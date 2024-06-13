@@ -1,5 +1,5 @@
 import { Box, BoxProps } from '../Box';
-import { TextVariant } from '@/ui/theme/fontSizes';
+import { TextVariant, variantMap } from '@/ui/theme/fontSizes';
 import clsx from 'clsx';
 
 type DefaultProps = Pick<
@@ -8,12 +8,12 @@ type DefaultProps = Pick<
 >;
 
 
-interface TextProps extends DefaultProps {
+export interface TextProps extends DefaultProps {
   variant?: TextVariant;
 }
 
-export const Text: React.FC<TextProps> = ({ as = 'span', className, variant = 'text-m', ...rest } ) => {
+export const Text: React.FC<TextProps> = ({ as = 'span', className, variant = 'text-s', ...rest } ) => {
   return (
-    <Box as={as} className={clsx(className, )} {...rest} />
+    <Box as={as} className={clsx(className, variantMap[variant] )} {...rest} />
   );
 }
