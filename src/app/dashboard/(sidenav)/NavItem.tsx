@@ -5,6 +5,7 @@ import Link from 'next/link';
 import clsx from 'clsx';
 
 import { NavLink } from './data'
+import { Box, Text } from '@/ui';
 
 export const NavItem = ({ navLink }: {navLink : NavLink})=> {
   const pathname = usePathname();
@@ -15,14 +16,16 @@ export const NavItem = ({ navLink }: {navLink : NavLink})=> {
       key={navLink.name}
       href={navLink.href}
       className={clsx(
-        'flex h-[48px] items-center justify-start gap-2 rounded-[6px] p-3 text-sm font-medium hover:bg-purple-50 hover:text-purple-950 md:flex-none md:p-2 md:px-3',
+        'flex group h-[48px] rounded-[6px] p-3 text-sm font-medium hover:bg-purple-50 hover:text-purple-950 md:flex-none md:p-2 md:px-3',
         {
-          'bg-purple-50 text-purple-800': pathname === navLink.href,
+          'bg-purple-50 text-purple-900': pathname === navLink.href,
         },
       )}
     >
-      <LinkIcon className="w-6" />
-      <p>{navLink.name}</p>
+      <Box className="group-hover:translate-x-[4px] transition-transform flex items-center justify-start gap-2">
+        <LinkIcon className="w-6" />
+        <Text>{navLink.name}</Text>
+      </Box>
     </Link>
   );
 }
