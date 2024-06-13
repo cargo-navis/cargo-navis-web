@@ -1,9 +1,9 @@
-import { Box, Text } from '@/ui';
+import { Box, Heading } from '@/ui';
 
 export default function Page() {
   return (
     <Box>
-      <Text as="h1" className="text-xl font-bold">Assign Trucks</Text>
+      <Heading as="h1" variant="text-xl">Assign Trucks</Heading>
     </Box>
   );
 }
