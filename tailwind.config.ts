@@ -1,4 +1,7 @@
 import type { Config } from "tailwindcss";
+import { theme } from './src/ui/theme';
+
+const { fontSize } = theme;
 
 const config: Config = {
   content: [
@@ -7,6 +10,7 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
+    fontSize,
     extend: {
       backgroundImage: {
         "sidebar-gradient": 'linear-gradient(45deg, black, transparent)',
