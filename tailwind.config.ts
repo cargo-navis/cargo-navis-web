@@ -1,16 +1,17 @@
 import type { Config } from "tailwindcss";
 import { theme } from './src/ui/theme';
 
-const { fontSize } = theme;
+const { colors, fontSize } = theme;
 
 const config: Config = {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/ui/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/ui/**/*.{ts,tsx}",
   ],
   theme: {
+    colors,
     fontSize,
     extend: {
       fontFamily: {
