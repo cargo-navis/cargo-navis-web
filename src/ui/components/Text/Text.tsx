@@ -14,7 +14,7 @@ export interface TextProps extends DefaultProps {
   variant?: TextVariant;
 }
 
-export const Text: React.FC<TextProps> = ({ as = 'span', className, color = 'text-color-1', variant = 'text-s', ...rest } ) => {
+export const Text: React.FC<TextProps> = ({ as = 'span', className, color, variant = 'text-s', ...rest } ) => {
   return (
     <Box as={as} className={clsx(className, variantMap[variant], textColorMap[color as TextColorToken] ?? color )} {...rest} />
   );

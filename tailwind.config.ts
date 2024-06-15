@@ -19,7 +19,7 @@ const config: Config = {
         heading: ['var(--font-playfair)'],
       },
       backgroundImage: {
-        "sidebar-gradient": 'linear-gradient(45deg, #923CB5, 35%, black)',
+        "sidebar-gradient": 'linear-gradient(45deg, #13949f, 35%, transparent)',
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",

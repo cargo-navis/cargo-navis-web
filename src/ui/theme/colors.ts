@@ -28,9 +28,23 @@ const light = {
   'light-900': '#1A1B21',
 };
 
+const teal = {
+  'teal-50': '#e0f7f8',
+  'teal-100': '#b3eef0',
+  'teal-200': '#80e3e8',
+  'teal-300': '#4dd8df',
+  'teal-400': '#26cfd8',
+  'teal-500': '#13949f',
+  'teal-600': '#117f8a',
+  'teal-700': '#0e6a75',
+  'teal-800': '#0b5560',
+  'teal-900': '#08414b',
+}
+
 export const palettes = {
   ...dark,
   ...light,
+  ...teal,
 };
 
 const alphas = {
