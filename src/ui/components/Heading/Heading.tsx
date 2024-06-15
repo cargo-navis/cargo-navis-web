@@ -7,6 +7,6 @@ interface HeadingProps extends TextProps {
 
 export const Heading: React.FC<HeadingProps> = ({ as, className, variant, ...rest }) => {
   return (
-    <Text as={as} className={clsx('font-heading', className)} variant={variant} {...rest} />
+    <Text as={as} color="text-color-1" className={clsx('font-heading', className)} variant={variant} {...rest} />
   );
 }
