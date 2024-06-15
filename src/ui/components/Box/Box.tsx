@@ -7,5 +7,5 @@ export interface BoxProps extends HtmlElementProps {
 export const Box: React.FC<BoxProps> = ({ as = 'div', className, ...rest }) => {
   const Component = as;
 
-  return <Component as={as} className={className} {...rest} />;
+  return <Component className={className} {...rest} />;
 };

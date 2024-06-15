@@ -1,3 +1,4 @@
 import { fontSize } from './fontSizes';
+import { colors } from './colors';
 
-export const theme = { fontSize };
+export const theme = { colors, fontSize };
