@@ -7,6 +7,7 @@ import { Box, Table, Text } from '@/ui';
 import { Employee } from '@/lib/employees';
 
 import { OccupationPill } from './OccupationPill';
+import { CategoryLabel } from '@/app/dashboard/employees/CategoryLabel';
 
 const columnHelper = createColumnHelper<Employee>();
 
@@ -64,7 +65,7 @@ export const columns = [
 
       return (
         <Box className="flex gap-1 align-middle">
-          {licenceCategories.map(v => <span className="bg-light-700 px-1" key={v}>{v}</span>)}
+          {licenceCategories.map(l => <CategoryLabel category={l} />)}
         </Box>
       );
     },
@@ -86,9 +87,9 @@ export const columns = [
     id: 'actions',
     cell: () => {
       return (
-        <Box className="flex align-middle gap-3 w-[140px] h-[32px] text-teal-400">
-          <PencilIcon className="w-6" />
-          <TrashIcon className="w-6" />
+        <Box className="invisible group-hover/row:visible flex justify-center gap-4 w-full h-[32px] text-dark-500 dark:text-light-300">
+          <PencilIcon className="w-5 cursor-pointer" />
+          <TrashIcon className="w-5 cursor-pointer" />
         </Box>
       )
     }
