@@ -34,7 +34,7 @@ export const employees: Employee[] = [
     phoneNumber: "+385123456782",
     email: "marko.babic@example.com",
     gender: "M",
-    position: "disponent",
+    position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-03",
     driverLicenceCategories: ["B", "C", "D"],
@@ -62,9 +62,6 @@ export const employees: Employee[] = [
     gender: "M",
     position: "manager",
     nationality: "Croatian",
-    driverLicenceExpirationDate: "2025-12-05",
-    driverLicenceCategories: ["B", "C"],
-    adr: false
   },
   {
     id: "f5a7c0e9-8d3b-4c5e-9b1e-2d0f1c3e4a7b",
@@ -75,9 +72,6 @@ export const employees: Employee[] = [
     gender: "M",
     position: "disponent",
     nationality: "Croatian",
-    driverLicenceExpirationDate: "2025-12-06",
-    driverLicenceCategories: ["B", "C"],
-    adr: false
   },
   {
     id: "e1b3d0f5-7c3a-4e5a-9d1e-3b0c1d2e5f7a",
@@ -112,7 +106,7 @@ export const employees: Employee[] = [
     phoneNumber: "+385123456788",
     email: "stjepan.grgic@example.com",
     gender: "M",
-    position: "disponent",
+    position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-09",
     driverLicenceCategories: ["B"],
@@ -177,7 +171,7 @@ export const employees: Employee[] = [
     phoneNumber: "+385123456793",
     email: "martin.radic@example.com",
     gender: "M",
-    position: "disponent",
+    position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-14",
     driverLicenceCategories: ["B"],
@@ -190,7 +184,7 @@ export const employees: Employee[] = [
     phoneNumber: "+385123456794",
     email: "filip.lovric@example.com",
     gender: "M",
-    position: "disponent",
+    position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-15",
     driverLicenceCategories: ["B", "C", "D"],
@@ -231,9 +225,6 @@ export const employees: Employee[] = [
     gender: "F",
     position: "disponent",
     nationality: "Croatian",
-    driverLicenceExpirationDate: "2025-12-18",
-    driverLicenceCategories: ["B", "C", "D"],
-    adr: false
   },
   {
     id: "f3d7c0a5-7a3c-4e6a-9c1e-5d0b1e2f3b7a",
@@ -257,9 +248,6 @@ export const employees: Employee[] = [
     gender: "F",
     position: "manager",
     nationality: "Croatian",
-    driverLicenceExpirationDate: "2025-12-20",
-    driverLicenceCategories: ["B"],
-    adr: false
   },
   {
     id: "d3b7c5e5-6a4c-4e5a-8c1e-7d0b1f2e3a7b",
@@ -270,9 +258,6 @@ export const employees: Employee[] = [
     gender: "M",
     position: "disponent",
     nationality: "Croatian",
-    driverLicenceExpirationDate: "2025-12-21",
-    driverLicenceCategories: ["B", "C", "D"],
-    adr: false
   },
   {
     id: "f4b7d0c5-7c3a-4e6a-9b1e-8d0b1e2f3a7b",
@@ -309,9 +294,6 @@ export const employees: Employee[] = [
     gender: "F",
     position: "disponent",
     nationality: "Croatian",
-    driverLicenceExpirationDate: "2025-12-24",
-    driverLicenceCategories: ["B", "C", "D"],
-    adr: false
   }
 ];
 
