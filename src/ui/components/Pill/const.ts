@@ -5,3 +5,5 @@ export const variantsMap = {
   danger: 'bg-red-100 dark:bg-red-800 text-red-800 dark:text-red-100',
   info: 'bg-blue-100 dark:bg-blue-700 text-blue-500 dark:text-blue-100',
 };
+
+export type PillVariant = keyof typeof variantsMap;
