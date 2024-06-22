@@ -29,22 +29,107 @@ const light = {
 };
 
 const teal = {
-  'teal-50': '#e0f7f8',
-  'teal-100': '#b3eef0',
-  'teal-200': '#80e3e8',
-  'teal-300': '#4dd8df',
-  'teal-400': '#26cfd8',
-  'teal-500': '#13949f',
-  'teal-600': '#117f8a',
-  'teal-700': '#0e6a75',
-  'teal-800': '#0b5560',
-  'teal-900': '#08414b',
+  'teal-50': '#E0F7F8',
+  'teal-100': '#B3EEF0',
+  'teal-200': '#80E3E8',
+  'teal-300': '#4DD8DF',
+  'teal-400': '#26CFD8',
+  'teal-500': '#13949F',
+  'teal-600': '#117F8A',
+  'teal-700': '#0E6A75',
+  'teal-800': '#0B5560',
+  'teal-900': '#08414B',
 }
+
+const blue = {
+  'blue-50': '#E0F2FF',
+  'blue-100': '#B3DAFF',
+  'blue-200': '#80C1FF',
+  'blue-300': '#4DA8FF',
+  'blue-400': '#2696FF',
+  'blue-500': '#1370CC',
+  'blue-600': '#115FAA',
+  'blue-700': '#0E4D88',
+  'blue-800': '#0B3B66',
+  'blue-900': '#082945',
+}
+
+const orange = {
+  'orange-50': '#FFF4E0',
+  'orange-100': '#FFDDAB',
+  'orange-200': '#FFC380',
+  'orange-300': '#FFAA4D',
+  'orange-400': '#FF9526',
+  'orange-500': '#CC7513',
+  'orange-600': '#AA6011',
+  'orange-700': '#884D0E',
+  'orange-800': '#663B0B',
+  'orange-900': '#452908',
+}
+
+const green = {
+  'green-50': '#E0F8E0',
+  'green-100': '#B3EFB3',
+  'green-200': '#80E680',
+  'green-300': '#4DDF4D',
+  'green-400': '#26D826',
+  'green-500': '#13A213',
+  'green-600': '#118C11',
+  'green-700': '#0E750E',
+  'green-800': '#0B5E0B',
+  'green-900': '#084708',
+}
+
+const yellow = {
+  'yellow-50': '#FFFCE0',
+  'yellow-100': '#FFF6B3',
+  'yellow-200': '#FFEF80',
+  'yellow-300': '#FFE84D',
+  'yellow-400': '#FFE226',
+  'yellow-500': '#CCB113',
+  'yellow-600': '#AA9311',
+  'yellow-700': '#88760E',
+  'yellow-800': '#66580B',
+  'yellow-900': '#453B08',
+}
+
+const purple = {
+  'purple-50': '#F5E0FF',
+  'purple-100': '#E3B3FF',
+  'purple-200': '#D080FF',
+  'purple-300': '#BE4DFF',
+  'purple-400': '#B026FF',
+  'purple-500': '#8F13CC',
+  'purple-600': '#7711AA',
+  'purple-700': '#5F0E88',
+  'purple-800': '#470B66',
+  'purple-900': '#2F0845',
+}
+
+const red = {
+  'red-50': '#FFE0E0',
+  'red-100': '#FFB3B3',
+  'red-200': '#FF8080',
+  'red-300': '#FF4D4D',
+  'red-400': '#FF2626',
+  'red-500': '#CC1313',
+  'red-600': '#AA1111',
+  'red-700': '#880E0E',
+  'red-800': '#660B0B',
+  'red-900': '#450808',
+}
+
 
 export const palettes = {
   ...dark,
   ...light,
   ...teal,
+  ...blue,
+  ...orange,
+  ...green,
+  ...yellow,
+  ...purple,
+  ...red,
 };
 
 const alphas = {
