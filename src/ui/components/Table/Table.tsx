@@ -21,7 +21,7 @@ export const Table: React.FC<TableProps> = ({ data, columns }) => {
      w-full
      {/*table-fixed*/}
      ">
-      <Box as="thead" className="bg-dark-200 sticky top-[-48px]">
+      <Box as="thead" className="bg-dark-200 dark:bg-light-900 sticky top-[-48px]">
       {table.getHeaderGroups().map(headerGroup => (
         <Box as="tr" key={headerGroup.id}>
           {headerGroup.headers.map(header => (
@@ -39,7 +39,7 @@ export const Table: React.FC<TableProps> = ({ data, columns }) => {
       </Box>
       <Box as="tbody">
       {table.getRowModel().rows.map(row => (
-        <Box as="tr" key={row.id} className="transition-colors ease-in-out duration-75 hover:bg-black-alpha-05 rounded-m border-b border-b-black-alpha-05 last:border-b-0">
+        <Box as="tr" key={row.id} className="transition-colors ease-in-out duration-75 hover:bg-black-alpha-05 dark:hover:bg-white-alpha-10 rounded-m border-b border-b-black-alpha-05 last:border-b-0">
           {row.getVisibleCells().map(cell => (
             <Box as="td" key={cell.id}>
               {flexRender(cell.column.columnDef.cell, cell.getContext())}

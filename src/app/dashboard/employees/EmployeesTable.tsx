@@ -1,11 +1,12 @@
 'use client';
+import clsx from 'clsx';
+import { CheckCircleIcon, PencilIcon, TrashIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { createColumnHelper } from '@tanstack/react-table';
 
 import { Box, Table, Text } from '@/ui';
-import clsx from 'clsx';
-import { CheckIcon, PencilIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { createColumnHelper } from '@tanstack/react-table';
 import { Employee } from '@/lib/employees';
-import { OccupationPill } from '@/app/dashboard/employees/OccupationPill';
+
+import { OccupationPill } from './OccupationPill';
 
 const columnHelper = createColumnHelper<Employee>();
 
@@ -71,11 +72,12 @@ export const columns = [
   columnHelper.accessor('adr', {
     cell: props => {
       const adr = props.getValue();
+      if(adr === undefined) return;
 
-      const color = adr ? 'text-teal-400' : 'text-teal-900'
+      const color = adr ? 'text-green-600' : 'text-red-500'
 
       return (
-        <Box className={clsx(color, 'h-[32px] w-[32px]')}>{props.getValue() ? <CheckIcon /> : <XMarkIcon />}</Box>
+        <Box className={clsx(color, 'h-[28px] w-[28px]')}>{props.getValue() ? <CheckCircleIcon /> : <XCircleIcon />}</Box>
       );
     },
     header: 'ADR',
