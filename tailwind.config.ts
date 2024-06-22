@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 import { theme } from './src/ui/theme';
 
-const { colors, fontSize } = theme;
+const { colors, fontSize, borderRadius } = theme;
 
 const config: Config = {
   content: [
@@ -13,6 +13,7 @@ const config: Config = {
   theme: {
     colors,
     fontSize,
+    borderRadius,
     extend: {
       fontFamily: {
         display: ['var(--font-inter)'],
