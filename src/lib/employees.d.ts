@@ -7,9 +7,9 @@ export interface Employee {
   gender: string; // TODO Enum - Gender;
   position: string; // TODO Enum - Position;
   nationality: string;
-  driverLicenceExpirationDate: string;
-  driverLicenceCategories: string[]; // TODO - Enum
-  adr: boolean;
+  driverLicenceExpirationDate?: string;
+  driverLicenceCategories?: string[]; // TODO - Enum
+  adr?: boolean;
 }
 
 enum Gender {
