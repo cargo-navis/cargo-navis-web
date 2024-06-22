@@ -65,7 +65,7 @@ export const columns = [
 
       return (
         <Box className="flex gap-1 align-middle">
-          {licenceCategories.map(l => <CategoryLabel category={l} />)}
+          {licenceCategories.map(l => <CategoryLabel category={l} key={l} />)}
         </Box>
       );
     },
