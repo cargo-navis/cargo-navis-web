@@ -12,7 +12,7 @@ export function Sidebar() {
       <Box as="nav" className="flex flex-col flex-grow gap-2">
         {links.map(l => <NavItem key={l.name} navLink={l}/>)}
       </Box>
-      <Box className="group cursor-pointer h-[48px] flex rounded-md p-3 text-sm font-medium hover:bg-light-50 hover:text-teal-900 md:flex-none md:p-2 md:px-3">
+      <Box className="group cursor-pointer h-[48px] flex rounded-s p-3 text-sm font-medium hover:bg-light-50 hover:text-teal-900 md:flex-none md:p-2 md:px-3">
         <Box className="flex items-center justify-start gap-2 group-focus:translate-x-[4px] group-hover:translate-x-[4px] transition-transform">
           <ArrowLeftStartOnRectangleIcon className="w-6" />
           <Text>Sign Out</Text>

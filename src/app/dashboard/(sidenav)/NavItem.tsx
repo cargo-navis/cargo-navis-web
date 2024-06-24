@@ -16,7 +16,7 @@ export const NavItem = ({ navLink }: {navLink : NavLink})=> {
       key={navLink.name}
       href={navLink.href}
       className={clsx(
-        'flex group h-[48px] rounded-[6px] p-3 text-sm font-medium hover:bg-light-50 hover:text-teal-900 md:flex-none md:p-2 md:px-3',
+        'flex group h-[48px] rounded-s p-3 text-sm font-medium hover:bg-light-50 hover:text-teal-900 md:flex-none md:p-2 md:px-3',
         {
           'bg-light-50 text-teal-900': pathname === navLink.href,
         },
