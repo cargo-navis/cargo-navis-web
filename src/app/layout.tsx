@@ -15,6 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <title>CargoNavis</title>
+      </head>
       <body className={`${inter.variable} ${playfairDisplaySc.variable} font-display`}>{children}</body>
     </html>
   );
