@@ -10,6 +10,7 @@ export interface Employee {
   driverLicenceExpirationDate?: string;
   driverLicenceCategories?: string[]; // TODO - Enum
   adr?: boolean;
+  governmentId: string;
 }
 
 enum Gender {
