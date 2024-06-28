@@ -8,18 +8,19 @@ import { CategoryLabel } from '@/app/dashboard/employees/CategoryLabel';
 import { Box, Table, Text } from '@/ui';
 import { Employee } from '@/lib/employees';
 
-import { useCopyPhoneNumber } from './hooks';
+import { useCopyCellValue } from './hooks';
 import { OccupationPill } from './OccupationPill';
 
 const columnHelper = createColumnHelper<Employee>();
 
 export function EmployeesTable({ employees }: { employees?: Employee[] }) {
-  const copyPhoneNumber = useCopyPhoneNumber();
+  const copyCellValue = useCopyCellValue();
 
   const columns = useMemo(() => {
     return [
       columnHelper.display({
         id: 'avatar',
+        size: 100,
         cell: props => {
           const memberName: string = props.row.getValue('fullName');
           const [fName, lName] = memberName.split(' ');
@@ -36,6 +37,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
       columnHelper.accessor(row => `${row.firstName} ${row.lastName}`, {
         id: 'fullName',
         header: 'Name',
+        size: 275,
         cell: props => {
           const name = props.getValue();
           const position = props.row.original.position;
@@ -50,21 +52,37 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           );
         }
       }),
+      columnHelper.accessor('governmentId', {
+        header: 'Government ID',
+        size: 220,
+        cell: props => {
+          const governmentId = props.getValue();
+
+          return (
+            <Box className="flex gap-2">
+              <Text color="text-color-2" variant="text-s">{governmentId}</Text>
+              <DocumentDuplicateIcon className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 cursor-pointer transition-all ease duration-750" onClick={() => copyCellValue(governmentId)} />
+            </Box>
+          )
+        },
+      }),
       columnHelper.accessor('phoneNumber', {
         header: 'Phone Number',
+        size: 200,
         cell: props => {
           const phoneNumber = props.getValue();
 
           return (
             <Box className="flex gap-2">
               <Text color="text-color-2" variant="text-s">{phoneNumber}</Text>
-              <DocumentDuplicateIcon className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 cursor-pointer transition-all ease duration-750" onClick={() => copyPhoneNumber(phoneNumber)} />
+              <DocumentDuplicateIcon className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 cursor-pointer transition-all ease duration-750" onClick={() => copyCellValue(phoneNumber)} />
             </Box>
           )
         },
       }),
       columnHelper.accessor('driverLicenceCategories', {
         header: 'Categories',
+        size: 200,
         cell: props => {
           const licenceCategories = props.getValue();
 
@@ -78,6 +96,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         },
       }),
       columnHelper.accessor('adr', {
+        size: 80,
         cell: props => {
           const adr = props.getValue();
           if(adr === undefined) return;
@@ -91,6 +110,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         header: 'ADR',
       }),
       columnHelper.display({
+        size: 100,
         id: 'actions',
         cell: () => {
           return (
@@ -102,7 +122,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         }
       })
     ];
-  }, [copyPhoneNumber]);
+  }, [copyCellValue]);
 
 
   return (
