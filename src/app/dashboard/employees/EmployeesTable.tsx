@@ -1,6 +1,6 @@
 'use client';
 import clsx from 'clsx';
-import { CheckCircleIcon, PencilIcon, TrashIcon, XCircleIcon } from '@heroicons/react/24/outline';
+import { CheckCircleIcon, PencilIcon, TrashIcon, XCircleIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
 import { createColumnHelper } from '@tanstack/react-table';
 
 import { Box, Table, Text } from '@/ui';
@@ -44,14 +44,15 @@ export const columns = [
       );
     }
   }),
-  columnHelper.accessor('email', {
-    header: 'Email',
+  columnHelper.accessor('phoneNumber', {
+    header: 'Phone Number',
     cell: props => {
-      const email = props.getValue();
+      const phoneNumber = props.getValue();
 
       return (
-        <Box className="flex flex-col gap-1">
-          <Text color="text-color-2" variant="text-s">{email}</Text>
+        <Box className="flex gap-2">
+          <Text color="text-color-2" variant="text-s">{phoneNumber}</Text>
+          <DocumentDuplicateIcon className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 cursor-pointer transition-all ease duration-750" />
         </Box>
       )
     },
