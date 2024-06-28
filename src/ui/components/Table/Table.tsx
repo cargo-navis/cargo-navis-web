@@ -1,6 +1,7 @@
 'use client';
-
+import clsx from 'clsx';
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+
 import { Box } from '@/ui';
 
 interface TableProps {
@@ -25,7 +26,7 @@ export const Table: React.FC<TableProps> = ({ data, columns }) => {
       {table.getHeaderGroups().map(headerGroup => (
         <Box as="tr" key={headerGroup.id}>
           {headerGroup.headers.map(header => (
-            <th key={header.id} className="text-start py-[20px] uppercase">
+            <th key={header.id} className="text-start py-[20px] uppercase" style={{ width: `${header.getSize()}px`}}>
               {header.isPlaceholder
                 ? null
                 : flexRender(
