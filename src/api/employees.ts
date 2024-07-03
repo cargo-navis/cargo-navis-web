@@ -7,3 +7,8 @@ export async function getEmployees() {
   // await sleep();
   return sortBy(employees, (e) => e.position);
 }
+
+export async function getEmployee(id: string) {
+  // await sleep();
+  return employees.find(e => e.id === id);
+}
