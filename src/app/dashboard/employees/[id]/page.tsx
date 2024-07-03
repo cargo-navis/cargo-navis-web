@@ -1,9 +1,13 @@
-import { Box, Pill, Text } from '@/ui';
+import clsx from 'clsx';
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
+
+import { Box, Text } from '@/ui';
 import { getEmployee } from '@/api/employees';
 import { Employee } from '@/lib/employees';
 
 import { ContactInfo } from './ContactInfo';
 import { OccupationPill } from '@/app/dashboard/employees/OccupationPill';
+import { CategoryLabel } from '@/app/dashboard/employees/CategoryLabel';
 
 type PageProps = {
   params: { id: string };
@@ -18,7 +22,7 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <Box>
-      <Box className="py-5">
+      <Box className="py-5 flex flex-col gap-10">
         <Box className="flex items-start gap-6">
           <Avatar employee={employee} />
           <Box className="flex flex-col gap-3 mt-[12px]">
@@ -32,6 +36,9 @@ export default async function Page({ params }: PageProps) {
               <ContactInfo contact={employee.email} contactType="email" />
             </Box>
           </Box>
+        </Box>
+        <Box className="ml-[116px]">
+          {employee.position === 'driver' && <DriverProfile employee={employee} />}
         </Box>
       </Box>
     </Box>
@@ -48,4 +55,38 @@ function Avatar({ employee }: { employee: Employee }) {
       </Box>
     </Box>
   )
+}
+
+interface DriverProfileProps {
+  employee: Employee;
+}
+
+const DriverProfile: React.FC<DriverProfileProps> = ({ employee }) => {
+  const adrColor = employee.adr ? 'text-green-600' : 'text-red-500'
+
+  const expiredDate = new Date(employee.driverLicenceExpirationDate as string);
+  const formattedDate = new Intl.DateTimeFormat('hr-HR', { dateStyle: 'short' }).format(expiredDate)
+
+  return (
+    <Box className="border border-teal-600 pl-4 pr-10 py-2 rounded-s flex flex-col gap-4 w-max">
+      <Box className="flex flex-col gap-1">
+        <Box className="flex gap-2 items-center">
+          <Text color="text-color-1" variant="text-l-medium">ADR:</Text>
+          <Box className={clsx(adrColor, 'h-[28px] w-[28px]')}>{employee.adr ? <CheckCircleIcon /> : <XCircleIcon />}</Box>
+        </Box>
+      </Box>
+      <Box className="flex flex-col gap-1">
+        <Box className="flex gap-6 items-center">
+          <Text color="text-color-1" variant="text-m-medium">Driver&apos;s Categories:</Text>
+          <Box className="flex gap-1 items-center">
+            {employee.driverLicenceCategories?.map(l => <CategoryLabel category={l} key={l} />)}
+          </Box>
+        </Box>
+        <Box className="flex items-center gap-2">
+          <Text color="text-color-3" variant="text-s">Expires at:</Text>
+          <Text color="text-color-2" variant="text-s-bold">{formattedDate}</Text>
+        </Box>
+      </Box>
+    </Box>
+  );
 }
