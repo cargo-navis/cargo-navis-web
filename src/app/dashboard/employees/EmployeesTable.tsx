@@ -59,9 +59,9 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           const governmentId = props.getValue();
 
           return (
-            <Box className="flex gap-2">
-              <Text color="text-color-2" variant="text-s">{governmentId}</Text>
-              <DocumentDuplicateIcon className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 cursor-pointer transition-all ease duration-750" onClick={() => copyCellValue(governmentId)} />
+            <Box className="flex gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease" onClick={() => copyCellValue(governmentId)}>
+              <Text variant="text-s">{governmentId}</Text>
+              <DocumentDuplicateIcon className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease" />
             </Box>
           )
         },
@@ -73,9 +73,9 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           const phoneNumber = props.getValue();
 
           return (
-            <Box className="flex gap-2">
-              <Text color="text-color-2" variant="text-s">{phoneNumber}</Text>
-              <DocumentDuplicateIcon className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 cursor-pointer transition-all ease duration-750" onClick={() => copyCellValue(phoneNumber)} />
+            <Box className="flex gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease" onClick={() => copyCellValue(phoneNumber)}>
+              <Text variant="text-s">{phoneNumber}</Text>
+              <DocumentDuplicateIcon className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 cursor-pointer transition-transform ease" />
             </Box>
           )
         },
