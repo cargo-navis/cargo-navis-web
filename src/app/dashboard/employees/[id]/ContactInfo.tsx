@@ -1,6 +1,6 @@
 'use client';
 
-import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/solid';
+import { EnvelopeIcon, IdentificationIcon, PhoneIcon } from '@heroicons/react/24/solid';
 import { DocumentDuplicateIcon } from '@heroicons/react/24/outline';
 
 import { Box, Text } from '@/ui';
@@ -9,11 +9,12 @@ import { copyToClipboard } from '@/lib/utils/clipboard';
 const contactIconMap = {
   email: EnvelopeIcon,
   phone: PhoneIcon,
+  governmentId: IdentificationIcon,
 };
 
 interface ContactInfoProps {
   contact: string;
-  contactType: 'email' | 'phone';
+  contactType: 'email' | 'phone' | 'governmentId';
 }
 
 export const ContactInfo: React.FC<ContactInfoProps> = ({ contact, contactType }) => {

@@ -23,6 +23,7 @@ export default async function Page({ params }: PageProps) {
           <Box className="flex flex-col gap-3 mt-[12px]">
             <Text variant="text-xxl-medium">{`${employee?.firstName} ${employee?.lastName}`}</Text>
             <Box className="flex gap-10">
+              <ContactInfo contact={employee.governmentId} contactType="governmentId" />
               <ContactInfo contact={employee.phoneNumber} contactType="phone" />
               <ContactInfo contact={employee.email} contactType="email" />
             </Box>
