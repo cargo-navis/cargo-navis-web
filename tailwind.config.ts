@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss";
+import plugin from 'tailwindcss/plugin';
+
 import { theme } from './src/ui/theme';
 
 const { colors, fontSize, borderRadius } = theme;
@@ -27,6 +29,25 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    plugin(function({ addUtilities }) {
+      const newUtilities = {
+        '.text-color-1': {
+          '@apply text-dark-800 dark:text-light-50': {},
+        },
+        '.text-color-2': {
+          '@apply text-dark-700 dark:text-light-100': {},
+        },
+        '.text-color-3': {
+          '@apply text-dark-600 dark:text-light-300': {},
+        },
+        '.text-color-4': {
+          '@apply text-dark-500 dark:text-light-300': {},
+        },
+      }
+
+      addUtilities(newUtilities)
+    })
+  ],
 };
 export default config;
