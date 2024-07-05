@@ -17,7 +17,7 @@ interface IconProps {
   icon: IconType;
   size?: IconSize;
   color?: string;
-  type?: IconFillType;
+  type?: `${IconFillType}`;
 }
 
 export const Icon: React.FC<IconProps> = ({ className, color, icon, size = 'm', type = 'outline' }) => {
