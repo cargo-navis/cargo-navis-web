@@ -32,7 +32,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
             <Link href={`/dashboard/employees/${id}`}>
               <Box className="py-3 pl-3">
                 <Box className="flex items-center justify-center w-[50px] h-[50px] rounded-circle bg-teal-900">
-                  <Text className="text-light-50">{fName[0]+lName[0]}</Text>
+                  <Text className="text-light-50 group-hover/cell:text-teal-600 transition-colors">{fName[0]+lName[0]}</Text>
                 </Box>
               </Box>
             </Link>
@@ -51,7 +51,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
             <Link href={`/dashboard/employees/${id}`}>
               <Box className="py-3">
                 <Box className="flex flex-col gap-1">
-                  <Text color="text-color-1" variant="text-m-bold">{name}</Text>
+                  <Text className="group-hover/cell:text-teal-600 transition-colors" color="text-color-1" variant="text-m-bold">{name}</Text>
                   <OccupationPill occupation={position} text={position} />
                 </Box>
               </Box>
