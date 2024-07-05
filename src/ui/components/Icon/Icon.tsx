@@ -7,16 +7,21 @@ import clsx from 'clsx';
 
 export type IconType = keyof typeof outlineIcons & keyof typeof solidIcons;
 
+enum IconFillType {
+  Solid = 'solid',
+  Outline = 'outline'
+}
+
 interface IconProps {
   className?: string;
   icon: IconType;
   size?: IconSize;
   color?: string;
-  type?: 'solid' | 'outline';
+  type?: IconFillType;
 }
 
 export const Icon: React.FC<IconProps> = ({ className, color, icon, size = 'm', type = 'outline' }) => {
-  const icons = type === 'solid' ? solidIcons : outlineIcons;
+  const icons = type === IconFillType.Solid ? solidIcons : outlineIcons;
   const IconComponent = icons[icon];
 
   return (
