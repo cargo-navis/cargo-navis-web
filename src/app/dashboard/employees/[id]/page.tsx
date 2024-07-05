@@ -1,6 +1,3 @@
-import clsx from 'clsx';
-import { CheckCircleIcon, XCircleIcon } from '@heroicons/react/24/outline';
-
 import { Box, Text } from '@/ui';
 import { getEmployee } from '@/api/employees';
 import { Employee } from '@/lib/employees';
@@ -8,6 +5,7 @@ import { Employee } from '@/lib/employees';
 import { ContactInfo } from './ContactInfo';
 import { OccupationPill } from '@/app/dashboard/employees/OccupationPill';
 import { CategoryLabel } from '@/app/dashboard/employees/CategoryLabel';
+import { Icon } from '@/ui/components/Icon';
 
 type PageProps = {
   params: { id: string };
@@ -62,8 +60,6 @@ interface DriverProfileProps {
 }
 
 const DriverProfile: React.FC<DriverProfileProps> = ({ employee }) => {
-  const adrColor = employee.adr ? 'text-green-600' : 'text-red-500'
-
   const expiredDate = new Date(employee.driverLicenceExpirationDate as string);
   const formattedDate = new Intl.DateTimeFormat('hr-HR', { dateStyle: 'short' }).format(expiredDate)
 
@@ -72,7 +68,10 @@ const DriverProfile: React.FC<DriverProfileProps> = ({ employee }) => {
       <Box className="flex flex-col gap-1">
         <Box className="flex gap-2 items-center">
           <Text color="text-color-1" variant="text-l-medium">ADR:</Text>
-          <Box className={clsx(adrColor, 'h-[28px] w-[28px]')}>{employee.adr ? <CheckCircleIcon /> : <XCircleIcon />}</Box>
+          {employee.adr
+            ? <Icon className="text-green-600" icon="CheckCircleIcon" size="l" />
+            : <Icon className="text-red-500" icon="XCircleIcon" size="l" />
+          }
         </Box>
       </Box>
       <Box className="flex flex-col gap-1">

@@ -4,12 +4,13 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import clsx from 'clsx';
 
-import { NavLink } from './data'
 import { Box, Text } from '@/ui';
+import { Icon } from '@/ui/components/Icon';
+
+import { NavLink } from './data'
 
 export const NavItem = ({ navLink }: {navLink : NavLink})=> {
   const pathname = usePathname();
-  const LinkIcon = navLink.icon;
 
   return (
     <Link
@@ -23,7 +24,7 @@ export const NavItem = ({ navLink }: {navLink : NavLink})=> {
       )}
     >
       <Box className="group-focus:translate-x-[4px] group-hover:translate-x-[4px] transition-transform flex items-center justify-start gap-2">
-        <LinkIcon className="w-6" />
+        <Icon icon={navLink.icon} size="l" />
         <Text>{navLink.name}</Text>
       </Box>
     </Link>

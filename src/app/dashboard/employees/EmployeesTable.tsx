@@ -1,13 +1,11 @@
 'use client';
 
-import clsx from 'clsx';
-import { CheckCircleIcon, XCircleIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useMemo } from 'react';
 import Link from 'next/link';
 
 import { CategoryLabel } from '@/app/dashboard/employees/CategoryLabel';
-import { Box, Table, Text } from '@/ui';
+import { Box, Icon, Table, Text } from '@/ui';
 import { Employee } from '@/lib/employees';
 
 import { useCopyCellValue } from './hooks';
@@ -66,9 +64,9 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           const governmentId = props.getValue();
 
           return (
-            <Box className="flex gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease" onClick={() => copyCellValue(governmentId)}>
+            <Box className="flex items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease" onClick={() => copyCellValue(governmentId)}>
               <Text variant="text-s">{governmentId}</Text>
-              <DocumentDuplicateIcon className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease" />
+              <Icon icon="DocumentDuplicateIcon" className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease" />
             </Box>
           )
         },
@@ -80,9 +78,9 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           const phoneNumber = props.getValue();
 
           return (
-            <Box className="flex gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease" onClick={() => copyCellValue(phoneNumber)}>
+            <Box className="flex items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease" onClick={() => copyCellValue(phoneNumber)}>
               <Text variant="text-s">{phoneNumber}</Text>
-              <DocumentDuplicateIcon className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 cursor-pointer transition-transform ease" />
+              <Icon icon="DocumentDuplicateIcon" className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease" />
             </Box>
           )
         },
@@ -108,11 +106,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           const adr = props.getValue();
           if(adr === undefined) return;
 
-          const color = adr ? 'text-green-600' : 'text-red-500'
-
-          return (
-            <Box className={clsx(color, 'h-[28px] w-[28px]')}>{props.getValue() ? <CheckCircleIcon /> : <XCircleIcon />}</Box>
-          );
+          return props.getValue() ? <Icon className="text-green-600" icon="CheckCircleIcon" size="l" /> : <Icon className="text-red-500" icon="XCircleIcon" size="l" />;
         },
         header: 'ADR',
       }),

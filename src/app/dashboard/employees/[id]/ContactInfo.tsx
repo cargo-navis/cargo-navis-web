@@ -1,15 +1,12 @@
 'use client';
 
-import { EnvelopeIcon, IdentificationIcon, PhoneIcon } from '@heroicons/react/24/solid';
-import { DocumentDuplicateIcon } from '@heroicons/react/24/outline';
-
-import { Box, Text } from '@/ui';
+import { Box, Icon, IconType, Text } from '@/ui';
 import { copyToClipboard } from '@/lib/utils/clipboard';
 
-const contactIconMap = {
-  email: EnvelopeIcon,
-  phone: PhoneIcon,
-  governmentId: IdentificationIcon,
+const contactIconMap: Record<string, IconType> = {
+  email: 'EnvelopeIcon',
+  phone: 'PhoneIcon',
+  governmentId: 'IdentificationIcon',
 };
 
 interface ContactInfoProps {
@@ -26,10 +23,10 @@ export const ContactInfo: React.FC<ContactInfoProps> = ({ contact, contactType }
   }
 
   return (
-    <Box className="group flex gap-2 text-color-2 cursor-pointer" onClick={copyContact}>
-      <ContactIcon className="h-[24px]" />
+    <Box className="group flex items-center gap-2 text-color-2 cursor-pointer hover:text-color-1" onClick={copyContact}>
+      <Icon icon={ContactIcon} />
       <Text variant="text-s">{contact}</Text>
-      <DocumentDuplicateIcon className="opacity-0 translate-x-[-4px] group-hover:opacity-100 group-hover:translate-x-0 w-5 transition-transform ease" />
+      <Icon icon="DocumentDuplicateIcon" className="opacity-0 translate-x-[-4px] group-hover:opacity-100 group-hover:translate-x-0 w-5 transition-transform ease" />
     </Box>
   )
 }
