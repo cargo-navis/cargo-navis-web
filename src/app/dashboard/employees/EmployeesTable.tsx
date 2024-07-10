@@ -1,21 +1,19 @@
 'use client';
-import clsx from 'clsx';
-import { CheckCircleIcon, PencilIcon, TrashIcon, XCircleIcon, DocumentDuplicateIcon } from '@heroicons/react/24/outline';
+
 import { createColumnHelper } from '@tanstack/react-table';
 import { useMemo } from 'react';
+import Link from 'next/link';
 
+import { copyToClipboard } from '@/lib/utils/clipboard';
 import { CategoryLabel } from '@/app/dashboard/employees/CategoryLabel';
-import { Box, Table, Text } from '@/ui';
+import { Box, Icon, Table, Text } from '@/ui';
 import { Employee } from '@/lib/employees';
 
-import { useCopyCellValue } from './hooks';
 import { OccupationPill } from './OccupationPill';
 
 const columnHelper = createColumnHelper<Employee>();
 
 export function EmployeesTable({ employees }: { employees?: Employee[] }) {
-  const copyCellValue = useCopyCellValue();
-
   const columns = useMemo(() => {
     return [
       columnHelper.display({
@@ -24,13 +22,16 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         cell: props => {
           const memberName: string = props.row.getValue('fullName');
           const [fName, lName] = memberName.split(' ');
+          const id = props.row.original.id;
 
           return (
-            <Box className="py-3 pl-3">
-              <Box className="flex items-center justify-center w-[50px] h-[50px] rounded-circle bg-teal-900">
-                <Text className="text-light-50">{fName[0]+lName[0]}</Text>
+            <Link href={`/dashboard/employees/${id}`}>
+              <Box className="py-3 pl-3">
+                <Box className="flex items-center justify-center w-[50px] h-[50px] rounded-circle bg-teal-900">
+                  <Text className="text-light-50 group-hover/cell:text-teal-600">{fName[0]+lName[0]}</Text>
+                </Box>
               </Box>
-            </Box>
+            </Link>
           );
         }
       }),
@@ -40,15 +41,17 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         size: 275,
         cell: props => {
           const name = props.getValue();
-          const position = props.row.original.position;
+          const { position, id } = props.row.original;
 
           return (
-            <Box className="py-3">
-              <Box className="flex flex-col gap-1">
-                <Text color="text-color-1" variant="text-m-bold">{name}</Text>
-                <OccupationPill occupation={position} text={position} />
+            <Link href={`/dashboard/employees/${id}`}>
+              <Box className="py-3">
+                <Box className="flex flex-col gap-1">
+                  <Text className="group-hover/cell:text-teal-600" color="text-color-1" variant="text-m-bold">{name}</Text>
+                  <OccupationPill occupation={position} text={position} />
+                </Box>
               </Box>
-            </Box>
+            </Link>
           );
         }
       }),
@@ -59,9 +62,9 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           const governmentId = props.getValue();
 
           return (
-            <Box className="flex gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease" onClick={() => copyCellValue(governmentId)}>
+            <Box className="flex items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease" onClick={() => copyToClipboard(governmentId)}>
               <Text variant="text-s">{governmentId}</Text>
-              <DocumentDuplicateIcon className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease" />
+              <Icon icon="DocumentDuplicateIcon" className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease" />
             </Box>
           )
         },
@@ -73,9 +76,9 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           const phoneNumber = props.getValue();
 
           return (
-            <Box className="flex gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease" onClick={() => copyCellValue(phoneNumber)}>
+            <Box className="flex items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease" onClick={() => copyToClipboard(phoneNumber)}>
               <Text variant="text-s">{phoneNumber}</Text>
-              <DocumentDuplicateIcon className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 cursor-pointer transition-transform ease" />
+              <Icon icon="DocumentDuplicateIcon" className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease" />
             </Box>
           )
         },
@@ -101,28 +104,12 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           const adr = props.getValue();
           if(adr === undefined) return;
 
-          const color = adr ? 'text-green-600' : 'text-red-500'
-
-          return (
-            <Box className={clsx(color, 'h-[28px] w-[28px]')}>{props.getValue() ? <CheckCircleIcon /> : <XCircleIcon />}</Box>
-          );
+          return props.getValue() ? <Icon className="text-green-600" icon="CheckCircleIcon" size="l" /> : <Icon className="text-red-500" icon="XCircleIcon" size="l" />;
         },
         header: 'ADR',
       }),
-      columnHelper.display({
-        size: 100,
-        id: 'actions',
-        cell: () => {
-          return (
-            <Box className="invisible group-hover/row:visible flex justify-center gap-4 w-full h-[32px] text-dark-500 dark:text-light-300">
-              <PencilIcon className="w-5 cursor-pointer" />
-              <TrashIcon className="w-5 cursor-pointer" />
-            </Box>
-          )
-        }
-      })
     ];
-  }, [copyCellValue]);
+  }, []);
 
 
   return (

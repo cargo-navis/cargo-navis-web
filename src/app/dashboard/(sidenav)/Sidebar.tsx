@@ -1,9 +1,8 @@
 'use client';
-import { ArrowLeftStartOnRectangleIcon } from '@heroicons/react/24/outline';
 
 import { NavItem } from './NavItem';
 import { links } from './data';
-import { Box, Heading, Text } from '@/ui';
+import { Box, Heading, Icon, Text } from '@/ui';
 
 export function Sidebar() {
   return (
@@ -14,7 +13,7 @@ export function Sidebar() {
       </Box>
       <Box className="group cursor-pointer h-[48px] flex rounded-s p-3 text-sm font-medium hover:bg-light-50 hover:text-teal-900 md:flex-none md:p-2 md:px-3">
         <Box className="flex items-center justify-start gap-2 group-focus:translate-x-[4px] group-hover:translate-x-[4px] transition-transform">
-          <ArrowLeftStartOnRectangleIcon className="w-6" />
+          <Icon icon="ArrowLeftStartOnRectangleIcon" size="l" />
           <Text>Sign Out</Text>
         </Box>
       </Box>
