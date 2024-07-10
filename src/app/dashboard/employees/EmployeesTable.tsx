@@ -4,18 +4,16 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { useMemo } from 'react';
 import Link from 'next/link';
 
+import { copyToClipboard } from '@/lib/utils/clipboard';
 import { CategoryLabel } from '@/app/dashboard/employees/CategoryLabel';
 import { Box, Icon, Table, Text } from '@/ui';
 import { Employee } from '@/lib/employees';
 
-import { useCopyCellValue } from './hooks';
 import { OccupationPill } from './OccupationPill';
 
 const columnHelper = createColumnHelper<Employee>();
 
 export function EmployeesTable({ employees }: { employees?: Employee[] }) {
-  const copyCellValue = useCopyCellValue();
-
   const columns = useMemo(() => {
     return [
       columnHelper.display({
@@ -64,7 +62,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           const governmentId = props.getValue();
 
           return (
-            <Box className="flex items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease" onClick={() => copyCellValue(governmentId)}>
+            <Box className="flex items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease" onClick={() => copyToClipboard(governmentId)}>
               <Text variant="text-s">{governmentId}</Text>
               <Icon icon="DocumentDuplicateIcon" className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease" />
             </Box>
@@ -78,7 +76,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           const phoneNumber = props.getValue();
 
           return (
-            <Box className="flex items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease" onClick={() => copyCellValue(phoneNumber)}>
+            <Box className="flex items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease" onClick={() => copyToClipboard(phoneNumber)}>
               <Text variant="text-s">{phoneNumber}</Text>
               <Icon icon="DocumentDuplicateIcon" className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease" />
             </Box>
@@ -111,7 +109,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         header: 'ADR',
       }),
     ];
-  }, [copyCellValue]);
+  }, []);
 
 
   return (

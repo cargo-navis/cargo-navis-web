@@ -17,13 +17,8 @@ interface ContactInfoProps {
 export const ContactInfo: React.FC<ContactInfoProps> = ({ contact, contactType }) => {
   const ContactIcon = contactIconMap[contactType];
 
-  async function copyContact() {
-    const copiedValue = await copyToClipboard(contact);
-    alert(`"${copiedValue}" copied to clipboard`);
-  }
-
   return (
-    <Box className="group flex items-center gap-2 text-color-2 cursor-pointer hover:text-color-1" onClick={copyContact}>
+    <Box className="group flex items-center gap-2 text-color-2 cursor-pointer hover:text-color-1" onClick={() => copyToClipboard(contact)}>
       <Icon icon={ContactIcon} type="solid" />
       <Text variant="text-s">{contact}</Text>
       <Icon icon="DocumentDuplicateIcon" className="opacity-0 translate-x-[-4px] group-hover:opacity-100 group-hover:translate-x-0 w-5 transition-transform ease" />
