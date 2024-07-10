@@ -1,5 +1,5 @@
 'use client';
-import clsx from 'clsx';
+
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
 
 import { Box } from '@/ui';
