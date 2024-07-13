@@ -19,7 +19,7 @@ export const Radio: React.FC<RadioProps> = ({ option }) => {
         className="group flex items-center gap-3 p-4"
       >
         <Box
-          className="flex items-center size-5 justify-center rounded-circle border border-black-alpha-50 dark:border-white-alpha-50 group-data-[checked]:bg-teal-700 dark:group-data-[checked]:bg-teal-600 group-data-[disabled]:bg-gray-100 transition-colors">
+          className="flex items-center size-5 justify-center rounded-circle border border-black-alpha-50 dark:border-white-alpha-50 group-data-[checked]:bg-teal-700 dark:group-data-[checked]:bg-teal-600 group-data-[disabled]:bg-gray-100 transition-colors duration-75">
           <Box as="span" className="invisible size-2 rounded-circle bg-white group-data-[checked]:visible"/>
         </Box>
         <Box>

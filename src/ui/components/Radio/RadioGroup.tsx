@@ -1,7 +1,7 @@
 import { RadioGroup as HeadlessRadioGroup } from '@headlessui/react';
 import { Radio, RadioOption } from '@/ui';
 
-interface RadioGroupProps {
+export interface RadioGroupProps {
   value: string;
   options: RadioOption[];
   onChange(value: string): void;
