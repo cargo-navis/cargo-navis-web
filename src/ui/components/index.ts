@@ -3,6 +3,7 @@ export * from './DisplayIf';
 export * from './Icon';
 export * from './Heading';
 export * from './Pill';
+export * from './Radio';
 export * from './Table';
 export * from './Text';
 export * from './TextInput';
