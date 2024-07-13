@@ -2,6 +2,7 @@ import { Checkbox as HeadlessCheckbox } from '@headlessui/react';
 
 import { Field, Label } from '@headlessui/react';
 import { Icon, Text } from '@/ui';
+import clsx from 'clsx';
 
 export interface CheckboxProps {
   value: boolean;
@@ -15,7 +16,11 @@ export const Checkbox: React.FC<CheckboxProps> = ({ value, label, onChange }) =>
       <HeadlessCheckbox
         checked={value}
         onChange={onChange}
-        className="group flex items-center justify-center size-[24px] rounded-s border bg-white data-[checked]:bg-teal-700 dark:data-[checked]:bg-teal-600 data-[checked]:text-white cursor-pointer"
+        className={clsx(
+          "group flex items-center justify-center size-[24px]",
+          "rounded-s border-[2px] border-dark-300 dark:border-light-800 hover:border-dark-500 hover:dark:border-light-700",
+          "bg-white-alpha-10 data-[checked]:bg-teal-700 dark:data-[checked]:bg-teal-600 text-white data-[checked]:!border-transparent cursor-pointer"
+        )}
       >
         <Icon color="red" icon="CheckIcon" className="opacity-0 group-data-[checked]:opacity-100 transition-opacity duration-75" size="m" />
       </HeadlessCheckbox>
