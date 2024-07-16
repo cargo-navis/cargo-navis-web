@@ -10,6 +10,8 @@ import {
 } from '../components';
 import { FieldLabelsProps, withFieldLabels } from './form';
 
+export type TextInputWithLabelsProps = React.ComponentPropsWithRef<typeof TextInputWithLabels>;
+
 export const TextInputWithLabels: React.FC<
   TextInputProps & FieldLabelsProps & React.RefAttributes<HTMLInputElement>
 > = withFieldLabels(TextInput);

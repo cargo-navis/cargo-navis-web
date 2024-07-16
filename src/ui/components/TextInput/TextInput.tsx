@@ -8,6 +8,7 @@ type DefaultProps = Pick<
 >;
 
 export interface TextInputProps extends DefaultProps {
+  isDisabled?: boolean;
   value: string;
   type?: 'text' | 'email' | 'password' | 'tel' | 'number' | 'url';
   onChange: (value: string) => void;
