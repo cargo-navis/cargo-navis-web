@@ -19,5 +19,7 @@ export const RadioGroupWithLabels: React.FC<RadioGroupProps & FieldLabelsProps> 
 export type RadioGroupWithLabelsProps = React.ComponentPropsWithRef<typeof RadioGroupWithLabels>;
 
 export const CheckboxGroupWithLabels: React.FC<CheckboxGroupProps & FieldLabelsProps> = withFieldLabels(CheckboxGroup);
+export type CheckboxGroupWithLabelsProps = React.ComponentPropsWithRef<typeof CheckboxGroupWithLabels>;
 
 export const DatepickerWithLabels: React.FC<DatepickerProps & FieldLabelsProps> = withFieldLabels(Datepicker);
+export type DatepickerWithLabelsProps = React.ComponentPropsWithRef<typeof DatepickerWithLabels>;

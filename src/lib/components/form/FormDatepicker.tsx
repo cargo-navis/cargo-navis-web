@@ -1,8 +1,7 @@
-import { DatepickerProps } from '@/ui';
 import { useController, UseControllerProps } from 'react-hook-form';
-import { DatepickerWithLabels } from '@/ui/hocs';
+import { DatepickerWithLabels, DatepickerWithLabelsProps } from '@/ui/hocs';
 
-interface FormDatepickerProps extends Omit<DatepickerProps, 'value' | 'onChange'> {
+interface FormDatepickerProps extends Omit<DatepickerWithLabelsProps, 'value' | 'onChange'> {
   name: string;
   isDisabled?: boolean;
   initialValue?: string;
