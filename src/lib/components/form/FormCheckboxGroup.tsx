@@ -1,14 +1,14 @@
-import { CheckboxGroup, CheckboxGroupProps } from '@/ui';
+import { CheckboxGroupProps } from '@/ui';
 import { useController, UseControllerProps } from 'react-hook-form';
+import { CheckboxGroupWithLabels } from '@/ui/hocs';
 
 interface FormCheckboxGroupProps extends Omit<CheckboxGroupProps, 'value' | 'onChange'> {
   name: string;
-  isDisabled?: boolean;
   initialValue?: string[];
   rules?: UseControllerProps['rules'];
 }
 
-export const FormCheckboxGroup: React.FC<FormCheckboxGroupProps> = ({ name, isDisabled, initialValue, rules, ...rest }) => {
+export const FormCheckboxGroup: React.FC<FormCheckboxGroupProps> = ({ name, initialValue, rules, ...rest }) => {
   const {
     field: { value, onChange },
     formState: { isSubmitting },
@@ -16,6 +16,6 @@ export const FormCheckboxGroup: React.FC<FormCheckboxGroupProps> = ({ name, isDi
 
 
   return (
-    <CheckboxGroup isDisabled={isSubmitting} name={name} {...rest} values={value} onChange={onChange} />
+    <CheckboxGroupWithLabels name={name} {...rest} isDisabled={isSubmitting} values={value} onChange={onChange} />
   );
 }
