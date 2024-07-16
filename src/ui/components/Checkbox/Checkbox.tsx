@@ -8,12 +8,16 @@ export interface CheckboxProps {
   value: boolean;
   label?: string;
   onChange: (value: boolean) => void;
+  name?: string;
+  isDisabled?: boolean;
 }
 
-export const Checkbox: React.FC<CheckboxProps> = ({ value, label, onChange }) => {
+export const Checkbox: React.FC<CheckboxProps> = ({ isDisabled, value, label, onChange, name }) => {
   return (
     <Field className="flex items-center gap-3">
       <HeadlessCheckbox
+        name={name}
+        disabled={isDisabled}
         checked={value}
         onChange={onChange}
         className={clsx(
