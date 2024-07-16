@@ -6,7 +6,7 @@ import { classnames } from './styles';
 import { DateTimeFormat, formatDateString, getDateInLocalTimezone } from '@/lib/utils/date';
 import { Icon } from '@/ui';
 
-interface DatepickerProps {
+export interface DatepickerProps {
   value: string | null;
   onChange(date: string | null): void;
   isDisabled?: boolean;
