@@ -14,8 +14,6 @@ export const classnames = {
     'bg-transparent',
     'text-dark-800 dark:text-light-50 border-none font-display',
     'leading-[24px]',
-    // 'hover:border-dark-300 hover:dark:border-light-700',
-    // 'focus:border-blue-400 focus:dark:border-orange-400 active:border-blue-400 active:dark:border-orange-400',
     variantMap['text-s'],
   ),
 }
