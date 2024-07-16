@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import '@mantine/core/styles.css';
 import "./globals.css";
 
+import { MantineProvider } from '@mantine/core';
 import { inter, playfairDisplaySc } from '@/ui/theme/fonts';
 
 export const metadata: Metadata = {
@@ -18,7 +20,11 @@ export default function RootLayout({
       <head>
         <title>CargoNavis</title>
       </head>
-      <body className={`${inter.variable} ${playfairDisplaySc.variable} font-display`}>{children}</body>
+      <body className={`${inter.variable} ${playfairDisplaySc.variable} font-display`}>
+        <MantineProvider>
+          {children}
+        </MantineProvider>
+      </body>
     </html>
   );
 }
