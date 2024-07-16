@@ -16,4 +16,5 @@ export const classnames = {
     'leading-[24px]',
     variantMap['text-s'],
   ),
+  section: "data-[position=left]:z-[-1]"
 }
