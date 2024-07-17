@@ -8,6 +8,7 @@ import { CategoryLabel } from '@/app/dashboard/employees/CategoryLabel';
 import { Icon } from '@/ui/components/Icon';
 
 import { EmployeeActions } from './EmployeeActions';
+import { BackButton } from '@/app/dashboard/employees/new/BackButton';
 
 type PageProps = {
   params: { id: string };
@@ -22,7 +23,8 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <Box>
-      <Box className="py-5 flex flex-col gap-10">
+      <Box className="py-5 flex flex-col gap-5">
+        <BackButton />
         <Box className="flex justify-between">
           <Box className="flex items-start gap-6">
             <Avatar employee={employee} />
