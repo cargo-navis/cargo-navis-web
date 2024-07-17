@@ -4,6 +4,7 @@ export * from './Datepicker';
 export * from './DisplayIf';
 export * from './Icon';
 export * from './Heading';
+export * from './LoadingSpinner';
 export * from './Pill';
 export * from './Radio';
 export * from './Table';
