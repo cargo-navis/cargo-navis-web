@@ -9,6 +9,7 @@ import { FormCheckboxGroup, FormDatepicker, FormRadioGroup, FormTextInput } from
 import { Employee } from '@/lib/employees';
 
 import { adrOptions, categoryOptions, positionOptions } from './const';
+import { createEmployee } from '@/api/employees';
 
 export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee }) => {
   const isEdit = !!employee;
@@ -20,9 +21,10 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
   const { watch, handleSubmit, formState } = formMethods;
   const values = watch();
 
-  function handleFormSubmit(data: any) {
+  async function handleFormSubmit(data: any) {
     console.log('form submitted');
     console.log(data);
+    await createEmployee();
   }
 
   return (

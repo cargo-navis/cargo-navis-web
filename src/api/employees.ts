@@ -2,6 +2,7 @@ import sortBy from 'lodash/sortBy';
 
 import { employees } from '@/lib/mocks/employees';
 import { backend } from '@/lib/services/backendService';
+import { sleep } from '@/lib/utils/async';
 
 export async function getEmployees() {
   // await sleep();
@@ -14,6 +15,7 @@ export async function getEmployee(id: string) {
 }
 
 export async function createEmployee() {
+  await sleep();
   // return backend.post<any>('/api/employees', values);
 }
 
