@@ -1,5 +1,6 @@
 import { Box, Text } from '@/ui';
 
+import { BackButton } from './BackButton';
 import { NewEmployeeForm } from './NewEmployeeForm';
 
 export default async function Page() {
@@ -8,7 +9,10 @@ export default async function Page() {
       <Box className="py-5 flex flex-col gap-10">
         <Text variant="text-xxl-medium">New Employee</Text>
       </Box>
-      <NewEmployeeForm />
+      <Box className="py-5 flex flex-col gap-10">
+        <BackButton />
+        <NewEmployeeForm />
+      </Box>
     </Box>
   );
 }
