@@ -7,6 +7,8 @@ import { OccupationPill } from '@/app/dashboard/employees/OccupationPill';
 import { CategoryLabel } from '@/app/dashboard/employees/CategoryLabel';
 import { Icon } from '@/ui/components/Icon';
 
+import { EmployeeActions } from './EmployeeActions';
+
 type PageProps = {
   params: { id: string };
 }
@@ -21,19 +23,22 @@ export default async function Page({ params }: PageProps) {
   return (
     <Box>
       <Box className="py-5 flex flex-col gap-10">
-        <Box className="flex items-start gap-6">
-          <Avatar employee={employee} />
-          <Box className="flex flex-col gap-3 mt-[12px]">
-            <Box className="flex gap-4 items-center">
-              <Text variant="text-xxl-medium">{`${employee?.firstName} ${employee?.lastName}`}</Text>
-              <OccupationPill occupation={employee.position} text={employee.position} />
-            </Box>
-            <Box className="flex gap-8">
-              <ContactInfo contact={employee.governmentId} contactType="governmentId" />
-              <ContactInfo contact={employee.phoneNumber} contactType="phone" />
-              <ContactInfo contact={employee.email} contactType="email" />
+        <Box className="flex justify-between">
+          <Box className="flex items-start gap-6">
+            <Avatar employee={employee} />
+            <Box className="flex flex-col gap-3 mt-[12px]">
+              <Box className="flex gap-4 items-center">
+                <Text variant="text-xxl-medium">{`${employee?.firstName} ${employee?.lastName}`}</Text>
+                <OccupationPill occupation={employee.position} text={employee.position} />
+              </Box>
+              <Box className="flex gap-8">
+                <ContactInfo contact={employee.governmentId} contactType="governmentId" />
+                <ContactInfo contact={employee.phoneNumber} contactType="phone" />
+                <ContactInfo contact={employee.email} contactType="email" />
+              </Box>
             </Box>
           </Box>
+          <EmployeeActions id={id} />
         </Box>
         <Box className="ml-[116px]">
           {employee.position === 'driver' && <DriverProfile employee={employee} />}
