@@ -1,6 +1,7 @@
 import sortBy from 'lodash/sortBy';
 
 import { employees } from '@/lib/mocks/employees';
+import { backend } from '@/lib/services/backendService';
 
 export async function getEmployees() {
   // await sleep();
@@ -21,5 +22,5 @@ export async function updateEmployee(id: string) {
 }
 
 export async function deleteEmployee(id: string) {
-  // return backend.delete<any>(`/api/employees/${id}`);
+  return backend.delete(`/api/employees/${id}`);
 }
