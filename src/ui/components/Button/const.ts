@@ -26,10 +26,10 @@ export type Size = keyof typeof sizesMap;
 
 export const variantStyles = {
   primary: {
-    normal: 'bg-teal-700 dark:bg-teal-600 text-white dark:text-light-900',
-    hover: 'hover:bg-teal-800 hover:dark:bg-teal-500',
-    focus: 'focus:shadow-[0_0_0_4px] focus:shadow-teal-500 focus:dark:shadow-teal-500',
-    active: 'active:bg-teal-700 active:dark:bg-teal-500',
+    normal: 'bg-teal-700 dark:bg-teal-600 text-white dark:text-dark-75',
+    hover: 'hover:enabled:bg-teal-800 hover:enabled:dark:bg-teal-500',
+    focus: 'focus:shadow-[0_0_0_4px] focus:shadow-teal-500 focus:dark:shadow-teal-700',
+    active: 'active:enabled:bg-teal-700 active:enabled:dark:bg-teal-500',
     disabled: 'disabled:opacity-25',
     disabledAnchor: 'opacity-25',
   },
