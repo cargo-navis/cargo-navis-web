@@ -9,7 +9,7 @@ export interface Employee {
   nationality: string;
   driverLicenceExpirationDate?: string;
   driverLicenceCategories?: string[]; // TODO - Enum
-  adr?: boolean;
+  adr?: string;
   governmentId: string;
 }
 
