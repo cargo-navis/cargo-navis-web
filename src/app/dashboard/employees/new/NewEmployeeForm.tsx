@@ -65,9 +65,9 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25"/>
           <Button text={isEdit ? "Update Employee" : "Create Employee"} isFullWidth isDisabled={!formState.isDirty} isLoading={formState.isSubmitting} />
         </Box>
-        <Box as="pre" className="absolute right-[600px]">
-          {JSON.stringify(values, null, 2)}
-        </Box>
+        {/*<Box as="pre" className="absolute right-[600px]">*/}
+        {/*  {JSON.stringify(values, null, 2)}*/}
+        {/*</Box>*/}
       </Box>
     </FormProvider>
   );
