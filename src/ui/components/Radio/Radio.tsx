@@ -9,12 +9,13 @@ export type RadioOption = {
 };
 
 interface RadioProps {
+  isDisabled?: boolean;
   option: RadioOption,
 }
 
-export const Radio: React.FC<RadioProps> = ({ option }) => {
+export const Radio: React.FC<RadioProps> = ({ isDisabled, option }) => {
   return (
-    <Field className="cursor-pointer bg-white-alpha-25 dark:bg-white-alpha-10 rounded-xl">
+    <Field disabled={isDisabled} className="cursor-pointer bg-white-alpha-25 dark:bg-white-alpha-10 rounded-xl hover:bg-white-alpha-50 hover:dark:bg-white-alpha-25 transition-colors duration-75">
       <HeadlessRadio
         value={option.value}
         className="group flex items-center gap-3 p-4"
@@ -29,6 +30,7 @@ export const Radio: React.FC<RadioProps> = ({ option }) => {
         </Box>
         <Box>
           <Label>
+            {/* TODO - disable pointer for disabled*/}
             <Text color="text-color-1" className="cursor-pointer" variant="text-s">{option.label}</Text>
           </Label>
         </Box>

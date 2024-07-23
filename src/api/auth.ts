@@ -15,6 +15,8 @@ export async function loginWithJoso() {
   const email = "josip.grubesa@prudentology.com";
   const password = "oyTzFZhgfpw8iF.tehNJ";
 
+  // return backend.get('https://json-placeholder.mock.beeceptor.com/posts');
+
   return backend.post<AuthResponse.RootObject>('/auth/token', { email, password });
 }
 
