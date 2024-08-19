@@ -14,7 +14,7 @@ export const Box: React.FC<BoxProps> = ({ as = 'div', className, isDisabled, onC
     <Component
       className={clsx(className, isDisabled && 'no-interactions', !isDisabled && onClick && 'cursor-pointer')}
       onClick={onClick && !isDisabled ? onClick : undefined}
-      {...rest}
+      {...{ disabled: isDisabled, ...rest }}
     />
   );
 };

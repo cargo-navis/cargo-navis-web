@@ -8,19 +8,25 @@ type DefaultProps = Pick<
 >;
 
 export interface TextInputProps extends DefaultProps {
+  isDisabled?: boolean;
   value: string;
   type?: 'text' | 'email' | 'password' | 'tel' | 'number' | 'url';
   onChange: (value: string) => void;
 }
 
-export const TextInput: React.FC<TextInputProps> = ({ type = 'text', value, onChange, ...rest }) => {
+export const TextInput: React.FC<TextInputProps> = ({ isDisabled, type = 'text', value, onChange, ...rest }) => {
   return (
-    <Box className={clsx(
-      'border-[2px] rounded-s border-dark-300 dark:border-light-800',
-      'hover:border-dark-500 hover:dark:border-light-700',
-      'focus-within:!border-teal-600 dark:focus-within:!border-teal-800'
-    )}>
+    <Box
+      className={clsx(
+        'border-[2px] rounded-s border-dark-300 dark:border-light-800',
+        'hover:enabled:border-dark-500 hover:enabled:dark:border-light-700',
+        'focus-within:!border-teal-600 dark:focus-within:!border-teal-800',
+        isDisabled && 'opacity-50',
+      )}
+      isDisabled={isDisabled}
+    >
       <Box as="input"
+         isDisabled={isDisabled}
          className={
             clsx(
               'p-3 w-full h-full bg-transparent outline-none z-20',

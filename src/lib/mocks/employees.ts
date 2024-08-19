@@ -11,8 +11,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-01",
-    driverLicenceCategories: ["B", "C"],
-    adr: true,
+    driverLicenceCategories: ["b", "c"],
+    adr: "adr_true",
     governmentId: "HR12345678"
   },
   {
@@ -25,8 +25,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-02",
-    driverLicenceCategories: ["B"],
-    adr: true,
+    driverLicenceCategories: ["b"],
+    adr: "adr_true",
     governmentId: "HR12345679"
   },
   {
@@ -39,8 +39,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-03",
-    driverLicenceCategories: ["B", "C", "D"],
-    adr: true,
+    driverLicenceCategories: ["b", "c", "d"],
+    adr: "adr_true",
     governmentId: "HR12345680"
   },
   {
@@ -53,8 +53,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-04",
-    driverLicenceCategories: ["B"],
-    adr: false,
+    driverLicenceCategories: ["b"],
+    adr: "adr_false",
     governmentId: "HR12345681"
   },
   {
@@ -89,8 +89,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-07",
-    driverLicenceCategories: ["B"],
-    adr: false,
+    driverLicenceCategories: ["b"],
+    adr: "adr_false",
     governmentId: "HR12345684"
   },
   {
@@ -103,8 +103,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-08",
-    driverLicenceCategories: ["B", "C", "D"],
-    adr: false,
+    driverLicenceCategories: ["b", "c", "d"],
+    adr: "adr_false",
     governmentId: "HR12345685"
   },
   {
@@ -117,8 +117,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-09",
-    driverLicenceCategories: ["B"],
-    adr: true,
+    driverLicenceCategories: ["b"],
+    adr: "adr_true",
     governmentId: "HR12345686"
   },
   {
@@ -131,8 +131,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-10",
-    driverLicenceCategories: ["B", "C"],
-    adr: false,
+    driverLicenceCategories: ["b", "c"],
+    adr: "adr_false",
     governmentId: "HR12345687"
   },
   {
@@ -145,8 +145,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-11",
-    driverLicenceCategories: ["B"],
-    adr: true,
+    driverLicenceCategories: ["b"],
+    adr: "adr_true",
     governmentId: "HR12345688"
   },
   {
@@ -159,8 +159,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-12",
-    driverLicenceCategories: ["B", "C", "D"],
-    adr: false,
+    driverLicenceCategories: ["b", "c", "d"],
+    adr: "adr_false",
     governmentId: "HR12345689"
   },
   {
@@ -173,8 +173,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-13",
-    driverLicenceCategories: ["B", "C"],
-    adr: false,
+    driverLicenceCategories: ["b", "c"],
+    adr: "adr_false",
     governmentId: "HR12345690"
   },
   {
@@ -187,8 +187,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-14",
-    driverLicenceCategories: ["B"],
-    adr: false,
+    driverLicenceCategories: ["b"],
+    adr: "adr_false",
     governmentId: "HR12345691"
   },
   {
@@ -201,8 +201,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-15",
-    driverLicenceCategories: ["B", "C", "D"],
-    adr: false,
+    driverLicenceCategories: ["b", "b2", "c"],
+    adr: "adr_false",
     governmentId: "HR12345692"
   },
   {
@@ -215,8 +215,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-16",
-    driverLicenceCategories: ["B", "C"],
-    adr: false,
+    driverLicenceCategories: ["b", "c"],
+    adr: "adr_false",
     governmentId: "HR12345693"
   },
   {
@@ -229,8 +229,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-17",
-    driverLicenceCategories: ["B"],
-    adr: false,
+    driverLicenceCategories: ["b"],
+    adr: "adr_false",
     governmentId: "HR12345694"
   },
   {
@@ -254,8 +254,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-19",
-    driverLicenceCategories: ["B", "C"],
-    adr: false,
+    driverLicenceCategories: ["b", "c"],
+    adr: "adr_false",
     governmentId: "HR12345696"
   },
   {
@@ -290,8 +290,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-22",
-    driverLicenceCategories: ["B", "C"],
-    adr: false,
+    driverLicenceCategories: ["b", "c"],
+    adr: "adr_false",
     governmentId: "HR12345699"
   },
   {
@@ -304,8 +304,8 @@ export const employees: Employee[] = [
     position: "driver",
     nationality: "Croatian",
     driverLicenceExpirationDate: "2025-12-23",
-    driverLicenceCategories: ["B"],
-    adr: false,
+    driverLicenceCategories: ["b"],
+    adr: "adr_false",
     governmentId: "HR12345700"
   },
   {
