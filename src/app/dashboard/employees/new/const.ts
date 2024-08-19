@@ -6,14 +6,15 @@ export const positionOptions = [
 ];
 
 export const adrOptions = [
-  { label: 'True', value: 'adr_true' },
-  { label: 'False', value: 'adr_false' },
+  { label: 'Yes', value: 'adr_true' },
+  { label: 'No', value: 'adr_false' },
 ];
 
 export const categoryOptions = [
-  { label: 'A', value: 'a' },
+  { label: 'B1', value: 'b1' },
   { label: 'B', value: 'b' },
-  { label: 'B2', value: 'b2' },
+  { label: 'C1', value: 'c1' },
   { label: 'C', value: 'c' },
-  { label: 'C2', value: 'c2' },
+  { label: 'C1E', value: 'c1e' },
+  { label: 'CE', value: 'ce' },
 ];
