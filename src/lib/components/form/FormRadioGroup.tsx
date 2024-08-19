@@ -8,7 +8,7 @@ interface FormRadioInputProps extends Omit<RadioGroupWithLabelsProps, 'value' | 
   rules?: UseControllerProps['rules'];
 }
 
-export const FormRadioGroup: React.FC<FormRadioInputProps> = ({ name, initialValue, rules, ...rest}) => {
+export const FormRadioGroup: React.FC<FormRadioInputProps> = ({ name, initialValue, rules, isDisabled, ...rest}) => {
   const {
     field: { value, onChange },
     formState: { isSubmitting },
@@ -18,7 +18,7 @@ export const FormRadioGroup: React.FC<FormRadioInputProps> = ({ name, initialVal
     <RadioGroupWithLabels
       name={name}
       {...rest}
-      isDisabled={isSubmitting}
+      isDisabled={isDisabled && isSubmitting}
       value={value}
       onChange={onChange}
     />
