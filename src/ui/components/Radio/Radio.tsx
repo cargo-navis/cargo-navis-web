@@ -17,9 +17,9 @@ export const Radio: React.FC<RadioProps> = ({ isDisabled, option }) => {
   return (
     <Field disabled={isDisabled} className={clsx(
       "rounded-xl",
-      "bg-white-alpha-25 dark:bg-white-alpha-10",
-      "enabled:hover:bg-white-alpha-50 enabled:hover:dark:bg-white-alpha-25 transition-colors duration-75",
-      "enabled:cursor-pointer"
+      "bg-white-alpha-25 dark:bg-white-alpha-10 transition-colors duration-75",
+      !isDisabled && "hover:bg-white-alpha-50 hover:dark:bg-white-alpha-25",
+      !isDisabled && "cursor-pointer"
     )}>
       <HeadlessRadio
         value={option.value}
@@ -39,7 +39,7 @@ export const Radio: React.FC<RadioProps> = ({ isDisabled, option }) => {
           <Label>
             <Text
               color="text-color-1"
-              className="enabled:cursor-pointer"
+              className={clsx(!isDisabled && "cursor-pointer")}
               variant="text-s"
             >{option.label}</Text>
           </Label>
