@@ -10,6 +10,7 @@ import { Employee } from '@/lib/employees';
 
 import { adrOptions, categoryOptions, positionOptions } from './const';
 import { createEmployee } from '@/api/employees';
+import clsx from 'clsx';
 
 export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee }) => {
   const isEdit = !!employee;
@@ -45,12 +46,15 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
           <Box>
             <FormTextInput name="email" label="Email" type="email" />
           </Box>
-          <Box>
-            <FormTextInput name="governmentId" label="Government ID" />
-          </Box>
           <FormRadioGroup name="position" label="Position" options={positionOptions} />
           {values?.position === 'driver' && (
-            <Box className="flex flex-col gap-4">
+            <Box className={clsx(
+              "relative flex flex-col gap-4 ml-[32px]",
+              "before:absolute before:top-0 before:bottom-0 before:left-[-24px] before:w-[1px] before:bg-dark-300 before:dark:bg-light-800 before:rounded-m"
+            )}>
+              <Box>
+                <FormTextInput name="governmentId" label="Government ID" />
+              </Box>
               <Box className="flex gap-3">
                 <Box className="flex-1">
                   <FormCheckboxGroup name="driverLicenceCategories" label="Categories" options={categoryOptions} />
