@@ -1,6 +1,7 @@
 export const positionOptions = [
+  { label: 'CEO', value: 'ceo' },
   { label: 'Manager', value: 'manager' },
-  { label: 'Disponent', value: 'disponent' },
+  { label: 'Dispatcher', value: 'disponent' },
   { label: 'Driver', value: 'driver' },
 ];
 
