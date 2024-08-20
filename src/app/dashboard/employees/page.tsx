@@ -8,8 +8,8 @@ import { loginWithJoso } from '@/api';
 import { Employee } from '@/lib/employees';
 
 export default async function Page() {
-  // const employees = await getEmployees();
-  const employees: Employee[] = [];
+  const employees = await getEmployees();
+  // const employees: Employee[] = [];
 
   return (
     <Box>
