@@ -6,7 +6,7 @@ import { Box, Heading, Icon, Text } from '@/ui';
 
 export function Sidebar() {
   return (
-    <Box className="flex flex-col gap-10 flex-grow">
+    <Box className="flex flex-col gap-[40px] flex-grow">
       <Heading as="h1" variant="text-xl" className="text-center">CargoNavis</Heading>
       <Box as="nav" className="flex flex-col flex-grow gap-2">
         {links.map(l => <NavItem key={l.name} navLink={l}/>)}

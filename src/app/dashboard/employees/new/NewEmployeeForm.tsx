@@ -30,7 +30,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
 
   return (
     <FormProvider {...formMethods}>
-      <Box as="form" className="flex gap-10" onSubmit={handleSubmit(handleFormSubmit)}>
+      <Box as="form" className="flex gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
         <Box className="flex flex-col gap-4 w-[500px]">
           <Box className="flex gap-4">
             <Box className="flex-grow">
