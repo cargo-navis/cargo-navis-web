@@ -3,7 +3,7 @@ import plugin from 'tailwindcss/plugin';
 
 import { theme } from './src/ui/theme';
 
-const { colors, fontSize, borderRadius } = theme;
+const { colors, fontSize, borderRadius, spacing } = theme;
 
 const config: Config = {
   content: [
@@ -16,6 +16,7 @@ const config: Config = {
     colors,
     fontSize,
     borderRadius,
+    spacing,
     extend: {
       fontFamily: {
         display: ['var(--font-inter)'],
