@@ -6,3 +6,6 @@ export function safeJsonParse(value: string | undefined | null) {
   }
 }
 
+export function removeExtraWhitespace(value: string) {
+  return value.trim().replace(/\s+/g, ' ');
+}
