@@ -17,7 +17,7 @@ export const Radio: React.FC<RadioProps> = ({ isDisabled, option }) => {
   return (
     <Field disabled={isDisabled} className={clsx(
       "rounded-xl",
-      "bg-white-alpha-25 dark:bg-white-alpha-10 transition-colors duration-75",
+      "bg-dark-100 dark:bg-white-alpha-10 transition-colors duration-75",
       !isDisabled && "hover:bg-white-alpha-50 hover:dark:bg-white-alpha-25",
       !isDisabled && "cursor-pointer"
     )}>
