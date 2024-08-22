@@ -9,7 +9,7 @@ const SingleValue = (props: SingleValueProps<SelectOption, false, any>) => {
     <components.SingleValue {...props}>
       <Box className="flex items-center gap-2">
         <OptionLeftSideContent color="text-dark-600 dark:text-light-300" iconLeft={props.data.iconLeft} />
-        <Text className="max-md:text-mobile-override" color="text-color-1" variant="text-xxs">
+        <Text className="max-md:text-mobile-override" color="text-color-1" variant="text-s">
           {props.children}
         </Text>
       </Box>

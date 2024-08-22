@@ -18,14 +18,14 @@ import {
 import { Box, DisplayIf, Icon, IconType, SelectOption, Text } from '@/ui';
 
 const Control = (props: ControlProps<SelectOption, boolean, any>) => {
-  const { iconLeft, isDisabled, isBrand } = props.selectProps as any;
+  const { iconLeft, isDisabled } = props.selectProps as any;
   return (
     <components.Control {...props}>
       <Box
         className={clsx(
-          'flex relative min-h-[40px] py-[7px] px-3 grow items-center justify-between gap-2 cursor-pointer shadow-dark-1 border border-dark-100 dark:border-light-800 rounded-m',
-          'hover:border-dark-300 dark:hover:border-light-700 transition-all',
-          'focus-within:!border-blue-400 dark:focus-within:!border-orange-400 focus-within:shadow-blue-2',
+          'flex relative min-h-[40px] py-2 px-3 grow items-center justify-between gap-2 cursor-pointer shadow-dark-1 border-[2px] border-dark-300 dark:border-light-800 rounded-s',
+          'hover:enabled:border-dark-500 hover:enabled:dark:border-light-700 transition-all',
+          'focus-within:!border-teal-600 dark:focus-within:!border-teal-800',
           isDisabled && 'opacity-50',
         )}
         isDisabled={isDisabled}
@@ -47,13 +47,13 @@ const DropdownIndicator = (props: DropdownIndicatorProps<SelectOption, boolean, 
   }
 
   return (
-    <Box className="mt-[2px] self-start">
+    <Box className="mt-[2px] self-center">
       <components.DropdownIndicator {...props}>
-        {/*TODO*/}
-        {/*<Icon*/}
-        {/*  color="text-dark-600 dark:text-light-300"*/}
-        {/*  icon={props.selectProps.menuIsOpen ? 'chevronUp' : 'chevronDown'}*/}
-        {/*/>*/}
+        <Icon
+          type="outline"
+          size="m"
+          icon={props.selectProps.menuIsOpen ? 'ChevronUpIcon' : 'ChevronDownIcon'}
+        />
       </components.DropdownIndicator>
     </Box>
   );
@@ -61,10 +61,9 @@ const DropdownIndicator = (props: DropdownIndicatorProps<SelectOption, boolean, 
 
 const ClearIndicator = (props: ClearIndicatorProps<SelectOption, boolean, any>) => {
   return (
-    <Box className="mt-[2px] self-start">
+    <Box className="mt-[2px] self-center">
       <components.ClearIndicator {...props}>
-        {/*TODO */}
-        {/*<Icon color="text-dark-600 dark:text-light-300" icon="close" />*/}
+        <Icon icon="XMarkIcon" />
       </components.ClearIndicator>
     </Box>
   );
@@ -80,11 +79,11 @@ const Option = (props: OptionProps<SelectOption & { __isNew__?: boolean }, boole
         className={clsx(
           'flex p-3 items-center gap-3 cursor-pointer',
           isSelected
-            ? 'bg-blue-100 dark:bg-black-alpha-10'
+            ? 'bg-teal-500 dark:bg-black-white-25'
             : isFocused && !isDisabled
-            ? 'bg-dark-50 dark:bg-light-800'
+            ? 'bg-dark-100 dark:bg-light-800'
             : 'bg-inherit',
-          isSelected ? 'text-blue-700 dark:text-orange-450' : 'text-dark-700 dark:text-light-50',
+          isSelected ? 'text-white' : 'text-dark-700 dark:text-light-50',
           isDisabled && 'opacity-40',
         )}
         isDisabled={isDisabled}
@@ -103,7 +102,7 @@ const Option = (props: OptionProps<SelectOption & { __isNew__?: boolean }, boole
               </Box>
             </DisplayIf>
             <DisplayIf condition={!!helper}>
-              <Text color={isSelected ? 'text-blue-500 dark:text-orange-400' : 'text-color-3'} variant="text-xxxs">
+              <Text color={isSelected ? 'text-teal-500 dark:text-teal-400' : 'text-color-3'} variant="text-xxxs">
                 {helper}
               </Text>
             </DisplayIf>
@@ -135,7 +134,7 @@ export const OptionLeftSideContent: React.FC<Pick<SelectOption, 'iconLeft'> & { 
 const Placeholder = (props: PlaceholderProps<SelectOption, boolean, any>) => {
   return (
     <components.Placeholder {...props}>
-      <Text color="text-dark-400 dark:text-light-800" variant="text-xxs">
+      <Text color="text-dark-400 dark:text-light-800" variant="text-xs-medium">
         {props.children}
       </Text>
     </components.Placeholder>
