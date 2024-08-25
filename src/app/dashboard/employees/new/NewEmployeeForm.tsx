@@ -24,6 +24,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
   const formMethods = useForm({
     defaultValues,
     resolver: yupResolver(employeeSchema),
+    mode: 'all',
   });
 
   const { watch, handleSubmit, formState } = formMethods;

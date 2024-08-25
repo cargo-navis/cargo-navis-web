@@ -11,7 +11,7 @@ export interface FieldLabelsProps {
 export const withFieldLabels = <T extends any>(WrappedComponent: React.FC<T>) => {
   // eslint-disable-next-line react/display-name
   return forwardRef<any, T & FieldLabelsProps>((props, ref) => {
-    const { label,  helperText,  errorText,  ...rest } = props;
+    const { label, helperText, errorText, ...rest } = props;
 
     return (
       <Box as="label" className="flex flex-col gap-1">

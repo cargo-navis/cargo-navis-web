@@ -16,12 +16,14 @@ export const FormTextInput: React.FC<FormTextInputProps> = ({
   }) => {
   const {
     field: { value, onChange, onBlur },
-    formState: { isSubmitting }
+    fieldState: { error },
+    formState: { isSubmitting },
   } = useController({ name, defaultValue: initialValue, rules });
 
   return (
     <TextInputWithLabels
       name={name}
+      errorText={error?.message}
       {...rest}
       isDisabled={isSubmitting}
       value={value}
