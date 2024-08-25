@@ -29,7 +29,7 @@ export const TextInput: React.FC<TextInputProps> = ({ isDisabled, type = 'text',
          isDisabled={isDisabled}
          className={
             clsx(
-              'p-3 w-full h-full bg-transparent outline-none z-20',
+              'p-3 w-full h-full bg-transparent outline-none z-20 rounded-s',
               'font-display md:text-s text-dark-800 dark:text-light-50 placeholder:text-dark-400 dark:placeholder:text-light-800',
               'caret-teal-600 dark:caret-teal-800'
             )

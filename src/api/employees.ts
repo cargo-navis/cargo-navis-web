@@ -6,7 +6,7 @@ import { sleep } from '@/lib/utils/async';
 
 export async function getEmployees() {
   // await sleep();
-  return backend.get('/api/employees');
+  // return backend.get('/api/employees');
   return sortBy(employees, (e) => e.position);
 }
 

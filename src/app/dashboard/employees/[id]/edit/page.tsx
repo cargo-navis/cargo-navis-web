@@ -11,10 +11,10 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   return (
     <Box>
-      <Box className="py-5 flex flex-col gap-10">
+      <Box className="py-5 flex flex-col gap-[40px]">
         <Heading as="h1" variant="text-xl">Edit Employee</Heading>
       </Box>
-      <Box className="py-5 flex flex-col gap-10">
+      <Box className="py-5 flex flex-col gap-[40px]">
         <BackButton />
         <NewEmployeeForm employee={employee} />
       </Box>

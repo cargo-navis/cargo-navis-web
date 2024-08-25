@@ -5,6 +5,8 @@ import {
   DatepickerProps,
   RadioGroup,
   RadioGroupProps,
+  SingleSelect,
+  SingleSelectProps,
   TextInput,
   TextInputProps
 } from '../components';
@@ -23,3 +25,7 @@ export type CheckboxGroupWithLabelsProps = React.ComponentPropsWithRef<typeof Ch
 
 export const DatepickerWithLabels: React.FC<DatepickerProps & FieldLabelsProps> = withFieldLabels(Datepicker);
 export type DatepickerWithLabelsProps = React.ComponentPropsWithRef<typeof DatepickerWithLabels>;
+
+export const SingleSelectWithLabels: React.FC<Omit<SingleSelectProps & FieldLabelsProps, 'charLimitText'>> =
+  withFieldLabels(SingleSelect);
+export type SingleSelectWithLabelsProps = React.ComponentProps<typeof SingleSelectWithLabels>;

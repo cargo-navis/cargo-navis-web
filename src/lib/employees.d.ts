@@ -4,8 +4,8 @@ export interface Employee {
   lastName: string;
   phoneNumber: string;
   email: string;
-  gender: string; // TODO Enum - Gender;
-  position: string; // TODO Enum - Position;
+  gender: GenderEnum;
+  position: PositionEnum;
   nationality: string;
   driverLicenceExpirationDate?: string;
   driverLicenceCategories?: string[]; // TODO - Enum
@@ -13,13 +13,14 @@ export interface Employee {
   governmentId: string;
 }
 
-enum Gender {
+export enum GenderEnum {
   Male = 'M',
   Female = 'F',
 }
 
-enum Position {
+export enum PositionEnum {
   Driver = 'driver',
-  Disponent = 'disponent',
-  Manager  = 'manager'
+  Dispatcher = 'disponent',
+  Manager  = 'manager',
+  Ceo = 'ceo,'
 }
