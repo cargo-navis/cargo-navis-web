@@ -8,9 +8,10 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { FormCheckboxGroup, FormDatepicker, FormRadioGroup, FormTextInput } from '@/lib/components/form';
 import { Employee } from '@/lib/employees';
 
-import { adrOptions, categoryOptions, positionOptions } from './const';
+import { adrOptions, categoryOptions, countryOptions, positionOptions } from './const';
 import { createEmployee } from '@/api/employees';
 import clsx from 'clsx';
+import { FormSingleSelect } from '@/lib/components/form/FormSingleSelect';
 
 export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee }) => {
   const isEdit = !!employee;
@@ -77,7 +78,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
               <Box className="flex flex-col gap-2">
                 <Text className="uppercase" color="text-color-3" variant="text-xs-medium">Driver&apos;s Licence</Text>
                 <FormDatepicker name="driverLicenceExpirationDate" label="Expiration date"/>
-                {/* + TIP VOZACKE (koja drzava)*/}
+                <FormSingleSelect label="Country of issue" name="country" isSearchable isClearable options={countryOptions} placeholder="Select country..." />
               </Box>
               <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25"/>
               <Box className="flex flex-col gap-2">
@@ -98,7 +99,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
           </>
         )}
       </Box>
-      {/*<Box as="pre" className="absolute right-[600px]">*/}
+      {/*<Box as="pre" className="absolute right-[600px] text-color-2">*/}
       {/*  {JSON.stringify(values, null, 2)}*/}
       {/*</Box>*/}
     </FormProvider>
