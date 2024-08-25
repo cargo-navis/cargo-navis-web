@@ -13,7 +13,7 @@ export interface Employee {
   governmentId: string;
 }
 
-enum GenderEnum {
+export enum GenderEnum {
   Male = 'M',
   Female = 'F',
 }
