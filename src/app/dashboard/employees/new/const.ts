@@ -1,11 +1,25 @@
-export const positionOptions = [
-  { label: 'CEO', value: 'ceo' },
-  { label: 'Manager', value: 'manager' },
-  { label: 'Dispatcher', value: 'disponent' },
-  { label: 'Driver', value: 'driver' },
+import { PositionEnum } from '@/lib/employees.d';
+
+interface PositionOption {
+    label: string;
+    value: PositionEnum;
+}
+
+export const positionOptions: PositionOption[] = [
+  { label: 'CEO', value: PositionEnum.Ceo },
+  { label: 'Manager', value: PositionEnum.Manager },
+  { label: 'Dispatcher', value: PositionEnum.Dispatcher },
+  { label: 'Driver', value: PositionEnum.Driver },
 ];
 
-export const adrOptions = [
+type Adr = 'adr_true' | 'adr_false';
+
+interface AdrOption {
+    label: string;
+    value: Adr;
+}
+
+export const adrOptions: AdrOption[] = [
   { label: 'Yes', value: 'adr_true' },
   { label: 'No', value: 'adr_false' },
 ];
@@ -217,3 +231,19 @@ export const countries = [
   ];
 
 export const countryOptions = countries.map(c => ({ value: c.code, label: c.name }));
+
+export const formDefaultValues = {
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    email: '',
+    position: PositionEnum.Ceo,
+    governmentId: '',
+    driverLicenceCategories: [''],
+    adr: '',
+    driverLicenceExpirationDate: '',
+    licenceCountry: '',
+    employmentExpirationDate: '',
+    medicalExpirationDate: '',
+    visaExpirationDate: '',
+};

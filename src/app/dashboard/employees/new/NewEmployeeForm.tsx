@@ -2,22 +2,28 @@
 
 import 'dayjs/locale/hr';
 import '@mantine/dates/styles.css';
+import { yupResolver } from '@hookform/resolvers/yup';
 
 import { Box, Button, Text } from '@/ui';
 import { FormProvider, useForm } from 'react-hook-form';
 import { FormCheckboxGroup, FormDatepicker, FormRadioGroup, FormTextInput } from '@/lib/components/form';
 import { Employee } from '@/lib/employees';
 
-import { adrOptions, categoryOptions, countryOptions, positionOptions } from './const';
+import { adrOptions, categoryOptions, countryOptions, formDefaultValues, positionOptions } from './const';
 import { createEmployee } from '@/api/employees';
 import clsx from 'clsx';
 import { FormSingleSelect } from '@/lib/components/form/FormSingleSelect';
+import { employeeSchema } from '@/app/dashboard/employees/new/schema';
+
 
 export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee }) => {
   const isEdit = !!employee;
 
+  const defaultValues = employee ? { ...employee } : formDefaultValues;
+
   const formMethods = useForm({
-    defaultValues: employee
+    defaultValues,
+    resolver: yupResolver(employeeSchema),
   });
 
   const { watch, handleSubmit, formState } = formMethods;
@@ -52,7 +58,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
           <Button
             text={isEdit ? "Update Employee" : "Create Employee"}
             isFullWidth
-            isDisabled={!formState.isDirty}
+            isDisabled={!formState.isValid}
             isLoading={formState.isSubmitting}
           />
         </Box>
@@ -78,7 +84,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
               <Box className="flex flex-col gap-2">
                 <Text className="uppercase" color="text-color-3" variant="text-xs-medium">Driver&apos;s Licence</Text>
                 <FormDatepicker name="driverLicenceExpirationDate" label="Expiration date"/>
-                <FormSingleSelect label="Country of issue" name="country" isSearchable isClearable options={countryOptions} placeholder="Select country..." />
+                <FormSingleSelect label="Country of issue" name="licenceCountry" isSearchable isClearable options={countryOptions} placeholder="Select country..." />
               </Box>
               <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25"/>
               <Box className="flex flex-col gap-2">
