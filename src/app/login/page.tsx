@@ -1,5 +1,5 @@
 import { FlexLayout, Heading, Text } from '@/ui';
-import { LoginForm } from './loginForm';
+import { LoginForm } from './LoginForm';
 
 export default async function Page() {
   //
