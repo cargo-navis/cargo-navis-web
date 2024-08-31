@@ -39,7 +39,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
   return (
     <FormProvider {...formMethods}>
       <Box as="form" className="flex gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
-        <Box className="flex flex-col gap-4 w-[500px]">
+        <Box className="flex flex-col gap-4 w-[480px]">
           <Box className="flex gap-4">
             <Box className="flex-grow">
               <FormTextInput name="firstName" label="First Name"/>
@@ -67,7 +67,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
           <>
             <Box className="w-[1px] border-[0px] border-l-[1px] border-light-200 dark:border-white-alpha-25" />
             <Box className={clsx(
-              "w-[500px] relative flex flex-col gap-4",
+              "w-[480px] relative flex flex-col gap-4",
             )}>
               <Text color="text-color-2" variant="text-l-medium">Driver details</Text>
               <Box>
