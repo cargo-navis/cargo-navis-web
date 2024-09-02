@@ -26,6 +26,7 @@ export default NextAuth({
     })
   ],
   pages: {
-    signIn: '/login'
+    signIn: '/login',
+    signOut: '/login',
   }
 });

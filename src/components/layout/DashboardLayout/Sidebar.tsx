@@ -1,3 +1,5 @@
+import { signOut } from "next-auth/react"
+
 import { NavItem } from './NavItem';
 import { links } from './data';
 import { Box, Heading, Icon, Text } from '@/ui';
@@ -10,7 +12,10 @@ export function Sidebar() {
         {links.map(l => <NavItem key={l.name} navLink={l}/>)}
       </Box>
       <Box className="group cursor-pointer h-[48px] flex rounded-s p-3 text-sm font-medium hover:bg-light-50 hover:text-teal-900 md:flex-none md:p-2 md:px-3">
-        <Box className="flex items-center justify-start gap-2 group-focus:translate-x-[4px] group-hover:translate-x-[4px] transition-transform">
+        <Box
+          className="flex items-center justify-start gap-2 group-focus:translate-x-[4px] group-hover:translate-x-[4px] transition-transform"
+          onClick={() => signOut()}
+        >
           <Icon icon="ArrowLeftStartOnRectangleIcon" size="l" />
           <Text>Sign Out</Text>
         </Box>
