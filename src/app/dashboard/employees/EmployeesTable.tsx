@@ -63,7 +63,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
 
           return (
             <Box className="flex items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease" onClick={() => copyToClipboard(governmentId)}>
-              <Text variant="text-s">{governmentId}</Text>
+              <Text variant="text-s">{governmentId || '–'}</Text>
               <Icon icon="DocumentDuplicateIcon" className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease" />
             </Box>
           )
@@ -89,10 +89,10 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         cell: props => {
           const licenceCategories = props.getValue();
 
-          if(!licenceCategories) return null;
+          if(!licenceCategories || !licenceCategories.length) return '–';
 
           return (
-            <Box className="flex gap-1 align-middle">
+            <Box className="flex gap-1 align-middle text-color-3">
               {licenceCategories.map(l => <CategoryLabel category={l} key={l} />)}
             </Box>
           );
@@ -102,7 +102,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         size: 80,
         cell: props => {
           const adr = props.getValue();
-          if(adr === undefined) return;
+          if(adr === undefined) return '–';
 
           return props.getValue() ? <Icon className="text-green-600" icon="CheckCircleIcon" size="l" /> : <Icon className="text-red-500" icon="XCircleIcon" size="l" />;
         },

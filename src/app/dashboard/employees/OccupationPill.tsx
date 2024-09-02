@@ -1,6 +1,7 @@
 import { Pill, PillVariant } from '@/ui';
 
 const occupationVariantMap: Record<string, PillVariant> = {
+  ceo: 'danger',
   driver: 'success',
   manager: 'info',
   disponent: 'warning',
