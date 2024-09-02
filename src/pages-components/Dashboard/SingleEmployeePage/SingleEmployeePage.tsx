@@ -1,7 +1,7 @@
 import { employees } from '@/lib/mocks/employees';
 import { Employee } from '@/lib/employees';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { Box, Icon, Text } from '@/ui';
+import { Box, DisplayIf, Icon, LoadingSpinner, Text } from '@/ui';
 
 
 import { ContactInfo } from './ContactInfo';
@@ -10,44 +10,55 @@ import { EmployeeActions } from './EmployeeActions';
 import { BackButton } from '../NewEmployeePage/BackButton';
 import { OccupationPill } from '../EmployeesPage/OccupationPill';
 import { CategoryLabel } from '../EmployeesPage/CategoryLabel';
+import { useEmployee } from '@/lib/hooks';
+import { useRouter } from 'next/router';
 
 export const SingleEmployeePage = () => {
-  //  const id = router get id;
-  // const employee = await getEmployee(id);
+  const { query } = useRouter();
+  const id = query.id;
 
-  const employee = employees[0];
-  const id = employee.id;
-
-  if(!employee) return;
+  const { data: employee } = useEmployee(id as string);
 
   return (
     <DashboardLayout>
       <Box>
-        <Box className="py-5 flex flex-col gap-5">
-          <BackButton />
-          <Box className="flex justify-between">
-            <Box className="flex items-start gap-6">
-              <Avatar employee={employee} />
-              <Box className="flex flex-col gap-3 mt-[12px]">
-                <Box className="flex gap-4 items-center">
-                  <Text variant="text-xxl-medium">{`${employee?.firstName} ${employee?.lastName}`}</Text>
-                  <OccupationPill occupation={employee.position} text={employee.position} />
-                </Box>
-                <Box className="flex gap-8">
-                  <ContactInfo contact={employee.governmentId} contactType="governmentId" />
-                  <ContactInfo contact={employee.phoneNumber} contactType="phone" />
-                  <ContactInfo contact={employee.email} contactType="email" />
-                </Box>
-              </Box>
-            </Box>
-            <EmployeeActions id={id} />
-          </Box>
-          <Box className="ml-[116px]">
-            {employee.position === 'driver' && <DriverProfile employee={employee} />}
-          </Box>
-        </Box>
+        {!employee ? <LoadingSpinner /> : <MainContent employee={employee} />}
       </Box>
     </DashboardLayout>
+  );
+}
+
+const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
+  return (
+    <Box className="py-5 flex flex-col gap-5">
+      <BackButton />
+      <Box className="flex justify-between">
+        <Box className="flex items-start gap-6">
+          <Avatar employee={employee} />
+          <Box className="flex flex-col gap-3 mt-[12px]">
+            <Box className="flex gap-4 items-center">
+              <Text variant="text-xxl-medium">{`${employee?.firstName} ${employee?.lastName}`}</Text>
+              <OccupationPill occupation={employee.position} text={employee.position} />
+            </Box>
+            <Box className="flex gap-8">
+              <DisplayIf condition={!!employee.governmentId}>
+                <ContactInfo contact={employee.governmentId} contactType="governmentId" />
+              </DisplayIf>
+              <DisplayIf condition={!!employee.phoneNumber}>
+                <ContactInfo contact={employee.phoneNumber} contactType="phone" />
+              </DisplayIf>
+              <DisplayIf condition={!!employee.email}>
+                <ContactInfo contact={employee.email} contactType="email" />
+              </DisplayIf>
+            </Box>
+          </Box>
+        </Box>
+        <EmployeeActions id={employee.id} />
+      </Box>
+      <Box className="ml-[116px]">
+        {employee.position === 'driver' && <DriverProfile employee={employee} />}
+      </Box>
+    </Box>
   );
 }
 
