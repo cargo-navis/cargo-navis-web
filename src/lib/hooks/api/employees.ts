@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Employee } from '@/lib/employees';
 import { getEmployees } from '@/lib/api';
-import { employees } from '@/lib/mocks/employees';
 
 interface UseEmployeesArgs<T> {
   select?: (data: Employee[]) => T;

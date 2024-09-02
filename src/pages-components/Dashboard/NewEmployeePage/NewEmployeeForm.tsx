@@ -57,7 +57,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
           <Button
             text={isEdit ? "Update Employee" : "Create Employee"}
             isFullWidth
-            isDisabled={!formState.isValid}
+            isDisabled={!(formState.isValid && formState.isDirty)}
             isLoading={formState.isSubmitting}
           />
         </Box>

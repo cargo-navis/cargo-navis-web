@@ -22,5 +22,5 @@ export enum PositionEnum {
   Driver = 'driver',
   Dispatcher = 'disponent',
   Manager  = 'manager',
-  Ceo = 'ceo,'
+  Ceo = 'ceo'
 }
