@@ -6,7 +6,7 @@ import { EmployeesTable } from './EmployeesTable';
 import { useSession } from 'next-auth/react';
 import { employees as mockEmployees } from '@/lib/mocks/employees';
 import { useEffect } from 'react';
-import { getEmployees } from '@/api';
+import { getEmployees } from '@/lib/api';
 
 export const EmployeesPage = () => {
   const employees: Employee[] = mockEmployees;

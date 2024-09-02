@@ -7,6 +7,7 @@ export interface LoginArgs {
   password: string;
 }
 
+// TODO - refactor
 export async function login(values: LoginArgs) {
   return backend.post<AuthResponse.RootObject>('/auth/token', values);
 }

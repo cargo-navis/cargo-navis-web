@@ -9,7 +9,7 @@ import { FormCheckboxGroup, FormDatepicker, FormRadioGroup, FormTextInput } from
 import { Employee } from '@/lib/employees';
 
 import { adrOptions, categoryOptions, countryOptions, formDefaultValues, positionOptions } from './const';
-import { createEmployee } from '@/api/employees';
+import { createEmployee } from '@/lib/api';
 import clsx from 'clsx';
 import { employeeSchema } from './schema';
 

@@ -1,5 +1,5 @@
 import { Box, Button } from '@/ui';
-import { deleteEmployee } from '@/api/employees';
+import { deleteEmployee } from '@/lib/api';
 
 export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
   return (
