@@ -1,5 +1,6 @@
 import { Box } from '@/ui';
-import { Sidebar } from '@/app/dashboard/(sidenav)/Sidebar';
+
+import { Sidebar } from './Sidebar';
 
 export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
