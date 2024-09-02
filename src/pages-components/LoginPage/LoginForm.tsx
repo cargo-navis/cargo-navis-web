@@ -1,3 +1,6 @@
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/router';
+
 import { FormTextInput } from '@/lib/components/form';
 import { Button, FlexLayout } from '@/ui';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -12,23 +15,28 @@ export const loginSchema = object({
 });
 
 export const LoginForm = () => {
+  const { query } = useRouter();
+
   const formMethods = useForm<FormValues>({
     defaultValues: { email: '', password: '' },
     resolver: yupResolver(loginSchema),
     mode: 'onBlur'
   });
 
-
   const { formState, handleSubmit } = formMethods;
   const { isSubmitting, isValid } = formState;
 
   async function onSubmit(formValues: FormValues) {
-    // await login-old(formValues as any);
+    const { email, password } = formValues;
+    const { callbackUrl } = query;
+
+    const redirectUrl = Array.isArray(callbackUrl) ? callbackUrl[0] : callbackUrl;
+
+    await signIn('credentials', { email, password, redirect: true, callbackUrl: redirectUrl ?? '/dashboard' });
   }
 
   return (
     <FormProvider {...formMethods}>
-      {/*<FlexLayout as="form" className="flex-col gap-6" action={action}>*/}
       <FlexLayout as="form" className="flex-col gap-6" onSubmit={handleSubmit(onSubmit)}>
         <FormTextInput autoFocus name="email" label="Email" placeholder="Enter your email" type="email"  />
         <FormTextInput name="password" label="Password" placeholder="Enter your password" type="password" />
