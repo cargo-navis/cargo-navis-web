@@ -1,9 +1,9 @@
-import NextAuth from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from "next-auth/providers/credentials";
 
 import { login } from '@/api';
 
-export default NextAuth({
+export const authOptions: NextAuthOptions =  {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -18,15 +18,29 @@ export default NextAuth({
         const res = await login({ email, password });
 
         if(res.token) {
-          return { isAuthenticated: true } as any;
+          return { isAuthenticated: true, token: res.token } as any;
         } else {
           return null;
         }
       }
     })
   ],
+  callbacks: {
+    jwt: async ({ token, user }) => {
+      if(user) {
+        token.accessToken = (user as any).token;
+      }
+
+      return token;
+    },
+  },
+  session: {
+    strategy: 'jwt',
+  },
   pages: {
     signIn: '/login',
     signOut: '/login',
   }
-});
+};
+
+export default NextAuth(authOptions);

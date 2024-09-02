@@ -1,29 +1,29 @@
-import sortBy from 'lodash/sortBy';
+const rootUrl = process.env.NEXT_PUBLIC_NEXT_URL;
 
-import { employees } from '@/lib/mocks/employees';
-import { backend } from '@/lib/services/backendService';
-import { sleep } from '@/lib/utils/async';
+if(!process.env.NEXT_PUBLIC_NEXT_URL) {
+  throw new Error('Missing NEXT_PUBLIC_NEXT_URL env var.');
+}
 
 export async function getEmployees() {
-  // await sleep();
-  // return backend.get('/api/employees');
-  return sortBy(employees, (e) => e.position);
+  // return sortBy(employees, (e) => e.position);
+  return fetch(`${rootUrl}/api/employees`);
 }
 
 export async function getEmployee(id: string) {
+  // Get single employee
+
   // await sleep();
-  return employees.find(e => e.id === id);
+  // return employees.find(e => e.id === id);
 }
 
 export async function createEmployee() {
-  await sleep();
-  // return backend.post<any>('/api/employees', values);
+  // Create employee
 }
 
 export async function updateEmployee(id: string) {
-  // return backend.put<any>(`/api/employees/${id}`, values);
+  // Update employee
 }
 
 export async function deleteEmployee(id: string) {
-  return backend.delete(`/api/employees/${id}`);
+  // Delete employee
 }
