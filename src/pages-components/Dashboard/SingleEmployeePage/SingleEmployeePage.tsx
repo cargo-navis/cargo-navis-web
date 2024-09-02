@@ -1,52 +1,53 @@
-import { Box, Text } from '@/ui';
-import { getEmployee } from '@/api/employees';
+import { employees } from '@/lib/mocks/employees';
 import { Employee } from '@/lib/employees';
+import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { Box, Icon, Text } from '@/ui';
+
 
 import { ContactInfo } from './ContactInfo';
-import { OccupationPill } from '@/app/dashboard/employees/OccupationPill';
-import { CategoryLabel } from '@/app/dashboard/employees/CategoryLabel';
-import { Icon } from '@/ui/components/Icon';
-
 import { EmployeeActions } from './EmployeeActions';
-import { BackButton } from '@/app/dashboard/employees/new/BackButton';
 
-type PageProps = {
-  params: { id: string };
-}
+import { BackButton } from '../NewEmployeePage/BackButton';
+import { OccupationPill } from '../EmployeesPage/OccupationPill';
+import { CategoryLabel } from '../EmployeesPage/CategoryLabel';
 
+export const SingleEmployeePage = () => {
+  //  const id = router get id;
+  // const employee = await getEmployee(id);
 
-export default async function Page({ params }: PageProps) {
-  const id = params.id;
-  const employee = await getEmployee(id);
+  const employee = employees[0];
+  const id = employee.id;
 
   if(!employee) return;
 
   return (
-    <Box>
-      <Box className="py-5 flex flex-col gap-5">
-        <BackButton />
-        <Box className="flex justify-between">
-          <Box className="flex items-start gap-6">
-            <Avatar employee={employee} />
-            <Box className="flex flex-col gap-3 mt-[12px]">
-              <Box className="flex gap-4 items-center">
-                <Text variant="text-xxl-medium">{`${employee?.firstName} ${employee?.lastName}`}</Text>
-                <OccupationPill occupation={employee.position} text={employee.position} />
-              </Box>
-              <Box className="flex gap-8">
-                <ContactInfo contact={employee.governmentId} contactType="governmentId" />
-                <ContactInfo contact={employee.phoneNumber} contactType="phone" />
-                <ContactInfo contact={employee.email} contactType="email" />
+    <DashboardLayout>
+      <Box>
+        <Box className="py-5 flex flex-col gap-5">
+          <BackButton />
+          <Box className="flex justify-between">
+            <Box className="flex items-start gap-6">
+              <Avatar employee={employee} />
+              <Box className="flex flex-col gap-3 mt-[12px]">
+                <Box className="flex gap-4 items-center">
+                  <Text variant="text-xxl-medium">{`${employee?.firstName} ${employee?.lastName}`}</Text>
+                  <OccupationPill occupation={employee.position} text={employee.position} />
+                </Box>
+                <Box className="flex gap-8">
+                  <ContactInfo contact={employee.governmentId} contactType="governmentId" />
+                  <ContactInfo contact={employee.phoneNumber} contactType="phone" />
+                  <ContactInfo contact={employee.email} contactType="email" />
+                </Box>
               </Box>
             </Box>
+            <EmployeeActions id={id} />
           </Box>
-          <EmployeeActions id={id} />
-        </Box>
-        <Box className="ml-[116px]">
-          {employee.position === 'driver' && <DriverProfile employee={employee} />}
+          <Box className="ml-[116px]">
+            {employee.position === 'driver' && <DriverProfile employee={employee} />}
+          </Box>
         </Box>
       </Box>
-    </Box>
+    </DashboardLayout>
   );
 }
 

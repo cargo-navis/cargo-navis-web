@@ -1,13 +1,12 @@
-'use client';
-
 import { createColumnHelper } from '@tanstack/react-table';
 import { useMemo } from 'react';
 import Link from 'next/link';
 
 import { copyToClipboard } from '@/lib/utils/clipboard';
-import { CategoryLabel } from '@/app/dashboard/employees/CategoryLabel';
-import { Box, Icon, Table, Text } from '@/ui';
 import { Employee } from '@/lib/employees';
+import { Box, Icon, Table, Text } from '@/ui';
+
+import { CategoryLabel } from './CategoryLabel';
 
 import { OccupationPill } from './OccupationPill';
 

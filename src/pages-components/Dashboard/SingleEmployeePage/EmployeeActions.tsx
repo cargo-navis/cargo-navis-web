@@ -1,5 +1,3 @@
-'use client';
-
 import { Box, Button } from '@/ui';
 import { deleteEmployee } from '@/api/employees';
 

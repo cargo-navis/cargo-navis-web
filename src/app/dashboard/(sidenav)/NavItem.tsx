@@ -1,6 +1,3 @@
-'use client';
-
-import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import clsx from 'clsx';
 
@@ -8,9 +5,10 @@ import { Box, Text } from '@/ui';
 import { Icon } from '@/ui/components/Icon';
 
 import { NavLink } from './data'
+import { useRouter } from 'next/router';
 
 export const NavItem = ({ navLink }: {navLink : NavLink})=> {
-  const pathname = usePathname();
+  const { pathname } = useRouter();
 
   return (
     <Link

@@ -1,5 +1,3 @@
-'use client';
-
 import { Box, Icon, IconType, Text } from '@/ui';
 import { copyToClipboard } from '@/lib/utils/clipboard';
 

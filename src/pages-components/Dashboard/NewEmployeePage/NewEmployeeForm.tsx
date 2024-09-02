@@ -1,7 +1,6 @@
-'use client';
-
 import 'dayjs/locale/hr';
 import '@mantine/dates/styles.css';
+import { FormSingleSelect } from '@/lib/components/form/FormSingleSelect';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { Box, Button, Text } from '@/ui';
@@ -12,8 +11,7 @@ import { Employee } from '@/lib/employees';
 import { adrOptions, categoryOptions, countryOptions, formDefaultValues, positionOptions } from './const';
 import { createEmployee } from '@/api/employees';
 import clsx from 'clsx';
-import { FormSingleSelect } from '@/lib/components/form/FormSingleSelect';
-import { employeeSchema } from '@/app/dashboard/employees/new/schema';
+import { employeeSchema } from './schema';
 
 
 export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee }) => {
