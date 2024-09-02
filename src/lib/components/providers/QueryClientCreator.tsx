@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientConfig, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useRef } from 'react';
 
 const config: QueryClientConfig = {};
@@ -12,6 +13,7 @@ export const QueryClientCreator: React.FC<{ children: React.ReactNode }> = ({ ch
   return (
     <QueryClientProvider client={queryClient.current}>
       {children}
+      <ReactQueryDevtools initialIsOpen={false} position="bottom" buttonPosition="bottom-left" />
     </QueryClientProvider>
   );
 };
