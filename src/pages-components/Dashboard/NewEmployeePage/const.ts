@@ -1,4 +1,4 @@
-import { PositionEnum } from '@/lib/employees.d';
+import { PositionEnum } from '@/lib/api/employees.d';
 
 interface PositionOption {
     label: string;
@@ -237,7 +237,7 @@ export const formDefaultValues = {
     lastName: '',
     phoneNumber: '',
     email: '',
-    position: PositionEnum.Ceo,
+    position: '' as PositionEnum,
     governmentId: '',
     driverLicenceCategories: [''],
     adr: '',

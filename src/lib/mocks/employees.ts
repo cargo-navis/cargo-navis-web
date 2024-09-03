@@ -1,4 +1,4 @@
-import { Employee, GenderEnum, PositionEnum } from '../employees.d';
+import { Employee, GenderEnum, PositionEnum } from '../api/employees.d';
 
 export const employees: Employee[] = [
   {

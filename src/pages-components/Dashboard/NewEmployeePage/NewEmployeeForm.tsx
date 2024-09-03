@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { Box, Button, Text } from '@/ui';
 import { FormProvider, useForm } from 'react-hook-form';
 import { FormCheckboxGroup, FormDatepicker, FormRadioGroup, FormTextInput } from '@/lib/components/form';
-import { Employee } from '@/lib/employees';
+import { Employee } from '@/lib/api/employees.d';
 
 import { adrOptions, categoryOptions, countryOptions, formDefaultValues, positionOptions } from './const';
 import { createEmployee } from '@/lib/api';
@@ -26,6 +26,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
   });
 
   const { watch, handleSubmit, formState } = formMethods;
+  const { isDirty, isValid } = formState;
   const values = watch();
 
   async function handleFormSubmit(data: any) {
@@ -57,7 +58,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
           <Button
             text={isEdit ? "Update Employee" : "Create Employee"}
             isFullWidth
-            isDisabled={!(formState.isValid && formState.isDirty)}
+            isDisabled={!(isValid && isDirty)}
             isLoading={formState.isSubmitting}
           />
         </Box>
