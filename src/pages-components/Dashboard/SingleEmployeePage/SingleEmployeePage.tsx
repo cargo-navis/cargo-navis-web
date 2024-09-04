@@ -1,5 +1,4 @@
-import { employees } from '@/lib/mocks/employees';
-import { Employee } from '@/lib/employees';
+import { Employee } from '@/lib/api/employees.d';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Box, DisplayIf, Icon, LoadingSpinner, Text } from '@/ui';
 
@@ -97,7 +96,7 @@ const DriverProfile: React.FC<DriverProfileProps> = ({ employee }) => {
         <Box className="flex gap-6 items-center">
           <Text color="text-color-1" variant="text-m-medium">Driver&apos;s Categories:</Text>
           <Box className="flex gap-1 items-center">
-            {employee.driverLicenceCategories?.map(l => <CategoryLabel category={l} key={l} />)}
+            {employee.driverLicenceCategories?.map((l: string) => <CategoryLabel category={l} key={l} />)}
           </Box>
         </Box>
         <Box className="flex items-center gap-2">
