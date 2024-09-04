@@ -12,7 +12,7 @@ export const NewEmployeePage = () => {
           <Heading as="h1" variant="text-xl">New Employee</Heading>
         </Box>
         <Box className="py-5 flex flex-col gap-[40px]">
-          <BackButton />
+          <BackButton targetLocation="/dashboard/employees" />
           <NewEmployeeForm />
         </Box>
       </Box>

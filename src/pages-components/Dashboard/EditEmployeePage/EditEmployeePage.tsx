@@ -22,7 +22,7 @@ export const EditEmployeePage = () => {
           <LoadingSpinner />
           ) : (
           <Box className="py-5 flex flex-col gap-[40px]">
-            <BackButton />
+            <BackButton targetLocation={`/dashboard/employees/${id}`} />
             <NewEmployeeForm employee={employee} />
           </Box>
         )}

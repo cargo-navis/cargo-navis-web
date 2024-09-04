@@ -31,7 +31,7 @@ export const SingleEmployeePage = () => {
 const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
   return (
     <Box className="py-5 flex flex-col gap-5">
-      <BackButton />
+      <BackButton targetLocation="/dashboard/employees" />
       <Box className="flex justify-between">
         <Box className="flex items-start gap-6">
           <Avatar employee={employee} />
