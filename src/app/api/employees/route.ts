@@ -12,28 +12,26 @@ export async function GET(req: NextApiRequest) {
 
   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-  // return employees;
-
   try {
     const response = await fetch(`${baseURL}/api/employees`,{
       headers: { Authorization: `Bearer ${jwtToken.accessToken}` },
     });
 
     if(!response.ok) {
-      const errorData = await response.json();
+      // const errorData = await response.json();
 
       if (response.status === 400) {
-        return createResponse(400, { message: 'Bad Request: ' + errorData.message });
+        return createResponse(400, { message: 'Bad Request' });
       } else if (response.status === 404) {
         return createResponse(404, { message: 'Resource Not Found' });
       } else {
         // Generic error handler for other statuses
-        return createResponse(response.status, { message: 'An error occurred', details: errorData });
+        return createResponse(response.status, { message: 'An error occurred' });
       }
     }
 
     const data = await response.json();
-    return createResponse(response.status, { message: 'Success', data });
+    return createResponse(response.status, data);
 
   } catch (error: any) {
     // Handle network errors or unexpected errors
