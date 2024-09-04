@@ -24,3 +24,7 @@ export enum PositionEnum {
   Manager  = 'manager',
   Ceo = 'ceo'
 }
+
+export type CreateEmployeeParams = Partial<Employee>;
+
+export type UpdateEmployeeParams = Partial<CreateEmployeeParams>;

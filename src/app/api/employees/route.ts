@@ -1,16 +1,15 @@
 import { getToken } from 'next-auth/jwt'
-import { NextApiRequest, NextApiResponse } from 'next';
-import { employees } from '@/lib/mocks/employees';
+import { NextRequest } from 'next/server';
 
-export async function GET(req: NextApiRequest) {
+const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
+
+export async function GET(req: NextRequest) {
   const jwtToken = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
   if (!jwtToken || !jwtToken.accessToken) {
     // Return 401 if there's no valid access token
     return createResponse(401, { error: 'Unauthorized' });
   }
-
-  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   try {
     const response = await fetch(`${baseURL}/api/employees`,{
@@ -48,16 +47,44 @@ function createResponse(status: number, data: any, options?: any) {
 }
 
 
-export async function POST(req: NextApiRequest) {
-  // POST request to API
+export async function POST(req: NextRequest) {
+  const jwtToken = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-  // async function createEmployee(accessToken: string, data: string) {
-  //   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
-  //   return fetch(`${baseURL}/api/employees`,{
-  //     method: 'POST',
-  //     headers: { Authorization: `Bearer ${accessToken}` },
-  //     body: data
-  //   });
-  // }
+  if (!jwtToken || !jwtToken.accessToken) {
+    // Return 401 if there's no valid access token
+    return createResponse(401, { error: 'Unauthorized' });
+  }
+
+  console.log(jwtToken.accessToken)
+
+  try {
+    const body = await req.json();
+    console.log(body);
+
+    const response = await fetch(`${baseURL}/api/employees`,{
+      headers: { Authorization: `Bearer ${jwtToken.accessToken}` },
+      method: 'POST',
+      body: JSON.stringify(body)
+    });
+
+    if(!response.ok) {
+      if (response.status === 400) {
+        return createResponse(400, { message: 'Bad Request' });
+      } else if (response.status === 404) {
+        return createResponse(404, { message: 'Resource Not Found' });
+      } else {
+        // Generic error handler for other statuses
+        return createResponse(response.status, { message: 'An error occurred' });
+      }
+    }
+
+    const data = await response.json();
+    return createResponse(response.status, data);
+
+
+  } catch (error: any) {
+    // Handle network errors or unexpected errors
+    console.error('Error fetching data from backend:', error);
+    return createResponse(500, { message: 'Internal Server Error', details: error.message });
+  }
 }
-

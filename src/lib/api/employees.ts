@@ -1,3 +1,5 @@
+import { CreateEmployeeParams, UpdateEmployeeParams } from './employees.d';
+
 const rootUrl = process.env.NEXT_PUBLIC_NEXT_URL;
 
 if(!process.env.NEXT_PUBLIC_NEXT_URL) {
@@ -16,12 +18,12 @@ export async function getEmployee(id: string) {
   // return employees.find(e => e.id === id);
 }
 
-export async function createEmployee() {
-  // Create employee
+export async function createEmployee(data: CreateEmployeeParams) {
+  return fetch(`${rootUrl}/api/employees`, { method: 'POST', body: JSON.stringify(data) });
 }
 
-export async function updateEmployee(id: string) {
-  // Update employee
+export async function updateEmployee(id: string, data: UpdateEmployeeParams) {
+  return fetch(`${rootUrl}/api/employees/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
 }
 
 export async function deleteEmployee(id: string) {
