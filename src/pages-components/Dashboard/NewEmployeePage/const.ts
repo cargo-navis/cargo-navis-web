@@ -241,7 +241,7 @@ export const formDefaultValues = {
     governmentId: '',
     driverLicenceCategories: [''],
     adr: '',
-    driverLicenceExpirationDate: '',
+    driverLicenceExpiryDate: '',
     licenceCountry: '',
     employmentExpirationDate: '',
     medicalExpirationDate: '',

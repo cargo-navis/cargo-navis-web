@@ -10,7 +10,7 @@ export const employeeSchema = object({
   governmentId: requiredWhenDriver(string()),
   driverLicenceCategories: requiredWhenDriver(array(string())),
   adr: requiredWhenDriver(string()),
-  driverLicenceExpirationDate: requiredWhenDriver(string()),
+  driverLicenceExpiryDate: requiredWhenDriver(string()),
   licenceCountry: requiredWhenDriver(string()),
   employmentExpirationDate: requiredWhenDriver(string()),
   medicalExpirationDate: requiredWhenDriver(string()),

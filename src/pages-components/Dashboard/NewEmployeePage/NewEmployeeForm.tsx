@@ -83,7 +83,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
               <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25"/>
               <Box className="flex flex-col gap-2">
                 <Text className="uppercase" color="text-color-3" variant="text-xs-medium">Driver&apos;s Licence</Text>
-                <FormDatepicker name="driverLicenceExpirationDate" label="Expiration date"/>
+                <FormDatepicker name="driverLicenceExpiryDate" label="Expiration date"/>
                 <FormSingleSelect label="Country of issue" name="licenceCountry" isSearchable isClearable options={countryOptions} placeholder="Select country..." />
               </Box>
               <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25"/>

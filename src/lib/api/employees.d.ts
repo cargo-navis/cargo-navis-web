@@ -6,11 +6,14 @@ export interface Employee {
   email: string;
   gender: GenderEnum;
   position: PositionEnum;
-  nationality: string;
-  driverLicenceExpirationDate?: string;
-  driverLicenceCategories?: string[]; // TODO - Enum
-  adr?: string;
   governmentId: string;
+  adr?: string;
+  nationality: string;
+  driverLicenceCategories?: string[]; // TODO - Enum
+  driverLicenceExpiryDate?: string;
+  contractExpiryDate?: string;
+  medicalExaminationExpiryDate?: string;
+  visaExpiryDate?: string;
 }
 
 export enum GenderEnum {

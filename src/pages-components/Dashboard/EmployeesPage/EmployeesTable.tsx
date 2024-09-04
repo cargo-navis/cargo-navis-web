@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 
 import { copyToClipboard } from '@/lib/utils/clipboard';
-import { Employee } from '@/lib/employees';
+import { Employee } from '@/lib/api/employees.d';
 import { Box, Icon, Table, Text } from '@/ui';
 
 import { CategoryLabel } from './CategoryLabel';
@@ -92,7 +92,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
 
           return (
             <Box className="flex gap-1 align-middle text-color-3">
-              {licenceCategories.map(l => <CategoryLabel category={l} key={l} />)}
+              {licenceCategories.map((l: string) => <CategoryLabel category={l} key={l} />)}
             </Box>
           );
         },

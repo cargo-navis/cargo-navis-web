@@ -55,7 +55,9 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
         <EmployeeActions id={employee.id} />
       </Box>
       <Box className="ml-[116px]">
-        {employee.position === 'driver' && <DriverProfile employee={employee} />}
+        <DisplayIf condition={employee.position === 'driver'}>
+          <DriverProfile employee={employee} />
+        </DisplayIf>
       </Box>
     </Box>
   );
@@ -78,7 +80,7 @@ interface DriverProfileProps {
 }
 
 const DriverProfile: React.FC<DriverProfileProps> = ({ employee }) => {
-  const expiredDate = new Date(employee.driverLicenceExpirationDate as string);
+  const expiredDate = new Date(employee.driverLicenceExpiryDate as string);
   const formattedDate = new Intl.DateTimeFormat('hr-HR', { dateStyle: 'short' }).format(expiredDate)
 
   return (
