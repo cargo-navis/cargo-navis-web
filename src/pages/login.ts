@@ -1,1 +1,1 @@
-export { LoginPage as default } from '@/pages-components/LoginPage';
+export { LoginPage as default, getServerSideProps } from '@/pages-components/LoginPage';

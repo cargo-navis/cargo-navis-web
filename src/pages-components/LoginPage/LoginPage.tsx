@@ -1,5 +1,8 @@
 import { FlexLayout, Heading, Text } from '@/ui';
 import { LoginForm } from './LoginForm';
+import { GetServerSideProps } from 'next';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/pages/api/auth/[...nextauth]';
 
 export const LoginPage = () => {
   //
@@ -18,4 +21,21 @@ export const LoginPage = () => {
       </FlexLayout>
     </FlexLayout>
   );
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getServerSession(context.req, context.res, authOptions);
+
+  if (session) {
+    // Redirect to the home page if the user is already logged in
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+    };
+  }
+
+  // If no session, render the login page
+  return { props: {} };
 }
