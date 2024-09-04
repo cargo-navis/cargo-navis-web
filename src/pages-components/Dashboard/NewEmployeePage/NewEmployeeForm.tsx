@@ -9,13 +9,18 @@ import { FormCheckboxGroup, FormDatepicker, FormRadioGroup, FormTextInput } from
 import { Employee } from '@/lib/api/employees.d';
 
 import { adrOptions, categoryOptions, countryOptions, formDefaultValues, positionOptions } from './const';
-import { createEmployee } from '@/lib/api';
 import clsx from 'clsx';
 import { employeeSchema } from './schema';
+import { useCreateEmployee, useUpdateEmployee } from '@/lib/hooks';
+import { useRouter } from 'next/router';
 
 
 export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee }) => {
+  const { push } = useRouter();
   const isEdit = !!employee;
+
+  const { mutateAsync: createEmployee } = useCreateEmployee();
+  const { mutateAsync: updateEmployee } = useUpdateEmployee(employee?.id as string);
 
   const defaultValues = employee ? { ...employee } : formDefaultValues;
 
@@ -30,9 +35,17 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
   const values = watch();
 
   async function handleFormSubmit(data: any) {
-    console.log('form submitted');
-    console.log(data);
-    await createEmployee();
+    try {
+      if(isEdit) {
+        await updateEmployee(data);
+      } else {
+        await createEmployee(data);
+      }
+
+     await push('/dashboard/employees');
+    } catch (error: any) {
+      alert(`Error with form submit. ${error?.message}`);
+    }
   }
 
   return (
