@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Employee, UpdateEmployeeParams } from '@/lib/api/employees.d';
-import { createEmployee, getEmployees, updateEmployee } from '@/lib/api';
+import { createEmployee, deleteEmployee, getEmployees, updateEmployee } from '@/lib/api';
 
 interface UseEmployeesArgs<T> {
   select?: (data: Employee[]) => T;
@@ -43,6 +43,16 @@ export function useUpdateEmployee(id: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: UpdateEmployeeParams) => updateEmployee(id, data),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ['employees'], type: 'all' });
+    }
+  });
+}
+
+export function useDeleteEmployee(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => deleteEmployee(id),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: ['employees'], type: 'all' });
     }

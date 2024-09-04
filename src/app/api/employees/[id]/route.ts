@@ -50,3 +50,39 @@ function createResponse(status: number, data: any, options?: any) {
     { status, headers: { 'Content-Type': 'application/json' } }
   );
 }
+
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+  const jwtToken = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
+  if (!jwtToken || !jwtToken.accessToken) {
+    // Return 401 if there's no valid access token
+    return createResponse(401, { error: 'Unauthorized' });
+  }
+
+  try {
+    const response = await fetch(`${baseURL}/api/employees/${params.id}`,{
+      headers: { Authorization: `Bearer ${jwtToken.accessToken}` },
+      method: 'DELETE',
+    });
+
+    if(!response.ok) {
+      if (response.status === 400) {
+        return createResponse(400, { message: 'Bad Request' });
+      } else if (response.status === 404) {
+        return createResponse(404, { message: 'Resource Not Found' });
+      } else {
+        // Generic error handler for other statuses
+        return createResponse(response.status, { message: 'An error occurred' });
+      }
+    }
+
+    const data = await response.json();
+    return createResponse(response.status, data);
+
+
+  } catch (error: any) {
+    // Handle network errors or unexpected errors
+    console.error('Error fetching data from backend:', error);
+    return createResponse(500, { message: 'Internal Server Error', details: error.message });
+  }
+}

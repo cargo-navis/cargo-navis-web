@@ -27,5 +27,5 @@ export async function updateEmployee(id: string, data: UpdateEmployeeParams) {
 }
 
 export async function deleteEmployee(id: string) {
-  // Delete employee
+  return fetch(`${rootUrl}/api/employees/${id}`, { method: 'DELETE' });
 }
