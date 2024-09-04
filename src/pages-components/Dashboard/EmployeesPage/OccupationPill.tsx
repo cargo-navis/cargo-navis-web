@@ -4,7 +4,7 @@ const occupationVariantMap: Record<string, PillVariant> = {
   ceo: 'danger',
   driver: 'success',
   manager: 'info',
-  disponent: 'warning',
+  dispatcher: 'warning',
 };
 
 interface OccupationPillProps {

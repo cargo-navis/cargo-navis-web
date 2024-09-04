@@ -20,7 +20,7 @@ export enum GenderEnum {
 
 export enum PositionEnum {
   Driver = 'driver',
-  Dispatcher = 'disponent',
+  Dispatcher = 'dispatcher',
   Manager  = 'manager',
   Ceo = 'ceo'
 }
