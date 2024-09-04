@@ -3,7 +3,7 @@ import { getToken } from 'next-auth/jwt';
 
 const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
-export async function PATCH(req: NextRequest) {
+export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {
   const jwtToken = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
   if (!jwtToken || !jwtToken.accessToken) {
@@ -14,7 +14,7 @@ export async function PATCH(req: NextRequest) {
   try {
     const body = await req.json();
 
-    const response = await fetch(`${baseURL}/api/employees`,{
+    const response = await fetch(`${baseURL}/api/employees/${params.id}`,{
       headers: { Authorization: `Bearer ${jwtToken.accessToken}` },
       method: 'PATCH',
       body: JSON.stringify(body)
