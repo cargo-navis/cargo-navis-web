@@ -1,6 +1,7 @@
 import { backend } from '@/lib/services/backendService';
 
 import { AuthResponse } from './login';
+import axios from 'axios';
 
 export interface LoginArgs {
   email: string;
@@ -9,7 +10,8 @@ export interface LoginArgs {
 
 // TODO - refactor
 export async function login(values: LoginArgs) {
-  return backend.post<AuthResponse.RootObject>('/auth/token', values);
+  const response = await axios.post<AuthResponse.RootObject>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/token`, values);
+  return response.data;
 }
 
 export async function loginWithJoso() {
