@@ -1,11 +1,10 @@
 import { InternalAxiosRequestConfig } from 'axios';
 
-// import { isServer } from '~/utils/browser';
+import { isServer } from '@/lib/utils/browser';
 import { getAuthTokens } from './session';
 
 export function decorateRequest(config: InternalAxiosRequestConfig): InternalAxiosRequestConfig {
-  // return !isServer ? authorizeClientSideRequest(config) : config;
-  return authorizeClientSideRequest(config);
+  return !isServer ? authorizeClientSideRequest(config) : config;
 }
 
 function authorizeClientSideRequest(config: InternalAxiosRequestConfig): InternalAxiosRequestConfig {

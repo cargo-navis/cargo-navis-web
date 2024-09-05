@@ -10,12 +10,7 @@ interface UseEmployeesArgs<T> {
 export function useEmployees<TData = Employee[]>(args?: UseEmployeesArgs<TData>) {
   return useQuery<Employee[], unknown, TData>({
     queryKey: ['employees'],
-    queryFn: async () => {
-      const res = await getEmployees();
-      const { data } = await res.json();
-
-      return data;
-    },
+    queryFn: getEmployees,
     ...args
   });
 }
