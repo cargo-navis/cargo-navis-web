@@ -36,7 +36,7 @@ function createBackendService() {
       const decoratedConfig = config as InternalAxiosRequestConfig & { fullResponse: boolean };
 
       // By doing this we'll get response.data by default, no need to destruct it in each axios call
-      return decoratedConfig.fullResponse ? response : data;
+      return decoratedConfig.fullResponse ? response : data?.data;
     },
     async (error) => {
       if (!error.response && error.request) {

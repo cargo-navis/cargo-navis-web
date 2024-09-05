@@ -1,6 +1,7 @@
 export * from './Box';
 export * from './Button';
 export * from './Checkbox';
+export * from './FlexLayout';
 export * from './Datepicker';
 export * from './DisplayIf';
 export * from './Icon';

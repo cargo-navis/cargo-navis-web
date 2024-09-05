@@ -17,7 +17,7 @@ interface LoadingSpinnerProps {
 
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ color, size = 'm' }) => {
   return (
-    <Box aria-busy className={clsx(sizesMap[size], color ?? 'text-blue-400 dark:text-orange-400')}>
+    <Box aria-busy className={clsx(sizesMap[size], color ?? 'text-teal-600 dark:text-teal-500')}>
       <LoadingSVG />
     </Box>
   );
