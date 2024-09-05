@@ -1,12 +1,6 @@
 import { CreateEmployeeParams, Employee, UpdateEmployeeParams } from './employees.d';
 import { backend } from '@/lib/services/backendService';
 
-const rootUrl = process.env.NEXT_PUBLIC_NEXT_URL;
-
-if(!process.env.NEXT_PUBLIC_NEXT_URL) {
-  throw new Error('Missing NEXT_PUBLIC_NEXT_URL env var.');
-}
-
 export async function getEmployees() {
   return backend.get<Employee[]>('/api/employees');
 }
