@@ -1,5 +1,4 @@
 import { Box, Button } from '@/ui';
-import { deleteEmployee } from '@/lib/api';
 import { useDeleteEmployee } from '@/lib/hooks';
 import { useRouter } from 'next/router';
 
@@ -8,6 +7,9 @@ export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
   const { mutateAsync, isPending } = useDeleteEmployee(id);
 
   async function handleDelete() {
+    const answer = confirm('Are you sure you want to delete this employee?');
+    if(!answer) return;
+
     try {
       await mutateAsync();
       alert(`Employee deleted`);
