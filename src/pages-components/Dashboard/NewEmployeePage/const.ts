@@ -24,6 +24,12 @@ export const adrOptions: AdrOption[] = [
   { label: 'No', value: 'adr_false' },
 ];
 
+
+export const genderOptions: any[] = [
+    { label: 'Male', value: 'M' },
+    { label: 'Female', value: 'F' },
+];
+
 export const categoryOptions = [
   { label: 'B1', value: 'b1' },
   { label: 'B', value: 'b' },
@@ -238,12 +244,12 @@ export const formDefaultValues = {
     phoneNumber: '',
     email: '',
     position: '' as PositionEnum,
-    governmentId: '',
-    driverLicenceCategories: [''],
-    adr: '',
-    driverLicenceExpiryDate: '',
-    licenceCountry: '',
-    employmentExpirationDate: '',
-    medicalExpirationDate: '',
-    visaExpirationDate: '',
+    governmentId: undefined as unknown as string,
+    driverLicenceCategories: undefined as unknown as string[],
+    adr: undefined as unknown as string,
+    driverLicenceExpiryDate: undefined as unknown as string,
+    licenceCountry: undefined as unknown as string,
+    employmentExpirationDate: undefined as unknown as string,
+    medicalExpirationDate: undefined as unknown as string,
+    visaExpirationDate: undefined as unknown as string,
 };

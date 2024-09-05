@@ -1,4 +1,5 @@
-import { CreateEmployeeParams, UpdateEmployeeParams } from './employees.d';
+import { CreateEmployeeParams, Employee, UpdateEmployeeParams } from './employees.d';
+import { backend } from '@/lib/services/backendService';
 
 const rootUrl = process.env.NEXT_PUBLIC_NEXT_URL;
 
@@ -7,19 +8,15 @@ if(!process.env.NEXT_PUBLIC_NEXT_URL) {
 }
 
 export async function getEmployees() {
-  // return sortBy(employees, (e) => e.position);
-  return fetch(`${rootUrl}/api/employees`);
+  return backend.get<Employee[]>('/api/employees');
 }
 
 export async function getEmployee(id: string) {
   // Get single employee
-
-  // await sleep();
-  // return employees.find(e => e.id === id);
 }
 
 export async function createEmployee(data: CreateEmployeeParams) {
-  return fetch(`${rootUrl}/api/employees`, { method: 'POST', body: JSON.stringify(data) });
+  return backend.post<Employee>('/api/employees', data);
 }
 
 export async function updateEmployee(id: string, data: UpdateEmployeeParams) {

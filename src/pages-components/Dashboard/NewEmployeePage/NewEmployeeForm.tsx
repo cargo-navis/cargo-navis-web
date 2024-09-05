@@ -8,7 +8,14 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { FormCheckboxGroup, FormDatepicker, FormRadioGroup, FormTextInput } from '@/lib/components/form';
 import { Employee } from '@/lib/api/employees.d';
 
-import { adrOptions, categoryOptions, countryOptions, formDefaultValues, positionOptions } from './const';
+import {
+  adrOptions,
+  categoryOptions,
+  countryOptions,
+  formDefaultValues,
+  genderOptions,
+  positionOptions
+} from './const';
 import clsx from 'clsx';
 import { employeeSchema } from './schema';
 import { useCreateEmployee, useUpdateEmployee } from '@/lib/hooks';
@@ -40,9 +47,9 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
         await updateEmployee(data);
       } else {
         await createEmployee(data);
+        await push(`/dashboard/employees`);
       }
 
-     await push('/dashboard/employees');
     } catch (error: any) {
       alert(`Error with form submit. ${error?.message}`);
     }
@@ -59,6 +66,9 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
             <Box className="flex-grow">
               <FormTextInput name="lastName" label="Last Name"/>
             </Box>
+          </Box>
+          <Box className="flex-1">
+            <FormRadioGroup name="gender" label="Gender" options={genderOptions}/>
           </Box>
           <Box>
             <FormTextInput name="phoneNumber" label="Phone Number" type="tel"/>
