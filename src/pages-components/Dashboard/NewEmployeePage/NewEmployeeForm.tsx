@@ -45,6 +45,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
     try {
       if(isEdit) {
         await updateEmployee(data);
+        await push(`/dashboard/employees/${employee.id}`);
       } else {
         await createEmployee(data);
         await push(`/dashboard/employees`);

@@ -20,7 +20,7 @@ export async function createEmployee(data: CreateEmployeeParams) {
 }
 
 export async function updateEmployee(id: string, data: UpdateEmployeeParams) {
-  return fetch(`${rootUrl}/api/employees/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
+  return backend.patch<Employee>(`/api/employees/${id}`, data);
 }
 
 export async function deleteEmployee(id: string) {
