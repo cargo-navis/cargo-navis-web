@@ -1,31 +1,31 @@
 export interface Employee {
-  id: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  email: string;
-  gender: GenderEnum;
-  position: PositionEnum;
-  governmentId: string;
-  adr?: string;
-  nationality: string;
-  driverLicenceCategories?: string[]; // TODO - Enum
-  driverLicenceExpiryDate?: string;
-  contractExpiryDate?: string;
-  medicalExaminationExpiryDate?: string;
-  visaExpiryDate?: string;
+	id: string;
+	firstName: string;
+	lastName: string;
+	phoneNumber: string;
+	email: string;
+	gender: GenderEnum;
+	position: PositionEnum;
+	governmentId: string;
+	adr?: string;
+	nationality: string;
+	driverLicenceCategories?: string[]; // TODO - Enum
+	driverLicenceExpiryDate?: string;
+	contractExpiryDate?: string;
+	medicalExaminationExpiryDate?: string;
+	visaExpiryDate?: string;
 }
 
 export enum GenderEnum {
-  Male = 'M',
-  Female = 'F',
+	Male = 'M',
+	Female = 'F',
 }
 
 export enum PositionEnum {
-  Driver = 'driver',
-  Dispatcher = 'dispatcher',
-  Manager  = 'manager',
-  Ceo = 'ceo'
+	Driver = 'driver',
+	Dispatcher = 'dispatcher',
+	Manager = 'manager',
+	Ceo = 'ceo',
 }
 
 export type CreateEmployeeParams = Partial<Employee>;
