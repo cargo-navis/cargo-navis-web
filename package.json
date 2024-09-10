@@ -36,6 +36,7 @@
     "yup": "^1.4.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.8.3",
     "@hookform/devtools": "^4.3.1",
     "@types/js-cookie": "^3.0.6",
     "@types/lodash": "^4.17.5",
