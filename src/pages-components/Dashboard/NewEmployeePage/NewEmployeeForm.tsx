@@ -110,7 +110,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
 								<FormDatepicker name="driverLicenceExpiryDate" label="Expiration date" />
 								<FormSingleSelect
 									label="Country of issue"
-									name="licenceCountry"
+									name="nationality"
 									isSearchable
 									isClearable
 									options={countryOptions}
@@ -122,21 +122,21 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
 								<Text className="uppercase" color="text-color-3" variant="text-xs-medium">
 									Employment Contract
 								</Text>
-								<FormDatepicker name="employmentExpirationDate" label="Expiration date" />
+								<FormDatepicker name="contractExpiryDate" label="Expiration date" />
 							</Box>
 							<hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
 							<Box className="flex flex-col gap-2">
 								<Text className="uppercase" color="text-color-3" variant="text-xs-medium">
 									Medical Exam
 								</Text>
-								<FormDatepicker name="medicalExpirationDate" label="Expiration date" />
+								<FormDatepicker name="medicalExaminationExpiryDate" label="Expiration date" />
 							</Box>
 							<hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
 							<Box className="flex flex-col gap-2">
 								<Text className="uppercase" color="text-color-3" variant="text-xs-medium">
 									Working Visa
 								</Text>
-								<FormDatepicker name="visaExpirationDate" label="Expiration date" />
+								<FormDatepicker name="visaExpiryDate" label="Expiration date" />
 							</Box>
 						</Box>
 					</>
