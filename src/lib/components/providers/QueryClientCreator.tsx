@@ -5,15 +5,15 @@ import { useRef } from 'react';
 const config: QueryClientConfig = {};
 
 export const QueryClientCreator: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-	const queryClient = useRef<QueryClient>();
-	if (!queryClient.current) {
-		queryClient.current = new QueryClient(config);
-	}
+  const queryClient = useRef<QueryClient>();
+  if (!queryClient.current) {
+    queryClient.current = new QueryClient(config);
+  }
 
-	return (
-		<QueryClientProvider client={queryClient.current}>
-			{children}
-			<ReactQueryDevtools initialIsOpen={false} position="bottom" buttonPosition="bottom-left" />
-		</QueryClientProvider>
-	);
+  return (
+    <QueryClientProvider client={queryClient.current}>
+      {children}
+      <ReactQueryDevtools initialIsOpen={false} position="bottom" buttonPosition="bottom-left" />
+    </QueryClientProvider>
+  );
 };

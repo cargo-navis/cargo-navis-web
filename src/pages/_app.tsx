@@ -9,15 +9,15 @@ import { QueryClientCreator } from '@/lib/components/providers/QueryClientCreato
 import type { AppProps } from 'next/app';
 
 export default function App({ Component, pageProps }: AppProps) {
-	return (
-		<MantineProvider>
-			<SessionProvider session={pageProps.session}>
-				<QueryClientCreator>
-					<div className={`${inter.variable} ${playfairDisplaySc.variable} font-display`}>
-						<Component {...pageProps} />
-					</div>
-				</QueryClientCreator>
-			</SessionProvider>
-		</MantineProvider>
-	);
+  return (
+    <MantineProvider>
+      <SessionProvider session={pageProps.session}>
+        <QueryClientCreator>
+          <div className={`${inter.variable} ${playfairDisplaySc.variable} font-display`}>
+            <Component {...pageProps} />
+          </div>
+        </QueryClientCreator>
+      </SessionProvider>
+    </MantineProvider>
+  );
 }

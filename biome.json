@@ -7,7 +7,7 @@
     "enabled": true
   },
   "formatter": {
-    "indentStyle": "tab",
+    "indentStyle": "space",
     "indentWidth": 2,
     "lineWidth": 120
   },

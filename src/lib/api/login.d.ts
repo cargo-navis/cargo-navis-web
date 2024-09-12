@@ -1,5 +1,5 @@
 export namespace AuthResponse {
-	export interface RootObject {
-		token: string;
-	}
+  export interface RootObject {
+    token: string;
+  }
 }
