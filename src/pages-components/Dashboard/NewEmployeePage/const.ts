@@ -1,4 +1,5 @@
 import { PositionEnum } from '@/lib/api/employees.d';
+import { RadioOption } from '@/ui';
 
 interface PositionOption {
 	label: string;
@@ -12,30 +13,28 @@ export const positionOptions: PositionOption[] = [
 	{ label: 'Driver', value: PositionEnum.Driver },
 ];
 
-type Adr = 'adr_true' | 'adr_false';
-
-interface AdrOption {
+interface AdrOption extends RadioOption {
 	label: string;
-	value: Adr;
+	value: 'true' | 'false';
 }
 
 export const adrOptions: AdrOption[] = [
-	{ label: 'Yes', value: 'adr_true' },
-	{ label: 'No', value: 'adr_false' },
+	{ label: 'Yes', value: 'true' },
+	{ label: 'No', value: 'false' },
 ];
 
-export const genderOptions: any[] = [
+export const genderOptions: RadioOption[] = [
 	{ label: 'Male', value: 'M' },
 	{ label: 'Female', value: 'F' },
 ];
 
 export const categoryOptions = [
-	{ label: 'B1', value: 'b1' },
-	{ label: 'B', value: 'b' },
-	{ label: 'C1', value: 'c1' },
-	{ label: 'C', value: 'c' },
-	{ label: 'C1E', value: 'c1e' },
-	{ label: 'CE', value: 'ce' },
+	{ label: 'B1', value: 'B1' },
+	{ label: 'B', value: 'B' },
+	{ label: 'C1', value: 'C1' },
+	{ label: 'C', value: 'C' },
+	{ label: 'C1E', value: 'C1E' },
+	{ label: 'CE', value: 'CE' },
 ];
 
 export const countries = [
@@ -247,8 +246,8 @@ export const formDefaultValues = {
 	driverLicenceCategories: undefined as unknown as string[],
 	adr: undefined as unknown as string,
 	driverLicenceExpiryDate: undefined as unknown as string,
-	licenceCountry: undefined as unknown as string,
-	employmentExpirationDate: undefined as unknown as string,
-	medicalExpirationDate: undefined as unknown as string,
-	visaExpirationDate: undefined as unknown as string,
+	nationality: undefined as unknown as string,
+	contractExpiryDate: undefined as unknown as string,
+	medicalExaminationExpiryDate: undefined as unknown as string,
+	visaExpiryDate: undefined as unknown as string,
 };
