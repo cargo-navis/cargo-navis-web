@@ -1,4 +1,5 @@
 import { PositionEnum } from '@/lib/api/employees.d';
+import { RadioOption } from '@/ui';
 
 interface PositionOption {
 	label: string;
@@ -12,17 +13,17 @@ export const positionOptions: PositionOption[] = [
 	{ label: 'Driver', value: PositionEnum.Driver },
 ];
 
-interface AdrOption {
+interface AdrOption extends RadioOption {
 	label: string;
-	value: boolean;
+	value: 'true' | 'false';
 }
 
 export const adrOptions: AdrOption[] = [
-	{ label: 'Yes', value: true },
-	{ label: 'No', value: false },
+	{ label: 'Yes', value: 'true' },
+	{ label: 'No', value: 'false' },
 ];
 
-export const genderOptions: any[] = [
+export const genderOptions: RadioOption[] = [
 	{ label: 'Male', value: 'M' },
 	{ label: 'Female', value: 'F' },
 ];
