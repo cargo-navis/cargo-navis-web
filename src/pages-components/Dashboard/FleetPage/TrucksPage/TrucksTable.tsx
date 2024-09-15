@@ -1,4 +1,4 @@
-import type { Vehicle } from '@/lib/api/vehicle.d';
+import type { Vehicle } from '@/lib/api/vehicles.d';
 import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
 import { createColumnHelper } from '@tanstack/react-table';
 import { useMemo } from 'react';
@@ -6,8 +6,6 @@ import { useMemo } from 'react';
 const columnHelper = createColumnHelper<Vehicle>();
 
 export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
-  // TODO - TRUCK (registracija + marka vozila) | CURB WEIGHT | ENGINE TYPE | ACTION
-
   const columns = useMemo(() => {
     return [
       columnHelper.display({
@@ -32,7 +30,6 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
       }),
       columnHelper.display({
         header: 'Curb Weight',
-        // size: 275,
         cell: ({ row }) => {
           const { emptyWeight } = row.original;
 
@@ -45,7 +42,6 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
       }),
       columnHelper.accessor('emissionStandard', {
         header: 'Engine Type',
-        // size: 220,
         cell: ({ row }) => {
           const { emissionStandard } = row.original;
 
@@ -61,7 +57,11 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
         size: 200,
         cell: ({ row }) => {
           const { tachographExpiryDate } = row.original;
-          const formattedDate = new Date(tachographExpiryDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+          const formattedDate = new Date(tachographExpiryDate).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+          });
 
           return (
             <FlexLayout>
