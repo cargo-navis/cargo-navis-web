@@ -1,6 +1,7 @@
 import type { Vehicle } from '@/lib/api/vehicles.d';
 import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
 import { createColumnHelper } from '@tanstack/react-table';
+import Link from 'next/link';
 import { useMemo } from 'react';
 
 const columnHelper = createColumnHelper<Vehicle>();
@@ -13,18 +14,17 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
         size: 100,
         header: () => <Box className="pl-3">Truck</Box>,
         cell: (props) => {
-          const { brand, registration } = props.row.original;
-          console.log(registration);
+          const { brand, registration, id } = props.row.original;
 
           return (
-            // <Link href={`/dashboard/fleet/trucks/${id}`}>
-            <FlexLayout className="flex-col py-3 pl-3">
-              <Text className="text-color-1 group-hover/cell:text-teal-600" variant="text-m-bold">
-                {registration}
-              </Text>
-              <Text className="text-color-3 group-hover/cell:text-teal-600">{brand}</Text>
-            </FlexLayout>
-            // </Link>
+            <Link href={`/dashboard/fleet/trucks/${id}`}>
+              <FlexLayout className="flex-col py-3 pl-3">
+                <Text className="text-color-1 group-hover/cell:text-teal-600" variant="text-m-bold">
+                  {registration}
+                </Text>
+                <Text className="text-color-3 group-hover/cell:text-teal-600">{brand}</Text>
+              </FlexLayout>
+            </Link>
           );
         },
       }),
