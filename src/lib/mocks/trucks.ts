@@ -2,6 +2,7 @@ import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles.d';
 
 export const trucks: Vehicle[] = [
   {
+    id: '560989fd-947f-4fdf-99a1-b55790d4f36d',
     type: VehicleEnum.TRUCK,
     emissionStandard: 'Euro 6',
     enginePower: 400,
@@ -31,6 +32,7 @@ export const trucks: Vehicle[] = [
     emptyWeight: 8000,
   },
   {
+    id: '83857227-7349-4a2a-aced-4d45cd1c0141',
     type: VehicleEnum.TRUCK,
     emissionStandard: 'Euro 5',
     enginePower: 360,
@@ -60,6 +62,7 @@ export const trucks: Vehicle[] = [
     emptyWeight: 7800,
   },
   {
+    id: '3952b5c0-a793-40f0-9d8a-83e611e59272',
     type: VehicleEnum.TRUCK,
     emissionStandard: 'Euro 6',
     enginePower: 450,
@@ -89,6 +92,7 @@ export const trucks: Vehicle[] = [
     emptyWeight: 8200,
   },
   {
+    id: '426cca57-5f68-4256-9f47-026f4719a68c',
     type: VehicleEnum.TRUCK,
     emissionStandard: 'Euro 4',
     enginePower: 300,
@@ -118,6 +122,7 @@ export const trucks: Vehicle[] = [
     emptyWeight: 7600,
   },
   {
+    id: '03272b96-60d3-4754-9e03-716e59e21ae8',
     type: VehicleEnum.TRUCK,
     emissionStandard: 'Euro 6',
     enginePower: 480,
@@ -147,6 +152,7 @@ export const trucks: Vehicle[] = [
     emptyWeight: 8500,
   },
   {
+    id: '52dbd581-ad23-45f3-9149-bc596634dc7b',
     type: VehicleEnum.TRUCK,
     emissionStandard: 'Euro 5',
     enginePower: 350,
@@ -176,6 +182,7 @@ export const trucks: Vehicle[] = [
     emptyWeight: 7900,
   },
   {
+    id: 'cb68251d-0b21-420a-baec-e91fcd650644',
     type: VehicleEnum.TRUCK,
     emissionStandard: 'Euro 4',
     enginePower: 320,
@@ -205,6 +212,7 @@ export const trucks: Vehicle[] = [
     emptyWeight: 7700,
   },
   {
+    id: 'd2f72c77-0f42-450a-8d0f-8778f57b8446',
     type: VehicleEnum.TRUCK,
     emissionStandard: 'Euro 5',
     enginePower: 370,

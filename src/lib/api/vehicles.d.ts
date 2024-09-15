@@ -6,6 +6,7 @@ export enum VehicleEnum {
 }
 
 export interface Vehicle {
+  id: string;
   type: VehicleEnum;
   emissionStandard: string;
   enginePower: number;
