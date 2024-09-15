@@ -1,4 +1,4 @@
-import { type Vehicle, VehicleEnum } from '@/lib/api/vehicle.d';
+import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles.d';
 
 export const trucks: Vehicle[] = [
   {
