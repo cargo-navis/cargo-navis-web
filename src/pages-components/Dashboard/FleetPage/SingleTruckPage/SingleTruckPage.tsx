@@ -5,6 +5,7 @@ import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackBut
 import { Box, FlexLayout, Icon, LoadingSpinner, Text } from '@/ui';
 import { useRouter } from 'next/router';
 import { GeneralInfo } from './GeneralInfo';
+import { VehicleInfo } from './VehicleInfo';
 
 export const SingleTruckPage = () => {
   const { query } = useRouter();
@@ -42,12 +43,8 @@ const MainContent: React.FC<{ truck: Vehicle }> = ({ truck }) => {
       </FlexLayout>
       <FlexLayout className="ml-4 gap-10">
         <GeneralInfo truck={truck} />
-        <VehicleInfo />
+        <VehicleInfo truck={truck} />
       </FlexLayout>
     </FlexLayout>
   );
-};
-
-const VehicleInfo = () => {
-  return <>Vehicle Info</>;
 };

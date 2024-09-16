@@ -1,6 +1,8 @@
 import type { Vehicle } from '@/lib/api';
 import { Divider, FlexLayout, Text } from '@/ui';
 
+import { InfoItem } from './InfoItem';
+
 interface GeneralInfoProps {
   truck: Vehicle;
 }
@@ -46,19 +48,6 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ truck }) => {
         <InfoItem label="Registration Date" value={formattedRegistrationDate} />
         <InfoItem label="Registration Expires" value={formattedRegistrationExpiryDate} />
       </FlexLayout>
-    </FlexLayout>
-  );
-};
-
-const InfoItem = ({ label, value }: { label: string; value: string | number }) => {
-  return (
-    <FlexLayout className="justify-between items-baseline">
-      <Text color="text-color-3" variant="text-s-medium">
-        {label}:
-      </Text>
-      <Text color="text-color-1" variant="text-m-medium">
-        {value}
-      </Text>
     </FlexLayout>
   );
 };
