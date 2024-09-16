@@ -4,6 +4,7 @@ export * from './Checkbox';
 export * from './FlexLayout';
 export * from './Datepicker';
 export * from './DisplayIf';
+export * from './Divider';
 export * from './Icon';
 export * from './Heading';
 export * from './LoadingSpinner';
