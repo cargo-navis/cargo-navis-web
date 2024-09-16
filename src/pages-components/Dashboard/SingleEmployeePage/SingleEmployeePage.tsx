@@ -1,6 +1,7 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Employee } from '@/lib/api/employees.d';
-import { Box, DisplayIf, Icon, LoadingSpinner, Text } from '@/ui';
+import { LoadingPage } from '@/lib/components/LoadingPage';
+import { Box, DisplayIf, Icon, Text } from '@/ui';
 
 import { ContactInfo } from './ContactInfo';
 import { EmployeeActions } from './EmployeeActions';
@@ -15,11 +16,17 @@ export const SingleEmployeePage = () => {
   const { query } = useRouter();
   const id = query.id;
 
-  const { data: employee } = useEmployee(id as string);
+  const { data: employee, isLoading } = useEmployee(id as string);
 
   return (
     <DashboardLayout>
-      <Box>{!employee ? <LoadingSpinner /> : <MainContent employee={employee} />}</Box>
+      {!employee || isLoading ? (
+        <LoadingPage />
+      ) : (
+        <Box>
+          <MainContent employee={employee} />
+        </Box>
+      )}
     </DashboardLayout>
   );
 };
