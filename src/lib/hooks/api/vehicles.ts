@@ -6,7 +6,7 @@ interface UseVehicleArgs<T> {
   enabled?: boolean;
 }
 
-export function useVehicles<TData = []>(args: UseVehicleArgs<TData>) {
+export function useVehicles<TData = []>(args?: UseVehicleArgs<TData>) {
   return useQuery<Vehicle[], unknown, TData>({
     queryKey: ['vehicles'],
     queryFn: getVehicles,
