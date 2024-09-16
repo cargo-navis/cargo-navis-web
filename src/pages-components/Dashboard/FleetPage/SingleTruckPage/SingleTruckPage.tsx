@@ -1,8 +1,9 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Vehicle } from '@/lib/api';
+import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicle } from '@/lib/hooks';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
-import { Box, FlexLayout, Icon, LoadingSpinner, Text } from '@/ui';
+import { Box, FlexLayout, Icon, Text } from '@/ui';
 import { useRouter } from 'next/router';
 import { GeneralInfo } from './GeneralInfo';
 import { VehicleInfo } from './VehicleInfo';
@@ -13,11 +14,7 @@ export const SingleTruckPage = () => {
 
   const { data: truck } = useVehicle(truckId as string);
 
-  return (
-    <DashboardLayout>
-      <Box>{!truck ? <LoadingSpinner /> : <MainContent truck={truck} />}</Box>
-    </DashboardLayout>
-  );
+  return <DashboardLayout>{!truck ? <LoadingPage /> : <MainContent truck={truck} />}</DashboardLayout>;
 };
 
 const MainContent: React.FC<{ truck: Vehicle }> = ({ truck }) => {
