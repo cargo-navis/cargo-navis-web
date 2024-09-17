@@ -3,19 +3,24 @@ import { useQuery } from '@tanstack/react-query';
 
 interface UseVehicleArgs<T> {
   select?: (data: Vehicle[]) => T;
+  type?: VehicleEnum;
   enabled?: boolean;
 }
 
-export function useVehicles<TData = []>(args?: UseVehicleArgs<TData>) {
+export function useVehicles<TData>(args?: UseVehicleArgs<TData>) {
   return useQuery<Vehicle[], unknown, TData>({
     queryKey: ['vehicles'],
     queryFn: getVehicles,
+    select: (vehicles) => {
+      const filteredVehicles = args?.type ? vehicles.filter((v) => v.type === args.type) : vehicles;
+      return args?.select ? args.select(filteredVehicles) : (filteredVehicles as unknown as TData); // Type assertion to TData
+    },
     ...args,
   });
 }
 
 export function useVehicle(id: string) {
-  return useVehicles({
+  return useVehicles<Vehicle | undefined>({
     enabled: !!id,
     select: (vehicle) => {
       return vehicle.find((v) => v.id === id);
@@ -24,9 +29,21 @@ export function useVehicle(id: string) {
 }
 
 export function useTrucks() {
-  const { data: trucks, ...rest } = useVehicles({
-    select: (vehicles) => vehicles.filter((v) => v.type === VehicleEnum.TRUCK),
-  });
-
+  const { data: trucks, ...rest } = useVehicles({ type: VehicleEnum.TRUCK });
   return { trucks, ...rest };
+}
+
+export function useTrailers() {
+  const { data: trailers, ...rest } = useVehicles({ type: VehicleEnum.TRAILER });
+  return { trailers, ...rest };
+}
+
+export function useSolos() {
+  const { data: solos, ...rest } = useVehicles({ type: VehicleEnum.SOLO });
+  return { solos, ...rest };
+}
+
+export function useVans() {
+  const { data: vans, ...rest } = useVehicles({ type: VehicleEnum.VAN });
+  return { vans, ...rest };
 }
