@@ -6,18 +6,18 @@ import { useMemo } from 'react';
 
 const columnHelper = createColumnHelper<Vehicle>();
 
-export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
+export const TrailersTable = ({ trailers }: { trailers: Vehicle[] }) => {
   const columns = useMemo(() => {
     return [
       columnHelper.display({
-        id: 'truck',
+        id: 'trailer',
         size: 100,
-        header: () => <Box className="pl-3">Truck</Box>,
+        header: () => <Box className="pl-3">Trailer</Box>,
         cell: (props) => {
           const { brand, registration, id } = props.row.original;
 
           return (
-            <Link href={`/dashboard/fleet/trucks/${id}`}>
+            <Link href={`/dashboard/fleet/trailer/${id}`}>
               <FlexLayout className="flex-col py-3 pl-3">
                 <Text className="text-color-1 group-hover/cell:text-teal-600" variant="text-m-bold">
                   {registration}
@@ -41,31 +41,28 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
         },
       }),
       columnHelper.accessor('emissionStandard', {
-        header: 'Engine Type',
+        header: 'Load Type',
         cell: ({ row }) => {
-          const { emissionStandard } = row.original;
+          const { vehicleLoadType } = row.original;
 
           return (
             <FlexLayout>
-              <Text className="text-color-2 group-hover/cell:text-teal-600">{emissionStandard}</Text>
+              <Text className="text-color-2 group-hover/cell:text-teal-600 capitalize">
+                {vehicleLoadType.split('_').join(' ')}
+              </Text>
             </FlexLayout>
           );
         },
       }),
       columnHelper.display({
-        header: 'Tachograph Until',
+        header: 'Load Capacity (kg)',
         size: 200,
         cell: ({ row }) => {
-          const { tachographExpiryDate } = row.original;
-          const formattedDate = new Date(tachographExpiryDate).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          });
+          const { loadCapacity } = row.original;
 
           return (
             <FlexLayout>
-              <Text className="text-color-2 group-hover/cell:text-teal-600">{formattedDate}</Text>
+              <Text className="text-color-2 group-hover/cell:text-teal-600">{loadCapacity}</Text>
             </FlexLayout>
           );
         },
@@ -73,5 +70,5 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
     ];
   }, []);
 
-  return <Table data={trucks} columns={columns} />;
+  return <Table data={trailers} columns={columns} />;
 };
