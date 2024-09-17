@@ -5,8 +5,8 @@ import { useVehicle } from '@/lib/hooks';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 import { useRouter } from 'next/router';
-import { GeneralInfo } from './GeneralInfo';
-import { VehicleInfo } from './VehicleInfo';
+import { GeneralInfo } from '../../components/GeneralInfo';
+import { VehicleInfo } from '../../components/VehicleInfo';
 
 export const SingleTruckPage = () => {
   const { query } = useRouter();
@@ -39,8 +39,8 @@ const MainContent: React.FC<{ truck: Vehicle }> = ({ truck }) => {
         </FlexLayout>
       </FlexLayout>
       <FlexLayout className="ml-4 gap-10">
-        <GeneralInfo truck={truck} />
-        <VehicleInfo truck={truck} />
+        <GeneralInfo vehicle={truck} />
+        <VehicleInfo vehicle={truck} />
       </FlexLayout>
     </FlexLayout>
   );

@@ -4,11 +4,11 @@ import { Divider, FlexLayout, Text } from '@/ui';
 import { InfoItem } from './InfoItem';
 
 interface VehicleInfoProps {
-  truck: Vehicle;
+  vehicle: Vehicle;
 }
 
-export const VehicleInfo: React.FC<VehicleInfoProps> = ({ truck }) => {
-  const { enginePower, averageFuelConsumption, tankSize, emissionStandard } = truck;
+export const VehicleInfo: React.FC<VehicleInfoProps> = ({ vehicle }) => {
+  const { enginePower, averageFuelConsumption, tankSize, emissionStandard } = vehicle;
 
   return (
     <FlexLayout className="flex-col gap-4 w-[360px]">
