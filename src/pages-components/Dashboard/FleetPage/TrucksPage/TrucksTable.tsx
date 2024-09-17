@@ -1,5 +1,5 @@
 import type { Vehicle } from '@/lib/api/vehicles.d';
-import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
+import { Box, FlexLayout, Table, Text } from '@/ui';
 import { createColumnHelper } from '@tanstack/react-table';
 import Link from 'next/link';
 import { useMemo } from 'react';

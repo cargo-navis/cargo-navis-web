@@ -1,4 +1,4 @@
-import { type Vehicle, getVehicles } from '@/lib/api';
+import { type Vehicle, VehicleEnum, getVehicles } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 
 interface UseVehicleArgs<T> {
@@ -21,4 +21,12 @@ export function useVehicle(id: string) {
       return vehicle.find((v) => v.id === id);
     },
   });
+}
+
+export function useTrucks() {
+  const { data: trucks, ...rest } = useVehicles({
+    select: (vehicles) => vehicles.filter((v) => v.type === VehicleEnum.TRUCK),
+  });
+
+  return { trucks, ...rest };
 }

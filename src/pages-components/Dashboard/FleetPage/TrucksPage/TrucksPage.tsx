@@ -1,14 +1,14 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Vehicle } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
-import { useVehicles } from '@/lib/hooks';
+import { useTrucks } from '@/lib/hooks';
 import { TrucksTable } from '@/pages-components/Dashboard/FleetPage/TrucksPage/TrucksTable';
 import { Box, Button, Heading } from '@/ui';
 
 export const TrucksPage = () => {
-  const { data, isLoading } = useVehicles();
+  const { trucks, isLoading } = useTrucks();
 
-  return <DashboardLayout>{isLoading || !data ? <LoadingPage /> : <MainContent trucks={data} />}</DashboardLayout>;
+  return <DashboardLayout>{isLoading || !trucks ? <LoadingPage /> : <MainContent trucks={trucks} />}</DashboardLayout>;
 };
 
 const MainContent = ({ trucks }: { trucks: Vehicle[] }) => {
