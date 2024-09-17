@@ -1,1 +1,1 @@
-export { SingleTrailerPage as default } from '@/pages-components/Dashboard/FleetPage/SingleTrailerPage';
+export { SingleTrailerPage as default } from '@/pages-components/Dashboard/FleetPage/Trailers/SingleTrailerPage';

@@ -1,6 +1,6 @@
 import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles.d';
 
-export const trucks: Vehicle[] = [
+export const trucks: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: any })[] = [
   {
     id: '560989fd-947f-4fdf-99a1-b55790d4f36d',
     type: VehicleEnum.TRUCK,
