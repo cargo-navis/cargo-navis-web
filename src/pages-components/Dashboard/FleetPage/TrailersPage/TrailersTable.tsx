@@ -17,7 +17,7 @@ export const TrailersTable = ({ trailers }: { trailers: Vehicle[] }) => {
           const { brand, registration, id } = props.row.original;
 
           return (
-            <Link href={`/dashboard/fleet/trailer/${id}`}>
+            <Link href={`/dashboard/fleet/trailers/${id}`}>
               <FlexLayout className="flex-col py-3 pl-3">
                 <Text className="text-color-1 group-hover/cell:text-teal-600" variant="text-m-bold">
                   {registration}
