@@ -5,8 +5,8 @@ import { useVehicle } from '@/lib/hooks';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 import { useRouter } from 'next/router';
-import { GeneralInfo } from './GeneralInfo';
-import { VehicleInfo } from './VehicleInfo';
+import { GeneralInfo } from '../../components/GeneralInfo';
+import { LoadingSpaceInfo } from '../../components/LoadingSpaceInfo';
 
 export const SingleTrailerPage = () => {
   const { query } = useRouter();
@@ -39,8 +39,8 @@ const MainContent: React.FC<{ trailer: Vehicle }> = ({ trailer }) => {
         </FlexLayout>
       </FlexLayout>
       <FlexLayout className="ml-4 gap-10">
-        {/*<GeneralInfo trailer={trailer} />*/}
-        {/*<VehicleInfo trailer={trailer} />*/}
+        <GeneralInfo vehicle={trailer} />
+        <LoadingSpaceInfo vehicle={trailer} />
       </FlexLayout>
     </FlexLayout>
   );
