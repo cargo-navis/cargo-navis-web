@@ -13,7 +13,7 @@ export function useVehicles<TData = Vehicle[]>(args?: UseVehicleArgs<TData>) {
     queryFn: getVehicles,
     select: (vehicles) => {
       const filteredVehicles = args?.type ? vehicles.filter((v) => v.type === args.type) : vehicles;
-      return args?.select ? args.select(filteredVehicles) : filteredVehicles as unknown as TData;
+      return args?.select ? args.select(filteredVehicles) : (filteredVehicles as unknown as TData);
     },
     ...args,
   });

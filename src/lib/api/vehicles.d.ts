@@ -18,7 +18,7 @@ export interface Vehicle {
   adrExpiryDate: string;
   dimensions: Dimensions;
   loadCapacity: number;
-  vehicleLoadType: string;
+  vehicleLoadType: VehicleLoadEnum;
   equipment: string[];
   ramp: boolean;
   codeXlCertificateExpiryDate: string;
@@ -36,4 +36,12 @@ export interface Dimensions {
   height: number;
   length: number;
   id: string;
+}
+
+export enum VehicleLoadEnum {
+  FURGON = 'furgon',
+  CISTERN = 'cistern',
+  TILT_TRUCK = 'tilt_truck',
+  FRIGO = 'frigo',
+  CONTAINER_TRAILER = 'container_trailer',
 }
