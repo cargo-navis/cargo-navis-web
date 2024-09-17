@@ -70,20 +70,6 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
           );
         },
       }),
-      columnHelper.display({
-        header: 'Ramp',
-        size: 80,
-        cell: ({ row }) => {
-          const { ramp } = row.original;
-          if (ramp === undefined) return '–';
-
-          return ramp ? (
-            <Icon className="text-green-600" icon="CheckCircleIcon" size="l" />
-          ) : (
-            <Icon className="text-red-500" icon="XCircleIcon" size="l" />
-          );
-        },
-      }),
     ];
   }, []);
 
