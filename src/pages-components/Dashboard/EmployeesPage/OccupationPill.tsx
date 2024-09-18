@@ -1,4 +1,4 @@
-import { Pill, type PillVariant } from '@/ui';
+import { Pill, PillSize, type PillVariant } from '@/ui';
 
 const occupationVariantMap: Record<string, PillVariant> = {
   ceo: 'danger',
@@ -10,10 +10,11 @@ const occupationVariantMap: Record<string, PillVariant> = {
 interface OccupationPillProps {
   occupation: string;
   text: string;
+  size?: PillSize;
 }
 
-export const OccupationPill: React.FC<OccupationPillProps> = ({ text, occupation }) => {
+export const OccupationPill: React.FC<OccupationPillProps> = ({ text, occupation, size }) => {
   const variant = occupationVariantMap[occupation];
 
-  return <Pill text={text} variant={variant} />;
+  return <Pill text={text} variant={variant} size={size} />;
 };
