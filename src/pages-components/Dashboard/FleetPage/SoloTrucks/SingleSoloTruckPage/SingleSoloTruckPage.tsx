@@ -4,7 +4,7 @@ import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicle } from '@/lib/hooks';
 import { VehicleInfo } from '@/pages-components/Dashboard/FleetPage/components/VehicleInfo';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
-import { Box, FlexLayout, Icon, Text } from '@/ui';
+import { Box, FlexLayout, Icon, Pill, Text } from '@/ui';
 import { useRouter } from 'next/router';
 import { GeneralInfo } from '../../components/GeneralInfo';
 import { LoadingSpaceInfo } from '../../components/LoadingSpaceInfo';
@@ -34,9 +34,12 @@ const MainContent: React.FC<{ solo: Vehicle }> = ({ solo }) => {
           <Text color="text-color-1" variant="text-xxl-bold">
             {registration}
           </Text>
-          <Text color="text-color-3" variant="text-m-medium">
-            {brand} ({manufacturingYear})
-          </Text>
+          <FlexLayout className="gap-3 items-center">
+            <Text color="text-color-3" variant="text-m-medium">
+              {brand} ({manufacturingYear})
+            </Text>
+            <Pill text="Solo Truck" variant="danger" />
+          </FlexLayout>
         </FlexLayout>
       </FlexLayout>
       <FlexLayout className="ml-4 gap-10 flex-wrap">
