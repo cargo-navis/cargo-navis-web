@@ -1,5 +1,6 @@
 'use client';
 
+import { NavLink } from '@/components/layout/DashboardLayout/data';
 import clsx from 'clsx';
 import Link from 'next/link';
 
@@ -7,7 +8,6 @@ import { Box, Text } from '@/ui';
 import { Icon } from '@/ui/components/Icon';
 
 import { usePathname } from 'next/navigation';
-import type { NavLink } from './data';
 
 export const NavItem = ({ navLink }: { navLink: NavLink }) => {
   const pathname = usePathname();
