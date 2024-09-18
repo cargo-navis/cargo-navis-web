@@ -1,8 +1,8 @@
 'use client';
 
+import { links } from '@/components/layout/DashboardLayout/data';
 import { Box, Heading, Icon, Text } from '@/ui';
 import { NavItem } from './NavItem';
-import { links } from './data';
 
 export function Sidebar() {
   return (
