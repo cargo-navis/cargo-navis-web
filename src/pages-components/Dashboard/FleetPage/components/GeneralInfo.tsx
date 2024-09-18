@@ -4,10 +4,10 @@ import { Divider, FlexLayout, Text } from '@/ui';
 import { InfoItem } from './InfoItem';
 
 interface GeneralInfoProps {
-  truck: Vehicle;
+  vehicle: Vehicle;
 }
 
-export const GeneralInfo: React.FC<GeneralInfoProps> = ({ truck }) => {
+export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
   const {
     brand,
     manufacturingYear,
@@ -16,7 +16,7 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ truck }) => {
     registrationDate,
     registrationExpiryDate,
     emptyWeight,
-  } = truck;
+  } = vehicle;
 
   const formattedRegistrationDate = new Date(registrationDate).toLocaleDateString('en-US', {
     year: 'numeric',

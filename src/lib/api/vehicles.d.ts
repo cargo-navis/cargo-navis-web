@@ -18,7 +18,7 @@ export interface Vehicle {
   adrExpiryDate: string;
   dimensions: Dimensions;
   loadCapacity: number;
-  vehicleLoadType: string;
+  vehicleLoadType: VehicleLoadEnum;
   equipment: string[];
   ramp: boolean;
   codeXlCertificateExpiryDate: string;
@@ -36,4 +36,33 @@ export interface Dimensions {
   height: number;
   length: number;
   id: string;
+}
+
+export enum VehicleLoadEnum {
+  FURGON = 'furgon',
+  CISTERN = 'cistern',
+  TILT_TRUCK = 'tilt_truck',
+  FRIGO = 'frigo',
+  CONTAINER_TRAILER = 'container_trailer',
+}
+
+// SOLO TRUCK TYPES
+// export enum VehicleLoadEnum {
+//   TILT_TRUCK = 'tilt_truck',
+//   FRIGO = 'frigo',
+//   FURGON = 'furgon',
+//   TAUTLINER = 'tautliner',
+// }
+
+export enum EquipmentEnum {
+  EDGE_PROTECTION = 'edge_protection',
+  LASHING_CHAINS = 'lashing_chains',
+  ANTI_SLIP_MAT = 'anti_slip_mat',
+  ADR = 'adr',
+  LASHING_STRAPS = 'lashing_straps',
+  STANCHIONS = 'stanchions',
+  CUSTOM_SEAL_STRING = 'custom_seal_string',
+  PORTABLE_FORKLIFT = 'portable_forklift',
+  WASTE_CARRIER_LICENCE = 'waste_carrier_licence',
+  MEAT_HOOK = 'meat_hooks',
 }

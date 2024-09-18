@@ -19,9 +19,9 @@ export const links: NavLink[] = [
     icon: 'TruckIcon',
     subItems: [
       { name: 'Trucks', href: '/dashboard/fleet/trucks', icon: 'ChevronRightIcon' },
-      { name: 'Trailers', href: '/dashboard/fleet/trailer', icon: 'ChevronRightIcon' },
-      { name: 'Solos', href: '/dashboard/fleet/solo', icon: 'ChevronRightIcon' },
-      { name: 'Vans', href: '/dashboard/fleet/van', icon: 'ChevronRightIcon' },
+      { name: 'Trailers', href: '/dashboard/fleet/trailers', icon: 'ChevronRightIcon' },
+      { name: 'Solo Trucks', href: '/dashboard/fleet/solo-trucks', icon: 'ChevronRightIcon' },
+      { name: 'Vans', href: '/dashboard/fleet/vans', icon: 'ChevronRightIcon' },
     ],
   },
   { name: 'Assign Trucks', href: '/dashboard/assign-trucks', icon: 'SquaresPlusIcon' },

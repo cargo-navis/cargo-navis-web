@@ -1,19 +1,20 @@
 import { Box, Text } from '@/ui';
 import clsx from 'clsx';
 
-import { type PillVariant, variantsMap } from './const';
+import { type PillSize, type PillVariant, getSizeStyles, variantsMap } from './const';
 
 interface PillProps {
   text: string;
+  size?: PillSize;
   variant?: PillVariant;
 }
 
-export const Pill: React.FC<PillProps> = ({ text, variant = 'default' }) => {
+export const Pill: React.FC<PillProps> = ({ text, size = 'm', variant = 'default' }) => {
+  const { styles, textVariant } = getSizeStyles(size);
+
   return (
-    <Box
-      className={clsx('flex items-center justify-center w-min px-2 py-0.5 rounded-xl uppercase', variantsMap[variant])}
-    >
-      <Text variant="text-xs-medium">{text}</Text>
+    <Box className={clsx('flex w-max items-center justify-center uppercase', styles, variantsMap[variant])}>
+      <Text variant={textVariant}>{text}</Text>
     </Box>
   );
 };

@@ -1,3 +1,5 @@
+import type { TextVariant } from '@/ui/theme/fontSizes';
+
 export const variantsMap = {
   default: 'bg-dark-50 dark:bg-light-800 text-dark-800 dark:text-light-100',
   success: 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100',
@@ -7,3 +9,20 @@ export const variantsMap = {
 };
 
 export type PillVariant = keyof typeof variantsMap;
+
+export type PillSize = 's' | 'm';
+
+export const getSizeStyles = (size: PillSize) => {
+  switch (size) {
+    case 's':
+      return {
+        styles: 'px-2 py-[2px] rounded-l',
+        textVariant: 'text-xxxs-medium' as TextVariant,
+      };
+    case 'm':
+      return {
+        styles: 'px-2 py-1 rounded-xl',
+        textVariant: 'text-xs-medium' as TextVariant,
+      };
+  }
+};

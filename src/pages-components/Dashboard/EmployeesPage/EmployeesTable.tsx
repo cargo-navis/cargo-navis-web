@@ -49,7 +49,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
                   <Text className="group-hover/cell:text-teal-600" color="text-color-1" variant="text-m-bold">
                     {name}
                   </Text>
-                  <OccupationPill occupation={position} text={position} />
+                  <OccupationPill occupation={position} text={position} size="s" />
                 </Box>
               </Box>
             </Link>
