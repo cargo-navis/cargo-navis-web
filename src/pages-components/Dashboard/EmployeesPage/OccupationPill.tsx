@@ -1,4 +1,4 @@
-import { Pill, PillSize, type PillVariant } from '@/ui';
+import { Pill, type PillSize, type PillVariant } from '@/ui';
 
 const occupationVariantMap: Record<string, PillVariant> = {
   ceo: 'danger',

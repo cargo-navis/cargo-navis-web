@@ -1,5 +1,4 @@
-import { TextVariant } from '@/ui/theme/fontSizes';
-import clsx from 'clsx';
+import type { TextVariant } from '@/ui/theme/fontSizes';
 
 export const variantsMap = {
   default: 'bg-dark-50 dark:bg-light-800 text-dark-800 dark:text-light-100',
@@ -11,7 +10,7 @@ export const variantsMap = {
 
 export type PillVariant = keyof typeof variantsMap;
 
-export type PillSize =  's' | 'm';
+export type PillSize = 's' | 'm';
 
 export const getSizeStyles = (size: PillSize) => {
   switch (size) {
