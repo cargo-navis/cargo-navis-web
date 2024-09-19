@@ -1,7 +1,7 @@
 export enum VehicleEnum {
   TRUCK = 'TRUCK',
   TRAILER = 'TRAILER',
-  SOLO = 'SOLO',
+  SOLO_TRUCK = 'SOLO_TRUCK',
   VAN = 'VAN',
 }
 

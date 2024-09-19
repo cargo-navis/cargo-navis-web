@@ -39,7 +39,7 @@ export function useTrailers() {
 }
 
 export function useSolos() {
-  const { data: solos, ...rest } = useVehicles({ type: VehicleEnum.SOLO });
+  const { data: solos, ...rest } = useVehicles({ type: VehicleEnum.SOLO_TRUCK });
   return { solos, ...rest };
 }
 

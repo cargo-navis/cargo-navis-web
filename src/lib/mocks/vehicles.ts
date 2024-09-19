@@ -183,7 +183,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
   },
   {
     id: 'cb68251d-0b21-420a-baec-e91fcd650644',
-    type: VehicleEnum.SOLO,
+    type: VehicleEnum.SOLO_TRUCK,
     emissionStandard: 'Euro 4',
     enginePower: 320,
     tankSize: 480,
@@ -213,7 +213,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
   },
   {
     id: 'd2f72c77-0f42-450a-8d0f-8778f57b8446',
-    type: VehicleEnum.SOLO,
+    type: VehicleEnum.SOLO_TRUCK,
     emissionStandard: 'Euro 5',
     enginePower: 370,
     tankSize: 600,
@@ -243,7 +243,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
   },
   {
     id: '4d0bc201-91b1-4735-89fc-bdbb3bf5bb90',
-    type: VehicleEnum.SOLO,
+    type: VehicleEnum.SOLO_TRUCK,
     emissionStandard: 'Euro 6',
     enginePower: 400,
     tankSize: 600,
@@ -273,7 +273,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
   },
   {
     id: 'ffbc9680-f2c3-465a-a9db-758f8bc54791',
-    type: VehicleEnum.SOLO,
+    type: VehicleEnum.SOLO_TRUCK,
     emissionStandard: 'Euro 5',
     enginePower: 360,
     tankSize: 550,
@@ -303,7 +303,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
   },
   {
     id: '7b85dfea-23be-4405-b286-66a0d5c5fa91',
-    type: VehicleEnum.SOLO,
+    type: VehicleEnum.SOLO_TRUCK,
     emissionStandard: 'Euro 6',
     enginePower: 450,
     tankSize: 700,
