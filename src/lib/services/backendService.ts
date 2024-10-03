@@ -55,7 +55,7 @@ function createBackendService() {
         return Promise.reject(error);
       }
 
-      // Get original request so we can retry it after refreshing our tokens
+      // Get original request, so we can retry it after refreshing our tokens
       const originalRequest: OriginalRequest = error.config;
 
       if (originalRequest._doNotRefresh) {
@@ -96,6 +96,9 @@ function createBackendService() {
       // }
 
       clearAuthCookies();
+
+      window.location.pathname = '/login';
+
       return Promise.reject(error);
     },
   );
