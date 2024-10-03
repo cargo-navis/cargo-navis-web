@@ -6,7 +6,7 @@ export const FleetPage = () => {
     <DashboardLayout>
       <Box>
         <Heading as="h1" variant="text-xl">
-          Fleet
+          Fleet - Overview
         </Heading>
       </Box>
     </DashboardLayout>

@@ -15,7 +15,7 @@ export const links: NavLink[] = [
   // { name: 'Loading Planer', href: '/loading-planer', icon: HomeIcon }, // TODO
   {
     name: 'Fleet',
-    href: '/dashboard/fleet',
+    href: '/dashboard/fleet/overview',
     icon: 'TruckIcon',
     subItems: [
       { name: 'Trucks', href: '/dashboard/fleet/trucks', icon: 'ChevronRightIcon' },

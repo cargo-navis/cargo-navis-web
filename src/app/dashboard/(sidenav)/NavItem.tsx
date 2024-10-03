@@ -1,6 +1,6 @@
 'use client';
 
-import { NavLink } from '@/components/layout/DashboardLayout/data';
+import type { NavLink } from '@/components/layout/DashboardLayout/data';
 import clsx from 'clsx';
 import Link from 'next/link';
 
