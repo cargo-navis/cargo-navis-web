@@ -8,6 +8,7 @@ export * from './Divider';
 export * from './Icon';
 export * from './Heading';
 export * from './LoadingSpinner';
+export * from './Menu';
 export * from './Pill';
 export * from './Radio';
 export * from './Select';

@@ -1,12 +1,10 @@
 import clsx from 'clsx';
-import type React from 'react';
+import React from 'react';
 
-import { Box, type BoxProps } from '../Box';
+import { Box, type BoxProps } from '@/ui';
 
-type FlexLayoutProps = BoxProps;
-
-export const FlexLayout: React.FC<FlexLayoutProps> = ({ className, ...rest }) => {
-  return <Box className={clsx('flex', className)} {...rest} />;
-};
+export const FlexLayout = React.forwardRef<any, BoxProps>(({ className, ...rest }, ref) => {
+  return <Box className={clsx('flex', className)} ref={ref} {...rest} />;
+});
 
 FlexLayout.displayName = 'FlexLayout';
