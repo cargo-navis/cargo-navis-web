@@ -4,13 +4,13 @@ import Link from 'next/link';
 import React from 'react';
 import type { HTMLAttributeAnchorTarget } from 'react';
 
-import { DisplayIf, FlexLayout, Icon, type IconType, Text } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon, type IconType, Text } from '@/ui';
 
 import { Badge } from './Badge';
 
 export interface MenuItemProps {
   text: string;
-  iconLeft?: { name: string; logoUrl?: string; uuid: string } | IconType | (() => JSX.Element);
+  iconLeft?: IconType;
   iconRight?: IconType;
   badge?: string;
   helper?: string;
@@ -50,9 +50,9 @@ export const MenuItemContent = React.forwardRef<any, Omit<MenuItemProps, 'onClic
         target={target}
         {...rest}
       >
-        {/*<DisplayIf condition={!!iconLeft}>*/}
-        {/*  <LeftSideContent {...{ iconLeft, itemColor }} />*/}
-        {/*</DisplayIf>*/}
+        <DisplayIf condition={!!iconLeft}>
+          <Box className="mt-1">{!!iconLeft && <Icon color={itemColor} icon={iconLeft} size="s" />}</Box>
+        </DisplayIf>
         <FlexLayout className="w-full justify-between items-center">
           <FlexLayout className="pr-[40px] flex-col break-word">
             <Text variant="text-xs-medium">{text}</Text>
