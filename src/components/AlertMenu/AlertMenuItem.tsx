@@ -28,6 +28,11 @@ export const items: MenuComponent[] = [
   { type: 'custom', Renderer: <AlertMenuItem alert={alerts[2]} /> },
   { type: 'custom', Renderer: <AlertMenuItem alert={alerts[3]} /> },
   { type: 'custom', Renderer: <AlertMenuItem alert={alerts[4]} /> },
+  { type: 'custom', Renderer: <AlertMenuItem alert={alerts[5]} /> },
+  { type: 'custom', Renderer: <AlertMenuItem alert={alerts[6]} /> },
+  { type: 'custom', Renderer: <AlertMenuItem alert={alerts[7]} /> },
+  { type: 'custom', Renderer: <AlertMenuItem alert={alerts[8]} /> },
+  { type: 'custom', Renderer: <AlertMenuItem alert={alerts[9]} /> },
   { type: 'item', text: 'Preview', iconLeft: 'EyeIcon', onClick: () => alert('Preview') },
   { type: 'item', text: 'Edit', iconLeft: 'PencilIcon', onClick: () => alert('Edit') },
 ];

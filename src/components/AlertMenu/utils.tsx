@@ -1,4 +1,4 @@
-import type { Employee } from '@/lib/api';
+import type { Employee, Vehicle } from '@/lib/api';
 import { type Alert, AlertType } from '@/lib/mocks/alerts';
 import { FlexLayout, Icon, Text } from '@/ui';
 
@@ -36,7 +36,8 @@ export function getItemData(alert: Alert) {
       targetUrl = `/dashboard/employees/${employee.id}`;
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
-          Vozaču (<EmployeeName employee={employee} />) uskoro istječe vozačka dozvola ({employee.driverLicenceCategories?.join(', ')}).
+          Vozaču (<EmployeeName employee={employee} />) uskoro istječe vozačka dozvola (
+          {employee.driverLicenceCategories?.join(', ')}).
         </Text>
       );
       break;
@@ -63,11 +64,72 @@ export function getItemData(alert: Alert) {
       );
       break;
     }
-    // Continue
-    default:
+    case AlertType.VEHICLE_REGISTRATION_EXPIRED: {
+      const vehicle = alertable as Vehicle;
+
+      // TODO - fix: trucks|trailers|solos|vans
+      targetUrl = `/dashboard/fleet/trucks/${vehicle.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozilu (<Text variant="text-s-bold">{vehicle.registration}</Text>) uskoro istječe registracija.
+        </Text>
+      );
+      break;
+    }
+    case AlertType.VEHICLE_TECHNICAL_INSPECTION_EXPIRED: {
+      const vehicle = alertable as Vehicle;
+
+      // TODO - fix: trucks|trailers|solos|vans
+      targetUrl = `/dashboard/fleet/trucks/${vehicle.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozilu (<Text variant="text-s-bold">{vehicle.registration}</Text>) uskoro istječe tehnički pregled.
+        </Text>
+      );
+      break;
+    }
+    case AlertType.VEHICLE_ADR_EXPIRED: {
+      const vehicle = alertable as Vehicle;
+
+      // TODO - fix: trucks|trailers|solos|vans
+      targetUrl = `/dashboard/fleet/trucks/${vehicle.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozilu (<Text variant="text-s-bold">{vehicle.registration}</Text>) uskoro istječe ADR.
+        </Text>
+      );
+      break;
+    }
+    case AlertType.VEHICLE_FIRE_EXTINGUISHER_CHECK_EXPIRED: {
+      const vehicle = alertable as Vehicle;
+
+      // TODO - fix: trucks|trailers|solos|vans
+      targetUrl = `/dashboard/fleet/trucks/${vehicle.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozilu (<Text variant="text-s-bold">{vehicle.registration}</Text>) uskoro istječe valjanost protupožarnog
+          aparata.
+        </Text>
+      );
+      break;
+    }
+    case AlertType.VEHICLE_TACHOGRAPH_EXPIRED: {
+      const vehicle = alertable as Vehicle;
+
+      // TODO - fix: trucks|trailers|solos|vans
+      targetUrl = `/dashboard/fleet/trucks/${vehicle.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozilu (<Text variant="text-s-bold">{vehicle.registration}</Text>) istječe tahograf.
+        </Text>
+      );
+      break;
+    }
+    default: {
       // Handle non-existing case
       targetUrl = '';
       break;
+    }
   }
 
   return { targetUrl, descriptionNode };
