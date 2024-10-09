@@ -1,4 +1,4 @@
-import { AlertButton } from '@/components/AlertButton';
+import { AlertMenu } from '@/components/AlertMenu';
 import { clearAuthCookies } from '@/lib/utils/session';
 import { Box, Divider, FlexLayout, Heading, Icon, Text } from '@/ui';
 import { useRouter } from 'next/router';
@@ -25,7 +25,7 @@ export function Sidebar() {
         <Box className="grow">
           <Divider bgColor="bg-teal-900" />
         </Box>
-        <AlertButton />
+        <AlertMenu />
       </FlexLayout>
       <FlexLayout as="nav" className="flex-col flex-grow gap-2">
         {links.map((l) => (
