@@ -1,7 +1,7 @@
-import { FlexLayout, Icon, Menu, Text } from '@/ui';
-import type { MenuComponent } from '@/ui/components/Menu/types';
 import { mapToMenuItems } from '@/components/AlertMenu/utils';
 import { useAlerts } from '@/lib/hooks';
+import { FlexLayout, Icon, Menu, Text } from '@/ui';
+import type { MenuComponent } from '@/ui/components/Menu/types';
 import clsx from 'clsx';
 import React from 'react';
 import { useToggle } from 'react-use';
