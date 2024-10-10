@@ -15,7 +15,7 @@ export function getItemData(alert: Alert) {
       targetUrl = `/dashboard/employees/${employee.id}`;
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
-          Zaposleniku (<EmployeeName employee={employee} />) uskoro istječe ugovor o zaposlenju.
+          Zaposleniku (<EmployeeName employee={employee} />) istječe ugovor o zaposlenju.
         </Text>
       );
       break;
@@ -26,7 +26,7 @@ export function getItemData(alert: Alert) {
       targetUrl = `/dashboard/employees/${employee.id}`;
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
-          Vozaču (<EmployeeName employee={employee} />) uskoro istječe vozačka dozvola.
+          Vozaču (<EmployeeName employee={employee} />) istječe vozačka dozvola.
         </Text>
       );
       break;
@@ -48,7 +48,7 @@ export function getItemData(alert: Alert) {
       targetUrl = `/dashboard/employees/${employee.id}`;
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
-          Vozaču (<EmployeeName employee={employee} />) uskoro istječe radna viza.
+          Vozaču (<EmployeeName employee={employee} />) istječe radna viza.
         </Text>
       );
       break;
@@ -59,7 +59,7 @@ export function getItemData(alert: Alert) {
       targetUrl = `/dashboard/employees/${employee.id}`;
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
-          Vozaču (<EmployeeName employee={employee} />) uskoro istječe lječnički pregled.
+          Vozaču (<EmployeeName employee={employee} />) istječe lječnički pregled.
         </Text>
       );
       break;
@@ -71,7 +71,7 @@ export function getItemData(alert: Alert) {
       targetUrl = `/dashboard/fleet/trucks/${vehicle.id}`;
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
-          Vozilu (<Text variant="text-s-bold">{vehicle.registration}</Text>) uskoro istječe registracija.
+          Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe registracija.
         </Text>
       );
       break;
@@ -83,7 +83,7 @@ export function getItemData(alert: Alert) {
       targetUrl = `/dashboard/fleet/trucks/${vehicle.id}`;
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
-          Vozilu (<Text variant="text-s-bold">{vehicle.registration}</Text>) uskoro istječe tehnički pregled.
+          Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe tehnički pregled.
         </Text>
       );
       break;
@@ -95,7 +95,7 @@ export function getItemData(alert: Alert) {
       targetUrl = `/dashboard/fleet/trucks/${vehicle.id}`;
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
-          Vozilu (<Text variant="text-s-bold">{vehicle.registration}</Text>) uskoro istječe ADR.
+          Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe ADR.
         </Text>
       );
       break;
@@ -107,8 +107,7 @@ export function getItemData(alert: Alert) {
       targetUrl = `/dashboard/fleet/trucks/${vehicle.id}`;
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
-          Vozilu (<Text variant="text-s-bold">{vehicle.registration}</Text>) uskoro istječe valjanost protupožarnog
-          aparata.
+          Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe valjanost protupožarnog aparata.
         </Text>
       );
       break;
@@ -120,7 +119,7 @@ export function getItemData(alert: Alert) {
       targetUrl = `/dashboard/fleet/trucks/${vehicle.id}`;
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
-          Vozilu (<Text variant="text-s-bold">{vehicle.registration}</Text>) istječe tahograf.
+          Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe tahograf.
         </Text>
       );
       break;
@@ -137,11 +136,20 @@ export function getItemData(alert: Alert) {
 
 function EmployeeName({ employee }: { employee: Employee }) {
   return (
-    <FlexLayout className="inline-flex items-center gap-1 align-bottom">
+    <FlexLayout className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 align-bottom">
       <Icon icon="UserIcon" />
       <Text variant="text-s-bold">
         {employee.firstName} {employee.lastName}
       </Text>
+    </FlexLayout>
+  );
+}
+
+function VehicleRegistration({ vehicle }: { vehicle: Vehicle }) {
+  return (
+    <FlexLayout className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 align-bottom">
+      <Icon icon="TruckIcon" />
+      <Text variant="text-s-bold">{vehicle.registration}</Text>
     </FlexLayout>
   );
 }
