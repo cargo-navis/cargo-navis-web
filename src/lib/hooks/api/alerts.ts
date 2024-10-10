@@ -1,9 +1,9 @@
-import { type Alert, type Employee, getAlerts } from '@/lib/api';
+import { type Alert, getAlerts } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 
-export function useAlerts<TData = Employee[]>() {
+export function useAlerts<TData = Alert[]>() {
   return useQuery<Alert[], unknown, TData>({
-    queryKey: ['employees'],
+    queryKey: ['alerts'],
     queryFn: getAlerts,
   });
 }
