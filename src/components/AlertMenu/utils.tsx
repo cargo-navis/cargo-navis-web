@@ -1,4 +1,4 @@
-import { Employee, Vehicle, VehicleEnum } from '@/lib/api';
+import { type Employee, type Vehicle, VehicleEnum } from '@/lib/api';
 import { type Alert, AlertType } from '@/lib/api';
 import { FlexLayout, Icon, Text } from '@/ui';
 import type { MenuComponent } from '@/ui/components/Menu/types';
@@ -138,6 +138,7 @@ export function getItemData(alert: Alert) {
     default: {
       // Handle non-existing case
       targetUrl = '';
+      descriptionNode = <></>;
       break;
     }
   }
