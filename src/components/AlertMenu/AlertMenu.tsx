@@ -1,8 +1,7 @@
 import Link from 'next/link';
-import React from 'react';
 import { useToggle } from 'react-use';
 
-import { Alert } from '@/lib/api';
+import type { Alert } from '@/lib/api';
 import { useAlerts } from '@/lib/hooks';
 import { FlexLayout, Icon, Menu, Text } from '@/ui';
 import type { MenuComponent } from '@/ui/components/Menu/types';
@@ -31,12 +30,12 @@ export const AlertMenu = () => {
 function getMenuItems(alerts: Alert[] | undefined) {
   let items: MenuComponent[];
 
-  if(alerts) {
+  if (alerts) {
     items = mapToMenuItems(alerts);
 
-    if(items.length > 4) {
-      items = items.splice(0,4);
-      items.push(seeMoreItem)
+    if (items.length > 4) {
+      items = items.splice(0, 4);
+      items.push(seeMoreItem);
     }
   } else {
     items = [loadingItem];
@@ -68,6 +67,4 @@ const seeMoreItem: MenuComponent = {
       </FlexLayout>
     </Link>
   ),
-}
-
-
+};
