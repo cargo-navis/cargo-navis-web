@@ -1,4 +1,4 @@
-import type { Employee, Vehicle } from '@/lib/api';
+import { Employee, Vehicle, VehicleEnum } from '@/lib/api';
 import { type Alert, AlertType } from '@/lib/api';
 import { FlexLayout, Icon, Text } from '@/ui';
 import type { MenuComponent } from '@/ui/components/Menu/types';
@@ -77,9 +77,9 @@ export function getItemData(alert: Alert) {
     }
     case AlertType.VEHICLE_REGISTRATION_EXPIRED: {
       const vehicle = alertable as Vehicle;
+      const path = vehicleTypeToPathMap[vehicle.type];
 
-      // TODO - fix: trucks|trailers|solos|vans
-      targetUrl = `/dashboard/fleet/trucks/${vehicle.id}`;
+      targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe registracija.
@@ -89,9 +89,9 @@ export function getItemData(alert: Alert) {
     }
     case AlertType.VEHICLE_TECHNICAL_INSPECTION_EXPIRED: {
       const vehicle = alertable as Vehicle;
+      const path = vehicleTypeToPathMap[vehicle.type];
 
-      // TODO - fix: trucks|trailers|solos|vans
-      targetUrl = `/dashboard/fleet/trucks/${vehicle.id}`;
+      targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe tehnički pregled.
@@ -101,9 +101,9 @@ export function getItemData(alert: Alert) {
     }
     case AlertType.VEHICLE_ADR_EXPIRED: {
       const vehicle = alertable as Vehicle;
+      const path = vehicleTypeToPathMap[vehicle.type];
 
-      // TODO - fix: trucks|trailers|solos|vans
-      targetUrl = `/dashboard/fleet/trucks/${vehicle.id}`;
+      targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe ADR.
@@ -113,9 +113,9 @@ export function getItemData(alert: Alert) {
     }
     case AlertType.VEHICLE_FIRE_EXTINGUISHER_CHECK_EXPIRED: {
       const vehicle = alertable as Vehicle;
+      const path = vehicleTypeToPathMap[vehicle.type];
 
-      // TODO - fix: trucks|trailers|solos|vans
-      targetUrl = `/dashboard/fleet/trucks/${vehicle.id}`;
+      targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe valjanost protupožarnog aparata.
@@ -125,9 +125,9 @@ export function getItemData(alert: Alert) {
     }
     case AlertType.VEHICLE_TACHOGRAPH_EXPIRED: {
       const vehicle = alertable as Vehicle;
+      const path = vehicleTypeToPathMap[vehicle.type];
 
-      // TODO - fix: trucks|trailers|solos|vans
-      targetUrl = `/dashboard/fleet/trucks/${vehicle.id}`;
+      targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe tahograf.
@@ -164,3 +164,10 @@ function VehicleRegistration({ vehicle }: { vehicle: Vehicle }) {
     </FlexLayout>
   );
 }
+
+const vehicleTypeToPathMap = {
+  [VehicleEnum.TRUCK]: 'trucks',
+  [VehicleEnum.TRAILER]: 'trailers',
+  [VehicleEnum.SOLO_TRUCK]: 'solo-trucks',
+  [VehicleEnum.VAN]: 'vans',
+};
