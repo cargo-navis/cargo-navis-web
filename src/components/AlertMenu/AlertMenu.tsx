@@ -1,16 +1,17 @@
 import { mapToMenuItems } from '@/components/AlertMenu/utils';
+import { Alert } from '@/lib/api';
 import { useAlerts } from '@/lib/hooks';
 import { FlexLayout, Icon, Menu, Text } from '@/ui';
 import type { MenuComponent } from '@/ui/components/Menu/types';
 import clsx from 'clsx';
+import Link from 'next/link';
 import React from 'react';
 import { useToggle } from 'react-use';
 
 export const AlertMenu = () => {
   const [isOpen, onToggleIsMenuOpen] = useToggle(false);
   const { data } = useAlerts();
-
-  const items: MenuComponent[] = data ? mapToMenuItems(data) : [loadingItem];
+  const items = getMenuItems(data);
 
   return (
     <Menu
@@ -25,6 +26,23 @@ export const AlertMenu = () => {
   );
 };
 
+function getMenuItems(alerts: Alert[] | undefined) {
+  let items: MenuComponent[];
+
+  if(alerts) {
+    items = mapToMenuItems(alerts);
+
+    if(items.length > 4) {
+      items = items.splice(0,4);
+      items.push(seeMoreItem)
+    }
+  } else {
+    items = [loadingItem];
+  }
+
+  return items;
+}
+
 const loadingItem: MenuComponent = {
   type: 'custom',
   Renderer: (
@@ -35,6 +53,20 @@ const loadingItem: MenuComponent = {
     </FlexLayout>
   ),
 };
+
+const seeMoreItem: MenuComponent = {
+  type: 'custom',
+  Renderer: (
+    <Link href="/dashboard" className="outline-0">
+      <FlexLayout className="justify-center items-center gap-2 py-3 hover:bg-dark-50 hover:dark:bg-light-800 data-[highlighted]:bg-dark-50 data-[highlighted]:dark:bg-light-800">
+        <Text variant="text-s" color="text-color-2">
+          See more
+        </Text>
+        <Icon icon="ArrowRightIcon" />
+      </FlexLayout>
+    </Link>
+  ),
+}
 
 const AlertButton = React.forwardRef((props, ref) => (
   <FlexLayout
