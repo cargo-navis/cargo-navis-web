@@ -1,12 +1,16 @@
-import { FlexLayout, Icon, Menu } from '@/ui';
+import { FlexLayout, Icon, Menu, Text } from '@/ui';
+import type { MenuComponent } from '@/ui/components/Menu/types';
+import { mapToMenuItems } from '@/components/AlertMenu/utils';
+import { useAlerts } from '@/lib/hooks';
 import clsx from 'clsx';
 import React from 'react';
 import { useToggle } from 'react-use';
 
-import { items } from './AlertMenuItem';
-
 export const AlertMenu = () => {
   const [isOpen, onToggleIsMenuOpen] = useToggle(false);
+  const { data } = useAlerts();
+
+  const items: MenuComponent[] = data ? mapToMenuItems(data) : [loadingItem];
 
   return (
     <Menu
@@ -19,6 +23,17 @@ export const AlertMenu = () => {
       control={<AlertButton />}
     />
   );
+};
+
+const loadingItem: MenuComponent = {
+  type: 'custom',
+  Renderer: (
+    <FlexLayout className="justify-center items-center px-3 py-7">
+      <Text variant="text-s" color="text-color-3">
+        Loading...
+      </Text>
+    </FlexLayout>
+  ),
 };
 
 const AlertButton = React.forwardRef((props, ref) => (

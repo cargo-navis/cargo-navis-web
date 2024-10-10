@@ -1,4 +1,4 @@
-import { Alert } from '@/lib/api';
+import type { Alert } from '@/lib/api';
 import { alerts } from '@/lib/mocks/alerts';
 import { FlexLayout, Icon } from '@/ui';
 import type { MenuComponent } from '@/ui/components/Menu/types';

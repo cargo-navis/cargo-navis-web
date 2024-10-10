@@ -1,6 +1,17 @@
 import type { Employee, Vehicle } from '@/lib/api';
 import { type Alert, AlertType } from '@/lib/api';
 import { FlexLayout, Icon, Text } from '@/ui';
+import type { MenuComponent } from '@/ui/components/Menu/types';
+import type React from 'react';
+
+import { AlertMenuItem } from './AlertMenuItem';
+
+export function mapToMenuItems(alerts: Alert[]): MenuComponent[] {
+  return alerts.map((a) => ({
+    type: 'custom',
+    Renderer: <AlertMenuItem alert={a} />,
+  }));
+}
 
 export function getItemData(alert: Alert) {
   let targetUrl: string;
