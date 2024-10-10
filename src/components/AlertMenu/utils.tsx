@@ -1,5 +1,5 @@
 import type { Employee, Vehicle } from '@/lib/api';
-import { type Alert, AlertType } from '@/lib/mocks/alerts';
+import { type Alert, AlertType } from '@/lib/api';
 import { FlexLayout, Icon, Text } from '@/ui';
 
 export function getItemData(alert: Alert) {

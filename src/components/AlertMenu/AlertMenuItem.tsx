@@ -1,7 +1,9 @@
-import { type Alert, alerts } from '@/lib/mocks/alerts';
+import { Alert } from '@/lib/api';
+import { alerts } from '@/lib/mocks/alerts';
 import { FlexLayout, Icon } from '@/ui';
 import type { MenuComponent } from '@/ui/components/Menu/types';
 import Link from 'next/link';
+import React from 'react';
 
 import { getItemData } from './utils';
 

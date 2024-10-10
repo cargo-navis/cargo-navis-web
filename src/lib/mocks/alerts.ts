@@ -1,22 +1,5 @@
 import { GenderEnum, PositionEnum, VehicleEnum } from '@/lib/api';
-
-export enum AlertType {
-  EMPLOYEE_CONTRACT_EXPIRED = 'EMP_CONTRACT_EXP',
-  DRIVER_LICENCE_EXPIRED = 'DRI_LICENCE_EXP',
-  PROFESSIONAL_DRIVER_LICENCE_EXPIRED = 'PRO_DRI_LICENCE_EXP',
-  DRIVER_VISA_EXPIRED = 'DRI_VISA_EPX',
-  DRIVER_MEDICAL_EXAMINATION_EXPIRED = 'DRI_MED_EXAM_EXP',
-  VEHICLE_REGISTRATION_EXPIRED = 'VEH_REG_EXP',
-  VEHICLE_TECHNICAL_INSPECTION_EXPIRED = 'VEH_TECH_EXP',
-  VEHICLE_ADR_EXPIRED = 'VEH_ADR_EXP',
-  VEHICLE_FIRE_EXTINGUISHER_CHECK_EXPIRED = 'VEH_FIRE_EXP',
-  VEHICLE_TACHOGRAPH_EXPIRED = 'VEH_TACHO_EXP',
-}
-
-export interface Alert {
-  ruleName: AlertType;
-  alertable: any;
-}
+import { type Alert, AlertType } from '@/lib/api';
 
 export const alerts: Alert[] = [
   {
