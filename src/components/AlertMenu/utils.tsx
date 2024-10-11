@@ -48,7 +48,7 @@ export function getItemData(alert: Alert) {
       targetUrl = `/dashboard/employees/${employee.id}`;
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
-          Vozaču (<EmployeeName employee={employee} />) uskoro istječe vozačka dozvola (
+          Vozaču (<EmployeeName employee={employee} />) istječe vozačka dozvola (
           {employee.driverLicenceCategories?.join(', ')}).
         </Text>
       );
