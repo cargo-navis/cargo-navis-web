@@ -26,3 +26,5 @@ export const Text = React.forwardRef<any, TextProps>(
     );
   },
 );
+
+Text.displayName = 'Text';

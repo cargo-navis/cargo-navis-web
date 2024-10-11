@@ -12,3 +12,5 @@ export const MenuCustom = forwardRef<any, MenuCustomProps>(({ Renderer, ...props
     </DropdownMenu.Item>
   );
 });
+
+MenuCustom.displayName = 'MenuCustom';

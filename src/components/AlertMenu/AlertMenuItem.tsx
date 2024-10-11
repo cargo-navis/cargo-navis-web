@@ -25,3 +25,5 @@ export const AlertMenuItem = React.forwardRef<any, AlertMenuItemProps>(({ alert,
     </Link>
   );
 });
+
+AlertMenuItem.displayName = 'AlertMenuItem';

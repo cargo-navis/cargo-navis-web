@@ -20,3 +20,5 @@ export const AlertButton = React.forwardRef((props, ref) => (
     />
   </FlexLayout>
 ));
+
+AlertButton.displayName = 'AlertButton';

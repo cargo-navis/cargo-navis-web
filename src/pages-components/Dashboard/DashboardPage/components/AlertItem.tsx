@@ -22,26 +22,33 @@ export const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
     : '—';
 
   return (
-    <Link href={targetUrl} className={`
+    <Link
+      href={targetUrl}
+      className={`
       group 
       hover:bg-dark-50 hover:dark:bg-light-800
       focus:bg-dark-50 focus:dark:bg-light-800
-    `}>
+    `}
+    >
       <FlexLayout className="flex-start gap-3 p-4">
         <Icon icon="ExclamationTriangleIcon" size="l" color="text-red-500 dark:text-red-300" className="mt-1" />
         <FlexLayout className="flex-col grow gap-1">
           {descriptionNode}
           <Text color="text-color-2" variant="text-m">
             Datum isteka:{' '}
-            <Text variant="text-m-bold" color="text-color-1">{formattedDate}</Text>
+            <Text variant="text-m-bold" color="text-color-1">
+              {formattedDate}
+            </Text>
           </Text>
         </FlexLayout>
-        <Box className={`
+        <Box
+          className={`
           self-center 
           opacity-0 translate-x-[-4px] 
           group-focus:translate-x-0 group-focus:opacity-100
           group-hover:translate-x-0 group-hover:opacity-100
-          transition-transform`}>
+          transition-transform`}
+        >
           <Icon icon="ArrowRightIcon" size="l" color="text-color-2" />
         </Box>
       </FlexLayout>

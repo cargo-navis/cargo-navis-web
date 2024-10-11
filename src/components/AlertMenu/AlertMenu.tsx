@@ -56,24 +56,28 @@ const loadingItem: MenuComponent = {
   ),
 };
 
-const seeMoreItem: MenuComponent = {
-  type: 'custom',
-  Renderer: forwardRef((props, ref) => (
-    <Link href="/dashboard">
-      <FlexLayout
-        className={`
+const SeeMoreItem = forwardRef((props, ref) => (
+  <Link href="/dashboard">
+    <FlexLayout
+      className={`
         justify-center items-center gap-2 py-3 
         hover:bg-dark-50 hover:dark:bg-light-800 data-[highlighted]:bg-dark-50 data-[highlighted]:dark:bg-light-800 
         outline-0
       `}
-        ref={ref}
-        {...props}
-      >
-        <Text variant="text-s" color="text-color-2">
-          See more
-        </Text>
-        <Icon icon="ArrowRightIcon" />
-      </FlexLayout>
-    </Link>
-  )),
+      ref={ref}
+      {...props}
+    >
+      <Text variant="text-s" color="text-color-2">
+        See more
+      </Text>
+      <Icon icon="ArrowRightIcon" />
+    </FlexLayout>
+  </Link>
+));
+
+SeeMoreItem.displayName = 'SeeMoreItem';
+
+const seeMoreItem: MenuComponent = {
+  type: 'custom',
+  Renderer: SeeMoreItem,
 };

@@ -16,7 +16,7 @@ export const DashboardPage = () => {
       <Box className="py-5">
         <Text variant="text-l-medium">Alerts</Text>
         <FlexLayout className="flex-col max-w-[50%]">
-          {isLoading || !alerts ? 'Loading...' : alerts.map((a) => <AlertItem alert={a} />)}
+          {isLoading || !alerts ? 'Loading...' : alerts.map((a) => <AlertItem key={a.alertable.uuid} alert={a} />)}
         </FlexLayout>
       </Box>
     </DashboardLayout>
