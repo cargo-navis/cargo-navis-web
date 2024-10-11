@@ -3,13 +3,14 @@ import { type Alert, AlertType } from '@/lib/api';
 import { FlexLayout, Icon, Text } from '@/ui';
 import type { MenuComponent } from '@/ui/components/Menu/types';
 import type React from 'react';
+import { forwardRef } from 'react';
 
 import { AlertMenuItem } from './AlertMenuItem';
 
 export function mapToMenuItems(alerts: Alert[]): MenuComponent[] {
   return alerts.map((a) => ({
     type: 'custom',
-    Renderer: <AlertMenuItem alert={a} />,
+    Renderer: forwardRef((props, ref) => <AlertMenuItem alert={a} ref={ref} {...props} />),
   }));
 }
 
@@ -138,7 +139,7 @@ export function getItemData(alert: Alert) {
     default: {
       // Handle non-existing case
       targetUrl = '';
-      descriptionNode = <></>;
+      descriptionNode = null;
       break;
     }
   }
