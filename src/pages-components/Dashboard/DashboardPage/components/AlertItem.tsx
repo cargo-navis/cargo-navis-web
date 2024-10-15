@@ -31,7 +31,7 @@ export const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
     `}
     >
       <FlexLayout className="flex-start gap-3 p-4">
-        <Icon icon="ExclamationTriangleIcon" size="l" color="text-red-500 dark:text-red-300" className="mt-1" />
+        <Icon icon="ExclamationTriangleIcon" size="l" color="text-red-500 dark:text-red-300" className="mt-[1px]" />
         <FlexLayout className="flex-col grow gap-1">
           {descriptionNode}
           <Text color="text-color-2" variant="text-m">
