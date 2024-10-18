@@ -1,6 +1,6 @@
-import { alerts } from '@/lib/mocks/alerts';
+import type { Alert } from '@/lib/api/alerts.d';
+import { backend } from '@/lib/services/backendService';
 
 export async function getAlerts() {
-  return alerts;
-  // return backend.get<Alert[]>('/api/alerts');
+  return backend.get<Alert[]>('/api/alerts');
 }
