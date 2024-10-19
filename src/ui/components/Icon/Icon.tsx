@@ -3,6 +3,7 @@ import * as solidIcons from '@heroicons/react/24/solid';
 
 import { Box, type BoxProps } from '@/ui';
 import clsx from 'clsx';
+import { forwardRef } from 'react';
 import { type IconSize, iconSizesMap } from './const';
 
 export type IconType = keyof typeof outlineIcons & keyof typeof solidIcons;
@@ -22,30 +23,25 @@ interface IconProps extends DefaultProps {
   type?: `${IconFillType}`;
 }
 
-export const Icon: React.FC<IconProps> = ({
-  className,
-  color,
-  icon,
-  size = 'm',
-  type = 'outline',
-  onClick,
-  ...rest
-}) => {
-  const icons = type === IconFillType.Solid ? solidIcons : outlineIcons;
-  const IconComponent = icons[icon];
+export const Icon = forwardRef<HTMLDivElement, IconProps>(
+  ({ className, color, icon, size = 'm', type = 'outline', onClick, ...rest }, ref) => {
+    const icons = type === IconFillType.Solid ? solidIcons : outlineIcons;
+    const IconComponent = icons[icon];
 
-  return (
-    <Box
-      className={clsx(
-        className,
-        iconSizesMap[size],
-        color,
-        'flex-none focus:outline-blue-200 dark:focus:outline-orange-200 leading-[0px]',
-      )}
-      onClick={onClick}
-      {...rest}
-    >
-      <IconComponent />
-    </Box>
-  );
-};
+    return (
+      <Box
+        className={clsx(
+          className,
+          iconSizesMap[size],
+          color,
+          'flex-none focus:outline-blue-200 dark:focus:outline-orange-200 leading-[0px]',
+        )}
+        ref={ref}
+        onClick={onClick}
+        {...rest}
+      >
+        <IconComponent />
+      </Box>
+    );
+  },
+);
