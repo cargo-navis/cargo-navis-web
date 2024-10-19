@@ -107,7 +107,8 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
                 <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
                   Driver&apos;s Licence
                 </Text>
-                <FormDatepicker name="driverLicenceExpiryDate" label="Expiration date" />
+                <FormDatepicker name="driverLicenceExpiryDate" label="Expiration date (Regular)" />
+                <FormDatepicker name="professionalDriverLicenceExpiryDate" label="Expiration date (Professional)" />
                 <FormSingleSelect
                   label="Country of issue"
                   name="nationality"
