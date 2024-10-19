@@ -1,8 +1,8 @@
 import {
+  FloatingPortal,
   arrow as arrowMiddleware,
   autoUpdate,
   flip,
-  FloatingPortal,
   offset as offsetPlugin,
   shift,
   useFloating,
@@ -65,7 +65,7 @@ export const Tooltip: React.FC<TooltipProps> = ({ children, content, offset = 10
         right: 'left',
         bottom: 'top',
         left: 'right',
-      }[placement.split('-')[0]]),
+      })[placement.split('-')[0]],
     [placement],
   ) as string;
 
@@ -86,8 +86,8 @@ export const Tooltip: React.FC<TooltipProps> = ({ children, content, offset = 10
         className={clsx('absolute w-[12px] h-[12px] rounded-[2px] rotate-45', TOOLTIP_BG)}
         ref={arrowRef}
         style={{
-          left: !!arrow?.x ? `${arrow?.x}px` : '',
-          top: !!arrow?.y ? `${arrow?.y}px` : '',
+          left: arrow?.x ? `${arrow?.x}px` : '',
+          top: arrow?.y ? `${arrow?.y}px` : '',
           right: '',
           bottom: '',
           [staticSide]: '-5px',
