@@ -73,7 +73,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
             <FormTextInput name="phoneNumber" label="Phone Number" type="tel" />
           </Box>
           <Box>
-            <FormTextInput name="email" label="Email" type="email" />
+            <FormTextInput iconLeft={isEdit ? "LockClosedIcon" : undefined} isDisabled={isEdit} name="email" label="Email" type="email" />
           </Box>
           <FormRadioGroup name="position" label="Position" options={positionOptions} />
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
