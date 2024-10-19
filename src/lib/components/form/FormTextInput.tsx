@@ -19,8 +19,8 @@ export const FormTextInput: React.FC<FormTextInputProps> = ({ name, initialValue
     <TextInputWithLabels
       name={name}
       errorText={error?.message}
-      {...rest}
       isDisabled={isSubmitting}
+      {...rest}
       value={value}
       onBlur={onBlur}
       onChange={onChange}

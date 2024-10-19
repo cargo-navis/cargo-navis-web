@@ -21,7 +21,7 @@ export const employeeSchema = object({
 function whenDriver(schema: Schema) {
   return schema.when('position', {
     is: PositionEnum.Driver,
-    then: (s) => s.optional(),
+    then: (s) => s.optional().nullable(),
     otherwise: (s) => s.nullable(),
   });
 }
