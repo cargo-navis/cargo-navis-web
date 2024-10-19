@@ -117,7 +117,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         size: 80,
         cell: (props) => {
           const adr = props.getValue();
-          if (adr === undefined) return '–';
+          if (adr === null) return '–';
 
           return props.getValue() ? (
             <Icon className="text-green-600" icon="CheckCircleIcon" size="l" />
