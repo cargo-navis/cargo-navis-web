@@ -12,8 +12,10 @@ import { mapToMenuItems } from './utils';
 
 export const AlertMenu = () => {
   const [isOpen, onToggleIsMenuOpen] = useToggle(false);
-  const { data } = useAlerts();
+  const { data, isLoading } = useAlerts();
   const items = getMenuItems(data);
+
+  const areAlertsPresent = !isLoading && !!data && data?.length > 0;
 
   return (
     <Menu
@@ -23,7 +25,7 @@ export const AlertMenu = () => {
       items={items}
       minWidth="200px"
       maxWidth="360px"
-      control={<AlertButton />}
+      control={<AlertButton shouldDisplayIndicator={areAlertsPresent} />}
     />
   );
 };
