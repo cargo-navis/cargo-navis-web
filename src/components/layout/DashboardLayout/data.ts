@@ -9,9 +9,9 @@ export interface NavLink {
 
 export const links: NavLink[] = [
   { name: 'Home', href: '/dashboard', icon: 'HomeIcon' },
-  { name: 'Trucks Capacity', href: '/dashboard/capacity', icon: 'TruckIcon' },
-  { name: 'Shipments', href: '/dashboard/shipments', icon: 'CubeTransparentIcon' },
-  { name: 'Warehouse', href: '/dashboard/warehouses', icon: 'HomeModernIcon' },
+  // { name: 'Trucks Capacity', href: '/dashboard/capacity', icon: 'TruckIcon' }, // TODO
+  // { name: 'Shipments', href: '/dashboard/shipments', icon: 'CubeTransparentIcon' }, // TODO
+  // { name: 'Warehouse', href: '/dashboard/warehouses', icon: 'HomeModernIcon' }, // TODO
   // { name: 'Loading Planer', href: '/loading-planer', icon: HomeIcon }, // TODO
   {
     name: 'Fleet',
@@ -24,7 +24,7 @@ export const links: NavLink[] = [
       { name: 'Vans', href: '/dashboard/fleet/vans', icon: 'ChevronRightIcon' },
     ],
   },
-  { name: 'Assign Trucks', href: '/dashboard/assign-trucks', icon: 'SquaresPlusIcon' },
+  // { name: 'Assign Trucks', href: '/dashboard/assign-trucks', icon: 'SquaresPlusIcon' }, // TODO
   { name: 'Employees', href: '/dashboard/employees', icon: 'UserGroupIcon' },
-  { name: 'Analytics', href: '/dashboard/analytics', icon: 'PresentationChartLineIcon' },
+  // { name: 'Analytics', href: '/dashboard/analytics', icon: 'PresentationChartLineIcon' }, // TODO
 ];
