@@ -1,0 +1,1 @@
+export { RootPage as default, getServerSideProps } from '@/pages-components/RootPage';
