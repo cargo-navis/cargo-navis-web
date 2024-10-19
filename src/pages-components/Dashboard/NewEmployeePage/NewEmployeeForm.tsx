@@ -66,7 +66,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
               <FormTextInput name="lastName" label="Last Name" />
             </Box>
           </Box>
-          <Box className="flex-1">
+          <Box>
             <FormRadioGroup name="gender" label="Gender" options={genderOptions} />
           </Box>
           <Box>
