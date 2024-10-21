@@ -1,4 +1,4 @@
-import { AlertType, Employee, Vehicle } from '@/lib/api';
+import { AlertType, type Employee, type Vehicle } from '@/lib/api';
 
 export const ruleToPropertyMap: Record<AlertType, keyof Employee | keyof Vehicle> = {
   [AlertType.EMPLOYEE_CONTRACT_EXPIRED]: 'contractExpiryDate',

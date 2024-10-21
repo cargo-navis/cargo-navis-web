@@ -1,4 +1,4 @@
-import { Box, Icon, IconType } from '@/ui';
+import { Box, Icon, type IconType } from '@/ui';
 import clsx from 'clsx';
 import type { InputHTMLAttributes } from 'react';
 
@@ -15,7 +15,14 @@ export interface TextInputProps extends DefaultProps {
   onChange: (value: string) => void;
 }
 
-export const TextInput: React.FC<TextInputProps> = ({ isDisabled, type = 'text', value, onChange, iconLeft, ...rest }) => {
+export const TextInput: React.FC<TextInputProps> = ({
+  iconLeft,
+  isDisabled,
+  type = 'text',
+  value,
+  onChange,
+  ...rest
+}) => {
   return (
     <Box
       className={clsx(

@@ -1,7 +1,7 @@
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { ACCESS_TOKEN_KEY } from '@/lib/utils/session';
 import { FlexLayout } from '@/ui';
-import { GetServerSideProps, NextPage } from 'next';
+import type { GetServerSideProps, NextPage } from 'next';
 
 export const RootPage: NextPage = () => {
   return (
@@ -18,5 +18,5 @@ export const getServerSideProps: GetServerSideProps = async ({ req: { cookies } 
   return {
     redirect: { destination: redirectDestination },
     props: {},
-  }
+  };
 };
