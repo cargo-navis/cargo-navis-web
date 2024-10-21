@@ -1,4 +1,4 @@
-import { type Alert, getAlerts, VehicleEnum } from '@/lib/api';
+import { type Alert, type VehicleEnum, getAlerts } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 
 interface UseAlertsArgs<T> {
@@ -17,7 +17,7 @@ export function useAlerts<TData = Alert[]>(args?: UseAlertsArgs<TData>) {
 export function useAlertByVehicleType(vehicleType: VehicleEnum) {
   return useAlerts({
     select: (alerts) => {
-      return alerts.filter(a => a.alertable.type === vehicleType);
+      return alerts.filter((a) => a.alertable.type === vehicleType);
     },
   });
 }
