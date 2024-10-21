@@ -35,8 +35,15 @@ const TooltipListItem: React.FC<{ alert: Alert }> = ({ alert }) => {
   const formattedDate = new Intl.DateTimeFormat('hr-HR', { dateStyle: 'short' }).format(expiryDateString);
 
   return (
-    <Text as="li" color="text-light-50">
-      {text}: <Text variant="text-s-bold">{formattedDate}</Text>
-    </Text>
+    <Box as="li" className="marker:text-light-50">
+      <FlexLayout className="items-center justify-between gap-3">
+        <Text color="text-light-50" variant="text-s">
+          {text}:
+        </Text>
+        <Text color="text-light-50" variant="text-s-bold">
+          {formattedDate}
+        </Text>
+      </FlexLayout>
+    </Box>
   );
 };
