@@ -15,7 +15,8 @@ export const AlertButton = React.forwardRef<any, AlertButtonProps>(({ shouldDisp
         'group relative p-2 justify-center items-center rounded-s isolate',
         'hover:bg-light-50 hover:text-teal-900 cursor-pointer',
         'data-[state=open]:bg-light-50 data-[state=open]:text-teal-900 cursor-pointer',
-        `before:content-[''] before:absolute before:z-20 before:top-[6px] before:right-[8px] before:w-[5px] before:h-[5px] before:rounded-circle before:bg-red-500 before:opacity-0 before:transition before:duration-500`,
+        "before:content-[''] before:absolute before:z-20 before:top-[6px] before:right-[8px] before:w-[5px] before:h-[5px]",
+        'before:rounded-circle before:bg-red-500 before:opacity-0 before:transition before:duration-200',
         shouldDisplayIndicator && 'before:scale-[2] before:opacity-100',
       )}
     >
