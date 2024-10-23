@@ -1,7 +1,7 @@
 import type { Vehicle } from '@/lib/api';
 import { Divider, FlexLayout, Text } from '@/ui';
 
-import { InfoItem } from './InfoItem';
+import { InfoItem } from '@/components/InfoItem';
 
 interface VehicleInfoProps {
   vehicle: Vehicle;

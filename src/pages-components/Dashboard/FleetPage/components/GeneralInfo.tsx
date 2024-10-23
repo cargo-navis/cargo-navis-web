@@ -3,7 +3,7 @@ import { useAlertByVehicleType } from '@/lib/hooks';
 import { ruleToPropertyMap } from '@/pages-components/Dashboard/DashboardPage/components/utils';
 import { Divider, FlexLayout, Text } from '@/ui';
 
-import { InfoItem } from './InfoItem';
+import { InfoItem } from '@/components/InfoItem';
 
 interface GeneralInfoProps {
   vehicle: Vehicle;
@@ -23,7 +23,7 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
   } = vehicle;
 
   const { data } = useAlertByVehicleType(type);
-  const vehicleAlerts = data?.filter((truck) => truck.alertable.id === id);
+  const vehicleAlerts = data?.filter(({ alertable }) => alertable.id === id);
 
   const propertiesWithAlert = vehicleAlerts?.map((va) => ruleToPropertyMap[va.ruleName]);
 
