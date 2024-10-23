@@ -3,6 +3,8 @@ import type { Employee } from '@/lib/api/employees.d';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { Box, DisplayIf, Icon, Text } from '@/ui';
 
+import { EmployeeInfo } from './EmployeeInfo';
+
 import { ContactInfo } from './ContactInfo';
 import { EmployeeActions } from './EmployeeActions';
 
@@ -58,7 +60,8 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
         </Box>
         <EmployeeActions id={employee.id} />
       </Box>
-      <Box className="ml-[116px]">
+      <Box className="ml-4">
+        <EmployeeInfo employee={employee} />
         <DisplayIf condition={employee.position === 'driver'}>
           <DriverProfile employee={employee} />
         </DisplayIf>

@@ -21,3 +21,14 @@ export function useAlertByVehicleType(vehicleType: VehicleEnum) {
     },
   });
 }
+
+export function useEmployeeAlerts() {
+  return useAlerts({
+    select: (alerts) => {
+      return alerts.filter(({ alertable }) => {
+        // TODO - weak logic decision
+        return alertable.hasOwnProperty('email');
+      });
+    },
+  });
+}
