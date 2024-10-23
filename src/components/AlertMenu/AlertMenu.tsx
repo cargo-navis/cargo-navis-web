@@ -4,7 +4,7 @@ import { useToggle } from 'react-use';
 
 import type { Alert } from '@/lib/api';
 import { useAlerts } from '@/lib/hooks';
-import { FlexLayout, Icon, Menu, Text } from '@/ui';
+import { FlexLayout, Icon, LoadingSpinner, Menu, Text } from '@/ui';
 import type { MenuComponent } from '@/ui/components/Menu/types';
 
 import { AlertButton } from './AlertMenuButton';
@@ -12,8 +12,10 @@ import { mapToMenuItems } from './utils';
 
 export const AlertMenu = () => {
   const [isOpen, onToggleIsMenuOpen] = useToggle(false);
-  const { data } = useAlerts();
-  const items = getMenuItems(data);
+  const { data, isLoading } = useAlerts();
+  const items = getMenuItems(data, isLoading);
+
+  const areAlertsPresent = !isLoading && !!data && data?.length > 0;
 
   return (
     <Menu
@@ -23,35 +25,46 @@ export const AlertMenu = () => {
       items={items}
       minWidth="200px"
       maxWidth="360px"
-      control={<AlertButton />}
+      control={<AlertButton shouldDisplayIndicator={areAlertsPresent} />}
     />
   );
 };
 
-function getMenuItems(alerts: Alert[] | undefined) {
+function getMenuItems(alerts: Alert[] | undefined, isLoading: boolean) {
   let items: MenuComponent[];
 
-  if (alerts) {
+  if (alerts && alerts.length > 0) {
     items = mapToMenuItems(alerts);
 
     if (items.length > 4) {
       items = items.splice(0, 4);
       items.push(seeMoreItem);
     }
-  } else {
+  } else if (isLoading) {
     items = [loadingItem];
+  } else {
+    items = [emptyAlertsItem];
   }
 
   return items;
 }
 
+const emptyAlertsItem: MenuComponent = {
+  type: 'custom',
+  Renderer: () => (
+    <FlexLayout className="justify-center items-center p-3">
+      <Text variant="text-s" color="text-color-2">
+        No new Alerts
+      </Text>
+    </FlexLayout>
+  ),
+};
+
 const loadingItem: MenuComponent = {
   type: 'custom',
   Renderer: () => (
     <FlexLayout className="justify-center items-center px-3 py-7">
-      <Text variant="text-s" color="text-color-3">
-        Loading...
-      </Text>
+      <LoadingSpinner />
     </FlexLayout>
   ),
 };

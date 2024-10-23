@@ -1,3 +1,12 @@
+export enum DriverLicenceEnum {
+  B1 = 'B1',
+  B = 'B',
+  C1 = 'C1',
+  C = 'C',
+  C1E = 'C1E',
+  CE = 'CE',
+}
+
 export interface Employee {
   id: string;
   firstName: string;
@@ -9,8 +18,9 @@ export interface Employee {
   governmentId: string;
   adr?: string;
   nationality: string;
-  driverLicenceCategories?: string[]; // TODO - Enum
+  driverLicenceCategories?: DriverLicenceEnum[];
   driverLicenceExpiryDate?: string;
+  professionalDriverLicenceExpiryDate?: string;
   contractExpiryDate?: string;
   medicalExaminationExpiryDate?: string;
   visaExpiryDate?: string;

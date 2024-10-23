@@ -1,7 +1,5 @@
-import { authOptions } from '@/pages/api/auth/[...nextauth]';
 import { FlexLayout, Heading, Text } from '@/ui';
 import type { GetServerSideProps } from 'next';
-import { getServerSession } from 'next-auth';
 import { LoginForm } from './LoginForm';
 
 export const LoginPage = () => {
@@ -30,7 +28,10 @@ export const LoginPage = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const session = await getServerSession(context.req, context.res, authOptions);
+  // const session = await getServerSession(context.req, context.res, authOptions);
+
+  // TODO - redirect if access-token is present
+  const session = null;
 
   if (session) {
     // Redirect to the home page if the user is already logged in

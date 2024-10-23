@@ -1,8 +1,8 @@
 import {
+  FloatingPortal,
   arrow as arrowMiddleware,
   autoUpdate,
   flip,
-  FloatingPortal,
   offset as offsetPlugin,
   shift,
   useFloating,
@@ -24,8 +24,8 @@ const motionTransition = { type: 'spring', damping: 20, stiffness: 300 };
 const TOOLTIP_BG = 'bg-dark-800 dark:bg-light-800';
 
 export interface TooltipProps {
-  children: JSX.Element;
-  content: JSX.Element;
+  children: React.ReactElement;
+  content: React.ReactElement;
   offset?: number;
   isPortal?: boolean;
 }
@@ -39,8 +39,6 @@ export const Tooltip: React.FC<TooltipProps> = ({ children, content, offset = 10
     y,
     placement,
     refs,
-    // reference,
-    // floating,
     strategy,
     context,
     middlewareData: { arrow },
@@ -65,7 +63,7 @@ export const Tooltip: React.FC<TooltipProps> = ({ children, content, offset = 10
         right: 'left',
         bottom: 'top',
         left: 'right',
-      }[placement.split('-')[0]]),
+      })[placement.split('-')[0]],
     [placement],
   ) as string;
 
@@ -75,7 +73,6 @@ export const Tooltip: React.FC<TooltipProps> = ({ children, content, offset = 10
       className={clsx('p-1 z-[600] rounded-[10px] text-xxs font-semibold', TOOLTIP_BG)}
       exit={{ opacity: 0 }}
       initial={{ opacity: 0 }}
-      // ref={floating}
       ref={refs.setFloating}
       style={{ position: strategy, top: y ?? 0, left: x ?? 0 }}
       transition={motionTransition}
@@ -86,8 +83,8 @@ export const Tooltip: React.FC<TooltipProps> = ({ children, content, offset = 10
         className={clsx('absolute w-[12px] h-[12px] rounded-[2px] rotate-45', TOOLTIP_BG)}
         ref={arrowRef}
         style={{
-          left: !!arrow?.x ? `${arrow?.x}px` : '',
-          top: !!arrow?.y ? `${arrow?.y}px` : '',
+          left: arrow?.x ? `${arrow?.x}px` : '',
+          top: arrow?.y ? `${arrow?.y}px` : '',
           right: '',
           bottom: '',
           [staticSide]: '-5px',

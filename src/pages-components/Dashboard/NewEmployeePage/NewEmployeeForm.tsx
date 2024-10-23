@@ -66,14 +66,20 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
               <FormTextInput name="lastName" label="Last Name" />
             </Box>
           </Box>
-          <Box className="flex-1">
+          <Box>
             <FormRadioGroup name="gender" label="Gender" options={genderOptions} />
           </Box>
           <Box>
             <FormTextInput name="phoneNumber" label="Phone Number" type="tel" />
           </Box>
           <Box>
-            <FormTextInput name="email" label="Email" type="email" />
+            <FormTextInput
+              name="email"
+              label="Email"
+              type="email"
+              iconLeft={isEdit ? 'LockClosedIcon' : undefined}
+              isDisabled={isEdit}
+            />
           </Box>
           <FormRadioGroup name="position" label="Position" options={positionOptions} />
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
@@ -107,7 +113,8 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
                 <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
                   Driver&apos;s Licence
                 </Text>
-                <FormDatepicker name="driverLicenceExpiryDate" label="Expiration date" />
+                <FormDatepicker name="driverLicenceExpiryDate" label="Expiration date (Regular)" />
+                <FormDatepicker name="professionalDriverLicenceExpiryDate" label="Expiration date (Professional)" />
                 <FormSingleSelect
                   label="Country of issue"
                   name="nationality"

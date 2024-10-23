@@ -1,4 +1,5 @@
-import type { Vehicle } from '@/lib/api/vehicles.d';
+import { VehicleAlertTooltip } from '@/components/alerts/VehicleAlertTooltip';
+import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles.d';
 import { Box, FlexLayout, Table, Text } from '@/ui';
 import { createColumnHelper } from '@tanstack/react-table';
 import Link from 'next/link';
@@ -19,9 +20,12 @@ export const TrailersTable = ({ trailers }: { trailers: Vehicle[] }) => {
           return (
             <Link href={`/dashboard/fleet/trailers/${id}`}>
               <FlexLayout className="flex-col py-3 pl-3">
-                <Text className="text-color-1 group-hover/cell:text-teal-600" variant="text-m-bold">
-                  {registration}
-                </Text>
+                <FlexLayout className="gap-3 items-center">
+                  <Text className="text-color-1 group-hover/cell:text-teal-600" variant="text-m-bold">
+                    {registration}
+                  </Text>
+                  <VehicleAlertTooltip id={id} type={VehicleEnum.TRAILER} />
+                </FlexLayout>
                 <Text className="text-color-3 group-hover/cell:text-teal-600">{brand}</Text>
               </FlexLayout>
             </Link>

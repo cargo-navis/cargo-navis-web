@@ -1,10 +1,13 @@
+import { AlertsTooltip } from '@/components/alerts/AlertsTooltip';
+import { useAlerts } from '@/lib/hooks';
 import { createColumnHelper } from '@tanstack/react-table';
+import groupBy from 'lodash/groupBy';
 import Link from 'next/link';
 import { useMemo } from 'react';
 
 import type { Employee } from '@/lib/api/employees.d';
 import { copyToClipboard } from '@/lib/utils/clipboard';
-import { Box, Icon, Table, Text } from '@/ui';
+import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
 
 import { CategoryLabel } from './CategoryLabel';
 
@@ -13,6 +16,9 @@ import { OccupationPill } from './OccupationPill';
 const columnHelper = createColumnHelper<Employee>();
 
 export function EmployeesTable({ employees }: { employees?: Employee[] }) {
+  const { data } = useAlerts({ select: (alerts) => alerts.filter((a) => !!a.alertable?.email) });
+  const groupedAlerts = groupBy(data || [], 'alertable.id');
+
   const columns = useMemo(() => {
     return [
       columnHelper.display({
@@ -26,9 +32,9 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           return (
             <Link href={`/dashboard/employees/${id}`}>
               <Box className="py-3 pl-3">
-                <Box className="flex items-center justify-center w-[50px] h-[50px] rounded-circle bg-teal-900">
+                <FlexLayout className="items-center justify-center w-[50px] h-[50px] rounded-circle bg-teal-900">
                   <Text className="text-light-50 group-hover/cell:text-teal-600">{fName[0] + lName[0]}</Text>
-                </Box>
+                </FlexLayout>
               </Box>
             </Link>
           );
@@ -42,15 +48,24 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           const name = props.getValue();
           const { position, id } = props.row.original;
 
+          const employeeAlerts = groupedAlerts[id];
+
           return (
             <Link href={`/dashboard/employees/${id}`}>
               <Box className="py-3">
-                <Box className="flex flex-col gap-1">
-                  <Text className="group-hover/cell:text-teal-600" color="text-color-1" variant="text-m-bold">
-                    {name}
-                  </Text>
+                <FlexLayout className="flex-col gap-1">
+                  <FlexLayout className="gap-3 items-center">
+                    <Text className="group-hover/cell:text-teal-600" color="text-color-1" variant="text-m-bold">
+                      {name}
+                    </Text>
+                    {employeeAlerts && (
+                      <AlertsTooltip alerts={employeeAlerts}>
+                        <Icon icon="ExclamationTriangleIcon" size="l" color="text-red-500" />
+                      </AlertsTooltip>
+                    )}
+                  </FlexLayout>
                   <OccupationPill occupation={position} text={position} size="s" />
-                </Box>
+                </FlexLayout>
               </Box>
             </Link>
           );
@@ -117,7 +132,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         size: 80,
         cell: (props) => {
           const adr = props.getValue();
-          if (adr === undefined) return '–';
+          if (adr === null) return '–';
 
           return props.getValue() ? (
             <Icon className="text-green-600" icon="CheckCircleIcon" size="l" />
@@ -128,7 +143,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         header: 'ADR',
       }),
     ];
-  }, []);
+  }, [groupedAlerts]);
 
   return <Table data={employees} columns={columns} />;
 }

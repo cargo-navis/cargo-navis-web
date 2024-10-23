@@ -11,6 +11,7 @@ export const employeeSchema = object({
   driverLicenceCategories: whenDriver(array(string())),
   adr: whenDriver(boolean()),
   driverLicenceExpiryDate: whenDriver(string()),
+  professionalDriverLicenceExpiryDate: whenDriver(string()),
   nationality: whenDriver(string()),
   contractExpiryDate: whenDriver(string()),
   medicalExaminationExpiryDate: whenDriver(string()),
@@ -20,7 +21,7 @@ export const employeeSchema = object({
 function whenDriver(schema: Schema) {
   return schema.when('position', {
     is: PositionEnum.Driver,
-    then: (s) => s.optional(),
+    then: (s) => s.optional().nullable(),
     otherwise: (s) => s.nullable(),
   });
 }

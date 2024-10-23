@@ -12,6 +12,7 @@ export enum AlertType {
 }
 
 export interface Alert {
+  id: string;
   ruleName: AlertType;
   alertable: any;
 }

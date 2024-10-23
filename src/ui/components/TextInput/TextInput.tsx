@@ -1,4 +1,4 @@
-import { Box } from '@/ui';
+import { Box, Icon, type IconType } from '@/ui';
 import clsx from 'clsx';
 import type { InputHTMLAttributes } from 'react';
 
@@ -8,23 +8,38 @@ type DefaultProps = Pick<
 >;
 
 export interface TextInputProps extends DefaultProps {
-  isDisabled?: boolean;
   value: string;
+  iconLeft?: IconType;
+  isDisabled?: boolean;
   type?: 'text' | 'email' | 'password' | 'tel' | 'number' | 'url';
   onChange: (value: string) => void;
 }
 
-export const TextInput: React.FC<TextInputProps> = ({ isDisabled, type = 'text', value, onChange, ...rest }) => {
+export const TextInput: React.FC<TextInputProps> = ({
+  iconLeft,
+  isDisabled,
+  type = 'text',
+  value,
+  onChange,
+  ...rest
+}) => {
   return (
     <Box
       className={clsx(
+        'relative',
         'border-[2px] rounded-s border-dark-300 dark:border-light-800',
         'hover:enabled:border-dark-500 hover:enabled:dark:border-light-700',
         'focus-within:!border-teal-600 dark:focus-within:!border-teal-800',
+        iconLeft && 'pl-6 pr-3',
         isDisabled && 'opacity-50',
       )}
       isDisabled={isDisabled}
     >
+      {iconLeft && (
+        <Box className="absolute z-20 left-3 top-3">
+          <Icon color="text-dark-600 dark:text-light-300" icon={iconLeft} {...rest} />
+        </Box>
+      )}
       <Box
         as="input"
         isDisabled={isDisabled}
