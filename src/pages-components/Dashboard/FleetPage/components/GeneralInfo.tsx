@@ -1,4 +1,6 @@
 import type { Vehicle } from '@/lib/api';
+import { useAlertByVehicleType } from '@/lib/hooks';
+import { ruleToPropertyMap } from '@/pages-components/Dashboard/DashboardPage/components/utils';
 import { Divider, FlexLayout, Text } from '@/ui';
 
 import { InfoItem } from './InfoItem';
@@ -9,6 +11,8 @@ interface GeneralInfoProps {
 
 export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
   const {
+    id,
+    type,
     brand,
     manufacturingYear,
     numberOfAxles,
@@ -17,6 +21,11 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
     registrationExpiryDate,
     emptyWeight,
   } = vehicle;
+
+  const { data } = useAlertByVehicleType(type);
+  const vehicleAlerts = data?.filter((truck) => truck.alertable.id === id);
+
+  const propertiesWithAlert = vehicleAlerts?.map((va) => ruleToPropertyMap[va.ruleName]);
 
   const formattedRegistrationDate = new Date(registrationDate).toLocaleDateString('en-US', {
     year: 'numeric',
@@ -46,7 +55,11 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
       <FlexLayout className="flex-col gap-3">
         <InfoItem label="Registration Plate" value={registration} />
         <InfoItem label="Registration Date" value={formattedRegistrationDate} />
-        <InfoItem label="Registration Expires" value={formattedRegistrationExpiryDate} />
+        <InfoItem
+          label="Registration Expires"
+          value={formattedRegistrationExpiryDate}
+          isAlert={propertiesWithAlert?.includes('registrationExpiryDate')}
+        />
       </FlexLayout>
     </FlexLayout>
   );
