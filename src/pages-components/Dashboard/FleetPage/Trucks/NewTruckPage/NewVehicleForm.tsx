@@ -1,5 +1,5 @@
 import 'dayjs/locale/hr';
-import { Vehicle } from '@/lib/api';
+import type { Vehicle } from '@/lib/api';
 import { FormSingleSelect } from '@/lib/components/form/FormSingleSelect';
 import { FormProvider, useForm } from 'react-hook-form';
 
@@ -7,12 +7,12 @@ import '@mantine/dates/styles.css';
 import { FormDatepicker, FormTextInput } from '@/lib/components/form';
 import { Box, Button, FlexLayout, Text } from '@/ui';
 
-import { formDefaultValues, vehicleModelOptions } from './const';
+import { emissionStandardOptions, formDefaultValues, truckFormDefaultValues, vehicleModelOptions } from './const';
 
 export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => {
   const isEdit = !!vehicle;
 
-  const defaultValues = vehicle ? { ...vehicle } : formDefaultValues;
+  const defaultValues = vehicle ? { ...vehicle } : { ...formDefaultValues, ...truckFormDefaultValues };
 
   const formMethods = useForm({
     defaultValues,
@@ -31,7 +31,10 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => 
   return (
     <FormProvider {...formMethods}>
       <FlexLayout as="form" className="gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
-        <FlexLayout className="flex-col gap-4 w-[480px]">
+        <FlexLayout as="fieldset" className="flex-col gap-4 w-[480px]">
+          <Text color="text-color-2" variant="text-m-medium">
+            General Info
+          </Text>
           <FlexLayout className="gap-4">
             <Box className="flex-1">
               <FormSingleSelect
@@ -46,8 +49,9 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => 
             <Box className="flex-1">
               {/* TODO - create new Yearpicker UI and form component */}
               <FormDatepicker name="manufacturingYear" label="Manufacturing Year" />
-             </Box>
+            </Box>
           </FlexLayout>
+          <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Box>
             <FormTextInput name="registration" label="Registration plate" />
           </Box>
@@ -59,12 +63,13 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => 
               <FormDatepicker name="registrationExpiryDate" label="Registration expiry date" />
             </Box>
           </FlexLayout>
+          <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <FlexLayout className="gap-4">
             <Box className="flex-grow">
-              <FormTextInput name="emptyWeight" label="Curb Weight" type="number"/>
+              <FormTextInput name="emptyWeight" label="Curb Weight" type="number" min="0" />
             </Box>
             <Box className="flex-grow">
-              <FormTextInput name="numberOfAxles" label="Number of Axels" type="number"/>
+              <FormTextInput name="numberOfAxles" label="Number of Axels" type="number" min="0" />
             </Box>
           </FlexLayout>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
@@ -75,7 +80,40 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => 
             isLoading={formState.isSubmitting}
           />
         </FlexLayout>
+        <VehicleInfoForm />
       </FlexLayout>
     </FormProvider>
   );
 };
+
+function VehicleInfoForm() {
+  return (
+    <FlexLayout as="fieldset" className="flex-col gap-4 w-[480px]">
+      <Text color="text-color-2" variant="text-m-medium">
+        Vehicle Info
+      </Text>
+      <FlexLayout className="gap-4">
+        <Box>
+          <FormTextInput name="enginePower" label="Engine Power (kW)" type="number" min="0" />
+        </Box>
+        <Box className="flex-1">
+          <FormSingleSelect
+            label="Engine Type"
+            name="emissionStandard"
+            isSearchable
+            isClearable
+            options={emissionStandardOptions}
+            placeholder="Select engine type..."
+          />
+        </Box>
+      </FlexLayout>
+      <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
+      <Box>
+        <FormTextInput name="tankSize" label="Tank Size (Liters)" type="number" min="0" />
+      </Box>
+      <Box>
+        <FormTextInput name="averageFuelConsumption" label="Fuel Consumption (l/100km)" type="number" min="0" />
+      </Box>
+    </FlexLayout>
+  );
+}
