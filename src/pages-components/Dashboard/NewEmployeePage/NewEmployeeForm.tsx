@@ -60,28 +60,28 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
         <Box className="flex flex-col gap-4 w-[480px]">
           <Box className="flex gap-4">
             <Box className="flex-grow">
-              <FormTextInput name="firstName" label="First Name" />
+              <FormTextInput name="firstName" label="First Name *" />
             </Box>
             <Box className="flex-grow">
-              <FormTextInput name="lastName" label="Last Name" />
+              <FormTextInput name="lastName" label="Last Name *" />
             </Box>
           </Box>
           <Box>
             <FormRadioGroup name="gender" label="Gender" options={genderOptions} />
           </Box>
           <Box>
-            <FormTextInput name="phoneNumber" label="Phone Number" type="tel" />
+            <FormTextInput name="phoneNumber" label="Phone Number *" type="tel" />
           </Box>
           <Box>
             <FormTextInput
               name="email"
-              label="Email"
+              label="Email *"
               type="email"
               iconLeft={isEdit ? 'LockClosedIcon' : undefined}
               isDisabled={isEdit}
             />
           </Box>
-          <FormRadioGroup name="position" label="Position" options={positionOptions} />
+          <FormRadioGroup name="position" label="Position *" options={positionOptions} />
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Button
             text={isEdit ? 'Update Employee' : 'Create Employee'}
