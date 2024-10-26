@@ -38,6 +38,17 @@ export interface Dimensions {
   id: string;
 }
 
+export enum EmissionStandard {
+  Euro1 = 'EURO1',
+  Euro2 = 'EURO2',
+  Euro3 = 'EURO3',
+  Euro4 = 'EURO4',
+  Euro5 = 'EURO5',
+  Euro6 = 'EURO6',
+  Euro7 = 'EURO7',
+  Euro8 = 'EURO8',
+}
+
 export enum VehicleLoadEnum {
   FURGON = 'furgon',
   CISTERN = 'cistern',
