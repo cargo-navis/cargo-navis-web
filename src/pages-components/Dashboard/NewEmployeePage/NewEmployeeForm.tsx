@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import type { Employee } from '@/lib/api/employees.d';
+import { DriverLicenceEnum, Employee } from '@/lib/api/employees.d';
 import '@mantine/dates/styles.css';
 import { FormCheckboxGroup, FormDatepicker, FormRadioGroup, FormTextInput } from '@/lib/components/form';
 import { Box, Button, Text } from '@/ui';
@@ -109,22 +109,30 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
                 </Box>
               </Box>
               <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
-              <Box className="flex flex-col gap-2">
-                <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
-                  Driver&apos;s Licence
-                </Text>
-                <FormDatepicker name="driverLicenceExpiryDate" label="Expiration date (Regular)" />
-                <FormDatepicker name="professionalDriverLicenceExpiryDate" label="Expiration date (Professional)" />
-                <FormSingleSelect
-                  label="Country of issue"
-                  name="nationality"
-                  isSearchable
-                  isClearable
-                  options={countryOptions}
-                  placeholder="Select country..."
-                />
-              </Box>
-              <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
+              {values.driverLicenceCategories && !!values.driverLicenceCategories.length && (
+                <>
+                  <Box className="flex flex-col gap-2">
+                    <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
+                      Driver&apos;s Licence
+                    </Text>
+                    {values.driverLicenceCategories.some((cat: DriverLicenceEnum) => [DriverLicenceEnum.B, DriverLicenceEnum.B1].includes(cat)) &&
+                      <FormDatepicker name="driverLicenceExpiryDate" label="Expiration date (Regular)" />
+                    }
+                    {values.driverLicenceCategories.some((cat: DriverLicenceEnum) => [DriverLicenceEnum.C1, DriverLicenceEnum.C, DriverLicenceEnum.C1E, DriverLicenceEnum.CE].includes(cat)) &&
+                      <FormDatepicker name="professionalDriverLicenceExpiryDate" label="Expiration date (Professional)" />
+                    }
+                    <FormSingleSelect
+                      label="Country of issue"
+                      name="nationality"
+                      isSearchable
+                      isClearable
+                      options={countryOptions}
+                      placeholder="Select country..."
+                    />
+                  </Box>
+                  <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
+                </>
+              )}
               <Box className="flex flex-col gap-2">
                 <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
                   Employment Contract
