@@ -20,7 +20,7 @@ export const RadioGroup: React.FC<RadioGroupProps> = ({ isDisabled, value, optio
       {...rest}
     >
       {options.map((option) => (
-        <Radio isDisabled={isDisabled} option={option} key={option.value} />
+        <Radio isDisabled={isDisabled} option={option} key={option.value as string} />
       ))}
     </HeadlessRadioGroup>
   );
