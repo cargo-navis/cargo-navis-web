@@ -34,9 +34,9 @@ export const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
         <Icon icon="ExclamationTriangleIcon" size="l" color="text-red-500 dark:text-red-300" className="mt-[1px]" />
         <FlexLayout className="flex-col grow gap-1">
           {descriptionNode}
-          <Text color="text-color-2" variant="text-m">
+          <Text color="text-color-2" variant="text-s">
             Datum isteka:{' '}
-            <Text variant="text-m-bold" color="text-color-1">
+            <Text variant="text-s-bold" color="text-color-1">
               {formattedDate}
             </Text>
           </Text>

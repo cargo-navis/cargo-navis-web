@@ -1,19 +1,16 @@
 import { AlertMenu } from '@/components/AlertMenu';
 import { clearAuthCookies } from '@/lib/utils/session';
 import { Box, Divider, FlexLayout, Heading, Icon, Text } from '@/ui';
-import { useRouter } from 'next/router';
 import { NavItem } from './NavItem';
 import { links } from './data';
 
 export function Sidebar() {
-  const { push } = useRouter();
-
   function handleSignOut() {
     const answer = confirm('Are you sure you want to sign out?');
     if (!answer) return;
 
     clearAuthCookies();
-    push('/login');
+    window.location.pathname = '/login';
   }
 
   return (

@@ -6,7 +6,7 @@ export const employeeSchema = object({
   lastName: string().required('Last name is required'),
   position: string<PositionEnum>().required('Position is required'),
   email: string().email('Email must be valid').required('Email is required'),
-  phoneNumber: string(),
+  phoneNumber: string().required('Phone number is required'),
   governmentId: whenDriver(string()),
   driverLicenceCategories: whenDriver(array(string())),
   adr: whenDriver(boolean()),
