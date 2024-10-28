@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import { DriverLicenceEnum, Employee } from '@/lib/api/employees.d';
+import { DriverLicenceEnum, type Employee } from '@/lib/api/employees.d';
 import '@mantine/dates/styles.css';
 import { FormCheckboxGroup, FormDatepicker, FormRadioGroup, FormTextInput } from '@/lib/components/form';
 import { Box, Button, Text } from '@/ui';
@@ -115,12 +115,19 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
                     <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
                       Driver&apos;s Licence
                     </Text>
-                    {values.driverLicenceCategories.some((cat: DriverLicenceEnum) => [DriverLicenceEnum.B, DriverLicenceEnum.B1].includes(cat)) &&
-                      <FormDatepicker name="driverLicenceExpiryDate" label="Expiration date (Regular)" />
-                    }
-                    {values.driverLicenceCategories.some((cat: DriverLicenceEnum) => [DriverLicenceEnum.C1, DriverLicenceEnum.C, DriverLicenceEnum.C1E, DriverLicenceEnum.CE].includes(cat)) &&
-                      <FormDatepicker name="professionalDriverLicenceExpiryDate" label="Expiration date (Professional)" />
-                    }
+                    {values.driverLicenceCategories.some((cat: DriverLicenceEnum) =>
+                      [DriverLicenceEnum.B, DriverLicenceEnum.B1].includes(cat),
+                    ) && <FormDatepicker name="driverLicenceExpiryDate" label="Expiration date (Regular)" />}
+                    {values.driverLicenceCategories.some((cat: DriverLicenceEnum) =>
+                      [DriverLicenceEnum.C1, DriverLicenceEnum.C, DriverLicenceEnum.C1E, DriverLicenceEnum.CE].includes(
+                        cat,
+                      ),
+                    ) && (
+                      <FormDatepicker
+                        name="professionalDriverLicenceExpiryDate"
+                        label="Expiration date (Professional)"
+                      />
+                    )}
                     <FormSingleSelect
                       label="Country of issue"
                       name="nationality"
