@@ -149,9 +149,6 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
           </>
         )}
       </Box>
-      {/*<Box as="pre" className="absolute right-[600px] text-color-2">*/}
-      {/*  {JSON.stringify(values, null, 2)}*/}
-      {/*</Box>*/}
     </FormProvider>
   );
 };
