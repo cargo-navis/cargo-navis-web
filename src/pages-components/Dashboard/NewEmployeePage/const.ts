@@ -15,12 +15,12 @@ export const positionOptions: PositionOption[] = [
 
 interface AdrOption extends RadioOption {
   label: string;
-  value: 'true' | 'false';
+  value: boolean;
 }
 
 export const adrOptions: AdrOption[] = [
-  { label: 'Yes', value: 'true' },
-  { label: 'No', value: 'false' },
+  { label: 'Yes', value: true },
+  { label: 'No', value: false },
 ];
 
 export const genderOptions: RadioOption[] = [

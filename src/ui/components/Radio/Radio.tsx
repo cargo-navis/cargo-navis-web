@@ -4,7 +4,7 @@ import { Box, Text } from '@/ui';
 import clsx from 'clsx';
 
 export type RadioOption = {
-  value: string;
+  value: string | boolean;
   label: string;
 };
 
