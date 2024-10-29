@@ -1,5 +1,5 @@
-import { type Vehicle, VehicleEnum, getVehicles } from '@/lib/api';
-import { useQuery } from '@tanstack/react-query';
+import { type Vehicle, VehicleEnum, createVehicle, getVehicles } from '@/lib/api';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface UseVehicleArgs<T> {
   select?: (vehicles: Vehicle[]) => T;
@@ -46,4 +46,14 @@ export function useSolos() {
 export function useVans() {
   const { data: vans, ...rest } = useVehicles({ type: VehicleEnum.VAN });
   return { vans, ...rest };
+}
+
+export function useCreateVehicle() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createVehicle,
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ['vehicles'], type: 'all' });
+    },
+  });
 }

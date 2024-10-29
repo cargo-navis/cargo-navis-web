@@ -8,3 +8,7 @@ export async function getVehicles() {
 export async function getVehicle(id: string) {
   // Get single vehicle
 }
+
+export async function createVehicle(data: any) {
+  return backend.post<Vehicle>('/api/fleet', data);
+}
