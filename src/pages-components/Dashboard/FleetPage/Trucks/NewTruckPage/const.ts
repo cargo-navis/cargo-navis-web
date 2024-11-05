@@ -28,17 +28,19 @@ export const emissionStandardOptions: SelectOption[] = [
 
 export const formDefaultValues = {
   brand: '',
-  manufacturingYear: '',
+  manufacturingYear: 0,
   registration: '',
   registrationDate: undefined as unknown as string,
   registrationExpiryDate: undefined as unknown as string,
-  emptyWeight: '',
-  numberOfAxles: '',
+  emptyWeight: 0,
+  numberOfAxles: 0,
+  technicalInspectionExpiryDate: undefined as unknown as string,
 };
 
 export const truckFormDefaultValues = {
-  enginePower: '',
+  enginePower: 0,
   emissionStandard: EmissionStandard.Euro1,
-  tankSize: '',
-  averageFuelConsumption: '',
+  tankSize: 0,
+  averageFuelConsumption: 0,
+  technicalInspectionExpiryDate: undefined as unknown as string,
 };

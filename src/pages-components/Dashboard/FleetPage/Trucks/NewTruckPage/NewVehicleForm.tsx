@@ -26,9 +26,6 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => 
     mode: 'all',
   });
 
-  // TODO - Next TODO
-  //  3. add validation schema
-
   const { handleSubmit, formState } = formMethods;
   const { isDirty, isValid } = formState;
 
