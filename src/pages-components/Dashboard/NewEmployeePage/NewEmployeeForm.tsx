@@ -1,5 +1,6 @@
 import 'dayjs/locale/hr';
 import { yupResolver } from '@hookform/resolvers/yup';
+import type { AxiosError } from 'axios';
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -55,7 +56,14 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
         await push('/dashboard/employees');
       }
     } catch (error: any) {
-      alert(`Error with form submit. ${error?.message}`);
+      const emailTakenException = 'com.scalesoft.cargonavis.domain.EmailAlreadyExistException';
+      const errorMessage = error?.response?.data?.error;
+
+      if (errorMessage === emailTakenException) {
+        alert(`Korisnik s email adresom "${values.email}" već postoji`);
+      } else {
+        alert(`Error with form submit. ${error?.message}`);
+      }
     }
   }
 

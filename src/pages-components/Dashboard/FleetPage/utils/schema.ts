@@ -1,4 +1,4 @@
-import { object, string, number } from 'yup';
+import { number, object, string } from 'yup';
 
 export const vehicleSchema = object({
   brand: string().required('Brand is required'),
