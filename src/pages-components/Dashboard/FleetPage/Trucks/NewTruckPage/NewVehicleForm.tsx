@@ -1,40 +1,43 @@
 import 'dayjs/locale/hr';
 import { type Vehicle, VehicleEnum } from '@/lib/api';
 import { useCreateVehicle } from '@/lib/hooks';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import '@mantine/dates/styles.css';
 import { FormDatepicker, FormSingleSelect, FormTextInput, FormYearpicker } from '@/lib/components/form';
 import { Box, Button, FlexLayout, Text } from '@/ui';
 
+import { vehicleSchema } from '../../utils/schema';
 import { emissionStandardOptions, formDefaultValues, truckFormDefaultValues, vehicleModelOptions } from './const';
 
 export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => {
   const isEdit = !!vehicle;
 
+  const { push } = useRouter();
   const { mutateAsync: createVehicle } = useCreateVehicle();
 
-  const defaultValues: any = vehicle ? { ...vehicle } : { ...formDefaultValues, ...truckFormDefaultValues };
+  const defaultValues = vehicle ? { ...vehicle } : { ...formDefaultValues, ...truckFormDefaultValues };
 
   const formMethods = useForm({
     defaultValues,
-    // resolver: yupResolver(employeeSchema),
+    resolver: yupResolver(vehicleSchema),
     mode: 'all',
   });
 
   // TODO - Next TODO
   //  3. add validation schema
 
-  const { watch, handleSubmit, formState } = formMethods;
+  const { handleSubmit, formState } = formMethods;
   const { isDirty, isValid } = formState;
-  // const values = watch();
 
   async function handleFormSubmit(data: any) {
-    console.log(data);
     try {
       await createVehicle({ type: VehicleEnum.TRUCK, ...data });
-    } catch (e) {
-      console.log('NIJE DOBRO');
+      await push('/dashboard/fleet/trucks');
+    } catch (error: any) {
+      alert(`Error with form submit. ${error?.message}`);
     }
   }
 
