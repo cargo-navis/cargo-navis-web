@@ -1,5 +1,4 @@
 import 'dayjs/locale/hr';
-import { FormSingleSelect } from '@/lib/components/form/FormSingleSelect';
 import { yupResolver } from '@hookform/resolvers/yup';
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
@@ -7,7 +6,13 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 import { DriverLicenceEnum, type Employee } from '@/lib/api/employees.d';
 import '@mantine/dates/styles.css';
-import { FormCheckboxGroup, FormDatepicker, FormRadioGroup, FormTextInput } from '@/lib/components/form';
+import {
+  FormCheckboxGroup,
+  FormDatepicker,
+  FormRadioGroup,
+  FormSingleSelect,
+  FormTextInput,
+} from '@/lib/components/form';
 import { Box, Button, Text } from '@/ui';
 
 import { useCreateEmployee, useUpdateEmployee } from '@/lib/hooks';

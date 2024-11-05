@@ -1,10 +1,10 @@
 import 'dayjs/locale/hr';
-import type { Vehicle } from '@/lib/api';
-import { FormSingleSelect } from '@/lib/components/form/FormSingleSelect';
+import { type Vehicle, VehicleEnum } from '@/lib/api';
+import { useCreateVehicle } from '@/lib/hooks';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import '@mantine/dates/styles.css';
-import { FormDatepicker, FormTextInput } from '@/lib/components/form';
+import { FormDatepicker, FormSingleSelect, FormTextInput, FormYearpicker } from '@/lib/components/form';
 import { Box, Button, FlexLayout, Text } from '@/ui';
 
 import { emissionStandardOptions, formDefaultValues, truckFormDefaultValues, vehicleModelOptions } from './const';
@@ -12,7 +12,9 @@ import { emissionStandardOptions, formDefaultValues, truckFormDefaultValues, veh
 export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => {
   const isEdit = !!vehicle;
 
-  const defaultValues = vehicle ? { ...vehicle } : { ...formDefaultValues, ...truckFormDefaultValues };
+  const { mutateAsync: createVehicle } = useCreateVehicle();
+
+  const defaultValues: any = vehicle ? { ...vehicle } : { ...formDefaultValues, ...truckFormDefaultValues };
 
   const formMethods = useForm({
     defaultValues,
@@ -20,12 +22,20 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => 
     mode: 'all',
   });
 
+  // TODO - Next TODO
+  //  3. add validation schema
+
   const { watch, handleSubmit, formState } = formMethods;
   const { isDirty, isValid } = formState;
-  const values = watch();
+  // const values = watch();
 
   async function handleFormSubmit(data: any) {
     console.log(data);
+    try {
+      await createVehicle({ type: VehicleEnum.TRUCK, ...data });
+    } catch (e) {
+      console.log('NIJE DOBRO');
+    }
   }
 
   return (
@@ -47,8 +57,7 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => 
               />
             </Box>
             <Box className="flex-1">
-              {/* TODO - create new Yearpicker UI and form component */}
-              <FormDatepicker name="manufacturingYear" label="Manufacturing Year" />
+              <FormYearpicker name="manufacturingYear" label="Manufacturing Year" />
             </Box>
           </FlexLayout>
           <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
@@ -60,7 +69,7 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => 
               <FormDatepicker name="registrationDate" label="Registration date" />
             </Box>
             <Box className="flex-grow">
-              <FormDatepicker name="registrationExpiryDate" label="Registration expiry date" />
+              <FormDatepicker name="registrationExpiryDate" label="Registration - Expiry date" />
             </Box>
           </FlexLayout>
           <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
@@ -113,6 +122,18 @@ function VehicleInfoForm() {
       </Box>
       <Box>
         <FormTextInput name="averageFuelConsumption" label="Fuel Consumption (l/100km)" type="number" min="0" />
+      </Box>
+      <Box>
+        <FormDatepicker name="tachographExpiryDate" label="Techograph - Expiry date" />
+      </Box>
+      <Box>
+        <FormDatepicker name="fireExtinguisherCheckExpiryDate" label="Fire Extinguisher - Expiry date" />
+      </Box>
+      <Box>
+        <FormDatepicker name="technicalInspectionExpiryDate" label="Techical Inspection - Expiry date" />
+      </Box>
+      <Box>
+        <FormDatepicker name="adrExpiryDate" label="ADR - Expiry date" />
       </Box>
     </FlexLayout>
   );
