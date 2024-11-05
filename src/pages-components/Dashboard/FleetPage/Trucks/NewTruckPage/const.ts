@@ -2,17 +2,17 @@ import { EmissionStandard } from '@/lib/api';
 import type { SelectOption } from '@/ui';
 
 export const vehicleModelOptions: SelectOption[] = [
-  { value: 'volvo', label: 'Volvo' },
-  { value: 'mercedes', label: 'Mercedes-Benz' },
-  { value: 'scania', label: 'Scania' },
-  { value: 'man', label: 'MAN' },
-  { value: 'daf', label: 'DAF' },
-  { value: 'iveco', label: 'Iveco' },
-  { value: 'kenworth', label: 'Kenworth' },
-  { value: 'international', label: 'International' },
-  { value: 'western_star', label: 'Western Star' },
-  { value: 'renault', label: 'Renault Trucks' },
-  { value: 'fuso', label: 'Mitsubishi Fuso' },
+  { value: 'Volvo', label: 'Volvo' },
+  { value: 'Mercedes-Benz', label: 'Mercedes-Benz' },
+  { value: 'Scania', label: 'Scania' },
+  { value: 'MAN', label: 'MAN' },
+  { value: 'DAF', label: 'DAF' },
+  { value: 'Iveco', label: 'Iveco' },
+  { value: 'Kenworth', label: 'Kenworth' },
+  { value: 'International', label: 'International' },
+  { value: 'Western Star', label: 'Western Star' },
+  { value: 'Renault Trucks', label: 'Renault Trucks' },
+  { value: 'Mitsubishi Fuso', label: 'Mitsubishi Fuso' },
 ];
 
 export const emissionStandardOptions: SelectOption[] = [
