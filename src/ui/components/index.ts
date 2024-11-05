@@ -16,3 +16,4 @@ export * from './Table';
 export * from './Text';
 export * from './TextInput';
 export * from './Tooltip';
+export * from './Yearpicker';
