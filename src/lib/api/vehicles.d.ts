@@ -14,7 +14,7 @@ export interface Vehicle {
   averageFuelConsumption: number;
   tachographExpiryDate: string;
   fireExtinguisherCheckExpiryDate: string;
-  technicalInspectionDate: string;
+  technicalInspectionExpiryDate: string;
   adrExpiryDate: string;
   dimensions: Dimensions;
   loadCapacity: number;
