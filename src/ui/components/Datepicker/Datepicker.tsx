@@ -1,5 +1,3 @@
-'use client';
-
 import { DateInput, DatesProvider } from '@mantine/dates';
 
 import { DateTimeFormat, formatDateString, getDateInLocalTimezone } from '@/lib/utils/date';
@@ -15,6 +13,7 @@ export interface DatepickerProps {
 
 export const Datepicker: React.FC<DatepickerProps> = ({ isDisabled = false, isClearable = true, value, onChange }) => {
   const isClearButtonVisible = isClearable && !!value;
+
   return (
     <DatesProvider settings={{ firstDayOfWeek: 1, weekendDays: [0] }}>
       <DateInput
