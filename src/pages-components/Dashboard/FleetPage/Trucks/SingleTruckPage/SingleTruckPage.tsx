@@ -19,7 +19,7 @@ export const SingleTruckPage = () => {
 };
 
 const MainContent: React.FC<{ truck: Vehicle }> = ({ truck }) => {
-  const { registration, brand, manufacturingYear, id } = truck;
+  const { registration, brand, manufacturingYear, id, type } = truck;
 
   return (
     <FlexLayout className="py-5 flex-col gap-5">
@@ -43,7 +43,7 @@ const MainContent: React.FC<{ truck: Vehicle }> = ({ truck }) => {
             </FlexLayout>
           </FlexLayout>
         </FlexLayout>
-        <VehicleActions id={id} />
+        <VehicleActions id={id} type={type} />
       </FlexLayout>
       <FlexLayout className="ml-4 gap-10">
         <GeneralInfo vehicle={truck} />

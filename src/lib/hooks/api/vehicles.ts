@@ -3,6 +3,7 @@ import {
   type Vehicle,
   VehicleEnum,
   createVehicle,
+  deleteVehicle,
   getVehicles,
   updateVehicle,
 } from '@/lib/api';
@@ -69,6 +70,16 @@ export function useUpdateVehicle(id: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: UpdateVehicleParams) => updateVehicle(id, data),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ['vehicles'], type: 'all' });
+    },
+  });
+}
+
+export function useDeleteVehicle(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => deleteVehicle(id),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: ['vehicles'], type: 'all' });
     },

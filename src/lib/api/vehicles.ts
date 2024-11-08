@@ -16,3 +16,7 @@ export async function createVehicle(data: CreateVehicleParams) {
 export async function updateVehicle(id: string, data: UpdateVehicleParams) {
   return backend.patch<Vehicle>(`/api/fleet/${id}`, data);
 }
+
+export async function deleteVehicle(id: string) {
+  return backend.delete<Vehicle>(`/api/fleet/${id}`);
+}
