@@ -5,8 +5,8 @@ import { YearPickerInput } from '@mantine/dates';
 import { classnames } from './styles';
 
 export interface YearpickerProps {
-  value: string | null;
-  onChange(date: string | null): void;
+  value: number | null;
+  onChange(date: number | null): void;
   isDisabled?: boolean;
   isClearable?: boolean;
 }
@@ -20,11 +20,11 @@ export const Yearpicker: React.FC<YearpickerProps> = ({ isDisabled, isClearable,
       className="bg-transparent"
       disabled={isDisabled}
       leftSection={<Icon icon="CalendarIcon" type="solid" />}
-      rightSection={isClearButtonVisible ? <Icon icon="XMarkIcon" onClick={() => onChange('')} /> : null}
+      rightSection={isClearButtonVisible ? <Icon icon="XMarkIcon" onClick={() => onChange(null)} /> : null}
       classNames={classnames}
-      value={value ? getDateInLocalTimezone(value) : null}
+      value={value ? getDateInLocalTimezone(value.toString()) : null}
       onChange={(date) => {
-        const returnValue = date ? date.getFullYear().toString() : null;
+        const returnValue = date ? date.getFullYear() : null;
         onChange(returnValue);
       }}
     />

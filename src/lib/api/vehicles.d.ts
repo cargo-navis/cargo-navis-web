@@ -77,3 +77,7 @@ export enum EquipmentEnum {
   WASTE_CARRIER_LICENCE = 'waste_carrier_licence',
   MEAT_HOOK = 'meat_hooks',
 }
+
+export type CreateVehicleParams = Partial<Vehicle>;
+
+export type UpdateVehicleParams = Partial<CreateVehicleParams>;

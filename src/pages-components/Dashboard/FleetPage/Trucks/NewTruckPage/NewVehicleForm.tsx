@@ -1,6 +1,6 @@
 import 'dayjs/locale/hr';
 import { type Vehicle, VehicleEnum } from '@/lib/api';
-import { useCreateVehicle } from '@/lib/hooks';
+import { useCreateVehicle, useUpdateVehicle } from '@/lib/hooks';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -17,6 +17,7 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => 
 
   const { push } = useRouter();
   const { mutateAsync: createVehicle } = useCreateVehicle();
+  const { mutateAsync: updateVehicle } = useUpdateVehicle(vehicle?.id as string);
 
   const defaultValues = vehicle ? { ...vehicle } : { ...formDefaultValues, ...truckFormDefaultValues };
 
@@ -31,8 +32,13 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => 
 
   async function handleFormSubmit(data: any) {
     try {
-      await createVehicle({ type: VehicleEnum.TRUCK, ...data });
-      await push('/dashboard/fleet/trucks');
+      if (isEdit) {
+        await updateVehicle({ type: VehicleEnum.TRUCK, ...data });
+        await push(`/dashboard/fleet/trucks/${vehicle.id}`);
+      } else {
+        await createVehicle({ type: VehicleEnum.TRUCK, ...data });
+        await push('/dashboard/fleet/trucks');
+      }
     } catch (error: any) {
       alert(`Error with form submit. ${error?.message}`);
     }
