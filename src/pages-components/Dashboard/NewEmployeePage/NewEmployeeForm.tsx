@@ -1,6 +1,5 @@
 import 'dayjs/locale/hr';
 import { yupResolver } from '@hookform/resolvers/yup';
-import type { AxiosError } from 'axios';
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';

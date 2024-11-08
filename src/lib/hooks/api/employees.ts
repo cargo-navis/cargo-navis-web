@@ -17,7 +17,7 @@ export function useEmployees<TData = Employee[]>(args?: UseEmployeesArgs<TData>)
     queryKey: ['employees'],
     queryFn: getEmployees,
     ...args,
-    select: args?.select || sortEmployees as any,
+    select: args?.select || (sortEmployees as any),
   });
 }
 
