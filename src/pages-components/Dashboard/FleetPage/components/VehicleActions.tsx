@@ -1,20 +1,14 @@
-import { VehicleEnum } from '@/lib/api';
+import { vehicleTypeToPathMap } from '@/components/AlertMenu/utils';
+import type { VehicleEnum } from '@/lib/api';
 import { useDeleteVehicle } from '@/lib/hooks';
 import { Box, Button } from '@/ui';
 import { useRouter } from 'next/router';
 
-const typeRouteMap = {
-  [VehicleEnum.TRUCK]: 'trucks',
-  [VehicleEnum.TRAILER]: 'trailers',
-  [VehicleEnum.SOLO_TRUCK]: 'solo-trucks',
-  [VehicleEnum.VAN]: 'vans',
-}
-
-export const VehicleActions: React.FC<{ id: string, type: VehicleEnum }> = ({ id, type }) => {
+export const VehicleActions: React.FC<{ id: string; type: VehicleEnum }> = ({ id, type }) => {
   const { asPath, push } = useRouter();
   const { mutateAsync, isPending } = useDeleteVehicle(id);
 
-  const vehicleSegmentPath = typeRouteMap[type];
+  const vehicleSegmentPath = vehicleTypeToPathMap[type];
 
   async function handleDelete() {
     const answer = confirm('Are you sure you want to delete this vehicle?');
