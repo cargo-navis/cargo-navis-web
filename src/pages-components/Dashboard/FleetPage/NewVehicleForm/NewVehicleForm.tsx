@@ -3,15 +3,15 @@ import { type Vehicle, VehicleEnum } from '@/lib/api';
 import { FormDatepicker, FormSingleSelect, FormTextInput, FormYearpicker } from '@/lib/components/form';
 import { useCreateVehicle, useUpdateVehicle } from '@/lib/hooks';
 import { Box, Button, DisplayIf, FlexLayout, Text } from '@/ui';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
+import { LoadingSpaceForm } from './LoadingSpaceForm';
 import { VehicleInfoForm } from './VehicleInfoForm';
+import { processFormData } from './utils';
 
 import '@mantine/dates/styles.css';
 
-import { formDefaultValues, truckFormDefaultValues, typeBrandOptionsMap } from './const';
-import { vehicleSchema } from './schema';
+import { formDefaultValues, typeBrandOptionsMap } from './const';
 
 export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> = ({ vehicle, type }) => {
   const isEdit = !!vehicle;
@@ -20,11 +20,16 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
   const { mutateAsync: createVehicle } = useCreateVehicle();
   const { mutateAsync: updateVehicle } = useUpdateVehicle(vehicle?.id as string);
 
-  const defaultValues = vehicle ? { ...vehicle } : { ...formDefaultValues, ...truckFormDefaultValues };
+  const defaultValues = vehicle
+    ? { ...vehicle }
+    : {
+        ...formDefaultValues,
+        // ...truckFormDefaultValues
+      };
 
   const formMethods = useForm({
     defaultValues,
-    resolver: yupResolver(vehicleSchema),
+    // resolver: yupResolver(vehicleSchema),
     mode: 'all',
   });
 
@@ -32,13 +37,15 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
   const { isDirty, isValid } = formState;
 
   async function handleFormSubmit(data: any) {
+    const processedData = processFormData(data);
+
     try {
       if (isEdit) {
-        await updateVehicle({ type: VehicleEnum.TRUCK, ...data });
-        await push(`/dashboard/fleet/trucks/${vehicle.id}`);
+        await updateVehicle({ type, ...processedData });
+        await push(`/dashboard/fleet/trailers/${vehicle.id}`);
       } else {
-        await createVehicle({ type: VehicleEnum.TRUCK, ...data });
-        await push('/dashboard/fleet/trucks');
+        await createVehicle({ type, ...processedData });
+        await push('/dashboard/fleet/trailers');
       }
     } catch (error: any) {
       alert(`Error with form submit. ${error?.message}`);
@@ -46,6 +53,9 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
   }
 
   const brandOptions = typeBrandOptionsMap[type];
+
+  const vehicleTypeName = typeNameMap[type];
+  const buttonText = isEdit ? `Update ${vehicleTypeName}` : `Create ${vehicleTypeName}`;
 
   return (
     <FormProvider {...formMethods}>
@@ -92,16 +102,26 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
           </FlexLayout>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Button
-            text={isEdit ? 'Update Truck' : 'Create Truck'}
+            text={buttonText}
             isFullWidth
-            isDisabled={!(isValid && isDirty)}
+            // isDisabled={!(isValid && isDirty)}
             isLoading={formState.isSubmitting}
           />
         </FlexLayout>
         <DisplayIf condition={type === VehicleEnum.TRUCK}>
           <VehicleInfoForm />
         </DisplayIf>
+        <DisplayIf condition={type === VehicleEnum.TRAILER}>
+          <LoadingSpaceForm />
+        </DisplayIf>
       </FlexLayout>
     </FormProvider>
   );
+};
+
+const typeNameMap: Record<VehicleEnum, string> = {
+  [VehicleEnum.TRUCK]: 'Truck',
+  [VehicleEnum.TRAILER]: 'Trailer',
+  [VehicleEnum.SOLO_TRUCK]: 'Solo Truck',
+  [VehicleEnum.VAN]: 'Van',
 };

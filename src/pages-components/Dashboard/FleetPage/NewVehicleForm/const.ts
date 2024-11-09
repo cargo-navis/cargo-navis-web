@@ -1,5 +1,5 @@
-import { EmissionStandard, VehicleEnum } from '@/lib/api';
-import type { SelectOption } from '@/ui';
+import { EmissionStandard, EquipmentEnum, VehicleEnum, VehicleLoadEnum } from '@/lib/api';
+import type { RadioOption, SelectOption } from '@/ui';
 
 export const truckBrandOptions: SelectOption[] = [
   { value: 'Volvo', label: 'Volvo' },
@@ -49,6 +49,32 @@ export const emissionStandardOptions: SelectOption[] = [
   { value: EmissionStandard.Euro6, label: 'EURO 6' },
   { value: EmissionStandard.Euro7, label: 'EURO 7' },
   { value: EmissionStandard.Euro8, label: 'EURO 8' },
+];
+
+export const equipmentOptions = [
+  { value: EquipmentEnum.EDGE_PROTECTION, label: 'Edge Protection' },
+  { value: EquipmentEnum.LASHING_CHAINS, label: 'Lashing Chains' },
+  { value: EquipmentEnum.ANTI_SLIP_MAT, label: 'Anti Slip Mat' },
+  { value: EquipmentEnum.ADR, label: 'ADR' },
+  { value: EquipmentEnum.LASHING_STRAPS, label: 'Lashing Straps' },
+  { value: EquipmentEnum.STANCHIONS, label: 'Stanchions' },
+  { value: EquipmentEnum.CUSTOM_SEAL_STRING, label: 'Custom Seal String' },
+  { value: EquipmentEnum.PORTABLE_FORKLIFT, label: 'Portable Forklift' },
+  { value: EquipmentEnum.WASTE_CARRIER_LICENCE, label: 'Waste Carrier Licence' },
+  { value: EquipmentEnum.MEAT_HOOK, label: 'Meat Hook' },
+];
+
+export const rampOptions: RadioOption[] = [
+  { label: 'Yes', value: true },
+  { label: 'No', value: false },
+];
+
+export const loadTypeOptions: SelectOption[] = [
+  { value: VehicleLoadEnum.TILT_TRUCK, label: 'Tilt Truck' },
+  { value: VehicleLoadEnum.FURGON, label: 'Furgon' },
+  { value: VehicleLoadEnum.FRIGO, label: 'Frigo' },
+  { value: VehicleLoadEnum.CISTERN, label: 'Cistern' },
+  { value: VehicleLoadEnum.CONTAINER_TRAILER, label: 'Undercarriage for containers' },
 ];
 
 export const formDefaultValues = {

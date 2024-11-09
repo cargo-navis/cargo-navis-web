@@ -8,6 +8,9 @@ export const vehicleSchema = object({
   registrationExpiryDate: string().required('Registration Expiry Date is required'),
   emptyWeight: number().required('Curb weight is required'),
   numberOfAxles: number().required('Number of axels is required'),
+}).required();
+
+export const truckSchema = object({
   enginePower: number().required('Engine power is required'),
   tankSize: number().required('Tank size is required'),
   averageFuelConsumption: number().required('Average fuel consumption is required'),
