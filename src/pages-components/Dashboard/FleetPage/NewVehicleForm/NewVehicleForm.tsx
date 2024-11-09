@@ -9,7 +9,7 @@ import '@mantine/dates/styles.css';
 import { FormDatepicker, FormSingleSelect, FormTextInput, FormYearpicker } from '@/lib/components/form';
 import { Box, Button, FlexLayout, Text } from '@/ui';
 
-import { vehicleSchema } from '../../utils/schema';
+import { vehicleSchema } from './schema';
 import { emissionStandardOptions, formDefaultValues, truckFormDefaultValues, vehicleModelOptions } from './const';
 
 export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => {

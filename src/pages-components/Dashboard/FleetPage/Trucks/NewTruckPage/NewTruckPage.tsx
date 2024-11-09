@@ -2,7 +2,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, Heading } from '@/ui';
 
-import { NewVehicleForm } from './NewVehicleForm';
+import { NewVehicleForm } from '../../NewVehicleForm';
 
 export const NewTruckPage = () => {
   return (
