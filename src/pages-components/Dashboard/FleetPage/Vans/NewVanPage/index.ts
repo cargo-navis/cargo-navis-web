@@ -1,0 +1,1 @@
+export { NewVanPage } from './NewVanPage';

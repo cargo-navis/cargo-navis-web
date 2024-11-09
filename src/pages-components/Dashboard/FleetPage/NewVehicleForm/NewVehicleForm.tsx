@@ -102,10 +102,10 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Button text={buttonText} isFullWidth isDisabled={!(isValid && isDirty)} isLoading={formState.isSubmitting} />
         </FlexLayout>
-        <DisplayIf condition={type === VehicleEnum.TRUCK || type === VehicleEnum.SOLO_TRUCK}>
+        <DisplayIf condition={type !== VehicleEnum.TRAILER}>
           <VehicleInfoFields />
         </DisplayIf>
-        <DisplayIf condition={type === VehicleEnum.TRAILER || type === VehicleEnum.SOLO_TRUCK}>
+        <DisplayIf condition={type !== VehicleEnum.TRUCK}>
           <LoadingSpaceFields type={type} />
         </DisplayIf>
       </FlexLayout>

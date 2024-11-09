@@ -36,7 +36,7 @@ const typeSchemaMap: Record<VehicleEnum, ObjectSchema<any>> = {
   [VehicleEnum.TRUCK]: truckSchema,
   [VehicleEnum.TRAILER]: trailerSchema,
   [VehicleEnum.SOLO_TRUCK]: truckSchema.concat(trailerSchema),
-  [VehicleEnum.VAN]: {} as any,
+  [VehicleEnum.VAN]: truckSchema.concat(trailerSchema),
 };
 
 export function getSchemaForType(type: VehicleEnum) {
