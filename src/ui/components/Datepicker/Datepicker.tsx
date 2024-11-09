@@ -24,7 +24,6 @@ export const Datepicker: React.FC<DatepickerProps> = ({ isDisabled = false, isCl
         leftSection={<Icon icon="CalendarIcon" type="solid" />}
         rightSection={isClearButtonVisible ? <Icon icon="XMarkIcon" onClick={() => onChange('')} /> : null}
         dateParser={(dt) => {
-          console.log(dt);
           return new Date(dt);
         }}
         value={value ? getDateInLocalTimezone(value) : null}

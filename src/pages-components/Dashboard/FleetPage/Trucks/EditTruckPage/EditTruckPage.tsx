@@ -1,11 +1,11 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { Vehicle, VehicleEnum } from '@/lib/api';
+import { type Vehicle, VehicleEnum } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicle } from '@/lib/hooks';
-import { NewVehicleForm } from '../../NewVehicleForm';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, Heading } from '@/ui';
 import { useRouter } from 'next/router';
+import { NewVehicleForm } from '../../NewVehicleForm';
 
 export const EditTruckPage = () => {
   const { query } = useRouter();

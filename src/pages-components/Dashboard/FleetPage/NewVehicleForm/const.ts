@@ -36,7 +36,7 @@ export const trailerBrandOptions: SelectOption[] = [
 export const typeBrandOptionsMap: Record<VehicleEnum, SelectOption[]> = {
   [VehicleEnum.TRUCK]: truckBrandOptions,
   [VehicleEnum.TRAILER]: trailerBrandOptions,
-  [VehicleEnum.SOLO_TRUCK]: [],
+  [VehicleEnum.SOLO_TRUCK]: truckBrandOptions,
   [VehicleEnum.VAN]: [],
 };
 
@@ -75,6 +75,7 @@ export const loadTypeOptions: SelectOption[] = [
   { value: VehicleLoadEnum.FRIGO, label: 'Frigo' },
   { value: VehicleLoadEnum.CISTERN, label: 'Cistern' },
   { value: VehicleLoadEnum.CONTAINER_TRAILER, label: 'Undercarriage for containers' },
+  { value: VehicleLoadEnum.TAUTLINER, label: 'Tautliner' },
 ];
 
 export const formDefaultValues = {

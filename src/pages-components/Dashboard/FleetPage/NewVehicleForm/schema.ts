@@ -1,5 +1,5 @@
 import { VehicleEnum } from '@/lib/api';
-import { array, boolean, number, object, ObjectSchema, string } from 'yup';
+import { type ObjectSchema, array, boolean, number, object, string } from 'yup';
 
 export const vehicleSchema = object({
   brand: string().required('Brand is required'),
@@ -29,13 +29,13 @@ export const trailerSchema = object({
   codeXlCertificateExpiryDate: string().optional(),
   ramp: boolean().optional(),
   vehicleLoadType: string().required('Vehicle Load type is required'),
-  equipment: array(string())
+  equipment: array(string()),
 }).required();
 
 const typeSchemaMap: Record<VehicleEnum, ObjectSchema<any>> = {
   [VehicleEnum.TRUCK]: truckSchema,
   [VehicleEnum.TRAILER]: trailerSchema,
-  [VehicleEnum.SOLO_TRUCK]: {} as any,
+  [VehicleEnum.SOLO_TRUCK]: truckSchema.concat(trailerSchema),
   [VehicleEnum.VAN]: {} as any,
 };
 

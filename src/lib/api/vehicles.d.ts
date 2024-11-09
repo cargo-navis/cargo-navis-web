@@ -55,6 +55,7 @@ export enum VehicleLoadEnum {
   TILT_TRUCK = 'tilt_truck',
   FRIGO = 'frigo',
   CONTAINER_TRAILER = 'container_trailer',
+  TAUTLINER = 'tautliner',
 }
 
 // SOLO TRUCK TYPES

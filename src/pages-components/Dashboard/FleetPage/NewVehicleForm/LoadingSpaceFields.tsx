@@ -1,3 +1,4 @@
+import { VehicleEnum, VehicleLoadEnum } from '@/lib/api';
 import {
   FormCheckboxGroup,
   FormDatepicker,
@@ -6,10 +7,21 @@ import {
   FormTextInput,
 } from '@/lib/components/form';
 import { Box, FlexLayout, Text } from '@/ui';
+import type React from 'react';
 
 import { equipmentOptions, loadTypeOptions, rampOptions } from './const';
 
-export const LoadingSpaceFields = () => {
+export const LoadingSpaceFields: React.FC<{ type: VehicleEnum }> = ({ type }) => {
+  let loadOptions = loadTypeOptions;
+
+  if (type === VehicleEnum.TRAILER) {
+    loadOptions = loadOptions.filter((o) => o.value !== VehicleLoadEnum.TAUTLINER);
+  } else if (type === VehicleEnum.SOLO_TRUCK) {
+    loadOptions = loadOptions.filter(
+      (o) => ![VehicleLoadEnum.CISTERN, VehicleLoadEnum.CONTAINER_TRAILER].includes(o.value as VehicleLoadEnum),
+    );
+  }
+
   return (
     <FlexLayout as="fieldset" className="flex-col gap-4 w-[480px]">
       <Text color="text-color-2" variant="text-m-medium">
@@ -47,7 +59,7 @@ export const LoadingSpaceFields = () => {
           name="vehicleLoadType"
           isSearchable
           isClearable
-          options={loadTypeOptions}
+          options={loadOptions}
           placeholder="Select load type..."
         />
       </Box>
