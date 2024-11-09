@@ -10,7 +10,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { LoadingSpaceFields } from './LoadingSpaceFields';
 import { VehicleInfoFields } from './VehicleInfoFields';
 import { getSchemaForType } from './schema';
-import { getDefaultValues, processFormData } from './utils';
+import { getDefaultValues, getEditDefaultValues, processFormData } from './utils';
 
 import '@mantine/dates/styles.css';
 
@@ -23,7 +23,7 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
   const { mutateAsync: createVehicle } = useCreateVehicle();
   const { mutateAsync: updateVehicle } = useUpdateVehicle(vehicle?.id as string);
 
-  const defaultValues = vehicle ? { ...vehicle } : getDefaultValues(type);
+  const defaultValues = vehicle ? getEditDefaultValues(vehicle) : getDefaultValues(type);
 
   const formMethods = useForm({
     defaultValues,

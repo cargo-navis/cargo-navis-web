@@ -33,11 +33,28 @@ export const trailerBrandOptions: SelectOption[] = [
   { value: 'Kaessbohrer', label: 'Kaessbohrer' },
 ];
 
+export const vanBrandOptions = [
+  { value: 'Volkswagen', label: 'Volkswagen' },
+  { value: 'Ford', label: 'Ford' },
+  { value: 'Renault', label: 'Renault' },
+  { value: 'Mercedes-Benz', label: 'Mercedes-Benz' },
+  { value: 'Peugeot', label: 'Peugeot' },
+  { value: 'Citroën', label: 'Citroën' },
+  { value: 'Fiat', label: 'Fiat' },
+  { value: 'Opel', label: 'Opel' },
+  { value: 'Iveco', label: 'Iveco' },
+  { value: 'Nissan', label: 'Nissan' },
+  { value: 'Toyota', label: 'Toyota' },
+  { value: 'Hyundai', label: 'Hyundai' },
+  { value: 'MAN', label: 'MAN' },
+  { value: 'Dacia', label: 'Dacia' },
+];
+
 export const typeBrandOptionsMap: Record<VehicleEnum, SelectOption[]> = {
   [VehicleEnum.TRUCK]: truckBrandOptions,
   [VehicleEnum.TRAILER]: trailerBrandOptions,
   [VehicleEnum.SOLO_TRUCK]: truckBrandOptions,
-  [VehicleEnum.VAN]: [],
+  [VehicleEnum.VAN]: vanBrandOptions,
 };
 
 export const emissionStandardOptions: SelectOption[] = [
