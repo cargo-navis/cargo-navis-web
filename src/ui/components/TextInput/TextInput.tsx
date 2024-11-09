@@ -12,7 +12,7 @@ export interface TextInputProps extends DefaultProps {
   iconLeft?: IconType;
   isDisabled?: boolean;
   type?: 'text' | 'email' | 'password' | 'tel' | 'number' | 'url';
-  onChange: (value: string) => void;
+  onChange: (value: string | number) => void;
 }
 
 export const TextInput: React.FC<TextInputProps> = ({
@@ -50,7 +50,10 @@ export const TextInput: React.FC<TextInputProps> = ({
         )}
         type={type}
         value={value}
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+          const returnValue = e.target.value;
+          type === 'number' ? onChange(Number(returnValue)) : onChange(returnValue);
+        }}
         {...rest}
       />
     </Box>
