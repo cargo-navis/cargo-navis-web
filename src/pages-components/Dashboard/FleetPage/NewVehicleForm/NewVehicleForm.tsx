@@ -1,17 +1,20 @@
 import 'dayjs/locale/hr';
+import { vehicleTypeToPathMap } from '@/components/AlertMenu/utils';
 import { type Vehicle, VehicleEnum } from '@/lib/api';
 import { FormDatepicker, FormSingleSelect, FormTextInput, FormYearpicker } from '@/lib/components/form';
 import { useCreateVehicle, useUpdateVehicle } from '@/lib/hooks';
 import { Box, Button, DisplayIf, FlexLayout, Text } from '@/ui';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 import { LoadingSpaceFields } from './LoadingSpaceFields';
 import { VehicleInfoFields } from './VehicleInfoFields';
-import { processFormData } from './utils';
+import { vehicleSchema } from './schema';
+import { getDefaultValues, processFormData } from './utils';
 
 import '@mantine/dates/styles.css';
 
-import { formDefaultValues, typeBrandOptionsMap, typeNameMap } from './const';
+import { typeBrandOptionsMap, typeNameMap } from './const';
 
 export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> = ({ vehicle, type }) => {
   const isEdit = !!vehicle;
@@ -20,16 +23,11 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
   const { mutateAsync: createVehicle } = useCreateVehicle();
   const { mutateAsync: updateVehicle } = useUpdateVehicle(vehicle?.id as string);
 
-  const defaultValues = vehicle
-    ? { ...vehicle }
-    : {
-        ...formDefaultValues,
-        // ...truckFormDefaultValues
-      };
+  const defaultValues = vehicle ? { ...vehicle } : getDefaultValues(type);
 
   const formMethods = useForm({
     defaultValues,
-    // resolver: yupResolver(vehicleSchema),
+    resolver: yupResolver(vehicleSchema),
     mode: 'all',
   });
 
@@ -37,15 +35,16 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
   const { isDirty, isValid } = formState;
 
   async function handleFormSubmit(data: any) {
-    const processedData = processFormData(data);
+    const processedData = processFormData(data, type);
+    const vehicleSegmentPath = vehicleTypeToPathMap[type];
 
     try {
       if (isEdit) {
         await updateVehicle({ type, ...processedData });
-        await push(`/dashboard/fleet/trailers/${vehicle.id}`);
+        await push(`/dashboard/fleet/${vehicleSegmentPath}/${vehicle.id}`);
       } else {
         await createVehicle({ type, ...processedData });
-        await push('/dashboard/fleet/trailers');
+        await push(`/dashboard/fleet/${vehicleSegmentPath}`);
       }
     } catch (error: any) {
       alert(`Error with form submit. ${error?.message}`);
@@ -101,12 +100,7 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
             </Box>
           </FlexLayout>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
-          <Button
-            text={buttonText}
-            isFullWidth
-            // isDisabled={!(isValid && isDirty)}
-            isLoading={formState.isSubmitting}
-          />
+          <Button text={buttonText} isFullWidth isDisabled={!(isValid && isDirty)} isLoading={formState.isSubmitting} />
         </FlexLayout>
         <DisplayIf condition={type === VehicleEnum.TRUCK}>
           <VehicleInfoFields />

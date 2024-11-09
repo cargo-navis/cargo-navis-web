@@ -96,6 +96,17 @@ export const truckFormDefaultValues = {
   technicalInspectionExpiryDate: undefined as unknown as string,
 };
 
+export const trailerFormDefaultValues = {
+  loadCapacity: 0,
+  width: 0,
+  height: 0,
+  length: 0,
+  codeXlCertificateExpiryDate: undefined as unknown as string,
+  ramp: false,
+  vehicleLoadType: VehicleLoadEnum.TILT_TRUCK,
+  equipment: [],
+};
+
 export const typeNameMap: Record<VehicleEnum, string> = {
   [VehicleEnum.TRUCK]: 'Truck',
   [VehicleEnum.TRAILER]: 'Trailer',
