@@ -99,6 +99,13 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
               <FormDatepicker name="registrationExpiryDate" label="Registration - Expiry date" />
             </Box>
           </FlexLayout>
+          <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
+          <Box>
+            <FormDatepicker name="tachographExpiryDate" label="Techograph - Expiry date" />
+          </Box>
+          <Box>
+            <FormDatepicker name="technicalInspectionExpiryDate" label="Techical Inspection - Expiry date" />
+          </Box>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Button text={buttonText} isFullWidth isDisabled={!(isValid && isDirty)} isLoading={formState.isSubmitting} />
         </FlexLayout>

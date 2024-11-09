@@ -31,14 +31,7 @@ export const VehicleInfoFields = () => {
         <FormTextInput name="averageFuelConsumption" label="Fuel Consumption (l/100km)" type="number" min="0" />
       </Box>
       <Box>
-        <FormDatepicker name="tachographExpiryDate" label="Techograph - Expiry date" />
-      </Box>
-      <Box>
         <FormDatepicker name="fireExtinguisherCheckExpiryDate" label="Fire Extinguisher - Expiry date" />
-      </Box>
-      <Box>
-        {/* Prebacit u General info */}
-        <FormDatepicker name="technicalInspectionExpiryDate" label="Techical Inspection - Expiry date" />
       </Box>
       <Box>
         <FormDatepicker name="adrExpiryDate" label="ADR - Expiry date" />

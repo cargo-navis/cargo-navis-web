@@ -20,6 +20,8 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
     registrationDate,
     registrationExpiryDate,
     emptyWeight,
+    technicalInspectionExpiryDate,
+    tachographExpiryDate
   } = vehicle;
 
   const { data } = useAlertByVehicleType(type);
@@ -41,6 +43,22 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
         month: 'short',
         day: 'numeric',
       })
+    : '-';
+
+  const techExpiryDate = technicalInspectionExpiryDate
+    ? new Date(technicalInspectionExpiryDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+    : '-';
+
+  const tachoExpiryDate = tachographExpiryDate
+    ? new Date(tachographExpiryDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
     : '-';
 
   return (
@@ -65,6 +83,9 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
           isAlert={propertiesWithAlert?.includes('registrationExpiryDate')}
         />
       </FlexLayout>
+      <Divider />
+      <InfoItem label="Techograph - Expiry Date" value={tachoExpiryDate} />
+      <InfoItem label="Technical Inspection - Expiry Date" value={techExpiryDate} />
     </FlexLayout>
   );
 };
