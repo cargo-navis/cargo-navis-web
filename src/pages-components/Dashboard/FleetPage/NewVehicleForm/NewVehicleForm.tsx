@@ -5,13 +5,13 @@ import { useCreateVehicle, useUpdateVehicle } from '@/lib/hooks';
 import { Box, Button, DisplayIf, FlexLayout, Text } from '@/ui';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
-import { LoadingSpaceForm } from './LoadingSpaceForm';
-import { VehicleInfoForm } from './VehicleInfoForm';
+import { LoadingSpaceFields } from './LoadingSpaceFields';
+import { VehicleInfoFields } from './VehicleInfoFields';
 import { processFormData } from './utils';
 
 import '@mantine/dates/styles.css';
 
-import { formDefaultValues, typeBrandOptionsMap } from './const';
+import { formDefaultValues, typeBrandOptionsMap, typeNameMap } from './const';
 
 export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> = ({ vehicle, type }) => {
   const isEdit = !!vehicle;
@@ -109,19 +109,12 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
           />
         </FlexLayout>
         <DisplayIf condition={type === VehicleEnum.TRUCK}>
-          <VehicleInfoForm />
+          <VehicleInfoFields />
         </DisplayIf>
         <DisplayIf condition={type === VehicleEnum.TRAILER}>
-          <LoadingSpaceForm />
+          <LoadingSpaceFields />
         </DisplayIf>
       </FlexLayout>
     </FormProvider>
   );
-};
-
-const typeNameMap: Record<VehicleEnum, string> = {
-  [VehicleEnum.TRUCK]: 'Truck',
-  [VehicleEnum.TRAILER]: 'Trailer',
-  [VehicleEnum.SOLO_TRUCK]: 'Solo Truck',
-  [VehicleEnum.VAN]: 'Van',
 };

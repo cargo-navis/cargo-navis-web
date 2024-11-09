@@ -2,7 +2,7 @@ import { FormDatepicker, FormSingleSelect, FormTextInput } from '@/lib/component
 import { Box, FlexLayout, Text } from '@/ui';
 import { emissionStandardOptions } from './const';
 
-export const VehicleInfoForm = () => {
+export const VehicleInfoFields = () => {
   return (
     <FlexLayout as="fieldset" className="flex-col gap-4 w-[480px]">
       <Text color="text-color-2" variant="text-m-medium">

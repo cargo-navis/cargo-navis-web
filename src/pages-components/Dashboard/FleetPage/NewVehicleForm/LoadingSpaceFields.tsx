@@ -9,7 +9,7 @@ import { Box, FlexLayout, Text } from '@/ui';
 
 import { equipmentOptions, loadTypeOptions, rampOptions } from './const';
 
-export const LoadingSpaceForm = () => {
+export const LoadingSpaceFields = () => {
   return (
     <FlexLayout as="fieldset" className="flex-col gap-4 w-[480px]">
       <Text color="text-color-2" variant="text-m-medium">

@@ -95,3 +95,10 @@ export const truckFormDefaultValues = {
   averageFuelConsumption: 0,
   technicalInspectionExpiryDate: undefined as unknown as string,
 };
+
+export const typeNameMap: Record<VehicleEnum, string> = {
+  [VehicleEnum.TRUCK]: 'Truck',
+  [VehicleEnum.TRAILER]: 'Trailer',
+  [VehicleEnum.SOLO_TRUCK]: 'Solo Truck',
+  [VehicleEnum.VAN]: 'Van',
+};
