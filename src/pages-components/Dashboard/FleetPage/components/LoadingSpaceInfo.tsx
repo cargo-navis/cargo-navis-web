@@ -1,5 +1,6 @@
 import type { Vehicle } from '@/lib/api';
-import { Box, Divider, FlexLayout, Text } from '@/ui';
+import { loadTypeOptions } from '../components/NewVehicleForm/const';
+import { Box, Divider, FlexLayout, Icon, Text } from '@/ui';
 
 import { InfoItem } from '@/components/InfoItem';
 
@@ -8,7 +9,17 @@ interface LoadingSpaceInfoProps {
 }
 
 export const LoadingSpaceInfo: React.FC<LoadingSpaceInfoProps> = ({ vehicle }) => {
-  const { loadCapacity, dimensions, equipment } = vehicle;
+  const { loadCapacity, dimensions, equipment, vehicleLoadType, codeXlCertificateExpiryDate, ramp } = vehicle;
+
+  const loadType = loadTypeOptions.find((l) => l.value === vehicleLoadType)?.label;
+
+  const formattedXlExpiryDate = codeXlCertificateExpiryDate
+    ? new Date(codeXlCertificateExpiryDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
+    : '-';
 
   return (
     <FlexLayout className="flex-col gap-4 w-[360px]">
@@ -27,6 +38,23 @@ export const LoadingSpaceInfo: React.FC<LoadingSpaceInfoProps> = ({ vehicle }) =
         <InfoItem label="Length" value={dimensions.length.toFixed(2)} />
         <InfoItem label="Width" value={dimensions.width.toFixed(2)} />
         <InfoItem label="Height" value={dimensions.height.toFixed(2)} />
+      </FlexLayout>
+      <Divider />
+      <InfoItem label="Code XL - Expiry date" value={formattedXlExpiryDate} />
+      <Divider />
+      <FlexLayout className="justify-between items-center">
+        <Text color="text-color-3" variant="text-s-medium">
+          Ramp
+        </Text>
+        {ramp ? (
+          <Icon className="text-green-600" icon="CheckCircleIcon" size="l" />
+        ) : (
+          <Icon className="text-red-500" icon="XCircleIcon" size="l" />
+        )}
+      </FlexLayout>
+      <Divider />
+      <FlexLayout className="flex-col gap-3">
+        <InfoItem label="Load Type" value={loadType ?? '-'} />
       </FlexLayout>
       <Divider />
       <FlexLayout className="justify-between items-baseline">
