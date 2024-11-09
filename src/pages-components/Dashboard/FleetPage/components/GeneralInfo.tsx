@@ -20,6 +20,8 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
     registrationDate,
     registrationExpiryDate,
     emptyWeight,
+    technicalInspectionExpiryDate,
+    tachographExpiryDate
   } = vehicle;
 
   const { data } = useAlertByVehicleType(type);
@@ -27,17 +29,37 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
 
   const propertiesWithAlert = vehicleAlerts?.map((va) => ruleToPropertyMap[va.ruleName]);
 
-  const formattedRegistrationDate = new Date(registrationDate).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
+  const formattedRegistrationDate = registrationDate
+    ? new Date(registrationDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
+    : '-';
 
-  const formattedRegistrationExpiryDate = new Date(registrationExpiryDate).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
+  const formattedRegistrationExpiryDate = registrationExpiryDate
+    ? new Date(registrationExpiryDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
+    : '-';
+
+  const techExpiryDate = technicalInspectionExpiryDate
+    ? new Date(technicalInspectionExpiryDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+    : '-';
+
+  const tachoExpiryDate = tachographExpiryDate
+    ? new Date(tachographExpiryDate).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+    : '-';
 
   return (
     <FlexLayout className="flex-col gap-4 w-[360px]">
@@ -46,7 +68,7 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
       </Text>
       <Divider />
       <FlexLayout className="flex-col gap-3">
-        <InfoItem label="Model" value={brand} />
+        <InfoItem label="Brand" value={brand} />
         <InfoItem label="Manufacturing Year" value={manufacturingYear} />
         <InfoItem label="Number of Axels" value={numberOfAxles} />
         <InfoItem label="Curb weight (kg)" value={emptyWeight} />
@@ -56,11 +78,14 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
         <InfoItem label="Registration Plate" value={registration} />
         <InfoItem label="Registration Date" value={formattedRegistrationDate} />
         <InfoItem
-          label="Registration Expires"
+          label="Registration - Expiry Date"
           value={formattedRegistrationExpiryDate}
           isAlert={propertiesWithAlert?.includes('registrationExpiryDate')}
         />
       </FlexLayout>
+      <Divider />
+      <InfoItem label="Techograph - Expiry Date" value={tachoExpiryDate} />
+      <InfoItem label="Technical Inspection - Expiry Date" value={techExpiryDate} />
     </FlexLayout>
   );
 };

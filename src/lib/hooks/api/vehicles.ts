@@ -1,5 +1,13 @@
-import { type Vehicle, VehicleEnum, getVehicles } from '@/lib/api';
-import { useQuery } from '@tanstack/react-query';
+import {
+  type UpdateVehicleParams,
+  type Vehicle,
+  VehicleEnum,
+  createVehicle,
+  deleteVehicle,
+  getVehicles,
+  updateVehicle,
+} from '@/lib/api';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface UseVehicleArgs<T> {
   select?: (vehicles: Vehicle[]) => T;
@@ -46,4 +54,34 @@ export function useSolos() {
 export function useVans() {
   const { data: vans, ...rest } = useVehicles({ type: VehicleEnum.VAN });
   return { vans, ...rest };
+}
+
+export function useCreateVehicle() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: createVehicle,
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ['vehicles'], type: 'all' });
+    },
+  });
+}
+
+export function useUpdateVehicle(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: UpdateVehicleParams) => updateVehicle(id, data),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ['vehicles'], type: 'all' });
+    },
+  });
+}
+
+export function useDeleteVehicle(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => deleteVehicle(id),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ['vehicles'], type: 'all' });
+    },
+  });
 }

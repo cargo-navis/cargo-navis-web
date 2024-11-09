@@ -37,8 +37,8 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
   return (
     <Box className="py-5 flex flex-col gap-5">
       <BackButton targetLocation="/dashboard/employees" />
-      <Box className="flex justify-between">
-        <Box className="flex items-start gap-6">
+      <FlexLayout className="justify-between">
+        <FlexLayout className="items-start gap-6">
           <Avatar employee={employee} />
           <Box className="flex flex-col gap-3 mt-[12px]">
             <Box className="flex gap-4 items-center">
@@ -57,9 +57,9 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
               </DisplayIf>
             </Box>
           </Box>
-        </Box>
+        </FlexLayout>
         <EmployeeActions id={employee.id} />
-      </Box>
+      </FlexLayout>
       <FlexLayout className="ml-4 gap-8">
         <EmployeeInfo employee={employee} />
         <DisplayIf condition={employee.position === 'driver'}>

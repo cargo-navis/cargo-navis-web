@@ -105,7 +105,7 @@ export const alerts: Alert[] = [
       averageFuelConsumption: 25,
       tachographExpiryDate: '2025-09-15',
       fireExtinguisherCheckExpiryDate: '2024-06-20',
-      technicalInspectionDate: '2023-12-01',
+      technicalInspectionExpiryDate: '2023-12-01',
       adrExpiryDate: '2024-08-10',
       dimensions: {
         width: 2.55,
@@ -139,7 +139,7 @@ export const alerts: Alert[] = [
       averageFuelConsumption: 30,
       tachographExpiryDate: '2024-04-20',
       fireExtinguisherCheckExpiryDate: '2023-12-30',
-      technicalInspectionDate: '2023-10-05',
+      technicalInspectionExpiryDate: '2023-10-05',
       adrExpiryDate: '2024-03-22',
       dimensions: {
         width: 2.5,
@@ -173,7 +173,7 @@ export const alerts: Alert[] = [
       averageFuelConsumption: 25,
       tachographExpiryDate: '2025-09-15',
       fireExtinguisherCheckExpiryDate: '2024-06-20',
-      technicalInspectionDate: '2023-12-01',
+      technicalInspectionExpiryDate: '2023-12-01',
       adrExpiryDate: '2024-08-10',
       dimensions: {
         width: 2.55,
@@ -207,7 +207,7 @@ export const alerts: Alert[] = [
       averageFuelConsumption: 25,
       tachographExpiryDate: '2025-09-15',
       fireExtinguisherCheckExpiryDate: '2024-06-20',
-      technicalInspectionDate: '2023-12-01',
+      technicalInspectionExpiryDate: '2023-12-01',
       adrExpiryDate: '2024-08-10',
       dimensions: {
         width: 2.55,
@@ -241,7 +241,7 @@ export const alerts: Alert[] = [
       averageFuelConsumption: 25,
       tachographExpiryDate: '2025-09-15',
       fireExtinguisherCheckExpiryDate: '2024-06-20',
-      technicalInspectionDate: '2023-12-01',
+      technicalInspectionExpiryDate: '2023-12-01',
       adrExpiryDate: '2024-08-10',
       dimensions: {
         width: 2.55,

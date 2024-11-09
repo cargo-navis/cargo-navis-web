@@ -1,0 +1,1 @@
+export { EditSoloTruckPage } from './EditSoloTruckPage';

@@ -10,7 +10,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     averageFuelConsumption: 25,
     tachographExpiryDate: '2025-09-15',
     fireExtinguisherCheckExpiryDate: '2024-06-20',
-    technicalInspectionDate: '2023-12-01',
+    technicalInspectionExpiryDate: '2023-12-01',
     adrExpiryDate: '2024-08-10',
     dimensions: {
       width: 2.55,
@@ -40,7 +40,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     averageFuelConsumption: 28,
     tachographExpiryDate: '2024-11-10',
     fireExtinguisherCheckExpiryDate: '2024-05-18',
-    technicalInspectionDate: '2023-09-15',
+    technicalInspectionExpiryDate: '2023-09-15',
     adrExpiryDate: '2024-07-22',
     dimensions: {
       width: 2.6,
@@ -70,7 +70,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     averageFuelConsumption: 27,
     tachographExpiryDate: '2025-06-30',
     fireExtinguisherCheckExpiryDate: '2024-08-14',
-    technicalInspectionDate: '2023-11-20',
+    technicalInspectionExpiryDate: '2023-11-20',
     adrExpiryDate: '2024-09-18',
     dimensions: {
       width: 2.55,
@@ -100,7 +100,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     averageFuelConsumption: 30,
     tachographExpiryDate: '2024-04-20',
     fireExtinguisherCheckExpiryDate: '2023-12-30',
-    technicalInspectionDate: '2023-10-05',
+    technicalInspectionExpiryDate: '2023-10-05',
     adrExpiryDate: '2024-03-22',
     dimensions: {
       width: 2.5,
@@ -130,7 +130,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     averageFuelConsumption: 26,
     tachographExpiryDate: '2025-02-25',
     fireExtinguisherCheckExpiryDate: '2024-04-22',
-    technicalInspectionDate: '2023-07-19',
+    technicalInspectionExpiryDate: '2023-07-19',
     adrExpiryDate: '2024-06-15',
     dimensions: {
       width: 2.57,
@@ -160,7 +160,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     averageFuelConsumption: 29,
     tachographExpiryDate: '2024-10-10',
     fireExtinguisherCheckExpiryDate: '2024-01-15',
-    technicalInspectionDate: '2023-05-25',
+    technicalInspectionExpiryDate: '2023-05-25',
     adrExpiryDate: '2024-12-05',
     dimensions: {
       width: 2.54,
@@ -190,7 +190,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     averageFuelConsumption: 32,
     tachographExpiryDate: '2024-12-15',
     fireExtinguisherCheckExpiryDate: '2023-10-22',
-    technicalInspectionDate: '2023-03-05',
+    technicalInspectionExpiryDate: '2023-03-05',
     adrExpiryDate: '2024-05-14',
     dimensions: {
       width: 2.56,
@@ -220,7 +220,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     averageFuelConsumption: 28,
     tachographExpiryDate: '2025-08-05',
     fireExtinguisherCheckExpiryDate: '2024-09-20',
-    technicalInspectionDate: '2023-06-10',
+    technicalInspectionExpiryDate: '2023-06-10',
     adrExpiryDate: '2024-11-11',
     dimensions: {
       width: 2.58,
@@ -250,7 +250,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     averageFuelConsumption: 25,
     tachographExpiryDate: '2025-09-15',
     fireExtinguisherCheckExpiryDate: '2024-06-20',
-    technicalInspectionDate: '2023-12-01',
+    technicalInspectionExpiryDate: '2023-12-01',
     adrExpiryDate: '2024-08-10',
     dimensions: {
       width: 2.55,
@@ -280,7 +280,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     averageFuelConsumption: 28,
     tachographExpiryDate: '2024-11-10',
     fireExtinguisherCheckExpiryDate: '2024-05-18',
-    technicalInspectionDate: '2023-09-15',
+    technicalInspectionExpiryDate: '2023-09-15',
     adrExpiryDate: '2024-07-22',
     dimensions: {
       width: 2.6,
@@ -310,7 +310,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     averageFuelConsumption: 27,
     tachographExpiryDate: '2025-06-30',
     fireExtinguisherCheckExpiryDate: '2024-08-14',
-    technicalInspectionDate: '2023-11-20',
+    technicalInspectionExpiryDate: '2023-11-20',
     adrExpiryDate: '2024-09-18',
     dimensions: {
       width: 2.55,
@@ -340,7 +340,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     averageFuelConsumption: 30,
     tachographExpiryDate: '2024-04-20',
     fireExtinguisherCheckExpiryDate: '2023-12-30',
-    technicalInspectionDate: '2023-10-05',
+    technicalInspectionExpiryDate: '2023-10-05',
     adrExpiryDate: '2024-03-22',
     dimensions: {
       width: 2.5,
@@ -370,7 +370,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     averageFuelConsumption: 26,
     tachographExpiryDate: '2025-02-25',
     fireExtinguisherCheckExpiryDate: '2024-04-22',
-    technicalInspectionDate: '2023-07-19',
+    technicalInspectionExpiryDate: '2023-07-19',
     adrExpiryDate: '2024-06-15',
     dimensions: {
       width: 2.57,
@@ -400,7 +400,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     averageFuelConsumption: 29,
     tachographExpiryDate: '2024-10-10',
     fireExtinguisherCheckExpiryDate: '2024-01-15',
-    technicalInspectionDate: '2023-05-25',
+    technicalInspectionExpiryDate: '2023-05-25',
     adrExpiryDate: '2024-12-05',
     dimensions: {
       width: 2.54,
@@ -430,7 +430,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     averageFuelConsumption: 32,
     tachographExpiryDate: '2024-12-15',
     fireExtinguisherCheckExpiryDate: '2023-10-22',
-    technicalInspectionDate: '2023-03-05',
+    technicalInspectionExpiryDate: '2023-03-05',
     adrExpiryDate: '2024-05-14',
     dimensions: {
       width: 2.56,
@@ -460,7 +460,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     averageFuelConsumption: 28,
     tachographExpiryDate: '2025-08-05',
     fireExtinguisherCheckExpiryDate: '2024-09-20',
-    technicalInspectionDate: '2023-06-10',
+    technicalInspectionExpiryDate: '2023-06-10',
     adrExpiryDate: '2024-11-11',
     dimensions: {
       width: 2.58,

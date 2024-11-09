@@ -1,0 +1,1 @@
+export { NewTrailerPage } from './NewTrailerPage';

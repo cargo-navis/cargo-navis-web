@@ -9,6 +9,8 @@ import {
   type SingleSelectProps,
   TextInput,
   type TextInputProps,
+  Yearpicker,
+  type YearpickerProps,
 } from '../components';
 import { type FieldLabelsProps, withFieldLabels } from './form';
 
@@ -24,6 +26,9 @@ export type CheckboxGroupWithLabelsProps = React.ComponentPropsWithRef<typeof Ch
 
 export const DatepickerWithLabels: React.FC<DatepickerProps & FieldLabelsProps> = withFieldLabels(Datepicker);
 export type DatepickerWithLabelsProps = React.ComponentPropsWithRef<typeof DatepickerWithLabels>;
+
+export const YearpickerWithLabels: React.FC<YearpickerProps & FieldLabelsProps> = withFieldLabels(Yearpicker);
+export type YearpickerWithLabelsProps = React.ComponentPropsWithRef<typeof YearpickerWithLabels>;
 
 export const SingleSelectWithLabels: React.FC<Omit<SingleSelectProps & FieldLabelsProps, 'charLimitText'>> =
   withFieldLabels(SingleSelect);

@@ -167,7 +167,7 @@ function VehicleRegistration({ vehicle }: { vehicle: Vehicle }) {
   );
 }
 
-const vehicleTypeToPathMap = {
+export const vehicleTypeToPathMap = {
   [VehicleEnum.TRUCK]: 'trucks',
   [VehicleEnum.TRAILER]: 'trailers',
   [VehicleEnum.SOLO_TRUCK]: 'solo-trucks',

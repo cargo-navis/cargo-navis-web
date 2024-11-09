@@ -1,10 +1,15 @@
 import { createEmployee, deleteEmployee, getEmployees, updateEmployee } from '@/lib/api';
 import type { Employee, UpdateEmployeeParams } from '@/lib/api/employees.d';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import sortBy from 'lodash/sortBy';
 
 interface UseEmployeesArgs<T> {
   select?: (data: Employee[]) => T;
   enabled?: boolean;
+}
+
+function sortEmployees(employees: Employee[]) {
+  return sortBy(employees, 'position') as Employee[];
 }
 
 export function useEmployees<TData = Employee[]>(args?: UseEmployeesArgs<TData>) {
@@ -12,6 +17,7 @@ export function useEmployees<TData = Employee[]>(args?: UseEmployeesArgs<TData>)
     queryKey: ['employees'],
     queryFn: getEmployees,
     ...args,
+    select: args?.select || (sortEmployees as any),
   });
 }
 

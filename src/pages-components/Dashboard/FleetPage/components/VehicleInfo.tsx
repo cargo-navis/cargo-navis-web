@@ -8,7 +8,30 @@ interface VehicleInfoProps {
 }
 
 export const VehicleInfo: React.FC<VehicleInfoProps> = ({ vehicle }) => {
-  const { enginePower, averageFuelConsumption, tankSize, emissionStandard } = vehicle;
+  const {
+    enginePower,
+    averageFuelConsumption,
+    tankSize,
+    emissionStandard,
+    adrExpiryDate,
+    fireExtinguisherCheckExpiryDate,
+  } = vehicle;
+
+  const formattedAdrExpiryDate = adrExpiryDate
+    ? new Date(adrExpiryDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
+    : '-';
+
+  const formattedFireExtinguisherCheckExpiryDate = fireExtinguisherCheckExpiryDate
+    ? new Date(fireExtinguisherCheckExpiryDate).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
+    : '-';
 
   return (
     <FlexLayout className="flex-col gap-4 w-[360px]">
@@ -24,6 +47,9 @@ export const VehicleInfo: React.FC<VehicleInfoProps> = ({ vehicle }) => {
       <FlexLayout className="flex-col gap-3">
         <InfoItem label="Tank Size (l)" value={tankSize} />
         <InfoItem label="Fuel Consumption (l/100km)" value={averageFuelConsumption} />
+        <Divider />
+        <InfoItem label="ADR - Expiry Date" value={formattedAdrExpiryDate} />
+        <InfoItem label="Fire Extinguisher - Expiry Date" value={formattedFireExtinguisherCheckExpiryDate} />
       </FlexLayout>
     </FlexLayout>
   );

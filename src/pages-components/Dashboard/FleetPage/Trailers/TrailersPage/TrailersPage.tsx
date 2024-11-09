@@ -32,7 +32,7 @@ const MainContent = ({ trailers }: { trailers: Vehicle[] }) => {
             in your fleet
           </Text>
         </FlexLayout>
-        <Button isDisabled href="/dashboard/fleet/trailers/new" iconLeft="PlusIcon" text="New Trailer" />
+        <Button as="a" href="/dashboard/fleet/trailers/new" iconLeft="PlusIcon" text="New Trailer" />
       </Box>
       <Box className="py-5">
         <TrailersTable trailers={trailers} />
