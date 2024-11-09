@@ -37,13 +37,13 @@ export const LoadingSpaceFields: React.FC<{ type: VehicleEnum }> = ({ type }) =>
         </Text>
       </Box>
       <Box>
-        <FormTextInput name="width" label="Width (m)" type="number" min="0" />
+        <FormTextInput name="length" label="Length (m)" type="number" min="0" step="0.01" />
       </Box>
       <Box>
-        <FormTextInput name="height" label="Height (m)" type="number" min="0" />
+        <FormTextInput name="width" label="Width (m)" type="number" min="0" step="0.01" />
       </Box>
       <Box>
-        <FormTextInput name="length" label="Length (m)" type="number" min="0" />
+        <FormTextInput name="height" label="Height (m)" type="number" min="0" step="0.01" />
       </Box>
       <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
       <Box>
