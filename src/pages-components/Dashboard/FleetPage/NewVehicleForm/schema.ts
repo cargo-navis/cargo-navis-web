@@ -1,4 +1,5 @@
-import { number, object, string } from 'yup';
+import { VehicleEnum } from '@/lib/api';
+import { array, boolean, number, object, ObjectSchema, string } from 'yup';
 
 export const vehicleSchema = object({
   brand: string().required('Brand is required'),
@@ -19,3 +20,26 @@ export const truckSchema = object({
   technicalInspectionExpiryDate: string().required('Technical inspection Expiry Date is required'),
   adrExpiryDate: string().required('ADR Expiry Date is required'),
 }).required();
+
+export const trailerSchema = object({
+  loadCapacity: number().required('Load Capacity is required'),
+  width: number().optional(),
+  height: number().optional(),
+  length: number().optional(),
+  codeXlCertificateExpiryDate: string().optional(),
+  ramp: boolean().optional(),
+  vehicleLoadType: string().required('Vehicle Load type is required'),
+  equipment: array(string())
+}).required();
+
+const typeSchemaMap: Record<VehicleEnum, ObjectSchema<any>> = {
+  [VehicleEnum.TRUCK]: truckSchema,
+  [VehicleEnum.TRAILER]: trailerSchema,
+  [VehicleEnum.SOLO_TRUCK]: {} as any,
+  [VehicleEnum.VAN]: {} as any,
+};
+
+export function getSchemaForType(type: VehicleEnum) {
+  const schema = typeSchemaMap[type];
+  return vehicleSchema.concat(schema);
+}

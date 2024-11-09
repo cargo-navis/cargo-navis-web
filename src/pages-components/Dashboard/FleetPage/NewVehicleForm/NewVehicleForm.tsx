@@ -9,7 +9,7 @@ import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 import { LoadingSpaceFields } from './LoadingSpaceFields';
 import { VehicleInfoFields } from './VehicleInfoFields';
-import { vehicleSchema } from './schema';
+import { getSchemaForType } from './schema';
 import { getDefaultValues, processFormData } from './utils';
 
 import '@mantine/dates/styles.css';
@@ -27,7 +27,7 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
 
   const formMethods = useForm({
     defaultValues,
-    resolver: yupResolver(vehicleSchema),
+    resolver: yupResolver(getSchemaForType(type)),
     mode: 'all',
   });
 

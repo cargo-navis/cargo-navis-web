@@ -54,7 +54,7 @@ export const emissionStandardOptions: SelectOption[] = [
 export const equipmentOptions = [
   { value: EquipmentEnum.EDGE_PROTECTION, label: 'Edge Protection' },
   { value: EquipmentEnum.LASHING_CHAINS, label: 'Lashing Chains' },
-  { value: EquipmentEnum.ANTI_SLIP_MAT, label: 'Anti Slip Mat' },
+  { value: EquipmentEnum.ANTI_SLIP_MATS, label: 'Anti Slip Mats' },
   { value: EquipmentEnum.ADR, label: 'ADR' },
   { value: EquipmentEnum.LASHING_STRAPS, label: 'Lashing Straps' },
   { value: EquipmentEnum.STANCHIONS, label: 'Stanchions' },

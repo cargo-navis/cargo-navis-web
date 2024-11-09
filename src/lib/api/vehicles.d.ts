@@ -68,7 +68,7 @@ export enum VehicleLoadEnum {
 export enum EquipmentEnum {
   EDGE_PROTECTION = 'edge_protection',
   LASHING_CHAINS = 'lashing_chains',
-  ANTI_SLIP_MAT = 'anti_slip_mat',
+  ANTI_SLIP_MATS = 'anti_slip_mats',
   ADR = 'adr',
   LASHING_STRAPS = 'lashing_straps',
   STANCHIONS = 'stanchions',
