@@ -1,5 +1,5 @@
 import type { Vehicle } from '@/lib/api';
-import { loadTypeOptions } from '../components/NewVehicleForm/const';
+import { loadTypeOptions } from '@/pages-components/Dashboard/FleetPage/NewVehicleForm/const';
 import { Box, Divider, FlexLayout, Icon, Text } from '@/ui';
 
 import { InfoItem } from '@/components/InfoItem';
