@@ -1,7 +1,7 @@
-import { EmissionStandard } from '@/lib/api';
+import { EmissionStandard, VehicleEnum } from '@/lib/api';
 import type { SelectOption } from '@/ui';
 
-export const vehicleModelOptions: SelectOption[] = [
+export const truckBrandOptions: SelectOption[] = [
   { value: 'Volvo', label: 'Volvo' },
   { value: 'Mercedes-Benz', label: 'Mercedes-Benz' },
   { value: 'Scania', label: 'Scania' },
@@ -14,6 +14,31 @@ export const vehicleModelOptions: SelectOption[] = [
   { value: 'Renault Trucks', label: 'Renault Trucks' },
   { value: 'Mitsubishi Fuso', label: 'Mitsubishi Fuso' },
 ];
+
+export const trailerBrandOptions: SelectOption[] = [
+  { value: 'Schmitz Cargobull', label: 'Schmitz Cargobull' },
+  { value: 'Krone', label: 'Krone' },
+  { value: 'Kögel', label: 'Kögel' },
+  { value: 'Schwarzmüller', label: 'Schwarzmüller' },
+  { value: 'Wielton', label: 'Wielton' },
+  { value: 'SDC', label: 'SDC' },
+  { value: 'Fliegl', label: 'Fliegl' },
+  { value: 'LAMBERET', label: 'LAMBERET' },
+  { value: 'Fruehauf', label: 'Fruehauf' },
+  { value: 'Van Hool', label: 'Van Hool' },
+  { value: 'Benalu', label: 'Benalu' },
+  { value: 'Langendorf', label: 'Langendorf' },
+  { value: 'Chereau', label: 'Chereau' },
+  { value: 'Tirsan', label: 'Tirsan' },
+  { value: 'Kaessbohrer', label: 'Kaessbohrer' },
+];
+
+export const typeBrandOptionsMap: Record<VehicleEnum, SelectOption[]> = {
+  [VehicleEnum.TRUCK]: truckBrandOptions,
+  [VehicleEnum.TRAILER]: trailerBrandOptions,
+  [VehicleEnum.SOLO_TRUCK]: [],
+  [VehicleEnum.VAN]: [],
+};
 
 export const emissionStandardOptions: SelectOption[] = [
   { value: EmissionStandard.Euro1, label: 'EURO 1' },

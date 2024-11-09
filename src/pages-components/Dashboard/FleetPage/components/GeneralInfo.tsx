@@ -50,7 +50,7 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
       </Text>
       <Divider />
       <FlexLayout className="flex-col gap-3">
-        <InfoItem label="Model" value={brand} />
+        <InfoItem label="Brand" value={brand} />
         <InfoItem label="Manufacturing Year" value={manufacturingYear} />
         <InfoItem label="Number of Axels" value={numberOfAxles} />
         <InfoItem label="Curb weight (kg)" value={emptyWeight} />

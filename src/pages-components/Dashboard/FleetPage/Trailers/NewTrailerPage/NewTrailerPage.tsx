@@ -1,4 +1,5 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { VehicleEnum } from '@/lib/api';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, Heading } from '@/ui';
 
@@ -15,7 +16,7 @@ export const NewTrailerPage = () => {
         </Box>
         <Box className="py-5 flex flex-col gap-[40px]">
           <BackButton targetLocation="/dashboard/fleet/trailers" />
-          <NewVehicleForm />
+          <NewVehicleForm type={VehicleEnum.TRAILER} />
         </Box>
       </Box>
     </DashboardLayout>

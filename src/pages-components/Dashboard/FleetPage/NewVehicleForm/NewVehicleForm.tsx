@@ -1,18 +1,19 @@
 import 'dayjs/locale/hr';
 import { type Vehicle, VehicleEnum } from '@/lib/api';
+import { FormDatepicker, FormSingleSelect, FormTextInput, FormYearpicker } from '@/lib/components/form';
 import { useCreateVehicle, useUpdateVehicle } from '@/lib/hooks';
+import { Box, Button, DisplayIf, FlexLayout, Text } from '@/ui';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
+import { VehicleInfoForm } from './VehicleInfoForm';
 
 import '@mantine/dates/styles.css';
-import { FormDatepicker, FormSingleSelect, FormTextInput, FormYearpicker } from '@/lib/components/form';
-import { Box, Button, FlexLayout, Text } from '@/ui';
 
+import { formDefaultValues, truckFormDefaultValues, typeBrandOptionsMap } from './const';
 import { vehicleSchema } from './schema';
-import { emissionStandardOptions, formDefaultValues, truckFormDefaultValues, vehicleModelOptions } from './const';
 
-export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => {
+export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> = ({ vehicle, type }) => {
   const isEdit = !!vehicle;
 
   const { push } = useRouter();
@@ -44,6 +45,8 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => 
     }
   }
 
+  const brandOptions = typeBrandOptionsMap[type];
+
   return (
     <FormProvider {...formMethods}>
       <FlexLayout as="form" className="gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
@@ -58,7 +61,7 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => 
                 name="brand"
                 isSearchable
                 isClearable
-                options={vehicleModelOptions}
+                options={brandOptions}
                 placeholder="Select brand..."
               />
             </Box>
@@ -72,19 +75,19 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => 
           </Box>
           <FlexLayout className="gap-4">
             <Box className="flex-grow">
-              <FormDatepicker name="registrationDate" label="Registration date" />
+              <FormTextInput name="emptyWeight" label="Curb Weight" type="number" min="0" />
             </Box>
             <Box className="flex-grow">
-              <FormDatepicker name="registrationExpiryDate" label="Registration - Expiry date" />
+              <FormTextInput name="numberOfAxles" label="Number of Axels" type="number" min="0" />
             </Box>
           </FlexLayout>
           <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <FlexLayout className="gap-4">
             <Box className="flex-grow">
-              <FormTextInput name="emptyWeight" label="Curb Weight" type="number" min="0" />
+              <FormDatepicker name="registrationDate" label="Registration date" />
             </Box>
             <Box className="flex-grow">
-              <FormTextInput name="numberOfAxles" label="Number of Axels" type="number" min="0" />
+              <FormDatepicker name="registrationExpiryDate" label="Registration - Expiry date" />
             </Box>
           </FlexLayout>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
@@ -95,52 +98,10 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle }> = ({ vehicle }) => 
             isLoading={formState.isSubmitting}
           />
         </FlexLayout>
-        <VehicleInfoForm />
+        <DisplayIf condition={type === VehicleEnum.TRUCK}>
+          <VehicleInfoForm />
+        </DisplayIf>
       </FlexLayout>
     </FormProvider>
   );
 };
-
-function VehicleInfoForm() {
-  return (
-    <FlexLayout as="fieldset" className="flex-col gap-4 w-[480px]">
-      <Text color="text-color-2" variant="text-m-medium">
-        Vehicle Info
-      </Text>
-      <FlexLayout className="gap-4">
-        <Box>
-          <FormTextInput name="enginePower" label="Engine Power (kW)" type="number" min="0" />
-        </Box>
-        <Box className="flex-1">
-          <FormSingleSelect
-            label="Engine Type"
-            name="emissionStandard"
-            isSearchable
-            isClearable
-            options={emissionStandardOptions}
-            placeholder="Select engine type..."
-          />
-        </Box>
-      </FlexLayout>
-      <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
-      <Box>
-        <FormTextInput name="tankSize" label="Tank Size (Liters)" type="number" min="0" />
-      </Box>
-      <Box>
-        <FormTextInput name="averageFuelConsumption" label="Fuel Consumption (l/100km)" type="number" min="0" />
-      </Box>
-      <Box>
-        <FormDatepicker name="tachographExpiryDate" label="Techograph - Expiry date" />
-      </Box>
-      <Box>
-        <FormDatepicker name="fireExtinguisherCheckExpiryDate" label="Fire Extinguisher - Expiry date" />
-      </Box>
-      <Box>
-        <FormDatepicker name="technicalInspectionExpiryDate" label="Techical Inspection - Expiry date" />
-      </Box>
-      <Box>
-        <FormDatepicker name="adrExpiryDate" label="ADR - Expiry date" />
-      </Box>
-    </FlexLayout>
-  );
-}
