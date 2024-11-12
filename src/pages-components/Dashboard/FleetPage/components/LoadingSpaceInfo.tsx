@@ -1,4 +1,6 @@
 import type { Vehicle } from '@/lib/api';
+import { useAlertByVehicleType } from '@/lib/hooks';
+import { ruleToPropertyMap } from '@/pages-components/Dashboard/DashboardPage/components/utils';
 import { loadTypeOptions } from '@/pages-components/Dashboard/FleetPage/NewVehicleForm/const';
 import { Box, Divider, FlexLayout, Icon, Text } from '@/ui';
 
@@ -9,7 +11,12 @@ interface LoadingSpaceInfoProps {
 }
 
 export const LoadingSpaceInfo: React.FC<LoadingSpaceInfoProps> = ({ vehicle }) => {
-  const { loadCapacity, dimensions, equipment, vehicleLoadType, codeXlCertificateExpiryDate, ramp } = vehicle;
+  const { id, type, loadCapacity, dimensions, equipment, vehicleLoadType, codeXlCertificateExpiryDate, ramp } = vehicle;
+
+  const { data } = useAlertByVehicleType(type);
+  const vehicleAlerts = data?.filter(({ alertable }) => alertable.id === id);
+
+  const propertiesWithAlert = vehicleAlerts?.map((va) => ruleToPropertyMap[va.ruleName]);
 
   const loadType = loadTypeOptions.find((l) => l.value === vehicleLoadType)?.label;
 
@@ -40,7 +47,7 @@ export const LoadingSpaceInfo: React.FC<LoadingSpaceInfoProps> = ({ vehicle }) =
         <InfoItem label="Height" value={dimensions.height.toFixed(2)} />
       </FlexLayout>
       <Divider />
-      <InfoItem label="Code XL - Expiry date" value={formattedXlExpiryDate} />
+      <InfoItem label="Code XL - Expiry date" value={formattedXlExpiryDate} isAlert={propertiesWithAlert?.includes('codeXlCertificateExpiryDate')}  />
       <Divider />
       <FlexLayout className="justify-between items-center">
         <Text color="text-color-3" variant="text-s-medium">

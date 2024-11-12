@@ -84,9 +84,9 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
       </FlexLayout>
       <Divider />
       <DisplayIf condition={type !== VehicleEnum.TRAILER}>
-        <InfoItem label="Tachograph - Expiry Date" value={tachoExpiryDate} />
+        <InfoItem label="Tachograph - Expiry Date" value={tachoExpiryDate} isAlert={propertiesWithAlert?.includes('tachographExpiryDate')} />
       </DisplayIf>
-      <InfoItem label="Technical Inspection - Expiry Date" value={techExpiryDate} />
+      <InfoItem label="Technical Inspection - Expiry Date" value={techExpiryDate} isAlert={propertiesWithAlert?.includes('technicalInspectionExpiryDate')} />
     </FlexLayout>
   );
 };

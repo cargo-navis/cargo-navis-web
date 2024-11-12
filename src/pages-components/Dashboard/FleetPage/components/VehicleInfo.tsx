@@ -1,4 +1,6 @@
 import type { Vehicle } from '@/lib/api';
+import { useAlertByVehicleType } from '@/lib/hooks';
+import { ruleToPropertyMap } from '@/pages-components/Dashboard/DashboardPage/components/utils';
 import { Divider, FlexLayout, Text } from '@/ui';
 
 import { InfoItem } from '@/components/InfoItem';
@@ -9,6 +11,8 @@ interface VehicleInfoProps {
 
 export const VehicleInfo: React.FC<VehicleInfoProps> = ({ vehicle }) => {
   const {
+    id,
+    type,
     enginePower,
     averageFuelConsumption,
     tankSize,
@@ -16,6 +20,12 @@ export const VehicleInfo: React.FC<VehicleInfoProps> = ({ vehicle }) => {
     adrExpiryDate,
     fireExtinguisherCheckExpiryDate,
   } = vehicle;
+
+  const { data } = useAlertByVehicleType(type);
+  const vehicleAlerts = data?.filter(({ alertable }) => alertable.id === id);
+
+  const propertiesWithAlert = vehicleAlerts?.map((va) => ruleToPropertyMap[va.ruleName]);
+
 
   const formattedAdrExpiryDate = adrExpiryDate
     ? new Date(adrExpiryDate).toLocaleDateString('en-US', {
@@ -48,8 +58,8 @@ export const VehicleInfo: React.FC<VehicleInfoProps> = ({ vehicle }) => {
         <InfoItem label="Tank Size (l)" value={tankSize} />
         <InfoItem label="Fuel Consumption (l/100km)" value={averageFuelConsumption} />
         <Divider />
-        <InfoItem label="ADR - Expiry Date" value={formattedAdrExpiryDate} />
-        <InfoItem label="Fire Extinguisher - Expiry Date" value={formattedFireExtinguisherCheckExpiryDate} />
+        <InfoItem label="ADR - Expiry Date" value={formattedAdrExpiryDate} isAlert={propertiesWithAlert?.includes('adrExpiryDate')} />
+        <InfoItem label="Fire Extinguisher - Expiry Date" value={formattedFireExtinguisherCheckExpiryDate} isAlert={propertiesWithAlert?.includes('fireExtinguisherCheckExpiryDate')} />
       </FlexLayout>
     </FlexLayout>
   );
