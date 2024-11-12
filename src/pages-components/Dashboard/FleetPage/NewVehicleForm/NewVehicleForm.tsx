@@ -102,7 +102,7 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
           <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <DisplayIf condition={type !== VehicleEnum.TRAILER}>
             <Box>
-              <FormDatepicker name="tachographExpiryDate" label="Techograph - Expiry date" />
+              <FormDatepicker name="tachographExpiryDate" label="Tachograph - Expiry date" />
             </Box>
           </DisplayIf>
           <Box>

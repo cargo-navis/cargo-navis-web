@@ -1,9 +1,8 @@
-import type { Vehicle } from '@/lib/api';
+import { InfoItem } from '@/components/InfoItem';
+import { Vehicle, VehicleEnum } from '@/lib/api';
 import { useAlertByVehicleType } from '@/lib/hooks';
 import { ruleToPropertyMap } from '@/pages-components/Dashboard/DashboardPage/components/utils';
-import { Divider, FlexLayout, Text } from '@/ui';
-
-import { InfoItem } from '@/components/InfoItem';
+import { DisplayIf, Divider, FlexLayout, Text } from '@/ui';
 
 interface GeneralInfoProps {
   vehicle: Vehicle;
@@ -84,7 +83,9 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
         />
       </FlexLayout>
       <Divider />
-      <InfoItem label="Techograph - Expiry Date" value={tachoExpiryDate} />
+      <DisplayIf condition={type !== VehicleEnum.TRAILER}>
+        <InfoItem label="Tachograph - Expiry Date" value={tachoExpiryDate} />
+      </DisplayIf>
       <InfoItem label="Technical Inspection - Expiry Date" value={techExpiryDate} />
     </FlexLayout>
   );
