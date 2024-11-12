@@ -7,14 +7,14 @@ import { Box, Button, DisplayIf, FlexLayout, Text } from '@/ui';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
+
+import { typeBrandOptionsMap, typeNameMap } from './const';
 import { LoadingSpaceFields } from './LoadingSpaceFields';
-import { VehicleInfoFields } from './VehicleInfoFields';
 import { getSchemaForType } from './schema';
 import { getDefaultValues, getEditDefaultValues, processFormData } from './utils';
 
 import '@mantine/dates/styles.css';
-
-import { typeBrandOptionsMap, typeNameMap } from './const';
+import { VehicleInfoFields } from './VehicleInfoFields';
 
 export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> = ({ vehicle, type }) => {
   const isEdit = !!vehicle;
@@ -100,9 +100,11 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
             </Box>
           </FlexLayout>
           <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
-          <Box>
-            <FormDatepicker name="tachographExpiryDate" label="Techograph - Expiry date" />
-          </Box>
+          <DisplayIf condition={type !== VehicleEnum.TRAILER}>
+            <Box>
+              <FormDatepicker name="tachographExpiryDate" label="Techograph - Expiry date" />
+            </Box>
+          </DisplayIf>
           <Box>
             <FormDatepicker name="technicalInspectionExpiryDate" label="Techical Inspection - Expiry date" />
           </Box>
