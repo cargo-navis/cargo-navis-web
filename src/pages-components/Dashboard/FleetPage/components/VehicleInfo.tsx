@@ -1,5 +1,6 @@
 import type { Vehicle } from '@/lib/api';
 import { useAlertByVehicleType } from '@/lib/hooks';
+import { getDataPointDateString } from '@/lib/utils/date';
 import { ruleToPropertyMap } from '@/pages-components/Dashboard/DashboardPage/components/utils';
 import { Divider, FlexLayout, Text } from '@/ui';
 
@@ -26,21 +27,8 @@ export const VehicleInfo: React.FC<VehicleInfoProps> = ({ vehicle }) => {
 
   const propertiesWithAlert = vehicleAlerts?.map((va) => ruleToPropertyMap[va.ruleName]);
 
-  const formattedAdrExpiryDate = adrExpiryDate
-    ? new Date(adrExpiryDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : '-';
-
-  const formattedFireExtinguisherCheckExpiryDate = fireExtinguisherCheckExpiryDate
-    ? new Date(fireExtinguisherCheckExpiryDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : '-';
+  const formattedAdrExpiryDate = getDataPointDateString(adrExpiryDate);
+  const formattedFireExtinguisherCheckExpiryDate = getDataPointDateString(fireExtinguisherCheckExpiryDate);
 
   return (
     <FlexLayout className="flex-col gap-4 w-[360px]">

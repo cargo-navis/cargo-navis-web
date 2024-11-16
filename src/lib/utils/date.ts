@@ -18,7 +18,7 @@ export function getDateInLocalTimezone(isoString: string) {
 
 export function getDataPointDateString(dataPoint: string | undefined) {
   return dataPoint
-    ? new Date(dataPoint).toLocaleDateString('en-US', {
+    ? new Date(dataPoint).toLocaleDateString('hr-HR', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',

@@ -1,6 +1,7 @@
 import { InfoItem } from '@/components/InfoItem';
 import type { Employee } from '@/lib/api';
 import { useEmployeeAlerts } from '@/lib/hooks';
+import { getDataPointDateString } from '@/lib/utils/date';
 import { ruleToPropertyMap } from '@/pages-components/Dashboard/DashboardPage/components/utils';
 import { CategoryLabel } from '@/pages-components/Dashboard/EmployeesPage/CategoryLabel';
 import { Divider, FlexLayout, Text } from '@/ui';
@@ -33,66 +34,17 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
 
   const propertiesWithAlert = employeeAlerts?.map((ea) => ruleToPropertyMap[ea.ruleName]);
 
-  const formattedGovIdExpiryDate = governmentIdExpiryDate
-    ? new Date(governmentIdExpiryDate).toLocaleDateString('hr-HR', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : '-';
+  const formattedGovIdExpiryDate = getDataPointDateString(governmentIdExpiryDate);
 
-  const formattedDriverLicenceExpiryDate = driverLicenceExpiryDate
-    ? new Date(driverLicenceExpiryDate).toLocaleDateString('hr-HR', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : '-';
+  const formattedDriverLicenceExpiryDate = getDataPointDateString(driverLicenceExpiryDate);
+  const formattedProfDriverExpiryDate = getDataPointDateString(professionalDriverLicenceExpiryDate);
 
-  const formattedProfDriverExpiryDate = professionalDriverLicenceExpiryDate
-    ? new Date(professionalDriverLicenceExpiryDate).toLocaleDateString('hr-HR', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : '-';
+  const formattedAdrExpiryDate = getDataPointDateString(adrExpiryDate);
+  const formattedCode95ExpiryDate = getDataPointDateString(code95ExpiryDate);
 
-  const formattedAdrExpiryDate = adrExpiryDate
-    ? new Date(adrExpiryDate).toLocaleDateString('hr-HR', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : '-';
-
-  const formattedCode95ExpiryDate = code95ExpiryDate
-    ? new Date(code95ExpiryDate).toLocaleDateString('hr-HR', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : '-';
-  const formattedContractExpiryDateExpiryDate = contractExpiryDate
-    ? new Date(contractExpiryDate).toLocaleDateString('hr-HR', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : '-';
-  const formattedVisaExpiryDateExpiryDate = visaExpiryDate
-    ? new Date(visaExpiryDate).toLocaleDateString('hr-HR', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : '-';
-  const formattedMedicalExaminationExpiryDateExpiryDate = medicalExaminationExpiryDate
-    ? new Date(medicalExaminationExpiryDate).toLocaleDateString('hr-HR', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : '-';
+  const formattedContractExpiryDateExpiryDate = getDataPointDateString(contractExpiryDate);
+  const formattedVisaExpiryDateExpiryDate = getDataPointDateString(visaExpiryDate);
+  const formattedMedicalExaminationExpiryDateExpiryDate = getDataPointDateString(medicalExaminationExpiryDate);
 
   return (
     <FlexLayout className="flex-col gap-4">
@@ -145,11 +97,11 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
         <Divider />
         <InfoItem label="ADR Expiry date" value={formattedAdrExpiryDate || '-'} />
         <Divider />
-        <InfoItem label="Employment Contract Expiry date" value={contractExpiryDate || '-'} />
+        <InfoItem label="Employment Contract Expiry date" value={formattedContractExpiryDateExpiryDate || '-'} />
         <Divider />
-        <InfoItem label="Work Permit Expiry date" value={visaExpiryDate || '-'} />
+        <InfoItem label="Work Permit Expiry date" value={formattedVisaExpiryDateExpiryDate || '-'} />
         <Divider />
-        <InfoItem label="Medical Exam Expiry date" value={medicalExaminationExpiryDate || '-'} />
+        <InfoItem label="Medical Exam Expiry date" value={formattedMedicalExaminationExpiryDateExpiryDate || '-'} />
         <Divider />
         <InfoItem
           label="Code 95 Expiry Date"
