@@ -16,8 +16,8 @@ export interface Employee {
   gender: GenderEnum;
   position: PositionEnum;
   governmentId: string;
-  governmentIdExpiryDate: string;
-  driversLicenceId: string;
+  governmentIdExpiryDate?: string;
+  driversLicenceId?: string;
   nationality: string;
   driverLicenceCategories?: DriverLicenceEnum[];
   driverLicenceExpiryDate?: string;
