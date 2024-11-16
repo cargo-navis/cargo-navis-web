@@ -1,13 +1,13 @@
 import { AlertsTooltip } from '@/components/alerts/AlertsTooltip';
+
+import { type Employee, PositionEnum } from '@/lib/api/employees.d';
 import { useAlerts } from '@/lib/hooks';
+import { copyToClipboard } from '@/lib/utils/clipboard';
+import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
 import { createColumnHelper } from '@tanstack/react-table';
 import groupBy from 'lodash/groupBy';
 import Link from 'next/link';
 import { useMemo } from 'react';
-
-import type { Employee } from '@/lib/api/employees.d';
-import { copyToClipboard } from '@/lib/utils/clipboard';
-import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
 
 import { CategoryLabel } from './CategoryLabel';
 
@@ -128,11 +128,12 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           );
         },
       }),
-      columnHelper.accessor('adr', {
+      columnHelper.accessor('adrExpiryDate', {
         size: 80,
         cell: (props) => {
-          const adr = props.getValue();
-          if (adr === null) return '–';
+          const { position } = props.row.original;
+
+          if (position !== PositionEnum.Driver) return '–';
 
           return props.getValue() ? (
             <Icon className="text-green-600" icon="CheckCircleIcon" size="l" />
