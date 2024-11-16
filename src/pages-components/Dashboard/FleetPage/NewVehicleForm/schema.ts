@@ -9,6 +9,12 @@ export const vehicleSchema = object({
   registrationExpiryDate: string().required('Registration Expiry Date is required'),
   emptyWeight: number().required('Curb weight is required'),
   numberOfAxles: number().required('Number of axels is required'),
+  periodicalTechnicalInspectionExpiryDate: string().required(),
+  smallServiceExpiryDate: string().required(),
+  bigServiceExpiryDate: string().required(),
+  tiresSeasonalReplacementExpiryDate: string().required(),
+  insuranceExpiryDate: string().required(),
+  leasingExpiryDate: string().required(),
 }).required();
 
 export const truckSchema = object({
