@@ -239,6 +239,7 @@ export const formDefaultValues = {
   adrExpiryDate: undefined as unknown as string,
   driverLicenceExpiryDate: undefined as unknown as string,
   professionalDriverLicenceExpiryDate: undefined as unknown as string,
+  driverTachographCardId: undefined as unknown as string,
   nationality: undefined as unknown as string,
   contractExpiryDate: undefined as unknown as string,
   medicalExaminationExpiryDate: undefined as unknown as string,

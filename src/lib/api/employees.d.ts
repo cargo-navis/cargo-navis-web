@@ -22,6 +22,7 @@ export interface Employee {
   driverLicenceCategories?: DriverLicenceEnum[];
   driverLicenceExpiryDate?: string;
   professionalDriverLicenceExpiryDate?: string;
+  driverTachographCardId?: string;
   adrExpiryDate?: string;
   contractExpiryDate?: string;
   medicalExaminationExpiryDate?: string;

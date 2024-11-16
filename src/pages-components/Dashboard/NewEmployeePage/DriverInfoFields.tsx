@@ -60,6 +60,13 @@ export const DriverInfoFields = () => {
         )}
         <Box className="flex-1">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
+            Tachograph Card
+          </Text>
+          <FormTextInput name="driverTachographCardId" label="Tachograph Card ID" />
+        </Box>
+        <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
+        <Box className="flex-1">
+          <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
             ADR
           </Text>
           <FormDatepicker name="adrExpiryDate" label="Expiry date" />

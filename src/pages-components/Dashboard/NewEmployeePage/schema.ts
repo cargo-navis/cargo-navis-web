@@ -14,6 +14,7 @@ export const employeeSchema = object({
   driverLicenceCategories: whenDriver(array(string())),
   professionalDriverLicenceExpiryDate: whenDriver(string()),
   nationality: whenDriver(string()),
+  driverTachographCardId: whenDriver(string()),
   adrExpiryDate: whenDriver(string()),
   contractExpiryDate: whenDriver(string()),
   medicalExaminationExpiryDate: whenDriver(string()),
