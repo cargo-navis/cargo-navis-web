@@ -6,7 +6,7 @@ import { links } from './data';
 
 export function Sidebar() {
   function handleSignOut() {
-    const answer = confirm('Are you sure you want to sign out?');
+    const answer = confirm('Želite se odjaviti?');
     if (!answer) return;
 
     clearAuthCookies();
@@ -35,7 +35,7 @@ export function Sidebar() {
       >
         <FlexLayout className="items-center justify-start gap-2 group-focus:translate-x-[4px] group-hover:translate-x-[4px] transition-transform">
           <Icon icon="ArrowLeftStartOnRectangleIcon" size="l" />
-          <Text>Sign Out</Text>
+          <Text>Odjava</Text>
         </FlexLayout>
       </FlexLayout>
     </FlexLayout>
