@@ -24,6 +24,7 @@ export interface Employee {
   contractExpiryDate?: string;
   medicalExaminationExpiryDate?: string;
   visaExpiryDate?: string;
+  code95ExpiryDate?: string;
 }
 
 export enum GenderEnum {

@@ -16,6 +16,7 @@ export const employeeSchema = object({
   contractExpiryDate: whenDriver(string()),
   medicalExaminationExpiryDate: whenDriver(string()),
   visaExpiryDate: whenDriver(string()),
+  code95ExpiryDate: whenDriver(string()),
 }).required();
 
 function whenDriver(schema: Schema) {
