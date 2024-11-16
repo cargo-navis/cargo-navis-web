@@ -4,8 +4,6 @@ import { LoadingPage } from '@/lib/components/LoadingPage';
 import { DriverInfo } from '@/pages-components/Dashboard/SingleEmployeePage/DriverInfo';
 import { Box, DisplayIf, FlexLayout, Text } from '@/ui';
 
-import { EmployeeInfo } from './EmployeeInfo';
-
 import { ContactInfo } from './ContactInfo';
 import { EmployeeActions } from './EmployeeActions';
 
@@ -61,7 +59,6 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
         <EmployeeActions id={employee.id} />
       </FlexLayout>
       <FlexLayout className="ml-4 gap-8">
-        <EmployeeInfo employee={employee} />
         <DisplayIf condition={employee.position === 'driver'}>
           <DriverInfo employee={employee} />
         </DisplayIf>
