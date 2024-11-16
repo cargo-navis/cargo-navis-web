@@ -67,7 +67,7 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
         <Divider />
         <FlexLayout className="flex-col gap-3">
           <Text variant="text-m-medium" color="text-color-3">
-            Driver's Licence
+            Driver&apos;s Licence
           </Text>
           <InfoItem label="Driver's Licence ID" value={driversLicenceId ?? '-'} />
           <InfoItem label="Country of issue" value={countries.find((c) => c.code === nationality)?.name || '-'} />
