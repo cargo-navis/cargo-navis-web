@@ -82,12 +82,12 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
             </FlexLayout>
           </FlexLayout>
           <InfoItem
-            label="Driver's Licence expiry date"
+            label="Driver's Licence Expiry date"
             value={formattedDriverLicenceExpiryDate}
             isAlert={propertiesWithAlert?.includes('driverLicenceExpiryDate')}
           />
           <InfoItem
-            label="Professional Driver's Licence expiry date"
+            label="Professional Driver's Licence Expiry date"
             value={formattedProfDriverExpiryDate}
             isAlert={propertiesWithAlert?.includes('professionalDriverLicenceExpiryDate')}
           />
