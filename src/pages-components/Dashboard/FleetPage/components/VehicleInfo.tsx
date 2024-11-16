@@ -26,7 +26,6 @@ export const VehicleInfo: React.FC<VehicleInfoProps> = ({ vehicle }) => {
 
   const propertiesWithAlert = vehicleAlerts?.map((va) => ruleToPropertyMap[va.ruleName]);
 
-
   const formattedAdrExpiryDate = adrExpiryDate
     ? new Date(adrExpiryDate).toLocaleDateString('en-US', {
         year: 'numeric',
@@ -58,8 +57,16 @@ export const VehicleInfo: React.FC<VehicleInfoProps> = ({ vehicle }) => {
         <InfoItem label="Tank Size (l)" value={tankSize} />
         <InfoItem label="Fuel Consumption (l/100km)" value={averageFuelConsumption} />
         <Divider />
-        <InfoItem label="ADR - Expiry Date" value={formattedAdrExpiryDate} isAlert={propertiesWithAlert?.includes('adrExpiryDate')} />
-        <InfoItem label="Fire Extinguisher - Expiry Date" value={formattedFireExtinguisherCheckExpiryDate} isAlert={propertiesWithAlert?.includes('fireExtinguisherCheckExpiryDate')} />
+        <InfoItem
+          label="ADR - Expiry Date"
+          value={formattedAdrExpiryDate}
+          isAlert={propertiesWithAlert?.includes('adrExpiryDate')}
+        />
+        <InfoItem
+          label="Fire Extinguisher - Expiry Date"
+          value={formattedFireExtinguisherCheckExpiryDate}
+          isAlert={propertiesWithAlert?.includes('fireExtinguisherCheckExpiryDate')}
+        />
       </FlexLayout>
     </FlexLayout>
   );

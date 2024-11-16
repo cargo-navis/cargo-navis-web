@@ -47,7 +47,11 @@ export const LoadingSpaceInfo: React.FC<LoadingSpaceInfoProps> = ({ vehicle }) =
         <InfoItem label="Height" value={dimensions.height.toFixed(2)} />
       </FlexLayout>
       <Divider />
-      <InfoItem label="Code XL - Expiry date" value={formattedXlExpiryDate} isAlert={propertiesWithAlert?.includes('codeXlCertificateExpiryDate')}  />
+      <InfoItem
+        label="Code XL - Expiry date"
+        value={formattedXlExpiryDate}
+        isAlert={propertiesWithAlert?.includes('codeXlCertificateExpiryDate')}
+      />
       <Divider />
       <FlexLayout className="justify-between items-center">
         <Text color="text-color-3" variant="text-s-medium">
