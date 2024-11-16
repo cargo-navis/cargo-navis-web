@@ -67,7 +67,7 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
         <InfoItem label="Registration Plate" value={registration} />
         <InfoItem label="Registration Date" value={formattedRegistrationDate} />
         <InfoItem
-          label="Registration - Expiry Date"
+          label="Registration - Expiry date"
           value={formattedRegistrationExpiryDate}
           isAlert={propertiesWithAlert?.includes('registrationExpiryDate')}
         />
@@ -75,46 +75,46 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
       <Divider />
       <DisplayIf condition={type !== VehicleEnum.TRAILER}>
         <InfoItem
-          label="Tachograph - Expiry Date"
+          label="Tachograph - Expiry date"
           value={tachoExpiryDate}
           isAlert={propertiesWithAlert?.includes('tachographExpiryDate')}
         />
         <Divider />
       </DisplayIf>
       <InfoItem
-        label="Technical Inspection - Expiry Date"
+        label="Technical Inspection - Expiry date"
         value={techExpiryDate}
         isAlert={propertiesWithAlert?.includes('technicalInspectionExpiryDate')}
       />
       <InfoItem
-        label="Periodical Technical Inspection - Expiry Date"
+        label="Periodical Technical Inspection - Expiry date"
         value={periodicalTechExpiryDate}
         isAlert={propertiesWithAlert?.includes('periodicalTechnicalInspectionExpiryDate')}
       />
       <Divider />
       <InfoItem
-        label="Small Service - Expiry Date"
+        label="Small Service - Expiry date"
         value={smallServiceExpDate}
         isAlert={propertiesWithAlert?.includes('smallServiceExpiryDate')}
       />
       <InfoItem
-        label="Big Service - Expiry Date"
+        label="Big Service - Expiry date"
         value={bigServiceExpDate}
         isAlert={propertiesWithAlert?.includes('bigServiceExpiryDate')}
       />
       <InfoItem
-        label="Tires change - Expiry Date"
+        label="Tires change - Expiry date"
         value={tiresExpDate}
         isAlert={propertiesWithAlert?.includes('tiresSeasonalReplacementExpiryDate')}
       />
       <Divider />
       <InfoItem
-        label="Insurance - Expiry Date"
+        label="Insurance - Expiry date"
         value={insuranceExpDate}
         isAlert={propertiesWithAlert?.includes('insuranceExpiryDate')}
       />
       <InfoItem
-        label="Leasing - Expiry Date"
+        label="Leasing - Expiry date"
         value={leasingExpDate}
         isAlert={propertiesWithAlert?.includes('leasingExpiryDate')}
       />

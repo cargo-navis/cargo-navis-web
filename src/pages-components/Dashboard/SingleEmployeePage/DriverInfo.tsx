@@ -104,7 +104,7 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
         <InfoItem label="Medical Exam Expiry date" value={formattedMedicalExaminationExpiryDateExpiryDate || '-'} />
         <Divider />
         <InfoItem
-          label="Code 95 Expiry Date"
+          label="Code 95 Expiry date"
           value={formattedCode95ExpiryDate}
           isAlert={propertiesWithAlert?.includes('code95ExpiryDate')}
         />

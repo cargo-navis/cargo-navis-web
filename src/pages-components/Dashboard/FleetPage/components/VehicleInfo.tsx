@@ -46,12 +46,12 @@ export const VehicleInfo: React.FC<VehicleInfoProps> = ({ vehicle }) => {
         <InfoItem label="Fuel Consumption (l/100km)" value={averageFuelConsumption} />
         <Divider />
         <InfoItem
-          label="ADR - Expiry Date"
+          label="ADR - Expiry date"
           value={formattedAdrExpiryDate}
           isAlert={propertiesWithAlert?.includes('adrExpiryDate')}
         />
         <InfoItem
-          label="Fire Extinguisher - Expiry Date"
+          label="Fire Extinguisher - Expiry date"
           value={formattedFireExtinguisherCheckExpiryDate}
           isAlert={propertiesWithAlert?.includes('fireExtinguisherCheckExpiryDate')}
         />
