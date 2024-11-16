@@ -58,10 +58,10 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
       <Box as="form" className="flex gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
         <Box className="flex flex-col gap-4 w-[480px]">
           <Box className="flex gap-4">
-            <Box className="flex-grow">
+            <Box className="flex-1">
               <FormTextInput name="firstName" label="First Name *" />
             </Box>
-            <Box className="flex-grow">
+            <Box className="flex-1">
               <FormTextInput name="lastName" label="Last Name *" />
             </Box>
           </Box>

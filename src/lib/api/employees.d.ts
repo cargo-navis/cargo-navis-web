@@ -16,11 +16,13 @@ export interface Employee {
   gender: GenderEnum;
   position: PositionEnum;
   governmentId: string;
-  adr?: string;
+  governmentIdExpiryDate: string;
+  driversLicenceId: string;
   nationality: string;
   driverLicenceCategories?: DriverLicenceEnum[];
   driverLicenceExpiryDate?: string;
   professionalDriverLicenceExpiryDate?: string;
+  adrExpiryDate?: string;
   contractExpiryDate?: string;
   medicalExaminationExpiryDate?: string;
   visaExpiryDate?: string;
