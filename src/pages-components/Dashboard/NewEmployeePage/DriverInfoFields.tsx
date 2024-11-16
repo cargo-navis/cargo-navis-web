@@ -74,16 +74,16 @@ export const DriverInfoFields = () => {
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
-            Medical Exam
+            Work Permit
           </Text>
-          <FormDatepicker name="medicalExaminationExpiryDate" label="Expiry date" />
+          <FormDatepicker name="visaExpiryDate" label="Expiry date" />
         </Box>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
-            Work Permit
+            Medical Exam
           </Text>
-          <FormDatepicker name="visaExpiryDate" label="Expiry date" />
+          <FormDatepicker name="medicalExaminationExpiryDate" label="Expiry date" />
         </Box>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex flex-col gap-2">
