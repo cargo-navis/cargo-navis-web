@@ -50,10 +50,10 @@ export const DriverInfoFields = () => {
               </Box>
               {values.driverLicenceCategories.some((cat: DriverLicenceEnum) =>
                 [DriverLicenceEnum.B, DriverLicenceEnum.B1].includes(cat),
-              ) && <FormDatepicker name="driverLicenceExpiryDate" label="Expiration date (Regular)" />}
+              ) && <FormDatepicker name="driverLicenceExpiryDate" label="Expiry date (Regular)" />}
               {values.driverLicenceCategories.some((cat: DriverLicenceEnum) =>
                 [DriverLicenceEnum.C1, DriverLicenceEnum.C, DriverLicenceEnum.C1E, DriverLicenceEnum.CE].includes(cat),
-              ) && <FormDatepicker name="professionalDriverLicenceExpiryDate" label="Expiration date (Professional)" />}
+              ) && <FormDatepicker name="professionalDriverLicenceExpiryDate" label="Expiry date (Professional)" />}
             </FlexLayout>
             <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           </>
@@ -69,28 +69,28 @@ export const DriverInfoFields = () => {
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
             Employment Contract
           </Text>
-          <FormDatepicker name="contractExpiryDate" label="Expiration date" />
+          <FormDatepicker name="contractExpiryDate" label="Expiry date" />
         </Box>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
             Medical Exam
           </Text>
-          <FormDatepicker name="medicalExaminationExpiryDate" label="Expiration date" />
+          <FormDatepicker name="medicalExaminationExpiryDate" label="Expiry date" />
         </Box>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
             Work Permit
           </Text>
-          <FormDatepicker name="visaExpiryDate" label="Expiration date" />
+          <FormDatepicker name="visaExpiryDate" label="Expiry date" />
         </Box>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
             Code 95
           </Text>
-          <FormDatepicker name="code95ExpiryDate" label="Expiration date" />
+          <FormDatepicker name="code95ExpiryDate" label="Expiry date" />
         </Box>
       </Box>
     </>
