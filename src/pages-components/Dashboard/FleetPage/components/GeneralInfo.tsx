@@ -1,6 +1,7 @@
 import { InfoItem } from '@/components/InfoItem';
-import { Vehicle, VehicleEnum } from '@/lib/api';
+import { type Vehicle, VehicleEnum } from '@/lib/api';
 import { useAlertByVehicleType } from '@/lib/hooks';
+import { getDataPointDateString } from '@/lib/utils/date';
 import { ruleToPropertyMap } from '@/pages-components/Dashboard/DashboardPage/components/utils';
 import { DisplayIf, Divider, FlexLayout, Text } from '@/ui';
 
@@ -19,8 +20,14 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
     registrationDate,
     registrationExpiryDate,
     emptyWeight,
+    tachographExpiryDate,
     technicalInspectionExpiryDate,
-    tachographExpiryDate
+    periodicalTechnicalInspectionExpiryDate,
+    smallServiceExpiryDate,
+    bigServiceExpiryDate,
+    tiresSeasonalReplacementExpiryDate,
+    insuranceExpiryDate,
+    leasingExpiryDate,
   } = vehicle;
 
   const { data } = useAlertByVehicleType(type);
@@ -28,37 +35,20 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
 
   const propertiesWithAlert = vehicleAlerts?.map((va) => ruleToPropertyMap[va.ruleName]);
 
-  const formattedRegistrationDate = registrationDate
-    ? new Date(registrationDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : '-';
+  const formattedRegistrationDate = getDataPointDateString(registrationDate);
+  const formattedRegistrationExpiryDate = getDataPointDateString(registrationExpiryDate);
 
-  const formattedRegistrationExpiryDate = registrationExpiryDate
-    ? new Date(registrationExpiryDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : '-';
+  const tachoExpiryDate = getDataPointDateString(tachographExpiryDate);
 
-  const techExpiryDate = technicalInspectionExpiryDate
-    ? new Date(technicalInspectionExpiryDate).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-    : '-';
+  const techExpiryDate = getDataPointDateString(technicalInspectionExpiryDate);
+  const periodicalTechExpiryDate = getDataPointDateString(periodicalTechnicalInspectionExpiryDate);
 
-  const tachoExpiryDate = tachographExpiryDate
-    ? new Date(tachographExpiryDate).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-    : '-';
+  const smallServiceExpDate = getDataPointDateString(smallServiceExpiryDate);
+  const bigServiceExpDate = getDataPointDateString(bigServiceExpiryDate);
+  const tiresExpDate = getDataPointDateString(tiresSeasonalReplacementExpiryDate);
+
+  const insuranceExpDate = getDataPointDateString(insuranceExpiryDate);
+  const leasingExpDate = getDataPointDateString(leasingExpiryDate);
 
   return (
     <FlexLayout className="flex-col gap-4 w-[360px]">
@@ -84,9 +74,50 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
       </FlexLayout>
       <Divider />
       <DisplayIf condition={type !== VehicleEnum.TRAILER}>
-        <InfoItem label="Tachograph - Expiry Date" value={tachoExpiryDate} isAlert={propertiesWithAlert?.includes('tachographExpiryDate')} />
+        <InfoItem
+          label="Tachograph - Expiry Date"
+          value={tachoExpiryDate}
+          isAlert={propertiesWithAlert?.includes('tachographExpiryDate')}
+        />
       </DisplayIf>
-      <InfoItem label="Technical Inspection - Expiry Date" value={techExpiryDate} isAlert={propertiesWithAlert?.includes('technicalInspectionExpiryDate')} />
+      <Divider />
+      <InfoItem
+        label="Technical Inspection - Expiry Date"
+        value={techExpiryDate}
+        isAlert={propertiesWithAlert?.includes('technicalInspectionExpiryDate')}
+      />
+      <InfoItem
+        label="Periodical Technical Inspection - Expiry Date"
+        value={periodicalTechExpiryDate}
+        isAlert={propertiesWithAlert?.includes('periodicalTechnicalInspectionExpiryDate')}
+      />
+      <Divider />
+      <InfoItem
+        label="Small Service - Expiry Date"
+        value={smallServiceExpDate}
+        isAlert={propertiesWithAlert?.includes('smallServiceExpiryDate')}
+      />
+      <InfoItem
+        label="Big Service - Expiry Date"
+        value={bigServiceExpDate}
+        isAlert={propertiesWithAlert?.includes('bigServiceExpiryDate')}
+      />
+      <InfoItem
+        label="Tires change - Expiry Date"
+        value={tiresExpDate}
+        isAlert={propertiesWithAlert?.includes('tiresSeasonalReplacementExpiryDate')}
+      />
+      <Divider />
+      <InfoItem
+        label="Insurance - Expiry Date"
+        value={insuranceExpDate}
+        isAlert={propertiesWithAlert?.includes('insuranceExpiryDate')}
+      />
+      <InfoItem
+        label="Leasing - Expiry Date"
+        value={leasingExpDate}
+        isAlert={propertiesWithAlert?.includes('leasingExpiryDate')}
+      />
     </FlexLayout>
   );
 };
