@@ -59,7 +59,7 @@ export const EmployeeInfo: React.FC<GeneralInfoProps> = ({ employee }) => {
           isAlert={propertiesWithAlert?.includes('medicalExaminationExpiryDate')}
         />
         <InfoItem
-          label="Visa Expiry Date"
+          label="Work Permit Expiry Date"
           value={formattedVisaExpiryDate}
           isAlert={propertiesWithAlert?.includes('visaExpiryDate')}
         />

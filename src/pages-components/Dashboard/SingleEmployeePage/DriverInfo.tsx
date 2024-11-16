@@ -10,7 +10,13 @@ interface DriverInfoProps {
 }
 
 export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
-  const { id, driverLicenceCategories, driverLicenceExpiryDate, professionalDriverLicenceExpiryDate } = employee;
+  const {
+    id,
+    driverLicenceCategories,
+    driverLicenceExpiryDate,
+    professionalDriverLicenceExpiryDate,
+    code95ExpiryDate,
+  } = employee;
 
   const { data } = useEmployeeAlerts();
   const employeeAlerts = data?.filter(({ alertable }) => alertable.id === id);
@@ -27,6 +33,14 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
 
   const formattedProfDriverExpiryDate = professionalDriverLicenceExpiryDate
     ? new Date(professionalDriverLicenceExpiryDate).toLocaleDateString('hr-HR', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
+    : '-';
+
+  const formattedCode95ExpiryDate = code95ExpiryDate
+    ? new Date(code95ExpiryDate).toLocaleDateString('hr-HR', {
         year: 'numeric',
         month: 'short',
         day: 'numeric',
@@ -69,6 +83,11 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
           label="Professional Driver's Licence expiry date"
           value={formattedProfDriverExpiryDate}
           isAlert={propertiesWithAlert?.includes('professionalDriverLicenceExpiryDate')}
+        />
+        <InfoItem
+          label="Code 95 Expiry Date"
+          value={formattedCode95ExpiryDate}
+          isAlert={propertiesWithAlert?.includes('code95ExpiryDate')}
         />
       </FlexLayout>
       <Divider />
