@@ -15,3 +15,13 @@ export function formatDateString(date: string, dateFormat = 'MMM D, YYYY') {
 export function getDateInLocalTimezone(isoString: string) {
   return dayjs(isoString).toDate();
 }
+
+export function getDataPointDateString(dataPoint: string | undefined) {
+  return dataPoint
+    ? new Date(dataPoint).toLocaleDateString('hr-HR', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
+    : '-';
+}

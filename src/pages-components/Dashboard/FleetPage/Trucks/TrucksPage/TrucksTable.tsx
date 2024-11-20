@@ -1,5 +1,6 @@
 import { VehicleAlertTooltip } from '@/components/alerts/VehicleAlertTooltip';
 import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles.d';
+import { getDataPointDateString } from '@/lib/utils/date';
 import { Box, FlexLayout, Table, Text } from '@/ui';
 import { createColumnHelper } from '@tanstack/react-table';
 import Link from 'next/link';
@@ -61,11 +62,7 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
         size: 200,
         cell: ({ row }) => {
           const { tachographExpiryDate } = row.original;
-          const formattedDate = new Date(tachographExpiryDate).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-          });
+          const formattedDate = getDataPointDateString(tachographExpiryDate);
 
           return (
             <FlexLayout>

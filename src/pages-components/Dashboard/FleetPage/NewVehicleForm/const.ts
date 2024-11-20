@@ -104,6 +104,12 @@ export const formDefaultValues = {
   emptyWeight: 0,
   numberOfAxles: 0,
   technicalInspectionExpiryDate: undefined as unknown as string,
+  periodicalTechnicalInspectionExpiryDate: undefined as unknown as string,
+  smallServiceExpiryDate: undefined as unknown as string,
+  bigServiceExpiryDate: undefined as unknown as string,
+  tiresSeasonalReplacementExpiryDate: undefined as unknown as string,
+  insuranceExpiryDate: undefined as unknown as string,
+  leasingExpiryDate: undefined as unknown as string,
 };
 
 export const truckFormDefaultValues = {

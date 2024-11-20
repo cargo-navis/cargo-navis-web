@@ -15,6 +15,12 @@ export interface Vehicle {
   tachographExpiryDate: string;
   fireExtinguisherCheckExpiryDate: string;
   technicalInspectionExpiryDate: string;
+  periodicalTechnicalInspectionExpiryDate?: string;
+  smallServiceExpiryDate?: string;
+  bigServiceExpiryDate?: string;
+  tiresSeasonalReplacementExpiryDate?: string;
+  insuranceExpiryDate?: string;
+  leasingExpiryDate?: string;
   adrExpiryDate: string;
   dimensions: Dimensions;
   loadCapacity: number;

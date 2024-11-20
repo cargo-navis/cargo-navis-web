@@ -8,8 +8,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import { typeBrandOptionsMap, typeNameMap } from './const';
 import { LoadingSpaceFields } from './LoadingSpaceFields';
+import { typeBrandOptionsMap, typeNameMap } from './const';
 import { getSchemaForType } from './schema';
 import { getDefaultValues, getEditDefaultValues, processFormData } from './utils';
 
@@ -92,10 +92,10 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
           </FlexLayout>
           <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <FlexLayout className="gap-4">
-            <Box className="flex-grow">
+            <Box className="flex-1">
               <FormDatepicker name="registrationDate" label="Registration date" />
             </Box>
-            <Box className="flex-grow">
+            <Box className="flex-1">
               <FormDatepicker name="registrationExpiryDate" label="Registration - Expiry date" />
             </Box>
           </FlexLayout>
@@ -104,9 +104,35 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
             <Box>
               <FormDatepicker name="tachographExpiryDate" label="Tachograph - Expiry date" />
             </Box>
+            <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           </DisplayIf>
           <Box>
             <FormDatepicker name="technicalInspectionExpiryDate" label="Techical Inspection - Expiry date" />
+          </Box>
+          <Box>
+            <FormDatepicker
+              name="periodicalTechnicalInspectionExpiryDate"
+              label="Periodical Techical Inspection - Expiry date"
+            />
+          </Box>
+          <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
+          <FlexLayout className="gap-4">
+            <Box className="flex-1">
+              <FormDatepicker name="smallServiceExpiryDate" label="Small Service - Expiry date" />
+            </Box>
+            <Box className="flex-1">
+              <FormDatepicker name="bigServiceExpiryDate" label="Big Service - Expiry date" />
+            </Box>
+          </FlexLayout>
+          <Box>
+            <FormDatepicker name="tiresSeasonalReplacementExpiryDate" label="Tires Seasonal Change - Expiry date" />
+          </Box>
+          <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
+          <Box>
+            <FormDatepicker name="insuranceExpiryDate" label="Insurance - Expiry date" />
+          </Box>
+          <Box>
+            <FormDatepicker name="leasingExpiryDate" label="Leasing - Expiry date" />
           </Box>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Button text={buttonText} isFullWidth isDisabled={!(isValid && isDirty)} isLoading={formState.isSubmitting} />

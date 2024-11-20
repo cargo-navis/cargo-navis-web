@@ -13,16 +13,6 @@ export const positionOptions: PositionOption[] = [
   { label: 'Driver', value: PositionEnum.Driver },
 ];
 
-interface AdrOption extends RadioOption {
-  label: string;
-  value: boolean;
-}
-
-export const adrOptions: AdrOption[] = [
-  { label: 'Yes', value: true },
-  { label: 'No', value: false },
-];
-
 export const genderOptions: RadioOption[] = [
   { label: 'Male', value: 'M' },
   { label: 'Female', value: 'F' },
@@ -243,12 +233,16 @@ export const formDefaultValues = {
   email: '',
   position: '' as PositionEnum,
   governmentId: undefined as unknown as string,
+  governmentIdExpiryDate: undefined as unknown as string,
+  driversLicenceId: undefined as unknown as string,
   driverLicenceCategories: undefined as unknown as string[],
-  adr: undefined as unknown as string,
+  adrExpiryDate: undefined as unknown as string,
   driverLicenceExpiryDate: undefined as unknown as string,
   professionalDriverLicenceExpiryDate: undefined as unknown as string,
+  driverTachographCardId: undefined as unknown as string,
   nationality: undefined as unknown as string,
   contractExpiryDate: undefined as unknown as string,
   medicalExaminationExpiryDate: undefined as unknown as string,
   visaExpiryDate: undefined as unknown as string,
+  code95ExpiryDate: undefined as unknown as string,
 };

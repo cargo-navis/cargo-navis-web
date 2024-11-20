@@ -1,5 +1,6 @@
 import type { Vehicle } from '@/lib/api';
 import { useAlertByVehicleType } from '@/lib/hooks';
+import { getDataPointDateString } from '@/lib/utils/date';
 import { ruleToPropertyMap } from '@/pages-components/Dashboard/DashboardPage/components/utils';
 import { loadTypeOptions } from '@/pages-components/Dashboard/FleetPage/NewVehicleForm/const';
 import { Box, Divider, FlexLayout, Icon, Text } from '@/ui';
@@ -20,13 +21,7 @@ export const LoadingSpaceInfo: React.FC<LoadingSpaceInfoProps> = ({ vehicle }) =
 
   const loadType = loadTypeOptions.find((l) => l.value === vehicleLoadType)?.label;
 
-  const formattedXlExpiryDate = codeXlCertificateExpiryDate
-    ? new Date(codeXlCertificateExpiryDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : '-';
+  const formattedXlExpiryDate = getDataPointDateString(codeXlCertificateExpiryDate);
 
   return (
     <FlexLayout className="flex-col gap-4 w-[360px]">
@@ -47,7 +42,11 @@ export const LoadingSpaceInfo: React.FC<LoadingSpaceInfoProps> = ({ vehicle }) =
         <InfoItem label="Height" value={dimensions.height.toFixed(2)} />
       </FlexLayout>
       <Divider />
-      <InfoItem label="Code XL - Expiry date" value={formattedXlExpiryDate} isAlert={propertiesWithAlert?.includes('codeXlCertificateExpiryDate')}  />
+      <InfoItem
+        label="Code XL - Expiry date"
+        value={formattedXlExpiryDate}
+        isAlert={propertiesWithAlert?.includes('codeXlCertificateExpiryDate')}
+      />
       <Divider />
       <FlexLayout className="justify-between items-center">
         <Text color="text-color-3" variant="text-s-medium">

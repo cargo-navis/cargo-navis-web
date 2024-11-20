@@ -1,5 +1,6 @@
 import type { Vehicle } from '@/lib/api';
 import { useAlertByVehicleType } from '@/lib/hooks';
+import { getDataPointDateString } from '@/lib/utils/date';
 import { ruleToPropertyMap } from '@/pages-components/Dashboard/DashboardPage/components/utils';
 import { Divider, FlexLayout, Text } from '@/ui';
 
@@ -26,22 +27,8 @@ export const VehicleInfo: React.FC<VehicleInfoProps> = ({ vehicle }) => {
 
   const propertiesWithAlert = vehicleAlerts?.map((va) => ruleToPropertyMap[va.ruleName]);
 
-
-  const formattedAdrExpiryDate = adrExpiryDate
-    ? new Date(adrExpiryDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : '-';
-
-  const formattedFireExtinguisherCheckExpiryDate = fireExtinguisherCheckExpiryDate
-    ? new Date(fireExtinguisherCheckExpiryDate).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
-    : '-';
+  const formattedAdrExpiryDate = getDataPointDateString(adrExpiryDate);
+  const formattedFireExtinguisherCheckExpiryDate = getDataPointDateString(fireExtinguisherCheckExpiryDate);
 
   return (
     <FlexLayout className="flex-col gap-4 w-[360px]">
@@ -58,8 +45,16 @@ export const VehicleInfo: React.FC<VehicleInfoProps> = ({ vehicle }) => {
         <InfoItem label="Tank Size (l)" value={tankSize} />
         <InfoItem label="Fuel Consumption (l/100km)" value={averageFuelConsumption} />
         <Divider />
-        <InfoItem label="ADR - Expiry Date" value={formattedAdrExpiryDate} isAlert={propertiesWithAlert?.includes('adrExpiryDate')} />
-        <InfoItem label="Fire Extinguisher - Expiry Date" value={formattedFireExtinguisherCheckExpiryDate} isAlert={propertiesWithAlert?.includes('fireExtinguisherCheckExpiryDate')} />
+        <InfoItem
+          label="ADR - Expiry date"
+          value={formattedAdrExpiryDate}
+          isAlert={propertiesWithAlert?.includes('adrExpiryDate')}
+        />
+        <InfoItem
+          label="Fire Extinguisher - Expiry date"
+          value={formattedFireExtinguisherCheckExpiryDate}
+          isAlert={propertiesWithAlert?.includes('fireExtinguisherCheckExpiryDate')}
+        />
       </FlexLayout>
     </FlexLayout>
   );

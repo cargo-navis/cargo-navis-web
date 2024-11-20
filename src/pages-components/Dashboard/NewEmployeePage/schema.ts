@@ -1,5 +1,5 @@
 import { PositionEnum } from '@/lib/api/employees.d';
-import { type Schema, array, boolean, object, string } from 'yup';
+import { type Schema, array, object, string } from 'yup';
 
 export const employeeSchema = object({
   firstName: string().required('First name is required'),
@@ -8,14 +8,18 @@ export const employeeSchema = object({
   email: string().email('Email must be valid').required('Email is required'),
   phoneNumber: string().required('Phone number is required'),
   governmentId: whenDriver(string()),
-  driverLicenceCategories: whenDriver(array(string())),
-  adr: whenDriver(boolean()),
+  governmentIdExpiryDate: whenDriver(string()),
+  driversLicenceId: whenDriver(string()),
   driverLicenceExpiryDate: whenDriver(string()),
+  driverLicenceCategories: whenDriver(array(string())),
   professionalDriverLicenceExpiryDate: whenDriver(string()),
   nationality: whenDriver(string()),
+  driverTachographCardId: whenDriver(string()),
+  adrExpiryDate: whenDriver(string()),
   contractExpiryDate: whenDriver(string()),
   medicalExaminationExpiryDate: whenDriver(string()),
   visaExpiryDate: whenDriver(string()),
+  code95ExpiryDate: whenDriver(string()),
 }).required();
 
 function whenDriver(schema: Schema) {
