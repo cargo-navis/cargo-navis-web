@@ -7,12 +7,12 @@ export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
   const { mutateAsync, isPending } = useDeleteEmployee(id);
 
   async function handleDelete() {
-    const answer = confirm('Are you sure you want to delete this employee?');
+    const answer = confirm('Jeste li sigurni da želite izbrisati ovog zaposlenika?');
     if (!answer) return;
 
     try {
       await mutateAsync();
-      alert('Employee deleted');
+      alert('Zaposlenik izbrisan');
 
       push('/dashboard/employees');
     } catch (error) {
@@ -27,10 +27,10 @@ export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
         isDisabled={isPending}
         href={`/dashboard/employees/${id}/edit`}
         iconLeft="PencilIcon"
-        text="Edit"
+        text="Uredi"
         variant="secondary"
       />
-      <Button isLoading={isPending} iconLeft="TrashIcon" text="Delete" onClick={handleDelete} />
+      <Button isLoading={isPending} iconLeft="TrashIcon" text="Izbriši" onClick={handleDelete} />
     </Box>
   );
 };
