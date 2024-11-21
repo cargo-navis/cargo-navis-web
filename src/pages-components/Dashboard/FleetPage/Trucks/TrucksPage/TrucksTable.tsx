@@ -8,13 +8,15 @@ import { useMemo } from 'react';
 
 const columnHelper = createColumnHelper<Vehicle>();
 
+// TODO - update to CRO
+
 export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
   const columns = useMemo(() => {
     return [
       columnHelper.display({
         id: 'truck',
         size: 100,
-        header: () => <Box className="pl-3">Truck</Box>,
+        header: () => <Box className="pl-3">Tegljač</Box>,
         cell: (props) => {
           const { brand, registration, id } = props.row.original;
 
@@ -34,7 +36,7 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
         },
       }),
       columnHelper.display({
-        header: 'Curb Weight (kg)',
+        header: 'Masa praznog vozila (kg)',
         cell: ({ row }) => {
           const { emptyWeight } = row.original;
 
@@ -46,7 +48,7 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
         },
       }),
       columnHelper.accessor('emissionStandard', {
-        header: 'Engine Type',
+        header: 'Tip motora',
         cell: ({ row }) => {
           const { emissionStandard } = row.original;
 
@@ -58,7 +60,7 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
         },
       }),
       columnHelper.display({
-        header: 'Tachograph Until',
+        header: 'Tahograf vrijedi do',
         size: 200,
         cell: ({ row }) => {
           const { tachographExpiryDate } = row.original;

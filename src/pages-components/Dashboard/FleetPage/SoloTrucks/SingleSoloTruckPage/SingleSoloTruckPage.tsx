@@ -41,7 +41,7 @@ const MainContent: React.FC<{ solo: Vehicle }> = ({ solo }) => {
               <Text color="text-color-3" variant="text-m-medium">
                 {brand} ({manufacturingYear})
               </Text>
-              <Pill text="Solo Truck" variant="danger" />
+              <Pill text="Solo Kamion" variant="danger" />
             </FlexLayout>
           </FlexLayout>
         </FlexLayout>

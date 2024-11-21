@@ -8,7 +8,7 @@ export const FleetPage = () => {
     <DashboardLayout>
       <Box>
         <Heading as="h1" variant="text-xl">
-          Fleet - Overview
+          Pregled Flote
         </Heading>
       </Box>
       <FlexLayout className="gap-5 py-5">
@@ -32,18 +32,18 @@ const FleetSummary = () => {
     <FlexLayout className="flex-col gap-2">
       <FlexLayout className="flex-col gap-4 w-[360px]">
         <Text variant="text-l-medium" color="text-color-2">
-          Summary
+          Rezime
         </Text>
         <Divider />
         <FlexLayout className="flex-col gap-3">
-          <OverviewItem label="Trucks" href="/dashboard/fleet/trucks" value={trucks?.length} />
-          <OverviewItem label="Trailers" href="/dashboard/fleet/trailers" value={trailers?.length} />
-          <OverviewItem label="Solo Trucks" href="/dashboard/fleet/solo-trucks" value={solos?.length} />
-          <OverviewItem label="Vans" href="/dashboard/fleet/vans" value={vans?.length} />
+          <OverviewItem label="Tegljači" href="/dashboard/fleet/trucks" value={trucks?.length} />
+          <OverviewItem label="Prikolice" href="/dashboard/fleet/trailers" value={trailers?.length} />
+          <OverviewItem label="Solo Kamioni" href="/dashboard/fleet/solo-trucks" value={solos?.length} />
+          <OverviewItem label="Kombiji" href="/dashboard/fleet/vans" value={vans?.length} />
         </FlexLayout>
         <Divider />
         <FlexLayout className="justify-between items-baseline uppercase text-color-2">
-          <Text variant="text-m-medium">FLEET TOTAL</Text>
+          <Text variant="text-m-medium">FLOTA UKUPNO</Text>
           <Text variant="text-m-medium">{vehicles.length}</Text>
         </FlexLayout>
       </FlexLayout>

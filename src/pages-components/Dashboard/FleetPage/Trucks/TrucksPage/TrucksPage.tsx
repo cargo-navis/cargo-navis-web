@@ -3,7 +3,6 @@ import type { Vehicle } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useTrucks } from '@/lib/hooks';
 import { Box, Button, Divider, FlexLayout, Heading, Text } from '@/ui';
-import pluralize from 'pluralize';
 
 import { TrucksTable } from './TrucksTable';
 
@@ -19,18 +18,14 @@ const MainContent = ({ trucks }: { trucks: Vehicle[] }) => {
       <Box className="flex items-center justify-between">
         <FlexLayout className="flex-col gap-2">
           <Heading as="h1" variant="text-xl">
-            Fleet — Trucks
+            Flota — Tegljači
           </Heading>
           <Divider />
           <Text color="text-color-2" variant="text-m">
-            There are{' '}
-            <Text variant="text-m-bold">
-              {trucks.length} {pluralize('Truck', trucks.length)}
-            </Text>{' '}
-            in your fleet
+            Imate <Text variant="text-m-bold">{trucks.length} tegljača</Text> u svojoj floti.
           </Text>
         </FlexLayout>
-        <Button as="a" href="/dashboard/fleet/trucks/new" iconLeft="PlusIcon" text="New Truck" />
+        <Button as="a" href="/dashboard/fleet/trucks/new" iconLeft="PlusIcon" text="Dodaj Tegljač" />
       </Box>
       <Box className="py-5">
         <TrucksTable trucks={trucks} />

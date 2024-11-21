@@ -40,7 +40,7 @@ const MainContent: React.FC<{ trailer: Vehicle }> = ({ trailer }) => {
               <Text color="text-color-3" variant="text-m-medium">
                 {brand} ({manufacturingYear})
               </Text>
-              <Pill text="Trailer" variant="warning" />
+              <Pill text="Prikolica" variant="warning" />
             </FlexLayout>
           </FlexLayout>
         </FlexLayout>

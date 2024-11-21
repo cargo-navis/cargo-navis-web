@@ -11,12 +11,12 @@ export const VehicleActions: React.FC<{ id: string; type: VehicleEnum }> = ({ id
   const vehicleSegmentPath = vehicleTypeToPathMap[type];
 
   async function handleDelete() {
-    const answer = confirm('Are you sure you want to delete this vehicle?');
+    const answer = confirm('Jeste li sigurni da želite izbrisati ovo vozilo?');
     if (!answer) return;
 
     try {
       await mutateAsync();
-      alert('Vehicle deleted');
+      alert('Vozilo izbrisano');
       push(`/dashboard/fleet/${vehicleSegmentPath}`);
     } catch (error) {
       alert('Error with deleting the vehicle');
@@ -30,10 +30,10 @@ export const VehicleActions: React.FC<{ id: string; type: VehicleEnum }> = ({ id
         isDisabled={isPending}
         href={`${asPath}/edit`}
         iconLeft="PencilIcon"
-        text="Edit"
+        text="Uredi"
         variant="secondary"
       />
-      <Button iconLeft="TrashIcon" isDisabled={isPending} text="Delete" onClick={handleDelete} />
+      <Button iconLeft="TrashIcon" isDisabled={isPending} text="Izbriši" onClick={handleDelete} />
     </Box>
   );
 };

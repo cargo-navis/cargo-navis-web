@@ -81,7 +81,7 @@ const SeeMoreItem = forwardRef((props, ref) => (
       {...props}
     >
       <Text variant="text-s" color="text-color-2">
-        See more
+        Vidi više
       </Text>
       <Icon icon="ArrowRightIcon" />
     </FlexLayout>

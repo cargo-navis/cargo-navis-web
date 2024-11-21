@@ -42,7 +42,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
       }),
       columnHelper.accessor((row) => `${row.firstName} ${row.lastName}`, {
         id: 'fullName',
-        header: 'Name',
+        header: 'Ime',
         size: 275,
         cell: (props) => {
           const name = props.getValue();
@@ -72,7 +72,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         },
       }),
       columnHelper.accessor('governmentId', {
-        header: 'Government ID',
+        header: 'Broj dokumenta',
         size: 220,
         cell: (props) => {
           const governmentId = props.getValue();
@@ -92,7 +92,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         },
       }),
       columnHelper.accessor('phoneNumber', {
-        header: 'Phone Number',
+        header: 'Telefon',
         size: 200,
         cell: (props) => {
           const phoneNumber = props.getValue();
@@ -112,7 +112,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         },
       }),
       columnHelper.accessor('driverLicenceCategories', {
-        header: 'Categories',
+        header: 'Vozačke kategorije',
         size: 200,
         cell: (props) => {
           const licenceCategories = props.getValue();

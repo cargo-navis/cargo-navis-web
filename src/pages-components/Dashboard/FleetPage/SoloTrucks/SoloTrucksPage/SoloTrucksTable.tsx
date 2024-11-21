@@ -13,7 +13,7 @@ export const SoloTrucksTable = ({ solos }: { solos: Vehicle[] }) => {
       columnHelper.display({
         id: 'solo',
         size: 150,
-        header: () => <Box className="pl-3">Solo Truck</Box>,
+        header: () => <Box className="pl-3">Solo Kamion</Box>,
         cell: (props) => {
           const { brand, registration, id } = props.row.original;
 
@@ -33,7 +33,7 @@ export const SoloTrucksTable = ({ solos }: { solos: Vehicle[] }) => {
         },
       }),
       columnHelper.display({
-        header: 'Curb Weight (kg)',
+        header: 'Masa prazog vozila (kg)',
         cell: ({ row }) => {
           const { emptyWeight } = row.original;
 
@@ -44,8 +44,8 @@ export const SoloTrucksTable = ({ solos }: { solos: Vehicle[] }) => {
           );
         },
       }),
-      columnHelper.accessor('emissionStandard', {
-        header: 'Load Type',
+      columnHelper.accessor('vehicleLoadType', {
+        header: 'Vrsta utovarnog prostora',
         cell: ({ row }) => {
           const { vehicleLoadType } = row.original;
 
@@ -59,7 +59,7 @@ export const SoloTrucksTable = ({ solos }: { solos: Vehicle[] }) => {
         },
       }),
       columnHelper.display({
-        header: 'Load Capacity (kg)',
+        header: 'Utovarni kapacitet (kg)',
         size: 200,
         cell: ({ row }) => {
           const { loadCapacity } = row.original;
@@ -72,7 +72,7 @@ export const SoloTrucksTable = ({ solos }: { solos: Vehicle[] }) => {
         },
       }),
       columnHelper.display({
-        header: 'Ramp',
+        header: 'Rampa',
         size: 80,
         cell: ({ row }) => {
           const { ramp } = row.original;
