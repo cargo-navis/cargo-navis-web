@@ -10,15 +10,15 @@ export const DashboardPage = () => {
     <DashboardLayout>
       <Box>
         <Heading as="h1" variant="text-xl">
-          Dashboard
+          Početna
         </Heading>
       </Box>
       <Box className="py-5">
-        <Text variant="text-l-medium">Alerts</Text>
+        <Text variant="text-l-medium">Upozorenja</Text>
         <FlexLayout className="flex-col max-w-[40%]">
           <DisplayIf condition={isLoading}>
             <Text color="text-color-3" variant="text-m">
-              Loading alerts...
+              Učitavam upozorenja...
             </Text>
           </DisplayIf>
           <DisplayIf condition={!!alerts && !!alerts.length}>
@@ -28,7 +28,7 @@ export const DashboardPage = () => {
           </DisplayIf>
           <DisplayIf condition={!isLoading && (!alerts || !alerts.length)}>
             <Text color="text-color-3" variant="text-m">
-              No new alerts
+              Nema novih upozorenja
             </Text>
           </DisplayIf>
         </FlexLayout>
