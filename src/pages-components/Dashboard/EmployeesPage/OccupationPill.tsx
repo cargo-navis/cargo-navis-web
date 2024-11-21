@@ -1,3 +1,5 @@
+import type { PositionEnum } from '@/lib/api';
+import { positionLabelMap } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Pill, type PillSize, type PillVariant } from '@/ui';
 
 const occupationVariantMap: Record<string, PillVariant> = {
@@ -9,12 +11,13 @@ const occupationVariantMap: Record<string, PillVariant> = {
 
 interface OccupationPillProps {
   occupation: string;
-  text: string;
+  text: PositionEnum;
   size?: PillSize;
 }
 
 export const OccupationPill: React.FC<OccupationPillProps> = ({ text, occupation, size }) => {
   const variant = occupationVariantMap[occupation];
+  const label = positionLabelMap[text];
 
-  return <Pill text={text} variant={variant} size={size} />;
+  return <Pill text={label} variant={variant} size={size} />;
 };

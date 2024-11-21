@@ -6,11 +6,18 @@ interface PositionOption {
   value: PositionEnum;
 }
 
+export const positionLabelMap = {
+  [PositionEnum.Ceo]: 'CEO',
+  [PositionEnum.Manager]: 'Menadžer',
+  [PositionEnum.Dispatcher]: 'Disponent',
+  [PositionEnum.Driver]: 'Vozač',
+};
+
 export const positionOptions: PositionOption[] = [
   { label: 'CEO', value: PositionEnum.Ceo },
-  { label: 'Manager', value: PositionEnum.Manager },
-  { label: 'Dispatcher', value: PositionEnum.Dispatcher },
-  { label: 'Driver', value: PositionEnum.Driver },
+  { label: 'Menadžer', value: PositionEnum.Manager },
+  { label: 'Disponent', value: PositionEnum.Dispatcher },
+  { label: 'Vozač', value: PositionEnum.Driver },
 ];
 
 export const genderOptions: RadioOption[] = [

@@ -13,7 +13,7 @@ export const TrailersTable = ({ trailers }: { trailers: Vehicle[] }) => {
       columnHelper.display({
         id: 'trailer',
         size: 100,
-        header: () => <Box className="pl-3">Trailer</Box>,
+        header: () => <Box className="pl-3">Prikolica</Box>,
         cell: (props) => {
           const { brand, registration, id } = props.row.original;
 
@@ -33,7 +33,7 @@ export const TrailersTable = ({ trailers }: { trailers: Vehicle[] }) => {
         },
       }),
       columnHelper.display({
-        header: 'Curb Weight (kg)',
+        header: 'Masa prazne prikolice (kg)',
         cell: ({ row }) => {
           const { emptyWeight } = row.original;
 
@@ -44,8 +44,8 @@ export const TrailersTable = ({ trailers }: { trailers: Vehicle[] }) => {
           );
         },
       }),
-      columnHelper.accessor('emissionStandard', {
-        header: 'Load Type',
+      columnHelper.accessor('vehicleLoadType', {
+        header: 'Vrsta utovarnog prostora',
         cell: ({ row }) => {
           const { vehicleLoadType } = row.original;
 
@@ -59,7 +59,7 @@ export const TrailersTable = ({ trailers }: { trailers: Vehicle[] }) => {
         },
       }),
       columnHelper.display({
-        header: 'Load Capacity (kg)',
+        header: 'Utovarni kapacitet (kg)',
         size: 200,
         cell: ({ row }) => {
           const { loadCapacity } = row.original;

@@ -13,7 +13,7 @@ export const VansTable = ({ vans }: { vans: Vehicle[] }) => {
       columnHelper.display({
         id: 'van',
         size: 150,
-        header: () => <Box className="pl-3">Van</Box>,
+        header: () => <Box className="pl-3">Kombij</Box>,
         cell: (props) => {
           const { brand, registration, id } = props.row.original;
 
@@ -33,7 +33,7 @@ export const VansTable = ({ vans }: { vans: Vehicle[] }) => {
         },
       }),
       columnHelper.display({
-        header: 'Curb Weight (kg)',
+        header: 'Masa praznog vozila (kg)',
         cell: ({ row }) => {
           const { emptyWeight } = row.original;
 
@@ -44,8 +44,8 @@ export const VansTable = ({ vans }: { vans: Vehicle[] }) => {
           );
         },
       }),
-      columnHelper.accessor('emissionStandard', {
-        header: 'Load Type',
+      columnHelper.accessor('vehicleLoadType', {
+        header: 'Vrsta utovarnog prostora',
         cell: ({ row }) => {
           const { vehicleLoadType } = row.original;
 
@@ -59,7 +59,7 @@ export const VansTable = ({ vans }: { vans: Vehicle[] }) => {
         },
       }),
       columnHelper.display({
-        header: 'Load Capacity (kg)',
+        header: 'Utovarni kapacitet (kg)',
         size: 200,
         cell: ({ row }) => {
           const { loadCapacity } = row.original;
@@ -72,7 +72,7 @@ export const VansTable = ({ vans }: { vans: Vehicle[] }) => {
         },
       }),
       columnHelper.display({
-        header: 'Ramp',
+        header: 'Rampa',
         size: 80,
         cell: ({ row }) => {
           const { ramp } = row.original;

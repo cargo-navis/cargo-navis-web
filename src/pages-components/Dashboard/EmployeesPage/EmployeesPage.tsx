@@ -17,9 +17,9 @@ const MainContent = ({ employees }: { employees: Employee[] }) => {
     <Box>
       <Box className="flex items-center justify-between">
         <Heading as="h1" variant="text-xl">
-          Employees
+          Zaposlenici
         </Heading>
-        <Button as="a" href="/dashboard/employees/new" iconLeft="PlusIcon" text="New Employee" />
+        <Button as="a" href="/dashboard/employees/new" iconLeft="PlusIcon" text="Dodaj Zaposlenika" />
       </Box>
       <Box className="py-5">
         <EmployeesTable employees={employees} />
