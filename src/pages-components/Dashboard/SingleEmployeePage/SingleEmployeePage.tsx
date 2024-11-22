@@ -1,6 +1,7 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Employee } from '@/lib/api/employees.d';
 import { LoadingPage } from '@/lib/components/LoadingPage';
+import { getDataPointDateString } from '@/lib/utils/date';
 import { DriverInfo } from '@/pages-components/Dashboard/SingleEmployeePage/DriverInfo';
 import { Box, DisplayIf, FlexLayout, Text } from '@/ui';
 
@@ -53,6 +54,10 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
               <DisplayIf condition={!!employee.email}>
                 <ContactInfo contact={employee.email} contactType="email" />
               </DisplayIf>
+            </Box>
+            <Box className="flex gap-8">
+              <ContactInfo contact={getDataPointDateString(employee.dateOfBirth) || '-'} contactType="dateOfBirth" />
+              <ContactInfo contact={employee.residenceAddress || '-'} contactType="residenceAddress" />
             </Box>
           </Box>
         </FlexLayout>

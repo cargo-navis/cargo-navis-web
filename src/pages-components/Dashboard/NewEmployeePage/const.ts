@@ -252,4 +252,6 @@ export const formDefaultValues = {
   medicalExaminationExpiryDate: undefined as unknown as string,
   visaExpiryDate: undefined as unknown as string,
   code95ExpiryDate: undefined as unknown as string,
+  dateOfBirth: undefined as unknown as string,
+  residenceAddress: undefined as unknown as string,
 };

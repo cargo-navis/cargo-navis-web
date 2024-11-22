@@ -5,11 +5,13 @@ const contactIconMap: Record<string, IconType> = {
   email: 'EnvelopeIcon',
   phone: 'PhoneIcon',
   governmentId: 'IdentificationIcon',
+  dateOfBirth: 'CakeIcon',
+  residenceAddress: 'HomeIcon',
 };
 
 interface ContactInfoProps {
   contact: string;
-  contactType: 'email' | 'phone' | 'governmentId';
+  contactType: 'email' | 'phone' | 'governmentId' | 'dateOfBirth' | 'residenceAddress';
 }
 
 export const ContactInfo: React.FC<ContactInfoProps> = ({ contact, contactType }) => {

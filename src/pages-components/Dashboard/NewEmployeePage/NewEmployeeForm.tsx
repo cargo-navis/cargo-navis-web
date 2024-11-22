@@ -6,7 +6,7 @@ import { DriverInfoFields } from './DriverInfoFields';
 
 import type { Employee } from '@/lib/api/employees.d';
 import '@mantine/dates/styles.css';
-import { FormRadioGroup, FormTextInput } from '@/lib/components/form';
+import { FormDatepicker, FormRadioGroup, FormTextInput } from '@/lib/components/form';
 import { Box, Button } from '@/ui';
 
 import { useCreateEmployee, useUpdateEmployee } from '@/lib/hooks';
@@ -67,6 +67,14 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
           </Box>
           <Box>
             <FormRadioGroup name="gender" label="Gender" options={genderOptions} />
+          </Box>
+          <Box className="flex gap-4">
+            <Box className="flex-1">
+              <FormDatepicker name="dateOfBirth" label="Date of birth" />
+            </Box>
+            <Box className="flex-1">
+              <FormTextInput name="residenceAddress" label="Address" />
+            </Box>
           </Box>
           <Box>
             <FormTextInput name="phoneNumber" label="Phone Number *" type="tel" />
