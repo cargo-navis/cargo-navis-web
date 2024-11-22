@@ -28,7 +28,7 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
     tiresReplacementExpiryDate,
     mandatoryInsuranceExpiryDate,
     leasingExpiryDate,
-    vehicleIdentificationNumber
+    vehicleIdentificationNumber,
   } = vehicle;
 
   const { data } = useAlertByVehicleType(type);
