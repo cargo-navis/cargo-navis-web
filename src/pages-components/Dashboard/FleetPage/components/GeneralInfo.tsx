@@ -25,7 +25,7 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
     periodicalTechnicalInspectionExpiryDate,
     smallServiceExpiryDate,
     bigServiceExpiryDate,
-    tiresSeasonalReplacementExpiryDate,
+    tiresReplacementExpiryDate,
     insuranceExpiryDate,
     leasingExpiryDate,
   } = vehicle;
@@ -45,7 +45,7 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
 
   const smallServiceExpDate = getDataPointDateString(smallServiceExpiryDate);
   const bigServiceExpDate = getDataPointDateString(bigServiceExpiryDate);
-  const tiresExpDate = getDataPointDateString(tiresSeasonalReplacementExpiryDate);
+  const tiresExpDate = getDataPointDateString(tiresReplacementExpiryDate);
 
   const insuranceExpDate = getDataPointDateString(insuranceExpiryDate);
   const leasingExpDate = getDataPointDateString(leasingExpiryDate);
@@ -105,7 +105,7 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
       <InfoItem
         label="Tires change - Expiry date"
         value={tiresExpDate}
-        isAlert={propertiesWithAlert?.includes('tiresSeasonalReplacementExpiryDate')}
+        isAlert={propertiesWithAlert?.includes('tiresReplacementExpiryDate')}
       />
       <Divider />
       <InfoItem

@@ -12,7 +12,7 @@ export const vehicleSchema = object({
   periodicalTechnicalInspectionExpiryDate: string().required(),
   smallServiceExpiryDate: string().required(),
   bigServiceExpiryDate: string().required(),
-  tiresSeasonalReplacementExpiryDate: string().required(),
+  tiresReplacementExpiryDate: string().required(),
   insuranceExpiryDate: string().required(),
   leasingExpiryDate: string().required(),
 }).required();

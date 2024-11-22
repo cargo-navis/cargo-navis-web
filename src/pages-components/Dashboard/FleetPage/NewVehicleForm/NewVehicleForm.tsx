@@ -125,7 +125,7 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
             </Box>
           </FlexLayout>
           <Box>
-            <FormDatepicker name="tiresSeasonalReplacementExpiryDate" label="Tires Seasonal Change - Expiry date" />
+            <FormDatepicker name="tiresReplacementExpiryDate" label="Tires Change - Expiry date" />
           </Box>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Box>
