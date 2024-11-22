@@ -6,8 +6,6 @@ export const employeeSchema = object({
   lastName: string().required('Last name is required'),
   position: string<PositionEnum>().required('Position is required'),
   email: string().email('Email must be valid').required('Email is required'),
-  dateOfBirth: string().required('Date of birth is required'),
-  residenceAddress: string().required('Residence address is required'),
   phoneNumber: string().required('Phone number is required'),
   governmentId: whenDriver(string()),
   governmentIdExpiryDate: whenDriver(string()),
@@ -23,6 +21,8 @@ export const employeeSchema = object({
   medicalExaminationExpiryDate: whenDriver(string()),
   visaExpiryDate: whenDriver(string()),
   code95ExpiryDate: whenDriver(string()),
+  dateOfBirth: whenDriver(string()),
+  residenceAddress: whenDriver(string()),
 }).required();
 
 function whenDriver(schema: Schema) {
