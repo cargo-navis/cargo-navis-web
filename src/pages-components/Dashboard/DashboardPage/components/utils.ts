@@ -1,6 +1,6 @@
 import { AlertType, type Employee, type Vehicle } from '@/lib/api';
 
-export const ruleToPropertyMap: Record<AlertType, keyof Employee | keyof Vehicle> = {
+export const ruleToPropertyMap: Record<AlertType, keyof Employee | keyof Vehicle | string> = {
   [AlertType.EMPLOYEE_CONTRACT_EXPIRED]: 'contractExpiryDate',
   [AlertType.DRIVER_LICENCE_EXPIRED]: 'driverLicenceExpiryDate',
   [AlertType.PROFESSIONAL_DRIVER_LICENCE_EXPIRED]: 'professionalDriverLicenceExpiryDate',
@@ -11,6 +11,18 @@ export const ruleToPropertyMap: Record<AlertType, keyof Employee | keyof Vehicle
   [AlertType.VEHICLE_ADR_EXPIRED]: 'adrExpiryDate',
   [AlertType.VEHICLE_FIRE_EXTINGUISHER_CHECK_EXPIRED]: 'fireExtinguisherCheckExpiryDate',
   [AlertType.VEHICLE_TACHOGRAPH_EXPIRED]: 'tachographExpiryDate',
+  [AlertType.TENANT_INSURANCE_EXPIRED]: '-', // TODO
+  [AlertType.DRIVER_ADR_EXPIRED]: 'adrExpiryDate',
+  [AlertType.DRIVER_GOV_ID_EXPIRED]: 'governmentIdExpiryDate',
+  [AlertType.DRIVER_CODE_95_EXPIRED]: 'code95ExpiryDate',
+  [AlertType.DRIVER_TACHOGRAPH_CARD_EXPIRED]: 'driverTachographCardExpiryDate',
+  [AlertType.VEHICLE_MANDATORY_INSURANCE_EXPIRED]: 'mandatoryInsuranceExpiryDate',
+  [AlertType.VEHICLE_OPTIONAL_INSURANCE_EXPIRED]: 'optionalInsuranceExpiryDate',
+  [AlertType.VEHICLE_SMALL_SERVICE_EXPIRED]: 'smallServiceExpiryDate',
+  [AlertType.VEHICLE_BIG_SERVICE_EXPIRED]: 'bigServiceExpiryDate',
+  [AlertType.VEHICLE_PERIODICAL_TECHNICAL_INSPECTION_EXPIRED]: 'periodicalTechnicalInspectionExpiryDate',
+  [AlertType.VEHICLE_TIRES_REPLACEMENT_EXPIRED]: 'tiresReplacementExpiryDate',
+  [AlertType.VEHICLE_LEASING_EXPIRED]: 'leasingExpiryDate',
 };
 
 export const ruleToTextMap: Record<AlertType, string> = {
@@ -24,4 +36,16 @@ export const ruleToTextMap: Record<AlertType, string> = {
   [AlertType.VEHICLE_ADR_EXPIRED]: 'ADR',
   [AlertType.VEHICLE_FIRE_EXTINGUISHER_CHECK_EXPIRED]: 'Valjanost protupožarnog aparata',
   [AlertType.VEHICLE_TACHOGRAPH_EXPIRED]: 'Tahograf',
+  [AlertType.TENANT_INSURANCE_EXPIRED]: 'Generalno osiguranje',
+  [AlertType.DRIVER_ADR_EXPIRED]: 'ADR',
+  [AlertType.DRIVER_GOV_ID_EXPIRED]: 'Osobni dokument',
+  [AlertType.DRIVER_CODE_95_EXPIRED]: 'Kod 95',
+  [AlertType.DRIVER_TACHOGRAPH_CARD_EXPIRED]: 'Kartica tahografa vozača',
+  [AlertType.VEHICLE_MANDATORY_INSURANCE_EXPIRED]: 'Obavezno osiguranje',
+  [AlertType.VEHICLE_OPTIONAL_INSURANCE_EXPIRED]: 'Kasko osiguranje',
+  [AlertType.VEHICLE_SMALL_SERVICE_EXPIRED]: 'Mali servis',
+  [AlertType.VEHICLE_BIG_SERVICE_EXPIRED]: 'Veliki servis',
+  [AlertType.VEHICLE_PERIODICAL_TECHNICAL_INSPECTION_EXPIRED]: 'Periodički tehnički pregled',
+  [AlertType.VEHICLE_TIRES_REPLACEMENT_EXPIRED]: 'Zamjena guma',
+  [AlertType.VEHICLE_LEASING_EXPIRED]: 'Leasing',
 };
