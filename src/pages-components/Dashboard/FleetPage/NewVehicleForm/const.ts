@@ -109,7 +109,7 @@ export const formDefaultValues = {
   smallServiceExpiryDate: undefined as unknown as string,
   bigServiceExpiryDate: undefined as unknown as string,
   tiresReplacementExpiryDate: undefined as unknown as string,
-  insuranceExpiryDate: undefined as unknown as string,
+  mandatoryInsuranceExpiryDate: undefined as unknown as string,
   leasingExpiryDate: undefined as unknown as string,
 };
 

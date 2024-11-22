@@ -26,7 +26,7 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
     smallServiceExpiryDate,
     bigServiceExpiryDate,
     tiresReplacementExpiryDate,
-    insuranceExpiryDate,
+    mandatoryInsuranceExpiryDate,
     leasingExpiryDate,
   } = vehicle;
 
@@ -47,7 +47,7 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
   const bigServiceExpDate = getDataPointDateString(bigServiceExpiryDate);
   const tiresExpDate = getDataPointDateString(tiresReplacementExpiryDate);
 
-  const insuranceExpDate = getDataPointDateString(insuranceExpiryDate);
+  const insuranceExpDate = getDataPointDateString(mandatoryInsuranceExpiryDate);
   const leasingExpDate = getDataPointDateString(leasingExpiryDate);
 
   return (
@@ -111,7 +111,12 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
       <InfoItem
         label="Insurance - Expiry date"
         value={insuranceExpDate}
-        isAlert={propertiesWithAlert?.includes('insuranceExpiryDate')}
+        isAlert={propertiesWithAlert?.includes('mandatoryInsuranceExpiryDate')}
+      />
+      <InfoItem
+        label="Optional Insurance - Expiry date"
+        value={insuranceExpDate}
+        isAlert={propertiesWithAlert?.includes('optionalInsuranceExpiryDate')}
       />
       <InfoItem
         label="Leasing - Expiry date"

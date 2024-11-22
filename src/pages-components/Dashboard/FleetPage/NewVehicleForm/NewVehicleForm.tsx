@@ -128,9 +128,14 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
             <FormDatepicker name="tiresReplacementExpiryDate" label="Tires Change - Expiry date" />
           </Box>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
-          <Box>
-            <FormDatepicker name="insuranceExpiryDate" label="Insurance - Expiry date" />
-          </Box>
+          <FlexLayout className="gap-4">
+            <Box className="flex-1">
+              <FormDatepicker name="mandatoryInsuranceExpiryDate" label="Insurance - Expiry date" />
+            </Box>
+            <Box className="flex-1">
+              <FormDatepicker name="optionalInsuranceExpiryDate" label="Optional Insurance - Expiry date" />
+            </Box>
+          </FlexLayout>
           <Box>
             <FormDatepicker name="leasingExpiryDate" label="Leasing - Expiry date" />
           </Box>
