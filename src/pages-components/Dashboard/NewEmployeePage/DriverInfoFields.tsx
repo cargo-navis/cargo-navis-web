@@ -36,7 +36,7 @@ export const DriverInfoFields = () => {
               <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
                 Driver&apos;s Licence
               </Text>
-              <FormTextInput name="driversLicenceId" label="Driver's Licence ID" />
+              <FormTextInput name="driverLicenceId" label="Driver's Licence ID" />
               <FormSingleSelect
                 label="Country of issue"
                 name="nationality"

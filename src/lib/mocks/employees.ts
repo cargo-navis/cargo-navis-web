@@ -15,7 +15,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345678',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '8f6ed5cd-5796-45ab-ad7b-1ece80e3308c',
+    driverLicenceId: '8f6ed5cd-5796-45ab-ad7b-1ece80e3308c',
   },
   {
     id: 'd0d0b3f5-8b1a-45d9-8c4f-567e2e25d798',
@@ -31,7 +31,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345679',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: 'ce4be2aa-9f6b-47e5-8129-94f67a011ab9',
+    driverLicenceId: 'ce4be2aa-9f6b-47e5-8129-94f67a011ab9',
   },
   {
     id: 'c5c8d5e7-3d4a-4c3b-8a1c-9d0b1e5f4a78',
@@ -47,7 +47,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345680',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '7789e7ab-06fd-4c1d-b779-2ec047acbd9b',
+    driverLicenceId: '7789e7ab-06fd-4c1d-b779-2ec047acbd9b',
   },
   {
     id: 'a7b5e2c8-3e4d-4c3a-9a1e-0b1d5e2f4c8a',
@@ -63,7 +63,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345681',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '1d41f157-3f1c-4942-955f-4f210cb9389c',
+    driverLicenceId: '1d41f157-3f1c-4942-955f-4f210cb9389c',
   },
   {
     id: 'b3e7d0c9-5a4d-4e5a-8c1e-9d0b1f2e3a7b',
@@ -76,7 +76,7 @@ export const employees: Employee[] = [
     nationality: 'Croatian',
     governmentId: 'HR12345682',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '0aa15abe-784c-4940-b402-967926717472',
+    driverLicenceId: '0aa15abe-784c-4940-b402-967926717472',
   },
   {
     id: 'f5a7c0e9-8d3b-4c5e-9b1e-2d0f1c3e4a7b',
@@ -89,7 +89,7 @@ export const employees: Employee[] = [
     nationality: 'Croatian',
     governmentId: 'HR12345683',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '1377fa8f-2e0f-41c4-8f09-9c31497ba821',
+    driverLicenceId: '1377fa8f-2e0f-41c4-8f09-9c31497ba821',
   },
   {
     id: 'e1b3d0f5-7c3a-4e5a-9d1e-3b0c1d2e5f7a',
@@ -105,7 +105,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345684',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '3dfa89f4-b6ca-455e-92b0-8775da19f360',
+    driverLicenceId: '3dfa89f4-b6ca-455e-92b0-8775da19f360',
   },
   {
     id: 'c3d7b0e5-6a3c-4d5e-8b1e-4d0c1f2e3a5b',
@@ -121,7 +121,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345685',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '4a716bdd-1065-4893-b655-32a1d4a215bc',
+    driverLicenceId: '4a716bdd-1065-4893-b655-32a1d4a215bc',
   },
   {
     id: 'd0e7c1b5-5a4c-4e6a-9c1e-5d0b1f3e2a7b',
@@ -137,7 +137,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345686',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '4befb39d-e40a-45cc-8aa6-69831e8eb223',
+    driverLicenceId: '4befb39d-e40a-45cc-8aa6-69831e8eb223',
   },
   {
     id: 'e2b3d5a7-8c4d-4f6a-8b1e-6d0c1e2f3a5b',
@@ -153,7 +153,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345687',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '85287f4f-9a7d-4bb7-8a66-bc49ef8761e9',
+    driverLicenceId: '85287f4f-9a7d-4bb7-8a66-bc49ef8761e9',
   },
   {
     id: 'f0e7d3a5-7c3a-4e6a-9b1e-7d0c1f2e3b5a',
@@ -169,7 +169,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345688',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '126955bc-aa1a-4022-a3f6-7aaa2feee7f0',
+    driverLicenceId: '126955bc-aa1a-4022-a3f6-7aaa2feee7f0',
   },
   {
     id: 'd1b7c5e7-6a4d-4f5a-8c1e-8d0b1e2f3a7b',
@@ -185,7 +185,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345689',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '036adc5f-e569-47c5-8c8d-b1043e5a878c',
+    driverLicenceId: '036adc5f-e569-47c5-8c8d-b1043e5a878c',
   },
   {
     id: 'e3d7c1a5-5a3c-4e6a-9b1e-9d0c1f2e3a7b',
@@ -201,7 +201,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345690',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '5f80f60b-4aed-46b8-8f12-179e67124e05',
+    driverLicenceId: '5f80f60b-4aed-46b8-8f12-179e67124e05',
   },
   {
     id: 'c2d7e0b5-6a4c-4f5e-9c1e-0d0b1e3f2a7b',
@@ -217,7 +217,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345691',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '92b216f4-5fc0-45ce-aa3e-16ce5a2b356e',
+    driverLicenceId: '92b216f4-5fc0-45ce-aa3e-16ce5a2b356e',
   },
   {
     id: 'f1b7d0a5-7c3a-4e5a-8c1e-1d0b1e2f3a7b',
@@ -233,7 +233,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345692',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '22a6abad-77e9-4eab-9cfe-00d8da7a1b91',
+    driverLicenceId: '22a6abad-77e9-4eab-9cfe-00d8da7a1b91',
   },
   {
     id: 'd2e7c3b5-5a4c-4f6a-8c1e-2d0b1f3e2a7b',
@@ -249,7 +249,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345693',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '3bb659ac-7203-4efb-a1ea-32fd743387a2',
+    driverLicenceId: '3bb659ac-7203-4efb-a1ea-32fd743387a2',
   },
   {
     id: 'e4b7d0a5-8c3a-4e5a-9c1e-3d0b1e2f3a7b',
@@ -265,7 +265,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345694',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '27d79712-d0c8-493a-9d4d-469d30fcb570',
+    driverLicenceId: '27d79712-d0c8-493a-9d4d-469d30fcb570',
   },
   {
     id: 'c1d7e5b5-6a4c-4e6a-8c1e-4d0b1f2e3a7b',
@@ -278,7 +278,7 @@ export const employees: Employee[] = [
     nationality: 'Croatian',
     governmentId: 'HR12345695',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '21a7b035-96a4-48bd-b3b9-ccbc169778ae',
+    driverLicenceId: '21a7b035-96a4-48bd-b3b9-ccbc169778ae',
   },
   {
     id: 'f3d7c0a5-7a3c-4e6a-9c1e-5d0b1e2f3b7a',
@@ -294,7 +294,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345696',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '6880f13c-d040-4f66-947b-4adb1a041503',
+    driverLicenceId: '6880f13c-d040-4f66-947b-4adb1a041503',
   },
   {
     id: 'e5d7b0a5-5c3a-4f5e-9b1e-6d0b1f2e3a7b',
@@ -307,7 +307,7 @@ export const employees: Employee[] = [
     nationality: 'Croatian',
     governmentId: 'HR12345697',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: 'a07d57b4-6da0-48fe-ab51-bd5118a90a1d',
+    driverLicenceId: 'a07d57b4-6da0-48fe-ab51-bd5118a90a1d',
   },
   {
     id: 'd3b7c5e5-6a4c-4e5a-8c1e-7d0b1f2e3a7b',
@@ -320,7 +320,7 @@ export const employees: Employee[] = [
     nationality: 'Croatian',
     governmentId: 'HR12345698',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '5f00d350-5c5e-428a-b086-b22ce330aead',
+    driverLicenceId: '5f00d350-5c5e-428a-b086-b22ce330aead',
   },
   {
     id: 'f4b7d0c5-7c3a-4e6a-9b1e-8d0b1e2f3a7b',
@@ -336,7 +336,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345699',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '5953ffcd-bb01-453b-a337-ddcb69a0861d',
+    driverLicenceId: '5953ffcd-bb01-453b-a337-ddcb69a0861d',
   },
   {
     id: 'e6d7c1a5-5a3c-4f6a-9b1e-9d0b1f2e3a7b',
@@ -352,7 +352,7 @@ export const employees: Employee[] = [
     adrExpiryDate: '2025-12-23',
     governmentId: 'HR12345700',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '53ca03db-a98c-41f2-ba41-0b39e18ae6ca',
+    driverLicenceId: '53ca03db-a98c-41f2-ba41-0b39e18ae6ca',
   },
   {
     id: 'c5d7b0a5-6c4a-4e5a-8c1e-0d0b1f3e2a7b',
@@ -366,6 +366,6 @@ export const employees: Employee[] = [
     governmentId: 'HR12345701',
     adrExpiryDate: '2025-12-23',
     governmentIdExpiryDate: '2025-04-22',
-    driversLicenceId: '9ad8f7fa-f131-4e24-b49f-bdd73b56c3f0',
+    driverLicenceId: '9ad8f7fa-f131-4e24-b49f-bdd73b56c3f0',
   },
 ];

@@ -17,7 +17,7 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
     governmentId,
     governmentIdExpiryDate,
     nationality,
-    driversLicenceId,
+    driverLicenceId,
     driverLicenceCategories,
     driverLicenceExpiryDate,
     professionalDriverLicenceExpiryDate,
@@ -69,7 +69,7 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
           <Text variant="text-m-medium" color="text-color-3">
             Driver&apos;s Licence
           </Text>
-          <InfoItem label="Driver's Licence ID" value={driversLicenceId ?? '-'} />
+          <InfoItem label="Driver's Licence ID" value={driverLicenceId ?? '-'} />
           <InfoItem label="Country of issue" value={countries.find((c) => c.code === nationality)?.name || '-'} />
           <FlexLayout className="justify-between items-baseline">
             <Text color="text-color-3" variant="text-s-medium">

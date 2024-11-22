@@ -9,7 +9,7 @@ export const employeeSchema = object({
   phoneNumber: string().required('Phone number is required'),
   governmentId: whenDriver(string()),
   governmentIdExpiryDate: whenDriver(string()),
-  driversLicenceId: whenDriver(string()),
+  driverLicenceId: whenDriver(string()),
   driverLicenceExpiryDate: whenDriver(string()),
   driverLicenceCategories: whenDriver(array(string())),
   professionalDriverLicenceExpiryDate: whenDriver(string()),

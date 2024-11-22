@@ -241,7 +241,7 @@ export const formDefaultValues = {
   position: '' as PositionEnum,
   governmentId: undefined as unknown as string,
   governmentIdExpiryDate: undefined as unknown as string,
-  driversLicenceId: undefined as unknown as string,
+  driverLicenceId: undefined as unknown as string,
   driverLicenceCategories: undefined as unknown as string[],
   adrExpiryDate: undefined as unknown as string,
   driverLicenceExpiryDate: undefined as unknown as string,

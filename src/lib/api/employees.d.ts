@@ -17,7 +17,7 @@ export interface Employee {
   position: PositionEnum;
   governmentId: string;
   governmentIdExpiryDate?: string;
-  driversLicenceId?: string;
+  driverLicenceId?: string;
   nationality: string;
   driverLicenceCategories?: DriverLicenceEnum[];
   driverLicenceExpiryDate?: string;
@@ -28,6 +28,9 @@ export interface Employee {
   medicalExaminationExpiryDate?: string;
   visaExpiryDate?: string;
   code95ExpiryDate?: string;
+  dateOfBirth?: string;
+  residenceAddress?: string;
+  driverTachographCardExpiryDate?: string;
 }
 
 export enum GenderEnum {
