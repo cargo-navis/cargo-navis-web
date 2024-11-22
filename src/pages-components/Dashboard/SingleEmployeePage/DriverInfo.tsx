@@ -43,9 +43,9 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
   const formattedAdrExpiryDate = getDataPointDateString(adrExpiryDate);
   const formattedCode95ExpiryDate = getDataPointDateString(code95ExpiryDate);
 
-  const formattedContractExpiryDateExpiryDate = getDataPointDateString(contractExpiryDate);
-  const formattedVisaExpiryDateExpiryDate = getDataPointDateString(visaExpiryDate);
-  const formattedMedicalExaminationExpiryDateExpiryDate = getDataPointDateString(medicalExaminationExpiryDate);
+  const formattedContractExpiryDate = getDataPointDateString(contractExpiryDate);
+  const formattedVisaExpiryDate = getDataPointDateString(visaExpiryDate);
+  const formattedMedicalExaminationExpiryDate = getDataPointDateString(medicalExaminationExpiryDate);
 
   const tachographExpiryDate = getDataPointDateString(driverTachographCardExpiryDate);
 
@@ -101,11 +101,11 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
         <Divider />
         <InfoItem label="ADR Expiry date" value={formattedAdrExpiryDate || '-'} />
         <Divider />
-        <InfoItem label="Employment Contract Expiry date" value={formattedContractExpiryDateExpiryDate || '-'} />
+        <InfoItem label="Employment Contract Expiry date" value={formattedContractExpiryDate || '-'} />
         <Divider />
-        <InfoItem label="Work Permit Expiry date" value={formattedVisaExpiryDateExpiryDate || '-'} />
+        <InfoItem label="Work Permit Expiry date" value={formattedVisaExpiryDate || '-'} />
         <Divider />
-        <InfoItem label="Medical Exam Expiry date" value={formattedMedicalExaminationExpiryDateExpiryDate || '-'} />
+        <InfoItem label="Medical Exam Expiry date" value={formattedMedicalExaminationExpiryDate || '-'} />
         <Divider />
         <InfoItem
           label="Code 95 Expiry date"
