@@ -46,20 +46,21 @@ export const DriverInfoFields = () => {
           <Box className="flex-1">
             <FormCheckboxGroup name="driverLicenceCategories" label="Categories" options={categoryOptions} />
           </Box>
-          {values.driverLicenceCategories.some((cat: DriverLicenceEnum) =>
+          {values.driverLicenceCategories?.some((cat: DriverLicenceEnum) =>
             [DriverLicenceEnum.B, DriverLicenceEnum.B1].includes(cat),
           ) && <FormDatepicker name="driverLicenceExpiryDate" label="Expiry date (Regular)" />}
-          {values.driverLicenceCategories.some((cat: DriverLicenceEnum) =>
+          {values.driverLicenceCategories?.some((cat: DriverLicenceEnum) =>
             [DriverLicenceEnum.C1, DriverLicenceEnum.C, DriverLicenceEnum.C1E, DriverLicenceEnum.CE].includes(cat),
           ) && <FormDatepicker name="professionalDriverLicenceExpiryDate" label="Expiry date (Professional)" />}
         </FlexLayout>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
-        <Box className="flex-1">
+        <FlexLayout className="flex-1 flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
             Tachograph Card
           </Text>
           <FormTextInput name="driverTachographCardId" label="Tachograph Card ID" />
-        </Box>
+          <FormDatepicker name="driverTachographCardExpiryDate" label="Expiry date" />
+        </FlexLayout>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex-1">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">

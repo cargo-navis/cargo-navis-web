@@ -22,7 +22,6 @@ export interface Employee {
   driverLicenceCategories?: DriverLicenceEnum[];
   driverLicenceExpiryDate?: string;
   professionalDriverLicenceExpiryDate?: string;
-  driverTachographCardId?: string;
   adrExpiryDate?: string;
   contractExpiryDate?: string;
   medicalExaminationExpiryDate?: string;
@@ -30,6 +29,7 @@ export interface Employee {
   code95ExpiryDate?: string;
   dateOfBirth?: string;
   residenceAddress?: string;
+  driverTachographCardId?: string;
   driverTachographCardExpiryDate?: string;
 }
 

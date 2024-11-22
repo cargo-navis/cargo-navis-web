@@ -22,6 +22,7 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
     driverLicenceExpiryDate,
     professionalDriverLicenceExpiryDate,
     driverTachographCardId,
+    driverTachographCardExpiryDate,
     code95ExpiryDate,
     adrExpiryDate,
     contractExpiryDate,
@@ -45,6 +46,8 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
   const formattedContractExpiryDateExpiryDate = getDataPointDateString(contractExpiryDate);
   const formattedVisaExpiryDateExpiryDate = getDataPointDateString(visaExpiryDate);
   const formattedMedicalExaminationExpiryDateExpiryDate = getDataPointDateString(medicalExaminationExpiryDate);
+
+  const tachographExpiryDate = getDataPointDateString(driverTachographCardExpiryDate);
 
   return (
     <FlexLayout className="flex-col gap-4">
@@ -94,6 +97,7 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
         </FlexLayout>
         <Divider />
         <InfoItem label="Tachograph Card ID" value={driverTachographCardId || '-'} />
+        <InfoItem label="Tachograph Card Expiry date" value={tachographExpiryDate || '-'} />
         <Divider />
         <InfoItem label="ADR Expiry date" value={formattedAdrExpiryDate || '-'} />
         <Divider />
