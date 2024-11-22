@@ -28,6 +28,7 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
     tiresReplacementExpiryDate,
     mandatoryInsuranceExpiryDate,
     leasingExpiryDate,
+    vehicleIdentificationNumber
   } = vehicle;
 
   const { data } = useAlertByVehicleType(type);
@@ -61,6 +62,7 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
         <InfoItem label="Manufacturing Year" value={manufacturingYear} />
         <InfoItem label="Number of Axels" value={numberOfAxles} />
         <InfoItem label="Curb weight (kg)" value={emptyWeight} />
+        <InfoItem label="Chassis number" value={vehicleIdentificationNumber} />
       </FlexLayout>
       <Divider />
       <FlexLayout className="flex-col gap-3">

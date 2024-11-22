@@ -20,6 +20,7 @@ export interface Vehicle {
   bigServiceExpiryDate?: string;
   tiresReplacementExpiryDate?: string;
   mandatoryInsuranceExpiryDate?: string;
+  optionalInsuranceExpiryDate?: string;
   leasingExpiryDate?: string;
   adrExpiryDate: string;
   dimensions: Dimensions;
@@ -36,8 +37,6 @@ export interface Vehicle {
   registrationExpiryDate: string;
   emptyWeight: number;
   vehicleIdentificationNumber: string;
-  mandatoryInsuranceExpiryDate: string;
-  optionalInsuranceExpiryDate: string;
 }
 
 export interface Dimensions {

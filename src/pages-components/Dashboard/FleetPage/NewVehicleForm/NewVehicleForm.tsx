@@ -90,6 +90,9 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
               <FormTextInput name="numberOfAxles" label="Number of Axels" type="number" min="0" />
             </Box>
           </FlexLayout>
+          <Box>
+            <FormTextInput name="vehicleIdentificationNumber" label="Chassis number" />
+          </Box>
           <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <FlexLayout className="gap-4">
             <Box className="flex-1">
