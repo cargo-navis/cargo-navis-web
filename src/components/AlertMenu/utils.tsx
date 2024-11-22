@@ -21,6 +21,12 @@ export function getItemData(alert: Alert) {
   const { ruleName, alertable } = alert;
 
   switch (ruleName) {
+    case AlertType.TENANT_INSURANCE_EXPIRED: {
+      // TODO
+      targetUrl = '';
+      descriptionNode = 'TODO';
+      break;
+    }
     case AlertType.EMPLOYEE_CONTRACT_EXPIRED: {
       const employee = alertable as Employee;
 
@@ -72,6 +78,50 @@ export function getItemData(alert: Alert) {
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
           Vozaču (<EmployeeName employee={employee} />) istječe lječnički pregled.
+        </Text>
+      );
+      break;
+    }
+    case AlertType.DRIVER_ADR_EXPIRED: {
+      const employee = alertable as Employee;
+
+      targetUrl = `/dashboard/employees/${employee.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozaču (<EmployeeName employee={employee} />) istječe ADR licenca.
+        </Text>
+      );
+      break;
+    }
+    case AlertType.DRIVER_GOV_ID_EXPIRED: {
+      const employee = alertable as Employee;
+
+      targetUrl = `/dashboard/employees/${employee.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozaču (<EmployeeName employee={employee} />) istječe osobni dokument.
+        </Text>
+      );
+      break;
+    }
+    case AlertType.DRIVER_CODE_95_EXPIRED: {
+      const employee = alertable as Employee;
+
+      targetUrl = `/dashboard/employees/${employee.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozaču (<EmployeeName employee={employee} />) istječe dozvola za Kod 95.
+        </Text>
+      );
+      break;
+    }
+    case AlertType.DRIVER_TACHOGRAPH_CARD_EXPIRED: {
+      const employee = alertable as Employee;
+
+      targetUrl = `/dashboard/employees/${employee.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozaču (<EmployeeName employee={employee} />) istječe kartica za tahograf.
         </Text>
       );
       break;
@@ -132,6 +182,90 @@ export function getItemData(alert: Alert) {
       descriptionNode = (
         <Text variant="text-s" color="text-color-2">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe tahograf.
+        </Text>
+      );
+      break;
+    }
+    case AlertType.VEHICLE_MANDATORY_INSURANCE_EXPIRED: {
+      const vehicle = alertable as Vehicle;
+      const path = vehicleTypeToPathMap[vehicle.type];
+
+      targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozilu (<VehicleRegistration vehicle={vehicle} />) obavezno osiguranje.
+        </Text>
+      );
+      break;
+    }
+    case AlertType.VEHICLE_OPTIONAL_INSURANCE_EXPIRED: {
+      const vehicle = alertable as Vehicle;
+      const path = vehicleTypeToPathMap[vehicle.type];
+
+      targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe kasko osiguranje.
+        </Text>
+      );
+      break;
+    }
+    case AlertType.VEHICLE_SMALL_SERVICE_EXPIRED: {
+      const vehicle = alertable as Vehicle;
+      const path = vehicleTypeToPathMap[vehicle.type];
+
+      targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe mali servis.
+        </Text>
+      );
+      break;
+    }
+    case AlertType.VEHICLE_BIG_SERVICE_EXPIRED: {
+      const vehicle = alertable as Vehicle;
+      const path = vehicleTypeToPathMap[vehicle.type];
+
+      targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe veliki servis.
+        </Text>
+      );
+      break;
+    }
+    case AlertType.VEHICLE_PERIODICAL_TECHNICAL_INSPECTION_EXPIRED: {
+      const vehicle = alertable as Vehicle;
+      const path = vehicleTypeToPathMap[vehicle.type];
+
+      targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe periodički tehnički pregled.
+        </Text>
+      );
+      break;
+    }
+    case AlertType.VEHICLE_TIRES_REPLACEMENT_EXPIRED: {
+      const vehicle = alertable as Vehicle;
+      const path = vehicleTypeToPathMap[vehicle.type];
+
+      targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe zamjena guma.
+        </Text>
+      );
+      break;
+    }
+    case AlertType.VEHICLE_LEASING_EXPIRED: {
+      const vehicle = alertable as Vehicle;
+      const path = vehicleTypeToPathMap[vehicle.type];
+
+      targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe leasing.
         </Text>
       );
       break;
