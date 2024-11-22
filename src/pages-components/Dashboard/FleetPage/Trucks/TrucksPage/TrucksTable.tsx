@@ -8,8 +8,6 @@ import { useMemo } from 'react';
 
 const columnHelper = createColumnHelper<Vehicle>();
 
-// TODO - update to CRO
-
 export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
   const columns = useMemo(() => {
     return [

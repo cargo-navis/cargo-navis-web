@@ -79,6 +79,7 @@ export const equipmentOptions = [
   { value: EquipmentEnum.PORTABLE_FORKLIFT, label: 'Portable Forklift' },
   { value: EquipmentEnum.WASTE_CARRIER_LICENCE, label: 'Waste Carrier Licence' },
   { value: EquipmentEnum.MEAT_HOOK, label: 'Meat Hook' },
+  { value: EquipmentEnum.PALLETS, label: 'Pallets' },
 ];
 
 export const rampOptions: RadioOption[] = [
@@ -107,8 +108,8 @@ export const formDefaultValues = {
   periodicalTechnicalInspectionExpiryDate: undefined as unknown as string,
   smallServiceExpiryDate: undefined as unknown as string,
   bigServiceExpiryDate: undefined as unknown as string,
-  tiresSeasonalReplacementExpiryDate: undefined as unknown as string,
-  insuranceExpiryDate: undefined as unknown as string,
+  tiresReplacementExpiryDate: undefined as unknown as string,
+  mandatoryInsuranceExpiryDate: undefined as unknown as string,
   leasingExpiryDate: undefined as unknown as string,
 };
 

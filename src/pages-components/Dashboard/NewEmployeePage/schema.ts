@@ -9,17 +9,20 @@ export const employeeSchema = object({
   phoneNumber: string().required('Phone number is required'),
   governmentId: whenDriver(string()),
   governmentIdExpiryDate: whenDriver(string()),
-  driversLicenceId: whenDriver(string()),
+  driverLicenceId: whenDriver(string()),
   driverLicenceExpiryDate: whenDriver(string()),
   driverLicenceCategories: whenDriver(array(string())),
   professionalDriverLicenceExpiryDate: whenDriver(string()),
   nationality: whenDriver(string()),
   driverTachographCardId: whenDriver(string()),
+  driverTachographCardExpiryDate: whenDriver(string()),
   adrExpiryDate: whenDriver(string()),
   contractExpiryDate: whenDriver(string()),
   medicalExaminationExpiryDate: whenDriver(string()),
   visaExpiryDate: whenDriver(string()),
   code95ExpiryDate: whenDriver(string()),
+  dateOfBirth: whenDriver(string()),
+  residenceAddress: whenDriver(string()),
 }).required();
 
 function whenDriver(schema: Schema) {

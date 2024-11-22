@@ -25,9 +25,10 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
     periodicalTechnicalInspectionExpiryDate,
     smallServiceExpiryDate,
     bigServiceExpiryDate,
-    tiresSeasonalReplacementExpiryDate,
-    insuranceExpiryDate,
+    tiresReplacementExpiryDate,
+    mandatoryInsuranceExpiryDate,
     leasingExpiryDate,
+    vehicleIdentificationNumber,
   } = vehicle;
 
   const { data } = useAlertByVehicleType(type);
@@ -45,9 +46,9 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
 
   const smallServiceExpDate = getDataPointDateString(smallServiceExpiryDate);
   const bigServiceExpDate = getDataPointDateString(bigServiceExpiryDate);
-  const tiresExpDate = getDataPointDateString(tiresSeasonalReplacementExpiryDate);
+  const tiresExpDate = getDataPointDateString(tiresReplacementExpiryDate);
 
-  const insuranceExpDate = getDataPointDateString(insuranceExpiryDate);
+  const insuranceExpDate = getDataPointDateString(mandatoryInsuranceExpiryDate);
   const leasingExpDate = getDataPointDateString(leasingExpiryDate);
 
   return (
@@ -61,6 +62,7 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
         <InfoItem label="Manufacturing Year" value={manufacturingYear} />
         <InfoItem label="Number of Axels" value={numberOfAxles} />
         <InfoItem label="Curb weight (kg)" value={emptyWeight} />
+        <InfoItem label="Chassis number" value={vehicleIdentificationNumber} />
       </FlexLayout>
       <Divider />
       <FlexLayout className="flex-col gap-3">
@@ -105,13 +107,18 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
       <InfoItem
         label="Tires change - Expiry date"
         value={tiresExpDate}
-        isAlert={propertiesWithAlert?.includes('tiresSeasonalReplacementExpiryDate')}
+        isAlert={propertiesWithAlert?.includes('tiresReplacementExpiryDate')}
       />
       <Divider />
       <InfoItem
         label="Insurance - Expiry date"
         value={insuranceExpDate}
-        isAlert={propertiesWithAlert?.includes('insuranceExpiryDate')}
+        isAlert={propertiesWithAlert?.includes('mandatoryInsuranceExpiryDate')}
+      />
+      <InfoItem
+        label="Optional Insurance - Expiry date"
+        value={insuranceExpDate}
+        isAlert={propertiesWithAlert?.includes('optionalInsuranceExpiryDate')}
       />
       <InfoItem
         label="Leasing - Expiry date"

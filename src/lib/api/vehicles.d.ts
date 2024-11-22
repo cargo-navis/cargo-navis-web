@@ -18,8 +18,9 @@ export interface Vehicle {
   periodicalTechnicalInspectionExpiryDate?: string;
   smallServiceExpiryDate?: string;
   bigServiceExpiryDate?: string;
-  tiresSeasonalReplacementExpiryDate?: string;
-  insuranceExpiryDate?: string;
+  tiresReplacementExpiryDate?: string;
+  mandatoryInsuranceExpiryDate?: string;
+  optionalInsuranceExpiryDate?: string;
   leasingExpiryDate?: string;
   adrExpiryDate: string;
   dimensions: Dimensions;
@@ -35,6 +36,7 @@ export interface Vehicle {
   registrationDate: string;
   registrationExpiryDate: string;
   emptyWeight: number;
+  vehicleIdentificationNumber: string;
 }
 
 export interface Dimensions {
@@ -83,6 +85,7 @@ export enum EquipmentEnum {
   PORTABLE_FORKLIFT = 'portable_forklift',
   WASTE_CARRIER_LICENCE = 'waste_carrier_licence',
   MEAT_HOOK = 'meat_hooks',
+  PALLETS = 'pallets',
 }
 
 export type CreateVehicleParams = Partial<Vehicle>;

@@ -17,17 +17,20 @@ export interface Employee {
   position: PositionEnum;
   governmentId: string;
   governmentIdExpiryDate?: string;
-  driversLicenceId?: string;
+  driverLicenceId?: string;
   nationality: string;
   driverLicenceCategories?: DriverLicenceEnum[];
   driverLicenceExpiryDate?: string;
   professionalDriverLicenceExpiryDate?: string;
-  driverTachographCardId?: string;
   adrExpiryDate?: string;
   contractExpiryDate?: string;
   medicalExaminationExpiryDate?: string;
   visaExpiryDate?: string;
   code95ExpiryDate?: string;
+  dateOfBirth?: string;
+  residenceAddress?: string;
+  driverTachographCardId?: string;
+  driverTachographCardExpiryDate?: string;
 }
 
 export enum GenderEnum {

@@ -17,11 +17,12 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
     governmentId,
     governmentIdExpiryDate,
     nationality,
-    driversLicenceId,
+    driverLicenceId,
     driverLicenceCategories,
     driverLicenceExpiryDate,
     professionalDriverLicenceExpiryDate,
     driverTachographCardId,
+    driverTachographCardExpiryDate,
     code95ExpiryDate,
     adrExpiryDate,
     contractExpiryDate,
@@ -42,9 +43,11 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
   const formattedAdrExpiryDate = getDataPointDateString(adrExpiryDate);
   const formattedCode95ExpiryDate = getDataPointDateString(code95ExpiryDate);
 
-  const formattedContractExpiryDateExpiryDate = getDataPointDateString(contractExpiryDate);
-  const formattedVisaExpiryDateExpiryDate = getDataPointDateString(visaExpiryDate);
-  const formattedMedicalExaminationExpiryDateExpiryDate = getDataPointDateString(medicalExaminationExpiryDate);
+  const formattedContractExpiryDate = getDataPointDateString(contractExpiryDate);
+  const formattedVisaExpiryDate = getDataPointDateString(visaExpiryDate);
+  const formattedMedicalExaminationExpiryDate = getDataPointDateString(medicalExaminationExpiryDate);
+
+  const tachographExpiryDate = getDataPointDateString(driverTachographCardExpiryDate);
 
   return (
     <FlexLayout className="flex-col gap-4">
@@ -69,7 +72,7 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
           <Text variant="text-m-medium" color="text-color-3">
             Driver&apos;s Licence
           </Text>
-          <InfoItem label="Driver's Licence ID" value={driversLicenceId ?? '-'} />
+          <InfoItem label="Driver's Licence ID" value={driverLicenceId ?? '-'} />
           <InfoItem label="Country of issue" value={countries.find((c) => c.code === nationality)?.name || '-'} />
           <FlexLayout className="justify-between items-baseline">
             <Text color="text-color-3" variant="text-s-medium">
@@ -94,14 +97,15 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
         </FlexLayout>
         <Divider />
         <InfoItem label="Tachograph Card ID" value={driverTachographCardId || '-'} />
+        <InfoItem label="Tachograph Card Expiry date" value={tachographExpiryDate || '-'} />
         <Divider />
         <InfoItem label="ADR Expiry date" value={formattedAdrExpiryDate || '-'} />
         <Divider />
-        <InfoItem label="Employment Contract Expiry date" value={formattedContractExpiryDateExpiryDate || '-'} />
+        <InfoItem label="Employment Contract Expiry date" value={formattedContractExpiryDate || '-'} />
         <Divider />
-        <InfoItem label="Work Permit Expiry date" value={formattedVisaExpiryDateExpiryDate || '-'} />
+        <InfoItem label="Work Permit Expiry date" value={formattedVisaExpiryDate || '-'} />
         <Divider />
-        <InfoItem label="Medical Exam Expiry date" value={formattedMedicalExaminationExpiryDateExpiryDate || '-'} />
+        <InfoItem label="Medical Exam Expiry date" value={formattedMedicalExaminationExpiryDate || '-'} />
         <Divider />
         <InfoItem
           label="Code 95 Expiry date"

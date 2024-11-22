@@ -30,6 +30,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     registrationDate: '2019-07-22',
     registrationExpiryDate: '2024-07-21',
     emptyWeight: 8000,
+    vehicleIdentificationNumber: '01JDAM1GE1JE4SE704113ZM3GS',
   },
   {
     id: '83857227-7349-4a2a-aced-4d45cd1c0141',
@@ -60,6 +61,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     registrationDate: '2018-03-11',
     registrationExpiryDate: '2023-03-10',
     emptyWeight: 7800,
+    vehicleIdentificationNumber: '01JDAM1GE577YTWKH56YAS0FSX',
   },
   {
     id: '3952b5c0-a793-40f0-9d8a-83e611e59272',
@@ -90,6 +92,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     registrationDate: '2020-05-15',
     registrationExpiryDate: '2025-05-14',
     emptyWeight: 8200,
+    vehicleIdentificationNumber: '01JDAM1GE69X15FNZXV086EGEF',
   },
   {
     id: '426cca57-5f68-4256-9f47-026f4719a68c',
@@ -120,6 +123,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     registrationDate: '2017-09-08',
     registrationExpiryDate: '2022-09-07',
     emptyWeight: 7600,
+    vehicleIdentificationNumber: '01JDAM1GE7MD7TFZ8TX8Y2HERV',
   },
   {
     id: '03272b96-60d3-4754-9e03-716e59e21ae8',
@@ -150,6 +154,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     registrationDate: '2021-01-20',
     registrationExpiryDate: '2026-01-19',
     emptyWeight: 8500,
+    vehicleIdentificationNumber: '01JDAM1GE8MASTCG2KY12GHYPC',
   },
   {
     id: '52dbd581-ad23-45f3-9149-bc596634dc7b',
@@ -180,6 +185,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     registrationDate: '2016-08-30',
     registrationExpiryDate: '2021-08-29',
     emptyWeight: 7900,
+    vehicleIdentificationNumber: '01JDAM1GE9XTWPX5XZ4E2NDHB4',
   },
   {
     id: 'cb68251d-0b21-420a-baec-e91fcd650644',
@@ -210,6 +216,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     registrationDate: '2015-02-10',
     registrationExpiryDate: '2020-02-09',
     emptyWeight: 7700,
+    vehicleIdentificationNumber: '01JDAM1GE9H45VZ9W4ZEYJ6HHA',
   },
   {
     id: 'd2f72c77-0f42-450a-8d0f-8778f57b8446',
@@ -240,6 +247,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     registrationDate: '2017-04-20',
     registrationExpiryDate: '2022-04-19',
     emptyWeight: 8100,
+    vehicleIdentificationNumber: '01JDAM1GEAFMRM8NZXW91DM1RD',
   },
   {
     id: '4d0bc201-91b1-4735-89fc-bdbb3bf5bb90',
@@ -270,6 +278,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     registrationDate: '2019-07-22',
     registrationExpiryDate: '2024-07-21',
     emptyWeight: 8000,
+    vehicleIdentificationNumber: '01JDAM1GEAVY4DX4TJRYD998WH',
   },
   {
     id: 'ffbc9680-f2c3-465a-a9db-758f8bc54791',
@@ -300,6 +309,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     registrationDate: '2018-03-11',
     registrationExpiryDate: '2023-03-10',
     emptyWeight: 7800,
+    vehicleIdentificationNumber: '01JDAM1GEBZWYANSDTAX1572WZ',
   },
   {
     id: '7b85dfea-23be-4405-b286-66a0d5c5fa91',
@@ -330,6 +340,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     registrationDate: '2020-05-15',
     registrationExpiryDate: '2025-05-14',
     emptyWeight: 8200,
+    vehicleIdentificationNumber: '01JDAM1GEB6VCDQCWDT59TZMJY',
   },
   {
     id: '55fa196a-83fe-4b8f-86ff-908addff9c9f',
@@ -360,6 +371,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     registrationDate: '2017-09-08',
     registrationExpiryDate: '2022-09-07',
     emptyWeight: 7600,
+    vehicleIdentificationNumber: '01JDAM1GEBY25WN1X6HHJEN3QH',
   },
   {
     id: '07d3838f-cc53-41b4-8c60-a6e492a5ea36',
@@ -390,6 +402,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     registrationDate: '2021-01-20',
     registrationExpiryDate: '2026-01-19',
     emptyWeight: 8500,
+    vehicleIdentificationNumber: '01JDAM1GEC8N0ME87Y2Y40T4YF',
   },
   {
     id: '5a19ffbb-feee-4678-9a4e-4b7f6ef91be0',
@@ -420,6 +433,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     registrationDate: '2016-08-30',
     registrationExpiryDate: '2021-08-29',
     emptyWeight: 7900,
+    vehicleIdentificationNumber: '01JDAM1GEC9N0H6S89A04YJZN7',
   },
   {
     id: '40d8de4d-c348-4022-b8ab-f91be4a9612e',
@@ -450,6 +464,7 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     registrationDate: '2015-02-10',
     registrationExpiryDate: '2020-02-09',
     emptyWeight: 7700,
+    vehicleIdentificationNumber: '01JDAM1GEDCYNPJMRNS9B91RVQ',
   },
   {
     id: 'c6885541-e3d4-4857-8202-d6856c39a5a3',
@@ -480,5 +495,6 @@ export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: an
     registrationDate: '2017-04-20',
     registrationExpiryDate: '2022-04-19',
     emptyWeight: 8100,
+    vehicleIdentificationNumber: '01JDAM1GED7T3CMAWG3A78D150',
   },
 ];
