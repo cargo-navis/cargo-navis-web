@@ -54,19 +54,19 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
   const brandOptions = typeBrandOptionsMap[type];
 
   const vehicleTypeName = typeNameMap[type];
-  const buttonText = isEdit ? `Update ${vehicleTypeName}` : `Create ${vehicleTypeName}`;
+  const buttonText = isEdit ? `Ažuriraj ${vehicleTypeName}` : `Dodaj ${vehicleTypeName}`;
 
   return (
     <FormProvider {...formMethods}>
       <FlexLayout as="form" className="gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
         <FlexLayout as="fieldset" className="flex-col gap-4 w-[480px]">
           <Text color="text-color-2" variant="text-m-medium">
-            General Info
+            Generalni podaci
           </Text>
           <FlexLayout className="gap-4">
             <Box className="flex-1">
               <FormSingleSelect
-                label="Brand"
+                label="Brend"
                 name="brand"
                 isSearchable
                 isClearable
@@ -75,72 +75,72 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
               />
             </Box>
             <Box className="flex-1">
-              <FormYearpicker name="manufacturingYear" label="Manufacturing Year" />
+              <FormYearpicker name="manufacturingYear" label="Godina proizvodnje" />
             </Box>
           </FlexLayout>
           <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Box>
-            <FormTextInput name="registration" label="Registration plate" />
+            <FormTextInput name="registration" label="Registracija" />
           </Box>
           <FlexLayout className="gap-4">
             <Box className="flex-grow">
-              <FormTextInput name="emptyWeight" label="Curb Weight" type="number" min="0" />
+              <FormTextInput name="emptyWeight" label="Masa praznog vozila (kg)" type="number" min="0" />
             </Box>
             <Box className="flex-grow">
-              <FormTextInput name="numberOfAxles" label="Number of Axels" type="number" min="0" />
+              <FormTextInput name="numberOfAxles" label="Broj osovina" type="number" min="0" />
             </Box>
           </FlexLayout>
           <Box>
-            <FormTextInput name="vehicleIdentificationNumber" label="Chassis number" />
+            <FormTextInput name="vehicleIdentificationNumber" label="Broj šasije" />
           </Box>
           <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <FlexLayout className="gap-4">
             <Box className="flex-1">
-              <FormDatepicker name="registrationDate" label="Registration date" />
+              <FormDatepicker name="registrationDate" label="Datum registracije" />
             </Box>
             <Box className="flex-1">
-              <FormDatepicker name="registrationExpiryDate" label="Registration - Expiry date" />
+              <FormDatepicker name="registrationExpiryDate" label="Registracija - Vrijedi do" />
             </Box>
           </FlexLayout>
           <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <DisplayIf condition={type !== VehicleEnum.TRAILER}>
             <Box>
-              <FormDatepicker name="tachographExpiryDate" label="Tachograph - Expiry date" />
+              <FormDatepicker name="tachographExpiryDate" label="Tahograf - Vrijedi do" />
             </Box>
             <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           </DisplayIf>
           <Box>
-            <FormDatepicker name="technicalInspectionExpiryDate" label="Techical Inspection - Expiry date" />
+            <FormDatepicker name="technicalInspectionExpiryDate" label="Tehnički pregled - Vrijedi do" />
           </Box>
           <Box>
             <FormDatepicker
               name="periodicalTechnicalInspectionExpiryDate"
-              label="Periodical Techical Inspection - Expiry date"
+              label="Periodički tehnički pregled - Vrijedi do"
             />
           </Box>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <FlexLayout className="gap-4">
             <Box className="flex-1">
-              <FormDatepicker name="smallServiceExpiryDate" label="Small Service - Expiry date" />
+              <FormDatepicker name="smallServiceExpiryDate" label="Mali servis - Vrijedi do" />
             </Box>
             <Box className="flex-1">
-              <FormDatepicker name="bigServiceExpiryDate" label="Big Service - Expiry date" />
+              <FormDatepicker name="bigServiceExpiryDate" label="Veliki servis - Vrijedi do" />
             </Box>
           </FlexLayout>
           <Box>
-            <FormDatepicker name="tiresReplacementExpiryDate" label="Tires Change - Expiry date" />
+            <FormDatepicker name="tiresReplacementExpiryDate" label="Gume - Vrijedi do" />
           </Box>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <FlexLayout className="gap-4">
             <Box className="flex-1">
-              <FormDatepicker name="mandatoryInsuranceExpiryDate" label="Insurance - Expiry date" />
+              <FormDatepicker name="mandatoryInsuranceExpiryDate" label="Osiguranje - Vrijedi do" />
             </Box>
             <Box className="flex-1">
-              <FormDatepicker name="optionalInsuranceExpiryDate" label="Optional Insurance - Expiry date" />
+              <FormDatepicker name="optionalInsuranceExpiryDate" label="Kasko - Vrijedi do" />
             </Box>
           </FlexLayout>
           <Box>
-            <FormDatepicker name="leasingExpiryDate" label="Leasing - Expiry date" />
+            <FormDatepicker name="leasingExpiryDate" label="Leasing - Vrijedi do" />
           </Box>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Button text={buttonText} isFullWidth isDisabled={!(isValid && isDirty)} isLoading={formState.isSubmitting} />

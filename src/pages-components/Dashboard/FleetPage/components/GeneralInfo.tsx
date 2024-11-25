@@ -54,22 +54,22 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
   return (
     <FlexLayout className="flex-col gap-4 w-[360px]">
       <Text variant="text-l-medium" color="text-color-2">
-        General Info
+        Generalni podaci
       </Text>
       <Divider />
       <FlexLayout className="flex-col gap-3">
-        <InfoItem label="Brand" value={brand} />
-        <InfoItem label="Manufacturing Year" value={manufacturingYear} />
-        <InfoItem label="Number of Axels" value={numberOfAxles} />
-        <InfoItem label="Curb weight (kg)" value={emptyWeight} />
-        <InfoItem label="Chassis number" value={vehicleIdentificationNumber} />
+        <InfoItem label="Brend" value={brand} />
+        <InfoItem label="Godina proizvodnje" value={manufacturingYear} />
+        <InfoItem label="Broj osovina" value={numberOfAxles} />
+        <InfoItem label="Masa praznog vozila (kg)" value={emptyWeight} />
+        <InfoItem label="Broj šasije" value={vehicleIdentificationNumber} />
       </FlexLayout>
       <Divider />
       <FlexLayout className="flex-col gap-3">
-        <InfoItem label="Registration Plate" value={registration} />
-        <InfoItem label="Registration Date" value={formattedRegistrationDate} />
+        <InfoItem label="Registracija" value={registration} />
+        <InfoItem label="Datum registracije" value={formattedRegistrationDate} />
         <InfoItem
-          label="Registration - Expiry date"
+          label="Registracija - Vrijedi do"
           value={formattedRegistrationExpiryDate}
           isAlert={propertiesWithAlert?.includes('registrationExpiryDate')}
         />
@@ -77,51 +77,51 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
       <Divider />
       <DisplayIf condition={type !== VehicleEnum.TRAILER}>
         <InfoItem
-          label="Tachograph - Expiry date"
+          label="Tahograf - Vrijedi do"
           value={tachoExpiryDate}
           isAlert={propertiesWithAlert?.includes('tachographExpiryDate')}
         />
         <Divider />
       </DisplayIf>
       <InfoItem
-        label="Technical Inspection - Expiry date"
+        label="Tehnički pregled - Vrijedi do"
         value={techExpiryDate}
         isAlert={propertiesWithAlert?.includes('technicalInspectionExpiryDate')}
       />
       <InfoItem
-        label="Periodical Technical Inspection - Expiry date"
+        label="Periodički tehnički pregled - Vrijedi do"
         value={periodicalTechExpiryDate}
         isAlert={propertiesWithAlert?.includes('periodicalTechnicalInspectionExpiryDate')}
       />
       <Divider />
       <InfoItem
-        label="Small Service - Expiry date"
+        label="Mali servis - Vrijedi do"
         value={smallServiceExpDate}
         isAlert={propertiesWithAlert?.includes('smallServiceExpiryDate')}
       />
       <InfoItem
-        label="Big Service - Expiry date"
+        label="Veliki servis - Vrijedi do"
         value={bigServiceExpDate}
         isAlert={propertiesWithAlert?.includes('bigServiceExpiryDate')}
       />
       <InfoItem
-        label="Tires change - Expiry date"
+        label="Gume - Vrijedi do"
         value={tiresExpDate}
         isAlert={propertiesWithAlert?.includes('tiresReplacementExpiryDate')}
       />
       <Divider />
       <InfoItem
-        label="Insurance - Expiry date"
+        label="Osiguranje - Vrijedi do"
         value={insuranceExpDate}
         isAlert={propertiesWithAlert?.includes('mandatoryInsuranceExpiryDate')}
       />
       <InfoItem
-        label="Optional Insurance - Expiry date"
+        label="Kasko - Vrijedi do"
         value={insuranceExpDate}
         isAlert={propertiesWithAlert?.includes('optionalInsuranceExpiryDate')}
       />
       <InfoItem
-        label="Leasing - Expiry date"
+        label="Leasing - Vrijedi do"
         value={leasingExpDate}
         isAlert={propertiesWithAlert?.includes('leasingExpiryDate')}
       />

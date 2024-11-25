@@ -52,17 +52,17 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
   return (
     <FlexLayout className="flex-col gap-4">
       <Text variant="text-l-medium" color="text-color-2">
-        Driver Info
+        Podaci za vozača
       </Text>
       <Divider />
       <FlexLayout className="flex-col gap-3">
         <FlexLayout className="flex-col gap-3">
           <Text variant="text-m-medium" color="text-color-3">
-            Government Info
+            Službeni podaci
           </Text>
-          <InfoItem label="Government ID" value={governmentId} />
+          <InfoItem label="Broj dokumenta" value={governmentId} />
           <InfoItem
-            label="ID - Expiry date"
+            label="Vrijedi do"
             value={formattedGovIdExpiryDate}
             isAlert={propertiesWithAlert?.includes('governmentIdExpiryDate')}
           />
@@ -70,13 +70,13 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
         <Divider />
         <FlexLayout className="flex-col gap-3">
           <Text variant="text-m-medium" color="text-color-3">
-            Driver&apos;s Licence
+            Vozačka dozvola
           </Text>
-          <InfoItem label="Driver's Licence ID" value={driverLicenceId ?? '-'} />
-          <InfoItem label="Country of issue" value={countries.find((c) => c.code === nationality)?.name || '-'} />
+          <InfoItem label="Broj dozvole" value={driverLicenceId ?? '-'} />
+          <InfoItem label="Država izdavanja" value={countries.find((c) => c.code === nationality)?.name || '-'} />
           <FlexLayout className="justify-between items-baseline">
             <Text color="text-color-3" variant="text-s-medium">
-              Driver&apos;s Categories:
+              Kategorije:
             </Text>
             <FlexLayout className="gap-1">
               {driverLicenceCategories?.map((l: string) => (
@@ -85,30 +85,30 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
             </FlexLayout>
           </FlexLayout>
           <InfoItem
-            label="Driver's Licence Expiry date"
+            label="Regularna dozvola - Vrijedi do"
             value={formattedDriverLicenceExpiryDate}
             isAlert={propertiesWithAlert?.includes('driverLicenceExpiryDate')}
           />
           <InfoItem
-            label="Professional Driver's Licence Expiry date"
+            label="Profesionalna dozvola - Vrijedi do"
             value={formattedProfDriverExpiryDate}
             isAlert={propertiesWithAlert?.includes('professionalDriverLicenceExpiryDate')}
           />
         </FlexLayout>
         <Divider />
-        <InfoItem label="Tachograph Card ID" value={driverTachographCardId || '-'} />
-        <InfoItem label="Tachograph Card Expiry date" value={tachographExpiryDate || '-'} />
+        <InfoItem label="Broj Tahografske kartice" value={driverTachographCardId || '-'} />
+        <InfoItem label="Vrijedi do" value={tachographExpiryDate || '-'} />
         <Divider />
-        <InfoItem label="ADR Expiry date" value={formattedAdrExpiryDate || '-'} />
+        <InfoItem label="ADR - Vrijedi do" value={formattedAdrExpiryDate || '-'} />
         <Divider />
-        <InfoItem label="Employment Contract Expiry date" value={formattedContractExpiryDate || '-'} />
+        <InfoItem label="Ugovor o zaposlenju - Vrijedi do" value={formattedContractExpiryDate || '-'} />
         <Divider />
-        <InfoItem label="Work Permit Expiry date" value={formattedVisaExpiryDate || '-'} />
+        <InfoItem label="Radna dozvola - Vrijedi do" value={formattedVisaExpiryDate || '-'} />
         <Divider />
-        <InfoItem label="Medical Exam Expiry date" value={formattedMedicalExaminationExpiryDate || '-'} />
+        <InfoItem label="Lječnički pregled - Vrijedi do" value={formattedMedicalExaminationExpiryDate || '-'} />
         <Divider />
         <InfoItem
-          label="Code 95 Expiry date"
+          label="Kod 95 - Vrijedi do"
           value={formattedCode95ExpiryDate}
           isAlert={propertiesWithAlert?.includes('code95ExpiryDate')}
         />

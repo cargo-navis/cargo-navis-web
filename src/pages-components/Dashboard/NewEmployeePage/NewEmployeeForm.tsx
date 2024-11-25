@@ -59,25 +59,25 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
         <Box className="flex flex-col gap-4 w-[480px]">
           <Box className="flex gap-4">
             <Box className="flex-1">
-              <FormTextInput name="firstName" label="First Name *" />
+              <FormTextInput name="firstName" label="Ime *" />
             </Box>
             <Box className="flex-1">
-              <FormTextInput name="lastName" label="Last Name *" />
+              <FormTextInput name="lastName" label="Prezime *" />
             </Box>
           </Box>
           <Box>
-            <FormRadioGroup name="gender" label="Gender" options={genderOptions} />
+            <FormRadioGroup name="gender" label="Spol" options={genderOptions} />
           </Box>
           <Box className="flex gap-4">
             <Box className="flex-1">
-              <FormDatepicker name="dateOfBirth" label="Date of birth" />
+              <FormDatepicker name="dateOfBirth" label="Datum rođenja" />
             </Box>
             <Box className="flex-1">
-              <FormTextInput name="residenceAddress" label="Address" />
+              <FormTextInput name="residenceAddress" label="Adresa" />
             </Box>
           </Box>
           <Box>
-            <FormTextInput name="phoneNumber" label="Phone Number *" type="tel" />
+            <FormTextInput name="phoneNumber" label="Telefon *" type="tel" />
           </Box>
           <Box>
             <FormTextInput
@@ -88,10 +88,10 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
               isDisabled={isEdit}
             />
           </Box>
-          <FormRadioGroup name="position" label="Position *" options={positionOptions} />
+          <FormRadioGroup name="position" label="Pozicija *" options={positionOptions} />
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Button
-            text={isEdit ? 'Update Employee' : 'Create Employee'}
+            text={isEdit ? 'Ažuriraj Zaposlenika' : 'Dodaj Zaposlenika'}
             isFullWidth
             isDisabled={!(isValid && isDirty)}
             isLoading={formState.isSubmitting}

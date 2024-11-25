@@ -33,25 +33,25 @@ export const VehicleInfo: React.FC<VehicleInfoProps> = ({ vehicle }) => {
   return (
     <FlexLayout className="flex-col gap-4 w-[360px]">
       <Text variant="text-l-medium" color="text-color-2">
-        Vehicle Info
+        Podaci o vozilu
       </Text>
       <Divider />
       <FlexLayout className="flex-col gap-3">
-        <InfoItem label="Engine Power (kW)" value={enginePower} />
-        <InfoItem label="Engine Type" value={emissionStandard} />
+        <InfoItem label="Snaga motora (kW)" value={enginePower} />
+        <InfoItem label="Tip motora" value={emissionStandard} />
         <Divider />
       </FlexLayout>
       <FlexLayout className="flex-col gap-3">
-        <InfoItem label="Tank Size (l)" value={tankSize} />
-        <InfoItem label="Fuel Consumption (l/100km)" value={averageFuelConsumption} />
+        <InfoItem label="Veličina tanka (l)" value={tankSize} />
+        <InfoItem label="Potrošnja (l/100km)" value={averageFuelConsumption} />
         <Divider />
         <InfoItem
-          label="ADR - Expiry date"
+          label="ADR - Vrijedi do"
           value={formattedAdrExpiryDate}
           isAlert={propertiesWithAlert?.includes('adrExpiryDate')}
         />
         <InfoItem
-          label="Fire Extinguisher - Expiry date"
+          label="Vatrogasni aparat - Vrijedi do"
           value={formattedFireExtinguisherCheckExpiryDate}
           isAlert={propertiesWithAlert?.includes('fireExtinguisherCheckExpiryDate')}
         />
