@@ -16,7 +16,7 @@ export function BackButton({ targetLocation }: { targetLocation: string }) {
       onClick={() => push(targetLocation)}
     >
       <Icon icon="ArrowUturnLeftIcon" />
-      <Text variant="text-s-medium">Back</Text>
+      <Text variant="text-s-medium">Natrag</Text>
     </Box>
   );
 }
