@@ -22,9 +22,9 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
 
   const defaultValues = employee ? { ...employee } : formDefaultValues;
 
-  const formMethods = useForm({
+  const formMethods = useForm<any>({
     defaultValues,
-    resolver: yupResolver(employeeSchema),
+    // resolver: yupResolver(employeeSchema),
     mode: 'all',
   });
 
@@ -33,12 +33,20 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
   const values = watch();
 
   async function handleFormSubmit(data: any) {
+    const updatedData = Object.keys(data).reduce((acc, key) => {
+      if (formState.dirtyFields[key]) {
+        acc[key] = data[key];
+      }
+      return acc;
+    }, {} as Record<string, any>);
+
+
     try {
       if (isEdit) {
-        await updateEmployee(data);
+        await updateEmployee(updatedData);
         await push(`/dashboard/employees/${employee.id}`);
       } else {
-        await createEmployee(data);
+        await createEmployee(updatedData);
         await push('/dashboard/employees');
       }
     } catch (error: any) {
@@ -82,10 +90,8 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
           <Box>
             <FormTextInput
               name="email"
-              label="Email *"
+              label="Email"
               type="email"
-              iconLeft={isEdit ? 'LockClosedIcon' : undefined}
-              isDisabled={isEdit}
             />
           </Box>
           <FormRadioGroup name="position" label="Pozicija *" options={positionOptions} />
