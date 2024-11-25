@@ -1,0 +1,30 @@
+import type { IconType } from '@/ui/components/Icon';
+
+export interface NavLink {
+  name: string;
+  href: string;
+  icon: IconType;
+  subItems?: NavLink[];
+}
+
+export const links: NavLink[] = [
+  { name: 'Početna', href: '/dashboard', icon: 'HomeIcon' },
+  // { name: 'Trucks Capacity', href: '/dashboard/capacity', icon: 'TruckIcon' }, // TODO
+  // { name: 'Shipments', href: '/dashboard/shipments', icon: 'CubeTransparentIcon' }, // TODO
+  // { name: 'Warehouse', href: '/dashboard/warehouses', icon: 'HomeModernIcon' }, // TODO
+  // { name: 'Loading Planer', href: '/loading-planer', icon: HomeIcon }, // TODO
+  {
+    name: 'Flota',
+    href: '/dashboard/fleet/overview',
+    icon: 'TruckIcon',
+    subItems: [
+      { name: 'Tegljači', href: '/dashboard/fleet/trucks', icon: 'ChevronRightIcon' },
+      { name: 'Prikolice', href: '/dashboard/fleet/trailers', icon: 'ChevronRightIcon' },
+      { name: 'Solo Kamioni', href: '/dashboard/fleet/solo-trucks', icon: 'ChevronRightIcon' },
+      { name: 'Kombiji', href: '/dashboard/fleet/vans', icon: 'ChevronRightIcon' },
+    ],
+  },
+  // { name: 'Assign Trucks', href: '/dashboard/assign-trucks', icon: 'SquaresPlusIcon' }, // TODO
+  { name: 'Zaposlenici', href: '/dashboard/employees', icon: 'UserGroupIcon' },
+  // { name: 'Analytics', href: '/dashboard/analytics', icon: 'PresentationChartLineIcon' }, // TODO
+];

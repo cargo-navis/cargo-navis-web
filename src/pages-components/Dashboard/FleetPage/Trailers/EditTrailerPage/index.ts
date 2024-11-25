@@ -1,0 +1,1 @@
+export { EditTrailerPage } from './EditTrailerPage';
