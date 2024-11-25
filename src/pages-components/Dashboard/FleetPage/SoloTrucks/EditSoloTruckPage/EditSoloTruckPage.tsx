@@ -21,7 +21,7 @@ const MainContent: React.FC<{ solo: Vehicle }> = ({ solo }) => {
     <Box>
       <Box className="py-5 flex flex-col gap-[40px]">
         <Heading as="h1" variant="text-xl">
-          Edit Solo Truck
+          Ažuriraj Solo Kamion
         </Heading>
       </Box>
       <Box className="py-5 flex flex-col gap-[40px]">
