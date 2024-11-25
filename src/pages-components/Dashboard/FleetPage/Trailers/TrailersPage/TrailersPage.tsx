@@ -20,14 +20,14 @@ const MainContent = ({ trailers }: { trailers: Vehicle[] }) => {
       <Box className="flex items-center justify-between">
         <FlexLayout className="flex-col gap-2">
           <Heading as="h1" variant="text-xl">
-            Flota — Prikolice
+            Flota — Poluprikolice
           </Heading>
           <Divider />
           <Text color="text-color-2" variant="text-m">
-            Imate <Text variant="text-m-bold">{trailers.length} prikolica</Text> u svojoj floti.
+            Imate <Text variant="text-m-bold">{trailers.length} poluprikolica</Text> u svojoj floti.
           </Text>
         </FlexLayout>
-        <Button as="a" href="/dashboard/fleet/trailers/new" iconLeft="PlusIcon" text="Dodaj Prikolicu" />
+        <Button as="a" href="/dashboard/fleet/trailers/new" iconLeft="PlusIcon" text="Dodaj Poluprikolicu" />
       </Box>
       <Box className="py-5">
         <TrailersTable trailers={trailers} />

@@ -25,7 +25,7 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
 
   const defaultValues = vehicle ? getEditDefaultValues(vehicle) : getDefaultValues(type);
 
-  const formMethods = useForm({
+  const formMethods = useForm<any>({
     defaultValues,
     // resolver: yupResolver(getSchemaForType(type)), // TODO - fix schema
     mode: 'all',
@@ -38,12 +38,19 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
     const processedData = processFormData(data, type);
     const vehicleSegmentPath = vehicleTypeToPathMap[type];
 
+    const updatedFields = Object.keys(processedData).reduce((acc, key) => {
+      if (formState.dirtyFields[key]) {
+        acc[key] = processedData[key];
+      }
+      return acc;
+    }, {} as Record<string, any>);
+
     try {
       if (isEdit) {
-        await updateVehicle({ type, ...processedData });
+        await updateVehicle({ type, ...updatedFields });
         await push(`/dashboard/fleet/${vehicleSegmentPath}/${vehicle.id}`);
       } else {
-        await createVehicle({ type, ...processedData });
+        await createVehicle({ type, ...updatedFields });
         await push(`/dashboard/fleet/${vehicleSegmentPath}`);
       }
     } catch (error: any) {

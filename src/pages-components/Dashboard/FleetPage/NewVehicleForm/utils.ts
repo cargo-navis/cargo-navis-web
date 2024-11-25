@@ -1,4 +1,5 @@
 import { type Vehicle, VehicleEnum } from '@/lib/api';
+import { replaceEmptyStringsWithNull } from '@/lib/utils/data';
 import { formDefaultValues, trailerFormDefaultValues, truckFormDefaultValues } from './const';
 
 export function processFormData(data: any, type: VehicleEnum) {
@@ -11,7 +12,8 @@ export function processFormData(data: any, type: VehicleEnum) {
     processedData = { ...rest, dimensions };
   }
 
-  return { ...processedData };
+  const clearedData = replaceEmptyStringsWithNull(processedData);
+  return { ...clearedData };
 }
 
 const typeDefaultFieldsMap = {

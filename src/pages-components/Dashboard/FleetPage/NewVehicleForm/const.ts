@@ -138,7 +138,7 @@ export const trailerFormDefaultValues = {
 
 export const typeNameMap: Record<VehicleEnum, string> = {
   [VehicleEnum.TRUCK]: 'Tegljač',
-  [VehicleEnum.TRAILER]: 'Prikolicu',
+  [VehicleEnum.TRAILER]: 'Poluprikolicu',
   [VehicleEnum.SOLO_TRUCK]: 'Solo Kamion',
   [VehicleEnum.VAN]: 'Kombij',
 };
