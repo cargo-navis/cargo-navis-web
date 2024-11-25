@@ -1,4 +1,5 @@
 import 'dayjs/locale/hr';
+import { replaceEmptyStringsWithNull } from '@/lib/utils/data';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -41,12 +42,14 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
     }, {} as Record<string, any>);
 
 
+    const processedData = replaceEmptyStringsWithNull(updatedData);
+
     try {
       if (isEdit) {
-        await updateEmployee(updatedData);
+        await updateEmployee(processedData);
         await push(`/dashboard/employees/${employee.id}`);
       } else {
-        await createEmployee(updatedData);
+        await createEmployee(processedData);
         await push('/dashboard/employees');
       }
     } catch (error: any) {
