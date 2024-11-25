@@ -27,7 +27,7 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
 
   const formMethods = useForm({
     defaultValues,
-    resolver: yupResolver(getSchemaForType(type)),
+    // resolver: yupResolver(getSchemaForType(type)), // TODO - fix schema
     mode: 'all',
   });
 
