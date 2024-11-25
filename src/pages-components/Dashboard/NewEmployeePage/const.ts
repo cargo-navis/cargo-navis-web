@@ -21,8 +21,8 @@ export const positionOptions: PositionOption[] = [
 ];
 
 export const genderOptions: RadioOption[] = [
-  { label: 'Male', value: 'M' },
-  { label: 'Female', value: 'F' },
+  { label: 'Muško', value: 'M' },
+  { label: 'Žensko', value: 'F' },
 ];
 
 export const categoryOptions = [

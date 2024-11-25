@@ -14,29 +14,29 @@ export const DriverInfoFields = () => {
       <Box className="w-[1px] border-[0px] border-l-[1px] border-light-200 dark:border-white-alpha-25" />
       <Box className={clsx('w-[480px] relative flex flex-col gap-4')}>
         <Text color="text-color-2" variant="text-l-medium">
-          Driver details
+          Podaci za vozača
         </Text>
         <FlexLayout className="flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
-            Government ID
+            Službeni dokument
           </Text>
           <FlexLayout className="gap-4">
             <Box className="flex-1">
-              <FormTextInput name="governmentId" label="Government ID" />
+              <FormTextInput name="governmentId" label="Broj dokumenta" />
             </Box>
             <Box className="flex-1">
-              <FormDatepicker name="governmentIdExpiryDate" label="Expiry date" />
+              <FormDatepicker name="governmentIdExpiryDate" label="Vrijedi do" />
             </Box>
           </FlexLayout>
         </FlexLayout>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <FlexLayout className="flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
-            Driver&apos;s Licence
+            Vozačka dozvola
           </Text>
-          <FormTextInput name="driverLicenceId" label="Driver's Licence ID" />
+          <FormTextInput name="driverLicenceId" label="Broj dozvole" />
           <FormSingleSelect
-            label="Country of issue"
+            label="Država"
             name="nationality"
             isSearchable
             isClearable
@@ -44,57 +44,57 @@ export const DriverInfoFields = () => {
             placeholder="Select country..."
           />
           <Box className="flex-1">
-            <FormCheckboxGroup name="driverLicenceCategories" label="Categories" options={categoryOptions} />
+            <FormCheckboxGroup name="driverLicenceCategories" label="Kategorije" options={categoryOptions} />
           </Box>
           {values.driverLicenceCategories?.some((cat: DriverLicenceEnum) =>
             [DriverLicenceEnum.B, DriverLicenceEnum.B1].includes(cat),
-          ) && <FormDatepicker name="driverLicenceExpiryDate" label="Expiry date (Regular)" />}
+          ) && <FormDatepicker name="driverLicenceExpiryDate" label="Vrijedi do (Regularna)" />}
           {values.driverLicenceCategories?.some((cat: DriverLicenceEnum) =>
             [DriverLicenceEnum.C1, DriverLicenceEnum.C, DriverLicenceEnum.C1E, DriverLicenceEnum.CE].includes(cat),
-          ) && <FormDatepicker name="professionalDriverLicenceExpiryDate" label="Expiry date (Professional)" />}
+          ) && <FormDatepicker name="professionalDriverLicenceExpiryDate" label="Vrijedi do (Profesionalna)" />}
         </FlexLayout>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <FlexLayout className="flex-1 flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
-            Tachograph Card
+            Tahografska kartica
           </Text>
-          <FormTextInput name="driverTachographCardId" label="Tachograph Card ID" />
-          <FormDatepicker name="driverTachographCardExpiryDate" label="Expiry date" />
+          <FormTextInput name="driverTachographCardId" label="Broj kartice" />
+          <FormDatepicker name="driverTachographCardExpiryDate" label="Vrijedi do" />
         </FlexLayout>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex-1">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
             ADR
           </Text>
-          <FormDatepicker name="adrExpiryDate" label="Expiry date" />
+          <FormDatepicker name="adrExpiryDate" label="Vrijedi do" />
         </Box>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
-            Employment Contract
+            Ugovor o zaposlenju
           </Text>
-          <FormDatepicker name="contractExpiryDate" label="Expiry date" />
+          <FormDatepicker name="contractExpiryDate" label="Vrijedi do" />
         </Box>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
-            Work Permit
+            Radna dozvola
           </Text>
-          <FormDatepicker name="visaExpiryDate" label="Expiry date" />
+          <FormDatepicker name="visaExpiryDate" label="Vrijedi do" />
         </Box>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
-            Medical Exam
+            Lječnički pregled
           </Text>
-          <FormDatepicker name="medicalExaminationExpiryDate" label="Expiry date" />
+          <FormDatepicker name="medicalExaminationExpiryDate" label="Vrijedi do" />
         </Box>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
-            Code 95
+            Kod 95
           </Text>
-          <FormDatepicker name="code95ExpiryDate" label="Expiry date" />
+          <FormDatepicker name="code95ExpiryDate" label="Vrijedi do" />
         </Box>
       </Box>
     </>

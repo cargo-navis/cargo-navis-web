@@ -68,23 +68,27 @@ export const emissionStandardOptions: SelectOption[] = [
   { value: EmissionStandard.Euro8, label: 'EURO 8' },
 ];
 
-export const equipmentOptions = [
-  { value: EquipmentEnum.EDGE_PROTECTION, label: 'Edge Protection' },
-  { value: EquipmentEnum.LASHING_CHAINS, label: 'Lashing Chains' },
-  { value: EquipmentEnum.ANTI_SLIP_MATS, label: 'Anti Slip Mats' },
-  { value: EquipmentEnum.ADR, label: 'ADR' },
-  { value: EquipmentEnum.LASHING_STRAPS, label: 'Lashing Straps' },
-  { value: EquipmentEnum.STANCHIONS, label: 'Stanchions' },
-  { value: EquipmentEnum.CUSTOM_SEAL_STRING, label: 'Custom Seal String' },
-  { value: EquipmentEnum.PORTABLE_FORKLIFT, label: 'Portable Forklift' },
-  { value: EquipmentEnum.WASTE_CARRIER_LICENCE, label: 'Waste Carrier Licence' },
-  { value: EquipmentEnum.MEAT_HOOK, label: 'Meat Hook' },
-  { value: EquipmentEnum.PALLETS, label: 'Pallets' },
-];
+export const equipmentNameMap = {
+  [EquipmentEnum.EDGE_PROTECTION]: 'Kutnici',
+  [EquipmentEnum.LASHING_CHAINS]: 'Lanci',
+  [EquipmentEnum.ANTI_SLIP_MATS]: 'Protuklizne podloge',
+  [EquipmentEnum.ADR]: 'ADR',
+  [EquipmentEnum.LASHING_STRAPS]: 'Zatezni pojasevi',
+  [EquipmentEnum.STANCHIONS]: 'Stupovi',
+  [EquipmentEnum.CUSTOM_SEAL_STRING]: 'Carinsko uže',
+  [EquipmentEnum.PORTABLE_FORKLIFT]: 'Ručni viljuškar',
+  [EquipmentEnum.WASTE_CARRIER_LICENCE]: 'Ploče za označavanje otpada',
+  [EquipmentEnum.MEAT_HOOK]: 'Kuke za meso',
+  [EquipmentEnum.PALLETS]: 'Palete',
+};
+
+export const equipmentOptions = Object.entries(equipmentNameMap).map(([value, label]) => {
+  return { label, value };
+});
 
 export const rampOptions: RadioOption[] = [
-  { label: 'Yes', value: true },
-  { label: 'No', value: false },
+  { label: 'Da', value: true },
+  { label: 'Ne', value: false },
 ];
 
 export const loadTypeOptions: SelectOption[] = [
@@ -133,8 +137,8 @@ export const trailerFormDefaultValues = {
 };
 
 export const typeNameMap: Record<VehicleEnum, string> = {
-  [VehicleEnum.TRUCK]: 'Truck',
-  [VehicleEnum.TRAILER]: 'Trailer',
-  [VehicleEnum.SOLO_TRUCK]: 'Solo Truck',
-  [VehicleEnum.VAN]: 'Van',
+  [VehicleEnum.TRUCK]: 'Tegljač',
+  [VehicleEnum.TRAILER]: 'Prikolicu',
+  [VehicleEnum.SOLO_TRUCK]: 'Solo Kamion',
+  [VehicleEnum.VAN]: 'Kombij',
 };

@@ -6,15 +6,15 @@ export const VehicleInfoFields = () => {
   return (
     <FlexLayout as="fieldset" className="flex-col gap-4 w-[480px]">
       <Text color="text-color-2" variant="text-m-medium">
-        Vehicle Info
+        Podaci o vozilu
       </Text>
       <FlexLayout className="gap-4">
         <Box>
-          <FormTextInput name="enginePower" label="Engine Power (kW)" type="number" min="0" />
+          <FormTextInput name="enginePower" label="Snaga motora (kW)" type="number" min="0" />
         </Box>
         <Box className="flex-1">
           <FormSingleSelect
-            label="Engine Type"
+            label="Tip motora"
             name="emissionStandard"
             isSearchable
             isClearable
@@ -25,16 +25,16 @@ export const VehicleInfoFields = () => {
       </FlexLayout>
       <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
       <Box>
-        <FormTextInput name="tankSize" label="Tank Size (Liters)" type="number" min="0" />
+        <FormTextInput name="tankSize" label="Veličina tanka (l)" type="number" min="0" />
       </Box>
       <Box>
-        <FormTextInput name="averageFuelConsumption" label="Fuel Consumption (l/100km)" type="number" min="0" />
+        <FormTextInput name="averageFuelConsumption" label="Potrošnja (l/100km)" type="number" min="0" />
       </Box>
       <Box>
-        <FormDatepicker name="fireExtinguisherCheckExpiryDate" label="Fire Extinguisher - Expiry date" />
+        <FormDatepicker name="fireExtinguisherCheckExpiryDate" label="Vatrogasni aparat - Vrijedi do" />
       </Box>
       <Box>
-        <FormDatepicker name="adrExpiryDate" label="ADR - Expiry date" />
+        <FormDatepicker name="adrExpiryDate" label="ADR - Vrijedi do" />
       </Box>
     </FlexLayout>
   );

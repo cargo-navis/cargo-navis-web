@@ -25,37 +25,37 @@ export const LoadingSpaceFields: React.FC<{ type: VehicleEnum }> = ({ type }) =>
   return (
     <FlexLayout as="fieldset" className="flex-col gap-4 w-[480px]">
       <Text color="text-color-2" variant="text-m-medium">
-        Loading Space Info
+        Podaci o utovarnom prostoru
       </Text>
       <Box>
-        <FormTextInput name="loadCapacity" label="Load Capacity (kg)" type="number" min="0" />
+        <FormTextInput name="loadCapacity" label="Kapacitet (kg)" type="number" min="0" />
       </Box>
       <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
       <Box>
         <Text color="text-color-3" variant="text-xs-medium">
-          Dimensions
+          Dimenzije
         </Text>
       </Box>
       <Box>
-        <FormTextInput name="length" label="Length (m)" type="number" min="0" step="0.01" />
+        <FormTextInput name="length" label="Duljina (m)" type="number" min="0" step="0.01" />
       </Box>
       <Box>
-        <FormTextInput name="width" label="Width (m)" type="number" min="0" step="0.01" />
+        <FormTextInput name="width" label="Širina (m)" type="number" min="0" step="0.01" />
       </Box>
       <Box>
-        <FormTextInput name="height" label="Height (m)" type="number" min="0" step="0.01" />
+        <FormTextInput name="height" label="Visina (m)" type="number" min="0" step="0.01" />
       </Box>
       <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
       <Box>
-        <FormDatepicker name="codeXlCertificateExpiryDate" label="Code XL Certificate - Expiry date" />
+        <FormDatepicker name="codeXlCertificateExpiryDate" label="Kod XL Certifikat - Vrijedi do" />
       </Box>
       <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
       <Box className="flex-1">
-        <FormRadioGroup name="ramp" label="Ramp" options={rampOptions} />
+        <FormRadioGroup name="ramp" label="Rampa" options={rampOptions} />
       </Box>
       <Box className="flex-1">
         <FormSingleSelect
-          label="Load Type"
+          label="Vrsta utovarnog prostora"
           name="vehicleLoadType"
           isSearchable
           isClearable
@@ -65,7 +65,7 @@ export const LoadingSpaceFields: React.FC<{ type: VehicleEnum }> = ({ type }) =>
       </Box>
       <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
       <Box>
-        <FormCheckboxGroup name="equipment" label="Equipment" options={equipmentOptions} />
+        <FormCheckboxGroup name="equipment" label="Oprema" options={equipmentOptions} />
       </Box>
     </FlexLayout>
   );

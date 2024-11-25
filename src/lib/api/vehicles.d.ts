@@ -26,7 +26,7 @@ export interface Vehicle {
   dimensions: Dimensions;
   loadCapacity: number;
   vehicleLoadType: VehicleLoadEnum;
-  equipment: string[];
+  equipment: EquipmentEnum[];
   ramp: boolean;
   codeXlCertificateExpiryDate: string;
   brand: string;
