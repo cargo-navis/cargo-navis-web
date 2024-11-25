@@ -13,7 +13,7 @@ export const TrailersTable = ({ trailers }: { trailers: Vehicle[] }) => {
       columnHelper.display({
         id: 'trailer',
         size: 100,
-        header: () => <Box className="pl-3">Prikolica</Box>,
+        header: () => <Box className="pl-3">Poluprikolica</Box>,
         cell: (props) => {
           const { brand, registration, id } = props.row.original;
 
@@ -33,7 +33,7 @@ export const TrailersTable = ({ trailers }: { trailers: Vehicle[] }) => {
         },
       }),
       columnHelper.display({
-        header: 'Masa prazne prikolice (kg)',
+        header: 'Masa prazne poluprikolice (kg)',
         cell: ({ row }) => {
           const { emptyWeight } = row.original;
 

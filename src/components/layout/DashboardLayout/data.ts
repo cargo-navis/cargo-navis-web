@@ -19,7 +19,7 @@ export const links: NavLink[] = [
     icon: 'TruckIcon',
     subItems: [
       { name: 'Tegljači', href: '/dashboard/fleet/trucks', icon: 'ChevronRightIcon' },
-      { name: 'Prikolice', href: '/dashboard/fleet/trailers', icon: 'ChevronRightIcon' },
+      { name: 'Poluprikolice', href: '/dashboard/fleet/trailers', icon: 'ChevronRightIcon' },
       { name: 'Solo Kamioni', href: '/dashboard/fleet/solo-trucks', icon: 'ChevronRightIcon' },
       { name: 'Kombiji', href: '/dashboard/fleet/vans', icon: 'ChevronRightIcon' },
     ],

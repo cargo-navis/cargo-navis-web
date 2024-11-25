@@ -37,7 +37,7 @@ const FleetSummary = () => {
         <Divider />
         <FlexLayout className="flex-col gap-3">
           <OverviewItem label="Tegljači" href="/dashboard/fleet/trucks" value={trucks?.length} />
-          <OverviewItem label="Prikolice" href="/dashboard/fleet/trailers" value={trailers?.length} />
+          <OverviewItem label="Poluprikolice" href="/dashboard/fleet/trailers" value={trailers?.length} />
           <OverviewItem label="Solo Kamioni" href="/dashboard/fleet/solo-trucks" value={solos?.length} />
           <OverviewItem label="Kombiji" href="/dashboard/fleet/vans" value={vans?.length} />
         </FlexLayout>
