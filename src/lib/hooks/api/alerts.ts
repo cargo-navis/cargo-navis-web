@@ -27,7 +27,7 @@ export function useEmployeeAlerts() {
     select: (alerts) => {
       return alerts.filter(({ alertable }) => {
         // TODO - weak logic decision
-        return !!alertable.email;
+        return !!alertable.firstName;
       });
     },
   });

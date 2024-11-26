@@ -4,13 +4,11 @@ import { type Vehicle, VehicleEnum } from '@/lib/api';
 import { FormDatepicker, FormSingleSelect, FormTextInput, FormYearpicker } from '@/lib/components/form';
 import { useCreateVehicle, useUpdateVehicle } from '@/lib/hooks';
 import { Box, Button, DisplayIf, FlexLayout, Text } from '@/ui';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { LoadingSpaceFields } from './LoadingSpaceFields';
 import { typeBrandOptionsMap, typeNameMap } from './const';
-import { getSchemaForType } from './schema';
 import { getDefaultValues, getEditDefaultValues, processFormData } from './utils';
 
 import '@mantine/dates/styles.css';
@@ -38,12 +36,15 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
     const processedData = processFormData(data, type);
     const vehicleSegmentPath = vehicleTypeToPathMap[type];
 
-    const updatedFields = Object.keys(processedData).reduce((acc, key) => {
-      if (formState.dirtyFields[key]) {
-        acc[key] = processedData[key];
-      }
-      return acc;
-    }, {} as Record<string, any>);
+    const updatedFields = Object.keys(processedData).reduce(
+      (acc, key) => {
+        if (formState.dirtyFields[key]) {
+          acc[key] = processedData[key];
+        }
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
 
     try {
       if (isEdit) {
