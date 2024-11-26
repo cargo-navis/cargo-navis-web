@@ -1,7 +1,7 @@
 import { AlertsTooltip } from '@/components/alerts/AlertsTooltip';
 
 import { type Employee, PositionEnum } from '@/lib/api/employees.d';
-import { useAlerts } from '@/lib/hooks';
+import { useEmployeeAlerts } from '@/lib/hooks';
 import { copyToClipboard } from '@/lib/utils/clipboard';
 import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -16,10 +16,7 @@ import { OccupationPill } from './OccupationPill';
 const columnHelper = createColumnHelper<Employee>();
 
 export function EmployeesTable({ employees }: { employees?: Employee[] }) {
-  const { data } = useAlerts({
-    // Filter employee alerts (using 'firstName')
-    select: (alerts) => alerts.filter((a) => !!a.alertable?.firstName)
-  });
+  const { data } = useEmployeeAlerts();
   const groupedAlerts = groupBy(data || [], 'alertable.id');
 
   const columns = useMemo(() => {
