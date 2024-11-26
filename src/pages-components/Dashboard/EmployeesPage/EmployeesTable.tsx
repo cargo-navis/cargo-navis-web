@@ -16,7 +16,10 @@ import { OccupationPill } from './OccupationPill';
 const columnHelper = createColumnHelper<Employee>();
 
 export function EmployeesTable({ employees }: { employees?: Employee[] }) {
-  const { data } = useAlerts({ select: (alerts) => alerts.filter((a) => !!a.alertable?.email) });
+  const { data } = useAlerts({
+    // Filter employee alerts (using 'firstName')
+    select: (alerts) => alerts.filter((a) => !!a.alertable?.firstName)
+  });
   const groupedAlerts = groupBy(data || [], 'alertable.id');
 
   const columns = useMemo(() => {
