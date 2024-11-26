@@ -1,6 +1,5 @@
 import 'dayjs/locale/hr';
 import { replaceEmptyStringsWithNull } from '@/lib/utils/data';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 import { DriverInfoFields } from './DriverInfoFields';
@@ -12,7 +11,6 @@ import { Box, Button } from '@/ui';
 
 import { useCreateEmployee, useUpdateEmployee } from '@/lib/hooks';
 import { formDefaultValues, genderOptions, positionOptions } from './const';
-import { employeeSchema } from './schema';
 
 export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee }) => {
   const { push } = useRouter();
@@ -34,13 +32,15 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
   const values = watch();
 
   async function handleFormSubmit(data: any) {
-    const updatedData = Object.keys(data).reduce((acc, key) => {
-      if (formState.dirtyFields[key]) {
-        acc[key] = data[key];
-      }
-      return acc;
-    }, {} as Record<string, any>);
-
+    const updatedData = Object.keys(data).reduce(
+      (acc, key) => {
+        if (formState.dirtyFields[key]) {
+          acc[key] = data[key];
+        }
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
 
     const processedData = replaceEmptyStringsWithNull(updatedData);
 
@@ -91,11 +91,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
             <FormTextInput name="phoneNumber" label="Telefon *" type="tel" />
           </Box>
           <Box>
-            <FormTextInput
-              name="email"
-              label="Email"
-              type="email"
-            />
+            <FormTextInput name="email" label="Email" type="email" />
           </Box>
           <FormRadioGroup name="position" label="Pozicija *" options={positionOptions} />
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
