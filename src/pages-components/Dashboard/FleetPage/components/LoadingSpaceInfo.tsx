@@ -37,9 +37,9 @@ export const LoadingSpaceInfo: React.FC<LoadingSpaceInfoProps> = ({ vehicle }) =
         <Text variant="text-m-medium" color="text-color-3">
           Dimenzije (m)
         </Text>
-        <InfoItem label="Duljina" value={dimensions.length.toFixed(2)} />
-        <InfoItem label="Širina" value={dimensions.width.toFixed(2)} />
-        <InfoItem label="Visina" value={dimensions.height.toFixed(2)} />
+        <InfoItem label="Duljina" value={dimensions?.length.toFixed(2) || '-'} />
+        <InfoItem label="Širina" value={dimensions?.width.toFixed(2) || '-'} />
+        <InfoItem label="Visina" value={dimensions?.height.toFixed(2) || '-'} />
       </FlexLayout>
       <Divider />
       <InfoItem
