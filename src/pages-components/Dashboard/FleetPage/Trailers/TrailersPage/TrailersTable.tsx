@@ -52,7 +52,7 @@ export const TrailersTable = ({ trailers }: { trailers: Vehicle[] }) => {
           return (
             <FlexLayout>
               <Text className="text-color-2 group-hover/cell:text-teal-600 capitalize">
-                {vehicleLoadType.split('_').join(' ')}
+                {vehicleLoadType?.split('_').join(' ') || '–'}
               </Text>
             </FlexLayout>
           );
