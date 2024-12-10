@@ -270,6 +270,18 @@ export function getItemData(alert: Alert) {
       );
       break;
     }
+    case AlertType.VEHICLE_CODE_XL_EXPIRED: {
+      const vehicle = alertable as Vehicle;
+      const path = vehicleTypeToPathMap[vehicle.type];
+
+      targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
+      descriptionNode = (
+        <Text variant="text-s" color="text-color-2">
+          Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe dozvola Kod XL.
+        </Text>
+      );
+      break;
+    }
     default: {
       // Handle non-existing case
       targetUrl = '';
