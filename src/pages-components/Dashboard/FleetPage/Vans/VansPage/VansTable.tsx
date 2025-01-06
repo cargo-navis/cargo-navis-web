@@ -49,6 +49,16 @@ export const VansTable = ({ vans }: { vans: Vehicle[] }) => {
         cell: ({ row }) => {
           const { vehicleLoadType } = row.original;
 
+          if(!vehicleLoadType) {
+            return (
+              <FlexLayout>
+                <Text className="text-color-2">
+                  –
+                </Text>
+              </FlexLayout>
+            );
+          }
+
           return (
             <FlexLayout>
               <Text className="text-color-2 group-hover/cell:text-teal-600 capitalize">
