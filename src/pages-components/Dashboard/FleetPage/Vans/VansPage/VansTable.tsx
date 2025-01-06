@@ -13,7 +13,7 @@ export const VansTable = ({ vans }: { vans: Vehicle[] }) => {
       columnHelper.display({
         id: 'van',
         size: 150,
-        header: () => <Box className="pl-3">Kombij</Box>,
+        header: () => <Box className="pl-3">Kombi</Box>,
         cell: (props) => {
           const { brand, registration, id } = props.row.original;
 
