@@ -25,7 +25,7 @@ const MainContent = ({ vans }: { vans: Vehicle[] }) => {
             Imate <Text variant="text-m-bold">{vans.length} kombija</Text> u svojoj floti.
           </Text>
         </FlexLayout>
-        <Button as="a" href="/dashboard/fleet/vans/new" iconLeft="PlusIcon" text="Dodaj Kombij" />
+        <Button as="a" href="/dashboard/fleet/vans/new" iconLeft="PlusIcon" text="Dodaj Kombi" />
       </Box>
       <Box className="py-5">
         <VansTable vans={vans} />

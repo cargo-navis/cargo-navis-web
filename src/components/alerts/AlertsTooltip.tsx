@@ -1,4 +1,4 @@
-import { Alert, AlertType } from '@/lib/api';
+import type { Alert } from '@/lib/api';
 import { ruleToPropertyMap, ruleToTextMap } from '@/pages-components/Dashboard/DashboardPage/components/utils';
 import { Box, FlexLayout, Text, Tooltip, type TooltipProps } from '@/ui';
 
@@ -33,7 +33,9 @@ const TooltipListItem: React.FC<{ alert: Alert }> = ({ alert }) => {
 
   const expiryDate = alert.alertable[property];
   const expiryDateString = expiryDate ? new Date(expiryDate as string) : null;
-  const formattedDate = expiryDateString ? new Intl.DateTimeFormat('hr-HR', { dateStyle: 'short' }).format(expiryDateString) : null;
+  const formattedDate = expiryDateString
+    ? new Intl.DateTimeFormat('hr-HR', { dateStyle: 'short' }).format(expiryDateString)
+    : null;
 
   return (
     <Box as="li" className="marker:text-light-50">
