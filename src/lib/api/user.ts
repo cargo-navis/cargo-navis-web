@@ -1,5 +1,6 @@
 import { backend } from '@/lib/services/backendService';
+import type { User } from './user.d';
 
-export function getCurrentUser() {
-  return backend.get<any>('/api/account');
+export async function getCurrentUser() {
+  return backend.get<User>('/api/account');
 }
