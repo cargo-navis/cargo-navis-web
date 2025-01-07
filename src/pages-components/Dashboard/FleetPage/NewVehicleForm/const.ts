@@ -140,5 +140,5 @@ export const typeNameMap: Record<VehicleEnum, string> = {
   [VehicleEnum.TRUCK]: 'Tegljač',
   [VehicleEnum.TRAILER]: 'Poluprikolicu',
   [VehicleEnum.SOLO_TRUCK]: 'Solo Kamion',
-  [VehicleEnum.VAN]: 'Kombij',
+  [VehicleEnum.VAN]: 'Kombi',
 };

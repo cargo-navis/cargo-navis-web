@@ -13,7 +13,7 @@ export const VansTable = ({ vans }: { vans: Vehicle[] }) => {
       columnHelper.display({
         id: 'van',
         size: 150,
-        header: () => <Box className="pl-3">Kombij</Box>,
+        header: () => <Box className="pl-3">Kombi</Box>,
         cell: (props) => {
           const { brand, registration, id } = props.row.original;
 
@@ -49,12 +49,10 @@ export const VansTable = ({ vans }: { vans: Vehicle[] }) => {
         cell: ({ row }) => {
           const { vehicleLoadType } = row.original;
 
-          if(!vehicleLoadType) {
+          if (!vehicleLoadType) {
             return (
               <FlexLayout>
-                <Text className="text-color-2">
-                  –
-                </Text>
+                <Text className="text-color-2">–</Text>
               </FlexLayout>
             );
           }
