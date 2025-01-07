@@ -52,8 +52,8 @@ const TenantLink = () => {
 
   return (
     <Link href="/dashboard/tenant">
-      <Box className="bg-teal-900 py-1 -mx-4 min-h-[40px] text-center opacity-75 hover:opacity-100 transition-opacity">
-        <Text color="text-color-2" variant="text-m-medium">
+      <Box className="bg-teal-600 dark:bg-teal-900 py-1 -mx-4 min-h-[40px] text-center opacity-75 hover:opacity-100 transition-opacity">
+        <Text variant="text-m-medium" className="text-light-50 dark:text-light-100">
           {data ? data.name : 'Loading...'}
         </Text>
       </Box>
