@@ -42,12 +42,12 @@ export const MainContent: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
       <Divider />
       <FlexLayout className="flex-col">
         <Text color="text-color-2" variant="text-m">
-          OIB: <strong>{tenant.vatNumber}</strong>
+          VAT: <strong>{tenant.vatNumber}</strong>
         </Text>
       </FlexLayout>
       <FlexLayout className="flex-col">
         <Text color="text-color-2" variant="text-m">
-          Matični broj subjekta (MBS): <strong>{tenant.nationalCompanyRegisterId}</strong>
+          OIB: <strong>{tenant.nationalCompanyRegisterId}</strong>
         </Text>
       </FlexLayout>
       <FlexLayout className="flex-col">
