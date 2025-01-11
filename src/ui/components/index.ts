@@ -14,6 +14,7 @@ export * from './Radio';
 export * from './Select';
 export * from './Table';
 export * from './Text';
+export * from './TextButton';
 export * from './TextInput';
 export * from './Tooltip';
 export * from './Yearpicker';
