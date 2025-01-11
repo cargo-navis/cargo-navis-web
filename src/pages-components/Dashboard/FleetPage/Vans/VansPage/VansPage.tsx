@@ -15,7 +15,7 @@ export const VansPage = () => {
 const MainContent = ({ vans }: { vans: Vehicle[] }) => {
   return (
     <Box>
-      <Box className="flex items-center justify-between">
+      <FlexLayout className="items-center justify-between">
         <FlexLayout className="flex-col gap-2">
           <Heading as="h1" variant="text-xl">
             Flota — Kombiji
@@ -26,7 +26,7 @@ const MainContent = ({ vans }: { vans: Vehicle[] }) => {
           </Text>
         </FlexLayout>
         <Button as="a" href="/dashboard/fleet/vans/new" iconLeft="PlusIcon" text="Dodaj Kombi" />
-      </Box>
+      </FlexLayout>
       <Box className="py-5">
         <VansTable vans={vans} />
       </Box>

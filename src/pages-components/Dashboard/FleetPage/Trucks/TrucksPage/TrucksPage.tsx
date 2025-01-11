@@ -15,7 +15,7 @@ export const TrucksPage = () => {
 const MainContent = ({ trucks }: { trucks: Vehicle[] }) => {
   return (
     <Box>
-      <Box className="flex items-center justify-between">
+      <FlexLayout className="items-center justify-between">
         <FlexLayout className="flex-col gap-2">
           <Heading as="h1" variant="text-xl">
             Flota — Tegljači
@@ -26,7 +26,7 @@ const MainContent = ({ trucks }: { trucks: Vehicle[] }) => {
           </Text>
         </FlexLayout>
         <Button as="a" href="/dashboard/fleet/trucks/new" iconLeft="PlusIcon" text="Dodaj Tegljač" />
-      </Box>
+      </FlexLayout>
       <Box className="py-5">
         <TrucksTable trucks={trucks} />
       </Box>

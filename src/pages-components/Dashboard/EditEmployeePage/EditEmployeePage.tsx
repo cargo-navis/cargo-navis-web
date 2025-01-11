@@ -1,7 +1,7 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Employee } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
-import { Box, Heading } from '@/ui';
+import { Box, FlexLayout, Heading } from '@/ui';
 
 import { useEmployee } from '@/lib/hooks';
 import { useRouter } from 'next/router';
@@ -29,10 +29,10 @@ const MainContent = ({ employee, employeeId }: { employee: Employee; employeeId:
           Ažuriraj Zaposlenika
         </Heading>
       </Box>
-      <Box className="py-5 flex flex-col gap-[40px]">
+      <FlexLayout className="flex-col gap-[40px]">
         <BackButton targetLocation={`/dashboard/employees/${employeeId}`} />
         <NewEmployeeForm employee={employee} />
-      </Box>
+      </FlexLayout>
     </Box>
   );
 };

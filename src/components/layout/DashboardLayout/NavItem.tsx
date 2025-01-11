@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import Link from 'next/link';
 
-import { Box, Text } from '@/ui';
+import { Box, FlexLayout, Text } from '@/ui';
 import { Icon } from '@/ui/components/Icon';
 
 import { useRouter } from 'next/router';
@@ -23,10 +23,10 @@ export const NavItem = ({ navLink }: { navLink: NavLink }) => {
           },
         )}
       >
-        <Box className="group-focus:translate-x-[4px] group-hover:translate-x-[4px] transition-transform flex items-center justify-start gap-2">
+        <FlexLayout className="group-focus:translate-x-[4px] group-hover:translate-x-[4px] transition-transform items-center justify-start gap-2">
           <Icon icon={navLink.icon} size="l" />
           <Text>{navLink.name}</Text>
-        </Box>
+        </FlexLayout>
       </Link>
       {navLink.subItems && (
         <Box className="ml-3">

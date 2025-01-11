@@ -1,5 +1,5 @@
 import { useDeleteEmployee } from '@/lib/hooks';
-import { Box, Button } from '@/ui';
+import { Button, FlexLayout } from '@/ui';
 import { useRouter } from 'next/router';
 
 export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
@@ -21,7 +21,7 @@ export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
   }
 
   return (
-    <Box className="flex gap-5">
+    <FlexLayout className="gap-5">
       <Button
         as="a"
         isDisabled={isPending}
@@ -31,6 +31,6 @@ export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
         variant="secondary"
       />
       <Button isLoading={isPending} iconLeft="TrashIcon" text="Izbriši" onClick={handleDelete} />
-    </Box>
+    </FlexLayout>
   );
 };
