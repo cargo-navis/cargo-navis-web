@@ -1,5 +1,5 @@
 import { copyToClipboard } from '@/lib/utils/clipboard';
-import { Icon, type IconType, Text } from '@/ui';
+import { FlexLayout, Icon, type IconType, Text } from '@/ui';
 
 const contactIconMap: Record<string, IconType> = {
   email: 'EnvelopeIcon',
