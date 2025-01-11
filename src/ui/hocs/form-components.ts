@@ -6,9 +6,11 @@ import {
   RadioGroup,
   type RadioGroupProps,
   SingleSelect,
-  type SingleSelectProps, Textarea, TextareaProps,
+  type SingleSelectProps,
   TextInput,
   type TextInputProps,
+  Textarea,
+  type TextareaProps,
   Yearpicker,
   type YearpickerProps,
 } from '../components';
@@ -34,6 +36,5 @@ export const SingleSelectWithLabels: React.FC<Omit<SingleSelectProps & FieldLabe
   withFieldLabels(SingleSelect);
 export type SingleSelectWithLabelsProps = React.ComponentProps<typeof SingleSelectWithLabels>;
 
-export const TextareaWithLabels: React.FC<TextareaProps & FieldLabelsProps> =
-  withFieldLabels(Textarea);
+export const TextareaWithLabels: React.FC<TextareaProps & FieldLabelsProps> = withFieldLabels(Textarea);
 export type TextareaWithLabelsProps = React.ComponentProps<typeof TextareaWithLabels>;
