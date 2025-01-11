@@ -10,9 +10,16 @@ export interface NavLink {
 export const links: NavLink[] = [
   { name: 'Početna', href: '/dashboard', icon: 'HomeIcon' },
   // { name: 'Trucks Capacity', href: '/dashboard/capacity', icon: 'TruckIcon' }, // TODO
-  // { name: 'Shipments', href: '/dashboard/shipments', icon: 'CubeTransparentIcon' }, // TODO
   // { name: 'Warehouse', href: '/dashboard/warehouses', icon: 'HomeModernIcon' }, // TODO
   // { name: 'Loading Planer', href: '/loading-planer', icon: HomeIcon }, // TODO
+  {
+    name: 'Nalozi',
+    href: '/dashboard/shipments/',
+    icon: 'DocumentTextIcon',
+    subItems: [
+      { name: 'Novi Nalog', href: '/dashboard/shipments/new', icon: 'PlusIcon' },
+    ],
+  },
   {
     name: 'Flota',
     href: '/dashboard/fleet/overview',
