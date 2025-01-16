@@ -75,9 +75,17 @@ const CargoFields = () => {
       <Text color="text-color-3" variant="text-s-medium">
         TERET
       </Text>
-      <FormTextInput name="ldm" placeholder="1.00" label="LDM" type="number" step="0.01" />
-      {/* TODO - add dimensions */}
-      <FormTextInput name="wight" placeholder="100" label="Težina (kg)" />
+      <FlexLayout className="grow gap-3">
+        <Box className="flex-1">
+          <FormTextInput name="ldm" placeholder="1.00" label="LDM" type="number" step="0.01" />
+        </Box>
+        <Box className="flex-1">
+          <FormTextInput name="weight" placeholder="100" label="Težina (kg)" />
+        </Box>
+      </FlexLayout>
+      <FormTextInput name="length" placeholder="X" label="Duljina (m)" />
+      <FormTextInput name="width" placeholder="X" label="Širina (m)" />
+      <FormTextInput name="height" placeholder="X" label="Visina (m)" />
       <FormTextarea name="description" label="Opis tereta" />
     </FlexLayout>
   );
