@@ -176,8 +176,8 @@ const SubshipmentsFields = () => {
   const { watch } = useFormContext();
   const subshipments = watch('subshipments');
 
-  return subshipments.map(() => (
-    <FlexLayout as="fieldset" className="flex-col gap-4 p-2 rounded-s bg-black-alpha-10 dark:bg-white-alpha-10">
+  return subshipments.map((sub: any) => (
+    <FlexLayout as="fieldset" key={sub?.id} className="flex-col gap-4 p-2 rounded-s bg-black-alpha-10 dark:bg-white-alpha-10">
       <FlexLayout className="gap-4">
         <FlexLayout className="gap-4 grow">
           <Box className="flex-1">
@@ -209,12 +209,12 @@ const SubshipmentsFields = () => {
           </Text>
           <FlexLayout className="flex-col gap-5">
             <Box className="flex-1">
-              <FormTextInput name="streetName1" placeholder="Ulica" />
+              <FormTextInput name="contractor-streetName1" placeholder="Ulica" />
             </Box>
             <Box className="flex-1">
               {/* TODO - Async backend search */}
               <FormSingleSelect
-                name="postalCode1"
+                name="constractor-postalCode1"
                 isSearchable
                 isClearable
                 placeholder="Poštanski broj"
@@ -229,11 +229,11 @@ const SubshipmentsFields = () => {
           </Text>
           <FlexLayout className="flex-col gap-5">
             <Box className="flex-1">
-              <FormTextInput name="streetName2" placeholder="Ulica" />
+              <FormTextInput name="constractor-streetName2" placeholder="Ulica" />
             </Box>
             <Box className="flex-1">
               {/* TODO - Async backend search */}
-              <FormSingleSelect name="postalCode2" isSearchable placeholder="Poštanski broj" options={addressOptions} />
+              <FormSingleSelect name="constractor-postalCode2" isSearchable placeholder="Poštanski broj" options={addressOptions} />
             </Box>
           </FlexLayout>
         </FlexLayout>
