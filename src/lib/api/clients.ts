@@ -1,6 +1,9 @@
-import { backend } from '@/lib/services/backendService';
-import type { Client } from './clients.d';
+import { clients } from '@/lib/mocks/clients';
+import { sleep } from '@/lib/utils/async';
 
 export async function getClients() {
-  return backend.get<Client[]>('/api/clients');
+  await sleep();
+
+  return clients;
+  // return backend.get<Client[]>('/api/clients');
 }

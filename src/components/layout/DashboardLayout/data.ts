@@ -29,6 +29,11 @@ export const links: NavLink[] = [
       { name: 'Kombiji', href: '/dashboard/fleet/vans', icon: 'ChevronRightIcon' },
     ],
   },
+  {
+    name: 'Klijenti',
+    href: '/dashboard/clients',
+    icon: 'BriefcaseIcon',
+  },
   // { name: 'Assign Trucks', href: '/dashboard/assign-trucks', icon: 'SquaresPlusIcon' }, // TODO
   { name: 'Zaposlenici', href: '/dashboard/employees', icon: 'UserGroupIcon' },
   // { name: 'Analytics', href: '/dashboard/analytics', icon: 'PresentationChartLineIcon' }, // TODO
