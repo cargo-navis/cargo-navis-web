@@ -7,3 +7,11 @@ export interface Client {
   vatNumber: string;
   nationalCompanyRegisterId: string;
 }
+
+export type CreateClientParams = {
+  name: string;
+  addressName: string;
+  addressPostalCodeId: string;
+  vatNumber: string;
+  nationalCompanyRegisterId: string;
+};

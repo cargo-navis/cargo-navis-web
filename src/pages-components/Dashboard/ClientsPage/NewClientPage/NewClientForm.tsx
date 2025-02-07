@@ -1,19 +1,20 @@
-import 'dayjs/locale/hr';
 import type { Client } from '@/lib/api';
-import { FormProvider, useForm } from 'react-hook-form';
-import '@mantine/dates/styles.css';
-import { FormTextInput } from '@/lib/components/form';
+import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
+import { useCreateClient } from '@/lib/hooks';
 import { Box, Button, FlexLayout, Text } from '@/ui';
+import { useRouter } from 'next/router';
+import { FormProvider, useForm } from 'react-hook-form';
+import { formDefaultValues } from './const';
 
 export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
-  // const { push } = useRouter();
+  const { push } = useRouter();
   const isEdit = !!client;
-  //
-  // const { mutateAsync: createEmployee } = useCreateEmployee();
+
+  const { mutateAsync: createClient } = useCreateClient();
   // const { mutateAsync: updateEmployee } = useUpdateEmployee(employee?.id as string);
-  //
-  const defaultValues = client ? { ...client } : {};
-  //
+
+  const defaultValues = client ? { ...client } : formDefaultValues;
+
   const formMethods = useForm<any>({
     defaultValues,
     // resolver: yupResolver(employeeSchema),
@@ -25,18 +26,13 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
 
   async function handleFormSubmit(data: any) {
     console.log(data);
-    //   const processedData = replaceEmptyStringsWithNull(updatedData);
-    //
-    //   try {
-    //     if (isEdit) {
-    //       await updateEmployee(processedData);
-    //       await push(`/dashboard/employees/${employee.id}`);
-    //     } else {
-    //       await createEmployee(processedData);
-    //       await push('/dashboard/employees');
-    //     }
-    //   } catch (error: any) {
-    //   }
+
+    try {
+      await createClient(data);
+      await push('/dashboard/clients');
+    } catch (error: any) {
+      alert('Dogodila se greška s unosom klijenta. Pokušajte ponovno.');
+    }
   }
 
   return (
@@ -56,16 +52,9 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
             <Text color="text-color-3" variant="text-xxs-medium">
               Adresa sjedišta
             </Text>
-            <FormTextInput name="address.name" label="Ulica i broj" />
-            <FlexLayout className="gap-2">
-              <Box className="flex-1">
-                <FormTextInput name="address.postalCode" label="Poštanski broj" />
-              </Box>
-              <Box className="flex-1">
-                <FormTextInput name="address.city" label="Grad" />
-              </Box>
-            </FlexLayout>
-            <FormTextInput name="address.country" label="Država" />
+            <FormTextInput name="addressName" label="Ulica i broj" />
+            {/* TODO - dodaj async optione */}
+            <FormSingleSelect name="addressPostalCodeId" isSearchable placeholder="Poštanski broj" options={[]} />
           </FlexLayout>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Button
