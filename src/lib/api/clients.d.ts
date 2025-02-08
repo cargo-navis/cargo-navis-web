@@ -1,11 +1,18 @@
-import type { Address } from './address.d';
-
 export interface Client {
   id: string;
   name: string;
-  address: Address;
+  address: ClientAddress;
   vatNumber: string;
   nationalCompanyRegisterId: string;
+}
+
+interface ClientAddress {
+  streetName: string;
+  id: string;
+  postalCode: string;
+  region: string;
+  city: string;
+  countryCode: string;
 }
 
 export type CreateClientParams = {

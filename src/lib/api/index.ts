@@ -5,6 +5,8 @@ export * from './clients';
 export * from './clients.d';
 export * from './employees';
 export * from './employees.d';
+export * from './postalCodes';
+export * from './postalCodes.d';
 export * from './tenant';
 export * from './vehicles';
 export * from './vehicles.d';
