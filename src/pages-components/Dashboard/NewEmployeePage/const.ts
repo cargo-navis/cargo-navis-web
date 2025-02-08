@@ -1,5 +1,6 @@
 import { PositionEnum } from '@/lib/api/employees.d';
 import type { RadioOption } from '@/ui';
+import keyBy from 'lodash/keyBy';
 
 interface PositionOption {
   label: string;
@@ -230,6 +231,12 @@ export const countries = [
   { name: 'Zambia', code: 'ZM' },
   { name: 'Zimbabwe', code: 'ZW' },
 ];
+
+export const countriesMap = keyBy(countries, 'code');
+
+export function getCountryFromCode(countryCode: string) {
+  return countriesMap[countryCode];
+}
 
 export const countryOptions = countries.map((c) => ({ value: c.code, label: c.name }));
 
