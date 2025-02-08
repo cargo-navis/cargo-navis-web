@@ -1,5 +1,5 @@
 import type { Client } from '@/lib/api';
-import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
+import { FormAsyncSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateClient } from '@/lib/hooks';
 import { Box, Button, FlexLayout, Text } from '@/ui';
 import { useRouter } from 'next/router';
@@ -24,11 +24,11 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
   const { handleSubmit, formState } = formMethods;
   const { isDirty, isValid } = formState;
 
-  async function handleFormSubmit(data: any) {
-    console.log(data);
+  async function handleFormSubmit({ addressPostalCode, ...rest }: any) {
+    const payload = { ...rest, addressPostalCodeId: addressPostalCode.value };
 
     try {
-      await createClient(data);
+      await createClient(payload);
       await push('/dashboard/clients');
     } catch (error: any) {
       alert('Dogodila se greška s unosom klijenta. Pokušajte ponovno.');
@@ -53,8 +53,12 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
               Adresa sjedišta
             </Text>
             <FormTextInput name="addressName" label="Ulica i broj" />
-            {/* TODO - dodaj async optione */}
-            <FormSingleSelect name="addressPostalCodeId" isSearchable placeholder="Poštanski broj" options={[]} />
+            <FormAsyncSelect
+              label="Poštanski broj"
+              placeholder="Odaberi poštanski broj"
+              isClearable
+              name="addressPostalCode"
+            />
           </FlexLayout>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Button
