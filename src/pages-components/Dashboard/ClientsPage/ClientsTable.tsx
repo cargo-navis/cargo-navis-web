@@ -1,5 +1,6 @@
 import type { Client } from '@/lib/api';
 import { copyToClipboard } from '@/lib/utils/clipboard';
+import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
 import { createColumnHelper } from '@tanstack/react-table';
 import Link from 'next/link';
@@ -56,11 +57,13 @@ export function ClientsTable({ clients }: { clients?: Client[] }) {
         size: 275,
         cell: (props) => {
           const { address } = props.row.original;
+          const country = getCountryFromCode(address.countryCode);
+
           return (
             <FlexLayout className="items-center gap-2 cursor-pointer text-color-3">
               <FlexLayout className="flex-col">
-                <Text variant="text-s">{address.name || '–'}</Text>
-                <Text variant="text-s">{`${address.city}, ${address.country}`}</Text>
+                <Text variant="text-s">{address.streetName || '–'}</Text>
+                <Text variant="text-s">{`${address.city}, ${country.name}`}</Text>
               </FlexLayout>
             </FlexLayout>
           );
