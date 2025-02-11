@@ -1,5 +1,6 @@
+import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
 import type { Client } from '@/lib/api';
-import { FormAsyncSelect, FormTextInput } from '@/lib/components/form';
+import { FormTextInput } from '@/lib/components/form';
 import { useCreateClient } from '@/lib/hooks';
 import { Box, Button, FlexLayout, Text } from '@/ui';
 import { useRouter } from 'next/router';
@@ -53,11 +54,12 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
               Adresa sjedišta
             </Text>
             <FormTextInput name="addressName" label="Ulica i broj" />
-            <FormAsyncSelect
+            <PostalCodeSelectField
+              name="addressPostalCode"
               label="Poštanski broj"
+              iconLeft="MagnifyingGlassIcon"
               placeholder="Odaberi poštanski broj"
               isClearable
-              name="addressPostalCode"
             />
           </FlexLayout>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
