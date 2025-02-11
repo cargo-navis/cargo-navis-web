@@ -1,10 +1,17 @@
 import { type Client, createClient, getClients } from '@/lib/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-export function useClients<TData = Client[]>() {
+interface UseClientsArgs<T> {
+  select?: (data: Client[]) => T;
+  enabled?: boolean;
+}
+
+export function useClients<TData = Client[]>(args?: UseClientsArgs<TData>) {
   return useQuery<Client[], unknown, TData>({
     queryKey: ['clients'],
     queryFn: getClients,
+    ...args,
+    select: args?.select,
   });
 }
 
@@ -14,6 +21,15 @@ export function useCreateClient() {
     mutationFn: createClient,
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: ['clients'], type: 'all' });
+    },
+  });
+}
+
+export function useClient(id: string) {
+  return useClients({
+    enabled: !!id,
+    select: (clients) => {
+      return clients.find((c) => c.id.toString() === id);
     },
   });
 }

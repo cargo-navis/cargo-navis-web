@@ -24,10 +24,5 @@ const promisedOptionsDebounced = AwesomeDebouncePromise(promisedOptions, 400);
 type PostalCodeSelectFieldProps = Omit<FormAsyncSelectProps, 'promisedOptions'>;
 
 export const PostalCodeSelectField: React.FC<PostalCodeSelectFieldProps> = (props) => {
-  return (
-    <FormAsyncSelect
-      promisedOptions={promisedOptionsDebounced}
-      {...props}
-    />
-  );
+  return <FormAsyncSelect promisedOptions={promisedOptionsDebounced} {...props} />;
 };

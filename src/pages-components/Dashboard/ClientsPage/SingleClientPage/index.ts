@@ -1,0 +1,1 @@
+export { SingleClientPage } from './SingleClientPage';
