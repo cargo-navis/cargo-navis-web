@@ -10,7 +10,6 @@ import mergeStyles from './mergeStyles';
 export interface AsyncSelectProps extends Omit<SelectProps, 'options'> {
   value: SelectOption;
   onChange: (newValue: SelectOption) => void;
-  // onAddOption?: (newOption: SelectOption) => void;
   loadOptions?: AsyncProps<any, false, any>['loadOptions'];
 }
 
@@ -21,14 +20,12 @@ export const AsyncSelect = forwardRef<any, AsyncSelectProps>((props, ref) => {
     isClearable = false,
     isPortal = false,
     value,
-    // options,
     name,
     placeholder = 'Select',
     onChange,
     onBlur,
     menuPlacement = 'auto',
     loadOptions,
-    isBrand,
   } = props;
 
   const instanceId = useId();
@@ -48,18 +45,15 @@ export const AsyncSelect = forwardRef<any, AsyncSelectProps>((props, ref) => {
       menuPortalTarget={isPortal ? document.body : null}
       name={name}
       noOptionsMessage={() => 'Nema rezultata.'}
-      // options={options}
       placeholder={placeholder}
       ref={ref}
       loadOptions={loadOptions}
       styles={mergeStyles}
       value={value}
-      // value={getSelectValue(value, allOptions)}
       onBlur={onBlur}
       onChange={(newValue) => {
         onChange(newValue as SelectOption);
       }}
-      {...{ isBrand }}
     />
   );
 });
