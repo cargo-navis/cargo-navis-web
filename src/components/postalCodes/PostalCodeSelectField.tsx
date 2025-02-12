@@ -2,6 +2,7 @@ import { type PostalCode, searchPostalCodes } from '@/lib/api';
 import { FormAsyncSelect, type FormAsyncSelectProps } from '@/lib/components/form';
 import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
+import { useCallback } from 'react';
 
 function mapPostalCodes(postalCodes: PostalCode[]) {
   return postalCodes.map((p) => ({
@@ -10,19 +11,24 @@ function mapPostalCodes(postalCodes: PostalCode[]) {
   }));
 }
 
-const promisedOptions = async (inputValue: string) => {
-  if (inputValue?.length < 3) {
+const promisedOptions = async (inputValue: string, countryCode: string) => {
+  if (inputValue?.length < 3 || !countryCode) {
     return [];
   }
 
-  const res = await searchPostalCodes(inputValue);
+  const res = await searchPostalCodes(inputValue, countryCode);
   return mapPostalCodes(res);
 };
 
-const promisedOptionsDebounced = AwesomeDebouncePromise(promisedOptions, 400);
+interface PostalCodeSelectFieldProps extends Omit<FormAsyncSelectProps, 'promisedOptions'> {
+  countryCode: string;
+}
 
-type PostalCodeSelectFieldProps = Omit<FormAsyncSelectProps, 'promisedOptions'>;
+export const PostalCodeSelectField: React.FC<PostalCodeSelectFieldProps> = ({ countryCode, ...rest }) => {
+  const promisedOptionsDebounced = useCallback(
+    AwesomeDebouncePromise((inputVal) => promisedOptions(inputVal, countryCode), 400),
+    [countryCode],
+  );
 
-export const PostalCodeSelectField: React.FC<PostalCodeSelectFieldProps> = (props) => {
-  return <FormAsyncSelect promisedOptions={promisedOptionsDebounced} {...props} />;
+  return <FormAsyncSelect promisedOptions={promisedOptionsDebounced} {...rest} />;
 };

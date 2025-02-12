@@ -41,6 +41,7 @@ export const AsyncSelect = forwardRef<any, AsyncSelectProps>((props, ref) => {
       isClearable={isClearable}
       isDisabled={isDisabled}
       isSearchable
+      key={`async_select_${name}__${value?.value}`}
       menuPlacement={menuPlacement}
       menuPortalTarget={isPortal ? document.body : null}
       name={name}

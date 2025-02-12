@@ -3,5 +3,5 @@ export const formDefaultValues = {
   vatNumber: '',
   nationalCompanyRegisterId: '',
   addressName: '',
-  addressPostalCodeId: '',
+  addressPostalCode: undefined,
 };

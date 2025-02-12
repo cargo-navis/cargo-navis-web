@@ -1,9 +1,11 @@
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
 import type { Client } from '@/lib/api';
-import { FormTextInput } from '@/lib/components/form';
+import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateClient } from '@/lib/hooks';
+import { countryOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Button, FlexLayout, Text } from '@/ui';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { formDefaultValues } from './const';
 
@@ -22,7 +24,7 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
     mode: 'all',
   });
   //
-  const { handleSubmit, formState } = formMethods;
+  const { handleSubmit, formState, watch, resetField } = formMethods;
   const { isDirty, isValid } = formState;
 
   async function handleFormSubmit({ addressPostalCode, ...rest }: any) {
@@ -35,6 +37,12 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
       alert('Dogodila se greška s unosom klijenta. Pokušajte ponovno.');
     }
   }
+
+  const countryCode = watch('countryCode');
+
+  useEffect(() => {
+    resetField('addressPostalCode');
+  }, [countryCode]);
 
   return (
     <FormProvider {...formMethods}>
@@ -54,12 +62,15 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
               Adresa sjedišta
             </Text>
             <FormTextInput name="addressName" label="Ulica i broj" />
+            <FormSingleSelect name="countryCode" label="Država" isSearchable options={countryOptions} />
             <PostalCodeSelectField
+              isDisabled={!countryCode}
               name="addressPostalCode"
               label="Poštanski broj"
               iconLeft="MagnifyingGlassIcon"
               placeholder="Odaberi poštanski broj"
               isClearable
+              countryCode={countryCode}
             />
           </FlexLayout>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
