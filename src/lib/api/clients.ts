@@ -8,3 +8,7 @@ export async function getClients() {
 export async function createClient(data: CreateClientParams) {
   return backend.post<Client>('/api/clients', data);
 }
+
+export async function deleteClient(id: string) {
+  return backend.delete(`/api/clients/${id}`);
+}

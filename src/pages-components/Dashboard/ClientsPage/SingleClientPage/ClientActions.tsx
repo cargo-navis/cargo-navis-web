@@ -1,19 +1,19 @@
+import { useDeleteClient } from '@/lib/hooks';
 import { Button, FlexLayout } from '@/ui';
 import { useRouter } from 'next/router';
 
 export const ClientActions: React.FC<{ id: string }> = ({ id }) => {
   const { push } = useRouter();
-  // const { mutateAsync, isPending } = useDeleteClient(id);
-  //
+  const { mutateAsync, isPending } = useDeleteClient(id);
+
   async function handleDelete() {
-    const answer = confirm('Jeste li sigurni da želite izbrisati ovog zaposlenika?');
+    const answer = confirm('Jeste li sigurni da želite izbrisati ovog klijenta?');
     if (!answer) return;
 
     try {
-      // await mutateAsync();
-      alert('Zaposlenik izbrisan');
-
-      push('/dashboard/clients');
+      await mutateAsync();
+      alert('Klijent izbrisan');
+      await push('/dashboard/clients');
     } catch (error) {
       alert('Greška s brisanjem klijenta');
     }
@@ -23,14 +23,14 @@ export const ClientActions: React.FC<{ id: string }> = ({ id }) => {
     <FlexLayout className="gap-5">
       <Button
         as="a"
-        // isDisabled={isPending}
+        isDisabled={isPending}
         href={`/dashboard/client/${id}/edit`}
         iconLeft="PencilIcon"
         text="Uredi"
         variant="secondary"
       />
       <Button
-        // isLoading={isPending}
+        isLoading={isPending}
         iconLeft="TrashIcon"
         text="Izbriši"
         onClick={handleDelete}
