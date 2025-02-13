@@ -2,7 +2,7 @@ import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelect
 import type { Client } from '@/lib/api';
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateClient } from '@/lib/hooks';
-import { countryOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
+import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Button, FlexLayout, Text } from '@/ui';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
@@ -62,7 +62,7 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
               Adresa sjedišta
             </Text>
             <FormTextInput name="addressName" label="Ulica i broj" />
-            <FormSingleSelect name="countryCode" label="Država" isSearchable options={countryOptions} />
+            <FormSingleSelect name="countryCode" label="Država" isSearchable options={countryEuropeOptions} />
             <PostalCodeSelectField
               isDisabled={!countryCode}
               name="addressPostalCode"
