@@ -1,7 +1,7 @@
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
 import type { Client } from '@/lib/api';
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
-import { useCreateClient } from '@/lib/hooks';
+import { useCreateClient, useUpdateClient } from '@/lib/hooks';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Button, FlexLayout, Text } from '@/ui';
 import { useRouter } from 'next/router';
@@ -14,25 +14,46 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
   const isEdit = !!client;
 
   const { mutateAsync: createClient } = useCreateClient();
-  // const { mutateAsync: updateEmployee } = useUpdateEmployee(employee?.id as string);
+  const { mutateAsync: updateClient } = useUpdateClient(client?.id as string);
 
-  const defaultValues = client ? { ...client } : formDefaultValues;
+  const defaultValues = client
+    ? {
+        ...client,
+        addressName: client.address?.streetName,
+        countryCode: client.address?.countryCode,
+        addressPostalCode: {
+          value: client.address.postalCode,
+          label: client.address.postalCode,
+        },
+      }
+    : formDefaultValues;
 
   const formMethods = useForm<any>({
     defaultValues,
-    // resolver: yupResolver(employeeSchema),
+    // resolver: yupResolver(clientsSchema),
     mode: 'all',
   });
   //
   const { handleSubmit, formState, watch, resetField } = formMethods;
   const { isDirty, isValid } = formState;
 
-  async function handleFormSubmit({ addressPostalCode, ...rest }: any) {
-    const payload = { ...rest, addressPostalCodeId: addressPostalCode.value };
+  async function handleFormSubmit({ name, addressName, vatNumber, nationalCompanyRegisterId, addressPostalCode }: any) {
+    const payload = {
+      name,
+      addressName,
+      vatNumber,
+      nationalCompanyRegisterId,
+      addressPostalCodeId: addressPostalCode.value,
+    };
 
     try {
-      await createClient(payload);
-      await push('/dashboard/clients');
+      if (isEdit) {
+        await updateClient(payload);
+        await push(`/dashboard/clients/${client.id}`);
+      } else {
+        await createClient(payload);
+        await push('/dashboard/clients');
+      }
     } catch (error: any) {
       alert('Dogodila se greška s unosom klijenta. Pokušajte ponovno.');
     }

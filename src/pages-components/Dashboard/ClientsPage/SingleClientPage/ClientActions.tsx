@@ -24,17 +24,12 @@ export const ClientActions: React.FC<{ id: string }> = ({ id }) => {
       <Button
         as="a"
         isDisabled={isPending}
-        href={`/dashboard/client/${id}/edit`}
+        href={`/dashboard/clients/${id}/edit`}
         iconLeft="PencilIcon"
         text="Uredi"
         variant="secondary"
       />
-      <Button
-        isLoading={isPending}
-        iconLeft="TrashIcon"
-        text="Izbriši"
-        onClick={handleDelete}
-      />
+      <Button isLoading={isPending} iconLeft="TrashIcon" text="Izbriši" onClick={handleDelete} />
     </FlexLayout>
   );
 };

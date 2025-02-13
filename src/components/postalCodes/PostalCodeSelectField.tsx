@@ -7,7 +7,7 @@ import { useCallback } from 'react';
 function mapPostalCodes(postalCodes: PostalCode[]) {
   return postalCodes.map((p) => ({
     value: p.id,
-    label: `${p.postalCode}, ${p.city || p.region}, ${getCountryFromCode(p.countryCode).name}`,
+    label: `${p.postalCode}, ${p.city}, ${p.region}, ${getCountryFromCode(p.countryCode).name}`,
   }));
 }
 

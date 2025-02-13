@@ -22,3 +22,5 @@ export type CreateClientParams = {
   vatNumber: string;
   nationalCompanyRegisterId: string;
 };
+
+export type UpdateClientParams = Partial<CreateClientParams>;

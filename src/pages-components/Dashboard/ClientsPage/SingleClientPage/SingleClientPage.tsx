@@ -45,7 +45,9 @@ const MainContent: React.FC<{ client: Client }> = ({ client }) => {
                   {client.address.streetName},
                 </Text>
                 <Text color="text-color-3" variant="text-m">
-                  {client.address.city}, {client.address.postalCode}, {country.name}
+                  {[client.address.city, client.address.region, client.address.postalCode, country.name]
+                    .filter(Boolean)
+                    .join(', ')}
                 </Text>
               </FlexLayout>
               <Divider />
