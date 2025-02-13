@@ -68,7 +68,7 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
   return (
     <FormProvider {...formMethods}>
       <FlexLayout as="form" className="gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
-        <FlexLayout className="flex-col gap-4 w-[480px]">
+        <FlexLayout className="flex-col gap-4 w-[640px]">
           <FormTextInput name="name" label="Ime *" />
           <FlexLayout className="gap-2">
             <Box className="flex-1">
