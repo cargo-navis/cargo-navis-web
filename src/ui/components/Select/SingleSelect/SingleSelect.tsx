@@ -86,7 +86,7 @@ export const SingleSelect = forwardRef<any, SingleSelectProps>((props, ref) => {
       menuPlacement={menuPlacement}
       menuPortalTarget={isPortal ? document.body : null}
       name={name}
-      noOptionsMessage={() => 'No results.'}
+      noOptionsMessage={() => 'Nema rezultata.'}
       options={options}
       placeholder={placeholder}
       ref={ref}

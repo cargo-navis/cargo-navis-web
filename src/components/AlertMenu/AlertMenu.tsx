@@ -54,7 +54,7 @@ const emptyAlertsItem: MenuComponent = {
   Renderer: () => (
     <FlexLayout className="justify-center items-center p-3">
       <Text variant="text-s" color="text-color-2">
-        No new Alerts
+        Nema novih Upozorenja
       </Text>
     </FlexLayout>
   ),

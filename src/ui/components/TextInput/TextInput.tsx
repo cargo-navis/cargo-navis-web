@@ -28,10 +28,10 @@ export const TextInput: React.FC<TextInputProps> = ({
       className={clsx(
         'relative',
         'border-[2px] rounded-s border-dark-300 dark:border-light-800',
-        'hover:enabled:border-dark-500 hover:enabled:dark:border-light-700',
+        'hover:border-dark-500 hover:dark:border-light-700',
         'focus-within:!border-teal-600 dark:focus-within:!border-teal-800',
         iconLeft && 'pl-6 pr-3',
-        isDisabled && 'opacity-50',
+        isDisabled && 'opacity-50 pointer-events-none',
       )}
       isDisabled={isDisabled}
     >

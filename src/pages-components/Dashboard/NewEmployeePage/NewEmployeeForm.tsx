@@ -7,7 +7,7 @@ import { DriverInfoFields } from './DriverInfoFields';
 import type { Employee } from '@/lib/api/employees.d';
 import '@mantine/dates/styles.css';
 import { FormDatepicker, FormRadioGroup, FormTextInput } from '@/lib/components/form';
-import { Box, Button } from '@/ui';
+import { Box, Button, FlexLayout } from '@/ui';
 
 import { useCreateEmployee, useUpdateEmployee } from '@/lib/hooks';
 import { formDefaultValues, genderOptions, positionOptions } from './const';
@@ -66,27 +66,27 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
 
   return (
     <FormProvider {...formMethods}>
-      <Box as="form" className="flex gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
-        <Box className="flex flex-col gap-4 w-[480px]">
-          <Box className="flex gap-4">
+      <FlexLayout as="form" className="gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
+        <FlexLayout className="flex-col gap-4 w-[480px]">
+          <FlexLayout className="gap-4">
             <Box className="flex-1">
               <FormTextInput name="firstName" label="Ime *" />
             </Box>
             <Box className="flex-1">
               <FormTextInput name="lastName" label="Prezime *" />
             </Box>
-          </Box>
+          </FlexLayout>
           <Box>
             <FormRadioGroup name="gender" label="Spol" options={genderOptions} />
           </Box>
-          <Box className="flex gap-4">
+          <FlexLayout className="gap-4">
             <Box className="flex-1">
               <FormDatepicker name="dateOfBirth" label="Datum rođenja" />
             </Box>
             <Box className="flex-1">
               <FormTextInput name="residenceAddress" label="Adresa" />
             </Box>
-          </Box>
+          </FlexLayout>
           <Box>
             <FormTextInput name="phoneNumber" label="Telefon *" type="tel" />
           </Box>
@@ -101,9 +101,9 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
             isDisabled={!(isValid && isDirty)}
             isLoading={formState.isSubmitting}
           />
-        </Box>
+        </FlexLayout>
         {values?.position === 'driver' && <DriverInfoFields />}
-      </Box>
+      </FlexLayout>
     </FormProvider>
   );
 };

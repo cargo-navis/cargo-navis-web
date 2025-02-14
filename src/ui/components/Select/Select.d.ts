@@ -1,6 +1,5 @@
+import type { IconType } from '@/ui';
 import type { GroupBase, MenuPlacement } from 'react-select';
-
-import type { IconType } from '~/ui';
 
 export type SelectValue = string | number;
 
