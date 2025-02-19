@@ -1,6 +1,7 @@
-import { Box } from '@/ui';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
+
+import { Box } from '@/ui';
 
 export interface TextareaProps {
   value: string;
@@ -28,7 +29,7 @@ export const Textarea = forwardRef<any, TextareaProps>(
           'hover:enabled:border-dark-500 hover:enabled:dark:border-light-700',
           'focus-within:!border-teal-600 dark:focus-within:!border-teal-800',
           'caret-teal-500 dark:caret-teal-500',
-          isDisabled && 'opacity-50 pointer-events-none',
+          isDisabled && 'opacity-50 pointer-events-none'
         )}
         isDisabled={isDisabled}
         maxLength={charLimit}
@@ -40,7 +41,7 @@ export const Textarea = forwardRef<any, TextareaProps>(
         onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => onChange?.(e.target.value)}
       />
     );
-  },
+  }
 );
 
 Textarea.displayName = 'Textarea';

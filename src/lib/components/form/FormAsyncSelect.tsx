@@ -1,7 +1,7 @@
-import { type UseControllerProps, useController } from 'react-hook-form';
+import { useController, type UseControllerProps } from 'react-hook-form';
+import type { AsyncProps } from 'react-select/async';
 
 import { AsyncSelectWithLabels, type AsyncSelectWithLabelsProps } from '@/ui/hocs';
-import type { AsyncProps } from 'react-select/async';
 
 export interface FormAsyncSelectProps extends Omit<AsyncSelectWithLabelsProps, 'value' | 'onChange' | 'loadOptions'> {
   name: string;
@@ -22,10 +22,10 @@ export const FormAsyncSelect: React.FC<FormAsyncSelectProps> = (props) => {
     <AsyncSelectWithLabels
       name={name}
       {...rest}
-      value={value}
-      loadOptions={promisedOptions}
       errorText={(initialValue && error?.message) || ((isTouched && isDirty && error?.message) as string)}
       isDisabled={isSubmitting || isDisabled}
+      loadOptions={promisedOptions}
+      value={value}
       onBlur={onBlur}
       onChange={onChange}
     />

@@ -1,5 +1,6 @@
-import { type Client, type UpdateClientParams, createClient, deleteClient, getClients, updateClient } from '@/lib/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
+import { type Client, createClient, deleteClient, getClients, updateClient, type UpdateClientParams } from '@/lib/api';
 
 interface UseClientsArgs<T> {
   select?: (data: Client[]) => T;

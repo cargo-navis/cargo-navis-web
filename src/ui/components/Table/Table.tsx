@@ -28,7 +28,7 @@ export const Table: React.FC<TableProps> = ({ data, columns }) => {
         {table.getHeaderGroups().map((headerGroup) => (
           <Box as="tr" key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
-              <th key={header.id} className="text-start py-[20px]" style={{ width: `${header.getSize()}px` }}>
+              <th className="text-start py-[20px]" key={header.id} style={{ width: `${header.getSize()}px` }}>
                 {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
               </th>
             ))}
@@ -39,11 +39,11 @@ export const Table: React.FC<TableProps> = ({ data, columns }) => {
         {table.getRowModel().rows.map((row) => (
           <Box
             as="tr"
-            key={row.id}
             className="group/row hover:bg-black-alpha-05 dark:hover:bg-white-alpha-10 rounded-m border-b border-b-black-alpha-05 last:border-b-0"
+            key={row.id}
           >
             {row.getVisibleCells().map((cell) => (
-              <Box as="td" key={cell.id} className="group/cell">
+              <Box as="td" className="group/cell" key={cell.id}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </Box>
             ))}

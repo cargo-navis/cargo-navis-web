@@ -19,13 +19,13 @@ export const AlertMenu = () => {
 
   return (
     <Menu
+      control={<AlertButton shouldDisplayIndicator={areAlertsPresent} />}
       isOpen={isOpen}
+      items={items}
+      maxWidth="360px"
+      minWidth="200px"
       onClose={onToggleIsMenuOpen}
       onOpen={onToggleIsMenuOpen}
-      items={items}
-      minWidth="200px"
-      maxWidth="360px"
-      control={<AlertButton shouldDisplayIndicator={areAlertsPresent} />}
     />
   );
 };
@@ -53,7 +53,7 @@ const emptyAlertsItem: MenuComponent = {
   type: 'custom',
   Renderer: () => (
     <FlexLayout className="justify-center items-center p-3">
-      <Text variant="text-s" color="text-color-2">
+      <Text color="text-color-2" variant="text-s">
         Nema novih Upozorenja
       </Text>
     </FlexLayout>
@@ -80,7 +80,7 @@ const SeeMoreItem = forwardRef((props, ref) => (
       ref={ref}
       {...props}
     >
-      <Text variant="text-s" color="text-color-2">
+      <Text color="text-color-2" variant="text-s">
         Vidi više
       </Text>
       <Icon icon="ArrowRightIcon" />

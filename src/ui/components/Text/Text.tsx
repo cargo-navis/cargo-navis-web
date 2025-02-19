@@ -1,7 +1,9 @@
-import { type TextColorToken, textColorMap } from '@/ui/theme/colors';
-import { type TextVariant, variantMap } from '@/ui/theme/fontSizes';
 import clsx from 'clsx';
 import React from 'react';
+
+import { textColorMap, type TextColorToken } from '@/ui/theme/colors';
+import { type TextVariant, variantMap } from '@/ui/theme/fontSizes';
+
 import { Box, type BoxProps } from '../Box';
 
 type DefaultProps = Pick<
@@ -24,7 +26,7 @@ export const Text = React.forwardRef<any, TextProps>(
         {...rest}
       />
     );
-  },
+  }
 );
 
 Text.displayName = 'Text';

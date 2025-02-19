@@ -1,5 +1,6 @@
-import { type Alert, type VehicleEnum, getAlerts } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
+
+import { type Alert, getAlerts, type VehicleEnum } from '@/lib/api';
 
 interface UseAlertsArgs<T> {
   select?: (data: Alert[]) => T;

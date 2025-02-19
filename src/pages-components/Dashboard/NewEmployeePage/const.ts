@@ -1,6 +1,7 @@
+import keyBy from 'lodash/keyBy';
+
 import { PositionEnum } from '@/lib/api/employees.d';
 import type { RadioOption } from '@/ui';
-import keyBy from 'lodash/keyBy';
 
 interface PositionOption {
   label: string;
@@ -245,6 +246,7 @@ const countryCodesEurope = [
   'AL',
   'AT',
   'AX',
+  // 'BA',
   'BE',
   'BG',
   'BY',

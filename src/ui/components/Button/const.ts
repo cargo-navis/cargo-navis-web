@@ -1,7 +1,8 @@
-import type { IconSize, LoadingSpinnerSize } from '@/ui';
-import type { TextVariant } from '@/ui/theme/fontSizes';
 import mapValues from 'lodash/mapValues';
 import omit from 'lodash/omit';
+
+import type { IconSize, LoadingSpinnerSize } from '@/ui';
+import type { TextVariant } from '@/ui/theme/fontSizes';
 
 type SizeMap = Record<
   string,

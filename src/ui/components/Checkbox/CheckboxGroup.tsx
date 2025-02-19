@@ -22,9 +22,9 @@ export const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
       {options.map(({ value, label }) => (
         <Checkbox
           isDisabled={isDisabled}
-          name={name}
           key={value}
           label={label}
+          name={name}
           value={values.includes(value)}
           onChange={(isChecked) => {
             if (isChecked) {

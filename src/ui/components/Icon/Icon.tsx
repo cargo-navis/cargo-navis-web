@@ -1,9 +1,10 @@
 import * as outlineIcons from '@heroicons/react/24/outline';
 import * as solidIcons from '@heroicons/react/24/solid';
-
-import { Box, type BoxProps } from '@/ui';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
+
+import { Box, type BoxProps } from '@/ui';
+
 import { type IconSize, iconSizesMap } from './const';
 
 export type IconType = keyof typeof outlineIcons & keyof typeof solidIcons;
@@ -34,7 +35,7 @@ export const Icon = forwardRef<HTMLDivElement, IconProps>(
           className,
           iconSizesMap[size],
           color,
-          'flex-none focus:outline-blue-200 dark:focus:outline-orange-200 leading-[0px]',
+          'flex-none focus:outline-blue-200 dark:focus:outline-orange-200 leading-[0px]'
         )}
         ref={ref}
         onClick={onClick}
@@ -43,5 +44,5 @@ export const Icon = forwardRef<HTMLDivElement, IconProps>(
         <IconComponent />
       </Box>
     );
-  },
+  }
 );

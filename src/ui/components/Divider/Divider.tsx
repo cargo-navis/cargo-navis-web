@@ -12,7 +12,7 @@ export const Divider: React.FC<DividerProps> = ({ bgColor = 'bg-dark-200 dark:bg
     <FlexLayout
       className={clsx(
         'items-center justify-center relative isolate text-center box-content',
-        text ? 'h-[16px]' : 'h-[1px]',
+        text ? 'h-[16px]' : 'h-[1px]'
       )}
     >
       <Box className={clsx(bgColor, 'h-[1px] w-full')} />

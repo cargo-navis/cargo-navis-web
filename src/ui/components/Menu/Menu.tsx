@@ -86,7 +86,7 @@ const MenuContent = forwardRef<HTMLDivElement, MenuContentProps>(
       onSubmenuTriggerClick,
       maxHeight,
     },
-    ref,
+    ref
   ) => {
     const [side, align] = position.split('-') as [Side, Align];
 
@@ -124,7 +124,7 @@ const MenuContent = forwardRef<HTMLDivElement, MenuContentProps>(
         </DropdownMenu.Content>
       </motion.div>
     );
-  },
+  }
 );
 
 MenuContent.displayName = 'MenuContent';

@@ -53,7 +53,7 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
 
   return (
     <FlexLayout className="flex-col gap-4 w-[360px]">
-      <Text variant="text-l-medium" color="text-color-2">
+      <Text color="text-color-2" variant="text-l-medium">
         Generalni podaci
       </Text>
       <Divider />
@@ -69,61 +69,61 @@ export const GeneralInfo: React.FC<GeneralInfoProps> = ({ vehicle }) => {
         <InfoItem label="Registracija" value={registration} />
         <InfoItem label="Datum registracije" value={formattedRegistrationDate} />
         <InfoItem
+          isAlert={propertiesWithAlert?.includes('registrationExpiryDate')}
           label="Registracija - Vrijedi do"
           value={formattedRegistrationExpiryDate}
-          isAlert={propertiesWithAlert?.includes('registrationExpiryDate')}
         />
       </FlexLayout>
       <Divider />
       <DisplayIf condition={type !== VehicleEnum.TRAILER}>
         <InfoItem
+          isAlert={propertiesWithAlert?.includes('tachographExpiryDate')}
           label="Tahograf - Vrijedi do"
           value={tachoExpiryDate}
-          isAlert={propertiesWithAlert?.includes('tachographExpiryDate')}
         />
         <Divider />
       </DisplayIf>
       <InfoItem
+        isAlert={propertiesWithAlert?.includes('technicalInspectionExpiryDate')}
         label="Tehnički pregled - Vrijedi do"
         value={techExpiryDate}
-        isAlert={propertiesWithAlert?.includes('technicalInspectionExpiryDate')}
       />
       <InfoItem
+        isAlert={propertiesWithAlert?.includes('periodicalTechnicalInspectionExpiryDate')}
         label="Periodički tehnički pregled - Vrijedi do"
         value={periodicalTechExpiryDate}
-        isAlert={propertiesWithAlert?.includes('periodicalTechnicalInspectionExpiryDate')}
       />
       <Divider />
       <InfoItem
+        isAlert={propertiesWithAlert?.includes('smallServiceExpiryDate')}
         label="Mali servis - Vrijedi do"
         value={smallServiceExpDate}
-        isAlert={propertiesWithAlert?.includes('smallServiceExpiryDate')}
       />
       <InfoItem
+        isAlert={propertiesWithAlert?.includes('bigServiceExpiryDate')}
         label="Veliki servis - Vrijedi do"
         value={bigServiceExpDate}
-        isAlert={propertiesWithAlert?.includes('bigServiceExpiryDate')}
       />
       <InfoItem
+        isAlert={propertiesWithAlert?.includes('tiresReplacementExpiryDate')}
         label="Gume - Vrijedi do"
         value={tiresExpDate}
-        isAlert={propertiesWithAlert?.includes('tiresReplacementExpiryDate')}
       />
       <Divider />
       <InfoItem
+        isAlert={propertiesWithAlert?.includes('mandatoryInsuranceExpiryDate')}
         label="Osiguranje - Vrijedi do"
         value={insuranceExpDate}
-        isAlert={propertiesWithAlert?.includes('mandatoryInsuranceExpiryDate')}
       />
       <InfoItem
+        isAlert={propertiesWithAlert?.includes('optionalInsuranceExpiryDate')}
         label="Kasko - Vrijedi do"
         value={insuranceExpDate}
-        isAlert={propertiesWithAlert?.includes('optionalInsuranceExpiryDate')}
       />
       <InfoItem
+        isAlert={propertiesWithAlert?.includes('leasingExpiryDate')}
         label="Leasing - Vrijedi do"
         value={leasingExpDate}
-        isAlert={propertiesWithAlert?.includes('leasingExpiryDate')}
       />
     </FlexLayout>
   );

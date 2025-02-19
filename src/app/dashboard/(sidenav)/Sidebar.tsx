@@ -2,12 +2,13 @@
 
 import { links } from '@/components/layout/DashboardLayout/data';
 import { FlexLayout, Heading, Icon, Text } from '@/ui';
+
 import { NavItem } from './NavItem';
 
 export function Sidebar() {
   return (
     <FlexLayout className="flex-col gap-[40px] flex-grow">
-      <Heading as="h1" variant="text-xl" className="text-center">
+      <Heading as="h1" className="text-center" variant="text-xl">
         CargoNavis
       </Heading>
       <FlexLayout as="nav" className="flex-col flex-grow gap-2">

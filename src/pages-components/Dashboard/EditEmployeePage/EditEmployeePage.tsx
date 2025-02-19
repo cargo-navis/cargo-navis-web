@@ -1,10 +1,11 @@
+import { useRouter } from 'next/router';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Employee } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
+import { useEmployee } from '@/lib/hooks';
 import { Box, FlexLayout, Heading } from '@/ui';
 
-import { useEmployee } from '@/lib/hooks';
-import { useRouter } from 'next/router';
 import { BackButton } from '../NewEmployeePage/BackButton';
 import { NewEmployeeForm } from '../NewEmployeePage/NewEmployeeForm';
 

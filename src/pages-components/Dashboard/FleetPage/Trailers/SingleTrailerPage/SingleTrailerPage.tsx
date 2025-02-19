@@ -1,10 +1,11 @@
+import { useRouter } from 'next/router';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Vehicle } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicle } from '@/lib/hooks';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, FlexLayout, Icon, Pill, Text } from '@/ui';
-import { useRouter } from 'next/router';
 
 import { GeneralInfo } from '../../components/GeneralInfo';
 import { LoadingSpaceInfo } from '../../components/LoadingSpaceInfo';

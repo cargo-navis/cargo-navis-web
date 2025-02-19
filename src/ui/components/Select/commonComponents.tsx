@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   type ClearIndicatorProps,
+  components,
   type ControlProps,
   type DropdownIndicatorProps,
   type GroupBase,
@@ -12,7 +13,6 @@ import {
   type OptionProps,
   type PlaceholderProps,
   type SelectComponentsConfig,
-  components,
 } from 'react-select';
 
 import { Box, DisplayIf, Icon, type IconType, type SelectOption, Text } from '@/ui';
@@ -26,7 +26,7 @@ const Control = (props: ControlProps<SelectOption, boolean, any>) => {
           'flex relative min-h-[40px] py-2 px-3 grow items-center justify-between gap-2 cursor-pointer shadow-dark-1 border-[2px] border-dark-300 dark:border-light-800 rounded-s',
           'hover:enabled:border-dark-500 hover:enabled:dark:border-light-700 transition-all',
           'focus-within:!border-teal-600 dark:focus-within:!border-teal-800',
-          isDisabled && 'opacity-50',
+          isDisabled && 'opacity-50'
         )}
         isDisabled={isDisabled}
       >
@@ -49,7 +49,7 @@ const DropdownIndicator = (props: DropdownIndicatorProps<SelectOption, boolean, 
   return (
     <Box className="mt-[2px] self-center">
       <components.DropdownIndicator {...props}>
-        <Icon type="outline" size="m" icon={props.selectProps.menuIsOpen ? 'ChevronUpIcon' : 'ChevronDownIcon'} />
+        <Icon icon={props.selectProps.menuIsOpen ? 'ChevronUpIcon' : 'ChevronDownIcon'} size="m" type="outline" />
       </components.DropdownIndicator>
     </Box>
   );
@@ -80,7 +80,7 @@ const Option = (props: OptionProps<SelectOption & { __isNew__?: boolean }, boole
               ? 'bg-dark-100 dark:bg-light-800'
               : 'bg-inherit',
           isSelected ? 'text-white' : 'text-dark-700 dark:text-light-50',
-          isDisabled && 'opacity-40',
+          isDisabled && 'opacity-40'
         )}
         isDisabled={isDisabled}
       >

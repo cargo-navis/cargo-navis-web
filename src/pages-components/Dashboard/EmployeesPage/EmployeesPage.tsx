@@ -1,9 +1,9 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Employee } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
+import { useEmployees } from '@/lib/hooks/';
 import { Box, Button, FlexLayout, Heading } from '@/ui';
 
-import { useEmployees } from '@/lib/hooks/';
 import { EmployeesTable } from './EmployeesTable';
 
 export const EmployeesPage = () => {

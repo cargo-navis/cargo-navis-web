@@ -1,7 +1,8 @@
+import Link from 'next/link';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useSolos, useTrailers, useTrucks, useVans, useVehicles } from '@/lib/hooks';
 import { Box, Divider, FlexLayout, Heading, Icon, Text } from '@/ui';
-import Link from 'next/link';
 
 export const FleetPage = () => {
   return (
@@ -31,15 +32,15 @@ const FleetSummary = () => {
   return (
     <FlexLayout className="flex-col gap-2">
       <FlexLayout className="flex-col gap-4 w-[360px]">
-        <Text variant="text-l-medium" color="text-color-2">
+        <Text color="text-color-2" variant="text-l-medium">
           Rezime
         </Text>
         <Divider />
         <FlexLayout className="flex-col gap-3">
-          <OverviewItem label="Tegljači" href="/dashboard/fleet/trucks" value={trucks?.length} />
-          <OverviewItem label="Poluprikolice" href="/dashboard/fleet/trailers" value={trailers?.length} />
-          <OverviewItem label="Solo Kamioni" href="/dashboard/fleet/solo-trucks" value={solos?.length} />
-          <OverviewItem label="Kombiji" href="/dashboard/fleet/vans" value={vans?.length} />
+          <OverviewItem href="/dashboard/fleet/trucks" label="Tegljači" value={trucks?.length} />
+          <OverviewItem href="/dashboard/fleet/trailers" label="Poluprikolice" value={trailers?.length} />
+          <OverviewItem href="/dashboard/fleet/solo-trucks" label="Solo Kamioni" value={solos?.length} />
+          <OverviewItem href="/dashboard/fleet/vans" label="Kombiji" value={vans?.length} />
         </FlexLayout>
         <Divider />
         <FlexLayout className="justify-between items-baseline uppercase text-color-2">
@@ -64,8 +65,8 @@ export const OverviewItem: React.FC<InfoItemProps> = ({ label, value, href }) =>
     <Link href={href}>
       <FlexLayout className="group/overview-item relative justify-between items-center uppercase text-color-2 hover:text-teal-500">
         <Icon
-          icon="ChevronRightIcon"
           className="absolute opacity-0 left-[-22px] translate-x-[-4px] group-hover/overview-item:opacity-100 group-hover/overview-item:translate-x-0 w-5 transition-transform ease"
+          icon="ChevronRightIcon"
         />
         <Text variant="text-s-medium">{label}:</Text>
         <Text variant="text-m-medium">{value}</Text>

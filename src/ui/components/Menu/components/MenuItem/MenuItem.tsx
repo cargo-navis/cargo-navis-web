@@ -1,8 +1,8 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import clsx from 'clsx';
 import Link from 'next/link';
-import React from 'react';
 import type { HTMLAttributeAnchorTarget } from 'react';
+import React from 'react';
 
 import { Box, DisplayIf, FlexLayout, Icon, type IconType, Text } from '@/ui';
 
@@ -44,7 +44,7 @@ export const MenuItemContent = React.forwardRef<any, Omit<MenuItemProps, 'onClic
           itemColor,
           isActive
             ? 'bg-orange-50 dark:bg-black-alpha-10'
-            : 'data-[highlighted]:bg-dark-50 data-[highlighted]:dark:bg-light-800',
+            : 'data-[highlighted]:bg-dark-50 data-[highlighted]:dark:bg-light-800'
         )}
         ref={ref}
         target={target}
@@ -85,7 +85,7 @@ export const MenuItemContent = React.forwardRef<any, Omit<MenuItemProps, 'onClic
     }
 
     return content;
-  },
+  }
 );
 
 MenuItemContent.displayName = 'MenuItemContent';

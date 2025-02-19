@@ -9,10 +9,10 @@ import {
   type RadioGroupProps,
   SingleSelect,
   type SingleSelectProps,
-  TextInput,
-  type TextInputProps,
   Textarea,
   type TextareaProps,
+  TextInput,
+  type TextInputProps,
   Yearpicker,
   type YearpickerProps,
 } from '../components';

@@ -1,8 +1,9 @@
-import { type BoxProps, DisplayIf, FlexLayout, Icon, type IconType, Text } from '@/ui';
 import clsx from 'clsx';
 import React, { memo } from 'react';
 
-import { type Size, type Variant, sizesMap, variantStyles, variantsMap } from './const';
+import { type BoxProps, DisplayIf, FlexLayout, Icon, type IconType, Text } from '@/ui';
+
+import { type Size, sizesMap, type Variant, variantsMap, variantStyles } from './const';
 
 type DefaultProps = Pick<BoxProps, 'htmlFor' | 'onClick' | 'href' | 'target' | 'isDisabled' | 'type' | 'onKeyDown'>;
 
@@ -43,8 +44,8 @@ export const TextButton = memo(
           </DisplayIf>
         </FlexLayout>
       );
-    },
-  ),
+    }
+  )
 );
 
 TextButton.displayName = 'TextButton';

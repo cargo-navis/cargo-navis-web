@@ -1,3 +1,5 @@
+import { useRouter } from 'next/router';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Vehicle } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
@@ -5,7 +7,7 @@ import { useVehicle } from '@/lib/hooks';
 import { VehicleActions } from '@/pages-components/Dashboard/FleetPage/components/VehicleActions';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, FlexLayout, Icon, Pill, Text } from '@/ui';
-import { useRouter } from 'next/router';
+
 import { GeneralInfo } from '../../components/GeneralInfo';
 import { VehicleInfo } from '../../components/VehicleInfo';
 

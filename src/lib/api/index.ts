@@ -1,6 +1,6 @@
-export * from './auth';
 export * from './alerts';
 export * from './alerts.d';
+export * from './auth';
 export * from './clients';
 export * from './clients.d';
 export * from './employees';

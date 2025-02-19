@@ -1,17 +1,17 @@
+import { useRouter } from 'next/router';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Employee } from '@/lib/api/employees.d';
 import { LoadingPage } from '@/lib/components/LoadingPage';
+import { useEmployee } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { DriverInfo } from '@/pages-components/Dashboard/SingleEmployeePage/DriverInfo';
 import { Box, DisplayIf, FlexLayout, Text } from '@/ui';
 
-import { ContactInfo } from './ContactInfo';
-import { EmployeeActions } from './EmployeeActions';
-
-import { useEmployee } from '@/lib/hooks';
-import { useRouter } from 'next/router';
 import { OccupationPill } from '../EmployeesPage/OccupationPill';
 import { BackButton } from '../NewEmployeePage/BackButton';
+import { ContactInfo } from './ContactInfo';
+import { EmployeeActions } from './EmployeeActions';
 
 export const SingleEmployeePage = () => {
   const { query } = useRouter();
@@ -78,7 +78,7 @@ function Avatar({ employee }: { employee: Employee }) {
   return (
     <Box className="py-3 pl-3">
       <FlexLayout className="items-center justify-center w-[80px] h-[80px] rounded-circle bg-teal-900">
-        <Text variant="text-l-bold" className="text-light-50">
+        <Text className="text-light-50" variant="text-l-bold">
           {firstName[0] + lastName[0]}
         </Text>
       </FlexLayout>

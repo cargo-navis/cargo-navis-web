@@ -1,5 +1,6 @@
+import { array, object, type Schema, string } from 'yup';
+
 import { PositionEnum } from '@/lib/api/employees.d';
-import { type Schema, array, object, string } from 'yup';
 
 export const employeeSchema = object({
   firstName: string().required('First name is required'),

@@ -1,8 +1,9 @@
+import { useRouter } from 'next/router';
+
 import { vehicleTypeToPathMap } from '@/components/AlertMenu/utils';
 import type { VehicleEnum } from '@/lib/api';
 import { useDeleteVehicle } from '@/lib/hooks';
 import { Box, Button } from '@/ui';
-import { useRouter } from 'next/router';
 
 export const VehicleActions: React.FC<{ id: string; type: VehicleEnum }> = ({ id, type }) => {
   const { asPath, push } = useRouter();
@@ -27,9 +28,9 @@ export const VehicleActions: React.FC<{ id: string; type: VehicleEnum }> = ({ id
     <Box className="flex gap-5">
       <Button
         as="a"
-        isDisabled={isPending}
         href={`${asPath}/edit`}
         iconLeft="PencilIcon"
+        isDisabled={isPending}
         text="Uredi"
         variant="secondary"
       />

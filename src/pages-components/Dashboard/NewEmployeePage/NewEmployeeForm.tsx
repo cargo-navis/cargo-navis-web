@@ -1,16 +1,17 @@
 import 'dayjs/locale/hr';
-import { replaceEmptyStringsWithNull } from '@/lib/utils/data';
+import '@mantine/dates/styles.css';
+
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
-import { DriverInfoFields } from './DriverInfoFields';
 
 import type { Employee } from '@/lib/api/employees.d';
-import '@mantine/dates/styles.css';
 import { FormDatepicker, FormRadioGroup, FormTextInput } from '@/lib/components/form';
+import { useCreateEmployee, useUpdateEmployee } from '@/lib/hooks';
+import { replaceEmptyStringsWithNull } from '@/lib/utils/data';
 import { Box, Button, FlexLayout } from '@/ui';
 
-import { useCreateEmployee, useUpdateEmployee } from '@/lib/hooks';
 import { formDefaultValues, genderOptions, positionOptions } from './const';
+import { DriverInfoFields } from './DriverInfoFields';
 
 export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee }) => {
   const { push } = useRouter();
@@ -39,7 +40,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
         }
         return acc;
       },
-      {} as Record<string, any>,
+      {} as Record<string, any>
     );
 
     const processedData = replaceEmptyStringsWithNull(updatedData);
@@ -70,36 +71,36 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
         <FlexLayout className="flex-col gap-4 w-[480px]">
           <FlexLayout className="gap-4">
             <Box className="flex-1">
-              <FormTextInput name="firstName" label="Ime *" />
+              <FormTextInput label="Ime *" name="firstName" />
             </Box>
             <Box className="flex-1">
-              <FormTextInput name="lastName" label="Prezime *" />
+              <FormTextInput label="Prezime *" name="lastName" />
             </Box>
           </FlexLayout>
           <Box>
-            <FormRadioGroup name="gender" label="Spol" options={genderOptions} />
+            <FormRadioGroup label="Spol" name="gender" options={genderOptions} />
           </Box>
           <FlexLayout className="gap-4">
             <Box className="flex-1">
-              <FormDatepicker name="dateOfBirth" label="Datum rođenja" />
+              <FormDatepicker label="Datum rođenja" name="dateOfBirth" />
             </Box>
             <Box className="flex-1">
-              <FormTextInput name="residenceAddress" label="Adresa" />
+              <FormTextInput label="Adresa" name="residenceAddress" />
             </Box>
           </FlexLayout>
           <Box>
-            <FormTextInput name="phoneNumber" label="Telefon *" type="tel" />
+            <FormTextInput label="Telefon *" name="phoneNumber" type="tel" />
           </Box>
           <Box>
-            <FormTextInput name="email" label="Email" type="email" />
+            <FormTextInput label="Email" name="email" type="email" />
           </Box>
-          <FormRadioGroup name="position" label="Pozicija *" options={positionOptions} />
+          <FormRadioGroup label="Pozicija *" name="position" options={positionOptions} />
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Button
-            text={isEdit ? 'Ažuriraj Zaposlenika' : 'Dodaj Zaposlenika'}
-            isFullWidth
             isDisabled={!(isValid && isDirty)}
+            isFullWidth
             isLoading={formState.isSubmitting}
+            text={isEdit ? 'Ažuriraj Zaposlenika' : 'Dodaj Zaposlenika'}
           />
         </FlexLayout>
         {values?.position === 'driver' && <DriverInfoFields />}

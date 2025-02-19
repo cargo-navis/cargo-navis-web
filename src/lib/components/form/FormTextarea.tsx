@@ -1,5 +1,6 @@
+import { useController, type UseControllerProps } from 'react-hook-form';
+
 import { TextareaWithLabels, type TextareaWithLabelsProps } from '@/ui/hocs';
-import { type UseControllerProps, useController } from 'react-hook-form';
 
 interface FormTextareaProps extends Omit<TextareaWithLabelsProps, 'value' | 'onChange'> {
   name: string;

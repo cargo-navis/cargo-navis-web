@@ -1,17 +1,18 @@
 import 'dayjs/locale/hr';
+import '@mantine/dates/styles.css';
+
+import { useRouter } from 'next/router';
+import { FormProvider, useForm } from 'react-hook-form';
+
 import { vehicleTypeToPathMap } from '@/components/AlertMenu/utils';
 import { type Vehicle, VehicleEnum } from '@/lib/api';
 import { FormDatepicker, FormSingleSelect, FormTextInput, FormYearpicker } from '@/lib/components/form';
 import { useCreateVehicle, useUpdateVehicle } from '@/lib/hooks';
 import { Box, Button, DisplayIf, FlexLayout, Text } from '@/ui';
-import { useRouter } from 'next/router';
-import { FormProvider, useForm } from 'react-hook-form';
 
-import { LoadingSpaceFields } from './LoadingSpaceFields';
 import { typeBrandOptionsMap, typeNameMap } from './const';
+import { LoadingSpaceFields } from './LoadingSpaceFields';
 import { getDefaultValues, getEditDefaultValues, processFormData } from './utils';
-
-import '@mantine/dates/styles.css';
 import { VehicleInfoFields } from './VehicleInfoFields';
 
 export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> = ({ vehicle, type }) => {
@@ -43,7 +44,7 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
         }
         return acc;
       },
-      {} as Record<string, any>,
+      {} as Record<string, any>
     );
 
     try {
@@ -74,84 +75,84 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
           <FlexLayout className="gap-4">
             <Box className="flex-1">
               <FormSingleSelect
+                isClearable
+                isSearchable
                 label="Brend"
                 name="brand"
-                isSearchable
-                isClearable
                 options={brandOptions}
                 placeholder="Select brand..."
               />
             </Box>
             <Box className="flex-1">
-              <FormYearpicker name="manufacturingYear" label="Godina proizvodnje" />
+              <FormYearpicker label="Godina proizvodnje" name="manufacturingYear" />
             </Box>
           </FlexLayout>
           <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Box>
-            <FormTextInput name="registration" label="Registracija" />
+            <FormTextInput label="Registracija" name="registration" />
           </Box>
           <FlexLayout className="gap-4">
             <Box className="flex-grow">
-              <FormTextInput name="emptyWeight" label="Masa praznog vozila (kg)" type="number" min="0" />
+              <FormTextInput label="Masa praznog vozila (kg)" min="0" name="emptyWeight" type="number" />
             </Box>
             <Box className="flex-grow">
-              <FormTextInput name="numberOfAxles" label="Broj osovina" type="number" min="0" />
+              <FormTextInput label="Broj osovina" min="0" name="numberOfAxles" type="number" />
             </Box>
           </FlexLayout>
           <Box>
-            <FormTextInput name="vehicleIdentificationNumber" label="Broj šasije" />
+            <FormTextInput label="Broj šasije" name="vehicleIdentificationNumber" />
           </Box>
           <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <FlexLayout className="gap-4">
             <Box className="flex-1">
-              <FormDatepicker name="registrationDate" label="Datum registracije" />
+              <FormDatepicker label="Datum registracije" name="registrationDate" />
             </Box>
             <Box className="flex-1">
-              <FormDatepicker name="registrationExpiryDate" label="Registracija - Vrijedi do" />
+              <FormDatepicker label="Registracija - Vrijedi do" name="registrationExpiryDate" />
             </Box>
           </FlexLayout>
           <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <DisplayIf condition={type !== VehicleEnum.TRAILER}>
             <Box>
-              <FormDatepicker name="tachographExpiryDate" label="Tahograf - Vrijedi do" />
+              <FormDatepicker label="Tahograf - Vrijedi do" name="tachographExpiryDate" />
             </Box>
             <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           </DisplayIf>
           <Box>
-            <FormDatepicker name="technicalInspectionExpiryDate" label="Tehnički pregled - Vrijedi do" />
+            <FormDatepicker label="Tehnički pregled - Vrijedi do" name="technicalInspectionExpiryDate" />
           </Box>
           <Box>
             <FormDatepicker
-              name="periodicalTechnicalInspectionExpiryDate"
               label="Periodički tehnički pregled - Vrijedi do"
+              name="periodicalTechnicalInspectionExpiryDate"
             />
           </Box>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <FlexLayout className="gap-4">
             <Box className="flex-1">
-              <FormDatepicker name="smallServiceExpiryDate" label="Mali servis - Vrijedi do" />
+              <FormDatepicker label="Mali servis - Vrijedi do" name="smallServiceExpiryDate" />
             </Box>
             <Box className="flex-1">
-              <FormDatepicker name="bigServiceExpiryDate" label="Veliki servis - Vrijedi do" />
+              <FormDatepicker label="Veliki servis - Vrijedi do" name="bigServiceExpiryDate" />
             </Box>
           </FlexLayout>
           <Box>
-            <FormDatepicker name="tiresReplacementExpiryDate" label="Gume - Vrijedi do" />
+            <FormDatepicker label="Gume - Vrijedi do" name="tiresReplacementExpiryDate" />
           </Box>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <FlexLayout className="gap-4">
             <Box className="flex-1">
-              <FormDatepicker name="mandatoryInsuranceExpiryDate" label="Osiguranje - Vrijedi do" />
+              <FormDatepicker label="Osiguranje - Vrijedi do" name="mandatoryInsuranceExpiryDate" />
             </Box>
             <Box className="flex-1">
-              <FormDatepicker name="optionalInsuranceExpiryDate" label="Kasko - Vrijedi do" />
+              <FormDatepicker label="Kasko - Vrijedi do" name="optionalInsuranceExpiryDate" />
             </Box>
           </FlexLayout>
           <Box>
-            <FormDatepicker name="leasingExpiryDate" label="Leasing - Vrijedi do" />
+            <FormDatepicker label="Leasing - Vrijedi do" name="leasingExpiryDate" />
           </Box>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
-          <Button text={buttonText} isFullWidth isDisabled={!(isValid && isDirty)} isLoading={formState.isSubmitting} />
+          <Button isDisabled={!(isValid && isDirty)} isFullWidth isLoading={formState.isSubmitting} text={buttonText} />
         </FlexLayout>
         <DisplayIf condition={type !== VehicleEnum.TRAILER}>
           <VehicleInfoFields />

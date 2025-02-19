@@ -1,10 +1,12 @@
+import { useRouter } from 'next/router';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { type Vehicle, VehicleEnum } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicle } from '@/lib/hooks';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, FlexLayout, Heading } from '@/ui';
-import { useRouter } from 'next/router';
+
 import { NewVehicleForm } from '../../NewVehicleForm';
 
 export const EditTruckPage = () => {
@@ -26,7 +28,7 @@ const MainContent: React.FC<{ truck: Vehicle }> = ({ truck }) => {
       </FlexLayout>
       <FlexLayout className="py-5 flex-col gap-[40px]">
         <BackButton targetLocation="/dashboard/fleet/trucks" />
-        <NewVehicleForm vehicle={truck} type={VehicleEnum.TRUCK} />
+        <NewVehicleForm type={VehicleEnum.TRUCK} vehicle={truck} />
       </FlexLayout>
     </Box>
   );

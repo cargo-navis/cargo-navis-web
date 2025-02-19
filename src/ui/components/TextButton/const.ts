@@ -1,7 +1,8 @@
-import type { IconSize } from '@/ui';
-import type { TextVariant } from '@/ui/theme/fontSizes';
 import mapValues from 'lodash/mapValues';
 import omit from 'lodash/omit';
+
+import type { IconSize } from '@/ui';
+import type { TextVariant } from '@/ui/theme/fontSizes';
 
 export const sizesMap: Record<string, { textVariant: TextVariant; iconSize: IconSize }> = {
   s: { textVariant: 'text-xxs-medium', iconSize: 'm' },

@@ -1,10 +1,12 @@
+import Link from 'next/link';
+
 import { AlertMenu } from '@/components/AlertMenu';
 import { useCurrentTenant } from '@/lib/hooks';
 import { clearAuthCookies } from '@/lib/utils/session';
 import { Box, Divider, FlexLayout, Heading, Icon, Text } from '@/ui';
-import Link from 'next/link';
-import { NavItem } from './NavItem';
+
 import { links } from './data';
+import { NavItem } from './NavItem';
 
 export function Sidebar() {
   function handleSignOut() {
@@ -18,7 +20,7 @@ export function Sidebar() {
   return (
     <FlexLayout className="flex-col gap-[40px] flex-grow">
       <FlexLayout className="flex-col gap-4">
-        <Heading as="h1" variant="text-xl" className="text-center">
+        <Heading as="h1" className="text-center" variant="text-xl">
           CargoNavis
         </Heading>
         <TenantLink />
@@ -53,7 +55,7 @@ const TenantLink = () => {
   return (
     <Link href="/dashboard/tenant">
       <Box className="bg-teal-600 dark:bg-teal-900 py-1 -mx-4 min-h-[40px] text-center opacity-75 hover:opacity-100 transition-opacity">
-        <Text variant="text-m-medium" className="text-light-50 dark:text-light-100">
+        <Text className="text-light-50 dark:text-light-100" variant="text-m-medium">
           {data ? data.name : 'Loading...'}
         </Text>
       </Box>

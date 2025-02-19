@@ -1,8 +1,9 @@
 'use client';
 
-import { FlexLayout, Icon, Text } from '@/ui';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
+
+import { FlexLayout, Icon, Text } from '@/ui';
 
 export function BackButton({ targetLocation }: { targetLocation: string }) {
   const { push } = useRouter();
@@ -11,7 +12,7 @@ export function BackButton({ targetLocation }: { targetLocation: string }) {
     <FlexLayout
       className={clsx(
         'items-center gap-1 cursor-pointer max-w-max',
-        'text-color-2 hover:text-teal-500 transition-colors duration-75',
+        'text-color-2 hover:text-teal-500 transition-colors duration-75'
       )}
       onClick={() => push(targetLocation)}
     >

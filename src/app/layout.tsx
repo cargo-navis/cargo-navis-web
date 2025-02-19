@@ -1,9 +1,10 @@
-import type { Metadata } from 'next';
 import '@mantine/core/styles.css';
 import './globals.css';
 
-import { inter, playfairDisplaySc } from '@/ui/theme/fonts';
 import { MantineProvider } from '@mantine/core';
+import type { Metadata } from 'next';
+
+import { inter, playfairDisplaySc } from '@/ui/theme/fonts';
 
 export const metadata: Metadata = {
   title: 'Create Next App',

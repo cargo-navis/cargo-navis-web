@@ -1,6 +1,7 @@
 import type { InternalAxiosRequestConfig } from 'axios';
 
 import { isServer } from '@/lib/utils/browser';
+
 import { getAuthTokens } from './session';
 
 export function decorateRequest(config: InternalAxiosRequestConfig): InternalAxiosRequestConfig {

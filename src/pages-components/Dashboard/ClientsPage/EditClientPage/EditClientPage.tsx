@@ -1,12 +1,12 @@
+import { useRouter } from 'next/router';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Client } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
+import { useClient } from '@/lib/hooks';
 import { NewClientForm } from '@/pages-components/Dashboard/ClientsPage/NewClientPage/NewClientForm';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, FlexLayout, Heading } from '@/ui';
-
-import { useClient } from '@/lib/hooks';
-import { useRouter } from 'next/router';
 
 export const EditClientPage = () => {
   const { query } = useRouter();

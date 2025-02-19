@@ -1,12 +1,12 @@
-import { useRouter } from 'next/router';
-
-import { FormTextInput } from '@/lib/components/form';
-import { Button, FlexLayout } from '@/ui';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 import { object, string } from 'yup';
 
+import { FormTextInput } from '@/lib/components/form';
 import { useLogin } from '@/lib/hooks/api/auth';
+import { Button, FlexLayout } from '@/ui';
+
 import type { FormValues } from './types';
 
 export const loginSchema = object({
@@ -39,9 +39,9 @@ export const LoginForm = () => {
   return (
     <FormProvider {...formMethods}>
       <FlexLayout as="form" className="flex-col gap-6" onSubmit={handleSubmit(handleFormSubmit)}>
-        <FormTextInput autoFocus name="email" label="Email" placeholder="Enter your email" type="email" />
-        <FormTextInput name="password" label="Password" placeholder="Enter your password" type="password" />
-        <Button isLoading={isSubmitting} isDisabled={!isValid} text="Log in" size="l" isFullWidth />
+        <FormTextInput autoFocus label="Email" name="email" placeholder="Enter your email" type="email" />
+        <FormTextInput label="Password" name="password" placeholder="Enter your password" type="password" />
+        <Button isDisabled={!isValid} isFullWidth isLoading={isSubmitting} size="l" text="Log in" />
       </FlexLayout>
     </FormProvider>
   );

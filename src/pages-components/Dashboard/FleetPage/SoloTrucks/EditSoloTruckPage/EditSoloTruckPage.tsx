@@ -1,10 +1,12 @@
+import { useRouter } from 'next/router';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { type Vehicle, VehicleEnum } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicle } from '@/lib/hooks';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, FlexLayout, Heading } from '@/ui';
-import { useRouter } from 'next/router';
+
 import { NewVehicleForm } from '../../NewVehicleForm';
 
 export const EditSoloTruckPage = () => {
@@ -26,7 +28,7 @@ const MainContent: React.FC<{ solo: Vehicle }> = ({ solo }) => {
       </FlexLayout>
       <FlexLayout className="py-5 flex-col gap-[40px]">
         <BackButton targetLocation="/dashboard/fleet/solo-trucks" />
-        <NewVehicleForm vehicle={solo} type={VehicleEnum.SOLO_TRUCK} />
+        <NewVehicleForm type={VehicleEnum.SOLO_TRUCK} vehicle={solo} />
       </FlexLayout>
     </Box>
   );

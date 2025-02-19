@@ -1,10 +1,11 @@
+import { createColumnHelper } from '@tanstack/react-table';
+import Link from 'next/link';
+import { useMemo } from 'react';
+
 import { VehicleAlertTooltip } from '@/components/alerts/VehicleAlertTooltip';
 import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles.d';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { Box, FlexLayout, Table, Text } from '@/ui';
-import { createColumnHelper } from '@tanstack/react-table';
-import Link from 'next/link';
-import { useMemo } from 'react';
 
 const columnHelper = createColumnHelper<Vehicle>();
 
@@ -74,5 +75,5 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
     ];
   }, []);
 
-  return <Table data={trucks} columns={columns} />;
+  return <Table columns={columns} data={trucks} />;
 };

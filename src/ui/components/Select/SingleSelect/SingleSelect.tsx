@@ -5,11 +5,11 @@ import Select, { type GroupBase } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 
 import { removeExtraWhitespace } from '@/lib/utils/string';
-
 import type { IconType } from '@/ui';
-import type { SelectOption, SelectProps, SelectValue } from '../Select';
+
 import commonComponents from '../commonComponents';
 import { commonStylesClassNames } from '../commonStyles';
+import type { SelectOption, SelectProps, SelectValue } from '../Select';
 import singleSelectComponents from './customComponents';
 import mergeStyles from './mergeStyles';
 import { optionsIncludeValue } from './utils';

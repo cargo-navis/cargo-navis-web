@@ -1,4 +1,5 @@
 import { Box, FlexLayout } from '@/ui';
+
 import { Sidebar } from './(sidenav)/Sidebar';
 
 export default function Layout({ children }: { children: React.ReactNode }) {

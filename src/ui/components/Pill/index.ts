@@ -1,2 +1,2 @@
-export * from './Pill';
 export * from './const';
+export * from './Pill';

@@ -13,7 +13,7 @@ export const QueryClientCreator: React.FC<{ children: React.ReactNode }> = ({ ch
   return (
     <QueryClientProvider client={queryClient.current}>
       {children}
-      <ReactQueryDevtools initialIsOpen={false} position="bottom" buttonPosition="bottom-left" />
+      <ReactQueryDevtools buttonPosition="bottom-left" initialIsOpen={false} position="bottom" />
     </QueryClientProvider>
   );
 };

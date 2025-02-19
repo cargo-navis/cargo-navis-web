@@ -1,3 +1,5 @@
+import { useRouter } from 'next/router';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Client } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
@@ -5,7 +7,7 @@ import { useClient } from '@/lib/hooks';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Divider, FlexLayout, Text } from '@/ui';
-import { useRouter } from 'next/router';
+
 import { ClientActions } from './ClientActions';
 
 export const SingleClientPage = () => {

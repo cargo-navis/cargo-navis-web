@@ -1,9 +1,10 @@
 'use client';
 import { forwardRef, useId } from 'react';
 import ReactAsyncSelect, { type AsyncProps } from 'react-select/async';
-import type { SelectOption, SelectProps } from '../Select';
+
 import commonComponents from '../commonComponents';
 import { commonStylesClassNames } from '../commonStyles';
+import type { SelectOption, SelectProps } from '../Select';
 import singleSelectComponents from './customComponents';
 import mergeStyles from './mergeStyles';
 
@@ -35,26 +36,26 @@ export const AsyncSelect = forwardRef<any, AsyncSelectProps>((props, ref) => {
       classNames={commonStylesClassNames}
       closeMenuOnSelect
       components={{ ...commonComponents, ...singleSelectComponents }}
-      iconLeft={iconLeft}
-      // Fixes react-select error (https://github.com/JedWatson/react-select/issues/2629)
-      instanceId={instanceId}
       isClearable={isClearable}
       isDisabled={isDisabled}
       isSearchable
       key={`async_select_${name}__${value?.value}`}
+      loadOptions={loadOptions}
       menuPlacement={menuPlacement}
       menuPortalTarget={isPortal ? document.body : null}
       name={name}
       noOptionsMessage={() => 'Nema rezultata.'}
       placeholder={placeholder}
       ref={ref}
-      loadOptions={loadOptions}
       styles={mergeStyles}
       value={value}
       onBlur={onBlur}
       onChange={(newValue) => {
         onChange(newValue as SelectOption);
       }}
+      iconLeft={iconLeft}
+      // Fixes react-select error (https://github.com/JedWatson/react-select/issues/2629)
+      instanceId={instanceId}
     />
   );
 });

@@ -1,8 +1,9 @@
+import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { FormTextarea } from '@/lib/components/form/FormTextarea';
 import { postalCodes } from '@/lib/mocks/postalCodes';
 import { Box, Button, Divider, FlexLayout, Text, TextButton } from '@/ui';
-import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
 const defaultValues = {
   orderNo: '2025/24',
@@ -41,19 +42,19 @@ export const NewShipmentForm = () => {
           <FlexLayout as="fieldset" className="flex-col gap-5">
             <FlexLayout className="gap-4">
               <Box className="flex-1">
-                <FormTextInput iconLeft="LockClosedIcon" name="orderNo" label="Broj naloga" isDisabled />
+                <FormTextInput iconLeft="LockClosedIcon" isDisabled label="Broj naloga" name="orderNo" />
               </Box>
               <Box className="flex-1">
-                <FormTextInput name="referenceNumber" label="Referentni broj" placeholder="1234" />
+                <FormTextInput label="Referentni broj" name="referenceNumber" placeholder="1234" />
               </Box>
             </FlexLayout>
             <FlexLayout className="gap-4">
               <Box className="flex-1">
                 <FormSingleSelect
-                  label="Klijent"
-                  name="client"
                   isClearable
                   isSearchable
+                  label="Klijent"
+                  name="client"
                   options={clients}
                   placeholder="Odaberi klijenta..."
                 />
@@ -61,11 +62,11 @@ export const NewShipmentForm = () => {
               <Box className="flex-1">
                 <FormTextInput
                   iconLeft="CurrencyEuroIcon"
-                  name="price"
                   label="Cijena (Euro)"
+                  min="0"
+                  name="price"
                   placeholder="XXX"
                   type="number"
-                  min="0"
                 />
               </Box>
             </FlexLayout>
@@ -102,16 +103,16 @@ const CargoFields = () => {
       </Text>
       <FlexLayout className="grow gap-3">
         <Box className="flex-1">
-          <FormTextInput name="ldm" placeholder="1.00" label="LDM" type="number" step="0.01" />
+          <FormTextInput label="LDM" name="ldm" placeholder="1.00" step="0.01" type="number" />
         </Box>
         <Box className="flex-1">
-          <FormTextInput name="weight" placeholder="100" label="Težina (kg)" />
+          <FormTextInput label="Težina (kg)" name="weight" placeholder="100" />
         </Box>
       </FlexLayout>
-      <FormTextInput name="length" placeholder="X" label="Duljina (m)" />
-      <FormTextInput name="width" placeholder="X" label="Širina (m)" />
-      <FormTextInput name="height" placeholder="X" label="Visina (m)" />
-      <FormTextarea name="description" label="Opis tereta" />
+      <FormTextInput label="Duljina (m)" name="length" placeholder="X" />
+      <FormTextInput label="Širina (m)" name="width" placeholder="X" />
+      <FormTextInput label="Visina (m)" name="height" placeholder="X" />
+      <FormTextarea label="Opis tereta" name="description" />
     </FlexLayout>
   );
 };
@@ -135,11 +136,11 @@ const AddressFields = () => {
           <Box className="flex-1">
             {/* TODO - Async backend search */}
             <FormSingleSelect
-              name="postalCode1"
-              isSearchable
               isClearable
-              placeholder="Poštanski broj"
+              isSearchable
+              name="postalCode1"
               options={addressOptions}
+              placeholder="Poštanski broj"
             />
           </Box>
         </FlexLayout>
@@ -154,7 +155,7 @@ const AddressFields = () => {
           </Box>
           <Box className="flex-1">
             {/* TODO - Async backend search */}
-            <FormSingleSelect name="postalCode2" isSearchable placeholder="Poštanski broj" options={addressOptions} />
+            <FormSingleSelect isSearchable name="postalCode2" options={addressOptions} placeholder="Poštanski broj" />
           </Box>
         </FlexLayout>
       </FlexLayout>
@@ -179,17 +180,17 @@ const SubshipmentsFields = () => {
   return subshipments.map((sub: any) => (
     <FlexLayout
       as="fieldset"
-      key={sub?.id}
       className="flex-col gap-4 p-2 rounded-s bg-black-alpha-10 dark:bg-white-alpha-10"
+      key={sub?.id}
     >
       <FlexLayout className="gap-4">
         <FlexLayout className="gap-4 grow">
           <Box className="flex-1">
             <FormSingleSelect
-              label="Kontraktor"
-              name="contractor"
               isClearable
               isSearchable
+              label="Kontraktor"
+              name="contractor"
               options={contractors}
               placeholder="Odaberi kontraktora..."
             />
@@ -197,11 +198,11 @@ const SubshipmentsFields = () => {
           <Box className="flex-1">
             <FormTextInput
               iconLeft="CurrencyEuroIcon"
-              name="contractor-price"
               label="Cijena (Euro)"
+              min="0"
+              name="contractor-price"
               placeholder="XXX"
               type="number"
-              min="0"
             />
           </Box>
         </FlexLayout>
@@ -218,11 +219,11 @@ const SubshipmentsFields = () => {
             <Box className="flex-1">
               {/* TODO - Async backend search */}
               <FormSingleSelect
-                name="constractor-postalCode1"
-                isSearchable
                 isClearable
-                placeholder="Poštanski broj"
+                isSearchable
+                name="constractor-postalCode1"
                 options={addressOptions}
+                placeholder="Poštanski broj"
               />
             </Box>
           </FlexLayout>
@@ -238,10 +239,10 @@ const SubshipmentsFields = () => {
             <Box className="flex-1">
               {/* TODO - Async backend search */}
               <FormSingleSelect
-                name="constractor-postalCode2"
                 isSearchable
-                placeholder="Poštanski broj"
+                name="constractor-postalCode2"
                 options={addressOptions}
+                placeholder="Poštanski broj"
               />
             </Box>
           </FlexLayout>

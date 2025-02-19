@@ -1,6 +1,7 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useAlerts } from '@/lib/hooks';
 import { Box, DisplayIf, FlexLayout, Heading, Text } from '@/ui';
+
 import { AlertItem } from './components/AlertItem';
 
 export const DashboardPage = () => {
@@ -22,9 +23,7 @@ export const DashboardPage = () => {
             </Text>
           </DisplayIf>
           <DisplayIf condition={!!alerts && !!alerts.length}>
-            {alerts?.map((a) => (
-              <AlertItem key={a.alertable.uuid} alert={a} />
-            ))}
+            {alerts?.map((a) => <AlertItem alert={a} key={a.alertable.uuid} />)}
           </DisplayIf>
           <DisplayIf condition={!isLoading && (!alerts || !alerts.length)}>
             <Text color="text-color-3" variant="text-m">

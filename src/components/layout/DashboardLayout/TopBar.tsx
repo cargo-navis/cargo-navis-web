@@ -1,6 +1,7 @@
+import Link from 'next/link';
+
 import { useCurrentUser } from '@/lib/hooks';
 import { DisplayIf, FlexLayout, LoadingSpinner, Text } from '@/ui';
-import Link from 'next/link';
 
 export const TopBar = () => {
   const { data: user, isLoading } = useCurrentUser();

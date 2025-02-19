@@ -1,6 +1,7 @@
+import { useRouter } from 'next/router';
+
 import { useDeleteEmployee } from '@/lib/hooks';
 import { Button, FlexLayout } from '@/ui';
-import { useRouter } from 'next/router';
 
 export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
   const { push } = useRouter();
@@ -24,13 +25,13 @@ export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
     <FlexLayout className="gap-5">
       <Button
         as="a"
-        isDisabled={isPending}
         href={`/dashboard/employees/${id}/edit`}
         iconLeft="PencilIcon"
+        isDisabled={isPending}
         text="Uredi"
         variant="secondary"
       />
-      <Button isLoading={isPending} iconLeft="TrashIcon" text="Izbriši" onClick={handleDelete} />
+      <Button iconLeft="TrashIcon" isLoading={isPending} text="Izbriši" onClick={handleDelete} />
     </FlexLayout>
   );
 };

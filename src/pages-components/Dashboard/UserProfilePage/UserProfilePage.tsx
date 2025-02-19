@@ -33,10 +33,10 @@ export const MainContent: React.FC<{ user: User }> = ({ user }) => {
       </FlexLayout>
       <Box>
         <TextInputWithLabels
-          label="Email"
-          isDisabled
-          value={user.email}
           iconLeft="LockClosedIcon"
+          isDisabled
+          label="Email"
+          value={user.email}
           onChange={() => null}
         />
       </Box>

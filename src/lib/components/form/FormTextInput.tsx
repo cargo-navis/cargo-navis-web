@@ -1,4 +1,4 @@
-import { type UseControllerProps, useController } from 'react-hook-form';
+import { useController, type UseControllerProps } from 'react-hook-form';
 
 import { TextInputWithLabels, type TextInputWithLabelsProps } from '@/ui/hocs';
 
@@ -17,9 +17,9 @@ export const FormTextInput: React.FC<FormTextInputProps> = ({ name, initialValue
 
   return (
     <TextInputWithLabels
-      name={name}
       errorText={error?.message}
       isDisabled={isSubmitting}
+      name={name}
       {...rest}
       value={value}
       onBlur={onBlur}

@@ -1,8 +1,8 @@
 import {
-  FloatingPortal,
   arrow as arrowMiddleware,
   autoUpdate,
   flip,
+  FloatingPortal,
   offset as offsetPlugin,
   shift,
   useFloating,
@@ -64,7 +64,7 @@ export const Tooltip: React.FC<TooltipProps> = ({ children, content, offset = 10
         bottom: 'top',
         left: 'right',
       })[placement.split('-')[0]],
-    [placement],
+    [placement]
   ) as string;
 
   const motionContent = (

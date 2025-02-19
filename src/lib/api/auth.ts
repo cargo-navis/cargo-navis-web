@@ -1,4 +1,5 @@
 import axios from 'axios';
+
 import type { AuthResponse } from './login';
 
 export interface LoginArgs {
@@ -9,7 +10,7 @@ export interface LoginArgs {
 export async function login(values: LoginArgs) {
   const response = await axios.post<AuthResponse.RootObject>(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/token`,
-    values,
+    values
   );
   return response.data;
 }

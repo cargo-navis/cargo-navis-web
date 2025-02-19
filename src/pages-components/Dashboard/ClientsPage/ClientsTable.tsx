@@ -1,10 +1,11 @@
+import { createColumnHelper } from '@tanstack/react-table';
+import Link from 'next/link';
+import { useMemo } from 'react';
+
 import type { Client } from '@/lib/api';
 import { copyToClipboard } from '@/lib/utils/clipboard';
 import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
-import { createColumnHelper } from '@tanstack/react-table';
-import Link from 'next/link';
-import { useMemo } from 'react';
 
 const columnHelper = createColumnHelper<Client>();
 
@@ -83,8 +84,8 @@ export function ClientsTable({ clients }: { clients?: Client[] }) {
             >
               <Text variant="text-s">{vatNumber || '–'}</Text>
               <Icon
-                icon="DocumentDuplicateIcon"
                 className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
+                icon="DocumentDuplicateIcon"
               />
             </FlexLayout>
           );
@@ -93,5 +94,5 @@ export function ClientsTable({ clients }: { clients?: Client[] }) {
     ];
   }, []);
 
-  return <Table data={clients} columns={columns} />;
+  return <Table columns={columns} data={clients} />;
 }
