@@ -1,42 +1,50 @@
 module.exports = {
+  root: true,
+  parser: '@typescript-eslint/parser',
   extends: [
-    'eslint:recommended',
+    // 'next/core-web-vitals',
     'plugin:@typescript-eslint/recommended',
-    'next/core-web-vitals',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
+    'plugin:prettier/recommended',
   ],
-  plugins: [
-    '@typescript-eslint',
-    'simple-import-sort',
-    'react',
-  ],
+  parserOptions: {
+    ecmaVersion: 2022, // Allows for the parsing of modern ECMAScript features
+    sourceType: 'module', // Allows for the use of imports,
+    ecmaFeatures: {
+      jsx: true,
+    },
+  },
+  plugins: ['simple-import-sort', 'unused-imports', 'eslint-plugin-react', 'react-hooks'],
   rules: {
+    // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
+    '@typescript-eslint/explicit-module-boundary-types': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off',
+    '@typescript-eslint/interface-name-prefix': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
-    'no-unused-vars': 'warn',
-    
+    '@typescript-eslint/camelcase': 'off',
     'simple-import-sort/imports': 'error',
     'simple-import-sort/exports': 'error',
-    
+    'react/no-unescaped-entities': 'off',
+    'react/jsx-boolean-value': 'error',
+    'react/jsx-curly-brace-presence': ['error', { props: 'never', children: 'never', propElementValues: 'always' }],
     'react/jsx-sort-props': [
       'error',
       {
-        'callbacksLast': true,
-        'shorthandFirst': true,
-        'ignoreCase': true,
-        'reservedFirst': true,
-      }
+        callbacksLast: true,
+      },
     ],
-
-    '@next/next/no-html-link-for-pages': 'error',
-    '@next/next/no-img-element': 'error',
-    'react/react-in-jsx-scope': 'off',
-    'jsx-a11y/alt-text': 'warn',
-    'react/prop-types': 'off',
+    'react/self-closing-comp': 'error',
+    'unused-imports/no-unused-imports': 'error',
+    '@typescript-eslint/no-unused-vars': 'off',
+    'unused-imports/no-unused-vars': [
+      'error',
+      {
+        vars: 'all',
+        varsIgnorePattern: '^_',
+        args: 'after-used',
+        argsIgnorePattern: '^_',
+        ignoreRestSiblings: true,
+      },
+    ],
   },
-  settings: {
-    react: {
-      version: 'detect',
-    },
-  }
-}; 
+  ignorePatterns: ['node_modules/', 'dist/', 'build/', '.next/', '.vercel/'],
+};
