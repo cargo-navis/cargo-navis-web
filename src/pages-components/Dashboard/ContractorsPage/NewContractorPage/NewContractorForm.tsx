@@ -3,39 +3,38 @@ import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
-import type { Client } from '@/lib/api';
+import type { Contractor } from '@/lib/api';
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
-import { useCreateClient, useUpdateClient } from '@/lib/hooks';
+import { useCreateContractor, useUpdateContractor } from '@/lib/hooks';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Button, FlexLayout, Text } from '@/ui';
 
 import { formDefaultValues } from './const';
 
-export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
+export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contractor }) => {
   const { push } = useRouter();
-  const isEdit = !!client;
+  const isEdit = !!contractor;
 
-  const { mutateAsync: createClient } = useCreateClient();
-  const { mutateAsync: updateClient } = useUpdateClient(client?.id as string);
+  const { mutateAsync: createContractor } = useCreateContractor();
+  const { mutateAsync: updateContractor } = useUpdateContractor(contractor?.id as string);
 
-  const defaultValues = client
+  const defaultValues = contractor
     ? {
-        ...client,
-        addressName: client.address?.streetName,
-        countryCode: client.address?.countryCode,
+        ...contractor,
+        addressName: contractor.address?.streetName,
+        countryCode: contractor.address?.countryCode,
         addressPostalCode: {
-          value: client.address.postalCode,
-          label: client.address.postalCode,
+          value: contractor.address.postalCode,
+          label: contractor.address.postalCode,
         },
       }
     : formDefaultValues;
 
   const formMethods = useForm<any>({
     defaultValues,
-    // resolver: yupResolver(clientsSchema),
     mode: 'all',
   });
-  //
+
   const { handleSubmit, formState, watch, resetField } = formMethods;
   const { isDirty, isValid } = formState;
 
@@ -50,14 +49,14 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
 
     try {
       if (isEdit) {
-        await updateClient(payload);
-        await push(`/dashboard/clients/${client.id}`);
+        await updateContractor(payload);
+        await push(`/dashboard/contractors/${contractor.id}`);
       } else {
-        await createClient(payload);
-        await push('/dashboard/clients');
+        await createContractor(payload);
+        await push('/dashboard/contractors');
       }
     } catch {
-      alert('Dogodila se greška s unosom klijenta. Pokušajte ponovno.');
+      alert('Dogodila se greška s unosom kontraktora. Pokušajte ponovno.');
     }
   }
 
@@ -101,7 +100,7 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
             isDisabled={!(isValid && isDirty)}
             isFullWidth
             isLoading={formState.isSubmitting}
-            text={isEdit ? 'Ažuriraj Klijenta' : 'Dodaj Klijenta'}
+            text={isEdit ? 'Ažuriraj Kontraktora' : 'Dodaj Kontraktora'}
           />
         </FlexLayout>
       </FlexLayout>
