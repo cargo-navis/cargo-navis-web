@@ -29,7 +29,7 @@ export const LoginPage = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async (_context) => {
   // const session = await getServerSession(context.req, context.res, authOptions);
 
   // TODO - redirect if access-token is present

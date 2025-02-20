@@ -1,23 +1,22 @@
 import { useRouter } from 'next/router';
 
-import { useDeleteEmployee } from '@/lib/hooks';
+import { useDeleteContractor } from '@/lib/hooks';
 import { Button, FlexLayout } from '@/ui';
 
-export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
+export const ContractorActions: React.FC<{ id: string }> = ({ id }) => {
   const { push } = useRouter();
-  const { mutateAsync, isPending } = useDeleteEmployee(id);
+  const { mutateAsync, isPending } = useDeleteContractor(id);
 
   async function handleDelete() {
-    const answer = confirm('Jeste li sigurni da želite izbrisati ovog zaposlenika?');
+    const answer = confirm('Jeste li sigurni da želite izbrisati ovog kontraktora?');
     if (!answer) return;
 
     try {
       await mutateAsync();
-      alert('Zaposlenik izbrisan');
-
-      push('/dashboard/employees');
+      alert('Kontraktor izbrisan');
+      await push('/dashboard/contractors');
     } catch {
-      alert('Error with deleting the employee');
+      alert('Greška s brisanjem kontraktora');
     }
   }
 
@@ -25,7 +24,7 @@ export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
     <FlexLayout className="gap-5">
       <Button
         as="a"
-        href={`/dashboard/employees/${id}/edit`}
+        href={`/dashboard/contractors/${id}/edit`}
         iconLeft="PencilIcon"
         isDisabled={isPending}
         text="Uredi"

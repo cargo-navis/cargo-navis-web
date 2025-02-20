@@ -11,11 +11,10 @@ export interface TextareaProps {
   placeholder?: string;
   charLimit?: number;
   rows?: number;
-  isBrand?: boolean;
 }
 
 export const Textarea = forwardRef<any, TextareaProps>(
-  ({ isDisabled = false, placeholder, charLimit, rows = 4, value, isBrand, onChange, onBlur }, ref) => {
+  ({ isDisabled = false, placeholder, charLimit, rows = 4, value, onChange, onBlur }, ref) => {
     return (
       <Box
         as="textarea"

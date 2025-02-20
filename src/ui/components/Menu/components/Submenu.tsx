@@ -12,7 +12,7 @@ export interface SubmenuProps {
   onSubmenuTriggerClick?(items: MenuComponent[]): void;
 }
 
-export const Submenu: React.FC<SubmenuProps> = ({ triggerItem, items, onSubmenuTriggerClick }) => {
+export const Submenu: React.FC<SubmenuProps> = ({ triggerItem, items, onSubmenuTriggerClick: _ }) => {
   const { isDisabled, ...rest } = triggerItem;
 
   return (

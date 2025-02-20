@@ -1,0 +1,1 @@
+export { NewContractorPage } from './NewContractorPage';

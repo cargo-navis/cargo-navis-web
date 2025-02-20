@@ -15,7 +15,7 @@ export const ClientActions: React.FC<{ id: string }> = ({ id }) => {
       await mutateAsync();
       alert('Klijent izbrisan');
       await push('/dashboard/clients');
-    } catch (error) {
+    } catch {
       alert('Greška s brisanjem klijenta');
     }
   }

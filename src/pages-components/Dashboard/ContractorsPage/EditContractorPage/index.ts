@@ -1,0 +1,1 @@
+export { EditContractorPage } from './EditContractorPage';

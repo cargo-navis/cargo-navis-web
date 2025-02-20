@@ -19,7 +19,7 @@ export const VehicleActions: React.FC<{ id: string; type: VehicleEnum }> = ({ id
       await mutateAsync();
       alert('Vozilo izbrisano');
       push(`/dashboard/fleet/${vehicleSegmentPath}`);
-    } catch (error) {
+    } catch {
       alert('Error with deleting the vehicle');
     }
   }
