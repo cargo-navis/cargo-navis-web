@@ -56,7 +56,7 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
         await createClient(payload);
         await push('/dashboard/clients');
       }
-    } catch (error: any) {
+    } catch {
       alert('Dogodila se greška s unosom klijenta. Pokušajte ponovno.');
     }
   }

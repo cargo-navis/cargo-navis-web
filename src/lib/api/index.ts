@@ -3,6 +3,8 @@ export * from './alerts.d';
 export * from './auth';
 export * from './clients';
 export * from './clients.d';
+export * from './contractors';
+export * from './contractors.d';
 export * from './employees';
 export * from './employees.d';
 export * from './postalCodes';
