@@ -16,7 +16,7 @@ export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
       alert('Zaposlenik izbrisan');
 
       push('/dashboard/employees');
-    } catch (error) {
+    } catch {
       alert('Error with deleting the employee');
     }
   }

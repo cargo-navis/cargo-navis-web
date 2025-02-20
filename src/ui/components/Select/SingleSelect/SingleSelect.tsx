@@ -1,5 +1,3 @@
-'use client';
-
 import { forwardRef, useId, useState } from 'react';
 import Select, { type GroupBase } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
@@ -37,6 +35,7 @@ export interface SingleSelectProps extends SelectProps {
 
 // Fixes custom selectProps typing in react-select v5 (https://github.com/JedWatson/react-select/issues/4804#issuecomment-927223471)
 declare module 'react-select/dist/declarations/src/Select' {
+  // eslint-disable-next-line unused-imports/no-unused-vars
   export interface Props<Option, IsMulti extends boolean, Group extends GroupBase<Option>> {
     iconLeft?: IconType;
     isCreatable?: boolean;

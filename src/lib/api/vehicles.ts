@@ -7,7 +7,7 @@ export async function getVehicles() {
 }
 
 export async function getVehicle(id: string) {
-  // Get single vehicle
+  console.log(`GET VEHICLE ${id}`);
 }
 
 export async function createVehicle(data: CreateVehicleParams) {

@@ -1,4 +1,3 @@
-'use client';
 import { forwardRef, useId } from 'react';
 import ReactAsyncSelect, { type AsyncProps } from 'react-select/async';
 
@@ -36,6 +35,8 @@ export const AsyncSelect = forwardRef<any, AsyncSelectProps>((props, ref) => {
       classNames={commonStylesClassNames}
       closeMenuOnSelect
       components={{ ...commonComponents, ...singleSelectComponents }}
+      iconLeft={iconLeft}
+      instanceId={instanceId} // Fixes react-select error (https://github.com/JedWatson/react-select/issues/2629)
       isClearable={isClearable}
       isDisabled={isDisabled}
       isSearchable
@@ -53,9 +54,6 @@ export const AsyncSelect = forwardRef<any, AsyncSelectProps>((props, ref) => {
       onChange={(newValue) => {
         onChange(newValue as SelectOption);
       }}
-      iconLeft={iconLeft}
-      // Fixes react-select error (https://github.com/JedWatson/react-select/issues/2629)
-      instanceId={instanceId}
     />
   );
 });

@@ -67,7 +67,7 @@ const ClearIndicator = (props: ClearIndicatorProps<SelectOption, boolean, any>) 
 
 const Option = (props: OptionProps<SelectOption & { __isNew__?: boolean }, boolean, any>) => {
   const { isDisabled, isFocused, isSelected, children } = props;
-  const { helper, iconLeft, iconRight, value, __isNew__: isNew } = props.data;
+  const { helper, iconLeft, iconRight, __isNew__: isNew } = props.data;
 
   return (
     <components.Option {...props}>

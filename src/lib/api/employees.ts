@@ -8,6 +8,7 @@ export async function getEmployees() {
 
 export async function getEmployee(id: string) {
   // Get single employee
+  console.log(`GET EMPLOYEE ${id}`);
 }
 
 export async function createEmployee(data: CreateEmployeeParams) {

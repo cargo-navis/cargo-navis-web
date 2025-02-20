@@ -31,7 +31,7 @@ export const LoginForm = () => {
     try {
       await loginUser({ ...formValues });
       push('/dashboard/employees');
-    } catch (e) {
+    } catch {
       alert("We couldn't find anyone with that email and password combination.");
     }
   }

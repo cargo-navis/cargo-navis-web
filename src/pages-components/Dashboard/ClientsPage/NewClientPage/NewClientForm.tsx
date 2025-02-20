@@ -35,7 +35,11 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
     // resolver: yupResolver(clientsSchema),
     mode: 'all',
   });
-  //
+
+  // TODO 1. - fix editing of Client (address postal code / id)
+  // TODO 2- add schema validation
+  // TODO 3 - continue with Contractors
+
   const { handleSubmit, formState, watch, resetField } = formMethods;
   const { isDirty, isValid } = formState;
 
