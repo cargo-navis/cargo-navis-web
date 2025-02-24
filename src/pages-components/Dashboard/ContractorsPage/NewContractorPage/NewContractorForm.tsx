@@ -9,7 +9,7 @@ import { useCreateContractor, useUpdateContractor } from '@/lib/hooks';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Button, FlexLayout, Text } from '@/ui';
 
-import { formDefaultValues } from './const';
+import { getFormDefaultValues } from './utils';
 
 export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contractor }) => {
   const { push } = useRouter();
@@ -18,20 +18,8 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
   const { mutateAsync: createContractor } = useCreateContractor();
   const { mutateAsync: updateContractor } = useUpdateContractor(contractor?.id as string);
 
-  const defaultValues = contractor
-    ? {
-        ...contractor,
-        addressName: contractor.address?.streetName,
-        countryCode: contractor.address?.countryCode,
-        addressPostalCode: {
-          value: contractor.address.postalCode,
-          label: contractor.address.postalCode,
-        },
-      }
-    : formDefaultValues;
-
   const formMethods = useForm<any>({
-    defaultValues,
+    defaultValues: getFormDefaultValues(contractor),
     mode: 'all',
   });
 
