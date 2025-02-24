@@ -7,7 +7,7 @@ import type { Client } from '@/lib/api';
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateClient, useUpdateClient } from '@/lib/hooks';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, Button, FlexLayout, Text } from '@/ui';
+import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
 import { getFormDefaultValues } from './utils';
 
@@ -23,12 +23,10 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
     mode: 'all',
   });
 
-  // TODO 1. - fix editing of Client (address postal code / id)
   // TODO 2- add schema validation
-  // TODO 3 - continue with Contractors
 
   const { handleSubmit, formState, watch, resetField } = formMethods;
-  const { isDirty, isValid } = formState;
+  const { isDirty, isValid, isLoading } = formState;
 
   async function handleFormSubmit({ name, addressName, vatNumber, nationalCompanyRegisterId, addressPostalCode }: any) {
     const payload = {
@@ -57,6 +55,10 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
   useEffect(() => {
     resetField('addressPostalCode');
   }, [countryCode]);
+
+  if (isLoading) {
+    return <LoadingSpinner size="l" />;
+  }
 
   return (
     <FormProvider {...formMethods}>

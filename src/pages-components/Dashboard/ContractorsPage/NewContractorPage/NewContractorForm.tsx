@@ -7,7 +7,7 @@ import type { Contractor } from '@/lib/api';
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateContractor, useUpdateContractor } from '@/lib/hooks';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, Button, FlexLayout, Text } from '@/ui';
+import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
 import { getFormDefaultValues } from './utils';
 
@@ -24,7 +24,7 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
   });
 
   const { handleSubmit, formState, watch, resetField } = formMethods;
-  const { isDirty, isValid } = formState;
+  const { isDirty, isValid, isLoading } = formState;
 
   async function handleFormSubmit({ name, addressName, vatNumber, nationalCompanyRegisterId, addressPostalCode }: any) {
     const payload = {
@@ -53,6 +53,10 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
   useEffect(() => {
     resetField('addressPostalCode');
   }, [countryCode]);
+
+  if (isLoading) {
+    return <LoadingSpinner size="l" />;
+  }
 
   return (
     <FormProvider {...formMethods}>
