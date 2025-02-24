@@ -9,7 +9,7 @@ import { useCreateClient, useUpdateClient } from '@/lib/hooks';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Button, FlexLayout, Text } from '@/ui';
 
-import { formDefaultValues } from './const';
+import { getFormDefaultValues } from './utils';
 
 export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
   const { push } = useRouter();
@@ -18,21 +18,8 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
   const { mutateAsync: createClient } = useCreateClient();
   const { mutateAsync: updateClient } = useUpdateClient(client?.id as string);
 
-  const defaultValues = client
-    ? {
-        ...client,
-        addressName: client.address?.streetName,
-        countryCode: client.address?.countryCode,
-        addressPostalCode: {
-          value: client.address.postalCode,
-          label: client.address.postalCode,
-        },
-      }
-    : formDefaultValues;
-
   const formMethods = useForm<any>({
-    defaultValues,
-    // resolver: yupResolver(clientsSchema),
+    defaultValues: getFormDefaultValues(client),
     mode: 'all',
   });
 
