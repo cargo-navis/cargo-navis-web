@@ -1,3 +1,4 @@
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -9,6 +10,7 @@ import { useCreateContractor, useUpdateContractor } from '@/lib/hooks';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
+import { ContractorFormData, contractorSchema } from './schema';
 import { getFormDefaultValues } from './utils';
 
 export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contractor }) => {
@@ -18,9 +20,10 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
   const { mutateAsync: createContractor } = useCreateContractor();
   const { mutateAsync: updateContractor } = useUpdateContractor(contractor?.id as string);
 
-  const formMethods = useForm<any>({
+  const formMethods = useForm<ContractorFormData>({
     defaultValues: getFormDefaultValues(contractor),
     mode: 'all',
+    resolver: yupResolver(contractorSchema),
   });
 
   const { handleSubmit, formState, watch, resetField } = formMethods;

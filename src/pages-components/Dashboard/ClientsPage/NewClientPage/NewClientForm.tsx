@@ -1,3 +1,4 @@
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -9,6 +10,7 @@ import { useCreateClient, useUpdateClient } from '@/lib/hooks';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
+import { ClientFormData, clientSchema } from './schema';
 import { getFormDefaultValues } from './utils';
 
 export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
@@ -18,12 +20,11 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
   const { mutateAsync: createClient } = useCreateClient();
   const { mutateAsync: updateClient } = useUpdateClient(client?.id as string);
 
-  const formMethods = useForm<any>({
+  const formMethods = useForm<ClientFormData>({
     defaultValues: getFormDefaultValues(client),
+    resolver: yupResolver(clientSchema),
     mode: 'all',
   });
-
-  // TODO 2- add schema validation
 
   const { handleSubmit, formState, watch, resetField } = formMethods;
   const { isDirty, isValid, isLoading } = formState;
