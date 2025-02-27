@@ -1,4 +1,5 @@
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
+import { useToggle } from 'react-use';
 
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { FormTextarea } from '@/lib/components/form/FormTextarea';
@@ -96,6 +97,8 @@ export const NewShipmentForm = () => {
 };
 
 const CargoFields = () => {
+  const [isStandardCargo, setIsStandardCargo] = useToggle(true);
+
   return (
     <FlexLayout as="fieldset" className="flex-col gap-4">
       <Text color="text-color-3" variant="text-s-medium">
@@ -109,9 +112,27 @@ const CargoFields = () => {
           <FormTextInput label="Težina (kg)" name="weight" placeholder="100" />
         </Box>
       </FlexLayout>
-      <FormTextInput label="Duljina (m)" name="length" placeholder="X" />
-      <FormTextInput label="Širina (m)" name="width" placeholder="X" />
-      <FormTextInput label="Visina (m)" name="height" placeholder="X" />
+      {/* <FlexLayout className="grow gap-3">
+        <Box className="flex-1">
+          <FormTextInput label="LDM" name="ldm" placeholder="1.00" step="0.01" type="number" />
+        </Box>
+      </FlexLayout> */}
+      {isStandardCargo ? (
+        <Box>STANDARD</Box>
+      ) : (
+        <FlexLayout className="gap-4">
+          <Box className="flex-1">
+            <FormTextInput label="Duljina (m)" min="0" name="length" placeholder="XXX" step="0.01" type="number" />
+          </Box>
+          <Box className="flex-1">
+            <FormTextInput label="Širina (m)" min="0" name="width" placeholder="XXX" step="0.01" type="number" />
+          </Box>
+          <Box className="flex-1">
+            <FormTextInput label="Visina (m)" min="0" name="height" placeholder="XXX" step="0.01" type="number" />
+          </Box>
+        </FlexLayout>
+      )}
+      <FormTextInput label="Težina (kg)" name="weight" placeholder="100" />
       <FormTextarea label="Opis tereta" name="description" />
     </FlexLayout>
   );
