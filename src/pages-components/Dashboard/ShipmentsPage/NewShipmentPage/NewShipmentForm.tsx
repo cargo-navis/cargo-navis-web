@@ -108,42 +108,44 @@ export const NewShipmentForm = () => {
           <Box className="py-4">
             <Divider />
           </Box>
-          {cargo.map((_, index: number) => (
-            <CargoFields index={index} key={index} />
-          ))}
-          <TextButton
-            iconLeft="PlusIcon"
-            text="Dodaj teret"
-            variant="secondary"
-            onClick={() =>
-              formMethods.setValue('cargo', [
-                ...cargo,
-                {
-                  weight: undefined,
-                  description: undefined,
-                  metadata: {
-                    type: 'standard',
-                    palleteType: '120x80',
-                    palleteAmount: 1,
+          <FlexLayout className="flex-col gap-4">
+            {cargo.map((_, index: number) => (
+              <CargoFields index={index} key={index} />
+            ))}
+            <TextButton
+              iconLeft="PlusIcon"
+              text="Dodaj teret"
+              variant="secondary"
+              onClick={() =>
+                formMethods.setValue('cargo', [
+                  ...cargo,
+                  {
+                    weight: undefined,
+                    description: undefined,
+                    metadata: {
+                      type: 'standard',
+                      palleteType: '120x80',
+                      palleteAmount: 1,
+                    },
                   },
-                },
-              ])
-            }
-          />
-          <Box className="py-4">
+                ])
+              }
+            />
+          </FlexLayout>
+          {/* <Box className="py-4">
             <Divider />
           </Box>
           <AddressFields />
-          <SubshipmentsFields />
-          <TextButton
+          <SubshipmentsFields /> */}
+          {/* <TextButton
             iconLeft="PlusIcon"
             text="Dodaj podnalog"
             variant="secondary"
             onClick={() =>
               formMethods.setValue('subshipments', [{ contractor: undefined, 'contractor-price': undefined }])
             }
-          />
-          <Button iconLeft="PlusIcon" isFullWidth text="Dodaj Nalog" />
+          /> */}
+          {/* <Button iconLeft="PlusIcon" isFullWidth text="Napravi Nalog" /> */}
         </FlexLayout>
       </FlexLayout>
 
@@ -167,7 +169,7 @@ const CargoFields = ({ index }: { index: number }) => {
   };
 
   return (
-    <FlexLayout as="fieldset" className="flex-col gap-4">
+    <FlexLayout as="fieldset" className="flex-col gap-4 bg-black-alpha-10 dark:bg-white-alpha-10 p-4 rounded-s">
       <Text color="text-color-3" variant="text-s-medium">
         TERET {index + 1}
       </Text>
