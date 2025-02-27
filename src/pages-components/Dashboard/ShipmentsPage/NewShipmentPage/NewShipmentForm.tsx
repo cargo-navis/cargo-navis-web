@@ -1,5 +1,5 @@
+import { useState } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
-import { useToggle } from 'react-use';
 
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { FormTextarea } from '@/lib/components/form/FormTextarea';
@@ -97,19 +97,29 @@ export const NewShipmentForm = () => {
 };
 
 const CargoFields = () => {
-  const [isStandardCargo, setIsStandardCargo] = useToggle(true);
+  const [isStandardCargo, setIsStandardCargo] = useState(true);
 
   return (
     <FlexLayout as="fieldset" className="flex-col gap-4">
       <Text color="text-color-3" variant="text-s-medium">
         TERET
       </Text>
-      <FlexLayout className="grow gap-3">
+      <FlexLayout className="gap-2">
         <Box className="flex-1">
-          <FormTextInput label="LDM" name="ldm" placeholder="1.00" step="0.01" type="number" />
+          <Button
+            isFullWidth
+            text="Standardni teret"
+            variant={isStandardCargo ? 'primary' : 'secondary'}
+            onClick={() => setIsStandardCargo(true)}
+          />
         </Box>
         <Box className="flex-1">
-          <FormTextInput label="Težina (kg)" name="weight" placeholder="100" />
+          <Button
+            isFullWidth
+            text="Nestandardni teret"
+            variant={!isStandardCargo ? 'primary' : 'secondary'}
+            onClick={() => setIsStandardCargo(false)}
+          />
         </Box>
       </FlexLayout>
       {/* <FlexLayout className="grow gap-3">
@@ -118,7 +128,33 @@ const CargoFields = () => {
         </Box>
       </FlexLayout> */}
       {isStandardCargo ? (
-        <Box>STANDARD</Box>
+        <FlexLayout className="gap-4">
+          <Box className="flex-1">
+            <FormSingleSelect
+              isClearable
+              isSearchable
+              label="Vrsta palete"
+              name="palletType"
+              options={[
+                { value: '80x60', label: 'Mala Paleta (80x60)' },
+                { value: '120x80', label: 'Euro Paleta (120x80)' },
+                { value: '120x100', label: 'Brodska Paleta (120x100)' },
+                { value: '100x100', label: 'Industrijska Paleta (100x100)' },
+                { value: '120x120', label: 'Jumbo Paleta (120x120)' },
+              ]}
+              placeholder="Odaberi vrstu palete..."
+            />
+          </Box>
+          <Box className="flex-1">
+            <FormTextInput
+              label="Broj paleta"
+              min="1"
+              name="palletCount"
+              placeholder="Unesi broj paleta"
+              type="number"
+            />
+          </Box>
+        </FlexLayout>
       ) : (
         <FlexLayout className="gap-4">
           <Box className="flex-1">
