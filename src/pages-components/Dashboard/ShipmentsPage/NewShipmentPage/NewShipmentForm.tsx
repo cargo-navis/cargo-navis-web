@@ -174,13 +174,16 @@ const CargoField = ({ index }: { index: number }) => {
     setValue('cargo', updatedCargo);
   };
 
+  const currentCargo = getValues('cargo');
+  const cargoLength = currentCargo.length;
+
   return (
     <FlexLayout as="fieldset" className="flex-col gap-4 bg-black-alpha-10 dark:bg-white-alpha-10 p-4 rounded-s">
       <FlexLayout className="justify-between items-center">
         <Text color="text-color-3" variant="text-s-medium">
           TERET {index + 1}
         </Text>
-        <Icon icon="XMarkIcon" onClick={removeCargo} />
+        {cargoLength > 1 && <Icon icon="XMarkIcon" onClick={removeCargo} />}
       </FlexLayout>
       <FlexLayout className="flex-col gap-4">
         <FlexLayout className="gap-2">
