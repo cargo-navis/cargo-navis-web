@@ -3,7 +3,7 @@ import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { FormTextarea } from '@/lib/components/form/FormTextarea';
 import { postalCodes } from '@/lib/mocks/postalCodes';
-import { Box, Button, Divider, FlexLayout, Text, TextButton } from '@/ui';
+import { Box, Button, Divider, FlexLayout, Icon, Text, TextButton } from '@/ui';
 
 const defaultValues: {
   orderNo: string;
@@ -110,7 +110,7 @@ export const NewShipmentForm = () => {
           </Box>
           <FlexLayout className="flex-col gap-4">
             {cargo.map((_, index: number) => (
-              <CargoFields index={index} key={index} />
+              <CargoField index={index} key={index} />
             ))}
             <TextButton
               iconLeft="PlusIcon"
@@ -159,8 +159,8 @@ export const NewShipmentForm = () => {
   );
 };
 
-const CargoFields = ({ index }: { index: number }) => {
-  const { watch, setValue } = useFormContext();
+const CargoField = ({ index }: { index: number }) => {
+  const { watch, setValue, getValues } = useFormContext();
   const cargoType = watch(`cargo.${index}.metadata.type`);
   const isStandardCargo = cargoType === 'standard';
 
@@ -168,11 +168,20 @@ const CargoFields = ({ index }: { index: number }) => {
     setValue(`cargo.${index}.metadata.type`, type);
   };
 
+  const removeCargo = () => {
+    const currentCargo = getValues('cargo');
+    const updatedCargo = currentCargo.filter((_, i) => i !== index);
+    setValue('cargo', updatedCargo);
+  };
+
   return (
     <FlexLayout as="fieldset" className="flex-col gap-4 bg-black-alpha-10 dark:bg-white-alpha-10 p-4 rounded-s">
-      <Text color="text-color-3" variant="text-s-medium">
-        TERET {index + 1}
-      </Text>
+      <FlexLayout className="justify-between items-center">
+        <Text color="text-color-3" variant="text-s-medium">
+          TERET {index + 1}
+        </Text>
+        <Icon icon="XMarkIcon" onClick={removeCargo} />
+      </FlexLayout>
       <FlexLayout className="flex-col gap-4">
         <FlexLayout className="gap-2">
           <Box className="flex-1">
