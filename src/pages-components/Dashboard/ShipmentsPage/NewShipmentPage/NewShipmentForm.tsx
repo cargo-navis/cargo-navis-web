@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
@@ -6,9 +5,24 @@ import { FormTextarea } from '@/lib/components/form/FormTextarea';
 import { postalCodes } from '@/lib/mocks/postalCodes';
 import { Box, Button, Divider, FlexLayout, Text, TextButton } from '@/ui';
 
-const defaultValues = {
+const defaultValues: {
+  orderNo: string;
+  subshipments: any[];
+  cargo: Cargo[];
+} = {
   orderNo: '2025/24',
   subshipments: [],
+  cargo: [
+    {
+      weight: undefined,
+      description: undefined,
+      metadata: {
+        type: 'standard',
+        palleteType: '120x80',
+        palleteAmount: 1,
+      },
+    },
+  ],
 };
 
 const clients = [
@@ -24,11 +38,30 @@ const clients = [
   { label: 'Prangl Hrvatska', value: 'b5c8e7f9-2f14-4c7e-9a3d-8f1e6b3a4d92' },
 ];
 
+export interface Cargo {
+  weight?: number;
+  description?: string;
+  metadata: CargoMetadata;
+}
+
+export interface CargoMetadata {
+  type: 'standard' | 'nonstandard';
+  width?: number;
+  height?: number;
+  length?: number;
+  palleteType?: string;
+  palleteAmount?: number;
+}
+
 export const NewShipmentForm = () => {
   const formMethods = useForm<any>({
     defaultValues,
     mode: 'all',
   });
+
+  const { watch } = formMethods;
+  const cargo = watch('cargo');
+  const formValues = watch();
 
   const { handleSubmit } = formMethods;
 
@@ -75,7 +108,28 @@ export const NewShipmentForm = () => {
           <Box className="py-4">
             <Divider />
           </Box>
-          <CargoFields />
+          {cargo.map((_, index: number) => (
+            <CargoFields index={index} key={index} />
+          ))}
+          <TextButton
+            iconLeft="PlusIcon"
+            text="Dodaj teret"
+            variant="secondary"
+            onClick={() =>
+              formMethods.setValue('cargo', [
+                ...cargo,
+                {
+                  weight: undefined,
+                  description: undefined,
+                  metadata: {
+                    type: 'standard',
+                    palleteType: '120x80',
+                    palleteAmount: 1,
+                  },
+                },
+              ])
+            }
+          />
           <Box className="py-4">
             <Divider />
           </Box>
@@ -92,84 +146,117 @@ export const NewShipmentForm = () => {
           <Button iconLeft="PlusIcon" isFullWidth text="Dodaj Nalog" />
         </FlexLayout>
       </FlexLayout>
+
+      <Box className="fixed right-4 top-4 w-[400px] p-4 rounded-lg shadow-lg overflow-auto max-h-[90vh]">
+        <Text className="mb-2" variant="text-s-medium">
+          Form Data:
+        </Text>
+        <pre className="text-xs whitespace-pre-wrap">{JSON.stringify(formValues, null, 2)}</pre>
+      </Box>
     </FormProvider>
   );
 };
 
-const CargoFields = () => {
-  const [isStandardCargo, setIsStandardCargo] = useState(true);
+const CargoFields = ({ index }: { index: number }) => {
+  const { watch, setValue } = useFormContext();
+  const cargoType = watch(`cargo.${index}.metadata.type`);
+  const isStandardCargo = cargoType === 'standard';
+
+  const setCargoType = (type: 'standard' | 'nonstandard') => {
+    setValue(`cargo.${index}.metadata.type`, type);
+  };
 
   return (
     <FlexLayout as="fieldset" className="flex-col gap-4">
       <Text color="text-color-3" variant="text-s-medium">
-        TERET
+        TERET {index + 1}
       </Text>
-      <FlexLayout className="gap-2">
-        <Box className="flex-1">
-          <Button
-            isFullWidth
-            text="Standardni teret"
-            variant={isStandardCargo ? 'primary' : 'secondary'}
-            onClick={() => setIsStandardCargo(true)}
-          />
-        </Box>
-        <Box className="flex-1">
-          <Button
-            isFullWidth
-            text="Nestandardni teret"
-            variant={!isStandardCargo ? 'primary' : 'secondary'}
-            onClick={() => setIsStandardCargo(false)}
-          />
-        </Box>
+      <FlexLayout className="flex-col gap-4">
+        <FlexLayout className="gap-2">
+          <Box className="flex-1">
+            <Button
+              isFullWidth
+              text="Standardni teret"
+              type="button"
+              variant={isStandardCargo ? 'primary' : 'secondary'}
+              onClick={() => setCargoType('standard')}
+            />
+          </Box>
+          <Box className="flex-1">
+            <Button
+              isFullWidth
+              text="Nestandardni teret"
+              type="button"
+              variant={!isStandardCargo ? 'primary' : 'secondary'}
+              onClick={() => setCargoType('nonstandard')}
+            />
+          </Box>
+        </FlexLayout>
+        {isStandardCargo ? (
+          <FlexLayout className="gap-4">
+            <Box className="flex-1">
+              <FormSingleSelect
+                isClearable
+                isSearchable
+                label="Vrsta palete"
+                name={`cargo.${index}.metadata.palleteType`}
+                options={[
+                  { value: '80x60', label: 'Mala Paleta (80x60)' },
+                  { value: '120x80', label: 'Euro Paleta (120x80)' },
+                  { value: '120x100', label: 'Brodska Paleta (120x100)' },
+                  { value: '100x100', label: 'Industrijska Paleta (100x100)' },
+                  { value: '120x120', label: 'Jumbo Paleta (120x120)' },
+                ]}
+                placeholder="Odaberi vrstu palete..."
+              />
+            </Box>
+            <Box className="flex-1">
+              <FormTextInput
+                label="Broj paleta"
+                min="1"
+                name={`cargo.${index}.metadata.palleteAmount`}
+                placeholder="Unesi broj paleta"
+                type="number"
+              />
+            </Box>
+          </FlexLayout>
+        ) : (
+          <FlexLayout className="gap-4">
+            <Box className="flex-1">
+              <FormTextInput
+                label="Duljina (m)"
+                min="0"
+                name={`cargo.${index}.metadata.length`}
+                placeholder="XXX"
+                step="0.01"
+                type="number"
+              />
+            </Box>
+            <Box className="flex-1">
+              <FormTextInput
+                label="Širina (m)"
+                min="0"
+                name={`cargo.${index}.metadata.width`}
+                placeholder="XXX"
+                step="0.01"
+                type="number"
+              />
+            </Box>
+            <Box className="flex-1">
+              <FormTextInput
+                label="Visina (m)"
+                min="0"
+                name={`cargo.${index}.metadata.height`}
+                placeholder="XXX"
+                step="0.01"
+                type="number"
+              />
+            </Box>
+          </FlexLayout>
+        )}
+        <FormTextInput label="Težina (kg)" name={`cargo.${index}.weight`} />
+        <FormTextarea label="Opis tereta" name={`cargo.${index}.description`} />
       </FlexLayout>
-      {/* <FlexLayout className="grow gap-3">
-        <Box className="flex-1">
-          <FormTextInput label="LDM" name="ldm" placeholder="1.00" step="0.01" type="number" />
-        </Box>
-      </FlexLayout> */}
-      {isStandardCargo ? (
-        <FlexLayout className="gap-4">
-          <Box className="flex-1">
-            <FormSingleSelect
-              isClearable
-              isSearchable
-              label="Vrsta palete"
-              name="palletType"
-              options={[
-                { value: '80x60', label: 'Mala Paleta (80x60)' },
-                { value: '120x80', label: 'Euro Paleta (120x80)' },
-                { value: '120x100', label: 'Brodska Paleta (120x100)' },
-                { value: '100x100', label: 'Industrijska Paleta (100x100)' },
-                { value: '120x120', label: 'Jumbo Paleta (120x120)' },
-              ]}
-              placeholder="Odaberi vrstu palete..."
-            />
-          </Box>
-          <Box className="flex-1">
-            <FormTextInput
-              label="Broj paleta"
-              min="1"
-              name="palletCount"
-              placeholder="Unesi broj paleta"
-              type="number"
-            />
-          </Box>
-        </FlexLayout>
-      ) : (
-        <FlexLayout className="gap-4">
-          <Box className="flex-1">
-            <FormTextInput label="Duljina (m)" min="0" name="length" placeholder="XXX" step="0.01" type="number" />
-          </Box>
-          <Box className="flex-1">
-            <FormTextInput label="Širina (m)" min="0" name="width" placeholder="XXX" step="0.01" type="number" />
-          </Box>
-          <Box className="flex-1">
-            <FormTextInput label="Visina (m)" min="0" name="height" placeholder="XXX" step="0.01" type="number" />
-          </Box>
-        </FlexLayout>
-      )}
-      <FormTextInput label="Težina (kg)" name="weight" placeholder="100" />
-      <FormTextarea label="Opis tereta" name="description" />
     </FlexLayout>
   );
 };
