@@ -1,6 +1,3 @@
-import 'dayjs/locale/hr';
-import '@mantine/dates/styles.css';
-
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 
