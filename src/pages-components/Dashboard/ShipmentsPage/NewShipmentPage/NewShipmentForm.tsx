@@ -1,18 +1,48 @@
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
-import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
-import { postalCodes } from '@/lib/mocks/postalCodes';
+import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
+import { FormDatepicker, FormSingleSelect, FormTextarea, FormTextInput } from '@/lib/components/form';
+import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Divider, FlexLayout, Text, TextButton } from '@/ui';
 
 import { CargoField } from './CargoField';
+import { ClientField } from './ClientField';
+import { ContractorField } from './ContractorField';
+import { DispatcherField } from './DispatcherField';
 
-const defaultValues: {
+interface Address {
+  name: string;
+  postalCodeId: string;
+  countryCode?: string;
+}
+
+interface BaseShipmentFields {
+  referenceNumber?: string;
+  loadingAddress?: Address;
+  unloadingAddress?: Address;
+  loadingReadyDate?: string;
+  loadingDate?: string;
+  loadingDescription?: string;
+  unloadingDate?: string;
+  unloadingDueDate?: string;
+  unloadingDescription?: string;
+  price?: number;
+}
+
+interface Subshipment extends BaseShipmentFields {
+  contractorId?: string;
+}
+
+interface ShipmentFormData extends BaseShipmentFields {
   orderNo: string;
-  subshipments: any[];
+  clientId?: string;
+  dispatcherId?: string;
   cargo: Cargo[];
-} = {
+  subshipments: Subshipment[];
+}
+
+const defaultValues: ShipmentFormData = {
   orderNo: '2025/24',
-  subshipments: [],
   cargo: [
     {
       weight: undefined,
@@ -24,20 +54,8 @@ const defaultValues: {
       },
     },
   ],
+  subshipments: [],
 };
-
-const clients = [
-  { label: 'Gebrüder Weiss', value: 'e1b5a7f8-2f34-4a29-8c56-d8b963d034fa' },
-  { label: 'Dragon Maritime', value: 'a2c4b8f9-9e76-48d3-a34b-7b934d081c32' },
-  { label: 'TerraLog', value: 'f3c7e4a8-1d56-490b-8d92-fb4a8fba4d41' },
-  { label: 'Meridiana Shipping Agency', value: 'b7e5c9a2-8c3d-48e2-83d6-f4c1b9a21e54' },
-  { label: 'Log Adria', value: 'd8c3a1f5-7a2e-45b3-93d7-4e9a3d5c2f86' },
-  { label: 'Bandic Maritime', value: 'e6f2b7a9-6f49-4b83-8d14-9c5a4e7d5b63' },
-  { label: 'Jadrošped d.o.o.', value: 'a4e1b7c6-9f72-49c5-84a3-b9e3c7f4a851' },
-  { label: 'Zagrebtrans d.o.o.', value: 'c3f7a8e4-1d95-49a8-8c7d-5a9b7d4c8f24' },
-  { label: 'Ralu Logistika d.d.', value: 'f7a3e5b9-8d63-4f3d-8a1e-6c4e7b5a2f19' },
-  { label: 'Prangl Hrvatska', value: 'b5c8e7f9-2f14-4c7e-9a3d-8f1e6b3a4d92' },
-];
 
 export interface Cargo {
   weight?: number;
@@ -55,7 +73,7 @@ export interface CargoMetadata {
 }
 
 export const NewShipmentForm = () => {
-  const formMethods = useForm<any>({
+  const formMethods = useForm<ShipmentFormData>({
     defaultValues,
     mode: 'all',
   });
@@ -83,16 +101,12 @@ export const NewShipmentForm = () => {
                 <FormTextInput label="Referentni broj" name="referenceNumber" placeholder="1234" />
               </Box>
             </FlexLayout>
+            <Box className="flex-1">
+              <DispatcherField />
+            </Box>
             <FlexLayout className="gap-4">
               <Box className="flex-1">
-                <FormSingleSelect
-                  isClearable
-                  isSearchable
-                  label="Klijent"
-                  name="client"
-                  options={clients}
-                  placeholder="Odaberi klijenta..."
-                />
+                <ClientField />
               </Box>
               <Box className="flex-1">
                 <FormTextInput
@@ -133,11 +147,8 @@ export const NewShipmentForm = () => {
               }
             />
           </FlexLayout>
-          {/* <Box className="py-4">
-            <Divider />
-          </Box>
           <AddressFields />
-          <SubshipmentsFields /> */}
+          <SubshipmentsFields />
           {/* <TextButton
             iconLeft="PlusIcon"
             text="Dodaj podnalog"
@@ -160,137 +171,169 @@ export const NewShipmentForm = () => {
   );
 };
 
-const addressOptions = postalCodes.map((p) => ({
-  value: p.postalCode,
-  label: `${p.postalCode} ${p.city}, ${p.region}, ${p.country}`,
-}));
-
 const AddressFields = () => {
+  const { watch } = useFormContext();
+  const loadingCountryCode = watch('loadingAddress.countryCode');
+  const unloadingCountryCode = watch('unloadingAddress.countryCode');
+
   return (
-    <FlexLayout as="fieldset" className="gap-4">
-      <FlexLayout className="flex-1 flex-col gap-2">
-        <Text color="text-color-3" variant="text-xxs-medium">
-          Adresa utovara
-        </Text>
-        <FlexLayout className="flex-col gap-5">
-          <Box className="flex-1">
-            <FormTextInput name="streetName1" placeholder="Ulica" />
-          </Box>
-          <Box className="flex-1">
-            {/* TODO - Async backend search */}
-            <FormSingleSelect
-              isClearable
-              isSearchable
-              name="postalCode1"
-              options={addressOptions}
-              placeholder="Poštanski broj"
-            />
-          </Box>
+    <FlexLayout as="fieldset" className="flex-col gap-8">
+      <FlexLayout className="gap-4">
+        <FlexLayout className="flex-1 flex-col gap-4">
+          <Text color="text-color-3" variant="text-xxs-medium">
+            Detalji utovara
+          </Text>
+          <FormTextInput name="loadingAddress.name" placeholder="Ulica i broj" />
+          <FormSingleSelect
+            isSearchable
+            label="Država"
+            name="loadingAddress.countryCode"
+            options={countryEuropeOptions}
+          />
+          <PostalCodeSelectField
+            countryCode={loadingCountryCode}
+            iconLeft="MagnifyingGlassIcon"
+            isClearable
+            isDisabled={!loadingCountryCode}
+            label="Poštanski broj"
+            name="loadingAddress.postalCodeId"
+            placeholder="Odaberi poštanski broj"
+          />
+          <FormDatepicker label="Datum spremnosti za utovar" name="loadingReadyDate" />
+          <FormDatepicker label="Datum utovara" name="loadingDate" />
+          <FormTextarea label="Opis utovara" name="loadingDescription" placeholder="Unesite detalje utovara..." />
         </FlexLayout>
-      </FlexLayout>
-      <FlexLayout className="flex-1 flex-col gap-2">
-        <Text color="text-color-3" variant="text-xxs-medium">
-          Adresa istovara
-        </Text>
-        <FlexLayout className="flex-col gap-5">
-          <Box className="flex-1">
-            <FormTextInput name="streetName2" placeholder="Ulica" />
-          </Box>
-          <Box className="flex-1">
-            {/* TODO - Async backend search */}
-            <FormSingleSelect isSearchable name="postalCode2" options={addressOptions} placeholder="Poštanski broj" />
-          </Box>
+
+        <FlexLayout className="flex-1 flex-col gap-4">
+          <Text color="text-color-3" variant="text-xxs-medium">
+            Detalji istovara
+          </Text>
+          <FormTextInput name="unloadingAddress.name" placeholder="Ulica i broj" />
+          <FormSingleSelect
+            isSearchable
+            label="Država"
+            name="unloadingAddress.countryCode"
+            options={countryEuropeOptions}
+          />
+          <PostalCodeSelectField
+            countryCode={unloadingCountryCode}
+            iconLeft="MagnifyingGlassIcon"
+            isClearable
+            isDisabled={!unloadingCountryCode}
+            label="Poštanski broj"
+            name="unloadingAddress.postalCodeId"
+            placeholder="Odaberi poštanski broj"
+          />
+          <FormDatepicker label="Datum istovara" name="unloadingDate" />
+          <FormDatepicker label="Krajnji rok istovara" name="unloadingDueDate" />
+          <FormTextarea label="Opis istovara" name="unloadingDescription" placeholder="Unesite detalje istovara..." />
         </FlexLayout>
       </FlexLayout>
     </FlexLayout>
   );
 };
 
-const contractors: any = [
-  { value: 1, label: 'Cargo Transport Zagreb' },
-  { value: 2, label: 'Jagić Dostava d.o.o' },
-  { value: 3, label: 'Matej Cargo' },
-  { value: 4, label: 'Autotransport Melnjak d.o.o' },
-  { value: 5, label: 'Petko Kamion' },
-  { value: 6, label: 'Petason d.o.o' },
-  { value: 7, label: 'Grubeša transport d.o.o' },
-];
-
 const SubshipmentsFields = () => {
   const { watch } = useFormContext();
   const subshipments = watch('subshipments');
 
-  return subshipments.map((sub: any) => (
-    <FlexLayout
-      as="fieldset"
-      className="flex-col gap-4 p-2 rounded-s bg-black-alpha-10 dark:bg-white-alpha-10"
-      key={sub?.id}
-    >
-      <FlexLayout className="gap-4">
-        <FlexLayout className="gap-4 grow">
-          <Box className="flex-1">
-            <FormSingleSelect
-              isClearable
-              isSearchable
-              label="Kontraktor"
-              name="contractor"
-              options={contractors}
-              placeholder="Odaberi kontraktora..."
-            />
-          </Box>
-          <Box className="flex-1">
-            <FormTextInput
-              iconLeft="CurrencyEuroIcon"
-              label="Cijena (Euro)"
-              min="0"
-              name="contractor-price"
-              placeholder="XXX"
-              type="number"
-            />
-          </Box>
-        </FlexLayout>
-      </FlexLayout>
-      <FlexLayout as="fieldset" className="gap-4">
-        <FlexLayout className="flex-1 flex-col gap-2">
-          <Text color="text-color-3" variant="text-xxs-medium">
-            Adresa utovara
-          </Text>
-          <FlexLayout className="flex-col gap-5">
-            <Box className="flex-1">
-              <FormTextInput name="contractor-streetName1" placeholder="Ulica" />
-            </Box>
-            <Box className="flex-1">
-              {/* TODO - Async backend search */}
-              <FormSingleSelect
-                isClearable
-                isSearchable
-                name="constractor-postalCode1"
-                options={addressOptions}
-                placeholder="Poštanski broj"
-              />
-            </Box>
+  return (
+    <FlexLayout className="flex-col gap-8">
+      {subshipments.map((sub: any, index: number) => {
+        const loadingCountryCode = watch(`subshipments.${index}.loadingAddress.countryCode`);
+        const unloadingCountryCode = watch(`subshipments.${index}.unloadingAddress.countryCode`);
+
+        return (
+          <FlexLayout
+            as="fieldset"
+            className="flex-col gap-4 p-4 rounded-s bg-black-alpha-10 dark:bg-white-alpha-10"
+            key={index}
+          >
+            <FlexLayout className="gap-4">
+              <Box className="flex-1">
+                <FormTextInput
+                  label="Referentni broj"
+                  name={`subshipments.${index}.referenceNumber`}
+                  placeholder="Unesite referencu..."
+                />
+              </Box>
+              <Box className="flex-1">
+                <ContractorField name={`subshipments.${index}.contractorId`} />
+              </Box>
+              <Box className="flex-1">
+                <FormTextInput
+                  iconLeft="CurrencyEuroIcon"
+                  label="Price (Euro)"
+                  min="0"
+                  name={`subshipments.${index}.price`}
+                  placeholder="XXX"
+                  type="number"
+                />
+              </Box>
+            </FlexLayout>
+
+            <FlexLayout className="gap-4">
+              <FlexLayout className="flex-1 flex-col gap-4">
+                <Text color="text-color-3" variant="text-xxs-medium">
+                  Detalji utovara
+                </Text>
+                <FormTextInput name={`subshipments.${index}.loadingAddress.name`} placeholder="Ulica i broj" />
+                <FormSingleSelect
+                  isSearchable
+                  label="Država"
+                  name={`subshipments.${index}.loadingAddress.countryCode`}
+                  options={countryEuropeOptions}
+                />
+                <PostalCodeSelectField
+                  countryCode={loadingCountryCode}
+                  iconLeft="MagnifyingGlassIcon"
+                  isClearable
+                  isDisabled={!loadingCountryCode}
+                  label="Poštanski broj"
+                  name={`subshipments.${index}.loadingAddress.postalCodeId`}
+                  placeholder="Odaberi poštanski broj"
+                />
+                <FormDatepicker label="Datum spremnosti za utovar" name={`subshipments.${index}.loadingReadyDate`} />
+                <FormDatepicker label="Datum utovara" name={`subshipments.${index}.loadingDate`} />
+                <FormTextarea
+                  label="Opis utovara"
+                  name={`subshipments.${index}.loadingDescription`}
+                  placeholder="Unesite detalje utovara..."
+                />
+              </FlexLayout>
+
+              <FlexLayout className="flex-1 flex-col gap-4">
+                <Text color="text-color-3" variant="text-xxs-medium">
+                  Detalji istovara
+                </Text>
+                <FormTextInput name={`subshipments.${index}.unloadingAddress.name`} placeholder="Ulica i broj" />
+                <FormSingleSelect
+                  isSearchable
+                  label="Država"
+                  name={`subshipments.${index}.unloadingAddress.countryCode`}
+                  options={countryEuropeOptions}
+                />
+                <PostalCodeSelectField
+                  countryCode={unloadingCountryCode}
+                  iconLeft="MagnifyingGlassIcon"
+                  isClearable
+                  isDisabled={!unloadingCountryCode}
+                  label="Poštanski broj"
+                  name={`subshipments.${index}.unloadingAddress.postalCodeId`}
+                  placeholder="Odaberi poštanski broj"
+                />
+                <FormDatepicker label="Datum istovara" name={`subshipments.${index}.unloadingDate`} />
+                <FormDatepicker label="Krajnji rok istovara" name={`subshipments.${index}.unloadingDueDate`} />
+                <FormTextarea
+                  label="Opis istovara"
+                  name={`subshipments.${index}.unloadingDescription`}
+                  placeholder="Unesite detalje istovara..."
+                />
+              </FlexLayout>
+            </FlexLayout>
           </FlexLayout>
-        </FlexLayout>
-        <FlexLayout className="flex-1 flex-col gap-2">
-          <Text color="text-color-3" variant="text-xxs-medium">
-            Adresa istovara
-          </Text>
-          <FlexLayout className="flex-col gap-5">
-            <Box className="flex-1">
-              <FormTextInput name="constractor-streetName2" placeholder="Ulica" />
-            </Box>
-            <Box className="flex-1">
-              {/* TODO - Async backend search */}
-              <FormSingleSelect
-                isSearchable
-                name="constractor-postalCode2"
-                options={addressOptions}
-                placeholder="Poštanski broj"
-              />
-            </Box>
-          </FlexLayout>
-        </FlexLayout>
-      </FlexLayout>
+        );
+      })}
     </FlexLayout>
-  ));
+  );
 };
