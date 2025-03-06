@@ -7,7 +7,6 @@ import { Box, Divider, FlexLayout, Text, TextButton } from '@/ui';
 
 import { CargoField } from './CargoField';
 import { ClientField } from './ClientField';
-import { ContractorField } from './ContractorField';
 import { DispatcherField } from './DispatcherField';
 
 interface Address {
@@ -16,7 +15,7 @@ interface Address {
   countryCode?: string;
 }
 
-interface BaseShipmentFields {
+interface ShipmentFields {
   referenceNumber?: string;
   loadingAddress?: Address;
   unloadingAddress?: Address;
@@ -27,21 +26,11 @@ interface BaseShipmentFields {
   unloadingDueDate?: string;
   unloadingDescription?: string;
   price?: number;
-}
-
-interface Subshipment extends BaseShipmentFields {
-  contractorId?: string;
-}
-
-interface ShipmentFormData extends BaseShipmentFields {
   orderNo: string;
-  clientId?: string;
-  dispatcherId?: string;
   cargo: Cargo[];
-  subshipments: Subshipment[];
 }
 
-const defaultValues: ShipmentFormData = {
+const defaultValues: ShipmentFields = {
   orderNo: '2025/24',
   cargo: [
     {
@@ -54,7 +43,6 @@ const defaultValues: ShipmentFormData = {
       },
     },
   ],
-  subshipments: [],
 };
 
 export interface Cargo {
@@ -73,7 +61,7 @@ export interface CargoMetadata {
 }
 
 export const NewShipmentForm = () => {
-  const formMethods = useForm<ShipmentFormData>({
+  const formMethods = useForm<ShipmentFields>({
     defaultValues,
     mode: 'all',
   });
@@ -124,7 +112,7 @@ export const NewShipmentForm = () => {
             <Divider />
           </Box>
           <FlexLayout className="flex-col gap-4">
-            {cargo.map((_, index: number, arr: any[]) => (
+            {cargo.map((_, index: number, arr: Cargo[]) => (
               <CargoField cargoLength={arr.length} index={index} key={index} />
             ))}
             <TextButton
@@ -148,16 +136,6 @@ export const NewShipmentForm = () => {
             />
           </FlexLayout>
           <AddressFields />
-          <SubshipmentsFields />
-          {/* <TextButton
-            iconLeft="PlusIcon"
-            text="Dodaj podnalog"
-            variant="secondary"
-            onClick={() =>
-              formMethods.setValue('subshipments', [{ contractor: undefined, 'contractor-price': undefined }])
-            }
-          /> */}
-          {/* <Button iconLeft="PlusIcon" isFullWidth text="Napravi Nalog" /> */}
         </FlexLayout>
       </FlexLayout>
 
@@ -229,111 +207,6 @@ const AddressFields = () => {
           <FormTextarea label="Opis istovara" name="unloadingDescription" placeholder="Unesite detalje istovara..." />
         </FlexLayout>
       </FlexLayout>
-    </FlexLayout>
-  );
-};
-
-const SubshipmentsFields = () => {
-  const { watch } = useFormContext();
-  const subshipments = watch('subshipments');
-
-  return (
-    <FlexLayout className="flex-col gap-8">
-      {subshipments.map((sub: any, index: number) => {
-        const loadingCountryCode = watch(`subshipments.${index}.loadingAddress.countryCode`);
-        const unloadingCountryCode = watch(`subshipments.${index}.unloadingAddress.countryCode`);
-
-        return (
-          <FlexLayout
-            as="fieldset"
-            className="flex-col gap-4 p-4 rounded-s bg-black-alpha-10 dark:bg-white-alpha-10"
-            key={index}
-          >
-            <FlexLayout className="gap-4">
-              <Box className="flex-1">
-                <FormTextInput
-                  label="Referentni broj"
-                  name={`subshipments.${index}.referenceNumber`}
-                  placeholder="Unesite referencu..."
-                />
-              </Box>
-              <Box className="flex-1">
-                <ContractorField name={`subshipments.${index}.contractorId`} />
-              </Box>
-              <Box className="flex-1">
-                <FormTextInput
-                  iconLeft="CurrencyEuroIcon"
-                  label="Price (Euro)"
-                  min="0"
-                  name={`subshipments.${index}.price`}
-                  placeholder="XXX"
-                  type="number"
-                />
-              </Box>
-            </FlexLayout>
-
-            <FlexLayout className="gap-4">
-              <FlexLayout className="flex-1 flex-col gap-4">
-                <Text color="text-color-3" variant="text-xxs-medium">
-                  Detalji utovara
-                </Text>
-                <FormTextInput name={`subshipments.${index}.loadingAddress.name`} placeholder="Ulica i broj" />
-                <FormSingleSelect
-                  isSearchable
-                  label="Država"
-                  name={`subshipments.${index}.loadingAddress.countryCode`}
-                  options={countryEuropeOptions}
-                />
-                <PostalCodeSelectField
-                  countryCode={loadingCountryCode}
-                  iconLeft="MagnifyingGlassIcon"
-                  isClearable
-                  isDisabled={!loadingCountryCode}
-                  label="Poštanski broj"
-                  name={`subshipments.${index}.loadingAddress.postalCodeId`}
-                  placeholder="Odaberi poštanski broj"
-                />
-                <FormDatepicker label="Datum spremnosti za utovar" name={`subshipments.${index}.loadingReadyDate`} />
-                <FormDatepicker label="Datum utovara" name={`subshipments.${index}.loadingDate`} />
-                <FormTextarea
-                  label="Opis utovara"
-                  name={`subshipments.${index}.loadingDescription`}
-                  placeholder="Unesite detalje utovara..."
-                />
-              </FlexLayout>
-
-              <FlexLayout className="flex-1 flex-col gap-4">
-                <Text color="text-color-3" variant="text-xxs-medium">
-                  Detalji istovara
-                </Text>
-                <FormTextInput name={`subshipments.${index}.unloadingAddress.name`} placeholder="Ulica i broj" />
-                <FormSingleSelect
-                  isSearchable
-                  label="Država"
-                  name={`subshipments.${index}.unloadingAddress.countryCode`}
-                  options={countryEuropeOptions}
-                />
-                <PostalCodeSelectField
-                  countryCode={unloadingCountryCode}
-                  iconLeft="MagnifyingGlassIcon"
-                  isClearable
-                  isDisabled={!unloadingCountryCode}
-                  label="Poštanski broj"
-                  name={`subshipments.${index}.unloadingAddress.postalCodeId`}
-                  placeholder="Odaberi poštanski broj"
-                />
-                <FormDatepicker label="Datum istovara" name={`subshipments.${index}.unloadingDate`} />
-                <FormDatepicker label="Krajnji rok istovara" name={`subshipments.${index}.unloadingDueDate`} />
-                <FormTextarea
-                  label="Opis istovara"
-                  name={`subshipments.${index}.unloadingDescription`}
-                  placeholder="Unesite detalje istovara..."
-                />
-              </FlexLayout>
-            </FlexLayout>
-          </FlexLayout>
-        );
-      })}
     </FlexLayout>
   );
 };
