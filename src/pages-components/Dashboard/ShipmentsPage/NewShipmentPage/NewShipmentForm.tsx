@@ -1,7 +1,7 @@
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
 import { FormTextInput } from '@/lib/components/form';
-import { Box, Divider, FlexLayout, Text, TextButton } from '@/ui';
+import { Box, Button, Divider, FlexLayout, Text, TextButton } from '@/ui';
 
 import AddressFields from './AddressFields';
 import { CargoField } from './CargoField';
@@ -76,49 +76,54 @@ export const NewShipmentForm = () => {
 
   return (
     <FormProvider {...formMethods}>
-      <FlexLayout as="form" className="flex-col gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
-        <FlexLayout className="flex-row gap-7 w-full">
-          <FlexLayout className="flex-1 max-w-[640px] flex-col gap-4">
-            <FlexLayout as="fieldset" className="flex-col gap-5">
-              <FlexLayout className="gap-4">
+      <Box as="form" className="max-w-[1400px]" onSubmit={handleSubmit(handleFormSubmit)}>
+        <FlexLayout className="relative flex-col gap-7 w-full">
+          <FlexLayout className="flex-row gap-7">
+            <FlexLayout className="flex-1 flex-col gap-4">
+              <FlexLayout as="fieldset" className="flex-col gap-5">
+                <FlexLayout className="gap-4">
+                  <Box className="flex-1">
+                    <FormTextInput iconLeft="LockClosedIcon" isDisabled label="Broj naloga" name="orderNo" />
+                  </Box>
+                  <Box className="flex-1">
+                    <FormTextInput label="Referentni broj" name="referenceNumber" placeholder="1234" />
+                  </Box>
+                </FlexLayout>
                 <Box className="flex-1">
-                  <FormTextInput iconLeft="LockClosedIcon" isDisabled label="Broj naloga" name="orderNo" />
+                  <ContractorField name="contractorId" />
                 </Box>
+                <FlexLayout className="gap-4">
+                  <Box className="flex-1">
+                    <ClientField />
+                  </Box>
+                  <Box className="flex-1">
+                    <FormTextInput
+                      iconLeft="CurrencyEuroIcon"
+                      label="Cijena (Euro)"
+                      min="0"
+                      name="price"
+                      placeholder="XXX"
+                      type="number"
+                    />
+                  </Box>
+                </FlexLayout>
                 <Box className="flex-1">
-                  <FormTextInput label="Referentni broj" name="referenceNumber" placeholder="1234" />
+                  <DispatcherField />
                 </Box>
               </FlexLayout>
-              <Box className="flex-1">
-                <ContractorField name="contractorId" />
+              <Box className="py-4">
+                <Divider />
               </Box>
-              <FlexLayout className="gap-4">
-                <Box className="flex-1">
-                  <ClientField />
-                </Box>
-                <Box className="flex-1">
-                  <FormTextInput
-                    iconLeft="CurrencyEuroIcon"
-                    label="Cijena (Euro)"
-                    min="0"
-                    name="price"
-                    placeholder="XXX"
-                    type="number"
-                  />
-                </Box>
-              </FlexLayout>
-              <Box className="flex-1">
-                <DispatcherField />
-              </Box>
+              <AddressFields />
             </FlexLayout>
-            <Box className="py-4">
-              <Divider />
-            </Box>
-            <AddressFields />
+            <CargoFieldList />
           </FlexLayout>
-          <CargoFieldList />
+          <Box className="sticky bottom-0 bg-[#e9eded] border-t-[2px] border-dark-200 dark:border-light-700 p-4 -mx-4">
+            <Button isFullWidth text="Napravi nalog" type="submit" variant="primary" />
+          </Box>
         </FlexLayout>
-      </FlexLayout>
-      <ValuesPrinter />
+        <ValuesPrinter />
+      </Box>
     </FormProvider>
   );
 };
@@ -138,7 +143,7 @@ const CargoFieldList = () => {
   const cargo = watch('cargo');
 
   return (
-    <FlexLayout className="flex-col gap-4">
+    <FlexLayout className="flex-1 flex-col gap-4">
       {cargo.map((_, index: number, arr: Cargo[]) => (
         <CargoField cargoLength={arr.length} index={index} key={index} />
       ))}
