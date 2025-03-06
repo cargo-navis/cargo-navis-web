@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
@@ -69,61 +70,99 @@ const palleteOptions = [
   { value: '120x120', label: 'Jumbo Paleta (120x120)' },
 ];
 
-const StandardCargo: React.FC<{ index: number }> = ({ index }) => (
-  <FlexLayout className="gap-4">
-    <Box className="flex-1">
-      <FormSingleSelect
-        isClearable
-        isSearchable
-        label="Vrsta palete"
-        name={`cargo.${index}.metadata.palleteType`}
-        options={palleteOptions}
-        placeholder="Odaberi vrstu palete..."
-      />
-    </Box>
-    <Box className="flex-1">
-      <FormTextInput
-        label="Broj paleta"
-        min="1"
-        name={`cargo.${index}.metadata.palleteAmount`}
-        placeholder="Unesi broj paleta"
-        type="number"
-      />
-    </Box>
-  </FlexLayout>
-);
+const palleteValues: Record<string, number> = {
+  '80x60': 0.2,
+  '120x80': 0.4,
+  '120x100': 0.5,
+  '100x100': 0.4,
+  '120x120': 0.6,
+};
 
-const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => (
-  <FlexLayout className="gap-4">
-    <Box className="flex-1">
-      <FormTextInput
-        label="Duljina (m)"
-        min="0"
-        name={`cargo.${index}.metadata.length`}
-        placeholder="XXX"
-        step="0.01"
-        type="number"
-      />
-    </Box>
-    <Box className="flex-1">
-      <FormTextInput
-        label="Širina (m)"
-        min="0"
-        name={`cargo.${index}.metadata.width`}
-        placeholder="XXX"
-        step="0.01"
-        type="number"
-      />
-    </Box>
-    <Box className="flex-1">
-      <FormTextInput
-        label="Visina (m)"
-        min="0"
-        name={`cargo.${index}.metadata.height`}
-        placeholder="XXX"
-        step="0.01"
-        type="number"
-      />
-    </Box>
-  </FlexLayout>
-);
+const StandardCargo: React.FC<{ index: number }> = ({ index }) => {
+  const { watch, setValue } = useFormContext();
+  const palleteType = watch(`cargo.${index}.metadata.palleteType`);
+  const palleteAmount = watch(`cargo.${index}.metadata.palleteAmount`);
+
+  const ldmValue = palleteType && palleteAmount ? palleteValues[palleteType] * palleteAmount : 0;
+
+  useEffect(() => {
+    setValue(`cargo.${index}.metadata.ldm`, ldmValue);
+  }, [ldmValue, setValue, index]);
+
+  return (
+    <FlexLayout className="gap-4 flex-col">
+      <FlexLayout className="gap-4">
+        <Box className="flex-1">
+          <FormSingleSelect
+            isClearable
+            isSearchable
+            label="Vrsta palete"
+            name={`cargo.${index}.metadata.palleteType`}
+            options={palleteOptions}
+            placeholder="Odaberi vrstu palete..."
+          />
+        </Box>
+        <Box className="flex-1">
+          <FormTextInput
+            label="Broj paleta"
+            min="1"
+            name={`cargo.${index}.metadata.palleteAmount`}
+            placeholder="Unesi broj paleta"
+            type="number"
+          />
+        </Box>
+      </FlexLayout>
+      <FormTextInput isDisabled label="Dužni metri (LDM)" name={`cargo.${index}.metadata.ldm`} type="number" />
+    </FlexLayout>
+  );
+};
+
+const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => {
+  const { watch, setValue } = useFormContext();
+  const length = watch(`cargo.${index}.metadata.length`);
+  const width = watch(`cargo.${index}.metadata.width`);
+
+  const ldmValue = length && width ? (length * width) / 2.4 : 0;
+
+  useEffect(() => {
+    setValue(`cargo.${index}.metadata.ldm`, ldmValue);
+  }, [ldmValue, setValue, index]);
+
+  return (
+    <FlexLayout className="gap-4 flex-col">
+      <FlexLayout className="gap-4">
+        <Box className="flex-1">
+          <FormTextInput
+            label="Duljina (m)"
+            min="0"
+            name={`cargo.${index}.metadata.length`}
+            placeholder="XXX"
+            step="0.01"
+            type="number"
+          />
+        </Box>
+        <Box className="flex-1">
+          <FormTextInput
+            label="Širina (m)"
+            min="0"
+            name={`cargo.${index}.metadata.width`}
+            placeholder="XXX"
+            step="0.01"
+            type="number"
+          />
+        </Box>
+        <Box className="flex-1">
+          <FormTextInput
+            label="Visina (m)"
+            min="0"
+            name={`cargo.${index}.metadata.height`}
+            placeholder="XXX"
+            step="0.01"
+            type="number"
+          />
+        </Box>
+      </FlexLayout>
+      <FormTextInput label="Dužni metri (LDM)" name={`cargo.${index}.metadata.ldm`} type="number" />
+    </FlexLayout>
+  );
+};
