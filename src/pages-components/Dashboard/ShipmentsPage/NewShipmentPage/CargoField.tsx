@@ -53,71 +53,77 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
             />
           </Box>
         </FlexLayout>
-        {isStandardCargo ? (
-          <FlexLayout className="gap-4">
-            <Box className="flex-1">
-              <FormSingleSelect
-                isClearable
-                isSearchable
-                label="Vrsta palete"
-                name={`cargo.${index}.metadata.palleteType`}
-                options={[
-                  { value: '80x60', label: 'Mala Paleta (80x60)' },
-                  { value: '120x80', label: 'Euro Paleta (120x80)' },
-                  { value: '120x100', label: 'Brodska Paleta (120x100)' },
-                  { value: '100x100', label: 'Industrijska Paleta (100x100)' },
-                  { value: '120x120', label: 'Jumbo Paleta (120x120)' },
-                ]}
-                placeholder="Odaberi vrstu palete..."
-              />
-            </Box>
-            <Box className="flex-1">
-              <FormTextInput
-                label="Broj paleta"
-                min="1"
-                name={`cargo.${index}.metadata.palleteAmount`}
-                placeholder="Unesi broj paleta"
-                type="number"
-              />
-            </Box>
-          </FlexLayout>
-        ) : (
-          <FlexLayout className="gap-4">
-            <Box className="flex-1">
-              <FormTextInput
-                label="Duljina (m)"
-                min="0"
-                name={`cargo.${index}.metadata.length`}
-                placeholder="XXX"
-                step="0.01"
-                type="number"
-              />
-            </Box>
-            <Box className="flex-1">
-              <FormTextInput
-                label="Širina (m)"
-                min="0"
-                name={`cargo.${index}.metadata.width`}
-                placeholder="XXX"
-                step="0.01"
-                type="number"
-              />
-            </Box>
-            <Box className="flex-1">
-              <FormTextInput
-                label="Visina (m)"
-                min="0"
-                name={`cargo.${index}.metadata.height`}
-                placeholder="XXX"
-                step="0.01"
-                type="number"
-              />
-            </Box>
-          </FlexLayout>
-        )}
+        {isStandardCargo ? <StandardCargo index={index} /> : <NonStandardCargo index={index} />}
         <FormTextInput label="Težina (kg)" name={`cargo.${index}.weight`} />
         <FormTextarea label="Opis tereta" name={`cargo.${index}.description`} />
       </FlexLayout>
     </FlexLayout>
   );
 };
+
+const palleteOptions = [
+  { value: '80x60', label: 'Mala Paleta (80x60)' },
+  { value: '120x80', label: 'Euro Paleta (120x80)' },
+  { value: '120x100', label: 'Brodska Paleta (120x100)' },
+  { value: '100x100', label: 'Industrijska Paleta (100x100)' },
+  { value: '120x120', label: 'Jumbo Paleta (120x120)' },
+];
+
+const StandardCargo: React.FC<{ index: number }> = ({ index }) => (
+  <FlexLayout className="gap-4">
+    <Box className="flex-1">
+      <FormSingleSelect
+        isClearable
+        isSearchable
+        label="Vrsta palete"
+        name={`cargo.${index}.metadata.palleteType`}
+        options={palleteOptions}
+        placeholder="Odaberi vrstu palete..."
+      />
+    </Box>
+    <Box className="flex-1">
+      <FormTextInput
+        label="Broj paleta"
+        min="1"
+        name={`cargo.${index}.metadata.palleteAmount`}
+        placeholder="Unesi broj paleta"
+        type="number"
+      />
+    </Box>
+  </FlexLayout>
+);
+
+const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => (
+  <FlexLayout className="gap-4">
+    <Box className="flex-1">
+      <FormTextInput
+        label="Duljina (m)"
+        min="0"
+        name={`cargo.${index}.metadata.length`}
+        placeholder="XXX"
+        step="0.01"
+        type="number"
+      />
+    </Box>
+    <Box className="flex-1">
+      <FormTextInput
+        label="Širina (m)"
+        min="0"
+        name={`cargo.${index}.metadata.width`}
+        placeholder="XXX"
+        step="0.01"
+        type="number"
+      />
+    </Box>
+    <Box className="flex-1">
+      <FormTextInput
+        label="Visina (m)"
+        min="0"
+        name={`cargo.${index}.metadata.height`}
+        placeholder="XXX"
+        step="0.01"
+        type="number"
+      />
+    </Box>
+  </FlexLayout>
+);
