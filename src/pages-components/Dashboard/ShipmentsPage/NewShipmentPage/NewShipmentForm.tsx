@@ -1,4 +1,4 @@
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
 import { FormTextInput } from '@/lib/components/form';
 import { Box, Divider, FlexLayout, Text, TextButton } from '@/ui';
@@ -51,8 +51,10 @@ export interface Cargo {
   metadata: CargoMetadata;
 }
 
+type CargoType = 'standard' | 'nonstandard';
+
 export interface CargoMetadata {
-  type: 'standard' | 'nonstandard';
+  type: CargoType;
   width?: number;
   height?: number;
   length?: number;
@@ -65,10 +67,6 @@ export const NewShipmentForm = () => {
     defaultValues,
     mode: 'all',
   });
-
-  const { watch } = formMethods;
-  const cargo = watch('cargo');
-  const formValues = watch();
 
   const { handleSubmit } = formMethods;
 
@@ -114,40 +112,54 @@ export const NewShipmentForm = () => {
           <Box className="py-4">
             <Divider />
           </Box>
-          <FlexLayout className="flex-col gap-4">
-            {cargo.map((_, index: number, arr: Cargo[]) => (
-              <CargoField cargoLength={arr.length} index={index} key={index} />
-            ))}
-            <TextButton
-              iconLeft="PlusIcon"
-              text="Dodaj teret"
-              variant="secondary"
-              onClick={() =>
-                formMethods.setValue('cargo', [
-                  ...cargo,
-                  {
-                    weight: undefined,
-                    description: undefined,
-                    metadata: {
-                      type: 'standard',
-                      palleteType: '120x80',
-                      palleteAmount: 1,
-                    },
-                  },
-                ])
-              }
-            />
-          </FlexLayout>
+          <CargoFieldList />
           <AddressFields />
         </FlexLayout>
       </FlexLayout>
-
-      <Box className="fixed right-4 top-4 w-[400px] p-4 rounded-lg shadow-lg overflow-auto max-h-[90vh]">
-        <Text className="mb-2" variant="text-s-medium">
-          Form Data:
-        </Text>
-        <pre className="text-xs whitespace-pre-wrap">{JSON.stringify(formValues, null, 2)}</pre>
-      </Box>
+      <ValuesPrinter />
     </FormProvider>
+  );
+};
+
+const emptyCargoValues: Cargo = {
+  weight: 0,
+  description: '',
+  metadata: {
+    type: 'standard',
+    palleteType: '120x80',
+    palleteAmount: 1,
+  },
+};
+
+const CargoFieldList = () => {
+  const { watch, setValue } = useFormContext<ShipmentFields>();
+  const cargo = watch('cargo');
+
+  return (
+    <FlexLayout className="flex-col gap-4">
+      {cargo.map((_, index: number, arr: Cargo[]) => (
+        <CargoField cargoLength={arr.length} index={index} key={index} />
+      ))}
+      <TextButton
+        iconLeft="PlusIcon"
+        text="Dodaj teret"
+        variant="secondary"
+        onClick={() => setValue('cargo', [...cargo, emptyCargoValues])}
+      />
+    </FlexLayout>
+  );
+};
+
+const ValuesPrinter = () => {
+  const { watch } = useFormContext();
+  const formValues = watch();
+
+  return (
+    <Box className="fixed right-4 top-4 w-[400px] p-4 rounded-lg shadow-lg overflow-auto max-h-[90vh]">
+      <Text className="mb-2" variant="text-s-medium">
+        Form Data:
+      </Text>
+      <pre className="text-xs whitespace-pre-wrap">{JSON.stringify(formValues, null, 2)}</pre>
+    </Box>
   );
 };
