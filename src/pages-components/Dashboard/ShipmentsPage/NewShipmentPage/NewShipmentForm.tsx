@@ -7,6 +7,7 @@ import { Box, Divider, FlexLayout, Text, TextButton } from '@/ui';
 
 import { CargoField } from './CargoField';
 import { ClientField } from './ClientField';
+import { ContractorField } from './ContractorField';
 import { DispatcherField } from './DispatcherField';
 
 interface Address {
@@ -90,7 +91,7 @@ export const NewShipmentForm = () => {
               </Box>
             </FlexLayout>
             <Box className="flex-1">
-              <DispatcherField />
+              <ContractorField name="contractorId" />
             </Box>
             <FlexLayout className="gap-4">
               <Box className="flex-1">
@@ -107,6 +108,9 @@ export const NewShipmentForm = () => {
                 />
               </Box>
             </FlexLayout>
+            <Box className="flex-1">
+              <DispatcherField />
+            </Box>
           </FlexLayout>
           <Box className="py-4">
             <Divider />
