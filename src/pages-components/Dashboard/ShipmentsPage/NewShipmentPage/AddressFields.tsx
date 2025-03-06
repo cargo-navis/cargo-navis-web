@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form';
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
 import { FormDatepicker, FormSingleSelect, FormTextarea, FormTextInput } from '@/lib/components/form';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { FlexLayout, Text } from '@/ui';
+import { FlexLayout, Text, VerticalDivider } from '@/ui';
 
 export const AddressFields = () => {
   const { watch } = useFormContext();
@@ -12,12 +12,12 @@ export const AddressFields = () => {
 
   return (
     <FlexLayout as="fieldset" className="flex-col gap-8">
-      <FlexLayout className="gap-4">
+      <FlexLayout className="gap-5">
         <FlexLayout className="flex-1 flex-col gap-4">
-          <Text color="text-color-3" variant="text-xxs-medium">
+          <Text color="text-color-3" variant="text-s-medium">
             Detalji utovara
           </Text>
-          <FormTextInput name="loadingAddress.name" placeholder="Ulica i broj" />
+          <FormTextInput label="Ulica i broj" name="loadingAddress.name" />
           <FormSingleSelect
             isSearchable
             label="Država"
@@ -37,12 +37,12 @@ export const AddressFields = () => {
           <FormDatepicker label="Datum utovara" name="loadingDate" />
           <FormTextarea label="Opis utovara" name="loadingDescription" placeholder="Unesite detalje utovara..." />
         </FlexLayout>
-
+        <VerticalDivider />
         <FlexLayout className="flex-1 flex-col gap-4">
-          <Text color="text-color-3" variant="text-xxs-medium">
+          <Text color="text-color-3" variant="text-s-medium">
             Detalji istovara
           </Text>
-          <FormTextInput name="unloadingAddress.name" placeholder="Ulica i broj" />
+          <FormTextInput label="Ulica i broj" name="unloadingAddress.name" />
           <FormSingleSelect
             isSearchable
             label="Država"
