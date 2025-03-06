@@ -26,7 +26,10 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
   };
 
   return (
-    <FlexLayout as="fieldset" className="flex-col gap-4 bg-black-alpha-10 dark:bg-white-alpha-10 p-4 rounded-s">
+    <FlexLayout
+      as="fieldset"
+      className="flex-1 max-h-max max-w-[640px] flex-col gap-4 bg-black-alpha-10 dark:bg-white-alpha-10 p-4 rounded-s"
+    >
       <FlexLayout className="justify-between items-center">
         <Text color="text-color-3" variant="text-s-medium">
           TERET {index + 1}

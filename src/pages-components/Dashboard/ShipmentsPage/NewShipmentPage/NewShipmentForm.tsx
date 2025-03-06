@@ -77,43 +77,45 @@ export const NewShipmentForm = () => {
   return (
     <FormProvider {...formMethods}>
       <FlexLayout as="form" className="flex-col gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
-        <FlexLayout className="flex-col gap-4 w-[640px]">
-          <FlexLayout as="fieldset" className="flex-col gap-5">
-            <FlexLayout className="gap-4">
+        <FlexLayout className="flex-row gap-7 w-full">
+          <FlexLayout className="flex-1 max-w-[640px] flex-col gap-4">
+            <FlexLayout as="fieldset" className="flex-col gap-5">
+              <FlexLayout className="gap-4">
+                <Box className="flex-1">
+                  <FormTextInput iconLeft="LockClosedIcon" isDisabled label="Broj naloga" name="orderNo" />
+                </Box>
+                <Box className="flex-1">
+                  <FormTextInput label="Referentni broj" name="referenceNumber" placeholder="1234" />
+                </Box>
+              </FlexLayout>
               <Box className="flex-1">
-                <FormTextInput iconLeft="LockClosedIcon" isDisabled label="Broj naloga" name="orderNo" />
+                <ContractorField name="contractorId" />
               </Box>
+              <FlexLayout className="gap-4">
+                <Box className="flex-1">
+                  <ClientField />
+                </Box>
+                <Box className="flex-1">
+                  <FormTextInput
+                    iconLeft="CurrencyEuroIcon"
+                    label="Cijena (Euro)"
+                    min="0"
+                    name="price"
+                    placeholder="XXX"
+                    type="number"
+                  />
+                </Box>
+              </FlexLayout>
               <Box className="flex-1">
-                <FormTextInput label="Referentni broj" name="referenceNumber" placeholder="1234" />
+                <DispatcherField />
               </Box>
             </FlexLayout>
-            <Box className="flex-1">
-              <ContractorField name="contractorId" />
+            <Box className="py-4">
+              <Divider />
             </Box>
-            <FlexLayout className="gap-4">
-              <Box className="flex-1">
-                <ClientField />
-              </Box>
-              <Box className="flex-1">
-                <FormTextInput
-                  iconLeft="CurrencyEuroIcon"
-                  label="Cijena (Euro)"
-                  min="0"
-                  name="price"
-                  placeholder="XXX"
-                  type="number"
-                />
-              </Box>
-            </FlexLayout>
-            <Box className="flex-1">
-              <DispatcherField />
-            </Box>
+            <AddressFields />
           </FlexLayout>
-          <Box className="py-4">
-            <Divider />
-          </Box>
           <CargoFieldList />
-          <AddressFields />
         </FlexLayout>
       </FlexLayout>
       <ValuesPrinter />
