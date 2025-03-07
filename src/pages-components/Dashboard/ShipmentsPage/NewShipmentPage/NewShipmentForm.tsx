@@ -1,8 +1,10 @@
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useRouter } from 'next/router';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
 import { FormTextInput } from '@/lib/components/form';
-import { Box, Button, Divider, FlexLayout, Text, TextButton } from '@/ui';
+import { useCreateShipment } from '@/lib/hooks';
+import { Box, Button, Divider, FlexLayout, TextButton } from '@/ui';
 
 import AddressFields from './AddressFields';
 import { CargoField } from './CargoField';
@@ -10,36 +12,8 @@ import { ClientField } from './ClientField';
 import { ContractorField } from './ContractorField';
 import { DispatcherField } from './DispatcherField';
 import { shipmentSchema } from './schema';
-import { transformFormDataToPayload } from './utils';
-
-interface PostalCode {
-  label?: string;
-  value?: string;
-}
-
-interface Address {
-  name: string;
-  postalCodeId: PostalCode;
-  countryCode?: string;
-}
-
-export interface ShipmentFields {
-  cargoReference?: string;
-  dispatcherId?: string;
-  clientId?: string;
-  transportContractorId?: string;
-  loadingAddress?: Address;
-  unloadingAddress?: Address;
-  loadingReadyDate?: string;
-  loadingDate?: string;
-  loadingDescription?: string;
-  unloadingDate?: string;
-  unloadingDueDate?: string;
-  unloadingDescription?: string;
-  price?: number;
-  orderNumber: string;
-  cargo: Cargo[];
-}
+import { Cargo, ShipmentFields } from './types';
+import { PalleteType, transformFormDataToPayload } from './utils';
 
 const defaultValues: ShipmentFields = {
   orderNumber: '2025/24',
@@ -49,45 +23,41 @@ const defaultValues: ShipmentFields = {
       description: undefined,
       metadata: {
         type: 'standard',
-        palleteType: '120x80',
+        palleteType: PalleteType.Euro,
         palleteAmount: 1,
       },
     },
   ],
 };
 
-export interface Cargo {
-  weight?: number;
-  description?: string;
-  metadata: CargoMetadata;
-}
-
-type CargoType = 'standard' | 'nonstandard';
-
-export interface CargoMetadata {
-  type: CargoType;
-  width?: number;
-  height?: number;
-  length?: number;
-  palleteType?: string;
-  palleteAmount?: number;
-}
-
 export const NewShipmentForm = () => {
+  const { push } = useRouter();
+  const { mutateAsync: createShipment } = useCreateShipment();
+
   const formMethods = useForm<ShipmentFields>({
     defaultValues,
     mode: 'all',
     resolver: yupResolver(shipmentSchema),
   });
 
-  const {
-    handleSubmit,
-    formState: { isValid },
-  } = formMethods;
+  const { handleSubmit, formState } = formMethods;
+  const { isValid, isSubmitting } = formState;
 
-  function handleFormSubmit(data: ShipmentFields) {
+  async function handleFormSubmit(data: ShipmentFields) {
     const payload = transformFormDataToPayload(data);
     console.log(payload);
+
+    try {
+      // if (isEdit) {
+      //   await updateClient(payload);
+      //   await push(`/dashboard/clients/${client.id}`);
+      // } else {
+      await createShipment(payload);
+      await push('/dashboard/shipments');
+      // }
+    } catch {
+      alert('Dogodila se greška s unosom naloga. Pokušajte ponovno.');
+    }
   }
 
   return (
@@ -135,10 +105,17 @@ export const NewShipmentForm = () => {
             <CargoFieldList />
           </FlexLayout>
           <Box className="sticky bottom-0 bg-[#e9eded] border-t-[2px] border-dark-200 dark:border-light-700 p-4 -mx-4">
-            <Button isDisabled={!isValid} isFullWidth text="Napravi nalog" type="submit" variant="primary" />
+            <Button
+              isDisabled={!isValid}
+              isFullWidth
+              isLoading={isSubmitting}
+              text="Napravi nalog"
+              type="submit"
+              variant="primary"
+            />
           </Box>
         </FlexLayout>
-        <ValuesPrinter />
+        {/* <ValuesPrinter /> */}
       </Box>
     </FormProvider>
   );
@@ -149,7 +126,7 @@ const emptyCargoValues: Cargo = {
   description: '',
   metadata: {
     type: 'standard',
-    palleteType: '120x80',
+    palleteType: PalleteType.Euro,
     palleteAmount: 1,
   },
 };
@@ -166,6 +143,7 @@ const CargoFieldList = () => {
       <TextButton
         iconLeft="PlusIcon"
         text="Dodaj teret"
+        type="button"
         variant="secondary"
         onClick={() => setValue('cargo', [...cargo, emptyCargoValues])}
       />
@@ -173,16 +151,16 @@ const CargoFieldList = () => {
   );
 };
 
-const ValuesPrinter = () => {
-  const { watch } = useFormContext();
-  const formValues = watch();
+// const ValuesPrinter = () => {
+//   const { watch } = useFormContext();
+//   const formValues = watch();
 
-  return (
-    <Box className="fixed right-4 top-4 w-[400px] p-4 rounded-lg shadow-lg overflow-auto max-h-[90vh]">
-      <Text className="mb-2" variant="text-s-medium">
-        Form Data:
-      </Text>
-      <pre className="text-xs whitespace-pre-wrap">{JSON.stringify(formValues, null, 2)}</pre>
-    </Box>
-  );
-};
+//   return (
+//     <Box className="fixed right-4 top-4 w-[400px] p-4 rounded-lg shadow-lg overflow-auto max-h-[90vh]">
+//       <Text className="mb-2" variant="text-s-medium">
+//         Form Data:
+//       </Text>
+//       <pre className="text-xs whitespace-pre-wrap">{JSON.stringify(formValues, null, 2)}</pre>
+//     </Box>
+//   );
+// };

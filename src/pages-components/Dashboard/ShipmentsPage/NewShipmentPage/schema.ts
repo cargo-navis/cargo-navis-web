@@ -1,5 +1,7 @@
 import * as Yup from 'yup';
 
+import { PalleteType } from './utils';
+
 export const shipmentSchema = Yup.object().shape({
   orderNumber: Yup.string().required('Broj naloga je obavezan'),
   cargoReference: Yup.string().optional(),
@@ -48,7 +50,7 @@ export const shipmentSchema = Yup.object().shape({
             width: Yup.number().optional(),
             height: Yup.number().optional(),
             length: Yup.number().optional(),
-            palleteType: Yup.string().optional(),
+            palleteType: Yup.mixed<PalleteType>().oneOf(Object.values(PalleteType)).optional(),
             palleteAmount: Yup.number().min(1, 'Količina paleta mora biti najmanje 1').optional(),
           })
           .required('Podaci tereta su obavezni'),

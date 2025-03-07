@@ -1,6 +1,14 @@
 import type { CreateShipmentData, LoadingAddress } from '@/lib/api';
 
-import { ShipmentFields } from './NewShipmentForm';
+import type { ShipmentFields } from './types.d';
+
+export enum PalleteType {
+  Small = 'small',
+  Euro = 'euro',
+  Ship = 'ship',
+  Industry = 'industry',
+  Jumbo = 'jumbo',
+}
 
 // Function to transform form data into the format defined in types.ts
 export const transformFormDataToPayload = (formData: ShipmentFields): CreateShipmentData => {
