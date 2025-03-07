@@ -18,4 +18,5 @@ export * from './Textarea';
 export * from './TextButton';
 export * from './TextInput';
 export * from './Tooltip';
+export * from './VerticalDivider';
 export * from './Yearpicker';

@@ -246,7 +246,7 @@ const countryCodesEurope = [
   'AL',
   'AT',
   'AX',
-  // 'BA',
+  'BA',
   'BE',
   'BG',
   'BY',

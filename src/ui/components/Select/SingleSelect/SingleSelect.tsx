@@ -55,7 +55,7 @@ export const SingleSelect = forwardRef<any, SingleSelectProps>((props, ref) => {
     value,
     options,
     name,
-    placeholder = 'Select',
+    placeholder = 'Odaberi',
     onChange,
     onBlur,
     onAddOption,

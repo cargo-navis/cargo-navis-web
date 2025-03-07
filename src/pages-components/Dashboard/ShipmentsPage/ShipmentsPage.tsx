@@ -1,7 +1,12 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { Box, Button, FlexLayout, Heading } from '@/ui';
+import { useShipments } from '@/lib/hooks';
+import { Box, Button, FlexLayout, Heading, Text } from '@/ui';
+
+import { ShipmentsTable } from './ShipmentsTable';
 
 export const ShipmentsPage = () => {
+  const { data: shipments, isLoading } = useShipments();
+
   return (
     <DashboardLayout>
       <Box>
@@ -12,7 +17,7 @@ export const ShipmentsPage = () => {
           <Button as="a" href="/dashboard/shipments/new" iconLeft="PlusIcon" text="Dodaj Nalog" />
         </FlexLayout>
       </Box>
-      <Box className="py-5">{/*  ShipmentsTable */}</Box>
+      <Box className="py-5">{isLoading ? <Text>Loading...</Text> : <ShipmentsTable shipments={shipments} />}</Box>
     </DashboardLayout>
   );
 };
