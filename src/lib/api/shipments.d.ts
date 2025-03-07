@@ -1,4 +1,4 @@
-export interface CreateShipmentData {
+export interface Shipment {
   cargoReference: string;
   orderNumber: string;
   dispatcherId?: string;
@@ -16,6 +16,8 @@ export interface CreateShipmentData {
   unloadingDescription: string;
   parentShipmentId: string;
 }
+
+export type CreateShipmentData = Shipment;
 
 export interface LoadingAddress {
   name: string;

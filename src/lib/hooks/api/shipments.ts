@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { createShipment } from '@/lib/api';
+import { createShipment, getShipments } from '@/lib/api';
 
 export function useCreateShipment() {
   const queryClient = useQueryClient();
@@ -9,5 +9,12 @@ export function useCreateShipment() {
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: ['shipments'], type: 'all' });
     },
+  });
+}
+
+export function useShipments() {
+  return useQuery({
+    queryKey: ['shipments'],
+    queryFn: getShipments,
   });
 }
