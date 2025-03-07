@@ -77,16 +77,20 @@ const palleteValues: Record<string, number> = {
   '80x60': 0.2,
   '120x80': 0.4,
   '120x100': 0.5,
-  '100x100': 0.4,
+  '100x100': 0.5,
   '120x120': 0.6,
 };
+
+function roundLdmValue(value: number) {
+  return Math.round(value * 100) / 100;
+}
 
 const StandardCargo: React.FC<{ index: number }> = ({ index }) => {
   const { watch, setValue } = useFormContext();
   const palleteType = watch(`cargo.${index}.metadata.palleteType`);
   const palleteAmount = watch(`cargo.${index}.metadata.palleteAmount`);
 
-  const ldmValue = palleteType && palleteAmount ? palleteValues[palleteType] * palleteAmount : 0;
+  const ldmValue = palleteType && palleteAmount ? roundLdmValue(palleteValues[palleteType] * palleteAmount) : 0;
 
   useEffect(() => {
     setValue(`cargo.${index}.metadata.ldm`, ldmValue);
@@ -125,7 +129,7 @@ const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => {
   const length = watch(`cargo.${index}.metadata.length`);
   const width = watch(`cargo.${index}.metadata.width`);
 
-  const ldmValue = length && width ? (length * width) / 2.4 : 0;
+  const ldmValue = length && width ? roundLdmValue((length * width) / 2.4) : 0;
 
   useEffect(() => {
     setValue(`cargo.${index}.metadata.ldm`, ldmValue);
