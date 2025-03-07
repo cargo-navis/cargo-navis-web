@@ -1,3 +1,4 @@
+import { yupResolver } from '@hookform/resolvers/yup';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
 import { FormTextInput } from '@/lib/components/form';
@@ -8,6 +9,7 @@ import { CargoField } from './CargoField';
 import { ClientField } from './ClientField';
 import { ContractorField } from './ContractorField';
 import { DispatcherField } from './DispatcherField';
+import { shipmentSchema } from './schema';
 
 interface Address {
   name: string;
@@ -16,7 +18,10 @@ interface Address {
 }
 
 interface ShipmentFields {
-  referenceNumber?: string;
+  cargoReference?: string;
+  dispatcherId?: string;
+  clientId?: string;
+  transportContractorId?: string;
   loadingAddress?: Address;
   unloadingAddress?: Address;
   loadingReadyDate?: string;
@@ -26,12 +31,12 @@ interface ShipmentFields {
   unloadingDueDate?: string;
   unloadingDescription?: string;
   price?: number;
-  orderNo: string;
+  orderNumber: string;
   cargo: Cargo[];
 }
 
 const defaultValues: ShipmentFields = {
-  orderNo: '2025/24',
+  orderNumber: '2025/24',
   cargo: [
     {
       weight: undefined,
@@ -66,9 +71,13 @@ export const NewShipmentForm = () => {
   const formMethods = useForm<ShipmentFields>({
     defaultValues,
     mode: 'all',
+    resolver: yupResolver(shipmentSchema),
   });
 
-  const { handleSubmit } = formMethods;
+  const {
+    handleSubmit,
+    formState: { isValid },
+  } = formMethods;
 
   function handleFormSubmit(data: any) {
     console.log(data);
@@ -83,14 +92,14 @@ export const NewShipmentForm = () => {
               <FlexLayout as="fieldset" className="flex-col gap-5">
                 <FlexLayout className="gap-4">
                   <Box className="flex-1">
-                    <FormTextInput iconLeft="LockClosedIcon" isDisabled label="Broj naloga" name="orderNo" />
+                    <FormTextInput iconLeft="LockClosedIcon" isDisabled label="Broj naloga" name="orderNumber" />
                   </Box>
                   <Box className="flex-1">
-                    <FormTextInput label="Referentni broj" name="referenceNumber" placeholder="1234" />
+                    <FormTextInput label="Referentni broj" name="cargoReference" placeholder="1234" />
                   </Box>
                 </FlexLayout>
                 <Box className="flex-1">
-                  <ContractorField name="contractorId" />
+                  <ContractorField name="transportContractorId" />
                 </Box>
                 <FlexLayout className="gap-4">
                   <Box className="flex-1">
@@ -119,7 +128,7 @@ export const NewShipmentForm = () => {
             <CargoFieldList />
           </FlexLayout>
           <Box className="sticky bottom-0 bg-[#e9eded] border-t-[2px] border-dark-200 dark:border-light-700 p-4 -mx-4">
-            <Button isFullWidth text="Napravi nalog" type="submit" variant="primary" />
+            <Button isDisabled={!isValid} isFullWidth text="Napravi nalog" type="submit" variant="primary" />
           </Box>
         </FlexLayout>
         <ValuesPrinter />
