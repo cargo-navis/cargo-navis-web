@@ -10,14 +10,20 @@ import { ClientField } from './ClientField';
 import { ContractorField } from './ContractorField';
 import { DispatcherField } from './DispatcherField';
 import { shipmentSchema } from './schema';
+import { transformFormDataToPayload } from './utils';
+
+interface PostalCode {
+  label?: string;
+  value?: string;
+}
 
 interface Address {
   name: string;
-  postalCodeId: string;
+  postalCodeId: PostalCode;
   countryCode?: string;
 }
 
-interface ShipmentFields {
+export interface ShipmentFields {
   cargoReference?: string;
   dispatcherId?: string;
   clientId?: string;
@@ -79,8 +85,9 @@ export const NewShipmentForm = () => {
     formState: { isValid },
   } = formMethods;
 
-  function handleFormSubmit(data: any) {
-    console.log(data);
+  function handleFormSubmit(data: ShipmentFields) {
+    const payload = transformFormDataToPayload(data);
+    console.log(payload);
   }
 
   return (
