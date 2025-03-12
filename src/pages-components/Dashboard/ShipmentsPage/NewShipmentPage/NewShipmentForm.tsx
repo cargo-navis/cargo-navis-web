@@ -15,6 +15,7 @@ import { DriverField } from './DriverField';
 import { shipmentSchema } from './schema';
 import { Cargo, ShipmentFields } from './types';
 import { PalleteType, transformFormDataToPayload } from './utils';
+import { VehicleField } from './VehicleField';
 
 const defaultCargo: Cargo = {
   weight: 0,
@@ -100,9 +101,12 @@ export const NewShipmentForm = () => {
                     <DriverField />
                   </Box>
                   <Box className="flex-1">
-                    <DispatcherField />
+                    <VehicleField />
                   </Box>
                 </FlexLayout>
+                <Box className="flex-1">
+                  <DispatcherField />
+                </Box>
               </FlexLayout>
               <Box className="py-4">
                 <Divider />
