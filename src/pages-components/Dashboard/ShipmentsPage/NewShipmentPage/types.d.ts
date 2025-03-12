@@ -14,6 +14,7 @@ export interface ShipmentFields {
   dispatcherId?: string;
   clientId?: string;
   transportContractorId?: string;
+  driverId?: string;
   loadingAddress?: Address;
   unloadingAddress?: Address;
   loadingReadyDate?: string;
@@ -28,9 +29,9 @@ export interface ShipmentFields {
 }
 
 export interface Cargo {
-  weight?: number;
+  weight: number;
   description?: string;
-  ldm?: number;
+  ldm: number;
   metadata: CargoMetadata;
 }
 
