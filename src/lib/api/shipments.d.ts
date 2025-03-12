@@ -27,6 +27,7 @@ export interface LoadingAddress {
 export interface Cargo {
   weight: number;
   description: string;
+  ldm: number;
   metadata: Metadata;
 }
 

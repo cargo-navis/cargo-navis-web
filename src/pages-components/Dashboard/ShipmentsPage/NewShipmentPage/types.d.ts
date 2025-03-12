@@ -30,6 +30,7 @@ export interface ShipmentFields {
 export interface Cargo {
   weight?: number;
   description?: string;
+  ldm?: number;
   metadata: CargoMetadata;
 }
 

@@ -21,6 +21,7 @@ const defaultValues: ShipmentFields = {
     {
       weight: undefined,
       description: undefined,
+      ldm: 0.4,
       metadata: {
         type: 'standard',
         palleteType: PalleteType.Euro,
@@ -104,7 +105,7 @@ export const NewShipmentForm = () => {
             </FlexLayout>
             <CargoFieldList />
           </FlexLayout>
-          <Box className="sticky bottom-0 bg-[#e9eded] border-t-[2px] border-dark-200 dark:border-light-700 p-4 -mx-4">
+          <Box className="sticky bottom-0 bg-[#e9eded] dark:bg-black border-t-[2px] border-dark-200 dark:border-light-700 p-4 -mx-4">
             <Button
               isDisabled={!isValid}
               isFullWidth
@@ -124,6 +125,7 @@ export const NewShipmentForm = () => {
 const emptyCargoValues: Cargo = {
   weight: 0,
   description: '',
+  ldm: 0.4,
   metadata: {
     type: 'standard',
     palleteType: PalleteType.Euro,

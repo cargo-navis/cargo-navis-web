@@ -64,6 +64,7 @@ export const transformFormDataToPayload = (formData: ShipmentFields): CreateShip
     return {
       weight: item.weight || 0, // Default to 0 if undefined
       description: item.description || '',
+      ldm: item.ldm,
       metadata,
     };
   });

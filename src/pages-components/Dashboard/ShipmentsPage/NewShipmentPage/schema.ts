@@ -44,6 +44,7 @@ export const shipmentSchema = Yup.object().shape({
       Yup.object().shape({
         weight: Yup.number().optional(),
         description: Yup.string().optional(),
+        ldm: Yup.number().optional(),
         metadata: Yup.object()
           .shape({
             type: Yup.string().oneOf(['standard', 'nonstandard']).required('Tip tereta je obavezan'),

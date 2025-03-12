@@ -2,21 +2,23 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { useMemo } from 'react';
 
 import type { Shipment } from '@/lib/api'; // Assuming you have a Shipment type defined
-import { useClients, useContractors, useEmployees } from '@/lib/hooks';
+import { useClients, useContractors, useCurrentTenant, useEmployees } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { FlexLayout, Table, Text } from '@/ui'; // Import FlexLayout
 
 const columnHelper = createColumnHelper<Shipment>();
 
 export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
-  const { data: clients = [] } = useClients(); // Default to empty array if undefined
-  const { data: contractors = [] } = useContractors(); // Default to empty array if undefined
-  const { data: employees = [] } = useEmployees(); // Default to empty array if undefined
+  const { data: clients = [] } = useClients();
+  const { data: contractors = [] } = useContractors();
+  const { data: employees = [] } = useEmployees();
+  const { data: tenant } = useCurrentTenant();
 
   const columns = useMemo(() => {
     return [
       columnHelper.accessor('orderNumber', {
         header: 'Broj naloga',
+        size: 140,
         cell: (info) => (
           <FlexLayout className="items-center py-2">
             <Text>{info.getValue()}</Text>
@@ -39,7 +41,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: 'Prijevozik',
         cell: (info) => {
           const contractorId = info.getValue();
-          const contractor = contractors.find((contractor) => contractor.id === contractorId);
+          const contractor = contractorId ? contractors.find((contractor) => contractor.id === contractorId) : tenant;
+
           return (
             <FlexLayout className="items-center py-2">
               <Text>{contractor ? contractor.name : '—'}</Text>
@@ -51,7 +54,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: 'Cijena',
         cell: (info) => (
           <FlexLayout className="items-center py-2">
-            <Text>{info.getValue()}</Text>
+            <Text>{info.getValue()}€</Text>
           </FlexLayout>
         ),
       }),
@@ -70,6 +73,49 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
             <Text>{getDataPointDateString(info.getValue())}</Text>
           </FlexLayout>
         ),
+      }),
+      columnHelper.display({
+        id: 'ldm',
+        header: 'LDM',
+        size: 100,
+        cell: (props) => {
+          const { cargo } = props.row.original;
+          const ldmTotal = cargo.reduce((acc, c) => (acc += c.ldm), 0);
+
+          return (
+            <FlexLayout className="items-center py-2">
+              <Text>{ldmTotal}</Text>
+            </FlexLayout>
+          );
+        },
+      }),
+      columnHelper.display({
+        id: 'palleteNo',
+        header: 'Broj paleta',
+        cell: (props) => {
+          const { cargo } = props.row.original;
+          const palleteNo = cargo.reduce((acc, c) => (acc += c.metadata?.palleteAmount), 0);
+
+          return (
+            <FlexLayout className="items-center py-2">
+              <Text>{palleteNo || '—'}</Text>
+            </FlexLayout>
+          );
+        },
+      }),
+      columnHelper.display({
+        id: 'weight',
+        header: 'Težina',
+        cell: (props) => {
+          const { cargo } = props.row.original;
+          const weight = cargo.reduce((acc, c) => (acc += c.weight), 0);
+
+          return (
+            <FlexLayout className="items-center py-2">
+              <Text>{weight ? `${weight} kg` : '—'}</Text>
+            </FlexLayout>
+          );
+        },
       }),
       columnHelper.accessor('dispatcherId', {
         header: 'Disponent',
