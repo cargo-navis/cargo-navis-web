@@ -11,23 +11,26 @@ import { CargoField } from './CargoField';
 import { ClientField } from './ClientField';
 import { ContractorField } from './ContractorField';
 import { DispatcherField } from './DispatcherField';
+import { DriverField } from './DriverField';
 import { shipmentSchema } from './schema';
 import { Cargo, ShipmentFields } from './types';
 import { PalleteType, transformFormDataToPayload } from './utils';
+import { VehicleField } from './VehicleField';
+
+const defaultCargo: Cargo = {
+  weight: 0,
+  description: '',
+  ldm: 0.4,
+  metadata: {
+    type: 'standard',
+    palleteType: PalleteType.Euro,
+    palleteAmount: 1,
+  },
+};
 
 const defaultValues: ShipmentFields = {
   orderNumber: '2025/24',
-  cargo: [
-    {
-      weight: undefined,
-      description: undefined,
-      metadata: {
-        type: 'standard',
-        palleteType: PalleteType.Euro,
-        palleteAmount: 1,
-      },
-    },
-  ],
+  cargo: [defaultCargo],
 };
 
 export const NewShipmentForm = () => {
@@ -93,6 +96,14 @@ export const NewShipmentForm = () => {
                     />
                   </Box>
                 </FlexLayout>
+                <FlexLayout className="gap-4">
+                  <Box className="flex-1">
+                    <DriverField />
+                  </Box>
+                  <Box className="flex-1">
+                    <VehicleField />
+                  </Box>
+                </FlexLayout>
                 <Box className="flex-1">
                   <DispatcherField />
                 </Box>
@@ -104,7 +115,7 @@ export const NewShipmentForm = () => {
             </FlexLayout>
             <CargoFieldList />
           </FlexLayout>
-          <Box className="sticky bottom-0 bg-[#e9eded] border-t-[2px] border-dark-200 dark:border-light-700 p-4 -mx-4">
+          <Box className="sticky bottom-0 bg-[#e9eded] dark:bg-black border-t-[2px] border-dark-200 dark:border-light-700 p-4 -mx-4">
             <Button
               isDisabled={!isValid}
               isFullWidth
@@ -121,16 +132,6 @@ export const NewShipmentForm = () => {
   );
 };
 
-const emptyCargoValues: Cargo = {
-  weight: 0,
-  description: '',
-  metadata: {
-    type: 'standard',
-    palleteType: PalleteType.Euro,
-    palleteAmount: 1,
-  },
-};
-
 const CargoFieldList = () => {
   const { watch, setValue } = useFormContext<ShipmentFields>();
   const cargo = watch('cargo');
@@ -145,7 +146,7 @@ const CargoFieldList = () => {
         text="Dodaj teret"
         type="button"
         variant="secondary"
-        onClick={() => setValue('cargo', [...cargo, emptyCargoValues])}
+        onClick={() => setValue('cargo', [...cargo, defaultCargo])}
       />
     </FlexLayout>
   );

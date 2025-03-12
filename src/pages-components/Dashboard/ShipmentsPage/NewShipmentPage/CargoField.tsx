@@ -95,7 +95,7 @@ const StandardCargo: React.FC<{ index: number }> = ({ index }) => {
   const ldmValue = palleteType && palleteAmount ? roundLdmValue(palleteValues[palleteType] * palleteAmount) : 0;
 
   useEffect(() => {
-    setValue(`cargo.${index}.metadata.ldm`, ldmValue);
+    setValue(`cargo.${index}.ldm`, ldmValue);
   }, [ldmValue, setValue, index]);
 
   return (
@@ -121,7 +121,7 @@ const StandardCargo: React.FC<{ index: number }> = ({ index }) => {
           />
         </Box>
       </FlexLayout>
-      <FormTextInput isDisabled label="Dužni metri (LDM)" name={`cargo.${index}.metadata.ldm`} type="number" />
+      <FormTextInput isDisabled label="Dužni metri (LDM)" name={`cargo.${index}.ldm`} type="number" />
     </FlexLayout>
   );
 };
@@ -134,7 +134,7 @@ const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => {
   const ldmValue = length && width ? roundLdmValue((length * width) / 2.4) : 0;
 
   useEffect(() => {
-    setValue(`cargo.${index}.metadata.ldm`, ldmValue);
+    setValue(`cargo.${index}.ldm`, ldmValue);
   }, [ldmValue, setValue, index]);
 
   return (
@@ -171,7 +171,7 @@ const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => {
           />
         </Box>
       </FlexLayout>
-      <FormTextInput label="Dužni metri (LDM)" name={`cargo.${index}.metadata.ldm`} type="number" />
+      <FormTextInput label="Dužni metri (LDM)" name={`cargo.${index}.ldm`} type="number" />
     </FlexLayout>
   );
 };

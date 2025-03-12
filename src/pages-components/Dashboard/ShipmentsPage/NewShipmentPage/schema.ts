@@ -8,6 +8,8 @@ export const shipmentSchema = Yup.object().shape({
   dispatcherId: Yup.string().optional(),
   clientId: Yup.string().optional(),
   transportContractorId: Yup.string().optional(),
+  driverId: Yup.string().optional(),
+  vehicleId: Yup.string().optional(),
   loadingAddress: Yup.object()
     .shape({
       name: Yup.string().required('Adresa utovara je obavezna'),
@@ -42,8 +44,9 @@ export const shipmentSchema = Yup.object().shape({
   cargo: Yup.array()
     .of(
       Yup.object().shape({
-        weight: Yup.number().optional(),
+        weight: Yup.number().required(),
         description: Yup.string().optional(),
+        ldm: Yup.number().required(),
         metadata: Yup.object()
           .shape({
             type: Yup.string().oneOf(['standard', 'nonstandard']).required('Tip tereta je obavezan'),

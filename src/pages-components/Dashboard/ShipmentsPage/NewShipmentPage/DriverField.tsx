@@ -9,20 +9,20 @@ function mapEmployeesToOptions(employees: Employee[]) {
   }));
 }
 
-export const DispatcherField = () => {
+export const DriverField = () => {
   const { data: employees = [] } = useEmployees({
-    select: (employees: Employee[]) => employees.filter((employee) => employee.position === PositionEnum.Dispatcher),
+    select: (employees: Employee[]) => employees.filter((employee) => employee.position === PositionEnum.Driver),
   });
-  const dispatcherOptions = mapEmployeesToOptions(employees);
+  const driverOptions = mapEmployeesToOptions(employees);
 
   return (
     <FormSingleSelect
       isClearable
       isSearchable
-      label="Disponent"
-      name="dispatcherId"
-      options={dispatcherOptions}
-      placeholder="Odaberi disponenta..."
+      label="Vozač"
+      name="driverId"
+      options={driverOptions}
+      placeholder="Odaberi vozača..."
     />
   );
 };

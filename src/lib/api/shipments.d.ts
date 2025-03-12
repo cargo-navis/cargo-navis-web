@@ -2,6 +2,8 @@ export interface Shipment {
   cargoReference: string;
   orderNumber: string;
   dispatcherId?: string;
+  driverId?: string;
+  vehicleId?: string;
   clientId?: string;
   transportContractorId?: string;
   price: number;
@@ -24,9 +26,10 @@ export interface LoadingAddress {
   postalCodeId: string;
 }
 
-export interface Cargo {
+interface Cargo {
   weight: number;
   description: string;
+  ldm: number;
   metadata: Metadata;
 }
 
