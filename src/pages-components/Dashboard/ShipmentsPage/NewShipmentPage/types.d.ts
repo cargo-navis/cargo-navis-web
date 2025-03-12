@@ -15,6 +15,7 @@ export interface ShipmentFields {
   clientId?: string;
   transportContractorId?: string;
   driverId?: string;
+  vehicleId?: string;
   loadingAddress?: Address;
   unloadingAddress?: Address;
   loadingReadyDate?: string;

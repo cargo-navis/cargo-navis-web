@@ -17,6 +17,7 @@ export const transformFormDataToPayload = (formData: ShipmentFields): CreateShip
     orderNumber,
     dispatcherId,
     driverId,
+    vehicleId,
     clientId,
     transportContractorId,
     price,
@@ -76,6 +77,7 @@ export const transformFormDataToPayload = (formData: ShipmentFields): CreateShip
     orderNumber,
     dispatcherId,
     driverId,
+    vehicleId,
     clientId,
     transportContractorId,
     price: price || 0, // Default to 0 if undefined

@@ -3,6 +3,7 @@ export interface Shipment {
   orderNumber: string;
   dispatcherId?: string;
   driverId?: string;
+  vehicleId?: string;
   clientId?: string;
   transportContractorId?: string;
   price: number;
