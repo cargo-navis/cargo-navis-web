@@ -1,4 +1,4 @@
-import type { Employee } from '@/lib/api';
+import { type Employee, PositionEnum } from '@/lib/api';
 import { FormSingleSelect } from '@/lib/components/form';
 import { useEmployees } from '@/lib/hooks';
 
@@ -11,7 +11,7 @@ function mapEmployeesToOptions(employees: Employee[]) {
 
 export const DispatcherField = () => {
   const { data: employees = [] } = useEmployees({
-    select: (employees: Employee[]) => employees.filter((employee) => employee.position === 'dispatcher'),
+    select: (employees: Employee[]) => employees.filter((employee) => employee.position === PositionEnum.Dispatcher),
   });
   const dispatcherOptions = mapEmployeesToOptions(employees);
 

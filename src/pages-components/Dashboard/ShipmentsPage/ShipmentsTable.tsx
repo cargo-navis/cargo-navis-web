@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 
 import type { Shipment } from '@/lib/api'; // Assuming you have a Shipment type defined
 import { useClients, useContractors, useEmployees } from '@/lib/hooks';
+import { getDataPointDateString } from '@/lib/utils/date';
 import { FlexLayout, Table, Text } from '@/ui'; // Import FlexLayout
 
 const columnHelper = createColumnHelper<Shipment>();
@@ -15,15 +16,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
   const columns = useMemo(() => {
     return [
       columnHelper.accessor('orderNumber', {
-        header: 'Order Number',
-        cell: (info) => (
-          <FlexLayout className="items-center py-2">
-            <Text>{info.getValue()}</Text>
-          </FlexLayout>
-        ),
-      }),
-      columnHelper.accessor('loadingDate', {
-        header: 'Order Date',
+        header: 'Broj naloga',
         cell: (info) => (
           <FlexLayout className="items-center py-2">
             <Text>{info.getValue()}</Text>
@@ -31,7 +24,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         ),
       }),
       columnHelper.accessor('clientId', {
-        header: 'Client Name',
+        header: 'Klijent',
         cell: (info) => {
           const clientId = info.getValue();
           const client = clients.find((client) => client.id === clientId);
@@ -42,16 +35,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           );
         },
       }),
-      columnHelper.accessor('price', {
-        header: 'Price',
-        cell: (info) => (
-          <FlexLayout className="items-center py-2">
-            <Text>{info.getValue()}</Text>
-          </FlexLayout>
-        ),
-      }),
       columnHelper.accessor('transportContractorId', {
-        header: 'Transport Contractor',
+        header: 'Prijevozik',
         cell: (info) => {
           const contractorId = info.getValue();
           const contractor = contractors.find((contractor) => contractor.id === contractorId);
@@ -62,19 +47,27 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           );
         },
       }),
-      columnHelper.accessor('loadingAddress.name', {
-        header: 'Loading Location',
+      columnHelper.accessor('price', {
+        header: 'Cijena',
         cell: (info) => (
           <FlexLayout className="items-center py-2">
             <Text>{info.getValue()}</Text>
           </FlexLayout>
         ),
       }),
-      columnHelper.accessor('unloadingAddress.name', {
-        header: 'Unloading Location',
+      columnHelper.accessor('loadingDate', {
+        header: 'Datum utovara',
         cell: (info) => (
           <FlexLayout className="items-center py-2">
-            <Text>{info.getValue()}</Text>
+            <Text>{getDataPointDateString(info.getValue())}</Text>
+          </FlexLayout>
+        ),
+      }),
+      columnHelper.accessor('unloadingDate', {
+        header: 'Datum istovara',
+        cell: (info) => (
+          <FlexLayout className="items-center py-2">
+            <Text>{getDataPointDateString(info.getValue())}</Text>
           </FlexLayout>
         ),
       }),
