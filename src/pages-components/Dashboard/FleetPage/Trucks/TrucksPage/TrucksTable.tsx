@@ -47,6 +47,7 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
         },
       }),
       columnHelper.accessor('emissionStandard', {
+        enableSorting: false,
         header: 'Tip motora',
         cell: ({ row }) => {
           const { emissionStandard } = row.original;
@@ -58,11 +59,12 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
           );
         },
       }),
-      columnHelper.display({
+      columnHelper.accessor((row) => row.tachographExpiryDate, {
+        sortUndefined: 'first',
         header: 'Tahograf vrijedi do',
         size: 200,
-        cell: ({ row }) => {
-          const { tachographExpiryDate } = row.original;
+        cell: (props) => {
+          const tachographExpiryDate = props.getValue();
           const formattedDate = getDataPointDateString(tachographExpiryDate);
 
           return (

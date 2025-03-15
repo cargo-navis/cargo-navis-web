@@ -46,6 +46,7 @@ export const VansTable = ({ vans }: { vans: Vehicle[] }) => {
         },
       }),
       columnHelper.accessor('vehicleLoadType', {
+        enableSorting: false,
         header: 'Vrsta utovarnog prostora',
         cell: ({ row }) => {
           const { vehicleLoadType } = row.original;

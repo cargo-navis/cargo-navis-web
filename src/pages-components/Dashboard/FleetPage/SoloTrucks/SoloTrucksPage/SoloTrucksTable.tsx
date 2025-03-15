@@ -46,6 +46,7 @@ export const SoloTrucksTable = ({ solos }: { solos: Vehicle[] }) => {
         },
       }),
       columnHelper.accessor('vehicleLoadType', {
+        enableSorting: false,
         header: 'Vrsta utovarnog prostora',
         cell: ({ row }) => {
           const { vehicleLoadType } = row.original;
