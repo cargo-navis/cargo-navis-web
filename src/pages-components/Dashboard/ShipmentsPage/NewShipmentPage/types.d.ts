@@ -1,11 +1,9 @@
-interface PostalCode {
-  label?: string;
-  value?: string;
-}
-
-interface Address {
+export interface Address {
   name: string;
-  postalCodeId: PostalCode;
+  postalCodeId: {
+    label?: string;
+    value?: string;
+  };
   countryCode?: string;
 }
 
@@ -36,7 +34,7 @@ export interface Cargo {
   metadata: CargoMetadata;
 }
 
-type CargoType = 'standard' | 'nonstandard';
+export type CargoType = 'standard' | 'nonstandard';
 
 export interface CargoMetadata {
   type: CargoType;

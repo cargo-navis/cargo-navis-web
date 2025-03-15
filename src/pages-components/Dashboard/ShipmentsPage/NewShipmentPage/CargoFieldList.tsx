@@ -3,8 +3,8 @@ import { useFormContext } from 'react-hook-form';
 import { FlexLayout, TextButton } from '@/ui';
 
 import { CargoField } from './CargoField';
-import { defaultCargo } from './utils';
 import type { Cargo, ShipmentFields } from './types';
+import { defaultCargo } from './utils';
 
 export const CargoFieldList = () => {
   const { watch, setValue } = useFormContext<ShipmentFields>();
