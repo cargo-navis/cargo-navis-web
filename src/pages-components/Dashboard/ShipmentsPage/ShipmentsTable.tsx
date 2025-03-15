@@ -87,7 +87,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
 
           return (
             <FlexLayout className="items-center py-2">
-              <Text>{ldmTotal}</Text>
+              <Text>{ldmTotal || '—'}</Text>
             </FlexLayout>
           );
         },
