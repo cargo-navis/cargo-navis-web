@@ -23,6 +23,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
     return [
       columnHelper.accessor('orderNumber', {
         header: 'Broj naloga',
+        enableSorting: false,
         size: 140,
         cell: (info) => (
           <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
@@ -32,6 +33,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       }),
       columnHelper.accessor('clientId', {
         header: 'Klijent',
+        enableSorting: false,
         cell: (info) => {
           const clientId = info.getValue();
           const client = clients.find((client) => client.id === clientId);
@@ -44,6 +46,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       }),
       columnHelper.accessor('transportContractorId', {
         header: 'Prijevozik',
+        enableSorting: false,
         cell: (info) => {
           const contractorId = info.getValue();
           const contractor = contractorId ? contractors.find((contractor) => contractor.id === contractorId) : tenant;
@@ -56,6 +59,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       }),
       columnHelper.accessor('price', {
         header: 'Cijena',
+        enableSorting: true,
+        sortingFn: 'basic',
         cell: (info) => (
           <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
             <Text>{info.getValue()}€</Text>
@@ -64,6 +69,12 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       }),
       columnHelper.accessor('loadingDate', {
         header: 'Datum utovara',
+        enableSorting: true,
+        sortingFn: (rowA, rowB) => {
+          const a = new Date(rowA.original.loadingDate).getTime();
+          const b = new Date(rowB.original.loadingDate).getTime();
+          return a < b ? -1 : a > b ? 1 : 0;
+        },
         cell: (info) => (
           <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
             <Text>{getDataPointDateString(info.getValue())}</Text>
@@ -72,6 +83,12 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       }),
       columnHelper.accessor('unloadingDate', {
         header: 'Datum istovara',
+        enableSorting: true,
+        sortingFn: (rowA, rowB) => {
+          const a = new Date(rowA.original.unloadingDate).getTime();
+          const b = new Date(rowB.original.unloadingDate).getTime();
+          return a < b ? -1 : a > b ? 1 : 0;
+        },
         cell: (info) => (
           <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
             <Text>{getDataPointDateString(info.getValue())}</Text>
@@ -80,6 +97,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       }),
       columnHelper.display({
         id: 'ldm',
+        enableSorting: false,
         header: 'LDM',
         size: 100,
         cell: (props) => {
@@ -94,6 +112,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       }),
       columnHelper.display({
         id: 'palleteNo',
+        enableSorting: false,
         header: 'Broj paleta',
         cell: (props) => {
           const { cargo } = props.row.original;
@@ -105,12 +124,13 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           );
         },
       }),
-      columnHelper.display({
+      columnHelper.accessor((row) => row.cargo.reduce((acc, c) => acc + (c.weight || 0), 0), {
         id: 'weight',
         header: 'Težina',
+        enableSorting: true,
+        sortingFn: 'basic',
         cell: (props) => {
-          const { cargo } = props.row.original;
-          const weight = cargo.reduce((acc, c) => (acc += c.weight), 0);
+          const weight = props.getValue();
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
               <Text>{weight ? `${weight} kg` : '—'}</Text>
@@ -120,6 +140,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       }),
       columnHelper.accessor('vehicleId', {
         header: 'Vozilo',
+        enableSorting: false,
         cell: (info) => {
           const vehicleId = info.getValue();
           const vehicle = vehicles.find((v) => v.id === vehicleId);
@@ -133,6 +154,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       }),
       columnHelper.accessor('driverId', {
         header: 'Vozač',
+        enableSorting: false,
         cell: (info) => {
           const driverId = info.getValue();
           const employee = employees.find((employee) => employee.id === driverId);

@@ -1,9 +1,10 @@
 'use client';
 
-import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@tanstack/react-table';
 import clsx from 'clsx';
+import { useState } from 'react';
 
-import { Box } from '@/ui';
+import { Box, FlexLayout } from '@/ui';
 
 interface TableProps {
   data: any;
@@ -12,26 +13,42 @@ interface TableProps {
 }
 
 export const Table: React.FC<TableProps> = ({ data, columns, onRowClick }) => {
+  const [sorting, setSorting] = useState([{ id: 'createdAt', desc: true }]);
   const table = useReactTable({
     data,
     columns,
+    state: { sorting },
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
+    sortingFns: {
+      createdAt: (_rowA, _rowB) =>
+        new Date(_rowA.original.createdAt).getTime() - new Date(_rowB.original.createdAt).getTime(),
+    },
   });
 
   return (
-    <Box
-      as="table"
-      className="border-collapse
-     w-full
-     {/*table-fixed*/}
-     "
-    >
+    <Box as="table" className="border-collapse w-full">
       <Box as="thead" className="bg-dark-200 dark:bg-light-900 sticky top-[-48px]">
         {table.getHeaderGroups().map((headerGroup) => (
           <Box as="tr" key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
-              <th className="text-start py-[20px]" key={header.id} style={{ width: `${header.getSize()}px` }}>
-                {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+              <th
+                className={clsx(
+                  'text-start py-[20px]',
+                  header.column.getCanSort() && 'cursor-pointer select-none hover:text-teal-500'
+                )}
+                key={header.id}
+                style={{ width: `${header.getSize()}px` }}
+                onClick={header.column.getToggleSortingHandler()}
+              >
+                <FlexLayout className="items-center gap-1">
+                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                  {{
+                    asc: ' ↑',
+                    desc: ' ↓',
+                  }[header.column.getIsSorted() as string] ?? null}
+                </FlexLayout>
               </th>
             ))}
           </Box>
