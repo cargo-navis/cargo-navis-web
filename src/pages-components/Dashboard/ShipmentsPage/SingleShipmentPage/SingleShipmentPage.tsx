@@ -1,15 +1,17 @@
 import { useRouter } from 'next/router';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import type { Cargo, LoadingAddress, Shipment } from '@/lib/api';
+import type { LoadingAddress, Shipment } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useClient, useContractor, useEmployee, useShipment, useVehicle } from '@/lib/hooks';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, Divider, FlexLayout, Text } from '@/ui';
 
 import { AddressItem } from './components/AddressItem';
+import { CargoItem } from './components/CargoItem';
 import { DateItem } from './components/DateItem';
 import { DescriptionItem } from './components/DescriptionItem';
+import type { CargoWithMetadata } from './components/types';
 
 export const SingleShipmentPage = () => {
   const { query } = useRouter();
@@ -87,9 +89,9 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                   <Box className="flex-1">
                     <FlexLayout className="flex-col">
                       <Text color="text-color-3" variant="text-s-medium">
-                        Cijena (Euro)
+                        Cijena
                       </Text>
-                      <Text variant="text-l">{shipment.price}</Text>
+                      <Text variant="text-l">{shipment.price}€</Text>
                     </FlexLayout>
                   </Box>
                 </FlexLayout>
@@ -153,29 +155,8 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
 
             <FlexLayout as="section" className="flex-1 flex-col gap-4">
               <Text variant="text-l-medium">Teret</Text>
-              {(shipment.cargo as Cargo[]).map((item, index) => (
-                <Box className="border p-4 rounded-md" key={index}>
-                  <FlexLayout className="flex-col gap-2">
-                    <FlexLayout className="justify-between">
-                      <Text color="text-color-3" variant="text-s-medium">
-                        Opis
-                      </Text>
-                      <Text>{item.description}</Text>
-                    </FlexLayout>
-                    <FlexLayout className="justify-between">
-                      <Text color="text-color-3" variant="text-s-medium">
-                        LDM
-                      </Text>
-                      <Text>{item.ldm}</Text>
-                    </FlexLayout>
-                    <FlexLayout className="justify-between">
-                      <Text color="text-color-3" variant="text-s-medium">
-                        Težina (kg)
-                      </Text>
-                      <Text>{item.weight}</Text>
-                    </FlexLayout>
-                  </FlexLayout>
-                </Box>
+              {(shipment.cargo as CargoWithMetadata[]).map((item, index) => (
+                <CargoItem cargo={item} index={index} key={index} />
               ))}
             </FlexLayout>
           </FlexLayout>
