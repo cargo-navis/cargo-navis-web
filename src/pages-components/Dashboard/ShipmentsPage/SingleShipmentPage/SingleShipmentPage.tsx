@@ -12,6 +12,7 @@ import { AddressItem } from './components/AddressItem';
 import { CargoItem } from './components/CargoItem';
 import { DateItem } from './components/DateItem';
 import { DescriptionItem } from './components/DescriptionItem';
+import { ShipmentActions } from './components/ShipmentActions';
 import type { CargoWithMetadata } from './components/types';
 
 export const SingleShipmentPage = () => {
@@ -42,7 +43,10 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
 
   return (
     <FlexLayout className="py-5 flex-col gap-5">
-      <BackButton targetLocation="/dashboard/shipments" />
+      <FlexLayout className="justify-between">
+        <BackButton targetLocation="/dashboard/shipments" />
+        <ShipmentActions id={shipment.id} />
+      </FlexLayout>
       <Box className="max-w-[1400px]">
         <FlexLayout className="relative flex-col gap-7 w-full">
           <FlexLayout className="flex-row gap-7">

@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { type Client, createShipment, getShipment, getShipments, Shipment, updateShipment } from '@/lib/api';
-
+import { createShipment, deleteShipment, getShipments, Shipment, updateShipment } from '@/lib/api';
 
 interface UseShipmentsArgs<T> {
   select?: (data: Shipment[]) => T;
@@ -58,6 +57,18 @@ export function useUpdateShipment() {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['shipment', variables.id] });
       queryClient.invalidateQueries({ queryKey: ['shipments'] });
+    },
+  });
+}
+
+export function useDeleteShipment(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => deleteShipment(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['shipments'] });
+      queryClient.invalidateQueries({ queryKey: ['shipment', id] });
     },
   });
 }
