@@ -42,7 +42,7 @@ export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index }) => {
           <Text color="text-color-3" variant="text-s-medium">
             LDM
           </Text>
-          <Text variant="text-l">{cargo.ldm}</Text>
+          <Text variant="text-l">{cargo.ldm || '-'}</Text>
         </FlexLayout>
         <FlexLayout className="flex-col">
           <Text color="text-color-3" variant="text-s-medium">

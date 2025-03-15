@@ -72,7 +72,12 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     <Text color="text-color-3" variant="text-s-medium">
                       Prijevoznik
                     </Text>
-                    <Text variant="text-l">{contractor?.name || '-'}</Text>
+                    <Link
+                      className="hover:text-teal-500 transition-colors"
+                      href={contractor?.id ? `/dashboard/contractors/${contractor?.id}` : '#'}
+                    >
+                      <Text variant="text-l">{contractor?.name || '-'}</Text>
+                    </Link>
                   </FlexLayout>
                 </Box>
 
