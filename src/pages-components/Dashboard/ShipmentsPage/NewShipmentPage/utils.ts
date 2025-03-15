@@ -120,6 +120,9 @@ export const getFormDefaultValues = (shipment: Shipment | undefined) => {
               type: (c.metadata?.type || 'standard') as CargoType,
               palleteType: c.metadata?.palleteType || PalleteType.Euro,
               palleteAmount: c.metadata?.palleteAmount || 1,
+              width: c.metadata?.width || 0,
+              height: c.metadata?.height || 0,
+              length: c.metadata?.length || 0,
             },
           }))
         : formDefaultValues.cargo,

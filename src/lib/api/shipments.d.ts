@@ -43,4 +43,7 @@ export interface Metadata {
   type: string;
   palleteType: string;
   palleteAmount: number;
+  width: number;
+  height: number;
+  length: number;
 }
