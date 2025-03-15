@@ -4,11 +4,12 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Cargo, LoadingAddress, Shipment } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useClient, useContractor, useEmployee, useShipment, useVehicle } from '@/lib/hooks';
-import { getDataPointDateString } from '@/lib/utils/date';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, Divider, FlexLayout, Text } from '@/ui';
 
-import { getCountryFromCode } from '../../NewEmployeePage/const';
+import { AddressItem } from './components/AddressItem';
+import { DateItem } from './components/DateItem';
+import { DescriptionItem } from './components/DescriptionItem';
 
 export const SingleShipmentPage = () => {
   const { query } = useRouter();
@@ -180,42 +181,6 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
           </FlexLayout>
         </FlexLayout>
       </Box>
-    </FlexLayout>
-  );
-};
-
-const DescriptionItem: React.FC<{ label: string; description: string }> = ({ label, description }) => {
-  return (
-    <FlexLayout className="flex-col">
-      <Text color="text-color-3" variant="text-s-medium">
-        {label}
-      </Text>
-      <Text color="text-color-1" variant="text-s">
-        {description || '-'}
-      </Text>
-    </FlexLayout>
-  );
-};
-
-const DateItem: React.FC<{ label: string; date: string }> = ({ label, date }) => {
-  return (
-    <FlexLayout className="flex-col">
-      <Text color="text-color-3" variant="text-s-medium">
-        {label}
-      </Text>
-      <Text variant="text-m">{getDataPointDateString(date)}</Text>
-    </FlexLayout>
-  );
-};
-const AddressItem: React.FC<{ address: LoadingAddress }> = ({ address }) => {
-  return (
-    <FlexLayout className="flex-col">
-      <Text variant="text-m">{address?.streetName}</Text>
-      <FlexLayout>
-        <Text variant="text-m">{address?.postalCode},&nbsp;</Text>
-        <Text variant="text-m">{address?.city}</Text>
-      </FlexLayout>
-      <Text variant="text-m">{getCountryFromCode(address?.countryCode || '')?.name}</Text>
     </FlexLayout>
   );
 };
