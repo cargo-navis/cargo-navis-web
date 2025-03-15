@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import type { Shipment } from '@/lib/api';
+import type { Tenant } from '@/lib/api/tenant.d';
 import { FormTextInput } from '@/lib/components/form';
 import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
 import { Box, Button, Divider, FlexLayout, LoadingSpinner } from '@/ui';
@@ -20,9 +21,10 @@ import { VehicleField } from './VehicleField';
 
 interface NewShipmentFormProps {
   shipment?: Shipment;
+  tenant: Tenant;
 }
 
-export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment }) => {
+export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tenant }) => {
   const { push } = useRouter();
   const isEdit = !!shipment;
 
@@ -30,7 +32,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment }) =>
   const { mutateAsync: updateShipment } = useUpdateShipment();
 
   const formMethods = useForm<ShipmentFields>({
-    defaultValues: getFormDefaultValues(shipment),
+    defaultValues: getFormDefaultValues(shipment, tenant),
     resolver: yupResolver(shipmentSchema),
     mode: 'all',
   });
@@ -75,7 +77,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment }) =>
                   </Box>
                 </FlexLayout>
                 <Box className="flex-1">
-                  <ContractorField name="transportContractorId" />
+                  <ContractorField name="transportContractorId" tenant={tenant} />
                 </Box>
                 <FlexLayout className="gap-4">
                   <Box className="flex-1">
