@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -38,8 +39,6 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
   const { data: driver } = useEmployee(shipment.driverId || '');
   const { data: vehicle } = useVehicle(shipment.vehicleId || '');
   const { data: dispatcher } = useEmployee(shipment.dispatcherId || '');
-
-  console.log(shipment);
 
   return (
     <FlexLayout className="py-5 flex-col gap-5">
@@ -83,7 +82,12 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                       <Text color="text-color-3" variant="text-s-medium">
                         Klijent
                       </Text>
-                      <Text variant="text-l">{client?.name || '-'}</Text>
+                      <Link
+                        className="hover:text-teal-500 transition-colors"
+                        href={client?.id ? `/dashboard/clients/${client?.id}` : '#'}
+                      >
+                        <Text variant="text-l">{client?.name || '-'}</Text>
+                      </Link>
                     </FlexLayout>
                   </Box>
                   <Box className="flex-1">
@@ -95,14 +99,18 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     </FlexLayout>
                   </Box>
                 </FlexLayout>
-
                 <FlexLayout className="gap-4">
                   <Box className="flex-1">
                     <FlexLayout className="flex-col">
                       <Text color="text-color-3" variant="text-s-medium">
                         Vozač
                       </Text>
-                      <Text variant="text-l">{driver ? `${driver.firstName} ${driver.lastName}` : '-'}</Text>
+                      <Link
+                        className="hover:text-teal-500 transition-colors"
+                        href={driver?.id ? `/dashboard/employees/${driver?.id}` : '#'}
+                      >
+                        <Text variant="text-l">{driver ? `${driver.firstName} ${driver.lastName}` : '-'}</Text>
+                      </Link>
                     </FlexLayout>
                   </Box>
                   <Box className="flex-1">
@@ -110,17 +118,28 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                       <Text color="text-color-3" variant="text-s-medium">
                         Vozilo
                       </Text>
-                      <Text variant="text-l">{vehicle ? `${vehicle?.registration} (${vehicle?.brand})` : '-'}</Text>
+                      <Link
+                        className="hover:text-teal-500 transition-colors"
+                        href={vehicle?.id ? `/dashboard/vehicles/${vehicle?.type}/${vehicle?.id}` : '#'}
+                      >
+                        <Text variant="text-l">{vehicle ? `${vehicle?.registration} (${vehicle?.brand})` : '-'}</Text>
+                      </Link>
                     </FlexLayout>
                   </Box>
                 </FlexLayout>
-
                 <Box className="flex-1">
                   <FlexLayout className="flex-col">
                     <Text color="text-color-3" variant="text-s-medium">
                       Disponent
                     </Text>
-                    <Text variant="text-l">{dispatcher ? `${dispatcher.firstName} ${dispatcher.lastName}` : '-'}</Text>
+                    <Link
+                      className="hover:text-teal-500 transition-colors"
+                      href={dispatcher?.id ? `/dashboard/employees/${dispatcher?.id}` : '#'}
+                    >
+                      <Text variant="text-l">
+                        {dispatcher ? `${dispatcher.firstName} ${dispatcher.lastName}` : '-'}
+                      </Text>
+                    </Link>
                   </FlexLayout>
                 </Box>
               </FlexLayout>
