@@ -3,6 +3,7 @@ import { useFormContext } from 'react-hook-form';
 
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { FormTextarea } from '@/lib/components/form/FormTextarea';
+import { roundLdmValue } from '@/lib/utils/math';
 import { palleteOptions, palleteValues } from '@/lib/utils/palletes';
 import { Box, Button, FlexLayout, Icon, Text } from '@/ui';
 
@@ -65,10 +66,6 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
     </FlexLayout>
   );
 };
-
-function roundLdmValue(value: number) {
-  return Math.round(value * 100) / 100;
-}
 
 const StandardCargo: React.FC<{ index: number }> = ({ index }) => {
   const { watch, setValue } = useFormContext();

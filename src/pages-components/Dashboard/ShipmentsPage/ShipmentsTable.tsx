@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { Employee, PositionEnum, type Shipment } from '@/lib/api';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
+import { roundLdmValue } from '@/lib/utils/math';
 import { FlexLayout, Table, Text } from '@/ui';
 
 const columnHelper = createColumnHelper<Shipment>();
@@ -102,10 +103,11 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         size: 100,
         cell: (props) => {
           const { cargo } = props.row.original;
+
           const ldmTotal = cargo.reduce((acc, c) => (acc += c.ldm), 0);
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Text>{ldmTotal || '—'}</Text>
+              <Text>{roundLdmValue(ldmTotal) || '—'}</Text>
             </FlexLayout>
           );
         },
