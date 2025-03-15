@@ -1,15 +1,8 @@
 import type { CreateShipmentData, LoadingAddress, Shipment } from '@/lib/api';
 import { getPostalCode } from '@/lib/api/postalCodes';
+import { PalleteType } from '@/lib/utils/pallete';
 
 import type { Cargo, CargoType, ShipmentFields } from './types.d';
-
-export enum PalleteType {
-  Small = 'small',
-  Euro = 'euro',
-  Ship = 'ship',
-  Industry = 'industry',
-  Jumbo = 'jumbo',
-}
 
 export const defaultCargo: Cargo = {
   weight: 0,

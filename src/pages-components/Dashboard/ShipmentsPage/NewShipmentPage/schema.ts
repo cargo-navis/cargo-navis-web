@@ -1,7 +1,8 @@
 import * as Yup from 'yup';
 
+import { PalleteType } from '@/lib/utils/pallete';
+
 import type { CargoType } from './types.d';
-import { PalleteType } from './utils';
 
 export const shipmentSchema = Yup.object().shape({
   orderNumber: Yup.string().required('Broj naloga je obavezan'),
