@@ -33,8 +33,8 @@ export const AddressFields = () => {
             name="loadingAddress.postalCodeId"
             placeholder="Odaberi poštanski broj"
           />
-          <FormDatepicker label="Datum spremnosti za utovar" name="loadingReadyDate" />
           <FormDatepicker label="Datum utovara" name="loadingDate" />
+          <FormDatepicker label="Datum spremnosti za utovar" name="loadingReadyDate" />
           <FormTextarea label="Opis utovara" name="loadingDescription" placeholder="Unesite detalje utovara..." />
         </FlexLayout>
         <VerticalDivider />

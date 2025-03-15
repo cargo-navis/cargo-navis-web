@@ -3,9 +3,9 @@ import { useFormContext } from 'react-hook-form';
 
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { FormTextarea } from '@/lib/components/form/FormTextarea';
+import { roundLdmValue } from '@/lib/utils/math';
+import { palleteOptions, palleteValues } from '@/lib/utils/palletes';
 import { Box, Button, FlexLayout, Icon, Text } from '@/ui';
-
-import { PalleteType } from './utils';
 
 interface CargoFieldProps {
   index: number;
@@ -66,26 +66,6 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
     </FlexLayout>
   );
 };
-
-const palleteOptions: { value: PalleteType; label: string }[] = [
-  { value: PalleteType.Small, label: 'Mala Paleta (80x60)' },
-  { value: PalleteType.Euro, label: 'Euro Paleta (120x80)' },
-  { value: PalleteType.Ship, label: 'Brodska Paleta (120x100)' },
-  { value: PalleteType.Industry, label: 'Industrijska Paleta (100x100)' },
-  { value: PalleteType.Jumbo, label: 'Jumbo Paleta (120x120)' },
-];
-
-const palleteValues: Record<PalleteType, number> = {
-  [PalleteType.Small]: 0.2,
-  [PalleteType.Euro]: 0.4,
-  [PalleteType.Ship]: 0.5,
-  [PalleteType.Industry]: 0.5,
-  [PalleteType.Jumbo]: 0.6,
-};
-
-function roundLdmValue(value: number) {
-  return Math.round(value * 100) / 100;
-}
 
 const StandardCargo: React.FC<{ index: number }> = ({ index }) => {
   const { watch, setValue } = useFormContext();

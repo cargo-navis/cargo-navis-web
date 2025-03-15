@@ -1,17 +1,138 @@
-import type { CreateShipmentData, LoadingAddress } from '@/lib/api';
+import type { CreateShipmentData, LoadingAddress, Shipment } from '@/lib/api';
+import { getPostalCode } from '@/lib/api/postalCodes';
+import type { Tenant } from '@/lib/api/tenant.d';
+import { PalleteType } from '@/lib/utils/palletes';
 
-import type { ShipmentFields } from './types.d';
+import type { Cargo, CargoType, ShipmentFields } from './types.d';
 
-export enum PalleteType {
-  Small = 'small',
-  Euro = 'euro',
-  Ship = 'ship',
-  Industry = 'industry',
-  Jumbo = 'jumbo',
-}
+export const defaultCargo: Cargo = {
+  weight: 0,
+  description: '',
+  ldm: 0.4,
+  metadata: {
+    type: 'standard',
+    palleteType: PalleteType.Euro,
+    palleteAmount: 1,
+  },
+};
+
+export const formDefaultValues: ShipmentFields = {
+  orderNumber: '2025/24', // TODO - generate incrementally
+  cargoReference: '',
+  transportContractorId: '',
+  clientId: '',
+  price: 0,
+  driverId: '',
+  vehicleId: '',
+  dispatcherId: '',
+  loadingAddress: {
+    name: '',
+    postalCodeId: {},
+  },
+  unloadingAddress: {
+    name: '',
+    postalCodeId: {},
+  },
+  loadingReadyDate: '',
+  loadingDate: '',
+  loadingDescription: '',
+  unloadingDate: '',
+  unloadingDueDate: '',
+  unloadingDescription: '',
+  cargo: [defaultCargo],
+};
+
+export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Tenant) => {
+  if (!shipment) return { ...formDefaultValues, transportContractorId: tenant.id };
+
+  return async () => {
+    // Fetch postal code data if needed
+    let loadingPostalCode = {};
+    let unloadingPostalCode = {};
+
+    // TODO - remove when BE is fixed
+    const loadingAddress = shipment.loadingAddressName;
+    const unloadingAddress = shipment.unloadingAddressName;
+
+    if (loadingAddress) {
+      shipment.loadingAddress = loadingAddress;
+    }
+
+    if (unloadingAddress) {
+      shipment.unloadingAddress = unloadingAddress;
+    }
+    // TODO ---
+
+    if (shipment.loadingAddress?.id) {
+      try {
+        const postalCodeData = await getPostalCode(shipment.loadingAddress.id);
+        loadingPostalCode = {
+          value: postalCodeData.id,
+          label: `${postalCodeData.postalCode}, ${postalCodeData.city}, ${postalCodeData.region}`,
+        };
+      } catch (error) {
+        console.error('Error fetching loading postal code:', error);
+      }
+    }
+
+    if (shipment.unloadingAddress?.id) {
+      try {
+        const postalCodeData = await getPostalCode(shipment.unloadingAddress.id);
+        unloadingPostalCode = {
+          value: postalCodeData.id,
+          label: `${postalCodeData.postalCode}, ${postalCodeData.city}, ${postalCodeData.region}`,
+        };
+      } catch (error) {
+        console.error('Error fetching unloading postal code:', error);
+      }
+    }
+
+    return {
+      orderNumber: shipment.orderNumber || '',
+      cargoReference: shipment.cargoReference || '',
+      transportContractorId: shipment.transportContractorId || '',
+      clientId: shipment.clientId || '',
+      price: shipment.price || 0,
+      driverId: shipment.driverId || '',
+      vehicleId: shipment.vehicleId || '',
+      dispatcherId: shipment.dispatcherId || '',
+      loadingAddress: {
+        name: shipment.loadingAddress?.streetName || '',
+        countryCode: shipment.loadingAddress?.countryCode,
+        postalCodeId: loadingPostalCode,
+      },
+      unloadingAddress: {
+        name: shipment.unloadingAddress?.streetName || '',
+        countryCode: shipment.unloadingAddress?.countryCode,
+        postalCodeId: unloadingPostalCode,
+      },
+      loadingReadyDate: shipment.loadingReadyDate || '',
+      loadingDate: shipment.loadingDate || '',
+      loadingDescription: shipment.loadingDescription || '',
+      unloadingDate: shipment.unloadingDate || '',
+      unloadingDueDate: shipment.unloadingDueDate || '',
+      unloadingDescription: shipment.unloadingDescription || '',
+      cargo: shipment.cargo?.length
+        ? shipment.cargo.map((c) => ({
+            weight: c.weight || 0,
+            description: c.description || '',
+            ldm: c.ldm || 0.4,
+            metadata: {
+              type: (c.metadata?.type || 'standard') as CargoType,
+              palleteType: c.metadata?.palleteType || PalleteType.Euro,
+              palleteAmount: c.metadata?.palleteAmount || 1,
+              width: c.metadata?.width || 0,
+              height: c.metadata?.height || 0,
+              length: c.metadata?.length || 0,
+            },
+          }))
+        : formDefaultValues.cargo,
+    };
+  };
+};
 
 // Function to transform form data into the format defined in types.ts
-export const transformFormDataToPayload = (formData: ShipmentFields): CreateShipmentData => {
+export const transformFormDataToPayload = (formData: ShipmentFields): Omit<CreateShipmentData, 'id'> => {
   const {
     cargoReference,
     orderNumber,
@@ -35,12 +156,12 @@ export const transformFormDataToPayload = (formData: ShipmentFields): CreateShip
   // Transform loadingAddress and unloadingAddress to match the expected format
   const transformedLoadingAddress: LoadingAddress = {
     name: loadingAddress?.name || '',
-    postalCodeId: loadingAddress?.postalCodeId?.value || '', // Assuming postalCodeId is an object
+    postalCodeId: loadingAddress?.postalCodeId?.value || '',
   };
 
   const transformedUnloadingAddress: LoadingAddress = {
     name: unloadingAddress?.name || '',
-    postalCodeId: unloadingAddress?.postalCodeId?.value || '', // Assuming postalCodeId is an object
+    postalCodeId: unloadingAddress?.postalCodeId?.value || '',
   };
 
   // Transform cargo array with conditional logic for metadata

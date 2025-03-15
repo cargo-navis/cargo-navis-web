@@ -1,8 +1,9 @@
 import type React from 'react';
 import { forwardRef } from 'react';
 
-import { type Employee, type Vehicle, VehicleEnum } from '@/lib/api';
+import { type Employee, type Vehicle } from '@/lib/api';
 import { type Alert, AlertType } from '@/lib/api';
+import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { FlexLayout, Icon, Text } from '@/ui';
 import type { MenuComponent } from '@/ui/components/Menu/types';
 
@@ -313,10 +314,3 @@ function VehicleRegistration({ vehicle }: { vehicle: Vehicle }) {
     </FlexLayout>
   );
 }
-
-export const vehicleTypeToPathMap = {
-  [VehicleEnum.TRUCK]: 'trucks',
-  [VehicleEnum.TRAILER]: 'trailers',
-  [VehicleEnum.SOLO_TRUCK]: 'solo-trucks',
-  [VehicleEnum.VAN]: 'vans',
-};

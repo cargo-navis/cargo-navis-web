@@ -4,10 +4,10 @@ import '@mantine/dates/styles.css';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import { vehicleTypeToPathMap } from '@/components/AlertMenu/utils';
-import { type Vehicle, VehicleEnum } from '@/lib/api';
+import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles';
 import { FormDatepicker, FormSingleSelect, FormTextInput, FormYearpicker } from '@/lib/components/form';
 import { useCreateVehicle, useUpdateVehicle } from '@/lib/hooks';
+import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { Box, Button, DisplayIf, FlexLayout, Text } from '@/ui';
 
 import { typeBrandOptionsMap, typeNameMap } from './const';
