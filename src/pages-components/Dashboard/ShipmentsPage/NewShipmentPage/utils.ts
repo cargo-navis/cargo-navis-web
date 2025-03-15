@@ -1,4 +1,4 @@
-import type { CreateShipmentData, LoadingAddress, Shipment } from '@/lib/api';
+import type { CreateShipmentData, Shipment } from '@/lib/api';
 import { getPostalCode } from '@/lib/api/postalCodes';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { PalleteType } from '@/lib/utils/palletes';
@@ -153,64 +153,74 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
     cargo,
   } = formData;
 
-  // Transform loadingAddress and unloadingAddress to match the expected format
-  const transformedLoadingAddress: LoadingAddress = {
-    name: loadingAddress?.name || '',
-    postalCodeId: loadingAddress?.postalCodeId?.value || '',
-  };
+  const payload: Partial<Omit<CreateShipmentData, 'id'>> = {};
 
-  const transformedUnloadingAddress: LoadingAddress = {
-    name: unloadingAddress?.name || '',
-    postalCodeId: unloadingAddress?.postalCodeId?.value || '',
-  };
+  // Only add fields that are present in formData
+  if ('cargoReference' in formData) payload.cargoReference = cargoReference || '';
+  if ('orderNumber' in formData) payload.orderNumber = orderNumber;
+  if ('dispatcherId' in formData) payload.dispatcherId = dispatcherId;
+  if ('driverId' in formData) payload.driverId = driverId;
+  if ('vehicleId' in formData) payload.vehicleId = vehicleId;
+  if ('clientId' in formData) payload.clientId = clientId;
+  if ('transportContractorId' in formData) payload.transportContractorId = transportContractorId;
+  if ('price' in formData) payload.price = price || 0;
 
-  // Transform cargo array with conditional logic for metadata
-  const transformedCargo = cargo.map((item) => {
-    const { type } = item.metadata; // Get the type from metadata
-    let metadata;
-
-    if (type === 'standard') {
-      metadata = {
-        type,
-        palleteType: item.metadata.palleteType || '',
-        palleteAmount: item.metadata.palleteAmount || 1, // Default to 1 if undefined
-      };
-    } else if (type === 'nonstandard') {
-      metadata = {
-        type,
-        width: item.metadata.width || 0, // Default to 0 if undefined
-        height: item.metadata.height || 0, // Default to 0 if undefined
-        length: item.metadata.length || 0, // Default to 0 if undefined
-      };
-    }
-
-    return {
-      weight: item.weight || 0, // Default to 0 if undefined
-      description: item.description || '',
-      ldm: item.ldm,
-      metadata,
+  // Handle addresses only if they exist in formData
+  if (loadingAddress) {
+    payload.loadingAddress = {
+      name: loadingAddress.name || '',
+      postalCodeId: loadingAddress.postalCodeId?.value || '',
     };
-  });
+  }
 
-  // Return the transformed payload
-  return {
-    cargoReference: cargoReference || '',
-    orderNumber,
-    dispatcherId,
-    driverId,
-    vehicleId,
-    clientId,
-    transportContractorId,
-    price: price || 0, // Default to 0 if undefined
-    cargo: transformedCargo,
-    loadingAddress: transformedLoadingAddress,
-    loadingReadyDate: loadingReadyDate || '',
-    loadingDate: loadingDate || '',
-    loadingDescription: loadingDescription || '',
-    unloadingAddress: transformedUnloadingAddress,
-    unloadingDate: unloadingDate || '',
-    unloadingDueDate: unloadingDueDate || '',
-    unloadingDescription: unloadingDescription || '',
-    parentShipmentId: '', // Assuming this is not provided in the form
-  };
+  if (unloadingAddress) {
+    payload.unloadingAddress = {
+      name: unloadingAddress.name || '',
+      postalCodeId: unloadingAddress.postalCodeId?.value || '',
+    };
+  }
+
+  // Handle dates and descriptions only if they exist in formData
+  if ('loadingReadyDate' in formData) payload.loadingReadyDate = loadingReadyDate || '';
+  if ('loadingDate' in formData) payload.loadingDate = loadingDate || '';
+  if ('loadingDescription' in formData) payload.loadingDescription = loadingDescription || '';
+  if ('unloadingDate' in formData) payload.unloadingDate = unloadingDate || '';
+  if ('unloadingDueDate' in formData) payload.unloadingDueDate = unloadingDueDate || '';
+  if ('unloadingDescription' in formData) payload.unloadingDescription = unloadingDescription || '';
+
+  // Handle cargo only if it exists in formData
+  if (cargo) {
+    payload.cargo = cargo.map((item) => {
+      const result: any = {
+        weight: item.weight || 0,
+        ldm: item.ldm,
+      };
+
+      if ('description' in item) {
+        result.description = item.description || '';
+      }
+
+      if (item.metadata) {
+        const { type } = item.metadata;
+        if (type === 'standard') {
+          result.metadata = {
+            type,
+            ...(item.metadata.palleteType && { palleteType: item.metadata.palleteType }),
+            ...(item.metadata.palleteAmount && { palleteAmount: item.metadata.palleteAmount }),
+          };
+        } else if (type === 'nonstandard') {
+          result.metadata = {
+            type,
+            ...(item.metadata.width && { width: item.metadata.width }),
+            ...(item.metadata.height && { height: item.metadata.height }),
+            ...(item.metadata.length && { length: item.metadata.length }),
+          };
+        }
+      }
+
+      return result;
+    });
+  }
+
+  return payload as Omit<CreateShipmentData, 'id'>;
 };

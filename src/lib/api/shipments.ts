@@ -15,7 +15,7 @@ export async function getShipment(id: string) {
 }
 
 export async function updateShipment(id: string, data: Partial<CreateShipmentData>) {
-  return backend.put<Shipment>(`/api/shipments/${id}`, data);
+  return backend.patch<Shipment>(`/api/shipments/${id}`, data);
 }
 
 export async function deleteShipment(id: string) {

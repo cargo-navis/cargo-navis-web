@@ -38,11 +38,17 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
   });
 
   const { handleSubmit, formState } = formMethods;
-  const { isDirty, isValid, isLoading, isSubmitting } = formState;
+  const { isDirty, isValid, isLoading, isSubmitting, dirtyFields } = formState;
 
   async function handleFormSubmit(data: ShipmentFields) {
-    const payload = transformFormDataToPayload(data);
-    console.log(payload);
+    const dirtyData = Object.keys(data).reduce((acc, key) => {
+      if (dirtyFields[key]) {
+        acc[key] = data[key];
+      }
+      return acc;
+    }, {} as ShipmentFields);
+
+    const payload = transformFormDataToPayload(dirtyData);
 
     try {
       if (isEdit && shipment) {
