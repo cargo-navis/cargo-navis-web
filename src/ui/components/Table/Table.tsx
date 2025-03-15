@@ -1,15 +1,17 @@
 'use client';
 
 import { flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import clsx from 'clsx';
 
 import { Box } from '@/ui';
 
 interface TableProps {
   data: any;
   columns: any;
+  onRowClick?: (row: any) => void;
 }
 
-export const Table: React.FC<TableProps> = ({ data, columns }) => {
+export const Table: React.FC<TableProps> = ({ data, columns, onRowClick }) => {
   const table = useReactTable({
     data,
     columns,
@@ -39,8 +41,12 @@ export const Table: React.FC<TableProps> = ({ data, columns }) => {
         {table.getRowModel().rows.map((row) => (
           <Box
             as="tr"
-            className="group/row hover:bg-black-alpha-05 dark:hover:bg-white-alpha-10 rounded-m border-b border-b-black-alpha-05 last:border-b-0"
+            className={clsx(
+              'group/row hover:bg-black-alpha-05 dark:hover:bg-white-alpha-10 rounded-m border-b border-b-black-alpha-05 last:border-b-0',
+              onRowClick && 'cursor-pointer'
+            )}
             key={row.id}
+            onClick={() => onRowClick?.(row.original)}
           >
             {row.getVisibleCells().map((cell) => (
               <Box as="td" className="group/cell" key={cell.id}>

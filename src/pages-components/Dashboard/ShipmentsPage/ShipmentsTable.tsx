@@ -1,4 +1,5 @@
 import { createColumnHelper } from '@tanstack/react-table';
+import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 
 import { Employee, PositionEnum, type Shipment } from '@/lib/api';
@@ -9,6 +10,7 @@ import { FlexLayout, Table, Text } from '@/ui';
 const columnHelper = createColumnHelper<Shipment>();
 
 export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
+  const router = useRouter();
   const { data: clients = [] } = useClients();
   const { data: contractors = [] } = useContractors();
   const { data: tenant } = useCurrentTenant();
@@ -23,7 +25,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: 'Broj naloga',
         size: 140,
         cell: (info) => (
-          <FlexLayout className="items-center py-2">
+          <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
             <Text>{info.getValue()}</Text>
           </FlexLayout>
         ),
@@ -34,7 +36,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const clientId = info.getValue();
           const client = clients.find((client) => client.id === clientId);
           return (
-            <FlexLayout className="items-center py-2">
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
               <Text>{client ? client.name : '—'}</Text>
             </FlexLayout>
           );
@@ -45,9 +47,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (info) => {
           const contractorId = info.getValue();
           const contractor = contractorId ? contractors.find((contractor) => contractor.id === contractorId) : tenant;
-
           return (
-            <FlexLayout className="items-center py-2">
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
               <Text>{contractor ? contractor.name : '—'}</Text>
             </FlexLayout>
           );
@@ -56,7 +57,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       columnHelper.accessor('price', {
         header: 'Cijena',
         cell: (info) => (
-          <FlexLayout className="items-center py-2">
+          <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
             <Text>{info.getValue()}€</Text>
           </FlexLayout>
         ),
@@ -64,7 +65,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       columnHelper.accessor('loadingDate', {
         header: 'Datum utovara',
         cell: (info) => (
-          <FlexLayout className="items-center py-2">
+          <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
             <Text>{getDataPointDateString(info.getValue())}</Text>
           </FlexLayout>
         ),
@@ -72,7 +73,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       columnHelper.accessor('unloadingDate', {
         header: 'Datum istovara',
         cell: (info) => (
-          <FlexLayout className="items-center py-2">
+          <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
             <Text>{getDataPointDateString(info.getValue())}</Text>
           </FlexLayout>
         ),
@@ -84,9 +85,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (props) => {
           const { cargo } = props.row.original;
           const ldmTotal = cargo.reduce((acc, c) => (acc += c.ldm), 0);
-
           return (
-            <FlexLayout className="items-center py-2">
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
               <Text>{ldmTotal || '—'}</Text>
             </FlexLayout>
           );
@@ -98,9 +98,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (props) => {
           const { cargo } = props.row.original;
           const palleteNo = cargo.reduce((acc, c) => (acc += c.metadata?.palleteAmount), 0);
-
           return (
-            <FlexLayout className="items-center py-2">
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
               <Text>{palleteNo || '—'}</Text>
             </FlexLayout>
           );
@@ -112,9 +111,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (props) => {
           const { cargo } = props.row.original;
           const weight = cargo.reduce((acc, c) => (acc += c.weight), 0);
-
           return (
-            <FlexLayout className="items-center py-2">
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
               <Text>{weight ? `${weight} kg` : '—'}</Text>
             </FlexLayout>
           );
@@ -125,12 +123,9 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (info) => {
           const vehicleId = info.getValue();
           const vehicle = vehicles.find((v) => v.id === vehicleId);
-          console.log(vehicle);
-
           const displayValue = vehicle ? `${vehicle?.registration} (${vehicle?.brand})` : '—';
-
           return (
-            <FlexLayout className="items-center py-2">
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
               <Text>{displayValue}</Text>
             </FlexLayout>
           );
@@ -142,9 +137,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const driverId = info.getValue();
           const employee = employees.find((employee) => employee.id === driverId);
           const fullName = employee ? `${employee.firstName || ''} ${employee.lastName || ''}`.trim() : '—';
-
           return (
-            <FlexLayout className="items-center py-2">
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
               <Text>{fullName || '—'}</Text>
             </FlexLayout>
           );
@@ -153,5 +147,9 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
     ];
   }, [clients, contractors, employees, tenant, vehicles]);
 
-  return <Table columns={columns} data={shipments} />;
+  const handleRowClick = (shipment: Shipment) => {
+    router.push(`/dashboard/shipments/${shipment.id}`);
+  };
+
+  return <Table columns={columns} data={shipments} onRowClick={handleRowClick} />;
 }
