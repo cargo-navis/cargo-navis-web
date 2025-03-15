@@ -1,6 +1,6 @@
 import type { CreateShipmentData, LoadingAddress, Shipment } from '@/lib/api';
 import { getPostalCode } from '@/lib/api/postalCodes';
-import { PalleteType } from '@/lib/utils/pallete';
+import { PalleteType } from '@/lib/utils/palletes';
 
 import type { Cargo, CargoType, ShipmentFields } from './types.d';
 

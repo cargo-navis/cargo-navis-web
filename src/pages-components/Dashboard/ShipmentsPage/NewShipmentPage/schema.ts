@@ -1,6 +1,6 @@
 import * as Yup from 'yup';
 
-import { PalleteType } from '@/lib/utils/pallete';
+import { PalleteType } from '@/lib/utils/palletes';
 
 import type { CargoType } from './types.d';
 

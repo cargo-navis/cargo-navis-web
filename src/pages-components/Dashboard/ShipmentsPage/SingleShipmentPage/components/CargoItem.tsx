@@ -1,4 +1,4 @@
-import { palleteNameMap } from '@/lib/utils/pallete';
+import { palleteNameMap } from '@/lib/utils/palletes';
 import { FlexLayout, Text } from '@/ui';
 
 import type { CargoWithMetadata } from './types';

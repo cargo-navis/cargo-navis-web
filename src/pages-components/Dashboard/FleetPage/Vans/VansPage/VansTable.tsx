@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 
 import { VehicleAlertTooltip } from '@/components/alerts/VehicleAlertTooltip';
-import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles.d';
+import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles';
 import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
 
 const columnHelper = createColumnHelper<Vehicle>();

@@ -1,9 +1,4 @@
-export enum VehicleEnum {
-  TRUCK = 'TRUCK',
-  TRAILER = 'TRAILER',
-  SOLO_TRUCK = 'SOLO_TRUCK',
-  VAN = 'VAN',
-}
+import { VehicleEnum } from './vehicles';
 
 export interface Vehicle {
   id: string;

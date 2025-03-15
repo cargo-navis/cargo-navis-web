@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 
-import { vehicleTypeToPathMap } from '@/components/AlertMenu/utils';
 import type { VehicleEnum } from '@/lib/api';
 import { useDeleteVehicle } from '@/lib/hooks';
+import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { Box, Button } from '@/ui';
 
 export const VehicleActions: React.FC<{ id: string; type: VehicleEnum }> = ({ id, type }) => {

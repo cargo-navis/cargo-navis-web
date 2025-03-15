@@ -3,7 +3,7 @@ import { useFormContext } from 'react-hook-form';
 
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { FormTextarea } from '@/lib/components/form/FormTextarea';
-import { palleteOptions, palleteValues } from '@/lib/utils/pallete';
+import { palleteOptions, palleteValues } from '@/lib/utils/palletes';
 import { Box, Button, FlexLayout, Icon, Text } from '@/ui';
 
 interface CargoFieldProps {

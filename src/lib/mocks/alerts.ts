@@ -1,6 +1,6 @@
 import { type Alert, AlertType } from '@/lib/api/alerts.d';
 import { GenderEnum, PositionEnum } from '@/lib/api/employees.d';
-import { VehicleEnum } from '@/lib/api/vehicles.d';
+import { VehicleEnum } from '@/lib/api/vehicles';
 
 export const alerts: Alert[] = [
   {
