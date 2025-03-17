@@ -5,6 +5,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Shipment } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useClient, useContractor, useCurrentTenant, useEmployee, useShipment, useVehicle } from '@/lib/hooks';
+import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, Divider, FlexLayout, Text } from '@/ui';
 
@@ -135,7 +136,9 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                       </Text>
                       <Link
                         className="hover:text-teal-500 transition-colors"
-                        href={vehicle?.id ? `/dashboard/vehicles/${vehicle?.type}/${vehicle?.id}` : '#'}
+                        href={
+                          vehicle?.id ? `/dashboard/fleet/${vehicleTypeToPathMap[vehicle?.type]}/${vehicle?.id}` : '#'
+                        }
                       >
                         <Text variant="text-l">{vehicle ? `${vehicle?.registration} (${vehicle?.brand})` : '-'}</Text>
                       </Link>
