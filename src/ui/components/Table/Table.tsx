@@ -13,18 +13,14 @@ interface TableProps {
 }
 
 export const Table: React.FC<TableProps> = ({ data, columns, onRowClick }) => {
-  const [sorting, setSorting] = useState([{ id: 'createdAt', desc: true }]);
+  const [sorting, setSorting] = useState([]);
   const table = useReactTable({
     data,
     columns,
     state: { sorting },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    onSortingChange: setSorting,
-    sortingFns: {
-      createdAt: (_rowA, _rowB) =>
-        new Date(_rowA.original.createdAt).getTime() - new Date(_rowB.original.createdAt).getTime(),
-    },
+    onSortingChange: (updater) => setSorting(updater as any),
   });
 
   return (
