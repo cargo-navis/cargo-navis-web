@@ -50,7 +50,9 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         enableSorting: false,
         cell: (info) => {
           const contractorId = info.getValue();
-          const contractor = contractorId ? contractors.find((contractor) => contractor.id === contractorId) : tenant;
+          const contractor =
+            (contractorId && contractors.find((contractor) => contractor.id === contractorId)) || tenant;
+
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
               <Text>{contractor ? contractor.name : '—'}</Text>
