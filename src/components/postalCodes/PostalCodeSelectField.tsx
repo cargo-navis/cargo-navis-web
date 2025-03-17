@@ -13,9 +13,7 @@ function mapPostalCodes(postalCodes: PostalCode[]) {
 }
 
 const promisedOptions = async (inputValue: string, countryCode: string) => {
-  if (inputValue?.length < 3 || !countryCode) {
-    return [];
-  }
+  if (!countryCode) return [];
 
   const res = await searchPostalCodes(inputValue, countryCode);
   return mapPostalCodes(res);

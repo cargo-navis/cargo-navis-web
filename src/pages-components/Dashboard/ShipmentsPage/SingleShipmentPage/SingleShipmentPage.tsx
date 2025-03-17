@@ -2,9 +2,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import type { LoadingAddress, Shipment } from '@/lib/api';
+import type { Shipment } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
-import { useClient, useContractor, useEmployee, useShipment, useVehicle } from '@/lib/hooks';
+import { useClient, useContractor, useCurrentTenant, useEmployee, useShipment, useVehicle } from '@/lib/hooks';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, Divider, FlexLayout, Text } from '@/ui';
 
@@ -35,11 +35,20 @@ export const SingleShipmentPage = () => {
 };
 
 const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
+  const { data: tenant } = useCurrentTenant();
   const { data: contractor } = useContractor(shipment.transportContractorId || '');
   const { data: client } = useClient(shipment.clientId || '');
   const { data: driver } = useEmployee(shipment.driverId || '');
   const { data: vehicle } = useVehicle(shipment.vehicleId || '');
   const { data: dispatcher } = useEmployee(shipment.dispatcherId || '');
+
+  let transporter: any = contractor;
+
+  if (!contractor && shipment.transportContractorId === tenant.id) {
+    transporter = tenant;
+  }
+
+  const transporterHref = contractor ? `/dashboard/contractors/${contractor?.id}` : `/dashboard/tenant`;
 
   return (
     <FlexLayout className="py-5 flex-col gap-5">
@@ -76,11 +85,8 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     <Text color="text-color-3" variant="text-s-medium">
                       Prijevoznik
                     </Text>
-                    <Link
-                      className="hover:text-teal-500 transition-colors"
-                      href={contractor?.id ? `/dashboard/contractors/${contractor?.id}` : '#'}
-                    >
-                      <Text variant="text-l">{contractor?.name || '-'}</Text>
+                    <Link className="hover:text-teal-500 transition-colors" href={transporterHref || '#'}>
+                      <Text variant="text-l">{transporter?.name || '-'}</Text>
                     </Link>
                   </FlexLayout>
                 </Box>
@@ -163,7 +169,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     <Text color="text-color-3" variant="text-s-medium">
                       Detalji utovara
                     </Text>
-                    <AddressItem address={shipment.loadingAddressName as LoadingAddress} />
+                    <AddressItem address={shipment.loadingAddress} />
                     <DateItem date={shipment.loadingDate} label="Datum utovara" />
                     <DateItem date={shipment.loadingReadyDate} label="Datum spremnosti za utovar" />
                     <DescriptionItem description={shipment.loadingDescription} label="Opis utovara:" />
@@ -172,7 +178,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     <Text color="text-color-3" variant="text-s-medium">
                       Detalji istovara
                     </Text>
-                    <AddressItem address={shipment.unloadingAddressName as LoadingAddress} />
+                    <AddressItem address={shipment.unloadingAddress} />
                     <DateItem date={shipment.unloadingDate} label="Datum istovara" />
                     <DateItem date={shipment.unloadingDueDate} label="Krajnji rok istovara" />
                     <DescriptionItem description={shipment.unloadingDescription} label="Opis istovara:" />

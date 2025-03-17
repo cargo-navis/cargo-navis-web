@@ -50,19 +50,6 @@ export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Ten
     let loadingPostalCode = {};
     let unloadingPostalCode = {};
 
-    // TODO - remove when BE is fixed
-    const loadingAddress = shipment.loadingAddressName;
-    const unloadingAddress = shipment.unloadingAddressName;
-
-    if (loadingAddress) {
-      shipment.loadingAddress = loadingAddress;
-    }
-
-    if (unloadingAddress) {
-      shipment.unloadingAddress = unloadingAddress;
-    }
-    // TODO ---
-
     if (shipment.loadingAddress?.id) {
       try {
         const postalCodeData = await getPostalCode(shipment.loadingAddress.id);

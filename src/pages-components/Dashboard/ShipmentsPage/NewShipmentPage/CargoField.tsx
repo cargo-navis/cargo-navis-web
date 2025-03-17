@@ -24,7 +24,7 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
   const removeCargo = () => {
     const currentCargo = getValues('cargo');
     const updatedCargo = currentCargo.filter((_: any, i: number) => i !== index);
-    setValue('cargo', updatedCargo);
+    setValue('cargo', updatedCargo, { shouldDirty: true });
   };
 
   return (
