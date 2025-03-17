@@ -7,7 +7,8 @@ export async function createShipment(data: CreateShipmentData) {
 }
 
 export async function getShipments() {
-  return backend.get<Shipment[]>('/api/shipments');
+  const shipments = await backend.get<Shipment[]>('/api/shipments');
+  return shipments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 }
 
 export async function getShipment(id: string) {
