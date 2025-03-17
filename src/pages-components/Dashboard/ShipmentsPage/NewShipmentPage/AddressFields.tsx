@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
@@ -6,9 +7,28 @@ import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePa
 import { FlexLayout, Text, VerticalDivider } from '@/ui';
 
 export const AddressFields = () => {
-  const { watch } = useFormContext();
+  const { watch, setValue } = useFormContext();
   const loadingCountryCode = watch('loadingAddress.countryCode');
   const unloadingCountryCode = watch('unloadingAddress.countryCode');
+
+  const isInitialMountLoading = useRef(true);
+  const isInitialMountUnloading = useRef(true);
+
+  useEffect(() => {
+    if (isInitialMountLoading.current) {
+      isInitialMountLoading.current = false;
+      return;
+    }
+    setValue('loadingAddress.postalCodeId', null, { shouldDirty: true });
+  }, [loadingCountryCode, setValue]);
+
+  useEffect(() => {
+    if (isInitialMountUnloading.current) {
+      isInitialMountUnloading.current = false;
+      return;
+    }
+    setValue('unloadingAddress.postalCodeId', null, { shouldDirty: true });
+  }, [unloadingCountryCode, setValue]);
 
   return (
     <FlexLayout as="fieldset" className="flex-col gap-8">
