@@ -44,7 +44,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
 
   let transporter: any = contractor;
 
-  if (!contractor && shipment.transportContractorId === tenant.id) {
+  if (!contractor && shipment.transportContractorId === tenant?.id) {
     transporter = tenant;
   }
 
