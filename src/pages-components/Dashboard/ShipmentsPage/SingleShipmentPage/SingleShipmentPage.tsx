@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import type { LoadingAddress, Shipment } from '@/lib/api';
+import type { Shipment } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useClient, useContractor, useEmployee, useShipment, useVehicle } from '@/lib/hooks';
 import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
@@ -163,7 +163,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     <Text color="text-color-3" variant="text-s-medium">
                       Detalji utovara
                     </Text>
-                    <AddressItem address={shipment.loadingAddressName as LoadingAddress} />
+                    <AddressItem address={shipment.loadingAddress} />
                     <DateItem date={shipment.loadingDate} label="Datum utovara" />
                     <DateItem date={shipment.loadingReadyDate} label="Datum spremnosti za utovar" />
                     <DescriptionItem description={shipment.loadingDescription} label="Opis utovara:" />
@@ -172,7 +172,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     <Text color="text-color-3" variant="text-s-medium">
                       Detalji istovara
                     </Text>
-                    <AddressItem address={shipment.unloadingAddressName as LoadingAddress} />
+                    <AddressItem address={shipment.unloadingAddress} />
                     <DateItem date={shipment.unloadingDate} label="Datum istovara" />
                     <DateItem date={shipment.unloadingDueDate} label="Krajnji rok istovara" />
                     <DescriptionItem description={shipment.unloadingDescription} label="Opis istovara:" />
