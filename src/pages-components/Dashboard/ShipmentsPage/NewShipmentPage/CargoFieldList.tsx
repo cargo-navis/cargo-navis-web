@@ -20,7 +20,7 @@ export const CargoFieldList = () => {
         text="Dodaj teret"
         type="button"
         variant="secondary"
-        onClick={() => setValue('cargo', [...cargo, defaultCargo])}
+        onClick={() => setValue('cargo', [...cargo, defaultCargo], { shouldDirty: true })}
       />
     </FlexLayout>
   );
