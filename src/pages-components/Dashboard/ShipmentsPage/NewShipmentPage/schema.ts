@@ -52,11 +52,14 @@ export const shipmentSchema = Yup.object().shape({
         metadata: Yup.object()
           .shape({
             type: Yup.string().oneOf<CargoType>(['standard', 'nonstandard']).required('Tip tereta je obavezan'),
-            width: Yup.number().optional(),
-            height: Yup.number().optional(),
-            length: Yup.number().optional(),
+            width: Yup.number().typeError('Širina je obavezna').optional(),
+            height: Yup.number().typeError('Visina je obavezna').optional(),
+            length: Yup.number().typeError('Duljina je obavezna').optional(),
             palleteType: Yup.mixed<PalleteType>().oneOf(Object.values(PalleteType)).optional(),
-            palleteAmount: Yup.number().min(1, 'Količina paleta mora biti najmanje 1').optional(),
+            palleteAmount: Yup.number()
+              .typeError('Količina paleta je obavezna')
+              .min(1, 'Količina paleta mora biti najmanje 1')
+              .optional(),
           })
           .required('Podaci tereta su obavezni'),
       })
