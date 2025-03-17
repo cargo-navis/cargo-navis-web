@@ -2,7 +2,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 
-import { Employee, PositionEnum, type Shipment } from '@/lib/api';
+import { type Shipment } from '@/lib/api';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
@@ -16,9 +16,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
   const { data: contractors = [] } = useContractors();
   const { data: tenant } = useCurrentTenant();
   const { data: vehicles = [] } = useVehicles();
-  const { data: employees = [] } = useEmployees({
-    select: (employees: Employee[]) => employees.filter((employee) => employee.position === PositionEnum.Driver),
-  });
+  const { data: employees = [] } = useEmployees();
 
   const columns = useMemo(() => {
     return [
@@ -162,6 +160,22 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (info) => {
           const driverId = info.getValue();
           const employee = employees.find((employee) => employee.id === driverId);
+          const fullName = employee ? `${employee.firstName || ''} ${employee.lastName || ''}`.trim() : '—';
+          return (
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+              <Text>{fullName || '—'}</Text>
+            </FlexLayout>
+          );
+        },
+      }),
+      columnHelper.accessor('dispatcherId', {
+        header: 'Disponent',
+        enableSorting: false,
+        cell: (info) => {
+          const dispatcherId = info.getValue();
+          const employee = employees.find((employee) => employee.id === dispatcherId);
+          console.log(dispatcherId);
+
           const fullName = employee ? `${employee.firstName || ''} ${employee.lastName || ''}`.trim() : '—';
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
