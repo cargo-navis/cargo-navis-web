@@ -20,6 +20,7 @@ export interface Shipment {
   unloadingDueDate: string;
   unloadingDescription: string;
   parentShipmentId: string;
+  createdAt: string;
 }
 
 export type CreateShipmentData = Omit<Shipment, 'id'>;

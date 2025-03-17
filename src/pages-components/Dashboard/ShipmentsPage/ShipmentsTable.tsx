@@ -174,7 +174,6 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (info) => {
           const dispatcherId = info.getValue();
           const employee = employees.find((employee) => employee.id === dispatcherId);
-          console.log(dispatcherId);
 
           const fullName = employee ? `${employee.firstName || ''} ${employee.lastName || ''}`.trim() : '—';
           return (
