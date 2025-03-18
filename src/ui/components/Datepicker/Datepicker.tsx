@@ -21,7 +21,7 @@ export const Datepicker: React.FC<DatepickerProps> = ({ isDisabled = false, isCl
   return (
     <DatesProvider settings={{ firstDayOfWeek: 1, weekendDays: [0] }}>
       <DateInput
-        className="bg-transparent"
+        className="bg-transparent isolate"
         classNames={classnames}
         clearable
         dateParser={(dt) => {

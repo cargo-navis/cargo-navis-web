@@ -31,6 +31,7 @@ export const TextInput: React.FC<TextInputProps> = ({
         'border-[2px] rounded-s border-dark-300 dark:border-light-800',
         'hover:border-dark-500 hover:dark:border-light-700',
         'focus-within:!border-teal-600 dark:focus-within:!border-teal-800',
+        'isolate',
         iconLeft && 'pl-6 pr-3',
         isDisabled && 'opacity-50 pointer-events-none'
       )}
