@@ -22,3 +22,7 @@ export async function updateShipment(id: string, data: Partial<CreateShipmentDat
 export async function deleteShipment(id: string) {
   return backend.delete<void>(`/api/shipments/${id}`);
 }
+
+export async function getOrderNumber() {
+  return backend.get<string>('api/shipments/next-order-number');
+}

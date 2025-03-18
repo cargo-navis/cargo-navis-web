@@ -1,4 +1,4 @@
-import type { CreateShipmentData, Shipment } from '@/lib/api';
+import { type CreateShipmentData, getOrderNumber, type Shipment } from '@/lib/api';
 import { getPostalCode } from '@/lib/api/postalCodes';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { PalleteType } from '@/lib/utils/palletes';
@@ -43,9 +43,12 @@ export const formDefaultValues: ShipmentFields = {
 };
 
 export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Tenant) => {
-  if (!shipment) return { ...formDefaultValues, transportContractorId: tenant.id };
-
   return async () => {
+    if (!shipment) {
+      const orderNumber = await getOrderNumber();
+      return { ...formDefaultValues, orderNumber, transportContractorId: tenant.id };
+    }
+
     // Fetch postal code data if needed
     let loadingPostalCode = {};
     let unloadingPostalCode = {};
