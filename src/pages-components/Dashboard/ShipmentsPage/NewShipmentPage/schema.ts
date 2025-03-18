@@ -46,9 +46,9 @@ export const shipmentSchema = Yup.object().shape({
   cargo: Yup.array()
     .of(
       Yup.object().shape({
-        weight: Yup.number().required(),
+        weight: Yup.number().typeError('Težina je obavezna').required(),
         description: Yup.string().optional(),
-        ldm: Yup.number().required(),
+        ldm: Yup.number().typeError('LDM je obavezan').required(),
         metadata: Yup.object()
           .shape({
             type: Yup.string().oneOf<CargoType>(['standard', 'nonstandard']).required('Tip tereta je obavezan'),
