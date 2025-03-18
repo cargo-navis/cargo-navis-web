@@ -17,7 +17,7 @@ export const defaultCargo: Cargo = {
 };
 
 export const formDefaultValues: ShipmentFields = {
-  orderNumber: '2025/24', // TODO - generate incrementally
+  orderNumber: '',
   cargoReference: '',
   transportContractorId: '',
   clientId: '',
