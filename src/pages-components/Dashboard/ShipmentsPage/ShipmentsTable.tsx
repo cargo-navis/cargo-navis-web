@@ -118,7 +118,12 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: 'Broj paleta',
         cell: (props) => {
           const { cargo } = props.row.original;
-          const palleteNo = cargo.reduce((acc, c) => (acc += c.metadata?.palleteAmount), 0);
+          const palleteNo = cargo.reduce((acc, c) => {
+            // For nonstandard cargo, we assume 1 palette per cargo
+            const palleteAmount = c.metadata?.palleteAmount || 1;
+            return (acc += palleteAmount);
+          }, 0);
+
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
               <Text>{palleteNo || '—'}</Text>
