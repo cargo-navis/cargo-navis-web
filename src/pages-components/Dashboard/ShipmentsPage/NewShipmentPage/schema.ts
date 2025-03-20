@@ -42,7 +42,11 @@ export const shipmentSchema = Yup.object().shape({
   unloadingDate: Yup.string().optional(),
   unloadingDueDate: Yup.string().optional(),
   unloadingDescription: Yup.string().optional(),
-  price: Yup.number().min(0, 'Cijena mora biti najmanje 0').optional(),
+  price: Yup.number()
+    .typeError('Cijena mora biti pozitivan broj')
+    .min(0, 'Cijena mora biti najmanje 0')
+    .positive('Mora biti pozitivan broj')
+    .optional(),
   cargo: Yup.array()
     .of(
       Yup.object().shape({
