@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
@@ -110,12 +110,20 @@ const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => {
   const { watch, setValue } = useFormContext();
   const length = watch(`cargo.${index}.metadata.length`);
   const width = watch(`cargo.${index}.metadata.width`);
+  const isInitialMount = useRef(true);
 
   const ldmValue = length && width ? roundLdmValue((length * width) / 2.4) : 0;
 
   useEffect(() => {
-    setValue(`cargo.${index}.ldm`, ldmValue);
-  }, [ldmValue, setValue, index]);
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    if (length && width) {
+      setValue(`cargo.${index}.ldm`, ldmValue);
+    }
+  }, [length, width, ldmValue, setValue, index]);
 
   return (
     <FlexLayout className="gap-4 flex-col">

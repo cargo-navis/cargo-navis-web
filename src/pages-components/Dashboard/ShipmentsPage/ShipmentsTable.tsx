@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { type Shipment } from '@/lib/api';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
-import { getDataPointDateString } from '@/lib/utils/date';
+import { formatDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
 import { FlexLayout, Table, Text } from '@/ui';
 
@@ -78,7 +78,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         },
         cell: (info) => (
           <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-            <Text>{getDataPointDateString(info.getValue())}</Text>
+            <Text>{formatDateString(info.getValue(), 'DD.MM.YYYY')}</Text>
           </FlexLayout>
         ),
       }),
@@ -92,7 +92,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         },
         cell: (info) => (
           <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-            <Text>{getDataPointDateString(info.getValue())}</Text>
+            <Text>{formatDateString(info.getValue(), 'DD.MM.YYYY')}</Text>
           </FlexLayout>
         ),
       }),
@@ -118,7 +118,12 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: 'Broj paleta',
         cell: (props) => {
           const { cargo } = props.row.original;
-          const palleteNo = cargo.reduce((acc, c) => (acc += c.metadata?.palleteAmount), 0);
+          const palleteNo = cargo.reduce((acc, c) => {
+            // For nonstandard cargo, we assume 1 palette per cargo
+            const palleteAmount = c.metadata?.palleteAmount || 1;
+            return (acc += palleteAmount);
+          }, 0);
+
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
               <Text>{palleteNo || '—'}</Text>

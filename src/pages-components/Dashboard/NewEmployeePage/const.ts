@@ -289,7 +289,8 @@ const countryCodesEurope = [
   'SJ',
   'SK',
   'SM',
-  'UA',
+  'TR',
+  // 'UA',
   'VA',
 ];
 

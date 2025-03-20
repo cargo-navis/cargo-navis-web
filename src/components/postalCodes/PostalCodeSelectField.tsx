@@ -6,10 +6,15 @@ import { FormAsyncSelect, type FormAsyncSelectProps } from '@/lib/components/for
 import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
 
 function mapPostalCodes(postalCodes: PostalCode[]) {
-  return postalCodes.map((p) => ({
-    value: p.id,
-    label: `${p.postalCode}, ${p.city}, ${p.region}, ${getCountryFromCode(p.countryCode).name}`,
-  }));
+  return postalCodes.map((p) => {
+    let label: string = p.postalCode;
+
+    if (p.city) label += `, ${p.city}`;
+    if (p.region) label += `, ${p.region}`;
+    if (getCountryFromCode(p.countryCode).name) label += `, ${getCountryFromCode(p.countryCode).name}`;
+
+    return { value: p.id, label };
+  });
 }
 
 const promisedOptions = async (inputValue: string, countryCode: string) => {

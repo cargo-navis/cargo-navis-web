@@ -1,5 +1,5 @@
+import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, FlexLayout, Heading } from '@/ui';
 
 import { NewClientForm } from './NewClientForm';

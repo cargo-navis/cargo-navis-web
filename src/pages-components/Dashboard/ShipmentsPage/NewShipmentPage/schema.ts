@@ -12,6 +12,7 @@ export const shipmentSchema = Yup.object().shape({
   transportContractorId: Yup.string().optional(),
   driverId: Yup.string().optional(),
   vehicleId: Yup.string().optional(),
+  trailerId: Yup.string().optional(),
   loadingAddress: Yup.object()
     .shape({
       name: Yup.string().required('Adresa utovara je obavezna'),
@@ -42,19 +43,23 @@ export const shipmentSchema = Yup.object().shape({
   unloadingDate: Yup.string().optional(),
   unloadingDueDate: Yup.string().optional(),
   unloadingDescription: Yup.string().optional(),
-  price: Yup.number().min(0, 'Cijena mora biti najmanje 0').optional(),
+  price: Yup.number()
+    .typeError('Cijena mora biti pozitivan broj')
+    .min(0, 'Cijena mora biti najmanje 0')
+    .positive('Mora biti pozitivan broj')
+    .optional(),
   cargo: Yup.array()
     .of(
       Yup.object().shape({
-        weight: Yup.number().required(),
+        weight: Yup.number().typeError('Težina je obavezna').positive('Mora biti pozitivan broj').required(),
         description: Yup.string().optional(),
-        ldm: Yup.number().required(),
+        ldm: Yup.number().typeError('LDM je obavezan').positive('Mora biti pozitivan broj').required(),
         metadata: Yup.object()
           .shape({
             type: Yup.string().oneOf<CargoType>(['standard', 'nonstandard']).required('Tip tereta je obavezan'),
-            width: Yup.number().typeError('Širina je obavezna').optional(),
-            height: Yup.number().typeError('Visina je obavezna').optional(),
-            length: Yup.number().typeError('Duljina je obavezna').optional(),
+            width: Yup.number().typeError('Širina je obavezna').positive('Mora biti pozitivan broj').optional(),
+            height: Yup.number().typeError('Visina je obavezna').positive('Mora biti pozitivan broj').optional(),
+            length: Yup.number().typeError('Duljina je obavezna').positive('Mora biti pozitivan broj').optional(),
             palleteType: Yup.mixed<PalleteType>().oneOf(Object.values(PalleteType)).optional(),
             palleteAmount: Yup.number()
               .typeError('Količina paleta je obavezna')
