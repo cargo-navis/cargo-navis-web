@@ -1,6 +1,6 @@
+import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { VehicleEnum } from '@/lib/api';
-import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, FlexLayout, Heading } from '@/ui';
 
 import { NewVehicleForm } from '../../NewVehicleForm';

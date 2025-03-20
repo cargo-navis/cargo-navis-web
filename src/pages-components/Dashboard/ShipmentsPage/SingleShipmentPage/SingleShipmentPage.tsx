@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
+import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Shipment } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useClient, useContractor, useCurrentTenant, useEmployee, useShipment, useVehicle } from '@/lib/hooks';
 import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
-import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, Divider, FlexLayout, Text } from '@/ui';
 
 import { AddressItem } from './components/AddressItem';

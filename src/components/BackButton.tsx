@@ -25,3 +25,8 @@ export function BackButton({ targetLocation }: { targetLocation: string }) {
     </FlexLayout>
   );
 }
+
+// todo - ime firme utovara
+
+// Todo - fixat removanje tereta
+// todo - fixat editiranje naloga (http://localhost:3000/dashboard/shipments/c5202028-2064-4d67-841a-ffc77079c180/edit)

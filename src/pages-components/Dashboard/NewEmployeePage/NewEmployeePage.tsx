@@ -1,7 +1,7 @@
+import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Box, FlexLayout, Heading } from '@/ui';
 
-import { BackButton } from './BackButton';
 import { NewEmployeeForm } from './NewEmployeeForm';
 
 export const NewEmployeePage = () => {

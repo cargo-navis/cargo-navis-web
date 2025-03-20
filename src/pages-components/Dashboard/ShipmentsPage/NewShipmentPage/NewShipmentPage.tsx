@@ -1,7 +1,7 @@
+import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useCurrentTenant } from '@/lib/hooks';
-import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, FlexLayout, Heading } from '@/ui';
 
 import { NewShipmentForm } from './NewShipmentForm';

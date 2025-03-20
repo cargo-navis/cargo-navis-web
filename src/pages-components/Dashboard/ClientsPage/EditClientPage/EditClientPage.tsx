@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router';
 
+import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Client } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useClient } from '@/lib/hooks';
 import { NewClientForm } from '@/pages-components/Dashboard/ClientsPage/NewClientPage/NewClientForm';
-import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { Box, FlexLayout, Heading } from '@/ui';
 
 export const EditClientPage = () => {

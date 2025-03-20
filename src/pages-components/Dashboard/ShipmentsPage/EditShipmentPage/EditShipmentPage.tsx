@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router';
 
+import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Shipment } from '@/lib/api';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useCurrentTenant, useShipment } from '@/lib/hooks';
-import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
 import { NewShipmentForm } from '@/pages-components/Dashboard/ShipmentsPage/NewShipmentPage/NewShipmentForm';
 import { Box, FlexLayout, Heading } from '@/ui';
 

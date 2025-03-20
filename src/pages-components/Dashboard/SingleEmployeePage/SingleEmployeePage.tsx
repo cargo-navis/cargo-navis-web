@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 
+import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Employee } from '@/lib/api/employees.d';
 import { LoadingPage } from '@/lib/components/LoadingPage';
@@ -9,7 +10,6 @@ import { DriverInfo } from '@/pages-components/Dashboard/SingleEmployeePage/Driv
 import { Box, DisplayIf, FlexLayout, Text } from '@/ui';
 
 import { OccupationPill } from '../EmployeesPage/OccupationPill';
-import { BackButton } from '../NewEmployeePage/BackButton';
 import { ContactInfo } from './ContactInfo';
 import { EmployeeActions } from './EmployeeActions';
 
