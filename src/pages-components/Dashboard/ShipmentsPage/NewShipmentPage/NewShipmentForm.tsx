@@ -15,6 +15,7 @@ import { ContractorField } from './ContractorField';
 import { DispatcherField } from './DispatcherField';
 import { DriverField } from './DriverField';
 import { shipmentSchema } from './schema';
+import { TrailerField } from './TrailerField';
 import type { ShipmentFields } from './types';
 import { getFormDefaultValues, transformFormDataToPayload } from './utils';
 import { VehicleField } from './VehicleField';
@@ -102,12 +103,15 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
                     />
                   </Box>
                 </FlexLayout>
+                <Box className="flex-1">
+                  <DriverField />
+                </Box>
                 <FlexLayout className="gap-4">
                   <Box className="flex-1">
-                    <DriverField />
+                    <VehicleField />
                   </Box>
                   <Box className="flex-1">
-                    <VehicleField />
+                    <TrailerField />
                   </Box>
                 </FlexLayout>
                 <Box className="flex-1">
