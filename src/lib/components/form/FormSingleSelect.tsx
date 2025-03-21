@@ -24,7 +24,11 @@ export const FormSingleSelect: React.FC<FormSingleSelectProps> = (props) => {
       isDisabled={isSubmitting || isDisabled}
       value={value}
       onBlur={onBlur}
-      onChange={onChange}
+      onChange={(newValue) => {
+        // When the clear button is clicked, react-select will pass null
+        // We need to explicitly pass null/empty value to prevent it from resetting to default
+        onChange(newValue === undefined ? '' : newValue);
+      }}
     />
   );
 };

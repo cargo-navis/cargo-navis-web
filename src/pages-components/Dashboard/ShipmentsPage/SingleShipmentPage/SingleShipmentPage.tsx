@@ -9,7 +9,7 @@ import { useClient, useContractor, useCurrentTenant, useEmployee, useShipment, u
 import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { Box, Divider, FlexLayout, Text } from '@/ui';
 
-import { AddressItem } from './components/AddressItem';
+import { AddressDetailsItem } from './components/AddressDetailsItem';
 import { CargoItem } from './components/CargoItem';
 import { DateItem } from './components/DateItem';
 import { DescriptionItem } from './components/DescriptionItem';
@@ -41,6 +41,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
   const { data: client } = useClient(shipment.clientId || '');
   const { data: driver } = useEmployee(shipment.driverId || '');
   const { data: vehicle } = useVehicle(shipment.vehicleId || '');
+  const { data: trailer } = useVehicle(shipment.trailerId || '');
   const { data: dispatcher } = useEmployee(shipment.dispatcherId || '');
 
   let transporter: any = contractor;
@@ -115,20 +116,18 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     </FlexLayout>
                   </Box>
                 </FlexLayout>
+                <FlexLayout className="flex-col">
+                  <Text color="text-color-3" variant="text-s-medium">
+                    Vozač
+                  </Text>
+                  <Link
+                    className="hover:text-teal-500 transition-colors"
+                    href={driver?.id ? `/dashboard/employees/${driver?.id}` : '#'}
+                  >
+                    <Text variant="text-l">{driver ? `${driver.firstName} ${driver.lastName}` : '-'}</Text>
+                  </Link>
+                </FlexLayout>
                 <FlexLayout className="gap-4">
-                  <Box className="flex-1">
-                    <FlexLayout className="flex-col">
-                      <Text color="text-color-3" variant="text-s-medium">
-                        Vozač
-                      </Text>
-                      <Link
-                        className="hover:text-teal-500 transition-colors"
-                        href={driver?.id ? `/dashboard/employees/${driver?.id}` : '#'}
-                      >
-                        <Text variant="text-l">{driver ? `${driver.firstName} ${driver.lastName}` : '-'}</Text>
-                      </Link>
-                    </FlexLayout>
-                  </Box>
                   <Box className="flex-1">
                     <FlexLayout className="flex-col">
                       <Text color="text-color-3" variant="text-s-medium">
@@ -141,6 +140,21 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                         }
                       >
                         <Text variant="text-l">{vehicle ? `${vehicle?.registration} (${vehicle?.brand})` : '-'}</Text>
+                      </Link>
+                    </FlexLayout>
+                  </Box>
+                  <Box className="flex-1">
+                    <FlexLayout className="flex-col">
+                      <Text color="text-color-3" variant="text-s-medium">
+                        Priključno vozilo
+                      </Text>
+                      <Link
+                        className="hover:text-teal-500 transition-colors"
+                        href={
+                          trailer?.id ? `/dashboard/fleet/${vehicleTypeToPathMap[trailer?.type]}/${trailer?.id}` : '#'
+                        }
+                      >
+                        <Text variant="text-l">{trailer ? `${trailer?.registration} (${trailer?.brand})` : '-'}</Text>
                       </Link>
                     </FlexLayout>
                   </Box>
@@ -172,7 +186,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     <Text color="text-color-3" variant="text-s-medium">
                       Detalji utovara
                     </Text>
-                    <AddressItem address={shipment.loadingAddress} />
+                    <AddressDetailsItem address={shipment.loadingAddress} companyName={shipment.loadingCompanyName} />
                     <DateItem date={shipment.loadingDate} label="Datum utovara" />
                     <DateItem date={shipment.loadingReadyDate} label="Datum spremnosti za utovar" />
                     <DescriptionItem description={shipment.loadingDescription} label="Opis utovara:" />
@@ -181,7 +195,10 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     <Text color="text-color-3" variant="text-s-medium">
                       Detalji istovara
                     </Text>
-                    <AddressItem address={shipment.unloadingAddress} />
+                    <AddressDetailsItem
+                      address={shipment.unloadingAddress}
+                      companyName={shipment.unloadingCompanyName}
+                    />
                     <DateItem date={shipment.unloadingDate} label="Datum istovara" />
                     <DateItem date={shipment.unloadingDueDate} label="Krajnji rok istovara" />
                     <DescriptionItem description={shipment.unloadingDescription} label="Opis istovara:" />

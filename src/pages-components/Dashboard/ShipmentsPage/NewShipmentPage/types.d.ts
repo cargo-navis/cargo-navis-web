@@ -14,8 +14,11 @@ export interface ShipmentFields {
   transportContractorId?: string;
   driverId?: string;
   vehicleId?: string;
+  trailerId?: string;
   loadingAddress?: Address;
   unloadingAddress?: Address;
+  loadingCompanyName?: string;
+  unloadingCompanyName?: string;
   loadingReadyDate?: string;
   loadingDate?: string;
   loadingDescription?: string;

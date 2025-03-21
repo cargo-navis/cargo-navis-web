@@ -7,15 +7,18 @@ export interface Shipment {
   dispatcherId?: string;
   driverId?: string;
   vehicleId?: string;
+  trailerId?: string;
   clientId?: string;
   transportContractorId?: string;
   price: number;
   cargo: Cargo[];
   loadingAddress: LoadingAddress;
+  loadingCompanyName?: string;
   loadingReadyDate: string;
   loadingDate: string;
   loadingDescription: string;
   unloadingAddress: LoadingAddress;
+  unloadingCompanyName?: string;
   unloadingDate: string;
   unloadingDueDate: string;
   unloadingDescription: string;

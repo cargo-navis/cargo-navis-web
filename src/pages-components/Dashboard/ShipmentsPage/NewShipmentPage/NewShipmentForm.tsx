@@ -44,8 +44,12 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
   async function handleFormSubmit(data: ShipmentFields) {
     try {
       if (isEdit && shipment) {
+        // When cargo items are removed, the cargo array should always be included
+        // even if dirtyFields doesn't detect it properly
+        const cargoHasChanged = JSON.stringify(shipment.cargo) !== JSON.stringify(data.cargo);
+
         const dirtyData = Object.keys(data).reduce((acc, key) => {
-          if (dirtyFields[key]) {
+          if (dirtyFields[key] || (key === 'cargo' && cargoHasChanged)) {
             acc[key] = data[key];
           }
           return acc;
