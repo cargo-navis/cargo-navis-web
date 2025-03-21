@@ -133,6 +133,7 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
     dispatcherId,
     driverId,
     vehicleId,
+    trailerId,
     clientId,
     transportContractorId,
     price,
@@ -157,6 +158,7 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
   if ('dispatcherId' in formData) payload.dispatcherId = dispatcherId;
   if ('driverId' in formData) payload.driverId = driverId;
   if ('vehicleId' in formData) payload.vehicleId = vehicleId;
+  if ('trailerId' in formData) payload.trailerId = trailerId;
   if ('clientId' in formData) payload.clientId = clientId;
   if ('transportContractorId' in formData) payload.transportContractorId = transportContractorId;
   if ('price' in formData) payload.price = price || 0;

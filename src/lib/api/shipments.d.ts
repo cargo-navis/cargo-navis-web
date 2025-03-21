@@ -7,6 +7,7 @@ export interface Shipment {
   dispatcherId?: string;
   driverId?: string;
   vehicleId?: string;
+  trailerId?: string;
   clientId?: string;
   transportContractorId?: string;
   price: number;
