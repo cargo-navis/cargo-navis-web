@@ -37,6 +37,7 @@ export const AddressFields = () => {
           <Text color="text-color-3" variant="text-s-medium">
             Detalji utovara
           </Text>
+          <FormTextInput label="Naziv tvrtke" name="loadingCompanyName" />
           <FormTextInput label="Ulica i broj" name="loadingAddress.name" />
           <FormSingleSelect
             isSearchable
@@ -62,6 +63,7 @@ export const AddressFields = () => {
           <Text color="text-color-3" variant="text-s-medium">
             Detalji istovara
           </Text>
+          <FormTextInput label="Naziv tvrtke" name="unloadingCompanyName" />
           <FormTextInput label="Ulica i broj" name="unloadingAddress.name" />
           <FormSingleSelect
             isSearchable

@@ -37,6 +37,8 @@ export const shipmentSchema = Yup.object().shape({
       countryCode: Yup.string().optional(),
     })
     .optional(),
+  loadingCompanyName: Yup.string().optional(),
+  unloadingCompanyName: Yup.string().optional(),
   loadingReadyDate: Yup.string().optional(),
   loadingDate: Yup.string().optional(),
   loadingDescription: Yup.string().optional(),

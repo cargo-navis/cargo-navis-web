@@ -12,10 +12,12 @@ export interface Shipment {
   price: number;
   cargo: Cargo[];
   loadingAddress: LoadingAddress;
+  loadingCompanyName?: string;
   loadingReadyDate: string;
   loadingDate: string;
   loadingDescription: string;
   unloadingAddress: LoadingAddress;
+  unloadingCompanyName?: string;
   unloadingDate: string;
   unloadingDueDate: string;
   unloadingDescription: string;

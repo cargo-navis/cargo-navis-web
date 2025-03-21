@@ -33,6 +33,8 @@ export const formDefaultValues: ShipmentFields = {
     name: '',
     postalCodeId: {},
   },
+  loadingCompanyName: '',
+  unloadingCompanyName: '',
   loadingReadyDate: '',
   loadingDate: '',
   loadingDescription: '',
@@ -96,6 +98,8 @@ export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Ten
         countryCode: shipment.unloadingAddress?.countryCode,
         postalCodeId: unloadingPostalCode,
       },
+      loadingCompanyName: shipment.loadingCompanyName || '',
+      unloadingCompanyName: shipment.unloadingCompanyName || '',
       loadingReadyDate: shipment.loadingReadyDate || '',
       loadingDate: shipment.loadingDate || '',
       loadingDescription: shipment.loadingDescription || '',
@@ -134,6 +138,8 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
     price,
     loadingAddress,
     unloadingAddress,
+    loadingCompanyName,
+    unloadingCompanyName,
     loadingReadyDate,
     loadingDate,
     loadingDescription,
@@ -169,6 +175,10 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
       postalCodeId: unloadingAddress.postalCodeId?.value || '',
     };
   }
+
+  // Handle company names
+  if ('loadingCompanyName' in formData) payload.loadingCompanyName = loadingCompanyName || '';
+  if ('unloadingCompanyName' in formData) payload.unloadingCompanyName = unloadingCompanyName || '';
 
   // Handle dates and descriptions only if they exist in formData
   if ('loadingReadyDate' in formData) payload.loadingReadyDate = loadingReadyDate || '';
