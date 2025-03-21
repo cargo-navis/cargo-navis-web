@@ -172,8 +172,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     <Text color="text-color-3" variant="text-s-medium">
                       Detalji utovara
                     </Text>
-                    <Text variant="text-m">{shipment.loadingCompanyName}</Text>
-                    <AddressDetailsItem address={shipment.loadingAddress} />
+                    <AddressDetailsItem address={shipment.loadingAddress} companyName={shipment.loadingCompanyName} />
                     <DateItem date={shipment.loadingDate} label="Datum utovara" />
                     <DateItem date={shipment.loadingReadyDate} label="Datum spremnosti za utovar" />
                     <DescriptionItem description={shipment.loadingDescription} label="Opis utovara:" />
@@ -182,7 +181,10 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     <Text color="text-color-3" variant="text-s-medium">
                       Detalji istovara
                     </Text>
-                    <AddressDetailsItem address={shipment.unloadingAddress} />
+                    <AddressDetailsItem
+                      address={shipment.unloadingAddress}
+                      companyName={shipment.unloadingCompanyName}
+                    />
                     <DateItem date={shipment.unloadingDate} label="Datum istovara" />
                     <DateItem date={shipment.unloadingDueDate} label="Krajnji rok istovara" />
                     <DescriptionItem description={shipment.unloadingDescription} label="Opis istovara:" />
