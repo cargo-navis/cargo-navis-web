@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 
-import { generatePdf } from '@/lib/api/shipments';
 import { useDeleteShipment } from '@/lib/hooks';
+import { getAuthTokens } from '@/lib/utils/session';
 import { Button, FlexLayout } from '@/ui';
 
 export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
@@ -23,13 +23,30 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
 
   async function handleDownloadPdf() {
     try {
-      const response = await generatePdf(id);
+      const { accessToken } = getAuthTokens();
 
-      // Create a Blob from the PDF data
-      const blob = new Blob([response]);
+      if (!accessToken) {
+        throw new Error('Error with authentication');
+      }
+
+      // Use fetch with authorization header
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/shipments/${id}/generate-pdf`, {
+        method: 'GET',
+        headers: {
+          Accept: 'application/pdf',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+
+      // Get the blob directly from the fetch response
+      const blob = await response.blob();
+
+      // Create a download link
       const url = window.URL.createObjectURL(blob);
-
-      // Create a link and trigger download
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;

@@ -26,7 +26,3 @@ export async function deleteShipment(id: string) {
 export async function getOrderNumber() {
   return backend.get<string>('api/shipments/next-order-number');
 }
-
-export async function generatePdf(id: string) {
-  return backend.get<Blob>(`/api/shipments/${id}/generate-pdf`, { responseType: 'blob' });
-}
