@@ -27,7 +27,11 @@ export const FormAsyncSelect: React.FC<FormAsyncSelectProps> = (props) => {
       loadOptions={promisedOptions}
       value={value}
       onBlur={onBlur}
-      onChange={onChange}
+      onChange={(newValue) => {
+        // When the clear button is clicked, react-select will pass null
+        // We need to explicitly pass null/empty value to prevent it from resetting to default
+        onChange(newValue === undefined ? '' : newValue);
+      }}
     />
   );
 };
