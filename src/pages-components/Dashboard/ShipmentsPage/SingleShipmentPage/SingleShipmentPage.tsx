@@ -9,7 +9,7 @@ import { useClient, useContractor, useCurrentTenant, useEmployee, useShipment, u
 import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { Box, Divider, FlexLayout, Text } from '@/ui';
 
-import { AddressItem } from './components/AddressItem';
+import { AddressDetailsItem } from './components/AddressDetailsItem';
 import { CargoItem } from './components/CargoItem';
 import { DateItem } from './components/DateItem';
 import { DescriptionItem } from './components/DescriptionItem';
@@ -172,7 +172,8 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     <Text color="text-color-3" variant="text-s-medium">
                       Detalji utovara
                     </Text>
-                    <AddressItem address={shipment.loadingAddress} />
+                    <Text variant="text-m">{shipment.loadingCompanyName}</Text>
+                    <AddressDetailsItem address={shipment.loadingAddress} />
                     <DateItem date={shipment.loadingDate} label="Datum utovara" />
                     <DateItem date={shipment.loadingReadyDate} label="Datum spremnosti za utovar" />
                     <DescriptionItem description={shipment.loadingDescription} label="Opis utovara:" />
@@ -181,7 +182,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     <Text color="text-color-3" variant="text-s-medium">
                       Detalji istovara
                     </Text>
-                    <AddressItem address={shipment.unloadingAddress} />
+                    <AddressDetailsItem address={shipment.unloadingAddress} />
                     <DateItem date={shipment.unloadingDate} label="Datum istovara" />
                     <DateItem date={shipment.unloadingDueDate} label="Krajnji rok istovara" />
                     <DescriptionItem description={shipment.unloadingDescription} label="Opis istovara:" />

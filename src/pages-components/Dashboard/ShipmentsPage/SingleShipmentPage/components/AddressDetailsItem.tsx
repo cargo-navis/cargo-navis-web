@@ -3,7 +3,7 @@ import { FlexLayout, Text } from '@/ui';
 
 import { getCountryFromCode } from '../../../NewEmployeePage/const';
 
-export const AddressItem: React.FC<{ address: LoadingAddress }> = ({ address }) => {
+export const AddressDetailsItem: React.FC<{ address: LoadingAddress }> = ({ address }) => {
   return (
     <FlexLayout className="flex-col">
       <Text variant="text-m">{address?.streetName}</Text>
