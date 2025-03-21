@@ -59,14 +59,48 @@ export const shipmentSchema = Yup.object().shape({
         metadata: Yup.object()
           .shape({
             type: Yup.string().oneOf<CargoType>(['standard', 'nonstandard']).required('Tip tereta je obavezan'),
-            width: Yup.number().typeError('Širina je obavezna').positive('Mora biti pozitivan broj').optional(),
-            height: Yup.number().typeError('Visina je obavezna').positive('Mora biti pozitivan broj').optional(),
-            length: Yup.number().typeError('Duljina je obavezna').positive('Mora biti pozitivan broj').optional(),
-            palleteType: Yup.mixed<PalleteType>().oneOf(Object.values(PalleteType)).optional(),
-            palleteAmount: Yup.number()
-              .typeError('Količina paleta je obavezna')
-              .min(1, 'Količina paleta mora biti najmanje 1')
-              .optional(),
+            width: Yup.number().when('type', {
+              is: 'nonstandard',
+              then: () =>
+                Yup.number()
+                  .typeError('Širina je obavezna')
+                  .positive('Mora biti pozitivan broj')
+                  .required('Širina je obavezna'),
+              otherwise: () => Yup.number().strip(),
+            }),
+            height: Yup.number().when('type', {
+              is: 'nonstandard',
+              then: () =>
+                Yup.number()
+                  .typeError('Visina je obavezna')
+                  .positive('Mora biti pozitivan broj')
+                  .required('Visina je obavezna'),
+              otherwise: () => Yup.number().strip(),
+            }),
+            length: Yup.number().when('type', {
+              is: 'nonstandard',
+              then: () =>
+                Yup.number()
+                  .typeError('Duljina je obavezna')
+                  .positive('Mora biti pozitivan broj')
+                  .required('Duljina je obavezna'),
+              otherwise: () => Yup.number().strip(),
+            }),
+            palleteType: Yup.mixed<PalleteType>().when('type', {
+              is: 'standard',
+              then: () =>
+                Yup.mixed<PalleteType>().oneOf(Object.values(PalleteType)).required('Vrsta palete je obavezna'),
+              otherwise: () => Yup.mixed().strip(),
+            }),
+            palleteAmount: Yup.number().when('type', {
+              is: 'standard',
+              then: () =>
+                Yup.number()
+                  .typeError('Količina paleta je obavezna')
+                  .min(1, 'Količina paleta mora biti najmanje 1')
+                  .required('Količina paleta je obavezna'),
+              otherwise: () => Yup.number().strip(),
+            }),
           })
           .required('Podaci tereta su obavezni'),
       })
