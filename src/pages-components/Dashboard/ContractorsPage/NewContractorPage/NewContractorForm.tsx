@@ -14,7 +14,7 @@ import { ContractorFormData, contractorSchema } from './schema';
 import { getFormDefaultValues } from './utils';
 
 export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contractor }) => {
-  const { push } = useRouter();
+  const { back } = useRouter();
   const isEdit = !!contractor;
 
   const { mutateAsync: createContractor } = useCreateContractor();
@@ -41,10 +41,10 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
     try {
       if (isEdit) {
         await updateContractor(payload);
-        await push(`/dashboard/contractors/${contractor.id}`);
+        void back();
       } else {
         await createContractor(payload);
-        await push('/dashboard/contractors');
+        void back();
       }
     } catch {
       alert('Dogodila se greška s unosom kontraktora. Pokušajte ponovno.');

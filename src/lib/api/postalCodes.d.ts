@@ -1,7 +1,6 @@
 export interface PostalCode {
   id: string;
   postalCode: string;
-  region: string;
-  city?: string;
+  placeName: string;
   countryCode: string;
 }

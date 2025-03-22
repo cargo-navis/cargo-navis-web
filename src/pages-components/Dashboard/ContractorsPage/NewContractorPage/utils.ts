@@ -16,7 +16,7 @@ export const getFormDefaultValues = (contractor: Contractor | undefined) => {
       countryCode: contractor.address?.countryCode,
       addressPostalCode: {
         value: postalCodeData.id,
-        label: `${postalCodeData.postalCode}, ${postalCodeData.city}, ${postalCodeData.region}, ${getCountryFromCode(postalCodeData.countryCode).name}`,
+        label: `${postalCodeData.postalCode}, ${postalCodeData.placeName}, ${getCountryFromCode(postalCodeData.countryCode).name}`,
       },
     };
   };

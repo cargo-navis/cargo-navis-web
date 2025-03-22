@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { type Shipment } from '@/lib/api';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
-import { formatDateString } from '@/lib/utils/date';
+import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
 import { FlexLayout, Table, Text } from '@/ui';
 
@@ -76,11 +76,14 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const b = new Date(rowB.original.loadingDate).getTime();
           return a < b ? -1 : a > b ? 1 : 0;
         },
-        cell: (info) => (
-          <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-            <Text>{formatDateString(info.getValue(), 'DD.MM.YYYY')}</Text>
-          </FlexLayout>
-        ),
+        cell: (info) => {
+          const date = info.getValue();
+          return (
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+              <Text>{getDataPointDateString(date)}</Text>
+            </FlexLayout>
+          );
+        },
       }),
       columnHelper.accessor('unloadingDate', {
         header: 'Datum istovara',
@@ -90,11 +93,14 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const b = new Date(rowB.original.unloadingDate).getTime();
           return a < b ? -1 : a > b ? 1 : 0;
         },
-        cell: (info) => (
-          <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-            <Text>{formatDateString(info.getValue(), 'DD.MM.YYYY')}</Text>
-          </FlexLayout>
-        ),
+        cell: (info) => {
+          const date = info.getValue();
+          return (
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+              <Text>{getDataPointDateString(date)}</Text>
+            </FlexLayout>
+          );
+        },
       }),
       columnHelper.display({
         id: 'ldm',
@@ -118,6 +124,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: 'Broj paleta',
         cell: (props) => {
           const { cargo } = props.row.original;
+          const hasNonstandardCargo = cargo.some((c) => c.metadata?.type === 'nonstandard');
+
           const palleteNo = cargo.reduce((acc, c) => {
             // For nonstandard cargo, we assume 1 palette per cargo
             const palleteAmount = c.metadata?.palleteAmount || 1;
@@ -126,7 +134,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
 
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Text>{palleteNo || '—'}</Text>
+              <Text>{!hasNonstandardCargo && !!palleteNo ? palleteNo : '—'}</Text>
             </FlexLayout>
           );
         },

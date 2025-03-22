@@ -1,5 +1,3 @@
-import type { ClientAddress } from '@/lib/api/clients.d';
-
 export interface Shipment {
   id: string;
   cargoReference: string;
@@ -26,12 +24,24 @@ export interface Shipment {
   createdAt: string;
 }
 
-export type CreateShipmentData = Omit<Shipment, 'id'>;
+export interface CreateShipmentData extends Omit<Shipment, 'id' | 'loadingAddress' | 'unloadingAddress'> {
+  loadingAddress: {
+    name: string;
+    postalCodeId: string;
+  };
+  unloadingAddress: {
+    name: string;
+    postalCodeId: string;
+  };
+}
 
 // TODO - this should be for Create shipment
-export interface LoadingAddress extends Partial<ClientAddress> {
-  name: string;
-  postalCodeId: string;
+export interface LoadingAddress {
+  streetName: string;
+  id: string;
+  postalCode: string;
+  countryCode: string;
+  placeName: string;
 }
 
 interface Cargo {

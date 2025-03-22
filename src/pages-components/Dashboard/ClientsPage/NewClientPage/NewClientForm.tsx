@@ -14,7 +14,7 @@ import { ClientFormData, clientSchema } from './schema';
 import { getFormDefaultValues } from './utils';
 
 export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
-  const { push } = useRouter();
+  const { back } = useRouter();
   const isEdit = !!client;
 
   const { mutateAsync: createClient } = useCreateClient();
@@ -41,10 +41,10 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
     try {
       if (isEdit) {
         await updateClient(payload);
-        await push(`/dashboard/clients/${client.id}`);
+        void back();
       } else {
         await createClient(payload);
-        await push('/dashboard/clients');
+        void back();
       }
     } catch {
       alert('Dogodila se greška s unosom klijenta. Pokušajte ponovno.');

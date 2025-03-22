@@ -7,7 +7,6 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles';
 import { FormDatepicker, FormSingleSelect, FormTextInput, FormYearpicker } from '@/lib/components/form';
 import { useCreateVehicle, useUpdateVehicle } from '@/lib/hooks';
-import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { Box, Button, DisplayIf, FlexLayout, Text } from '@/ui';
 
 import { typeBrandOptionsMap, typeNameMap } from './const';
@@ -18,7 +17,7 @@ import { VehicleInfoFields } from './VehicleInfoFields';
 export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> = ({ vehicle, type }) => {
   const isEdit = !!vehicle;
 
-  const { push } = useRouter();
+  const { back } = useRouter();
   const { mutateAsync: createVehicle } = useCreateVehicle();
   const { mutateAsync: updateVehicle } = useUpdateVehicle(vehicle?.id as string);
 
@@ -35,7 +34,6 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
 
   async function handleFormSubmit(data: any) {
     const processedData = processFormData(data, type);
-    const vehicleSegmentPath = vehicleTypeToPathMap[type];
 
     const updatedFields = Object.keys(processedData).reduce(
       (acc, key) => {
@@ -50,10 +48,10 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
     try {
       if (isEdit) {
         await updateVehicle({ type, ...updatedFields });
-        await push(`/dashboard/fleet/${vehicleSegmentPath}/${vehicle.id}`);
+        void back();
       } else {
         await createVehicle({ type, ...updatedFields });
-        await push(`/dashboard/fleet/${vehicleSegmentPath}`);
+        void back();
       }
     } catch (error: any) {
       alert(`Error with form submit. ${error?.message}`);

@@ -23,6 +23,7 @@ export const DispatcherField = () => {
       name="dispatcherId"
       options={dispatcherOptions}
       placeholder="Odaberi disponenta..."
+      rules={{ required: true }}
     />
   );
 };

@@ -4,7 +4,7 @@ import { useDeleteEmployee } from '@/lib/hooks';
 import { Button, FlexLayout } from '@/ui';
 
 export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
-  const { push } = useRouter();
+  const { back } = useRouter();
   const { mutateAsync, isPending } = useDeleteEmployee(id);
 
   async function handleDelete() {
@@ -14,15 +14,14 @@ export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
     try {
       await mutateAsync();
       alert('Zaposlenik izbrisan');
-
-      push('/dashboard/employees');
+      void back();
     } catch {
       alert('Error with deleting the employee');
     }
   }
 
   return (
-    <FlexLayout className="gap-5">
+    <FlexLayout className="gap-3">
       <Button
         as="a"
         href={`/dashboard/employees/${id}/edit`}

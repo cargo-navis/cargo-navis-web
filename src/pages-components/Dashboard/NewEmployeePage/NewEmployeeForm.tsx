@@ -1,3 +1,4 @@
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 
@@ -9,9 +10,10 @@ import { Box, Button, FlexLayout } from '@/ui';
 
 import { formDefaultValues, genderOptions, positionOptions } from './const';
 import { DriverInfoFields } from './DriverInfoFields';
+import { employeeSchema } from './schema';
 
 export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee }) => {
-  const { push } = useRouter();
+  const { back } = useRouter();
   const isEdit = !!employee;
 
   const { mutateAsync: createEmployee } = useCreateEmployee();
@@ -21,7 +23,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
 
   const formMethods = useForm<any>({
     defaultValues,
-    // resolver: yupResolver(employeeSchema),
+    resolver: yupResolver(employeeSchema),
     mode: 'all',
   });
 
@@ -45,10 +47,10 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
     try {
       if (isEdit) {
         await updateEmployee(processedData);
-        await push(`/dashboard/employees/${employee.id}`);
+        void back();
       } else {
         await createEmployee(processedData);
-        await push('/dashboard/employees');
+        void back();
       }
     } catch (error: any) {
       const emailTakenException = 'com.scalesoft.cargonavis.domain.EmailAlreadyExistException';
