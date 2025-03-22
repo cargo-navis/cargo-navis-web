@@ -15,5 +15,15 @@ export const FormDatepicker: React.FC<FormDatepickerProps> = ({ name, isDisabled
     formState: { isSubmitting },
   } = useController({ name, defaultValue: initialValue, rules });
 
-  return <DatepickerWithLabels {...rest} isDisabled={isSubmitting} value={value} onChange={onChange} />;
+  const isRequired = !!rules?.required;
+
+  return (
+    <DatepickerWithLabels
+      {...rest}
+      isDisabled={isSubmitting}
+      isRequired={isRequired}
+      value={value}
+      onChange={onChange}
+    />
+  );
 };

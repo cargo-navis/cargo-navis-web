@@ -103,6 +103,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
                       min="0"
                       name="price"
                       placeholder="XXX"
+                      rules={{ required: true }}
                       type="number"
                     />
                   </Box>

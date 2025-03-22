@@ -21,6 +21,7 @@ export const ClientField = () => {
       name="clientId"
       options={clientOptions}
       placeholder="Odaberi klijenta..."
+      rules={{ required: true }}
     />
   );
 };

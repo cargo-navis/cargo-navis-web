@@ -15,10 +15,13 @@ export const FormTextInput: React.FC<FormTextInputProps> = ({ name, initialValue
     formState: { isSubmitting },
   } = useController({ name, defaultValue: initialValue, rules });
 
+  const isRequired = !!rules?.required;
+
   return (
     <TextInputWithLabels
       errorText={error?.message}
       isDisabled={isSubmitting}
+      isRequired={isRequired}
       name={name}
       {...rest}
       value={value}

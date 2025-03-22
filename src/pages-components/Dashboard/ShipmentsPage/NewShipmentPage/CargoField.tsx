@@ -60,7 +60,7 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
           </Box>
         </FlexLayout>
         {isStandardCargo ? <StandardCargo index={index} /> : <NonStandardCargo index={index} />}
-        <FormTextInput label="Težina (kg)" name={`cargo.${index}.weight`} />
+        <FormTextInput label="Težina (kg)" name={`cargo.${index}.weight`} rules={{ required: true }} />
         <FormTextarea label="Opis tereta" name={`cargo.${index}.description`} />
       </FlexLayout>
     </FlexLayout>

@@ -16,12 +16,15 @@ export const FormSingleSelect: React.FC<FormSingleSelectProps> = (props) => {
     formState: { isSubmitting },
   } = useController({ name, defaultValue: initialValue, rules });
 
+  const isRequired = !!rules?.required;
+
   return (
     <SingleSelectWithLabels
       name={name}
       {...rest}
       errorText={(initialValue && error?.message) || ((isTouched && isDirty && error?.message) as string)}
       isDisabled={isSubmitting || isDisabled}
+      isRequired={isRequired}
       value={value}
       onBlur={onBlur}
       onChange={(newValue) => {

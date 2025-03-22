@@ -37,13 +37,14 @@ export const AddressFields = () => {
           <Text color="text-color-3" variant="text-s-medium">
             Detalji utovara
           </Text>
-          <FormTextInput label="Tvrtka utovara" name="loadingCompanyName" />
-          <FormTextInput label="Ulica i broj" name="loadingAddress.name" />
+          <FormTextInput label="Tvrtka utovara" name="loadingCompanyName" rules={{ required: true }} />
+          <FormTextInput label="Ulica i broj" name="loadingAddress.name" rules={{ required: true }} />
           <FormSingleSelect
             isSearchable
             label="Država"
             name="loadingAddress.countryCode"
             options={countryEuropeOptions}
+            rules={{ required: true }}
           />
           <PostalCodeSelectField
             countryCode={loadingCountryCode}
@@ -53,8 +54,9 @@ export const AddressFields = () => {
             label="Poštanski broj"
             name="loadingAddress.postalCodeId"
             placeholder="Odaberi poštanski broj"
+            rules={{ required: true }}
           />
-          <FormDatepicker label="Datum utovara" name="loadingDate" />
+          <FormDatepicker label="Datum utovara" name="loadingDate" rules={{ required: true }} />
           <FormDatepicker label="Datum spremnosti za utovar" name="loadingReadyDate" />
           <FormTextarea label="Opis utovara" name="loadingDescription" placeholder="Unesite detalje utovara..." />
         </FlexLayout>
@@ -80,7 +82,7 @@ export const AddressFields = () => {
             name="unloadingAddress.postalCodeId"
             placeholder="Odaberi poštanski broj"
           />
-          <FormDatepicker label="Datum istovara" name="unloadingDate" />
+          <FormDatepicker label="Datum istovara" name="unloadingDate" rules={{ required: true }} />
           <FormDatepicker label="Krajnji rok istovara" name="unloadingDueDate" />
           <FormTextarea label="Opis istovara" name="unloadingDescription" placeholder="Unesite detalje istovara..." />
         </FlexLayout>
