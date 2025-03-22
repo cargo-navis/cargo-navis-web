@@ -5,8 +5,8 @@ import { PositionEnum } from '@/lib/api/employees.d';
 export const employeeSchema = object({
   firstName: string().required('First name is required'),
   lastName: string().required('Last name is required'),
-  position: string<PositionEnum>().required('Position is required'),
-  email: string().email('Email must be valid').optional(),
+  position: string().oneOf(Object.values(PositionEnum)).required('Position is required'),
+  email: string().email('Email must be valid').optional().nullable(),
   phoneNumber: string().optional(),
   governmentId: whenDriver(string()),
   governmentIdExpiryDate: whenDriver(string()),

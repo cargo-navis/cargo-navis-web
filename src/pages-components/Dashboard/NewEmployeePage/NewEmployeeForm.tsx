@@ -1,3 +1,4 @@
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 
@@ -9,6 +10,7 @@ import { Box, Button, FlexLayout } from '@/ui';
 
 import { formDefaultValues, genderOptions, positionOptions } from './const';
 import { DriverInfoFields } from './DriverInfoFields';
+import { employeeSchema } from './schema';
 
 export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee }) => {
   const { push } = useRouter();
@@ -21,7 +23,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
 
   const formMethods = useForm<any>({
     defaultValues,
-    // resolver: yupResolver(employeeSchema),
+    resolver: yupResolver(employeeSchema),
     mode: 'all',
   });
 
