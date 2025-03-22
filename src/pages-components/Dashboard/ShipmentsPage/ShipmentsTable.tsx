@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { type Shipment } from '@/lib/api';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
-import { formatDateString } from '@/lib/utils/date';
+import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
 import { FlexLayout, Table, Text } from '@/ui';
 
@@ -80,7 +80,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const date = info.getValue();
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Text>{date ? formatDateString(date, 'DD.MM.YYYY') : '—'}</Text>
+              <Text>{getDataPointDateString(date)}</Text>
             </FlexLayout>
           );
         },
@@ -97,7 +97,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const date = info.getValue();
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Text>{date ? formatDateString(date, 'DD.MM.YYYY') : '—'}</Text>
+              <Text>{getDataPointDateString(date)}</Text>
             </FlexLayout>
           );
         },
