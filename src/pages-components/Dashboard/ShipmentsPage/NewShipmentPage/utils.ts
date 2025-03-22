@@ -60,7 +60,7 @@ export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Ten
         const postalCodeData = await getPostalCode(shipment.loadingAddress.id);
         loadingPostalCode = {
           value: postalCodeData.id,
-          label: `${postalCodeData.postalCode}, ${postalCodeData.city}, ${postalCodeData.region}`,
+          label: `${postalCodeData.postalCode}, ${postalCodeData.placeName}`,
         };
       } catch (error) {
         console.error('Error fetching loading postal code:', error);
@@ -72,7 +72,7 @@ export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Ten
         const postalCodeData = await getPostalCode(shipment.unloadingAddress.id);
         unloadingPostalCode = {
           value: postalCodeData.id,
-          label: `${postalCodeData.postalCode}, ${postalCodeData.city}, ${postalCodeData.region}`,
+          label: `${postalCodeData.postalCode}, ${postalCodeData.placeName}`,
         };
       } catch (error) {
         console.error('Error fetching unloading postal code:', error);
