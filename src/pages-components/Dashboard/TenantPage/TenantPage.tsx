@@ -33,10 +33,7 @@ export const MainContent: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
       </FlexLayout>
       <FlexLayout className="flex-col">
         <Text color="text-color-3" variant="text-m">
-          {address.city}, {address.postalCode}
-        </Text>
-        <Text color="text-color-3" variant="text-m">
-          {address.country}
+          {address.placeName}, {address.postalCode}
         </Text>
       </FlexLayout>
       <Divider />

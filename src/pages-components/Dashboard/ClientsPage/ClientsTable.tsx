@@ -64,7 +64,7 @@ export function ClientsTable({ clients }: { clients?: Client[] }) {
             <FlexLayout className="items-center gap-2 cursor-pointer text-color-3">
               <FlexLayout className="flex-col">
                 <Text variant="text-s">{address.streetName || '–'}</Text>
-                <Text variant="text-s">{`${address.city}, ${country.name}`}</Text>
+                <Text variant="text-s">{`${address.placeName}, ${country.name}`}</Text>
               </FlexLayout>
             </FlexLayout>
           );
