@@ -25,7 +25,7 @@ export const Table: React.FC<TableProps> = ({ data, columns, onRowClick }) => {
 
   return (
     <Box as="table" className="border-collapse w-full">
-      <Box as="thead" className="bg-dark-200 dark:bg-light-900 sticky top-[-48px]">
+      <Box as="thead" className="bg-dark-200 dark:bg-light-900 sticky top-[-0px]">
         {table.getHeaderGroups().map((headerGroup) => (
           <Box as="tr" key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
