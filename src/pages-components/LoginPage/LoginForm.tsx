@@ -32,16 +32,16 @@ export const LoginForm = () => {
       await loginUser({ ...formValues });
       push('/dashboard/employees');
     } catch {
-      alert("We couldn't find anyone with that email and password combination.");
+      alert('Nismo pronašli nijednog korisnika s tom kombinacijom emaila i lozinke.');
     }
   }
 
   return (
     <FormProvider {...formMethods}>
       <FlexLayout as="form" className="flex-col gap-6" onSubmit={handleSubmit(handleFormSubmit)}>
-        <FormTextInput autoFocus label="Email" name="email" placeholder="Enter your email" type="email" />
-        <FormTextInput label="Password" name="password" placeholder="Enter your password" type="password" />
-        <Button isDisabled={!isValid} isFullWidth isLoading={isSubmitting} size="l" text="Log in" />
+        <FormTextInput autoFocus label="Email" name="email" placeholder="Unesite svoj email" type="email" />
+        <FormTextInput label="Lozinka" name="password" placeholder="Unesite svoju lozinku" type="password" />
+        <Button isDisabled={!isValid} isFullWidth isLoading={isSubmitting} size="l" text="Prijava" />
       </FlexLayout>
     </FormProvider>
   );
