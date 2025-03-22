@@ -64,7 +64,7 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
   }
 
   return (
-    <FlexLayout className="gap-5">
+    <FlexLayout className="gap-3">
       <Button
         iconLeft="ArrowDownTrayIcon"
         isDisabled={isPending}

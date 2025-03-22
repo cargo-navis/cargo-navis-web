@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import type { VehicleEnum } from '@/lib/api';
 import { useDeleteVehicle } from '@/lib/hooks';
 import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
-import { Box, Button } from '@/ui';
+import { Button, FlexLayout } from '@/ui';
 
 export const VehicleActions: React.FC<{ id: string; type: VehicleEnum }> = ({ id, type }) => {
   const { asPath, push } = useRouter();
@@ -25,7 +25,7 @@ export const VehicleActions: React.FC<{ id: string; type: VehicleEnum }> = ({ id
   }
 
   return (
-    <Box className="flex gap-5">
+    <FlexLayout className="gap-3">
       <Button
         as="a"
         href={`${asPath}/edit`}
@@ -35,6 +35,6 @@ export const VehicleActions: React.FC<{ id: string; type: VehicleEnum }> = ({ id
         variant="secondary"
       />
       <Button iconLeft="TrashIcon" isDisabled={isPending} text="Izbriši" onClick={handleDelete} />
-    </Box>
+    </FlexLayout>
   );
 };

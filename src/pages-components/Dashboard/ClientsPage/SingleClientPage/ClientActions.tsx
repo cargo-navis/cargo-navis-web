@@ -21,7 +21,7 @@ export const ClientActions: React.FC<{ id: string }> = ({ id }) => {
   }
 
   return (
-    <FlexLayout className="gap-5">
+    <FlexLayout className="gap-3">
       <Button
         as="a"
         href={`/dashboard/clients/${id}/edit`}
