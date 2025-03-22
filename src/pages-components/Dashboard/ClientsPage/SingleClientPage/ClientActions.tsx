@@ -4,7 +4,7 @@ import { useDeleteClient } from '@/lib/hooks';
 import { Button, FlexLayout } from '@/ui';
 
 export const ClientActions: React.FC<{ id: string }> = ({ id }) => {
-  const { push } = useRouter();
+  const { back } = useRouter();
   const { mutateAsync, isPending } = useDeleteClient(id);
 
   async function handleDelete() {
@@ -14,7 +14,7 @@ export const ClientActions: React.FC<{ id: string }> = ({ id }) => {
     try {
       await mutateAsync();
       alert('Klijent izbrisan');
-      await push('/dashboard/clients');
+      void back();
     } catch {
       alert('Greška s brisanjem klijenta');
     }

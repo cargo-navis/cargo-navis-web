@@ -4,7 +4,7 @@ import { useDeleteContractor } from '@/lib/hooks';
 import { Button, FlexLayout } from '@/ui';
 
 export const ContractorActions: React.FC<{ id: string }> = ({ id }) => {
-  const { push } = useRouter();
+  const { back } = useRouter();
   const { mutateAsync, isPending } = useDeleteContractor(id);
 
   async function handleDelete() {
@@ -14,7 +14,7 @@ export const ContractorActions: React.FC<{ id: string }> = ({ id }) => {
     try {
       await mutateAsync();
       alert('Kontraktor izbrisan');
-      await push('/dashboard/contractors');
+      void back();
     } catch {
       alert('Greška s brisanjem kontraktora');
     }

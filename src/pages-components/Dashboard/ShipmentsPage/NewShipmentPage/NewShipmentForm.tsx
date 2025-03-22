@@ -26,7 +26,7 @@ interface NewShipmentFormProps {
 }
 
 export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tenant }) => {
-  const { push } = useRouter();
+  const { push, back } = useRouter();
   const isEdit = !!shipment;
 
   const { mutateAsync: createShipment } = useCreateShipment();
@@ -58,7 +58,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
         const payload = transformFormDataToPayload(dirtyData);
 
         await updateShipment({ id: shipment.id, ...payload });
-        await push(`/dashboard/shipments/${shipment.id}`);
+        void back();
       } else {
         const payload = transformFormDataToPayload(data);
 
