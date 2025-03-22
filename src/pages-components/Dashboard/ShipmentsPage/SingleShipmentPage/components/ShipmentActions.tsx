@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 import { useDeleteShipment } from '@/lib/hooks';
 import { getAuthTokens } from '@/lib/utils/session';
@@ -7,6 +8,7 @@ import { Button, FlexLayout } from '@/ui';
 export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
   const { push } = useRouter();
   const { mutateAsync, isPending } = useDeleteShipment(id);
+  const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
 
   async function handleDelete() {
     const answer = confirm('Jeste li sigurni da želite izbrisati ovaj nalog?');
@@ -22,6 +24,7 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
   }
 
   async function handleDownloadPdf() {
+    setIsDownloadingPdf(true);
     try {
       const { accessToken } = getAuthTokens();
 
@@ -60,6 +63,8 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
     } catch (error) {
       console.error('Error downloading PDF:', error);
       alert('Greška s preuzimanjem PDF-a');
+    } finally {
+      setIsDownloadingPdf(false);
     }
   }
 
@@ -68,6 +73,7 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
       <Button
         iconLeft="ArrowDownTrayIcon"
         isDisabled={isPending}
+        isLoading={isDownloadingPdf}
         text="Preuzmi PDF"
         variant="secondary"
         onClick={handleDownloadPdf}
