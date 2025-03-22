@@ -76,11 +76,14 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const b = new Date(rowB.original.loadingDate).getTime();
           return a < b ? -1 : a > b ? 1 : 0;
         },
-        cell: (info) => (
-          <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-            <Text>{formatDateString(info.getValue(), 'DD.MM.YYYY')}</Text>
-          </FlexLayout>
-        ),
+        cell: (info) => {
+          const date = info.getValue();
+          return (
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+              <Text>{date ? formatDateString(date, 'DD.MM.YYYY') : '—'}</Text>
+            </FlexLayout>
+          );
+        },
       }),
       columnHelper.accessor('unloadingDate', {
         header: 'Datum istovara',
@@ -90,11 +93,14 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const b = new Date(rowB.original.unloadingDate).getTime();
           return a < b ? -1 : a > b ? 1 : 0;
         },
-        cell: (info) => (
-          <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-            <Text>{formatDateString(info.getValue(), 'DD.MM.YYYY')}</Text>
-          </FlexLayout>
-        ),
+        cell: (info) => {
+          const date = info.getValue();
+          return (
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+              <Text>{date ? formatDateString(date, 'DD.MM.YYYY') : '—'}</Text>
+            </FlexLayout>
+          );
+        },
       }),
       columnHelper.display({
         id: 'ldm',
