@@ -18,12 +18,15 @@ export const FormAsyncSelect: React.FC<FormAsyncSelectProps> = (props) => {
     formState: { isSubmitting },
   } = useController({ name, defaultValue: initialValue, rules });
 
+  const isRequired = !!rules?.required;
+
   return (
     <AsyncSelectWithLabels
       name={name}
       {...rest}
       errorText={(initialValue && error?.message) || ((isTouched && isDirty && error?.message) as string)}
       isDisabled={isSubmitting || isDisabled}
+      isRequired={isRequired}
       loadOptions={promisedOptions}
       value={value}
       onBlur={onBlur}

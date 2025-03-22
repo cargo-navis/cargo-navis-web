@@ -65,21 +65,27 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
     <FormProvider {...formMethods}>
       <FlexLayout as="form" className="gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
         <FlexLayout className="flex-col gap-4 w-[640px]">
-          <FormTextInput label="Ime *" name="name" />
+          <FormTextInput label="Ime" name="name" rules={{ required: true }} />
           <FlexLayout className="gap-2">
             <Box className="flex-1">
-              <FormTextInput label="VAT *" name="vatNumber" />
+              <FormTextInput label="VAT" name="vatNumber" rules={{ required: true }} />
             </Box>
             <Box className="flex-1">
-              <FormTextInput label="OIB *" name="nationalCompanyRegisterId" />
+              <FormTextInput label="OIB" name="nationalCompanyRegisterId" rules={{ required: true }} />
             </Box>
           </FlexLayout>
           <FlexLayout className="flex-1 flex-col gap-2">
             <Text color="text-color-3" variant="text-xxs-medium">
               Adresa sjedišta
             </Text>
-            <FormTextInput label="Ulica i broj" name="addressName" />
-            <FormSingleSelect isSearchable label="Država" name="countryCode" options={countryEuropeOptions} />
+            <FormTextInput label="Ulica i broj" name="addressName" rules={{ required: true }} />
+            <FormSingleSelect
+              isSearchable
+              label="Država"
+              name="countryCode"
+              options={countryEuropeOptions}
+              rules={{ required: true }}
+            />
             <PostalCodeSelectField
               countryCode={countryCode}
               iconLeft="MagnifyingGlassIcon"
@@ -88,6 +94,7 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
               label="Poštanski broj"
               name="addressPostalCode"
               placeholder="Odaberi poštanski broj"
+              rules={{ required: true }}
             />
           </FlexLayout>
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
