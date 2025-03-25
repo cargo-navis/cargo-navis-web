@@ -1,4 +1,5 @@
 import { createColumnHelper } from '@tanstack/react-table';
+import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 
@@ -6,7 +7,7 @@ import { type Shipment } from '@/lib/api';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
-import { FlexLayout, Table, Text } from '@/ui';
+import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
 
 const columnHelper = createColumnHelper<Shipment>();
 
@@ -24,11 +25,42 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: 'Broj naloga',
         enableSorting: false,
         size: 140,
-        cell: (info) => (
-          <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-            <Text>{info.getValue()}</Text>
-          </FlexLayout>
-        ),
+        cell: (info) => {
+          const row = info.row;
+          const hasSubshipments = (info.row.original.subshipments?.length ?? 0) > 0;
+          const depth = row.depth;
+          const isExpanded = row.getIsExpanded();
+
+          return (
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500 gap-2">
+              {depth > 0 ? (
+                <FlexLayout className="items-center gap-2">
+                  <Text>{info.getValue()}</Text>
+                </FlexLayout>
+              ) : (
+                <FlexLayout className="items-center gap-2 relative">
+                  {hasSubshipments && (
+                    <Box
+                      className="absolute -left-6 cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        row.toggleExpanded();
+                      }}
+                    >
+                      <Icon
+                        className={clsx('transition-transform', isExpanded && 'rotate-90')}
+                        color="text-dark-500 dark:text-light-300 "
+                        icon="ChevronRightIcon"
+                        size="m"
+                      />
+                    </Box>
+                  )}
+                  <Text>{info.getValue()}</Text>
+                </FlexLayout>
+              )}
+            </FlexLayout>
+          );
+        },
       }),
       columnHelper.accessor('clientId', {
         header: 'Klijent',
@@ -203,5 +235,9 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
     router.push(`/dashboard/shipments/${shipment.id}`);
   };
 
-  return <Table columns={columns} data={shipments} onRowClick={handleRowClick} />;
+  const getSubRows = (row: Shipment) => {
+    return row.subshipments || [];
+  };
+
+  return <Table columns={columns} data={shipments || []} getSubRows={getSubRows} onRowClick={handleRowClick} />;
 }
