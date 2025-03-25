@@ -27,10 +27,12 @@ export const formDefaultValues: ShipmentFields = {
   dispatcherId: '',
   loadingAddress: {
     name: '',
+    countryCode: '',
     postalCodeId: {},
   },
   unloadingAddress: {
     name: '',
+    countryCode: '',
     postalCodeId: {},
   },
   loadingCompanyName: '',

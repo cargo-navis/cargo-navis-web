@@ -33,7 +33,7 @@ export const shipmentSchema = Yup.object().shape({
           label: Yup.string(),
           value: Yup.string(),
         })
-        .required('Poštanski broj je obavezan'),
+        .optional(),
       countryCode: Yup.string().optional(),
     })
     .optional(),
