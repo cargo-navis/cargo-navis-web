@@ -23,20 +23,20 @@ export const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
 
   return (
     <Link
-      href={targetUrl}
       className={`
       group 
       hover:bg-dark-50 hover:dark:bg-light-800
       focus:bg-dark-50 focus:dark:bg-light-800
     `}
+      href={targetUrl}
     >
       <FlexLayout className="flex-start gap-3 p-4">
-        <Icon icon="ExclamationTriangleIcon" size="l" color="text-red-500 dark:text-red-300" className="mt-[1px]" />
+        <Icon className="mt-[1px]" color="text-red-500 dark:text-red-300" icon="ExclamationTriangleIcon" size="l" />
         <FlexLayout className="flex-col grow gap-1">
           {descriptionNode}
           <Text color="text-color-2" variant="text-s">
             Datum isteka:{' '}
-            <Text variant="text-s-bold" color="text-color-1">
+            <Text color="text-color-1" variant="text-s-bold">
               {formattedDate}
             </Text>
           </Text>
@@ -49,7 +49,7 @@ export const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
           group-hover:translate-x-0 group-hover:opacity-100
           transition-transform`}
         >
-          <Icon icon="ArrowRightIcon" size="l" color="text-color-2" />
+          <Icon color="text-color-2" icon="ArrowRightIcon" size="l" />
         </Box>
       </FlexLayout>
       <hr className="border-dark-300 dark:border-light-600 m-0" />

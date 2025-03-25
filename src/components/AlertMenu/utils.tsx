@@ -1,9 +1,11 @@
-import { type Employee, type Vehicle, VehicleEnum } from '@/lib/api';
-import { type Alert, AlertType } from '@/lib/api';
-import { FlexLayout, Icon, Text } from '@/ui';
-import type { MenuComponent } from '@/ui/components/Menu/types';
 import type React from 'react';
 import { forwardRef } from 'react';
+
+import { type Employee, type Vehicle } from '@/lib/api';
+import { type Alert, AlertType } from '@/lib/api';
+import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
+import { FlexLayout, Icon, Text } from '@/ui';
+import type { MenuComponent } from '@/ui/components/Menu/types';
 
 import { AlertMenuItem } from './AlertMenuItem';
 
@@ -22,9 +24,12 @@ export function getItemData(alert: Alert) {
 
   switch (ruleName) {
     case AlertType.TENANT_INSURANCE_EXPIRED: {
-      // TODO
-      targetUrl = '';
-      descriptionNode = 'TODO';
+      targetUrl = '/dashboard/tenant';
+      descriptionNode = (
+        <Text color="text-color-2" variant="text-s">
+          Kompaniji istječe generalno osiguranje.
+        </Text>
+      );
       break;
     }
     case AlertType.EMPLOYEE_CONTRACT_EXPIRED: {
@@ -32,7 +37,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/employees/${employee.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Zaposleniku (<EmployeeName employee={employee} />) istječe ugovor o zaposlenju.
         </Text>
       );
@@ -43,7 +48,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/employees/${employee.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozaču (<EmployeeName employee={employee} />) istječe vozačka dozvola.
         </Text>
       );
@@ -53,7 +58,7 @@ export function getItemData(alert: Alert) {
       const employee = alertable as Employee;
       targetUrl = `/dashboard/employees/${employee.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozaču (<EmployeeName employee={employee} />) istječe vozačka dozvola (
           {employee.driverLicenceCategories?.join(', ')}).
         </Text>
@@ -65,7 +70,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/employees/${employee.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozaču (<EmployeeName employee={employee} />) istječe radna viza.
         </Text>
       );
@@ -76,7 +81,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/employees/${employee.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozaču (<EmployeeName employee={employee} />) istječe lječnički pregled.
         </Text>
       );
@@ -87,7 +92,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/employees/${employee.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozaču (<EmployeeName employee={employee} />) istječe ADR licenca.
         </Text>
       );
@@ -98,7 +103,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/employees/${employee.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozaču (<EmployeeName employee={employee} />) istječe osobni dokument.
         </Text>
       );
@@ -109,7 +114,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/employees/${employee.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozaču (<EmployeeName employee={employee} />) istječe dozvola za Kod 95.
         </Text>
       );
@@ -120,7 +125,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/employees/${employee.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozaču (<EmployeeName employee={employee} />) istječe kartica za tahograf.
         </Text>
       );
@@ -132,7 +137,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe registracija.
         </Text>
       );
@@ -144,7 +149,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe tehnički pregled.
         </Text>
       );
@@ -156,7 +161,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe ADR.
         </Text>
       );
@@ -168,7 +173,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe valjanost protupožarnog aparata.
         </Text>
       );
@@ -180,7 +185,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe tahograf.
         </Text>
       );
@@ -192,7 +197,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) obavezno osiguranje.
         </Text>
       );
@@ -204,7 +209,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe kasko osiguranje.
         </Text>
       );
@@ -216,7 +221,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe mali servis.
         </Text>
       );
@@ -228,7 +233,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe veliki servis.
         </Text>
       );
@@ -240,7 +245,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe periodički tehnički pregled.
         </Text>
       );
@@ -252,7 +257,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe zamjena guma.
         </Text>
       );
@@ -264,7 +269,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe leasing.
         </Text>
       );
@@ -276,7 +281,7 @@ export function getItemData(alert: Alert) {
 
       targetUrl = `/dashboard/fleet/${path}/${vehicle.id}`;
       descriptionNode = (
-        <Text variant="text-s" color="text-color-2">
+        <Text color="text-color-2" variant="text-s">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe dozvola Kod XL.
         </Text>
       );
@@ -312,10 +317,3 @@ function VehicleRegistration({ vehicle }: { vehicle: Vehicle }) {
     </FlexLayout>
   );
 }
-
-export const vehicleTypeToPathMap = {
-  [VehicleEnum.TRUCK]: 'trucks',
-  [VehicleEnum.TRAILER]: 'trailers',
-  [VehicleEnum.SOLO_TRUCK]: 'solo-trucks',
-  [VehicleEnum.VAN]: 'vans',
-};

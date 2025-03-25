@@ -17,7 +17,7 @@ export const InfoItem: React.FC<InfoItemProps> = ({ label, value, isAlert }) => 
           {value}
         </Text>
         {isAlert && (
-          <Icon icon="ExclamationTriangleIcon" color="text-red-500" size="l" className="absolute right-[-32px]" />
+          <Icon className="absolute right-[-32px]" color="text-red-500" icon="ExclamationTriangleIcon" size="l" />
         )}
       </FlexLayout>
     </FlexLayout>

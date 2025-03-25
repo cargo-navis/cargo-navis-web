@@ -1,7 +1,8 @@
+import type { GetServerSideProps, NextPage } from 'next';
+
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { ACCESS_TOKEN_KEY } from '@/lib/utils/session';
 import { FlexLayout } from '@/ui';
-import type { GetServerSideProps, NextPage } from 'next';
 
 export const RootPage: NextPage = () => {
   return (

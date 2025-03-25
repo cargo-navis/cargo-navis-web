@@ -4,7 +4,7 @@ import type React from 'react';
 import { DisplayIf, Icon, type IconType, LoadingSpinner, Text } from '@/ui';
 
 import { Box, type BoxProps } from '../Box';
-import { type Size, type Variant, sizesMap, variantStyles, variantsMap } from './const';
+import { type Size, sizesMap, type Variant, variantsMap, variantStyles } from './const';
 
 type DefaultProps = Pick<BoxProps, 'isDisabled' | 'onClick' | 'href' | 'target' | 'type'> &
   Pick<React.ButtonHTMLAttributes<HTMLButtonElement>, 'type'>;
@@ -45,7 +45,7 @@ export const Button: React.FC<ButtonProps> = ({
         sizeStyles,
         styles,
         disabledAnchorStyles,
-        isFullWidth ? 'w-full' : 'w-fit',
+        isFullWidth ? 'w-full' : 'w-fit'
       )}
       isDisabled={isDisabled || isLoading}
       tabIndex={isDisabled || isLoading ? -1 : 0}

@@ -1,4 +1,4 @@
-import { type SelectComponentsConfig, type SingleValueProps, components } from 'react-select';
+import { components, type SelectComponentsConfig, type SingleValueProps } from 'react-select';
 
 import { Box, type SelectOption, Text } from '@/ui';
 

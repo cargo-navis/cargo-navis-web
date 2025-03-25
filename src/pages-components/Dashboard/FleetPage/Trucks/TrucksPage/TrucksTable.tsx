@@ -1,10 +1,11 @@
-import { VehicleAlertTooltip } from '@/components/alerts/VehicleAlertTooltip';
-import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles.d';
-import { getDataPointDateString } from '@/lib/utils/date';
-import { Box, FlexLayout, Table, Text } from '@/ui';
 import { createColumnHelper } from '@tanstack/react-table';
 import Link from 'next/link';
 import { useMemo } from 'react';
+
+import { VehicleAlertTooltip } from '@/components/alerts/VehicleAlertTooltip';
+import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles';
+import { getDataPointDateString } from '@/lib/utils/date';
+import { Box, FlexLayout, Table, Text } from '@/ui';
 
 const columnHelper = createColumnHelper<Vehicle>();
 
@@ -46,6 +47,7 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
         },
       }),
       columnHelper.accessor('emissionStandard', {
+        enableSorting: false,
         header: 'Tip motora',
         cell: ({ row }) => {
           const { emissionStandard } = row.original;
@@ -57,11 +59,12 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
           );
         },
       }),
-      columnHelper.display({
+      columnHelper.accessor((row) => row.tachographExpiryDate, {
+        sortUndefined: 'first',
         header: 'Tahograf vrijedi do',
         size: 200,
-        cell: ({ row }) => {
-          const { tachographExpiryDate } = row.original;
+        cell: (props) => {
+          const tachographExpiryDate = props.getValue();
           const formattedDate = getDataPointDateString(tachographExpiryDate);
 
           return (
@@ -74,5 +77,5 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
     ];
   }, []);
 
-  return <Table data={trucks} columns={columns} />;
+  return <Table columns={columns} data={trucks} />;
 };

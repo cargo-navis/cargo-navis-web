@@ -1,7 +1,8 @@
-import { Box, Text } from '@/ui';
 import clsx from 'clsx';
 
-import { type PillSize, type PillVariant, getSizeStyles, variantsMap } from './const';
+import { Box, Text } from '@/ui';
+
+import { getSizeStyles, type PillSize, type PillVariant, variantsMap } from './const';
 
 interface PillProps {
   text: string;

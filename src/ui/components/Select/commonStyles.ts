@@ -48,6 +48,9 @@ export const commonStyles: StylesConfig<SelectOption, boolean, any> = {
     paddingTop: 12,
     paddingBottom: 8,
     margin: 0,
+    textTransform: 'uppercase',
+    position: 'sticky',
+    top: -12,
   }),
   menu: (base) => ({
     ...base,
@@ -92,9 +95,10 @@ export const commonStylesClassNames: ClassNamesConfig<SelectOption, boolean, any
   input: () =>
     clsx(
       'font-display text-xxs max-md:text-mobile-override !text-dark-800 dark:!text-light-50',
-      'caret-teal-600 dark:caret-teal-800',
+      'caret-teal-600 dark:caret-teal-800'
     ),
   group: () => 'border-b border-dark-100 dark:border-light-800',
-  menu: () => '!bg-white dark:!bg-light-900 border border-dark-100 dark:border-light-800 !shadow-menu',
+  groupHeading: () => '!bg-white dark:!bg-light-900',
+  menu: () => '!bg-white dark:!bg-light-900 border border-dark-100 dark:border-light-800 !shadow-menu overflow-hidden',
   indicatorSeparator: () => '!bg-black-alpha-10 dark:!bg-white-alpha-25',
 };

@@ -1,9 +1,10 @@
-import { VehicleAlertTooltip } from '@/components/alerts/VehicleAlertTooltip';
-import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles.d';
-import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
 import { createColumnHelper } from '@tanstack/react-table';
 import Link from 'next/link';
 import { useMemo } from 'react';
+
+import { VehicleAlertTooltip } from '@/components/alerts/VehicleAlertTooltip';
+import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles';
+import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
 
 const columnHelper = createColumnHelper<Vehicle>();
 
@@ -45,6 +46,7 @@ export const VansTable = ({ vans }: { vans: Vehicle[] }) => {
         },
       }),
       columnHelper.accessor('vehicleLoadType', {
+        enableSorting: false,
         header: 'Vrsta utovarnog prostora',
         cell: ({ row }) => {
           const { vehicleLoadType } = row.original;
@@ -96,5 +98,5 @@ export const VansTable = ({ vans }: { vans: Vehicle[] }) => {
     ];
   }, []);
 
-  return <Table data={vans} columns={columns} />;
+  return <Table columns={columns} data={vans} />;
 };

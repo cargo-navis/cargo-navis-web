@@ -19,5 +19,5 @@ export const OccupationPill: React.FC<OccupationPillProps> = ({ text, occupation
   const variant = occupationVariantMap[occupation];
   const label = positionLabelMap[text];
 
-  return <Pill text={label} variant={variant} size={size} />;
+  return <Pill size={size} text={label} variant={variant} />;
 };

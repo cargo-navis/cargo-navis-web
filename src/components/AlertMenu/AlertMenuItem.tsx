@@ -1,7 +1,8 @@
-import type { Alert } from '@/lib/api';
-import { FlexLayout, Icon } from '@/ui';
 import Link from 'next/link';
 import React from 'react';
+
+import type { Alert } from '@/lib/api';
+import { FlexLayout, Icon } from '@/ui';
 
 import { getItemData } from './utils';
 
@@ -19,7 +20,7 @@ export const AlertMenuItem = React.forwardRef<any, AlertMenuItemProps>(({ alert,
         ref={ref}
         {...rest}
       >
-        <Icon icon="ExclamationTriangleIcon" color="text-red-500 dark:text-red-300" className="mt-1" />
+        <Icon className="mt-1" color="text-red-500 dark:text-red-300" icon="ExclamationTriangleIcon" />
         {descriptionNode}
       </FlexLayout>
     </Link>

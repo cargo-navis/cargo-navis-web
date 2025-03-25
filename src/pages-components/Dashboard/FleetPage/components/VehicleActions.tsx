@@ -1,8 +1,9 @@
-import { vehicleTypeToPathMap } from '@/components/AlertMenu/utils';
+import { useRouter } from 'next/router';
+
 import type { VehicleEnum } from '@/lib/api';
 import { useDeleteVehicle } from '@/lib/hooks';
-import { Box, Button } from '@/ui';
-import { useRouter } from 'next/router';
+import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
+import { Button, FlexLayout } from '@/ui';
 
 export const VehicleActions: React.FC<{ id: string; type: VehicleEnum }> = ({ id, type }) => {
   const { asPath, push } = useRouter();
@@ -18,22 +19,22 @@ export const VehicleActions: React.FC<{ id: string; type: VehicleEnum }> = ({ id
       await mutateAsync();
       alert('Vozilo izbrisano');
       push(`/dashboard/fleet/${vehicleSegmentPath}`);
-    } catch (error) {
+    } catch {
       alert('Error with deleting the vehicle');
     }
   }
 
   return (
-    <Box className="flex gap-5">
+    <FlexLayout className="gap-3">
       <Button
         as="a"
-        isDisabled={isPending}
         href={`${asPath}/edit`}
         iconLeft="PencilIcon"
+        isDisabled={isPending}
         text="Uredi"
         variant="secondary"
       />
       <Button iconLeft="TrashIcon" isDisabled={isPending} text="Izbriši" onClick={handleDelete} />
-    </Box>
+    </FlexLayout>
   );
 };

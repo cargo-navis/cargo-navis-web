@@ -1,13 +1,14 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
 import {
-  type UpdateVehicleParams,
-  type Vehicle,
-  VehicleEnum,
   createVehicle,
   deleteVehicle,
   getVehicles,
   updateVehicle,
+  type UpdateVehicleParams,
+  type Vehicle,
+  VehicleEnum,
 } from '@/lib/api';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 interface UseVehicleArgs<T> {
   select?: (vehicles: Vehicle[]) => T;

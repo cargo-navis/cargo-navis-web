@@ -5,6 +5,7 @@ import { getDataPointDateString } from '@/lib/utils/date';
 import { ruleToPropertyMap } from '@/pages-components/Dashboard/DashboardPage/components/utils';
 import { CategoryLabel } from '@/pages-components/Dashboard/EmployeesPage/CategoryLabel';
 import { Divider, FlexLayout, Text } from '@/ui';
+
 import { countries } from '../NewEmployeePage/const';
 
 interface DriverInfoProps {
@@ -51,25 +52,25 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
 
   return (
     <FlexLayout className="flex-col gap-4">
-      <Text variant="text-l-medium" color="text-color-2">
+      <Text color="text-color-2" variant="text-l-medium">
         Podaci za vozača
       </Text>
       <Divider />
       <FlexLayout className="flex-col gap-3">
         <FlexLayout className="flex-col gap-3">
-          <Text variant="text-m-medium" color="text-color-3">
+          <Text color="text-color-3" variant="text-m-medium">
             Službeni podaci
           </Text>
           <InfoItem label="Broj dokumenta" value={governmentId} />
           <InfoItem
+            isAlert={propertiesWithAlert?.includes('governmentIdExpiryDate')}
             label="Vrijedi do"
             value={formattedGovIdExpiryDate}
-            isAlert={propertiesWithAlert?.includes('governmentIdExpiryDate')}
           />
         </FlexLayout>
         <Divider />
         <FlexLayout className="flex-col gap-3">
-          <Text variant="text-m-medium" color="text-color-3">
+          <Text color="text-color-3" variant="text-m-medium">
             Vozačka dozvola
           </Text>
           <InfoItem label="Broj dozvole" value={driverLicenceId ?? '-'} />
@@ -79,58 +80,56 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
               Kategorije:
             </Text>
             <FlexLayout className="gap-1">
-              {driverLicenceCategories?.map((l: string) => (
-                <CategoryLabel category={l} key={l} />
-              ))}
+              {driverLicenceCategories?.map((l: string) => <CategoryLabel category={l} key={l} />)}
             </FlexLayout>
           </FlexLayout>
           <InfoItem
+            isAlert={propertiesWithAlert?.includes('driverLicenceExpiryDate')}
             label="Regularna dozvola - Vrijedi do"
             value={formattedDriverLicenceExpiryDate}
-            isAlert={propertiesWithAlert?.includes('driverLicenceExpiryDate')}
           />
           <InfoItem
+            isAlert={propertiesWithAlert?.includes('professionalDriverLicenceExpiryDate')}
             label="Profesionalna dozvola - Vrijedi do"
             value={formattedProfDriverExpiryDate}
-            isAlert={propertiesWithAlert?.includes('professionalDriverLicenceExpiryDate')}
           />
         </FlexLayout>
         <Divider />
         <InfoItem label="Broj Tahografske kartice" value={driverTachographCardId || '-'} />
         <InfoItem
+          isAlert={propertiesWithAlert?.includes('driverTachographCardExpiryDate')}
           label="Vrijedi do"
           value={tachographExpiryDate || '-'}
-          isAlert={propertiesWithAlert?.includes('driverTachographCardExpiryDate')}
         />
         <Divider />
         <InfoItem
+          isAlert={propertiesWithAlert?.includes('adrExpiryDate')}
           label="ADR - Vrijedi do"
           value={formattedAdrExpiryDate || '-'}
-          isAlert={propertiesWithAlert?.includes('adrExpiryDate')}
         />
         <Divider />
         <InfoItem
+          isAlert={propertiesWithAlert?.includes('contractExpiryDate')}
           label="Ugovor o zaposlenju - Vrijedi do"
           value={formattedContractExpiryDate || '-'}
-          isAlert={propertiesWithAlert?.includes('contractExpiryDate')}
         />
         <Divider />
         <InfoItem
+          isAlert={propertiesWithAlert?.includes('visaExpiryDate')}
           label="Radna dozvola - Vrijedi do"
           value={formattedVisaExpiryDate || '-'}
-          isAlert={propertiesWithAlert?.includes('visaExpiryDate')}
         />
         <Divider />
         <InfoItem
+          isAlert={propertiesWithAlert?.includes('medicalExaminationExpiryDate')}
           label="Lječnički pregled - Vrijedi do"
           value={formattedMedicalExaminationExpiryDate || '-'}
-          isAlert={propertiesWithAlert?.includes('medicalExaminationExpiryDate')}
         />
         <Divider />
         <InfoItem
+          isAlert={propertiesWithAlert?.includes('code95ExpiryDate')}
           label="Kod 95 - Vrijedi do"
           value={formattedCode95ExpiryDate}
-          isAlert={propertiesWithAlert?.includes('code95ExpiryDate')}
         />
       </FlexLayout>
       <Divider />

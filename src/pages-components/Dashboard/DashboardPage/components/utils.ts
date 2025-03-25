@@ -11,7 +11,7 @@ export const ruleToPropertyMap: Record<AlertType, keyof Employee | keyof Vehicle
   [AlertType.VEHICLE_ADR_EXPIRED]: 'adrExpiryDate',
   [AlertType.VEHICLE_FIRE_EXTINGUISHER_CHECK_EXPIRED]: 'fireExtinguisherCheckExpiryDate',
   [AlertType.VEHICLE_TACHOGRAPH_EXPIRED]: 'tachographExpiryDate',
-  [AlertType.TENANT_INSURANCE_EXPIRED]: '-', // TODO
+  [AlertType.TENANT_INSURANCE_EXPIRED]: 'cargoInsuranceExpiryDate',
   [AlertType.DRIVER_ADR_EXPIRED]: 'adrExpiryDate',
   [AlertType.DRIVER_GOV_ID_EXPIRED]: 'governmentIdExpiryDate',
   [AlertType.DRIVER_CODE_95_EXPIRED]: 'code95ExpiryDate',

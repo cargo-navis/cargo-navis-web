@@ -1,4 +1,4 @@
-import { Box } from '@/ui';
+import { FlexLayout } from '@/ui';
 
 import { Checkbox } from './Checkbox';
 
@@ -18,13 +18,13 @@ export const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
   onChange,
 }) => {
   return (
-    <Box className="flex flex-col py-2 gap-3">
+    <FlexLayout className="flex-col py-2 gap-3">
       {options.map(({ value, label }) => (
         <Checkbox
           isDisabled={isDisabled}
-          name={name}
           key={value}
           label={label}
+          name={name}
           value={values.includes(value)}
           onChange={(isChecked) => {
             if (isChecked) {
@@ -36,6 +36,6 @@ export const CheckboxGroup: React.FC<CheckboxGroupProps> = ({
           }}
         />
       ))}
-    </Box>
+    </FlexLayout>
   );
 };

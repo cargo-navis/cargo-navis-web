@@ -21,7 +21,7 @@ export const Box = React.forwardRef<any, BoxProps>(
         {...{ disabled: isDisabled, ...rest }}
       />
     );
-  },
+  }
 );
 
 Box.displayName = 'Box';

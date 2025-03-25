@@ -1,9 +1,10 @@
-import { useDeleteEmployee } from '@/lib/hooks';
-import { Box, Button } from '@/ui';
 import { useRouter } from 'next/router';
 
+import { useDeleteEmployee } from '@/lib/hooks';
+import { Button, FlexLayout } from '@/ui';
+
 export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
-  const { push } = useRouter();
+  const { back } = useRouter();
   const { mutateAsync, isPending } = useDeleteEmployee(id);
 
   async function handleDelete() {
@@ -13,24 +14,23 @@ export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
     try {
       await mutateAsync();
       alert('Zaposlenik izbrisan');
-
-      push('/dashboard/employees');
-    } catch (error) {
+      void back();
+    } catch {
       alert('Error with deleting the employee');
     }
   }
 
   return (
-    <Box className="flex gap-5">
+    <FlexLayout className="gap-3">
       <Button
         as="a"
-        isDisabled={isPending}
         href={`/dashboard/employees/${id}/edit`}
         iconLeft="PencilIcon"
+        isDisabled={isPending}
         text="Uredi"
         variant="secondary"
       />
-      <Button isLoading={isPending} iconLeft="TrashIcon" text="Izbriši" onClick={handleDelete} />
-    </Box>
+      <Button iconLeft="TrashIcon" isLoading={isPending} text="Izbriši" onClick={handleDelete} />
+    </FlexLayout>
   );
 };

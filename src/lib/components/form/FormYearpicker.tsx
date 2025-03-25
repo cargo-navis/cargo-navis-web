@@ -1,5 +1,6 @@
+import { useController, type UseControllerProps } from 'react-hook-form';
+
 import { YearpickerWithLabels, type YearpickerWithLabelsProps } from '@/ui/hocs';
-import { type UseControllerProps, useController } from 'react-hook-form';
 
 interface FormYearpickerProps extends Omit<YearpickerWithLabelsProps, 'value' | 'onChange'> {
   name: string;

@@ -1,16 +1,15 @@
-import { AlertsTooltip } from '@/components/alerts/AlertsTooltip';
-
-import { type Employee, PositionEnum } from '@/lib/api/employees.d';
-import { useEmployeeAlerts } from '@/lib/hooks';
-import { copyToClipboard } from '@/lib/utils/clipboard';
-import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
 import { createColumnHelper } from '@tanstack/react-table';
 import groupBy from 'lodash/groupBy';
 import Link from 'next/link';
 import { useMemo } from 'react';
 
-import { CategoryLabel } from './CategoryLabel';
+import { AlertsTooltip } from '@/components/alerts/AlertsTooltip';
+import { type Employee, PositionEnum } from '@/lib/api/employees.d';
+import { useEmployeeAlerts } from '@/lib/hooks';
+import { copyToClipboard } from '@/lib/utils/clipboard';
+import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
 
+import { CategoryLabel } from './CategoryLabel';
 import { OccupationPill } from './OccupationPill';
 
 const columnHelper = createColumnHelper<Employee>();
@@ -44,6 +43,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         id: 'fullName',
         header: 'Ime',
         size: 275,
+        enableSorting: false,
         cell: (props) => {
           const name = props.getValue();
           const { position, id } = props.row.original;
@@ -60,11 +60,11 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
                     </Text>
                     {employeeAlerts && (
                       <AlertsTooltip alerts={employeeAlerts}>
-                        <Icon icon="ExclamationTriangleIcon" size="l" color="text-red-500" />
+                        <Icon color="text-red-500" icon="ExclamationTriangleIcon" size="l" />
                       </AlertsTooltip>
                     )}
                   </FlexLayout>
-                  <OccupationPill occupation={position} text={position} size="s" />
+                  <OccupationPill occupation={position} size="s" text={position} />
                 </FlexLayout>
               </Box>
             </Link>
@@ -74,6 +74,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
       columnHelper.accessor('governmentId', {
         header: 'Broj dokumenta',
         size: 220,
+        enableSorting: false,
         cell: (props) => {
           const governmentId = props.getValue();
 
@@ -84,8 +85,8 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
             >
               <Text variant="text-s">{governmentId || '–'}</Text>
               <Icon
-                icon="DocumentDuplicateIcon"
                 className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
+                icon="DocumentDuplicateIcon"
               />
             </Box>
           );
@@ -94,6 +95,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
       columnHelper.accessor('phoneNumber', {
         header: 'Telefon',
         size: 200,
+        enableSorting: false,
         cell: (props) => {
           const phoneNumber = props.getValue();
 
@@ -104,8 +106,8 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
             >
               <Text variant="text-s">{phoneNumber}</Text>
               <Icon
-                icon="DocumentDuplicateIcon"
                 className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
+                icon="DocumentDuplicateIcon"
               />
             </Box>
           );
@@ -114,6 +116,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
       columnHelper.accessor('driverLicenceCategories', {
         header: 'Vozačke kategorije',
         size: 200,
+        enableSorting: false,
         cell: (props) => {
           const licenceCategories = props.getValue();
 
@@ -130,6 +133,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
       }),
       columnHelper.accessor('adrExpiryDate', {
         size: 80,
+        enableSorting: false,
         cell: (props) => {
           const { position } = props.row.original;
 
@@ -146,5 +150,5 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
     ];
   }, [groupedAlerts]);
 
-  return <Table data={employees} columns={columns} />;
+  return <Table columns={columns} data={employees} />;
 }

@@ -1,3 +1,5 @@
+import type React from 'react';
+
 import { VehicleEnum, VehicleLoadEnum } from '@/lib/api';
 import {
   FormCheckboxGroup,
@@ -7,7 +9,6 @@ import {
   FormTextInput,
 } from '@/lib/components/form';
 import { Box, FlexLayout, Text } from '@/ui';
-import type React from 'react';
 
 import { equipmentOptions, loadTypeOptions, rampOptions } from './const';
 
@@ -18,7 +19,7 @@ export const LoadingSpaceFields: React.FC<{ type: VehicleEnum }> = ({ type }) =>
     loadOptions = loadOptions.filter((o) => o.value !== VehicleLoadEnum.TAUTLINER);
   } else if (type === VehicleEnum.SOLO_TRUCK) {
     loadOptions = loadOptions.filter(
-      (o) => ![VehicleLoadEnum.CISTERN, VehicleLoadEnum.CONTAINER_TRAILER].includes(o.value as VehicleLoadEnum),
+      (o) => ![VehicleLoadEnum.CISTERN, VehicleLoadEnum.CONTAINER_TRAILER].includes(o.value as VehicleLoadEnum)
     );
   }
 
@@ -28,7 +29,7 @@ export const LoadingSpaceFields: React.FC<{ type: VehicleEnum }> = ({ type }) =>
         Podaci o utovarnom prostoru
       </Text>
       <Box>
-        <FormTextInput name="loadCapacity" label="Kapacitet (kg)" type="number" min="0" />
+        <FormTextInput label="Kapacitet (kg)" min="0" name="loadCapacity" type="number" />
       </Box>
       <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
       <Box>
@@ -37,35 +38,35 @@ export const LoadingSpaceFields: React.FC<{ type: VehicleEnum }> = ({ type }) =>
         </Text>
       </Box>
       <Box>
-        <FormTextInput name="length" label="Duljina (m)" type="number" min="0" step="0.01" />
+        <FormTextInput label="Duljina (m)" min="0" name="length" step="0.01" type="number" />
       </Box>
       <Box>
-        <FormTextInput name="width" label="Širina (m)" type="number" min="0" step="0.01" />
+        <FormTextInput label="Širina (m)" min="0" name="width" step="0.01" type="number" />
       </Box>
       <Box>
-        <FormTextInput name="height" label="Visina (m)" type="number" min="0" step="0.01" />
+        <FormTextInput label="Visina (m)" min="0" name="height" step="0.01" type="number" />
       </Box>
       <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
       <Box>
-        <FormDatepicker name="codeXlCertificateExpiryDate" label="Kod XL Certifikat - Vrijedi do" />
+        <FormDatepicker label="Kod XL Certifikat - Vrijedi do" name="codeXlCertificateExpiryDate" />
       </Box>
       <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
       <Box className="flex-1">
-        <FormRadioGroup name="ramp" label="Rampa" options={rampOptions} />
+        <FormRadioGroup label="Rampa" name="ramp" options={rampOptions} />
       </Box>
       <Box className="flex-1">
         <FormSingleSelect
+          isClearable
+          isSearchable
           label="Vrsta utovarnog prostora"
           name="vehicleLoadType"
-          isSearchable
-          isClearable
           options={loadOptions}
           placeholder="Select load type..."
         />
       </Box>
       <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
       <Box>
-        <FormCheckboxGroup name="equipment" label="Oprema" options={equipmentOptions} />
+        <FormCheckboxGroup label="Oprema" name="equipment" options={equipmentOptions} />
       </Box>
     </FlexLayout>
   );

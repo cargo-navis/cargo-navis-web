@@ -1,11 +1,11 @@
 import '@mantine/core/styles.css';
 import '../styles/globals.css';
 
-import { inter, playfairDisplaySc } from '@/ui/theme/fonts';
 import { MantineProvider } from '@mantine/core';
+import type { AppProps } from 'next/app';
 
 import { QueryClientCreator } from '@/lib/components/providers/QueryClientCreator';
-import type { AppProps } from 'next/app';
+import { inter, playfairDisplaySc } from '@/ui/theme/fonts';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

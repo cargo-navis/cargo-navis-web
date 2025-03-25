@@ -1,1 +1,1 @@
-export { LoginPage, getServerSideProps } from './LoginPage';
+export { getServerSideProps, LoginPage } from './LoginPage';

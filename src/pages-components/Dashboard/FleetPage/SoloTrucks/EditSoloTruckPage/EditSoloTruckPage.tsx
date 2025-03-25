@@ -1,10 +1,12 @@
+import { useRouter } from 'next/router';
+
+import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { type Vehicle, VehicleEnum } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicle } from '@/lib/hooks';
-import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
-import { Box, Heading } from '@/ui';
-import { useRouter } from 'next/router';
+import { Box, FlexLayout, Heading } from '@/ui';
+
 import { NewVehicleForm } from '../../NewVehicleForm';
 
 export const EditSoloTruckPage = () => {
@@ -19,15 +21,15 @@ export const EditSoloTruckPage = () => {
 const MainContent: React.FC<{ solo: Vehicle }> = ({ solo }) => {
   return (
     <Box>
-      <Box className="py-5 flex flex-col gap-[40px]">
+      <FlexLayout className="flex-col gap-[40px]">
         <Heading as="h1" variant="text-xl">
           Ažuriraj Solo Kamion
         </Heading>
-      </Box>
-      <Box className="py-5 flex flex-col gap-[40px]">
+      </FlexLayout>
+      <FlexLayout className="py-5 flex-col gap-[40px]">
         <BackButton targetLocation="/dashboard/fleet/solo-trucks" />
-        <NewVehicleForm vehicle={solo} type={VehicleEnum.SOLO_TRUCK} />
-      </Box>
+        <NewVehicleForm type={VehicleEnum.SOLO_TRUCK} vehicle={solo} />
+      </FlexLayout>
     </Box>
   );
 };

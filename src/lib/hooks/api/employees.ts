@@ -1,7 +1,8 @@
-import { createEmployee, deleteEmployee, getEmployees, updateEmployee } from '@/lib/api';
-import type { Employee, UpdateEmployeeParams } from '@/lib/api/employees.d';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import sortBy from 'lodash/sortBy';
+
+import { createEmployee, deleteEmployee, getEmployees, updateEmployee } from '@/lib/api';
+import type { Employee, UpdateEmployeeParams } from '@/lib/api/employees.d';
 
 interface UseEmployeesArgs<T> {
   select?: (data: Employee[]) => T;

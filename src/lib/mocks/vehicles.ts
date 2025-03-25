@@ -1,4 +1,4 @@
-import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles.d';
+import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles';
 
 export const vehicles: (Omit<Vehicle, 'vehicleLoadType'> & { vehicleLoadType: any })[] = [
   {

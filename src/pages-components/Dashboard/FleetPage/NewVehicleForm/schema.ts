@@ -1,5 +1,6 @@
+import { array, boolean, number, object, type ObjectSchema, string } from 'yup';
+
 import { VehicleEnum } from '@/lib/api';
-import { type ObjectSchema, array, boolean, number, object, string } from 'yup';
 
 export const vehicleSchema = object({
   brand: string().optional(),

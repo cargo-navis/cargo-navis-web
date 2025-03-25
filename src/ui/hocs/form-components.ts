@@ -1,4 +1,6 @@
 import {
+  AsyncSelect,
+  type AsyncSelectProps,
   CheckboxGroup,
   type CheckboxGroupProps,
   Datepicker,
@@ -7,6 +9,8 @@ import {
   type RadioGroupProps,
   SingleSelect,
   type SingleSelectProps,
+  Textarea,
+  type TextareaProps,
   TextInput,
   type TextInputProps,
   Yearpicker,
@@ -33,3 +37,10 @@ export type YearpickerWithLabelsProps = React.ComponentPropsWithRef<typeof Yearp
 export const SingleSelectWithLabels: React.FC<Omit<SingleSelectProps & FieldLabelsProps, 'charLimitText'>> =
   withFieldLabels(SingleSelect);
 export type SingleSelectWithLabelsProps = React.ComponentProps<typeof SingleSelectWithLabels>;
+
+export const AsyncSelectWithLabels: React.FC<Omit<AsyncSelectProps & FieldLabelsProps, 'charLimitText'>> =
+  withFieldLabels(AsyncSelect);
+export type AsyncSelectWithLabelsProps = React.ComponentProps<typeof AsyncSelectWithLabels>;
+
+export const TextareaWithLabels: React.FC<TextareaProps & FieldLabelsProps> = withFieldLabels(Textarea);
+export type TextareaWithLabelsProps = React.ComponentProps<typeof TextareaWithLabels>;

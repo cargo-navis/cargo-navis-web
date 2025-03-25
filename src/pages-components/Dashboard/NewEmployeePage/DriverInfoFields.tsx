@@ -1,8 +1,10 @@
+import clsx from 'clsx';
+import { useFormContext } from 'react-hook-form';
+
 import { DriverLicenceEnum } from '@/lib/api';
 import { FormCheckboxGroup, FormDatepicker, FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { Box, FlexLayout, Text } from '@/ui';
-import clsx from 'clsx';
-import { useFormContext } from 'react-hook-form';
+
 import { categoryOptions, countryOptions } from './const';
 
 export const DriverInfoFields = () => {
@@ -22,10 +24,10 @@ export const DriverInfoFields = () => {
           </Text>
           <FlexLayout className="gap-4">
             <Box className="flex-1">
-              <FormTextInput name="governmentId" label="Broj dokumenta" />
+              <FormTextInput label="Broj dokumenta" name="governmentId" />
             </Box>
             <Box className="flex-1">
-              <FormDatepicker name="governmentIdExpiryDate" label="Vrijedi do" />
+              <FormDatepicker label="Vrijedi do" name="governmentIdExpiryDate" />
             </Box>
           </FlexLayout>
         </FlexLayout>
@@ -34,67 +36,67 @@ export const DriverInfoFields = () => {
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
             Vozačka dozvola
           </Text>
-          <FormTextInput name="driverLicenceId" label="Broj dozvole" />
+          <FormTextInput label="Broj dozvole" name="driverLicenceId" />
           <FormSingleSelect
+            isClearable
+            isSearchable
             label="Država"
             name="nationality"
-            isSearchable
-            isClearable
             options={countryOptions}
             placeholder="Select country..."
           />
           <Box className="flex-1">
-            <FormCheckboxGroup name="driverLicenceCategories" label="Kategorije" options={categoryOptions} />
+            <FormCheckboxGroup label="Kategorije" name="driverLicenceCategories" options={categoryOptions} />
           </Box>
           {values.driverLicenceCategories?.some((cat: DriverLicenceEnum) =>
-            [DriverLicenceEnum.B, DriverLicenceEnum.B1].includes(cat),
-          ) && <FormDatepicker name="driverLicenceExpiryDate" label="Vrijedi do (Regularna)" />}
+            [DriverLicenceEnum.B, DriverLicenceEnum.B1].includes(cat)
+          ) && <FormDatepicker label="Vrijedi do (Regularna)" name="driverLicenceExpiryDate" />}
           {values.driverLicenceCategories?.some((cat: DriverLicenceEnum) =>
-            [DriverLicenceEnum.C1, DriverLicenceEnum.C, DriverLicenceEnum.C1E, DriverLicenceEnum.CE].includes(cat),
-          ) && <FormDatepicker name="professionalDriverLicenceExpiryDate" label="Vrijedi do (Profesionalna)" />}
+            [DriverLicenceEnum.C1, DriverLicenceEnum.C, DriverLicenceEnum.C1E, DriverLicenceEnum.CE].includes(cat)
+          ) && <FormDatepicker label="Vrijedi do (Profesionalna)" name="professionalDriverLicenceExpiryDate" />}
         </FlexLayout>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <FlexLayout className="flex-1 flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
             Tahografska kartica
           </Text>
-          <FormTextInput name="driverTachographCardId" label="Broj kartice" />
-          <FormDatepicker name="driverTachographCardExpiryDate" label="Vrijedi do" />
+          <FormTextInput label="Broj kartice" name="driverTachographCardId" />
+          <FormDatepicker label="Vrijedi do" name="driverTachographCardExpiryDate" />
         </FlexLayout>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex-1">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
             ADR
           </Text>
-          <FormDatepicker name="adrExpiryDate" label="Vrijedi do" />
+          <FormDatepicker label="Vrijedi do" name="adrExpiryDate" />
         </Box>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
             Ugovor o zaposlenju
           </Text>
-          <FormDatepicker name="contractExpiryDate" label="Vrijedi do" />
+          <FormDatepicker label="Vrijedi do" name="contractExpiryDate" />
         </Box>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
             Radna dozvola
           </Text>
-          <FormDatepicker name="visaExpiryDate" label="Vrijedi do" />
+          <FormDatepicker label="Vrijedi do" name="visaExpiryDate" />
         </Box>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
             Lječnički pregled
           </Text>
-          <FormDatepicker name="medicalExaminationExpiryDate" label="Vrijedi do" />
+          <FormDatepicker label="Vrijedi do" name="medicalExaminationExpiryDate" />
         </Box>
         <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
         <Box className="flex flex-col gap-2">
           <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
             Kod 95
           </Text>
-          <FormDatepicker name="code95ExpiryDate" label="Vrijedi do" />
+          <FormDatepicker label="Vrijedi do" name="code95ExpiryDate" />
         </Box>
       </Box>
     </>

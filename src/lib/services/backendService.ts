@@ -1,6 +1,7 @@
+import axios, { type AxiosRequestConfig, type InternalAxiosRequestConfig } from 'axios';
+
 import { decorateRequest } from '@/lib/utils/auth';
 import { clearAuthCookies } from '@/lib/utils/session';
-import axios, { type AxiosRequestConfig, type InternalAxiosRequestConfig } from 'axios';
 
 // import { AuthResponse } from '~/apis';
 
@@ -100,7 +101,7 @@ function createBackendService() {
       window.location.pathname = '/login';
 
       return Promise.reject(error);
-    },
+    }
   );
 
   return {

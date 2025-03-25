@@ -10,9 +10,14 @@ export interface NavLink {
 export const links: NavLink[] = [
   { name: 'Početna', href: '/dashboard', icon: 'HomeIcon' },
   // { name: 'Trucks Capacity', href: '/dashboard/capacity', icon: 'TruckIcon' }, // TODO
-  // { name: 'Shipments', href: '/dashboard/shipments', icon: 'CubeTransparentIcon' }, // TODO
   // { name: 'Warehouse', href: '/dashboard/warehouses', icon: 'HomeModernIcon' }, // TODO
   // { name: 'Loading Planer', href: '/loading-planer', icon: HomeIcon }, // TODO
+  {
+    name: 'Nalozi',
+    href: '/dashboard/shipments/',
+    icon: 'DocumentTextIcon',
+    subItems: [{ name: 'Novi Nalog', href: '/dashboard/shipments/new', icon: 'PlusIcon' }],
+  },
   {
     name: 'Flota',
     href: '/dashboard/fleet/overview',
@@ -23,6 +28,16 @@ export const links: NavLink[] = [
       { name: 'Solo Kamioni', href: '/dashboard/fleet/solo-trucks', icon: 'ChevronRightIcon' },
       { name: 'Kombiji', href: '/dashboard/fleet/vans', icon: 'ChevronRightIcon' },
     ],
+  },
+  {
+    name: 'Klijenti',
+    href: '/dashboard/clients',
+    icon: 'BriefcaseIcon',
+  },
+  {
+    name: 'Kontraktori',
+    href: '/dashboard/contractors',
+    icon: 'ClipboardDocumentListIcon',
   },
   // { name: 'Assign Trucks', href: '/dashboard/assign-trucks', icon: 'SquaresPlusIcon' }, // TODO
   { name: 'Zaposlenici', href: '/dashboard/employees', icon: 'UserGroupIcon' },

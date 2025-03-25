@@ -1,5 +1,6 @@
 import { FormDatepicker, FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { Box, FlexLayout, Text } from '@/ui';
+
 import { emissionStandardOptions } from './const';
 
 export const VehicleInfoFields = () => {
@@ -10,14 +11,14 @@ export const VehicleInfoFields = () => {
       </Text>
       <FlexLayout className="gap-4">
         <Box>
-          <FormTextInput name="enginePower" label="Snaga motora (kW)" type="number" min="0" />
+          <FormTextInput label="Snaga motora (kW)" min="0" name="enginePower" type="number" />
         </Box>
         <Box className="flex-1">
           <FormSingleSelect
+            isClearable
+            isSearchable
             label="Tip motora"
             name="emissionStandard"
-            isSearchable
-            isClearable
             options={emissionStandardOptions}
             placeholder="Select engine type..."
           />
@@ -25,16 +26,16 @@ export const VehicleInfoFields = () => {
       </FlexLayout>
       <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
       <Box>
-        <FormTextInput name="tankSize" label="Veličina tanka (l)" type="number" min="0" />
+        <FormTextInput label="Veličina tanka (l)" min="0" name="tankSize" type="number" />
       </Box>
       <Box>
-        <FormTextInput name="averageFuelConsumption" label="Potrošnja (l/100km)" type="number" min="0" />
+        <FormTextInput label="Potrošnja (l/100km)" min="0" name="averageFuelConsumption" type="number" />
       </Box>
       <Box>
-        <FormDatepicker name="fireExtinguisherCheckExpiryDate" label="Vatrogasni aparat - Vrijedi do" />
+        <FormDatepicker label="Vatrogasni aparat - Vrijedi do" name="fireExtinguisherCheckExpiryDate" />
       </Box>
       <Box>
-        <FormDatepicker name="adrExpiryDate" label="ADR - Vrijedi do" />
+        <FormDatepicker label="ADR - Vrijedi do" name="adrExpiryDate" />
       </Box>
     </FlexLayout>
   );

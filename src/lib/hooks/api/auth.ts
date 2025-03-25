@@ -1,4 +1,4 @@
-import { type LoginArgs, login } from '@/lib/api';
+import { login, type LoginArgs } from '@/lib/api';
 import type { AuthResponse } from '@/lib/api/login';
 import { setAuthTokens } from '@/lib/utils/session';
 

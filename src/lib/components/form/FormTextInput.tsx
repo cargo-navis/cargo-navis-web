@@ -1,4 +1,4 @@
-import { type UseControllerProps, useController } from 'react-hook-form';
+import { useController, type UseControllerProps } from 'react-hook-form';
 
 import { TextInputWithLabels, type TextInputWithLabelsProps } from '@/ui/hocs';
 
@@ -15,11 +15,14 @@ export const FormTextInput: React.FC<FormTextInputProps> = ({ name, initialValue
     formState: { isSubmitting },
   } = useController({ name, defaultValue: initialValue, rules });
 
+  const isRequired = !!rules?.required;
+
   return (
     <TextInputWithLabels
-      name={name}
       errorText={error?.message}
       isDisabled={isSubmitting}
+      isRequired={isRequired}
+      name={name}
       {...rest}
       value={value}
       onBlur={onBlur}

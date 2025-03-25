@@ -1,19 +1,19 @@
-import 'dayjs/locale/hr';
-import { replaceEmptyStringsWithNull } from '@/lib/utils/data';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
-import { DriverInfoFields } from './DriverInfoFields';
 
 import type { Employee } from '@/lib/api/employees.d';
-import '@mantine/dates/styles.css';
 import { FormDatepicker, FormRadioGroup, FormTextInput } from '@/lib/components/form';
-import { Box, Button } from '@/ui';
-
 import { useCreateEmployee, useUpdateEmployee } from '@/lib/hooks';
+import { replaceEmptyStringsWithNull } from '@/lib/utils/data';
+import { Box, Button, FlexLayout } from '@/ui';
+
 import { formDefaultValues, genderOptions, positionOptions } from './const';
+import { DriverInfoFields } from './DriverInfoFields';
+import { employeeSchema } from './schema';
 
 export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee }) => {
-  const { push } = useRouter();
+  const { back } = useRouter();
   const isEdit = !!employee;
 
   const { mutateAsync: createEmployee } = useCreateEmployee();
@@ -23,7 +23,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
 
   const formMethods = useForm<any>({
     defaultValues,
-    // resolver: yupResolver(employeeSchema),
+    resolver: yupResolver(employeeSchema),
     mode: 'all',
   });
 
@@ -39,7 +39,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
         }
         return acc;
       },
-      {} as Record<string, any>,
+      {} as Record<string, any>
     );
 
     const processedData = replaceEmptyStringsWithNull(updatedData);
@@ -47,10 +47,10 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
     try {
       if (isEdit) {
         await updateEmployee(processedData);
-        await push(`/dashboard/employees/${employee.id}`);
+        void back();
       } else {
         await createEmployee(processedData);
-        await push('/dashboard/employees');
+        void back();
       }
     } catch (error: any) {
       const emailTakenException = 'com.scalesoft.cargonavis.domain.EmailAlreadyExistException';
@@ -66,44 +66,44 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
 
   return (
     <FormProvider {...formMethods}>
-      <Box as="form" className="flex gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
-        <Box className="flex flex-col gap-4 w-[480px]">
-          <Box className="flex gap-4">
+      <FlexLayout as="form" className="gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
+        <FlexLayout className="flex-col gap-4 w-[480px]">
+          <FlexLayout className="gap-4">
             <Box className="flex-1">
-              <FormTextInput name="firstName" label="Ime *" />
+              <FormTextInput label="Ime *" name="firstName" />
             </Box>
             <Box className="flex-1">
-              <FormTextInput name="lastName" label="Prezime *" />
+              <FormTextInput label="Prezime *" name="lastName" />
             </Box>
+          </FlexLayout>
+          <Box>
+            <FormRadioGroup label="Spol" name="gender" options={genderOptions} />
+          </Box>
+          <FlexLayout className="gap-4">
+            <Box className="flex-1">
+              <FormDatepicker label="Datum rođenja" name="dateOfBirth" />
+            </Box>
+            <Box className="flex-1">
+              <FormTextInput label="Adresa" name="residenceAddress" />
+            </Box>
+          </FlexLayout>
+          <Box>
+            <FormTextInput label="Telefon *" name="phoneNumber" type="tel" />
           </Box>
           <Box>
-            <FormRadioGroup name="gender" label="Spol" options={genderOptions} />
+            <FormTextInput label="Email" name="email" type="email" />
           </Box>
-          <Box className="flex gap-4">
-            <Box className="flex-1">
-              <FormDatepicker name="dateOfBirth" label="Datum rođenja" />
-            </Box>
-            <Box className="flex-1">
-              <FormTextInput name="residenceAddress" label="Adresa" />
-            </Box>
-          </Box>
-          <Box>
-            <FormTextInput name="phoneNumber" label="Telefon *" type="tel" />
-          </Box>
-          <Box>
-            <FormTextInput name="email" label="Email" type="email" />
-          </Box>
-          <FormRadioGroup name="position" label="Pozicija *" options={positionOptions} />
+          <FormRadioGroup label="Pozicija *" name="position" options={positionOptions} />
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Button
-            text={isEdit ? 'Ažuriraj Zaposlenika' : 'Dodaj Zaposlenika'}
-            isFullWidth
             isDisabled={!(isValid && isDirty)}
+            isFullWidth
             isLoading={formState.isSubmitting}
+            text={isEdit ? 'Ažuriraj Zaposlenika' : 'Dodaj Zaposlenika'}
           />
-        </Box>
+        </FlexLayout>
         {values?.position === 'driver' && <DriverInfoFields />}
-      </Box>
+      </FlexLayout>
     </FormProvider>
   );
 };

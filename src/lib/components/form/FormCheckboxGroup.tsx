@@ -1,5 +1,6 @@
+import { useController, type UseControllerProps } from 'react-hook-form';
+
 import { CheckboxGroupWithLabels, type CheckboxGroupWithLabelsProps } from '@/ui/hocs';
-import { type UseControllerProps, useController } from 'react-hook-form';
 
 interface FormCheckboxGroupProps extends Omit<CheckboxGroupWithLabelsProps, 'values' | 'onChange'> {
   name: string;

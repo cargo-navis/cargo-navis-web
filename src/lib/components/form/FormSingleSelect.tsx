@@ -1,4 +1,4 @@
-import { type UseControllerProps, useController } from 'react-hook-form';
+import { useController, type UseControllerProps } from 'react-hook-form';
 
 import { SingleSelectWithLabels, type SingleSelectWithLabelsProps } from '@/ui/hocs';
 
@@ -16,15 +16,22 @@ export const FormSingleSelect: React.FC<FormSingleSelectProps> = (props) => {
     formState: { isSubmitting },
   } = useController({ name, defaultValue: initialValue, rules });
 
+  const isRequired = !!rules?.required;
+
   return (
     <SingleSelectWithLabels
       name={name}
       {...rest}
       errorText={(initialValue && error?.message) || ((isTouched && isDirty && error?.message) as string)}
       isDisabled={isSubmitting || isDisabled}
+      isRequired={isRequired}
       value={value}
       onBlur={onBlur}
-      onChange={onChange}
+      onChange={(newValue) => {
+        // When the clear button is clicked, react-select will pass null
+        // We need to explicitly pass null/empty value to prevent it from resetting to default
+        onChange(newValue === undefined ? '' : newValue);
+      }}
     />
   );
 };

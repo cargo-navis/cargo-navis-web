@@ -1,0 +1,111 @@
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+
+import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
+import type { Contractor } from '@/lib/api';
+import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
+import { useCreateContractor, useUpdateContractor } from '@/lib/hooks';
+import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
+import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
+
+import { ContractorFormData, contractorSchema } from './schema';
+import { getFormDefaultValues } from './utils';
+
+export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contractor }) => {
+  const { back } = useRouter();
+  const isEdit = !!contractor;
+
+  const { mutateAsync: createContractor } = useCreateContractor();
+  const { mutateAsync: updateContractor } = useUpdateContractor(contractor?.id as string);
+
+  const formMethods = useForm<ContractorFormData>({
+    defaultValues: getFormDefaultValues(contractor),
+    mode: 'all',
+    resolver: yupResolver(contractorSchema),
+  });
+
+  const { handleSubmit, formState, watch, resetField } = formMethods;
+  const { isDirty, isValid, isLoading } = formState;
+
+  async function handleFormSubmit({ name, addressName, vatNumber, nationalCompanyRegisterId, addressPostalCode }: any) {
+    const payload = {
+      name,
+      addressName,
+      vatNumber,
+      nationalCompanyRegisterId,
+      addressPostalCodeId: addressPostalCode.value,
+    };
+
+    try {
+      if (isEdit) {
+        await updateContractor(payload);
+        void back();
+      } else {
+        await createContractor(payload);
+        void back();
+      }
+    } catch {
+      alert('Dogodila se greška s unosom kontraktora. Pokušajte ponovno.');
+    }
+  }
+
+  const countryCode = watch('countryCode');
+
+  useEffect(() => {
+    resetField('addressPostalCode');
+  }, [countryCode]);
+
+  if (isLoading) {
+    return <LoadingSpinner size="l" />;
+  }
+
+  return (
+    <FormProvider {...formMethods}>
+      <FlexLayout as="form" className="gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
+        <FlexLayout className="flex-col gap-4 w-[640px]">
+          <FormTextInput label="Ime" name="name" rules={{ required: true }} />
+          <FlexLayout className="gap-2">
+            <Box className="flex-1">
+              <FormTextInput label="VAT" name="vatNumber" rules={{ required: true }} />
+            </Box>
+            <Box className="flex-1">
+              <FormTextInput label="OIB" name="nationalCompanyRegisterId" rules={{ required: true }} />
+            </Box>
+          </FlexLayout>
+          <FlexLayout className="flex-1 flex-col gap-2">
+            <Text color="text-color-3" variant="text-xxs-medium">
+              Adresa sjedišta
+            </Text>
+            <FormTextInput label="Ulica i broj" name="addressName" rules={{ required: true }} />
+            <FormSingleSelect
+              isSearchable
+              label="Država"
+              name="countryCode"
+              options={countryEuropeOptions}
+              rules={{ required: true }}
+            />
+            <PostalCodeSelectField
+              countryCode={countryCode}
+              iconLeft="MagnifyingGlassIcon"
+              isClearable
+              isDisabled={!countryCode}
+              label="Poštanski broj"
+              name="addressPostalCode"
+              placeholder="Odaberi poštanski broj"
+              rules={{ required: true }}
+            />
+          </FlexLayout>
+          <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
+          <Button
+            isDisabled={!(isValid && isDirty)}
+            isFullWidth
+            isLoading={formState.isSubmitting}
+            text={isEdit ? 'Ažuriraj Kontraktora' : 'Dodaj Kontraktora'}
+          />
+        </FlexLayout>
+      </FlexLayout>
+    </FormProvider>
+  );
+};

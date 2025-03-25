@@ -1,10 +1,12 @@
+import { useRouter } from 'next/router';
+
+import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { type Vehicle, VehicleEnum } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicle } from '@/lib/hooks';
-import { BackButton } from '@/pages-components/Dashboard/NewEmployeePage/BackButton';
-import { Box, Heading } from '@/ui';
-import { useRouter } from 'next/router';
+import { Box, FlexLayout, Heading } from '@/ui';
+
 import { NewVehicleForm } from '../../NewVehicleForm';
 
 export const EditVanPage = () => {
@@ -19,15 +21,15 @@ export const EditVanPage = () => {
 const MainContent: React.FC<{ van: Vehicle }> = ({ van }) => {
   return (
     <Box>
-      <Box className="py-5 flex flex-col gap-[40px]">
+      <FlexLayout className="flex-col gap-[40px]">
         <Heading as="h1" variant="text-xl">
           Ažuriraj Kombi
         </Heading>
-      </Box>
-      <Box className="py-5 flex flex-col gap-[40px]">
+      </FlexLayout>
+      <FlexLayout className="py-5 flex-col gap-[40px]">
         <BackButton targetLocation="/dashboard/fleet/vans" />
-        <NewVehicleForm vehicle={van} type={VehicleEnum.VAN} />
-      </Box>
+        <NewVehicleForm type={VehicleEnum.VAN} vehicle={van} />
+      </FlexLayout>
     </Box>
   );
 };

@@ -1,4 +1,4 @@
-import { type UseControllerProps, useController } from 'react-hook-form';
+import { useController, type UseControllerProps } from 'react-hook-form';
 
 import { RadioGroupWithLabels, type RadioGroupWithLabelsProps } from '@/ui/hocs';
 

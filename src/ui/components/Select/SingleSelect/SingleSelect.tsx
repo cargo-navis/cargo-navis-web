@@ -1,15 +1,13 @@
-'use client';
-
 import { forwardRef, useId, useState } from 'react';
 import Select, { type GroupBase } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 
 import { removeExtraWhitespace } from '@/lib/utils/string';
-
 import type { IconType } from '@/ui';
-import type { SelectOption, SelectProps, SelectValue } from '../Select';
+
 import commonComponents from '../commonComponents';
 import { commonStylesClassNames } from '../commonStyles';
+import type { SelectOption, SelectProps, SelectValue } from '../Select';
 import singleSelectComponents from './customComponents';
 import mergeStyles from './mergeStyles';
 import { optionsIncludeValue } from './utils';
@@ -37,6 +35,7 @@ export interface SingleSelectProps extends SelectProps {
 
 // Fixes custom selectProps typing in react-select v5 (https://github.com/JedWatson/react-select/issues/4804#issuecomment-927223471)
 declare module 'react-select/dist/declarations/src/Select' {
+  // eslint-disable-next-line unused-imports/no-unused-vars
   export interface Props<Option, IsMulti extends boolean, Group extends GroupBase<Option>> {
     iconLeft?: IconType;
     isCreatable?: boolean;
@@ -56,7 +55,7 @@ export const SingleSelect = forwardRef<any, SingleSelectProps>((props, ref) => {
     value,
     options,
     name,
-    placeholder = 'Select',
+    placeholder = 'Odaberi',
     onChange,
     onBlur,
     onAddOption,
@@ -86,7 +85,7 @@ export const SingleSelect = forwardRef<any, SingleSelectProps>((props, ref) => {
       menuPlacement={menuPlacement}
       menuPortalTarget={isPortal ? document.body : null}
       name={name}
-      noOptionsMessage={() => 'No results.'}
+      noOptionsMessage={() => 'Nema rezultata.'}
       options={options}
       placeholder={placeholder}
       ref={ref}
