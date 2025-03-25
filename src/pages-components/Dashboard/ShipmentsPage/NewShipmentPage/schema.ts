@@ -27,7 +27,7 @@ export const shipmentSchema = Yup.object().shape({
     .optional(),
   unloadingAddress: Yup.object()
     .shape({
-      name: Yup.string().required('Adresa istovara je obavezna'),
+      name: Yup.string(),
       postalCodeId: Yup.object()
         .shape({
           label: Yup.string(),
