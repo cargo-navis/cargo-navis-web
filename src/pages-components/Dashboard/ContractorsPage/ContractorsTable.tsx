@@ -94,5 +94,5 @@ export function ContractorsTable({ contractors }: { contractors?: Contractor[] }
     ];
   }, []);
 
-  return <Table columns={columns} data={contractors} />;
+  return <Table columns={columns} data={contractors || []} />;
 }
