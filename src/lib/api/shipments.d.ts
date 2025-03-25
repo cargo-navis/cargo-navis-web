@@ -20,7 +20,8 @@ export interface Shipment {
   unloadingDate: string;
   unloadingDueDate: string;
   unloadingDescription: string;
-  parentShipmentId: string;
+  parentShipmentId?: string;
+  subshipments?: Shipment[];
   createdAt: string;
 }
 
