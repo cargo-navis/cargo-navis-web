@@ -24,9 +24,12 @@ export function getItemData(alert: Alert) {
 
   switch (ruleName) {
     case AlertType.TENANT_INSURANCE_EXPIRED: {
-      // TODO
-      targetUrl = '';
-      descriptionNode = 'TODO';
+      targetUrl = '/dashboard/tenant';
+      descriptionNode = (
+        <Text color="text-color-2" variant="text-s">
+          Kompaniji istječe generalno osiguranje.
+        </Text>
+      );
       break;
     }
     case AlertType.EMPLOYEE_CONTRACT_EXPIRED: {
