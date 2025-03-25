@@ -23,9 +23,10 @@ import { VehicleField } from './VehicleField';
 interface NewShipmentFormProps {
   shipment?: Shipment;
   tenant: Tenant;
+  parentShipmentId?: string;
 }
 
-export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tenant }) => {
+export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tenant, parentShipmentId }) => {
   const { push, back } = useRouter();
   const isEdit = !!shipment;
 
@@ -56,11 +57,17 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
         }, {} as ShipmentFields);
 
         const payload = transformFormDataToPayload(dirtyData);
+        if (parentShipmentId) {
+          payload.parentShipmentId = parentShipmentId;
+        }
 
         await updateShipment({ id: shipment.id, ...payload });
         void back();
       } else {
         const payload = transformFormDataToPayload(data);
+        if (parentShipmentId) {
+          payload.parentShipmentId = parentShipmentId;
+        }
 
         await createShipment(payload);
         await push('/dashboard/shipments');
