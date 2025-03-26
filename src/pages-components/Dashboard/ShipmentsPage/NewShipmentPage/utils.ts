@@ -166,14 +166,14 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
   if ('price' in formData) payload.price = price || 0;
 
   // Handle addresses only if they exist in formData
-  if (loadingAddress) {
+  if (loadingAddress?.name && loadingAddress?.postalCodeId?.value) {
     payload.loadingAddress = {
       name: loadingAddress.name || '',
       postalCodeId: loadingAddress.postalCodeId?.value || '',
     };
   }
 
-  if (unloadingAddress) {
+  if (unloadingAddress?.name && unloadingAddress?.postalCodeId?.value) {
     payload.unloadingAddress = {
       name: unloadingAddress.name || '',
       postalCodeId: unloadingAddress.postalCodeId?.value || '',
