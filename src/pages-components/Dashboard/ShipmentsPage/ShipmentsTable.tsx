@@ -48,7 +48,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                       }}
                     >
                       <Icon
-                        className={clsx('transition-transform', isExpanded && 'rotate-90')}
+                        className={clsx(isExpanded && 'rotate-90')}
                         color="text-dark-500 dark:text-light-300 "
                         icon="ChevronRightIcon"
                         size="m"
