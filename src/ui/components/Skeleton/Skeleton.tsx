@@ -12,12 +12,13 @@ interface SkeletonProps {
 
 export const Skeleton: React.FC<SkeletonProps> = ({ id, borderRadius, height, width }) => {
   const radii = theme.borderRadius[borderRadius as Radius] ?? borderRadius;
-  const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDarkMode =
+    typeof window !== 'undefined' ? window?.matchMedia?.('(prefers-color-scheme: dark)').matches : false;
 
   return (
     <ContentLoader
-      backgroundColor={isDarkMode ? 'var(--color-light-850)' : 'var(--color-dark-50)'}
-      foregroundColor={isDarkMode ? 'var(--color-light-800)' : 'var(--color-dark-100)'}
+      backgroundColor={isDarkMode ? 'var(--color-light-850)' : 'var(--color-dark-200)'}
+      foregroundColor={isDarkMode ? 'var(--color-light-800)' : 'var(--color-dark-300)'}
       height={height}
       speed={2}
       uniqueKey={id}
