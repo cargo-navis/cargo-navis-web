@@ -43,6 +43,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
   const { data: vehicle } = useVehicle(shipment.vehicleId || '');
   const { data: trailer } = useVehicle(shipment.trailerId || '');
   const { data: dispatcher } = useEmployee(shipment.dispatcherId || '');
+  const { data: parentShipment } = useShipment(shipment.parentShipmentId || '');
 
   let transporter: any = contractor;
 
@@ -60,6 +61,18 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
       </FlexLayout>
       <Box className="max-w-[1400px]">
         <FlexLayout className="relative flex-col gap-7 w-full">
+          <FlexLayout className="flex-col gap-1">
+            <Text as="h1" variant="text-xl-medium">
+              Nalog #{shipment.orderNumber}
+            </Text>
+            {shipment.parentShipmentId && parentShipment && (
+              <Link className="max-w-max" href={`/dashboard/shipments/${parentShipment.id}`}>
+                <Text className="hover:text-teal-500 transition-colors" color="text-color-3" variant="text-s">
+                  Podnalog za #{parentShipment.orderNumber}
+                </Text>
+              </Link>
+            )}
+          </FlexLayout>
           <FlexLayout className="flex-row gap-7">
             <FlexLayout className="flex-1 flex-col gap-4">
               <FlexLayout as="section" className="flex-col gap-5">
