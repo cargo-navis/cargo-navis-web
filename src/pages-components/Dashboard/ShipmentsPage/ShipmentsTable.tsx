@@ -7,7 +7,7 @@ import { type Shipment } from '@/lib/api';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
-import { Box, Button, FlexLayout, Icon, Table, Text } from '@/ui';
+import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
 
 const columnHelper = createColumnHelper<Shipment>();
 
@@ -238,20 +238,6 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
   const getSubRows = (row: Shipment) => {
     return row.subshipments || [];
   };
-
-  if (!shipments?.length) {
-    return (
-      <FlexLayout className="flex-col gap-4 items-center justify-center h-full my-10">
-        <Text color="text-color-2" variant="text-l-medium">
-          Nemate naloga u bazi
-        </Text>
-        <Text color="text-color-3" variant="text-s-medium">
-          Dodajte novi nalog klikom na dugme ispod
-        </Text>
-        <Button as="a" href="/dashboard/shipments/new" iconLeft="PlusIcon" text="Dodaj Nalog" />
-      </FlexLayout>
-    );
-  }
 
   return <Table columns={columns} data={shipments || []} getSubRows={getSubRows} onRowClick={handleRowClick} />;
 }
