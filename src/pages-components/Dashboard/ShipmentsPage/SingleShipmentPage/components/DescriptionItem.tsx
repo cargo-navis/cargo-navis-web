@@ -7,7 +7,7 @@ export const DescriptionItem: React.FC<{ label: string; description: string }> =
         {label}
       </Text>
       <Text color="text-color-1" variant="text-s">
-        {description || '-'}
+        {description || '—'}
       </Text>
     </FlexLayout>
   );

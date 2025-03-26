@@ -100,7 +100,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     <Text color="text-color-3" variant="text-s-medium">
                       Prijevoznik
                     </Text>
-                    <Link className="hover:text-teal-500 transition-colors" href={transporterHref || '#'}>
+                    <Link className="hover:text-teal-500 transition-colors max-w-max" href={transporterHref || '#'}>
                       <Text variant="text-l">{transporter?.name || '-'}</Text>
                     </Link>
                   </FlexLayout>
@@ -113,7 +113,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                         Klijent
                       </Text>
                       <Link
-                        className="hover:text-teal-500 transition-colors"
+                        className="hover:text-teal-500 transition-colors max-w-max"
                         href={client?.id ? `/dashboard/clients/${client?.id}` : '#'}
                       >
                         <Text variant="text-l">{client?.name || '-'}</Text>
@@ -134,7 +134,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     Vozač
                   </Text>
                   <Link
-                    className="hover:text-teal-500 transition-colors"
+                    className="hover:text-teal-500 transition-colors max-w-max"
                     href={driver?.id ? `/dashboard/employees/${driver?.id}` : '#'}
                   >
                     <Text variant="text-l">{driver ? `${driver.firstName} ${driver.lastName}` : '-'}</Text>
@@ -147,7 +147,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                         Vozilo
                       </Text>
                       <Link
-                        className="hover:text-teal-500 transition-colors"
+                        className="hover:text-teal-500 transition-colors max-w-max"
                         href={
                           vehicle?.id ? `/dashboard/fleet/${vehicleTypeToPathMap[vehicle?.type]}/${vehicle?.id}` : '#'
                         }
@@ -162,7 +162,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                         Priključno vozilo
                       </Text>
                       <Link
-                        className="hover:text-teal-500 transition-colors"
+                        className="hover:text-teal-500 transition-colors max-w-max"
                         href={
                           trailer?.id ? `/dashboard/fleet/${vehicleTypeToPathMap[trailer?.type]}/${trailer?.id}` : '#'
                         }
@@ -178,7 +178,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                       Disponent
                     </Text>
                     <Link
-                      className="hover:text-teal-500 transition-colors"
+                      className="hover:text-teal-500 transition-colors max-w-max"
                       href={dispatcher?.id ? `/dashboard/employees/${dispatcher?.id}` : '#'}
                     >
                       <Text variant="text-l">
