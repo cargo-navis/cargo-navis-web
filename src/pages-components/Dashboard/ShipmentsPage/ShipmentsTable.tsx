@@ -7,7 +7,7 @@ import { type Shipment } from '@/lib/api';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
-import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
+import { Box, FlexLayout, Icon, Table, Text, TextButton } from '@/ui';
 
 const columnHelper = createColumnHelper<Shipment>();
 
@@ -228,8 +228,41 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           );
         },
       }),
+      columnHelper.display({
+        id: 'actions',
+        header: 'Akcije',
+        size: 100,
+        enableSorting: false,
+        cell: (props) => {
+          const { row } = props;
+          const shipment = row.original;
+          const depth = row.depth;
+
+          // Only show add subshipment button for parent shipments (depth 0)
+          if (depth > 0) {
+            return null;
+          }
+
+          return (
+            <FlexLayout className="items-center py-2">
+              <Box className="opacity-0 group-hover/row:opacity-100">
+                <TextButton
+                  iconLeft="PlusIcon"
+                  size="s"
+                  text="Dodaj podnalog"
+                  variant="secondary"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(`/dashboard/shipments/new?parentShipmentId=${shipment.id}`);
+                  }}
+                />
+              </Box>
+            </FlexLayout>
+          );
+        },
+      }),
     ];
-  }, [clients, contractors, employees, tenant, vehicles]);
+  }, [clients, contractors, employees, tenant, vehicles, router]);
 
   const handleRowClick = (shipment: Shipment) => {
     router.push(`/dashboard/shipments/${shipment.id}`);
