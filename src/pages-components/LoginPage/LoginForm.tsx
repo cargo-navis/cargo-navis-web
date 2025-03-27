@@ -10,8 +10,8 @@ import { Button, FlexLayout } from '@/ui';
 import type { FormValues } from './types';
 
 export const loginSchema = object({
-  email: string().email('Must be a valid email').required('Email is required'),
-  password: string().required('Password is required'),
+  email: string().email('Email mora biti valjanog formata').required('Email je obavezan'),
+  password: string().required('Lozinka je obavezna'),
 });
 
 export const LoginForm = () => {
