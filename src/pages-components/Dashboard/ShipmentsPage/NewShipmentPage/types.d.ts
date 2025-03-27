@@ -10,7 +10,7 @@ export interface Address {
 export interface ShipmentFields {
   cargoReference?: string;
   dispatcherId?: string;
-  clientId?: string;
+  clientId: string;
   transportContractorId?: string;
   driverId?: string;
   vehicleId?: string;
@@ -33,11 +33,11 @@ export interface ShipmentFields {
   };
   loadingCompanyName?: string;
   unloadingCompanyName?: string;
-  loadingReadyDate?: string;
+  loadingReadyDate: string;
   loadingDate?: string;
   loadingDescription?: string;
   unloadingDate?: string;
-  unloadingDueDate?: string;
+  unloadingDueDate: string;
   unloadingDescription?: string;
   price?: number;
   orderNumber: string;
