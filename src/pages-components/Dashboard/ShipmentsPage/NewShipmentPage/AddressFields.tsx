@@ -56,8 +56,8 @@ export const AddressFields = () => {
             placeholder="Odaberi poštanski broj"
             rules={{ required: true }}
           />
-          <FormDatepicker label="Datum utovara" name="loadingDate" rules={{ required: true }} />
-          <FormDatepicker label="Datum spremnosti za utovar" name="loadingReadyDate" />
+          <FormDatepicker label="Datum spremnosti za utovar" name="loadingReadyDate" rules={{ required: true }} />
+          <FormDatepicker label="Datum utovara" name="loadingDate" />
           <FormTextarea label="Opis utovara" name="loadingDescription" placeholder="Unesite detalje utovara..." />
         </FlexLayout>
         <VerticalDivider />
@@ -66,12 +66,13 @@ export const AddressFields = () => {
             Detalji istovara
           </Text>
           <FormTextInput label="Tvrtka istovara" name="unloadingCompanyName" />
-          <FormTextInput label="Ulica i broj" name="unloadingAddress.name" />
+          <FormTextInput label="Ulica i broj" name="unloadingAddress.name" rules={{ required: true }} />
           <FormSingleSelect
             isSearchable
             label="Država"
             name="unloadingAddress.countryCode"
             options={countryEuropeOptions}
+            rules={{ required: true }}
           />
           <PostalCodeSelectField
             countryCode={unloadingCountryCode}
@@ -81,9 +82,10 @@ export const AddressFields = () => {
             label="Poštanski broj"
             name="unloadingAddress.postalCodeId"
             placeholder="Odaberi poštanski broj"
+            rules={{ required: true }}
           />
-          <FormDatepicker label="Datum istovara" name="unloadingDate" rules={{ required: true }} />
-          <FormDatepicker label="Krajnji rok istovara" name="unloadingDueDate" />
+          <FormDatepicker label="Krajnji rok istovara" name="unloadingDueDate" rules={{ required: true }} />
+          <FormDatepicker label="Datum istovara" name="unloadingDate" />
           <FormTextarea label="Opis istovara" name="unloadingDescription" placeholder="Unesite detalje istovara..." />
         </FlexLayout>
       </FlexLayout>
