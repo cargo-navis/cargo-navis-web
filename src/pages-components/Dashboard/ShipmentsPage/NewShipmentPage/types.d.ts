@@ -9,7 +9,7 @@ export interface Address {
 
 export interface ShipmentFields {
   cargoReference?: string;
-  dispatcherId?: string;
+  dispatcherId: string;
   clientId: string;
   transportContractorId?: string;
   driverId?: string;
