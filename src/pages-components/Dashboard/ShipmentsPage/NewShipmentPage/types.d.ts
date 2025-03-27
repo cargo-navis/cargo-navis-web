@@ -24,8 +24,8 @@ export interface ShipmentFields {
     countryCode?: string;
   };
   unloadingAddress?: {
-    name?: string;
-    postalCodeId?: {
+    name: string;
+    postalCodeId: {
       label?: string;
       value?: string;
     };

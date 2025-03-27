@@ -88,7 +88,7 @@ export const Table: React.FC<TableProps> = ({ data, columns, onRowClick, getSubR
                     isSubRow &&
                       cellIndex === 0 && [
                         !isLast &&
-                          'before:absolute before:top-0 before:-left-[22px] before:-bottom-[1px] before:w-[2px] before:bg-dark-100 before:dark:bg-light-700',
+                          'before:absolute before:top-0 before:-left-[22px] before:-bottom-[1px] before:w-[2px] before:bg-dark-300 before:dark:bg-light-700',
                         'after:absolute after:top-0 after:-left-[22px] after:h-1/2 after:w-[9px] after:border-l-[2px] after:border-b-[2px] after:rounded-bl-[6px] after:border-dark-300 after:dark:border-light-700',
                       ]
                   )}

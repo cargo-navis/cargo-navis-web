@@ -32,13 +32,13 @@ export const shipmentSchema = Yup.object().shape({
     .optional(),
   unloadingAddress: Yup.object()
     .shape({
-      name: Yup.string(),
+      name: Yup.string().required('Adresa istovara je obavezna'),
       postalCodeId: Yup.object()
         .shape({
           label: Yup.string(),
           value: Yup.string(),
         })
-        .optional(),
+        .required('Poštanski broj je obavezan'),
       countryCode: Yup.string().optional(),
     })
     .optional(),
