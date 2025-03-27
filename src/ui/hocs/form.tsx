@@ -31,11 +31,9 @@ export const withFieldLabels = <T,>(WrappedComponent: React.FC<T>) => {
           </Box>
         </DisplayIf>
         <WrappedComponent {...(rest as any)} ref={ref} />
-        <DisplayIf condition={!!errorText}>
-          <Text color="text-red-600 dark:text-red-500" variant="text-xxxs">
-            {errorText}
-          </Text>
-        </DisplayIf>
+        <Text color="text-red-600 dark:text-red-500" variant="text-xxxs">
+          {errorText ?? <>&ensp;</>}
+        </Text>
       </Box>
     );
   });

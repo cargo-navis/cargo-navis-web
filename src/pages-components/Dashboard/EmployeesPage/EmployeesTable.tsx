@@ -150,5 +150,5 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
     ];
   }, [groupedAlerts]);
 
-  return <Table columns={columns} data={employees} />;
+  return <Table columns={columns} data={employees || []} />;
 }

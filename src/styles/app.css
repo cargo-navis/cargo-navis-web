@@ -1,0 +1,147 @@
+* {
+  @apply subpixel-antialiased;
+}
+
+* {
+  --color-white: theme(colors.white);
+  --color-black: theme(colors.black);
+  --color-transparent: theme(colors.transparent);
+  --color-current: theme(colors.current);
+  --color-inherit: theme(colors.inherit);
+
+  /* Dark */
+  --color-dark-25: theme(colors.dark-25);
+  --color-dark-50: theme(colors.dark-50);
+  --color-dark-75: theme(colors.dark-75);
+  --color-dark-100: theme(colors.dark-100);
+  --color-dark-200: theme(colors.dark-200);
+  --color-dark-300: theme(colors.dark-300);
+  --color-dark-400: theme(colors.dark-400);
+  --color-dark-500: theme(colors.dark-500);
+  --color-dark-600: theme(colors.dark-600);
+  --color-dark-700: theme(colors.dark-700);
+  --color-dark-800: theme(colors.dark-800);
+  --color-dark-900: theme(colors.dark-900);
+
+  /* Light */
+  --color-light-50: theme(colors.light-50);
+  --color-light-100: theme(colors.light-100);
+  --color-light-200: theme(colors.light-200);
+  --color-light-300: theme(colors.light-300);
+  --color-light-400: theme(colors.light-400);
+  --color-light-500: theme(colors.light-500);
+  --color-light-600: theme(colors.light-600);
+  --color-light-700: theme(colors.light-700);
+  --color-light-800: theme(colors.light-800);
+  --color-light-850: theme(colors.light-850);
+  --color-light-875: theme(colors.light-875);
+  --color-light-900: theme(colors.light-900);
+
+  /* Teal */
+  --color-teal-50: theme(colors.teal-50);
+  --color-teal-100: theme(colors.teal-100);
+  --color-teal-200: theme(colors.teal-200);
+  --color-teal-300: theme(colors.teal-300);
+  --color-teal-400: theme(colors.teal-400);
+  --color-teal-500: theme(colors.teal-500);
+  --color-teal-600: theme(colors.teal-600);
+  --color-teal-700: theme(colors.teal-700);
+  --color-teal-800: theme(colors.teal-800);
+  --color-teal-900: theme(colors.teal-900);
+
+  /* Blue */
+  --color-blue-50: theme(colors.blue-50);
+  --color-blue-100: theme(colors.blue-100);
+  --color-blue-200: theme(colors.blue-200);
+  --color-blue-300: theme(colors.blue-300);
+  --color-blue-400: theme(colors.blue-400);
+  --color-blue-500: theme(colors.blue-500);
+  --color-blue-600: theme(colors.blue-600);
+  --color-blue-700: theme(colors.blue-700);
+  --color-blue-800: theme(colors.blue-800);
+  --color-blue-900: theme(colors.blue-900);
+
+  /* Orange */
+  --color-orange-50: theme(colors.orange-50);
+  --color-orange-100: theme(colors.orange-100);
+  --color-orange-200: theme(colors.orange-200);
+  --color-orange-300: theme(colors.orange-300);
+  --color-orange-400: theme(colors.orange-400);
+  --color-orange-500: theme(colors.orange-500);
+  --color-orange-600: theme(colors.orange-600);
+  --color-orange-700: theme(colors.orange-700);
+  --color-orange-800: theme(colors.orange-800);
+  --color-orange-900: theme(colors.orange-900);
+
+  /* Green */
+  --color-green-50: theme(colors.green-50);
+  --color-green-100: theme(colors.green-100);
+  --color-green-200: theme(colors.green-200);
+  --color-green-300: theme(colors.green-300);
+  --color-green-400: theme(colors.green-400);
+  --color-green-500: theme(colors.green-500);
+  --color-green-600: theme(colors.green-600);
+  --color-green-700: theme(colors.green-700);
+  --color-green-800: theme(colors.green-800);
+  --color-green-900: theme(colors.green-900);
+
+  /* Yellow */
+  --color-yellow-50: theme(colors.yellow-50);
+  --color-yellow-100: theme(colors.yellow-100);
+  --color-yellow-200: theme(colors.yellow-200);
+  --color-yellow-300: theme(colors.yellow-300);
+  --color-yellow-400: theme(colors.yellow-400);
+  --color-yellow-500: theme(colors.yellow-500);
+  --color-yellow-600: theme(colors.yellow-600);
+  --color-yellow-700: theme(colors.yellow-700);
+  --color-yellow-800: theme(colors.yellow-800);
+  --color-yellow-900: theme(colors.yellow-900);
+
+  /* Purple */
+  --color-purple-50: theme(colors.purple-50);
+  --color-purple-100: theme(colors.purple-100);
+  --color-purple-200: theme(colors.purple-200);
+  --color-purple-300: theme(colors.purple-300);
+  --color-purple-400: theme(colors.purple-400);
+  --color-purple-500: theme(colors.purple-500);
+  --color-purple-600: theme(colors.purple-600);
+  --color-purple-700: theme(colors.purple-700);
+  --color-purple-800: theme(colors.purple-800);
+  --color-purple-900: theme(colors.purple-900);
+
+  /* Red */
+  --color-red-50: theme(colors.red-50);
+  --color-red-100: theme(colors.red-100);
+  --color-red-200: theme(colors.red-200);
+  --color-red-300: theme(colors.red-300);
+  --color-red-400: theme(colors.red-400);
+  --color-red-500: theme(colors.red-500);
+  --color-red-600: theme(colors.red-600);
+  --color-red-700: theme(colors.red-700);
+  --color-red-800: theme(colors.red-800);
+  --color-red-900: theme(colors.red-900);
+
+  /* Alphas */
+  --color-black-alpha-05: theme(colors.black-alpha-05);
+  --color-black-alpha-10: theme(colors.black-alpha-10);
+  --color-black-alpha-25: theme(colors.black-alpha-25);
+  --color-black-alpha-50: theme(colors.black-alpha-50);
+  --color-black-alpha-75: theme(colors.black-alpha-75);
+  --color-white-alpha-05: theme(colors.white-alpha-05);
+  --color-white-alpha-10: theme(colors.white-alpha-10);
+  --color-white-alpha-25: theme(colors.white-alpha-25);
+  --color-white-alpha-50: theme(colors.white-alpha-50);
+  --color-white-alpha-75: theme(colors.white-alpha-75);
+
+  /* Background */
+  --color-background-light: var(--color-white);
+  --color-background-dark: var(--color-light-900);
+}
+
+html {
+  background-color: white;
+}
+
+html.dark {
+  background-color: var(--color-light-900);
+} 

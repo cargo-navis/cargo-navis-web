@@ -9,21 +9,35 @@ export interface Address {
 
 export interface ShipmentFields {
   cargoReference?: string;
-  dispatcherId?: string;
-  clientId?: string;
+  dispatcherId: string;
+  clientId: string;
   transportContractorId?: string;
   driverId?: string;
   vehicleId?: string;
   trailerId?: string;
-  loadingAddress?: Address;
-  unloadingAddress?: Address;
+  loadingAddress?: {
+    name: string;
+    postalCodeId: {
+      label?: string;
+      value?: string;
+    };
+    countryCode?: string;
+  };
+  unloadingAddress?: {
+    name: string;
+    postalCodeId: {
+      label?: string;
+      value?: string;
+    };
+    countryCode?: string;
+  };
   loadingCompanyName?: string;
   unloadingCompanyName?: string;
-  loadingReadyDate?: string;
+  loadingReadyDate: string;
   loadingDate?: string;
   loadingDescription?: string;
   unloadingDate?: string;
-  unloadingDueDate?: string;
+  unloadingDueDate: string;
   unloadingDescription?: string;
   price?: number;
   orderNumber: string;

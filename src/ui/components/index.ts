@@ -12,6 +12,7 @@ export * from './Menu';
 export * from './Pill';
 export * from './Radio';
 export * from './Select';
+export * from './Skeleton';
 export * from './Table';
 export * from './Text';
 export * from './Textarea';
