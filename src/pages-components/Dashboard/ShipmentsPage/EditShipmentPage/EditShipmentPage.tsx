@@ -54,7 +54,7 @@ const MainContent = ({
     <Box>
       <Box className="py-5 flex flex-col gap-[40px]">
         <Heading as="h1" variant="text-xl">
-          {parentShipment ? `Ažuriraj podnalog za ${parentShipment.orderNumber}` : 'Ažuriraj Nalog'}
+          {parentShipment ? `Ažuriraj podnalog od ${parentShipment.orderNumber}` : 'Ažuriraj Nalog'}
         </Heading>
       </Box>
       <FlexLayout className="flex-col gap-[40px]">

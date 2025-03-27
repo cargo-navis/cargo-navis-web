@@ -68,7 +68,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
             {shipment.parentShipmentId && parentShipment && (
               <Link className="max-w-max" href={`/dashboard/shipments/${parentShipment.id}`}>
                 <Text className="hover:text-teal-500 transition-colors" color="text-color-3" variant="text-s">
-                  Podnalog za #{parentShipment.orderNumber}
+                  Podnalog od #{parentShipment.orderNumber}
                 </Text>
               </Link>
             )}
