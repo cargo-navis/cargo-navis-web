@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
@@ -70,6 +71,9 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
 
   return (
     <FlexLayout className="gap-3">
+      <Link href={`/dashboard/shipments/new?parentShipmentId=${id}`}>
+        <Button as="a" iconLeft="PlusIcon" text="Dodaj podnalog" variant="secondary" />
+      </Link>
       <Button
         iconLeft="ArrowDownTrayIcon"
         isDisabled={isPending}
