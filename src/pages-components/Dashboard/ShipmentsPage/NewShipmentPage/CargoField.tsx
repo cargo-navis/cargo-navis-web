@@ -101,7 +101,7 @@ const StandardCargo: React.FC<{ index: number }> = ({ index }) => {
           />
         </Box>
       </FlexLayout>
-      <FormTextInput isDisabled label="Dužni metri (LDM)" name={`cargo.${index}.ldm`} type="number" />
+      <FormTextInput label="Dužni metri (LDM)" name={`cargo.${index}.ldm`} type="number" />
     </FlexLayout>
   );
 };
