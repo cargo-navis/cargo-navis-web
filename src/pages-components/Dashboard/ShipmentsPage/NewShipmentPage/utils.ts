@@ -46,11 +46,16 @@ export const formDefaultValues: ShipmentFields = {
   cargo: [defaultCargo],
 };
 
-export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Tenant) => {
+export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Tenant, parentShipmentId?: string) => {
   return async () => {
     if (!shipment) {
       const orderNumber = await getOrderNumber();
-      return { ...formDefaultValues, orderNumber, transportContractorId: tenant.id };
+      return {
+        ...formDefaultValues,
+        orderNumber,
+        transportContractorId: tenant.id,
+        clientId: parentShipmentId ? tenant.id : '',
+      };
     }
 
     // Fetch postal code data if needed
