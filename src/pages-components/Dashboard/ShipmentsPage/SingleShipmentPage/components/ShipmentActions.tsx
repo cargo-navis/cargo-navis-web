@@ -82,14 +82,9 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
         variant="secondary"
         onClick={handleDownloadPdf}
       />
-      <Button
-        as="a"
-        href={`/dashboard/shipments/${id}/edit`}
-        iconLeft="PencilIcon"
-        isDisabled={isPending}
-        text="Uredi"
-        variant="secondary"
-      />
+      <Link href={`/dashboard/shipments/${id}/edit`}>
+        <Button as="a" iconLeft="PencilIcon" isDisabled={isPending} text="Uredi" variant="secondary" />
+      </Link>
       <Button iconLeft="TrashIcon" isLoading={isPending} text="Izbriši" onClick={handleDelete} />
     </FlexLayout>
   );
