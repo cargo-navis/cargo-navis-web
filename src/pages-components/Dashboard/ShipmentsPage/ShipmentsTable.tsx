@@ -7,7 +7,7 @@ import { type Shipment } from '@/lib/api';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
-import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon, Table, Text, Tooltip } from '@/ui';
 
 const columnHelper = createColumnHelper<Shipment>();
 
@@ -192,9 +192,25 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const vehicleId = info.getValue();
           const vehicle = vehicles.find((v) => v.id === vehicleId);
           const displayValue = vehicle ? `${vehicle?.registration} (${vehicle?.brand})` : '—';
+
+          const isSubshipment = info.row.depth !== 0;
+
           return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500 gap-2">
               <Text>{displayValue}</Text>
+              <DisplayIf condition={!isSubshipment && !vehicleId}>
+                <Tooltip
+                  content={
+                    <Box className="px-1">
+                      <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
+                        Vozilo još nije dodijeljeno
+                      </Text>
+                    </Box>
+                  }
+                >
+                  <Icon color="text-red-500" icon="ExclamationTriangleIcon" size="s" />
+                </Tooltip>
+              </DisplayIf>
             </FlexLayout>
           );
         },
@@ -206,9 +222,25 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const driverId = info.getValue();
           const employee = employees.find((employee) => employee.id === driverId);
           const fullName = employee ? `${employee.firstName || ''} ${employee.lastName || ''}`.trim() : '—';
+
+          const isSubshipment = info.row.depth !== 0;
+
           return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500 gap-2">
               <Text>{fullName || '—'}</Text>
+              <DisplayIf condition={!isSubshipment && !driverId}>
+                <Tooltip
+                  content={
+                    <Box className="px-1">
+                      <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
+                        Vozač još nije dodijeljen
+                      </Text>
+                    </Box>
+                  }
+                >
+                  <Icon color="text-red-500" icon="ExclamationTriangleIcon" size="s" />
+                </Tooltip>
+              </DisplayIf>
             </FlexLayout>
           );
         },
@@ -239,5 +271,22 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
     return row.subshipments || [];
   };
 
-  return <Table columns={columns} data={shipments || []} getSubRows={getSubRows} onRowClick={handleRowClick} />;
+  // Add isWarning flag to shipments missing vehicleId or driverId
+  const shipmentsWithWarnings = useMemo(() => {
+    if (!shipments) return [];
+
+    return shipments.map((shipment) => {
+      // Check if vehicleId or driverId is missing
+      const isMissingVehicleOrDriver = !shipment.vehicleId || !shipment.driverId;
+
+      // Add isWarning flag only to parent shipments
+      return {
+        ...shipment,
+        isWarning: isMissingVehicleOrDriver,
+        subshipments: shipment.subshipments || undefined,
+      };
+    });
+  }, [shipments]);
+
+  return <Table columns={columns} data={shipmentsWithWarnings} getSubRows={getSubRows} onRowClick={handleRowClick} />;
 }
