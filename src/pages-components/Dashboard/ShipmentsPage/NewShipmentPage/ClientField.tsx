@@ -1,6 +1,6 @@
 import type { Client } from '@/lib/api';
 import { FormSingleSelect } from '@/lib/components/form';
-import { useClients } from '@/lib/hooks';
+import { useClients, useCurrentTenant } from '@/lib/hooks';
 
 function mapClientsToOptions(clients: Client[]) {
   return clients.map((client) => ({
@@ -13,13 +13,16 @@ export const ClientField = () => {
   const { data: clients = [] } = useClients();
   const clientOptions = mapClientsToOptions(clients);
 
+  const { data: tenant } = useCurrentTenant();
+  const tenantOption = { value: tenant?.id || '', label: tenant?.name || '' };
+
   return (
     <FormSingleSelect
       isClearable
       isSearchable
       label="Klijent"
       name="clientId"
-      options={clientOptions}
+      options={[{ options: [tenantOption] }, ...clientOptions]}
       placeholder="Odaberi klijenta..."
       rules={{ required: true }}
     />

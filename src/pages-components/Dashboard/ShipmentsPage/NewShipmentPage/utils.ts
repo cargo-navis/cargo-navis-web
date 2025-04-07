@@ -1,4 +1,4 @@
-import { type CreateShipmentData, getOrderNumber, type Shipment } from '@/lib/api';
+import { type CreateShipmentData, getOrderNumber, getShipment, type Shipment } from '@/lib/api';
 import { getPostalCode } from '@/lib/api/postalCodes';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { PalleteType } from '@/lib/utils/palletes';
@@ -46,11 +46,42 @@ export const formDefaultValues: ShipmentFields = {
   cargo: [defaultCargo],
 };
 
-export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Tenant) => {
+export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Tenant, parentShipmentId?: string) => {
   return async () => {
     if (!shipment) {
       const orderNumber = await getOrderNumber();
-      return { ...formDefaultValues, orderNumber, transportContractorId: tenant.id };
+      let cargo = formDefaultValues.cargo;
+
+      if (parentShipmentId) {
+        try {
+          const parentShipment = await getShipment(parentShipmentId);
+          if (parentShipment.cargo?.length) {
+            cargo = parentShipment.cargo.map((c) => ({
+              weight: c.weight || 0,
+              description: c.description || '',
+              ldm: c.ldm || 0.4,
+              metadata: {
+                type: (c.metadata?.type || 'standard') as CargoType,
+                palleteType: c.metadata?.palleteType || PalleteType.Euro,
+                palleteAmount: c.metadata?.palleteAmount || 1,
+                width: c.metadata?.width || 0,
+                height: c.metadata?.height || 0,
+                length: c.metadata?.length || 0,
+              },
+            }));
+          }
+        } catch (error) {
+          console.error('Error fetching parent shipment cargo:', error);
+        }
+      }
+
+      return {
+        ...formDefaultValues,
+        orderNumber,
+        transportContractorId: tenant.id,
+        clientId: parentShipmentId ? tenant.id : '',
+        cargo,
+      };
     }
 
     // Fetch postal code data if needed

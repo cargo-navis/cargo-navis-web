@@ -53,6 +53,11 @@ const MainContent: React.FC<{ client: Client }> = ({ client }) => {
               <Divider />
               <FlexLayout className="flex-col">
                 <Text color="text-color-2" variant="text-m">
+                  Valuta plaćanja: <strong>{client.termsOfPayment || '—'}</strong>
+                </Text>
+              </FlexLayout>
+              <FlexLayout className="flex-col">
+                <Text color="text-color-2" variant="text-m">
                   VAT: <strong>{client.vatNumber}</strong>
                 </Text>
               </FlexLayout>
