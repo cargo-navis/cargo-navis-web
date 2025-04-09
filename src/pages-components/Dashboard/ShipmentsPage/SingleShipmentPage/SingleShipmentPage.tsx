@@ -18,6 +18,7 @@ import {
 import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { Box, Divider, FlexLayout, Text } from '@/ui';
 
+import { loadStatusConfig } from '../const';
 import { AddressDetailsItem } from './components/AddressDetailsItem';
 import { CargoItem } from './components/CargoItem';
 import { DateItem } from './components/DateItem';
@@ -70,7 +71,9 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
         id: shipment.id,
         loadStatus: status,
       });
-      alert(`Status utovara ažuriran u ${status}.`);
+
+      const statusText = loadStatusConfig[status].label;
+      alert(`Status naloga ažuriran u - ${statusText.toUpperCase()}.`);
     } catch (error) {
       console.error(error);
       alert('Dogodila se greška prilikom ažuriranja statusa utovara.');

@@ -22,11 +22,10 @@ export const LoadStatusProgress: React.FC<LoadStatusProgressProps> = ({ currentS
         {statuses.map((status, index) => {
           const config = loadStatusConfig[status];
           const isCurrent = index === currentIndex;
-          const isFuture = index > currentIndex;
           const isHovered = hoveredStatus === status;
 
           const opacity = isCurrent || isHovered ? 'opacity-100' : 'opacity-50';
-          const variant = isFuture && !isHovered ? 'default' : config.variant;
+          const variant = isCurrent || isHovered ? config.variant : 'default';
 
           return (
             <FlexLayout className="items-center" key={status}>
