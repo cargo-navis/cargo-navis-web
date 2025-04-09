@@ -5,6 +5,8 @@ import { useCurrentTenant } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { Box, Divider, FlexLayout, Text } from '@/ui';
 
+import { TenantActions } from './TenantActions';
+
 export const TenantPage = () => {
   const { data: tenant, isLoading } = useCurrentTenant();
 
@@ -21,42 +23,85 @@ export const TenantPage = () => {
   );
 };
 
-export const MainContent: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
+const MainContent: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
   const { address } = tenant;
 
   return (
-    <FlexLayout className="flex-col gap-3 max-w-[400px]">
-      <FlexLayout className="gap-3 items-center">
-        <Text color="text-color-1" variant="text-xxl-bold">
+    <FlexLayout className="py-5 flex-col gap-5">
+      <FlexLayout className="justify-between">
+        <Text as="h1" variant="text-xl-medium">
           {tenant.name}
         </Text>
+        <TenantActions />
       </FlexLayout>
-      <FlexLayout className="flex-col">
-        <Text color="text-color-3" variant="text-m">
-          {address.placeName}, {address.postalCode}
-        </Text>
-      </FlexLayout>
-      <Divider />
-      <FlexLayout className="flex-col">
-        <Text color="text-color-2" variant="text-m">
-          VAT: <strong>{tenant.vatNumber}</strong>
-        </Text>
-      </FlexLayout>
-      <FlexLayout className="flex-col">
-        <Text color="text-color-2" variant="text-m">
-          OIB: <strong>{tenant.nationalCompanyRegisterId}</strong>
-        </Text>
-      </FlexLayout>
-      <FlexLayout className="flex-col">
-        <Text color="text-color-2" variant="text-m">
-          Broj licence: <strong>{tenant.communityLicenseId}</strong>
-        </Text>
-      </FlexLayout>
-      <FlexLayout className="flex-col">
-        <Text color="text-color-2" variant="text-m">
-          Osiguranje tereta (vrijedi do): <strong>{getDataPointDateString(tenant.cargoInsuranceExpiryDate)}</strong>
-        </Text>
-      </FlexLayout>
+
+      <Box className="max-w-[720px]">
+        <FlexLayout className="relative flex-col gap-7 w-full">
+          <FlexLayout as="section" className="flex-col gap-5">
+            <Box className="flex-1">
+              <FlexLayout className="flex-col">
+                <Text color="text-color-3" variant="text-s-medium">
+                  Adresa
+                </Text>
+                <Text variant="text-l">
+                  {address.placeName}, {address.postalCode}
+                </Text>
+              </FlexLayout>
+            </Box>
+
+            <Box className="py-4">
+              <Divider />
+            </Box>
+
+            <FlexLayout className="gap-4">
+              <Box className="flex-1">
+                <FlexLayout className="flex-col">
+                  <Text color="text-color-3" variant="text-s-medium">
+                    OIB
+                  </Text>
+                  <Text variant="text-l">{tenant.nationalCompanyRegisterId || '–'}</Text>
+                </FlexLayout>
+              </Box>
+              <Box className="flex-1">
+                <FlexLayout className="flex-col">
+                  <Text color="text-color-3" variant="text-s-medium">
+                    VAT
+                  </Text>
+                  <Text variant="text-l">{tenant.vatNumber || '–'}</Text>
+                </FlexLayout>
+              </Box>
+            </FlexLayout>
+
+            <FlexLayout className="gap-4">
+              <Box className="flex-1">
+                <FlexLayout className="flex-col">
+                  <Text color="text-color-3" variant="text-s-medium">
+                    Broj licence
+                  </Text>
+                  <Text variant="text-l">{tenant.communityLicenseId || '–'}</Text>
+                </FlexLayout>
+              </Box>
+              <Box className="flex-1">
+                <FlexLayout className="flex-col">
+                  <Text color="text-color-3" variant="text-s-medium">
+                    Valuta plaćanja
+                  </Text>
+                  <Text variant="text-l">{tenant.termsOfPayment || '–'}</Text>
+                </FlexLayout>
+              </Box>
+            </FlexLayout>
+
+            <Box className="flex-1">
+              <FlexLayout className="flex-col">
+                <Text color="text-color-3" variant="text-s-medium">
+                  Datum isteka osiguranja
+                </Text>
+                <Text variant="text-l">{getDataPointDateString(tenant.cargoInsuranceExpiryDate) || '–'}</Text>
+              </FlexLayout>
+            </Box>
+          </FlexLayout>
+        </FlexLayout>
+      </Box>
     </FlexLayout>
   );
 };

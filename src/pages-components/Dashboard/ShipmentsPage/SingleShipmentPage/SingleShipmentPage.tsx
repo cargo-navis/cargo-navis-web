@@ -4,15 +4,26 @@ import { useRouter } from 'next/router';
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Shipment } from '@/lib/api';
+import { LoadStatus } from '@/lib/api/shipments';
 import { LoadingPage } from '@/lib/components/LoadingPage';
-import { useClient, useContractor, useCurrentTenant, useEmployee, useShipment, useVehicle } from '@/lib/hooks';
+import {
+  useClient,
+  useContractor,
+  useCurrentTenant,
+  useEmployee,
+  useShipment,
+  useUpdateShipment,
+  useVehicle,
+} from '@/lib/hooks';
 import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { Box, Divider, FlexLayout, Text } from '@/ui';
 
+import { loadStatusConfig } from '../const';
 import { AddressDetailsItem } from './components/AddressDetailsItem';
 import { CargoItem } from './components/CargoItem';
 import { DateItem } from './components/DateItem';
 import { DescriptionItem } from './components/DescriptionItem';
+import { LoadStatusProgress } from './components/LoadStatusProgress';
 import { ShipmentActions } from './components/ShipmentActions';
 import type { CargoWithMetadata } from './components/types';
 
@@ -44,6 +55,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
   const { data: trailer } = useVehicle(shipment.trailerId || '');
   const { data: dispatcher } = useEmployee(shipment.dispatcherId || '');
   const { data: parentShipment } = useShipment(shipment.parentShipmentId || '');
+  const { mutate: updateShipment, isPending } = useUpdateShipment();
 
   let transporter: any = contractor;
 
@@ -53,6 +65,21 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
 
   const transporterHref = contractor ? `/dashboard/contractors/${contractor?.id}` : `/dashboard/tenant`;
 
+  const handleLoadStatusChange = (status: LoadStatus) => {
+    try {
+      updateShipment({
+        id: shipment.id,
+        loadStatus: status,
+      });
+
+      const statusText = loadStatusConfig[status].label;
+      alert(`Status naloga ažuriran u - ${statusText.toUpperCase()}.`);
+    } catch (error) {
+      console.error(error);
+      alert('Dogodila se greška prilikom ažuriranja statusa utovara.');
+    }
+  };
+
   return (
     <FlexLayout className="py-5 flex-col gap-5">
       <FlexLayout className="justify-between">
@@ -61,17 +88,24 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
       </FlexLayout>
       <Box className="max-w-[1400px]">
         <FlexLayout className="relative flex-col gap-7 w-full">
-          <FlexLayout className="flex-col gap-1">
-            <Text as="h1" variant="text-xl-medium">
-              Nalog #{shipment.orderNumber}
-            </Text>
-            {shipment.parentShipmentId && parentShipment && (
-              <Link className="max-w-max" href={`/dashboard/shipments/${parentShipment.id}`}>
-                <Text className="hover:text-teal-500 transition-colors" color="text-color-3" variant="text-s">
-                  Podnalog od #{parentShipment.orderNumber}
-                </Text>
-              </Link>
-            )}
+          <FlexLayout className="flex-col gap-4">
+            <FlexLayout className="flex-col gap-1">
+              <Text as="h1" variant="text-xl-medium">
+                Nalog #{shipment.orderNumber}
+              </Text>
+              {shipment.parentShipmentId && parentShipment && (
+                <Link className="max-w-max" href={`/dashboard/shipments/${parentShipment.id}`}>
+                  <Text className="hover:text-teal-500 transition-colors" color="text-color-3" variant="text-s">
+                    Podnalog od #{parentShipment.orderNumber}
+                  </Text>
+                </Link>
+              )}
+            </FlexLayout>
+            <LoadStatusProgress
+              currentStatus={shipment.loadStatus || LoadStatus.NotYetLoaded}
+              isPending={isPending}
+              onStatusChange={handleLoadStatusChange}
+            />
           </FlexLayout>
           <FlexLayout className="flex-row gap-7">
             <FlexLayout className="flex-1 flex-col gap-4">

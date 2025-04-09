@@ -1,3 +1,5 @@
+import { LoadStatus } from './shipments';
+
 export interface Shipment {
   id: string;
   cargoReference: string;
@@ -23,6 +25,7 @@ export interface Shipment {
   parentShipmentId?: string;
   subshipments?: Shipment[];
   createdAt: string;
+  loadStatus?: LoadStatus;
 }
 
 export interface CreateShipmentData extends Omit<Shipment, 'id' | 'loadingAddress' | 'unloadingAddress'> {
