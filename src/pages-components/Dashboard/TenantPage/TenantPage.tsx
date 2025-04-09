@@ -5,6 +5,8 @@ import { useCurrentTenant } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { Box, Divider, FlexLayout, Text } from '@/ui';
 
+import { TenantActions } from './TenantActions';
+
 export const TenantPage = () => {
   const { data: tenant, isLoading } = useCurrentTenant();
 
@@ -26,10 +28,11 @@ export const MainContent: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
 
   return (
     <FlexLayout className="flex-col gap-3 max-w-[400px]">
-      <FlexLayout className="gap-3 items-center">
+      <FlexLayout className="gap-3 items-center justify-between">
         <Text color="text-color-1" variant="text-xxl-bold">
           {tenant.name}
         </Text>
+        <TenantActions />
       </FlexLayout>
       <FlexLayout className="flex-col">
         <Text color="text-color-3" variant="text-m">
@@ -54,7 +57,12 @@ export const MainContent: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
       </FlexLayout>
       <FlexLayout className="flex-col">
         <Text color="text-color-2" variant="text-m">
-          Osiguranje tereta (vrijedi do): <strong>{getDataPointDateString(tenant.cargoInsuranceExpiryDate)}</strong>
+          Datum isteka osiguranja: <strong>{getDataPointDateString(tenant.cargoInsuranceExpiryDate)}</strong>
+        </Text>
+      </FlexLayout>
+      <FlexLayout className="flex-col">
+        <Text color="text-color-2" variant="text-m">
+          Valuta plaćanja: <strong>{tenant.termsOfPayment}</strong>
         </Text>
       </FlexLayout>
     </FlexLayout>

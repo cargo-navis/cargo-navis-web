@@ -1,0 +1,1 @@
+export { EditTenantPage } from './EditTenantPage';
