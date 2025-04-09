@@ -4,10 +4,13 @@ import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 
 import { type Shipment } from '@/lib/api';
+import { LoadStatus } from '@/lib/api/shipments';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
-import { Box, DisplayIf, FlexLayout, Icon, Table, Text, Tooltip } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
+
+import { loadStatusConfig } from './const';
 
 const columnHelper = createColumnHelper<Shipment>();
 
@@ -256,6 +259,20 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
               <Text>{fullName || '—'}</Text>
+            </FlexLayout>
+          );
+        },
+      }),
+      columnHelper.accessor('loadStatus', {
+        header: 'Status utovara',
+        enableSorting: false,
+        cell: (info) => {
+          const status = info.getValue();
+          const config = status ? loadStatusConfig[status] : loadStatusConfig[LoadStatus.NotYetLoaded];
+
+          return (
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+              <Pill size="s" text={config.label} variant={config.variant} />
             </FlexLayout>
           );
         },

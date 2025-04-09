@@ -2,6 +2,12 @@ import { backend } from '@/lib/services/backendService';
 
 import type { CreateShipmentData, Shipment } from './';
 
+export enum LoadStatus {
+  NotYetLoaded = 'not_yet_loaded',
+  Loaded = 'loaded',
+  Unloaded = 'unloaded',
+}
+
 export async function createShipment(data: CreateShipmentData) {
   return backend.post<Shipment>('/api/shipments', data);
 }

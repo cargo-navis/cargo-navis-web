@@ -54,6 +54,12 @@ export function useUpdateShipment() {
       const { id, ...shipmentData } = data;
       return updateShipment(id, shipmentData);
     },
+    onMutate: (data) => {
+      queryClient.setQueryData(['shipments'], (oldData: Shipment[] | undefined) => {
+        if (!oldData) return oldData;
+        return oldData.map((shipment) => (shipment.id === data.id ? { ...shipment, ...data } : shipment));
+      });
+    },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['shipment', variables.id] });
       queryClient.invalidateQueries({ queryKey: ['shipments'] });
