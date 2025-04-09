@@ -299,7 +299,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       // Add isWarning flag only to parent shipments
       return {
         ...shipment,
-        isWarning: isMissingVehicleOrDriver,
+        isWarning: isMissingVehicleOrDriver && shipment.transportContractorId === tenant?.id,
         subshipments: shipment.subshipments || undefined,
       };
     });
