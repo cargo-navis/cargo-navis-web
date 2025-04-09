@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { useDeleteClient } from '@/lib/hooks';
@@ -22,14 +23,9 @@ export const ClientActions: React.FC<{ id: string }> = ({ id }) => {
 
   return (
     <FlexLayout className="gap-3">
-      <Button
-        as="a"
-        href={`/dashboard/clients/${id}/edit`}
-        iconLeft="PencilIcon"
-        isDisabled={isPending}
-        text="Uredi"
-        variant="secondary"
-      />
+      <Link href={`/dashboard/clients/${id}/edit`}>
+        <Button iconLeft="PencilIcon" isDisabled={isPending} text="Uredi" variant="secondary" />
+      </Link>
       <Button iconLeft="TrashIcon" isLoading={isPending} text="Izbriši" onClick={handleDelete} />
     </FlexLayout>
   );

@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import type { VehicleEnum } from '@/lib/api';
@@ -26,14 +27,9 @@ export const VehicleActions: React.FC<{ id: string; type: VehicleEnum }> = ({ id
 
   return (
     <FlexLayout className="gap-3">
-      <Button
-        as="a"
-        href={`${asPath}/edit`}
-        iconLeft="PencilIcon"
-        isDisabled={isPending}
-        text="Uredi"
-        variant="secondary"
-      />
+      <Link href={`${asPath}/edit`}>
+        <Button iconLeft="PencilIcon" isDisabled={isPending} text="Uredi" variant="secondary" />
+      </Link>
       <Button iconLeft="TrashIcon" isDisabled={isPending} text="Izbriši" onClick={handleDelete} />
     </FlexLayout>
   );
