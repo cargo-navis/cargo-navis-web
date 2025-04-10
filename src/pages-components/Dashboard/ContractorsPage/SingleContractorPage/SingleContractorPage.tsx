@@ -55,6 +55,11 @@ const MainContent: React.FC<{ contractor: Contractor }> = ({ contractor }) => {
               <Divider />
               <FlexLayout className="flex-col">
                 <Text color="text-color-2" variant="text-m">
+                  Valuta plaćanja: <strong>{contractor.termsOfPayment || '—'}</strong>
+                </Text>
+              </FlexLayout>
+              <FlexLayout className="flex-col">
+                <Text color="text-color-2" variant="text-m">
                   VAT: <strong>{contractor.vatNumber}</strong>
                 </Text>
               </FlexLayout>
