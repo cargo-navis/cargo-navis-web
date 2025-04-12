@@ -12,5 +12,6 @@ export * from './postalCodes.d';
 export * from './shipments';
 export * from './shipments.d';
 export * from './tenant';
+export * from './tenant.d';
 export * from './vehicles';
 export * from './vehicles.d';

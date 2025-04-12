@@ -1,3 +1,4 @@
+import { addToast } from '@heroui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -6,21 +7,14 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Shipment } from '@/lib/api';
 import { LoadStatus } from '@/lib/api/shipments';
 import { LoadingPage } from '@/lib/components/LoadingPage';
-import {
-  useClient,
-  useContractor,
-  useCurrentTenant,
-  useEmployee,
-  useShipment,
-  useUpdateShipment,
-  useVehicle,
-} from '@/lib/hooks';
+import { useContractor, useCurrentTenant, useEmployee, useShipment, useUpdateShipment, useVehicle } from '@/lib/hooks';
 import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
-import { Box, Divider, FlexLayout, Text } from '@/ui';
+import { Box, Divider, FlexLayout, Icon, Text } from '@/ui';
 
 import { loadStatusConfig } from '../const';
 import { AddressDetailsItem } from './components/AddressDetailsItem';
 import { CargoItem } from './components/CargoItem';
+import { ClientItem } from './components/ClientItem';
 import { DateItem } from './components/DateItem';
 import { DescriptionItem } from './components/DescriptionItem';
 import { LoadStatusProgress } from './components/LoadStatusProgress';
@@ -49,7 +43,7 @@ export const SingleShipmentPage = () => {
 const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
   const { data: tenant } = useCurrentTenant();
   const { data: contractor } = useContractor(shipment.transportContractorId || '');
-  const { data: client } = useClient(shipment.clientId || '');
+
   const { data: driver } = useEmployee(shipment.driverId || '');
   const { data: vehicle } = useVehicle(shipment.vehicleId || '');
   const { data: trailer } = useVehicle(shipment.trailerId || '');
@@ -73,10 +67,44 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
       });
 
       const statusText = loadStatusConfig[status].label;
-      alert(`Status naloga ažuriran u - ${statusText.toUpperCase()}.`);
+
+      addToast({
+        title: 'Status naloga ažuriran:',
+        description: statusText.toUpperCase(),
+        classNames: {
+          base: 'bg-teal-700 text-white border border-teal-600',
+          content: 'text-white',
+          description: 'text-white',
+          title: 'text-white',
+          closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
+        },
+        radius: 'sm',
+        icon: <Icon color="text-white" icon="InformationCircleIcon" size="xl" />,
+        closeIcon: (
+          <FlexLayout className="bg-teal-700 p-1 items-center justify-center">
+            <Icon color="text-white" icon="XMarkIcon" size="l" />
+          </FlexLayout>
+        ),
+      });
     } catch (error) {
       console.error(error);
-      alert('Dogodila se greška prilikom ažuriranja statusa utovara.');
+      addToast({
+        title: 'Greška prilikom ažuriranja statusa utovara. Pokušajte ponovno.',
+        classNames: {
+          base: 'bg-red-600 dark:bg-red-700 text-white border border-red-600',
+          content: 'text-white',
+          description: 'text-white',
+          title: 'text-white',
+          closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
+        },
+        radius: 'sm',
+        icon: <Icon color="text-white" icon="ExclamationTriangleIcon" size="xl" />,
+        closeIcon: (
+          <FlexLayout className="bg-red-600 dark:bg-red-700 p-1 items-center justify-center">
+            <Icon color="text-white" icon="XMarkIcon" size="l" />
+          </FlexLayout>
+        ),
+      });
     }
   };
 
@@ -142,17 +170,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
 
                 <FlexLayout className="gap-4">
                   <Box className="flex-1">
-                    <FlexLayout className="flex-col">
-                      <Text color="text-color-3" variant="text-s-medium">
-                        Klijent
-                      </Text>
-                      <Link
-                        className="hover:text-teal-500 transition-colors max-w-max"
-                        href={client?.id ? `/dashboard/clients/${client?.id}` : '#'}
-                      >
-                        <Text variant="text-l">{client?.name || '-'}</Text>
-                      </Link>
-                    </FlexLayout>
+                    <ClientItem clientId={shipment.clientId || ''} />
                   </Box>
                   <Box className="flex-1">
                     <FlexLayout className="flex-col">

@@ -71,6 +71,17 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (info) => {
           const clientId = info.getValue();
           const client = clients.find((client) => client.id === clientId);
+
+          const isTenant = !client && tenant?.id === clientId;
+
+          if (isTenant) {
+            return (
+              <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+                <Text>{tenant?.name}</Text>
+              </FlexLayout>
+            );
+          }
+
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
               <Text>{client ? client.name : '—'}</Text>
@@ -197,11 +208,12 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const displayValue = vehicle ? `${vehicle?.registration} (${vehicle?.brand})` : '—';
 
           const isSubshipment = info.row.depth !== 0;
+          const isTenantTransporter = info.row.original.transportContractorId === tenant?.id;
 
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500 gap-2">
               <Text>{displayValue}</Text>
-              <DisplayIf condition={!isSubshipment && !vehicleId}>
+              <DisplayIf condition={!isSubshipment && !vehicleId && isTenantTransporter}>
                 <Tooltip
                   content={
                     <Box className="px-1">
@@ -227,11 +239,11 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const fullName = employee ? `${employee.firstName || ''} ${employee.lastName || ''}`.trim() : '—';
 
           const isSubshipment = info.row.depth !== 0;
-
+          const isTenantTransporter = info.row.original.transportContractorId === tenant?.id;
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500 gap-2">
               <Text>{fullName || '—'}</Text>
-              <DisplayIf condition={!isSubshipment && !driverId}>
+              <DisplayIf condition={!isSubshipment && !driverId && isTenantTransporter}>
                 <Tooltip
                   content={
                     <Box className="px-1">
