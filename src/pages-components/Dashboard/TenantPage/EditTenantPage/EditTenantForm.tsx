@@ -28,7 +28,6 @@ export const EditTenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
     nationalCompanyRegisterId,
     communityLicenseId,
     cargoInsuranceExpiryDate,
-    termsOfPayment,
     address,
   }: TenantFormData) {
     const payload = {
@@ -37,7 +36,6 @@ export const EditTenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
       nationalCompanyRegisterId,
       communityLicenseId,
       cargoInsuranceExpiryDate,
-      termsOfPayment,
       address,
     };
 
@@ -68,7 +66,6 @@ export const EditTenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
           </FlexLayout>
           <FormTextInput label="Broj licence" name="communityLicenseId" rules={{ required: true }} />
           <FormTextInput label="Datum isteka osiguranja" name="cargoInsuranceExpiryDate" rules={{ required: true }} />
-          <FormTextInput label="Valuta plaćanja" name="termsOfPayment" rules={{ required: true }} />
           <FlexLayout className="flex-1 flex-col gap-2">
             <Text color="text-color-3" variant="text-xxs-medium">
               Adresa sjedišta

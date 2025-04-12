@@ -81,16 +81,7 @@ const MainContent: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
                   <Text variant="text-l">{tenant.communityLicenseId || '–'}</Text>
                 </FlexLayout>
               </Box>
-              <Box className="flex-1">
-                <FlexLayout className="flex-col">
-                  <Text color="text-color-3" variant="text-s-medium">
-                    Valuta plaćanja
-                  </Text>
-                  <Text variant="text-l">{tenant.termsOfPayment || '–'}</Text>
-                </FlexLayout>
-              </Box>
             </FlexLayout>
-
             <Box className="flex-1">
               <FlexLayout className="flex-col">
                 <Text color="text-color-3" variant="text-s-medium">

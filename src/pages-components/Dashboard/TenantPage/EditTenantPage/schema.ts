@@ -8,7 +8,6 @@ export interface TenantFormData {
   nationalCompanyRegisterId: string;
   communityLicenseId: string;
   cargoInsuranceExpiryDate: string;
-  termsOfPayment: string;
   address: {
     placeName: string;
     postalCode: string;
@@ -21,7 +20,6 @@ export const tenantSchema = yup.object().shape({
   nationalCompanyRegisterId: yup.string().required('OIB je obavezan'),
   communityLicenseId: yup.string().required('Broj licence je obavezan'),
   cargoInsuranceExpiryDate: yup.string().required('Datum isteka osiguranja je obavezan'),
-  termsOfPayment: yup.string().required('Valuta plaćanja je obavezna'),
   address: yup.object().shape({
     placeName: yup.string().required('Mjesto je obavezno'),
     postalCode: yup.string().required('Poštanski broj je obavezan'),
@@ -34,7 +32,6 @@ export const getFormDefaultValues = (tenant: Tenant): TenantFormData => ({
   nationalCompanyRegisterId: tenant?.nationalCompanyRegisterId || '',
   communityLicenseId: tenant?.communityLicenseId || '',
   cargoInsuranceExpiryDate: tenant?.cargoInsuranceExpiryDate || '',
-  termsOfPayment: tenant?.termsOfPayment || '',
   address: {
     placeName: tenant?.address?.placeName || '',
     postalCode: tenant?.address?.postalCode || '',
