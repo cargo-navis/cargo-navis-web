@@ -71,6 +71,17 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (info) => {
           const clientId = info.getValue();
           const client = clients.find((client) => client.id === clientId);
+
+          const isTenant = !client && tenant?.id === clientId;
+
+          if (isTenant) {
+            return (
+              <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+                <Text>{tenant?.name}</Text>
+              </FlexLayout>
+            );
+          }
+
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
               <Text>{client ? client.name : '—'}</Text>
