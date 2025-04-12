@@ -6,21 +6,14 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Shipment } from '@/lib/api';
 import { LoadStatus } from '@/lib/api/shipments';
 import { LoadingPage } from '@/lib/components/LoadingPage';
-import {
-  useClient,
-  useContractor,
-  useCurrentTenant,
-  useEmployee,
-  useShipment,
-  useUpdateShipment,
-  useVehicle,
-} from '@/lib/hooks';
+import { useContractor, useCurrentTenant, useEmployee, useShipment, useUpdateShipment, useVehicle } from '@/lib/hooks';
 import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { Box, Divider, FlexLayout, Text } from '@/ui';
 
 import { loadStatusConfig } from '../const';
 import { AddressDetailsItem } from './components/AddressDetailsItem';
 import { CargoItem } from './components/CargoItem';
+import { ClientItem } from './components/ClientItem';
 import { DateItem } from './components/DateItem';
 import { DescriptionItem } from './components/DescriptionItem';
 import { LoadStatusProgress } from './components/LoadStatusProgress';
@@ -49,7 +42,7 @@ export const SingleShipmentPage = () => {
 const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
   const { data: tenant } = useCurrentTenant();
   const { data: contractor } = useContractor(shipment.transportContractorId || '');
-  const { data: client } = useClient(shipment.clientId || '');
+
   const { data: driver } = useEmployee(shipment.driverId || '');
   const { data: vehicle } = useVehicle(shipment.vehicleId || '');
   const { data: trailer } = useVehicle(shipment.trailerId || '');
@@ -142,17 +135,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
 
                 <FlexLayout className="gap-4">
                   <Box className="flex-1">
-                    <FlexLayout className="flex-col">
-                      <Text color="text-color-3" variant="text-s-medium">
-                        Klijent
-                      </Text>
-                      <Link
-                        className="hover:text-teal-500 transition-colors max-w-max"
-                        href={client?.id ? `/dashboard/clients/${client?.id}` : '#'}
-                      >
-                        <Text variant="text-l">{client?.name || '-'}</Text>
-                      </Link>
-                    </FlexLayout>
+                    <ClientItem clientId={shipment.clientId || ''} />
                   </Box>
                   <Box className="flex-1">
                     <FlexLayout className="flex-col">
