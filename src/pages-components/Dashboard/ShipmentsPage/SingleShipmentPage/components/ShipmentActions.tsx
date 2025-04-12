@@ -72,7 +72,7 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
   return (
     <FlexLayout className="gap-3">
       <Link href={`/dashboard/shipments/new?parentShipmentId=${id}`}>
-        <Button as="a" iconLeft="PlusIcon" text="Dodaj podnalog" variant="secondary" />
+        <Button iconLeft="PlusIcon" text="Dodaj podnalog" variant="secondary" />
       </Link>
       <Button
         iconLeft="ArrowDownTrayIcon"
@@ -83,7 +83,7 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
         onClick={handleDownloadPdf}
       />
       <Link href={`/dashboard/shipments/${id}/edit`}>
-        <Button as="a" iconLeft="PencilIcon" isDisabled={isPending} text="Uredi" variant="secondary" />
+        <Button iconLeft="PencilIcon" isDisabled={isPending} text="Uredi" variant="secondary" />
       </Link>
       <Button iconLeft="TrashIcon" isLoading={isPending} text="Izbriši" onClick={handleDelete} />
     </FlexLayout>
