@@ -1,3 +1,4 @@
+import { addToast } from '@heroui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -8,7 +9,7 @@ import { LoadStatus } from '@/lib/api/shipments';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useContractor, useCurrentTenant, useEmployee, useShipment, useUpdateShipment, useVehicle } from '@/lib/hooks';
 import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
-import { Box, Divider, FlexLayout, Text } from '@/ui';
+import { Box, Divider, FlexLayout, Icon, Text } from '@/ui';
 
 import { loadStatusConfig } from '../const';
 import { AddressDetailsItem } from './components/AddressDetailsItem';
@@ -66,7 +67,25 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
       });
 
       const statusText = loadStatusConfig[status].label;
-      alert(`Status naloga ažuriran u - ${statusText.toUpperCase()}.`);
+
+      addToast({
+        title: 'Status naloga ažuriran:',
+        description: statusText.toUpperCase(),
+        classNames: {
+          base: 'bg-teal-700 text-white border border-teal-600',
+          content: 'text-white',
+          description: 'text-white',
+          title: 'text-white',
+          closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
+        },
+        radius: 'sm',
+        icon: <Icon color="text-white" icon="InformationCircleIcon" size="xl" />,
+        closeIcon: (
+          <FlexLayout className="bg-teal-700 p-1 items-center justify-center">
+            <Icon color="text-white" icon="XMarkIcon" size="l" />
+          </FlexLayout>
+        ),
+      });
     } catch (error) {
       console.error(error);
       alert('Dogodila se greška prilikom ažuriranja statusa utovara.');
