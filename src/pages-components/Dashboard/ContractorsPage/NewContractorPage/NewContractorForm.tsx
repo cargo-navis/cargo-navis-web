@@ -29,12 +29,20 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
   const { handleSubmit, formState, watch, resetField } = formMethods;
   const { isDirty, isValid, isLoading } = formState;
 
-  async function handleFormSubmit({ name, addressName, vatNumber, nationalCompanyRegisterId, addressPostalCode }: any) {
+  async function handleFormSubmit({
+    name,
+    addressName,
+    vatNumber,
+    nationalCompanyRegisterId,
+    addressPostalCode,
+    termsOfPayment,
+  }: any) {
     const payload = {
       name,
       addressName,
       vatNumber,
       nationalCompanyRegisterId,
+      termsOfPayment,
       addressPostalCodeId: addressPostalCode.value,
     };
 
@@ -74,6 +82,7 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
               <FormTextInput label="OIB" name="nationalCompanyRegisterId" rules={{ required: true }} />
             </Box>
           </FlexLayout>
+          <FormTextInput label="Valuta plaćanja" name="termsOfPayment" rules={{ required: true }} />
           <FlexLayout className="flex-1 flex-col gap-2">
             <Text color="text-color-3" variant="text-xxs-medium">
               Adresa sjedišta
