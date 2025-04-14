@@ -20,7 +20,6 @@ export const Skeleton: React.FC<SkeletonProps> = ({ id, borderRadius, height, wi
       backgroundColor={isDarkMode ? 'var(--color-light-850)' : 'var(--color-dark-200)'}
       foregroundColor={isDarkMode ? 'var(--color-light-800)' : 'var(--color-dark-300)'}
       height={height}
-      speed={2}
       uniqueKey={id}
       width={width}
     >

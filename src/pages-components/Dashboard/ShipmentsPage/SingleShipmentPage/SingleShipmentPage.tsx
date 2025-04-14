@@ -71,6 +71,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
       addToast({
         title: 'Status naloga ažuriran:',
         description: statusText.toUpperCase(),
+        timeout: 2500,
         classNames: {
           base: 'bg-teal-700 text-white border border-teal-600',
           content: 'text-white',
@@ -97,6 +98,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
           title: 'text-white',
           closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
         },
+        timeout: 2500,
         radius: 'sm',
         icon: <Icon color="text-white" icon="ExclamationTriangleIcon" size="xl" />,
         closeIcon: (
