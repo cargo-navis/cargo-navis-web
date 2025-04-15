@@ -56,8 +56,8 @@ export const AddressFields = () => {
             placeholder="Odaberi poštanski broj"
             rules={{ required: true }}
           />
-          <FormDatepicker label="Datum spremnosti za utovar" name="loadingReadyDate" rules={{ required: true }} />
-          <FormDatepicker label="Datum utovara" name="loadingDate" />
+          <FormDatepicker label="Datum utovara" name="loadingDate" rules={{ required: true }} />
+          <FormDatepicker label="Datum spremnosti za utovar" name="loadingReadyDate" />
           <FormTextarea label="Opis utovara" name="loadingDescription" placeholder="Unesite detalje utovara..." />
         </FlexLayout>
         <VerticalDivider />
@@ -84,8 +84,8 @@ export const AddressFields = () => {
             placeholder="Odaberi poštanski broj"
             rules={{ required: true }}
           />
-          <FormDatepicker label="Krajnji rok istovara" name="unloadingDueDate" rules={{ required: true }} />
-          <FormDatepicker label="Datum istovara" name="unloadingDate" />
+          <FormDatepicker label="Datum istovara" name="unloadingDate" rules={{ required: true }} />
+          <FormDatepicker label="Krajnji rok istovara" name="unloadingDueDate" />
           <FormTextarea label="Opis istovara" name="unloadingDescription" placeholder="Unesite detalje istovara..." />
         </FlexLayout>
       </FlexLayout>

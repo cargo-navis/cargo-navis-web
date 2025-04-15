@@ -254,8 +254,8 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                       Detalji utovara
                     </Text>
                     <AddressDetailsItem address={shipment.loadingAddress} companyName={shipment.loadingCompanyName} />
-                    <DateItem date={shipment.loadingReadyDate} label="Datum spremnosti za utovar" />
                     <DateItem date={shipment.loadingDate} label="Datum utovara" />
+                    <DateItem date={shipment.loadingReadyDate} label="Datum spremnosti za utovar" />
                     <DescriptionItem description={shipment.loadingDescription} label="Opis utovara:" />
                   </FlexLayout>
                   <FlexLayout className="flex-col flex-1 gap-4">
@@ -266,8 +266,8 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                       address={shipment.unloadingAddress}
                       companyName={shipment.unloadingCompanyName}
                     />
-                    <DateItem date={shipment.unloadingDueDate} label="Krajnji rok istovara" />
                     <DateItem date={shipment.unloadingDate} label="Datum istovara" />
+                    <DateItem date={shipment.unloadingDueDate} label="Krajnji rok istovara" />
                     <DescriptionItem description={shipment.unloadingDescription} label="Opis istovara:" />
                   </FlexLayout>
                 </FlexLayout>
