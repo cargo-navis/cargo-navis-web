@@ -101,4 +101,6 @@ export const commonStylesClassNames: ClassNamesConfig<SelectOption, boolean, any
   groupHeading: () => '!bg-white dark:!bg-light-900',
   menu: () => '!bg-white dark:!bg-light-900 border border-dark-100 dark:border-light-800 !shadow-menu overflow-hidden',
   indicatorSeparator: () => '!bg-black-alpha-10 dark:!bg-white-alpha-25',
+  dropdownIndicator: () => '!text-dark-500 dark:!text-light-100',
+  clearIndicator: () => '!text-dark-500 dark:!text-light-100',
 };

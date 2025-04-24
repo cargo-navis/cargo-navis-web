@@ -9,12 +9,13 @@ export const shipmentSchema = Yup.object().shape({
   cargoReference: Yup.string().optional(),
   dispatcherId: Yup.string().required('Disponent je obavezan'),
   clientId: Yup.string().required('Klijent je obavezan'),
+  isAgencyUse: Yup.boolean().optional(),
   price: Yup.number()
     .typeError('Cijena mora biti pozitivan broj')
     .min(0, 'Cijena mora biti najmanje 0')
     .positive('Mora biti pozitivan broj')
     .optional(),
-  transportContractorId: Yup.string().optional(),
+  transportContractorId: Yup.string().required('Prijevoznik je obavezan'),
   driverId: Yup.string().optional(),
   vehicleId: Yup.string().optional(),
   trailerId: Yup.string().optional(),
@@ -44,21 +45,21 @@ export const shipmentSchema = Yup.object().shape({
     .optional(),
   loadingCompanyName: Yup.string().optional(),
   unloadingCompanyName: Yup.string().optional(),
-  loadingReadyDate: Yup.string()
-    .required('Datum spremnosti utovara je obavezan')
+  loadingDate: Yup.string()
+    .required('Datum utovara je obavezan')
     .test(
       'not-empty',
-      'Datum spremnosti utovara je obavezan',
+      'Datum utovara je obavezan',
       (value) => value !== undefined && value !== null && value.trim() !== ''
     ),
-  loadingDate: Yup.string().optional(),
+  loadingReadyDate: Yup.string().optional(),
   loadingDescription: Yup.string().optional(),
-  unloadingDate: Yup.string().optional(),
-  unloadingDueDate: Yup.string()
-    .required('Rok istovara je obavezan')
+  unloadingDueDate: Yup.string().optional(),
+  unloadingDate: Yup.string()
+    .required('Datum istovara je obavezan')
     .test(
       'not-empty',
-      'Rok istovara je obavezan',
+      'Datum istovara je obavezan',
       (value) => value !== undefined && value !== null && value.trim() !== ''
     ),
   unloadingDescription: Yup.string().optional(),

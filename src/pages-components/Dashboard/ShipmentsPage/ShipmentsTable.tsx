@@ -209,11 +209,12 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
 
           const isSubshipment = info.row.depth !== 0;
           const isTenantTransporter = info.row.original.transportContractorId === tenant?.id;
+          const isAgencyUse = info.row.original.isAgencyUse;
 
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500 gap-2">
               <Text>{displayValue}</Text>
-              <DisplayIf condition={!isSubshipment && !vehicleId && isTenantTransporter}>
+              <DisplayIf condition={!isSubshipment && !vehicleId && isTenantTransporter && !isAgencyUse}>
                 <Tooltip
                   content={
                     <Box className="px-1">
@@ -240,10 +241,12 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
 
           const isSubshipment = info.row.depth !== 0;
           const isTenantTransporter = info.row.original.transportContractorId === tenant?.id;
+          const isAgencyUse = info.row.original.isAgencyUse;
+
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500 gap-2">
               <Text>{fullName || '—'}</Text>
-              <DisplayIf condition={!isSubshipment && !driverId && isTenantTransporter}>
+              <DisplayIf condition={!isSubshipment && !driverId && isTenantTransporter && !isAgencyUse}>
                 <Tooltip
                   content={
                     <Box className="px-1">
@@ -282,9 +285,15 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const status = info.getValue();
           const config = status ? loadStatusConfig[status] : loadStatusConfig[LoadStatus.NotYetLoaded];
 
+          const shipment = info.row.original;
+          const isAgencyUse = shipment.isAgencyUse;
+
+          const text = isAgencyUse ? 'Agencijski nalog' : config.label;
+          const variant = isAgencyUse ? 'warning' : config.variant;
+
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Pill size="s" text={config.label} variant={config.variant} />
+              <Pill size="s" text={text} variant={variant} />
             </FlexLayout>
           );
         },
@@ -311,7 +320,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       // Add isWarning flag only to parent shipments
       return {
         ...shipment,
-        isWarning: isMissingVehicleOrDriver && shipment.transportContractorId === tenant?.id,
+        isWarning: isMissingVehicleOrDriver && shipment.transportContractorId === tenant?.id && !shipment.isAgencyUse,
         subshipments: shipment.subshipments || undefined,
       };
     });

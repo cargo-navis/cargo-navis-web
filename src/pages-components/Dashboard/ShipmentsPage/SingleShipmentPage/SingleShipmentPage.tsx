@@ -9,7 +9,7 @@ import { LoadStatus } from '@/lib/api/shipments';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useContractor, useCurrentTenant, useEmployee, useShipment, useUpdateShipment, useVehicle } from '@/lib/hooks';
 import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
-import { Box, Divider, FlexLayout, Icon, Text } from '@/ui';
+import { Box, DisplayIf, Divider, FlexLayout, Icon, Pill, Text } from '@/ui';
 
 import { loadStatusConfig } from '../const';
 import { AddressDetailsItem } from './components/AddressDetailsItem';
@@ -120,9 +120,14 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
         <FlexLayout className="relative flex-col gap-7 w-full">
           <FlexLayout className="flex-col gap-4">
             <FlexLayout className="flex-col gap-1">
-              <Text as="h1" variant="text-xl-medium">
-                Nalog #{shipment.orderNumber}
-              </Text>
+              <FlexLayout className="items-center gap-4">
+                <Text as="h1" variant="text-xl-medium">
+                  Nalog #{shipment.orderNumber}
+                </Text>
+                <DisplayIf condition={!!shipment.isAgencyUse}>
+                  <Pill text="Agencijski Nalog" variant="warning" />
+                </DisplayIf>
+              </FlexLayout>
               {shipment.parentShipmentId && parentShipment && (
                 <Link className="max-w-max" href={`/dashboard/shipments/${parentShipment.id}`}>
                   <Text className="hover:text-teal-500 transition-colors" color="text-color-3" variant="text-s">
@@ -131,11 +136,13 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                 </Link>
               )}
             </FlexLayout>
-            <LoadStatusProgress
-              currentStatus={shipment.loadStatus || LoadStatus.NotYetLoaded}
-              isPending={isPending}
-              onStatusChange={handleLoadStatusChange}
-            />
+            <DisplayIf condition={!shipment?.isAgencyUse}>
+              <LoadStatusProgress
+                currentStatus={shipment.loadStatus || LoadStatus.NotYetLoaded}
+                isPending={isPending}
+                onStatusChange={handleLoadStatusChange}
+              />
+            </DisplayIf>
           </FlexLayout>
           <FlexLayout className="flex-row gap-7">
             <FlexLayout className="flex-1 flex-col gap-4">
@@ -254,8 +261,8 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                       Detalji utovara
                     </Text>
                     <AddressDetailsItem address={shipment.loadingAddress} companyName={shipment.loadingCompanyName} />
-                    <DateItem date={shipment.loadingReadyDate} label="Datum spremnosti za utovar" />
                     <DateItem date={shipment.loadingDate} label="Datum utovara" />
+                    <DateItem date={shipment.loadingReadyDate} label="Datum spremnosti za utovar" />
                     <DescriptionItem description={shipment.loadingDescription} label="Opis utovara:" />
                   </FlexLayout>
                   <FlexLayout className="flex-col flex-1 gap-4">
@@ -266,8 +273,8 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                       address={shipment.unloadingAddress}
                       companyName={shipment.unloadingCompanyName}
                     />
-                    <DateItem date={shipment.unloadingDueDate} label="Krajnji rok istovara" />
                     <DateItem date={shipment.unloadingDate} label="Datum istovara" />
+                    <DateItem date={shipment.unloadingDueDate} label="Krajnji rok istovara" />
                     <DescriptionItem description={shipment.unloadingDescription} label="Opis istovara:" />
                   </FlexLayout>
                 </FlexLayout>

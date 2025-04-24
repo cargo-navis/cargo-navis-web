@@ -11,7 +11,8 @@ export interface ShipmentFields {
   cargoReference?: string;
   dispatcherId: string;
   clientId: string;
-  transportContractorId?: string;
+  isAgencyUse?: boolean;
+  transportContractorId: string;
   driverId?: string;
   vehicleId?: string;
   trailerId?: string;
@@ -33,11 +34,11 @@ export interface ShipmentFields {
   };
   loadingCompanyName?: string;
   unloadingCompanyName?: string;
-  loadingReadyDate: string;
-  loadingDate?: string;
+  loadingReadyDate?: string;
+  loadingDate: string;
   loadingDescription?: string;
-  unloadingDate?: string;
-  unloadingDueDate: string;
+  unloadingDate: string;
+  unloadingDueDate?: string;
   unloadingDescription?: string;
   price?: number;
   orderNumber: string;

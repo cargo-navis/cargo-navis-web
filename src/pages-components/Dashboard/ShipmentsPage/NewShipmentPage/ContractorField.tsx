@@ -19,7 +19,6 @@ export const ContractorField: React.FC<ContractorFieldProps> = ({ name, tenant }
 
   return (
     <FormSingleSelect
-      isClearable
       isSearchable
       label="Prijevoznik"
       name={name}

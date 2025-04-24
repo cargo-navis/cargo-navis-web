@@ -68,22 +68,27 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
 };
 
 const StandardCargo: React.FC<{ index: number }> = ({ index }) => {
-  const { watch, setValue } = useFormContext();
-  const palleteType = watch(`cargo.${index}.metadata.palleteType`);
-  const palleteAmount = watch(`cargo.${index}.metadata.palleteAmount`);
-
-  const ldmValue = palleteType && palleteAmount ? roundLdmValue(palleteValues[palleteType] * palleteAmount) : 0;
+  const { watch, setValue, getValues } = useFormContext();
 
   useEffect(() => {
-    setValue(`cargo.${index}.ldm`, ldmValue);
-  }, [ldmValue, setValue, index]);
+    const { unsubscribe } = watch((_, { name }) => {
+      const palleteTypeName = `cargo.${index}.metadata.palleteType`;
+      const palleteAmountName = `cargo.${index}.metadata.palleteAmount`;
+
+      if (name === palleteTypeName || name === palleteAmountName) {
+        const [palleteType, palleteAmount] = getValues([palleteTypeName, palleteAmountName]);
+        const ldmValue = palleteType && palleteAmount ? roundLdmValue(palleteValues[palleteType] * palleteAmount) : 0;
+        setValue(`cargo.${index}.ldm`, ldmValue);
+      }
+    });
+    return () => unsubscribe();
+  }, [watch]);
 
   return (
     <FlexLayout className="gap-4 flex-col">
       <FlexLayout className="gap-4">
         <Box className="flex-1">
           <FormSingleSelect
-            isClearable
             isSearchable
             label="Vrsta palete"
             name={`cargo.${index}.metadata.palleteType`}
