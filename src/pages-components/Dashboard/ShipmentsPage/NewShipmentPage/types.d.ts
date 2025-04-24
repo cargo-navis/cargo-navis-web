@@ -11,6 +11,7 @@ export interface ShipmentFields {
   cargoReference?: string;
   dispatcherId: string;
   clientId: string;
+  isAgencyUse?: boolean;
   transportContractorId: string;
   driverId?: string;
   vehicleId?: string;

@@ -9,6 +9,7 @@ import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
 import { Box, Button, Divider, FlexLayout, LoadingSpinner } from '@/ui';
 
 import AddressFields from './AddressFields';
+import { AgencyField } from './AgencyField';
 import { CargoFieldList } from './CargoFieldList';
 import { ClientField } from './ClientField';
 import { ContractorField } from './ContractorField';
@@ -88,6 +89,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
           <FlexLayout className="flex-row gap-7">
             <FlexLayout className="flex-1 flex-col gap-4">
               <FlexLayout as="fieldset" className="flex-col gap-5">
+                <AgencyField />
                 <FlexLayout className="gap-4">
                   <Box className="flex-1">
                     <FormTextInput iconLeft="LockClosedIcon" isDisabled label="Broj naloga" name="orderNumber" />

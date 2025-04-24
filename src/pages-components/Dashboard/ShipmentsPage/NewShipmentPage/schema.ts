@@ -9,6 +9,7 @@ export const shipmentSchema = Yup.object().shape({
   cargoReference: Yup.string().optional(),
   dispatcherId: Yup.string().required('Disponent je obavezan'),
   clientId: Yup.string().required('Klijent je obavezan'),
+  isAgencyUse: Yup.boolean().optional(),
   price: Yup.number()
     .typeError('Cijena mora biti pozitivan broj')
     .min(0, 'Cijena mora biti najmanje 0')
