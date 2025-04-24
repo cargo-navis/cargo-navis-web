@@ -282,9 +282,15 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const status = info.getValue();
           const config = status ? loadStatusConfig[status] : loadStatusConfig[LoadStatus.NotYetLoaded];
 
+          const shipment = info.row.original;
+          const isAgencyUse = shipment.isAgencyUse;
+
+          const text = isAgencyUse ? 'Agencijski nalog' : config.label;
+          const variant = isAgencyUse ? 'warning' : config.variant;
+
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Pill size="s" text={config.label} variant={config.variant} />
+              <Pill size="s" text={text} variant={variant} />
             </FlexLayout>
           );
         },
