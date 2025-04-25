@@ -10,6 +10,7 @@ export interface Shipment {
   trailerId?: string;
   clientId?: string;
   isAgencyUse?: boolean;
+  isInvoiceSent?: boolean;
   transportContractorId?: string;
   price: number;
   cargo: Cargo[];
