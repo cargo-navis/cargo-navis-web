@@ -124,9 +124,6 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                 <Text as="h1" variant="text-xl-medium">
                   Nalog #{shipment.orderNumber}
                 </Text>
-                <DisplayIf condition={!!shipment.isAgencyUse}>
-                  <Pill text="Agencijski Nalog" variant="warning" />
-                </DisplayIf>
               </FlexLayout>
               {shipment.parentShipmentId && parentShipment && (
                 <Link className="max-w-max" href={`/dashboard/shipments/${parentShipment.id}`}>
@@ -136,7 +133,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                 </Link>
               )}
             </FlexLayout>
-            <DisplayIf condition={!shipment?.isAgencyUse}>
+            <DisplayIf condition={!shipment?.isAgencyUse} fallback={<Pill text="Agencijski Nalog" variant="warning" />}>
               <LoadStatusProgress
                 currentStatus={shipment.loadStatus || LoadStatus.NotYetLoaded}
                 isPending={isPending}
