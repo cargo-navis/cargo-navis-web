@@ -122,6 +122,7 @@ export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Ten
       driverId: shipment.driverId || '',
       vehicleId: shipment.vehicleId || '',
       dispatcherId: shipment.dispatcherId || '',
+      isAgencyUse: shipment.isAgencyUse || false,
       loadingAddress: {
         name: shipment.loadingAddress?.streetName || '',
         countryCode: shipment.loadingAddress?.countryCode,
