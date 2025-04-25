@@ -17,6 +17,7 @@ import { CargoItem } from './components/CargoItem';
 import { ClientItem } from './components/ClientItem';
 import { DateItem } from './components/DateItem';
 import { DescriptionItem } from './components/DescriptionItem';
+import { InvoiceItem } from './components/InvoiceItem';
 import { LoadStatusProgress } from './components/LoadStatusProgress';
 import { ShipmentActions } from './components/ShipmentActions';
 import type { CargoWithMetadata } from './components/types';
@@ -110,6 +111,55 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
     }
   };
 
+  const handleInvoiceChange = (isInvoiceSent: boolean) => {
+    try {
+      updateShipment({
+        id: shipment.id,
+        isInvoiceSent,
+      });
+
+      addToast({
+        title: `Nalog označen kao ${isInvoiceSent ? 'FAKTURIRAN' : 'NEFAKTURIRAN'}`,
+        timeout: 2500,
+        classNames: {
+          base: 'bg-teal-700 text-white border border-teal-600',
+          content: 'text-white',
+          description: 'text-white',
+          title: 'text-white',
+          closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
+        },
+        radius: 'sm',
+        icon: <Icon color="text-white" icon="InformationCircleIcon" size="xl" />,
+        closeIcon: (
+          <FlexLayout className="bg-teal-700 p-1 items-center justify-center">
+            <Icon color="text-white" icon="XMarkIcon" size="l" />
+          </FlexLayout>
+        ),
+      });
+    } catch (error) {
+      console.error(error);
+
+      addToast({
+        title: 'Greška prilikom ažuriranja fakture. Pokušajte ponovno.',
+        classNames: {
+          base: 'bg-red-600 dark:bg-red-700 text-white border border-red-600',
+          content: 'text-white',
+          description: 'text-white',
+          title: 'text-white',
+          closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
+        },
+        timeout: 2500,
+        radius: 'sm',
+        icon: <Icon color="text-white" icon="ExclamationTriangleIcon" size="xl" />,
+        closeIcon: (
+          <FlexLayout className="bg-red-600 dark:bg-red-700 p-1 items-center justify-center">
+            <Icon color="text-white" icon="XMarkIcon" size="l" />
+          </FlexLayout>
+        ),
+      });
+    }
+  };
+
   return (
     <FlexLayout className="py-5 flex-col gap-5">
       <FlexLayout className="justify-between">
@@ -117,7 +167,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
         <ShipmentActions id={shipment.id} />
       </FlexLayout>
       <Box className="max-w-[1400px]">
-        <FlexLayout className="relative flex-col gap-7 w-full">
+        <FlexLayout className="relative flex-col gap-5 w-full">
           <FlexLayout className="flex-col gap-4">
             <FlexLayout className="flex-col gap-1">
               <FlexLayout className="items-center gap-4">
@@ -133,14 +183,25 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                 </Link>
               )}
             </FlexLayout>
-            <DisplayIf condition={!shipment?.isAgencyUse} fallback={<Pill text="Agencijski Nalog" variant="warning" />}>
-              <LoadStatusProgress
-                currentStatus={shipment.loadStatus || LoadStatus.NotYetLoaded}
+            <FlexLayout className="items-baseline justify-between">
+              <DisplayIf
+                condition={!shipment?.isAgencyUse}
+                fallback={<Pill text="Agencijski Nalog" variant="warning" />}
+              >
+                <LoadStatusProgress
+                  currentStatus={shipment.loadStatus || LoadStatus.NotYetLoaded}
+                  isPending={isPending}
+                  onStatusChange={handleLoadStatusChange}
+                />
+              </DisplayIf>
+              <InvoiceItem
+                isInvoiceSent={!!shipment.isInvoiceSent}
                 isPending={isPending}
-                onStatusChange={handleLoadStatusChange}
+                onChange={handleInvoiceChange}
               />
-            </DisplayIf>
+            </FlexLayout>
           </FlexLayout>
+          <Divider />
           <FlexLayout className="flex-row gap-7">
             <FlexLayout className="flex-1 flex-col gap-4">
               <FlexLayout as="section" className="flex-col gap-5">
