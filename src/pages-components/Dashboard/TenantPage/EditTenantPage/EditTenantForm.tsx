@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import type { Tenant } from '@/lib/api/tenant.d';
-import { FormTextInput } from '@/lib/components/form';
+import { FormDatepicker, FormTextInput } from '@/lib/components/form';
 import { useUpdateTenant } from '@/lib/hooks/api/tenant';
 import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
@@ -65,7 +65,7 @@ export const EditTenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
             </Box>
           </FlexLayout>
           <FormTextInput label="Broj licence" name="communityLicenseId" rules={{ required: true }} />
-          <FormTextInput label="Datum isteka osiguranja" name="cargoInsuranceExpiryDate" rules={{ required: true }} />
+          <FormDatepicker label="Datum isteka osiguranja" name="cargoInsuranceExpiryDate" rules={{ required: true }} />
           <FlexLayout className="flex-1 flex-col gap-2">
             <Text color="text-color-3" variant="text-xxs-medium">
               Adresa sjedišta
