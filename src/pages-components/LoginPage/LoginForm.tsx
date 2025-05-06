@@ -31,7 +31,7 @@ export const LoginForm = () => {
   async function handleFormSubmit(formValues: FormValues) {
     try {
       await loginUser({ ...formValues });
-      push('/dashboard/employees');
+      await push('/dashboard/employees');
     } catch {
       addToast({
         title: 'Nismo pronašli nijednog korisnika s tom kombinacijom emaila i lozinke.',
