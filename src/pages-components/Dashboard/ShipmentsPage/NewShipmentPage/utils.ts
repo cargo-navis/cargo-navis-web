@@ -47,116 +47,186 @@ export const formDefaultValues: ShipmentFields = {
   cargo: [defaultCargo],
 };
 
-export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Tenant, parentShipmentId?: string) => {
-  return async () => {
-    if (!shipment) {
-      const orderNumber = await getOrderNumber();
-      let cargo = formDefaultValues.cargo;
-
-      if (parentShipmentId) {
-        try {
-          const parentShipment = await getShipment(parentShipmentId);
-          if (parentShipment.cargo?.length) {
-            cargo = parentShipment.cargo.map((c) => ({
-              weight: c.weight || 0,
-              description: c.description || '',
-              ldm: c.ldm || 0.4,
-              metadata: {
-                type: (c.metadata?.type || 'standard') as CargoType,
-                palleteType: c.metadata?.palleteType || PalleteType.Euro,
-                palleteAmount: c.metadata?.palleteAmount || 1,
-                width: c.metadata?.width || 0,
-                height: c.metadata?.height || 0,
-                length: c.metadata?.length || 0,
-              },
-            }));
-          }
-        } catch (error) {
-          console.error('Error fetching parent shipment cargo:', error);
-        }
-      }
-
-      return {
-        ...formDefaultValues,
-        orderNumber,
-        transportContractorId: tenant.id,
-        clientId: parentShipmentId ? tenant.id : '',
-        cargo,
-      };
-    }
-
-    // Fetch postal code data if needed
-    let loadingPostalCode = {};
-    let unloadingPostalCode = {};
-
-    if (shipment.loadingAddress?.id) {
-      try {
-        const postalCodeData = await getPostalCode(shipment.loadingAddress.id);
-        loadingPostalCode = {
-          value: postalCodeData.id,
-          label: `${postalCodeData.postalCode}, ${postalCodeData.placeName}`,
-        };
-      } catch (error) {
-        console.error('Error fetching loading postal code:', error);
-      }
-    }
-
-    if (shipment.unloadingAddress?.id) {
-      try {
-        const postalCodeData = await getPostalCode(shipment.unloadingAddress.id);
-        unloadingPostalCode = {
-          value: postalCodeData.id,
-          label: `${postalCodeData.postalCode}, ${postalCodeData.placeName}`,
-        };
-      } catch (error) {
-        console.error('Error fetching unloading postal code:', error);
-      }
-    }
-
+// Fetch postal code data for an address
+const fetchPostalCodeData = async (postalCodeId: string) => {
+  try {
+    const postalCodeData = await getPostalCode(postalCodeId);
     return {
-      orderNumber: shipment.orderNumber || '',
-      cargoReference: shipment.cargoReference || '',
-      transportContractorId: shipment.transportContractorId || '',
-      clientId: shipment.clientId || '',
-      price: shipment.price || 0,
-      driverId: shipment.driverId || '',
-      vehicleId: shipment.vehicleId || '',
-      dispatcherId: shipment.dispatcherId || '',
-      isAgencyUse: shipment.isAgencyUse || false,
-      loadingAddress: {
-        name: shipment.loadingAddress?.streetName || '',
-        countryCode: shipment.loadingAddress?.countryCode,
-        postalCodeId: loadingPostalCode,
-      },
-      unloadingAddress: {
-        name: shipment.unloadingAddress?.streetName || '',
-        countryCode: shipment.unloadingAddress?.countryCode,
-        postalCodeId: unloadingPostalCode,
-      },
-      loadingCompanyName: shipment.loadingCompanyName || '',
-      unloadingCompanyName: shipment.unloadingCompanyName || '',
-      loadingReadyDate: shipment.loadingReadyDate || '',
-      loadingDate: shipment.loadingDate || '',
-      loadingDescription: shipment.loadingDescription || '',
-      unloadingDate: shipment.unloadingDate || '',
-      unloadingDueDate: shipment.unloadingDueDate || '',
-      unloadingDescription: shipment.unloadingDescription || '',
-      cargo: shipment.cargo?.length
-        ? shipment.cargo.map((c) => ({
-            weight: c.weight || 0,
-            description: c.description || '',
-            ldm: c.ldm || 0.4,
-            metadata: {
-              type: (c.metadata?.type || 'standard') as CargoType,
-              palleteType: c.metadata?.palleteType || PalleteType.Euro,
-              palleteAmount: c.metadata?.palleteAmount || 1,
-              width: c.metadata?.width || 0,
-              height: c.metadata?.height || 0,
-              length: c.metadata?.length || 0,
-            },
-          }))
-        : formDefaultValues.cargo,
+      value: postalCodeData.id,
+      label: `${postalCodeData.postalCode}, ${postalCodeData.placeName}`,
     };
+  } catch (error) {
+    console.error('Error fetching postal code:', error);
+    return {};
+  }
+};
+
+// Map cargo items from a shipment to the format expected by the form
+const mapCargoItems = (cargoItems?: any[]): Cargo[] => {
+  if (!cargoItems?.length) return [defaultCargo];
+
+  return cargoItems.map((c) => ({
+    weight: c.weight || 0,
+    description: c.description || '',
+    ldm: c.ldm || 0.4,
+    metadata: {
+      type: (c.metadata?.type || 'standard') as CargoType,
+      palleteType: c.metadata?.palleteType || PalleteType.Euro,
+      palleteAmount: c.metadata?.palleteAmount || 1,
+      width: c.metadata?.width || 0,
+      height: c.metadata?.height || 0,
+      length: c.metadata?.length || 0,
+    },
+  }));
+};
+
+// Get cargo items from parent shipment
+const getParentShipmentCargo = async (parentShipmentId: string): Promise<Cargo[]> => {
+  try {
+    const parentShipment = await getShipment(parentShipmentId);
+    return mapCargoItems(parentShipment.cargo);
+  } catch (error) {
+    console.error('Error fetching parent shipment cargo:', error);
+    return [defaultCargo];
+  }
+};
+
+// Create form values for a new shipment
+const getNewShipmentFormValues = async (tenant: Tenant, cargo: Cargo[]) => {
+  const orderNumber = await getOrderNumber();
+
+  return {
+    ...formDefaultValues,
+    orderNumber,
+    transportContractorId: tenant.id,
+    clientId: '',
+    cargo,
+  };
+};
+
+// Create form values for a new sub-shipment
+const getNewSubShipmentFormValues = async (tenant: Tenant, parentShipmentId: string) => {
+  const orderNumber = await getOrderNumber();
+  const cargo = await getParentShipmentCargo(parentShipmentId);
+
+  return {
+    ...formDefaultValues,
+    orderNumber,
+    transportContractorId: tenant.id,
+    clientId: tenant.id,
+    cargo,
+  };
+};
+
+// Create form values when copying a shipment
+const getCopyShipmentFormValues = async (shipment: Shipment) => {
+  const orderNumber = await getOrderNumber();
+
+  // Fetch postal code data if needed
+  const loadingPostalCode = shipment.loadingAddress?.id ? await fetchPostalCodeData(shipment.loadingAddress.id) : {};
+
+  const unloadingPostalCode = shipment.unloadingAddress?.id
+    ? await fetchPostalCodeData(shipment.unloadingAddress.id)
+    : {};
+
+  return {
+    orderNumber, // Use new orderNumber
+    cargoReference: shipment.cargoReference || '',
+    transportContractorId: shipment.transportContractorId || '',
+    clientId: shipment.clientId || '',
+    price: shipment.price || 0,
+    driverId: shipment.driverId || '',
+    vehicleId: shipment.vehicleId || '',
+    dispatcherId: shipment.dispatcherId || '',
+    isAgencyUse: shipment.isAgencyUse || false,
+    loadingAddress: {
+      name: shipment.loadingAddress?.streetName || '',
+      countryCode: shipment.loadingAddress?.countryCode,
+      postalCodeId: loadingPostalCode,
+    },
+    unloadingAddress: {
+      name: shipment.unloadingAddress?.streetName || '',
+      countryCode: shipment.unloadingAddress?.countryCode,
+      postalCodeId: unloadingPostalCode,
+    },
+    loadingCompanyName: shipment.loadingCompanyName || '',
+    unloadingCompanyName: shipment.unloadingCompanyName || '',
+    loadingReadyDate: shipment.loadingReadyDate || '',
+    loadingDate: shipment.loadingDate || '',
+    loadingDescription: shipment.loadingDescription || '',
+    unloadingDate: shipment.unloadingDate || '',
+    unloadingDueDate: shipment.unloadingDueDate || '',
+    unloadingDescription: shipment.unloadingDescription || '',
+    cargo: mapCargoItems(shipment.cargo),
+  };
+};
+
+// Create form values for editing an existing shipment
+const getEditShipmentFormValues = async (shipment: Shipment) => {
+  // Fetch postal code data if needed
+  const loadingPostalCode = shipment.loadingAddress?.id ? await fetchPostalCodeData(shipment.loadingAddress.id) : {};
+
+  const unloadingPostalCode = shipment.unloadingAddress?.id
+    ? await fetchPostalCodeData(shipment.unloadingAddress.id)
+    : {};
+
+  return {
+    orderNumber: shipment.orderNumber || '',
+    cargoReference: shipment.cargoReference || '',
+    transportContractorId: shipment.transportContractorId || '',
+    clientId: shipment.clientId || '',
+    price: shipment.price || 0,
+    driverId: shipment.driverId || '',
+    vehicleId: shipment.vehicleId || '',
+    dispatcherId: shipment.dispatcherId || '',
+    isAgencyUse: shipment.isAgencyUse || false,
+    loadingAddress: {
+      name: shipment.loadingAddress?.streetName || '',
+      countryCode: shipment.loadingAddress?.countryCode,
+      postalCodeId: loadingPostalCode,
+    },
+    unloadingAddress: {
+      name: shipment.unloadingAddress?.streetName || '',
+      countryCode: shipment.unloadingAddress?.countryCode,
+      postalCodeId: unloadingPostalCode,
+    },
+    loadingCompanyName: shipment.loadingCompanyName || '',
+    unloadingCompanyName: shipment.unloadingCompanyName || '',
+    loadingReadyDate: shipment.loadingReadyDate || '',
+    loadingDate: shipment.loadingDate || '',
+    loadingDescription: shipment.loadingDescription || '',
+    unloadingDate: shipment.unloadingDate || '',
+    unloadingDueDate: shipment.unloadingDueDate || '',
+    unloadingDescription: shipment.unloadingDescription || '',
+    cargo: mapCargoItems(shipment.cargo),
+  };
+};
+
+// Main function to get form default values based on context
+export const getFormDefaultValues = (
+  shipment: Shipment | undefined,
+  tenant: Tenant,
+  parentShipmentId?: string,
+  isCopy: boolean = false
+) => {
+  return async () => {
+    // Case 1: Copy existing shipment
+    if (shipment && isCopy) {
+      return getCopyShipmentFormValues(shipment);
+    }
+
+    // Case 2: Edit existing shipment
+    if (shipment && !isCopy) {
+      return getEditShipmentFormValues(shipment);
+    }
+
+    // Case 3: Create a sub-shipment
+    if (parentShipmentId) {
+      return getNewSubShipmentFormValues(tenant, parentShipmentId);
+    }
+
+    // Case 4: Create a brand new shipment
+    return getNewShipmentFormValues(tenant, [defaultCargo]);
   };
 };
 

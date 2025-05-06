@@ -7,7 +7,7 @@ import { Button, FlexLayout, Icon, Menu } from '@/ui';
 import { MenuComponent } from '@/ui/components/Menu/types';
 
 export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
-  const { back } = useRouter();
+  const { back, push } = useRouter();
   const { mutateAsync: deleteShipment, isPending: isDeleting } = useDeleteShipment(id);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,6 +23,10 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
     } catch {
       alert('Greška s brisanjem naloga');
     }
+  }
+
+  function handleCopyShipment() {
+    void push(`/dashboard/shipments/new?copyFromId=${id}`);
   }
 
   async function handleDownloadPdf() {
@@ -98,6 +102,13 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
 
   return (
     <FlexLayout className="items-center gap-3">
+      <Button
+        iconLeft="ClipboardDocumentIcon"
+        isDisabled={isDeleting}
+        text="Kopiraj nalog"
+        variant="secondary"
+        onClick={handleCopyShipment}
+      />
       <Button
         iconLeft="ArrowDownTrayIcon"
         isDisabled={isDeleting}

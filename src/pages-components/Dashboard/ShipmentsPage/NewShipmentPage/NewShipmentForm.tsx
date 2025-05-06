@@ -25,17 +25,22 @@ interface NewShipmentFormProps {
   shipment?: Shipment;
   tenant: Tenant;
   parentShipmentId?: string;
+  copyFromId?: string;
 }
 
-export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tenant, parentShipmentId }) => {
+export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tenant, parentShipmentId, copyFromId }) => {
   const { push, back } = useRouter();
   const isEdit = !!shipment;
+  const isCopy = !!copyFromId;
+
+  // When copying, we use the shipment data but treat it as a new form (not an edit)
+  const formMode = isEdit && !isCopy ? 'edit' : 'new';
 
   const { mutateAsync: createShipment } = useCreateShipment();
   const { mutateAsync: updateShipment } = useUpdateShipment();
 
   const formMethods = useForm<ShipmentFields>({
-    defaultValues: getFormDefaultValues(shipment, tenant, parentShipmentId),
+    defaultValues: getFormDefaultValues(shipment, tenant, parentShipmentId, isCopy),
     resolver: yupResolver(shipmentSchema),
     mode: 'all',
   });
@@ -43,9 +48,12 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
   const { handleSubmit, formState } = formMethods;
   const { isDirty, isValid, isLoading, isSubmitting, dirtyFields } = formState;
 
+  // For a copied shipment, we should only check validity, not dirty state
+  const isFormActionable = isCopy ? isValid : isValid && isDirty;
+
   async function handleFormSubmit(data: ShipmentFields) {
     try {
-      if (isEdit && shipment) {
+      if (formMode === 'edit' && shipment) {
         // When cargo items are removed, the cargo array should always be included
         // even if dirtyFields doesn't detect it properly
         const cargoHasChanged = JSON.stringify(shipment.cargo) !== JSON.stringify(data.cargo);
@@ -141,10 +149,10 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
           </FlexLayout>
           <Box className="sticky bottom-0 bg-[#e9eded] dark:bg-black border-t-[2px] border-dark-200 dark:border-light-700 p-4 -mx-4">
             <Button
-              isDisabled={!(isValid && isDirty)}
+              isDisabled={!isFormActionable}
               isFullWidth
               isLoading={isSubmitting}
-              text={isEdit ? 'Ažuriraj nalog' : 'Napravi nalog'}
+              text={formMode === 'edit' ? 'Ažuriraj nalog' : 'Napravi nalog'}
               type="submit"
               variant="primary"
             />
