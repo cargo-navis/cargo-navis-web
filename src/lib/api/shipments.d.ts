@@ -5,9 +5,9 @@ export interface Shipment {
   cargoReference: string;
   orderNumber: string;
   dispatcherId?: string;
-  driverId?: string;
-  vehicleId?: string;
-  trailerId?: string;
+  driverId?: string | null;
+  vehicleId?: string | null;
+  trailerId?: string | null;
   clientId?: string;
   isAgencyUse?: boolean;
   isInvoiceSent?: boolean;
