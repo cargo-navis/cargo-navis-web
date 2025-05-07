@@ -11,7 +11,10 @@ function mapEmployeesToOptions(employees: Employee[]) {
 
 export const DispatcherField = () => {
   const { data: employees = [] } = useEmployees({
-    select: (employees: Employee[]) => employees.filter((employee) => employee.position === PositionEnum.Dispatcher),
+    select: (employees: Employee[]) =>
+      employees.filter((employee) =>
+        [PositionEnum.Dispatcher, PositionEnum.Ceo, PositionEnum.Manager].includes(employee.position)
+      ),
   });
   const dispatcherOptions = mapEmployeesToOptions(employees);
 
