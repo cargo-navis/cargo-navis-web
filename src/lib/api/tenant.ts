@@ -6,5 +6,5 @@ export async function getCurrentTenant() {
 }
 
 export async function updateTenant(data: UpdateTenantParams) {
-  return backend.patch<Tenant>('/api/tenant', data);
+  return backend.put<Tenant>('/api/tenant', data);
 }

@@ -29,6 +29,10 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
     void push(`/dashboard/shipments/new?copyFromId=${id}`);
   }
 
+  function handleCopyToSubshipment() {
+    void push(`/dashboard/shipments/new?copyFromId=${id}&parentShipmentId=${id}`);
+  }
+
   async function handleDownloadPdf() {
     setIsDownloadingPdf(true);
     try {
@@ -83,13 +87,20 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
     },
     {
       type: 'item' as const,
+      iconLeft: 'ClipboardDocumentIcon',
+      text: 'Kopiraj u podnalog',
+      isDisabled: isDeleting,
+      onClick: handleCopyToSubshipment,
+    },
+    {
+      type: 'divider' as const,
+    },
+    {
+      type: 'item' as const,
       iconLeft: 'PencilIcon',
       text: 'Uredi',
       isDisabled: isDeleting,
       href: `/dashboard/shipments/${id}/edit`,
-    },
-    {
-      type: 'divider' as const,
     },
     {
       type: 'item' as const,
