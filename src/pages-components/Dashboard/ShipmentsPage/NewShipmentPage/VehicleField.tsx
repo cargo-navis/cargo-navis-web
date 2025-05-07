@@ -2,6 +2,8 @@ import { type Vehicle, VehicleEnum } from '@/lib/api';
 import { FormSingleSelect } from '@/lib/components/form';
 import { useVehicles } from '@/lib/hooks';
 
+import { useAgencyFieldReset } from './hooks';
+
 function mapVehiclesToOptions(vehicles: Vehicle[]) {
   // Filter vehicles by allowed types
   const allowedTypes = [VehicleEnum.TRUCK, VehicleEnum.SOLO_TRUCK, VehicleEnum.VAN];
@@ -36,6 +38,13 @@ function mapVehiclesToOptions(vehicles: Vehicle[]) {
 export const VehicleField = () => {
   const { data: vehicles = [] } = useVehicles();
   const vehicleOptions = mapVehiclesToOptions(vehicles);
+
+  const isAgencyUse = useAgencyFieldReset('vehicleId');
+
+  // Hide the component completely when isAgencyUse is true
+  if (isAgencyUse) {
+    return null;
+  }
 
   return (
     <FormSingleSelect

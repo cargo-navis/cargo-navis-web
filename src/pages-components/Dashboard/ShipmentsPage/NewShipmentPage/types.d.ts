@@ -13,9 +13,9 @@ export interface ShipmentFields {
   clientId: string;
   isAgencyUse?: boolean;
   transportContractorId: string;
-  driverId?: string;
-  vehicleId?: string;
-  trailerId?: string;
+  driverId?: string | null;
+  vehicleId?: string | null;
+  trailerId?: string | null;
   loadingAddress?: {
     name: string;
     postalCodeId: {

@@ -16,9 +16,9 @@ export const shipmentSchema = Yup.object().shape({
     .positive('Mora biti pozitivan broj')
     .optional(),
   transportContractorId: Yup.string().required('Prijevoznik je obavezan'),
-  driverId: Yup.string().optional(),
-  vehicleId: Yup.string().optional(),
-  trailerId: Yup.string().optional(),
+  driverId: Yup.string().optional().nullable(),
+  vehicleId: Yup.string().optional().nullable(),
+  trailerId: Yup.string().optional().nullable(),
   loadingAddress: Yup.object()
     .shape({
       name: Yup.string().required('Adresa utovara je obavezna'),
