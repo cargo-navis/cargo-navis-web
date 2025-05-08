@@ -1,3 +1,4 @@
+import { addToast } from '@heroui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -6,7 +7,7 @@ import type { Shipment } from '@/lib/api';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { FormTextInput } from '@/lib/components/form';
 import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
-import { Box, Button, Divider, FlexLayout, LoadingSpinner } from '@/ui';
+import { Box, Button, Divider, FlexLayout, Icon, LoadingSpinner } from '@/ui';
 
 import AddressFields from './AddressFields';
 import { AgencyField } from './AgencyField';
@@ -71,6 +72,24 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
         }
 
         await updateShipment({ id: shipment.id, ...payload });
+        addToast({
+          title: `Nalog "${shipment.orderNumber}" uspješno ažuriran`,
+          timeout: 2500,
+          classNames: {
+            base: 'bg-teal-700 text-white border border-teal-600',
+            content: 'text-white',
+            description: 'text-white',
+            title: 'text-white',
+            closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
+          },
+          radius: 'sm',
+          icon: <Icon color="text-white" icon="InformationCircleIcon" size="xl" />,
+          closeIcon: (
+            <FlexLayout className="bg-teal-700 p-1 items-center justify-center">
+              <Icon color="text-white" icon="XMarkIcon" size="l" />
+            </FlexLayout>
+          ),
+        });
         void back();
       } else {
         const payload = transformFormDataToPayload(data);
@@ -78,11 +97,47 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
           payload.parentShipmentId = parentShipmentId;
         }
 
-        await createShipment(payload);
+        const newShipment = await createShipment(payload);
+        addToast({
+          title: `Nalog "${newShipment.orderNumber}" uspješno kreiran`,
+          timeout: 2500,
+          classNames: {
+            base: 'bg-teal-700 text-white border border-teal-600',
+            content: 'text-white',
+            description: 'text-white',
+            title: 'text-white',
+            closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
+          },
+          radius: 'sm',
+          icon: <Icon color="text-white" icon="InformationCircleIcon" size="xl" />,
+          closeIcon: (
+            <FlexLayout className="bg-teal-700 p-1 items-center justify-center">
+              <Icon color="text-white" icon="XMarkIcon" size="l" />
+            </FlexLayout>
+          ),
+        });
         await push('/dashboard/shipments');
       }
-    } catch {
-      alert('Dogodila se greška s unosom naloga. Pokušajte ponovno.');
+    } catch (error) {
+      console.error(error);
+      addToast({
+        title: 'Dogodila se greška s unosom naloga. Pokušajte ponovno.',
+        classNames: {
+          base: 'bg-red-600 dark:bg-red-700 text-white border border-red-600',
+          content: 'text-white',
+          description: 'text-white',
+          title: 'text-white',
+          closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
+        },
+        timeout: 2500,
+        radius: 'sm',
+        icon: <Icon color="text-white" icon="ExclamationTriangleIcon" size="xl" />,
+        closeIcon: (
+          <FlexLayout className="bg-red-600 dark:bg-red-700 p-1 items-center justify-center">
+            <Icon color="text-white" icon="XMarkIcon" size="l" />
+          </FlexLayout>
+        ),
+      });
     }
   }
 
