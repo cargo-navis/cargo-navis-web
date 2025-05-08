@@ -38,7 +38,7 @@ export const AddressFields = () => {
             Detalji utovara
           </Text>
           <FormTextInput label="Tvrtka utovara" name="loadingCompanyName" />
-          <FormTextInput label="Ulica i broj" name="loadingAddress.name" rules={{ required: true }} />
+          <FormTextInput label="Ulica i broj" name="loadingAddress.streetName" rules={{ required: true }} />
           <FormSingleSelect
             isSearchable
             label="Država"
@@ -66,7 +66,7 @@ export const AddressFields = () => {
             Detalji istovara
           </Text>
           <FormTextInput label="Tvrtka istovara" name="unloadingCompanyName" />
-          <FormTextInput label="Ulica i broj" name="unloadingAddress.name" rules={{ required: true }} />
+          <FormTextInput label="Ulica i broj" name="unloadingAddress.streetName" rules={{ required: true }} />
           <FormSingleSelect
             isSearchable
             label="Država"

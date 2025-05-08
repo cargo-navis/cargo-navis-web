@@ -27,12 +27,12 @@ export const formDefaultValues: ShipmentFields = {
   vehicleId: '',
   dispatcherId: '',
   loadingAddress: {
-    name: '',
+    streetName: '',
     countryCode: '',
     postalCodeId: {},
   },
   unloadingAddress: {
-    name: '',
+    streetName: '',
     countryCode: '',
     postalCodeId: {},
   },
@@ -140,12 +140,12 @@ const getCopyShipmentFormValues = async (shipment: Shipment) => {
     dispatcherId: shipment.dispatcherId || '',
     isAgencyUse: shipment.isAgencyUse || false,
     loadingAddress: {
-      name: shipment.loadingAddress?.streetName || '',
+      streetName: shipment.loadingAddress?.streetName || '',
       countryCode: shipment.loadingAddress?.countryCode,
       postalCodeId: loadingPostalCode,
     },
     unloadingAddress: {
-      name: shipment.unloadingAddress?.streetName || '',
+      streetName: shipment.unloadingAddress?.streetName || '',
       countryCode: shipment.unloadingAddress?.countryCode,
       postalCodeId: unloadingPostalCode,
     },
@@ -181,12 +181,12 @@ const getEditShipmentFormValues = async (shipment: Shipment) => {
     dispatcherId: shipment.dispatcherId || '',
     isAgencyUse: shipment.isAgencyUse || false,
     loadingAddress: {
-      name: shipment.loadingAddress?.streetName || '',
+      streetName: shipment.loadingAddress?.streetName || '',
       countryCode: shipment.loadingAddress?.countryCode,
       postalCodeId: loadingPostalCode,
     },
     unloadingAddress: {
-      name: shipment.unloadingAddress?.streetName || '',
+      streetName: shipment.unloadingAddress?.streetName || '',
       countryCode: shipment.unloadingAddress?.countryCode,
       postalCodeId: unloadingPostalCode,
     },
@@ -271,16 +271,16 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
   if ('price' in formData) payload.price = price || 0;
 
   // Handle addresses only if they exist in formData
-  if (loadingAddress?.name && loadingAddress?.postalCodeId?.value) {
+  if (loadingAddress?.streetName && loadingAddress?.postalCodeId?.value) {
     payload.loadingAddress = {
-      name: loadingAddress.name || '',
+      streetName: loadingAddress.streetName || '',
       postalCodeId: loadingAddress.postalCodeId?.value || '',
     };
   }
 
-  if (unloadingAddress?.name && unloadingAddress?.postalCodeId?.value) {
+  if (unloadingAddress?.streetName && unloadingAddress?.postalCodeId?.value) {
     payload.unloadingAddress = {
-      name: unloadingAddress.name || '',
+      streetName: unloadingAddress.streetName || '',
       postalCodeId: unloadingAddress.postalCodeId?.value || '',
     };
   }

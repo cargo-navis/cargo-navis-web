@@ -21,7 +21,7 @@ export const shipmentSchema = Yup.object().shape({
   trailerId: Yup.string().optional().nullable(),
   loadingAddress: Yup.object()
     .shape({
-      name: Yup.string().required('Adresa utovara je obavezna'),
+      streetName: Yup.string().required('Adresa utovara je obavezna'),
       postalCodeId: Yup.object()
         .shape({
           label: Yup.string(),
@@ -33,7 +33,7 @@ export const shipmentSchema = Yup.object().shape({
     .optional(),
   unloadingAddress: Yup.object()
     .shape({
-      name: Yup.string().required('Adresa istovara je obavezna'),
+      streetName: Yup.string().required('Adresa istovara je obavezna'),
       postalCodeId: Yup.object()
         .shape({
           label: Yup.string(),

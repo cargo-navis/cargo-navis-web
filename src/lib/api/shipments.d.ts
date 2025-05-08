@@ -32,11 +32,11 @@ export interface Shipment {
 
 export interface CreateShipmentData extends Omit<Shipment, 'id' | 'loadingAddress' | 'unloadingAddress'> {
   loadingAddress: {
-    name: string;
+    streetName: string;
     postalCodeId: string;
   };
   unloadingAddress: {
-    name: string;
+    streetName: string;
     postalCodeId: string;
   };
 }

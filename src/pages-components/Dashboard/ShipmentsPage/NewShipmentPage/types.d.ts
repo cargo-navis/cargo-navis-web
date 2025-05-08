@@ -1,5 +1,5 @@
 export interface Address {
-  name: string;
+  streetName: string;
   postalCodeId: {
     label?: string;
     value?: string;
@@ -17,7 +17,7 @@ export interface ShipmentFields {
   vehicleId?: string | null;
   trailerId?: string | null;
   loadingAddress?: {
-    name: string;
+    streetName: string;
     postalCodeId: {
       label?: string;
       value?: string;
@@ -25,7 +25,7 @@ export interface ShipmentFields {
     countryCode?: string;
   };
   unloadingAddress?: {
-    name: string;
+    streetName: string;
     postalCodeId: {
       label?: string;
       value?: string;
