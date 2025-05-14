@@ -324,6 +324,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       return {
         ...shipment,
         isWarning: isMissingVehicleOrDriver && shipment.transportContractorId === tenant?.id && !shipment.isAgencyUse,
+        isSuccess: shipment.isInvoiceSent,
         subshipments: shipment.subshipments || undefined,
       };
     });
