@@ -320,12 +320,14 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       // Check if vehicleId or driverId is missing
       const isMissingVehicleOrDriver = !shipment.vehicleId || !shipment.driverId;
 
+      const subshipments = shipment.subshipments?.map((s) => ({ ...s, isSuccess: s.isInvoiceSent }));
+
       // Add isWarning flag only to parent shipments
       return {
         ...shipment,
         isWarning: isMissingVehicleOrDriver && shipment.transportContractorId === tenant?.id && !shipment.isAgencyUse,
         isSuccess: shipment.isInvoiceSent,
-        subshipments: shipment.subshipments || undefined,
+        subshipments,
       };
     });
   }, [shipments]);
