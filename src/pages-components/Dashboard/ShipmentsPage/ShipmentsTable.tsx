@@ -287,9 +287,12 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
 
           const shipment = info.row.original;
           const isAgencyUse = shipment.isAgencyUse;
+          const isSubshipment = !!shipment?.parentShipmentId;
 
-          const text = isAgencyUse ? 'Agencijski nalog' : config.label;
-          const variant = isAgencyUse ? 'warning' : config.variant;
+          const shouldRenderAgencyPill = isAgencyUse && !isSubshipment;
+
+          const text = shouldRenderAgencyPill ? 'Agencijski nalog' : config.label;
+          const variant = shouldRenderAgencyPill ? 'warning' : config.variant;
 
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">

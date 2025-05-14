@@ -9,7 +9,7 @@ import { LoadStatus } from '@/lib/api/shipments';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useContractor, useCurrentTenant, useEmployee, useShipment, useUpdateShipment, useVehicle } from '@/lib/hooks';
 import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
-import { Box, DisplayIf, Divider, FlexLayout, Icon, Pill, Text } from '@/ui';
+import { Box, Divider, FlexLayout, Icon, Pill, Text } from '@/ui';
 
 import { loadStatusConfig } from '../const';
 import { AddressDetailsItem } from './components/AddressDetailsItem';
@@ -160,6 +160,8 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
     }
   };
 
+  const shouldRenderAgencyPill = !!shipment?.isAgencyUse && !shipment?.parentShipmentId;
+
   return (
     <FlexLayout className="py-5 flex-col gap-5">
       <FlexLayout className="justify-between">
@@ -184,16 +186,15 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
               )}
             </FlexLayout>
             <FlexLayout className="items-baseline justify-between">
-              <DisplayIf
-                condition={!shipment?.isAgencyUse}
-                fallback={<Pill text="Agencijski Nalog" variant="warning" />}
-              >
+              {shouldRenderAgencyPill ? (
+                <Pill text="Agencijski Nalog" variant="warning" />
+              ) : (
                 <LoadStatusProgress
                   currentStatus={shipment.loadStatus || LoadStatus.NotYetLoaded}
                   isPending={isPending}
                   onStatusChange={handleLoadStatusChange}
                 />
-              </DisplayIf>
+              )}
               <InvoiceItem
                 isInvoiceSent={!!shipment.isInvoiceSent}
                 isPending={isPending}
