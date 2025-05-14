@@ -50,7 +50,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
   const { data: trailer } = useVehicle(shipment.trailerId || '');
   const { data: dispatcher } = useEmployee(shipment.dispatcherId || '');
   const { data: parentShipment } = useShipment(shipment.parentShipmentId || '');
-  const { mutate: updateShipment, isPending } = useUpdateShipment();
+  const { mutateAsync: updateShipment, isPending } = useUpdateShipment();
 
   let transporter: any = contractor;
 
@@ -60,9 +60,9 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
 
   const transporterHref = contractor ? `/dashboard/contractors/${contractor?.id}` : `/dashboard/tenant`;
 
-  const handleLoadStatusChange = (status: LoadStatus) => {
+  const handleLoadStatusChange = async (status: LoadStatus) => {
     try {
-      updateShipment({
+      await updateShipment({
         id: shipment.id,
         loadStatus: status,
       });
@@ -111,9 +111,9 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
     }
   };
 
-  const handleInvoiceChange = (isInvoiceSent: boolean) => {
+  const handleInvoiceChange = async (isInvoiceSent: boolean) => {
     try {
-      updateShipment({
+      await updateShipment({
         id: shipment.id,
         isInvoiceSent,
       });

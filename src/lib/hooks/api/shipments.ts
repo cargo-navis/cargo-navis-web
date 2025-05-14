@@ -55,14 +55,26 @@ export function useUpdateShipment() {
       return updateShipment(id, shipmentData);
     },
     onMutate: (data) => {
+      const prevShipments = queryClient.getQueryData<Shipment[]>(['shipments']);
+      const prevShipment = queryClient.getQueryData<Shipment>(['shipment', data.id]);
+
       queryClient.setQueryData(['shipments'], (oldData: Shipment[] | undefined) => {
         if (!oldData) return oldData;
         return oldData.map((shipment) => (shipment.id === data.id ? { ...shipment, ...data } : shipment));
       });
+
+      return { prevShipments, prevShipment };
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['shipment', variables.id] });
       queryClient.invalidateQueries({ queryKey: ['shipments'] });
+    },
+    onError: (_, data, context) => {
+      if (!context) return;
+      const { prevShipments, prevShipment } = context;
+
+      queryClient.setQueryData(['shipments'], prevShipments);
+      queryClient.setQueryData(['shipment', data.id], prevShipment);
     },
   });
 }
