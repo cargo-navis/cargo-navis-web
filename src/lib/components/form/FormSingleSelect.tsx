@@ -12,7 +12,7 @@ export const FormSingleSelect: React.FC<FormSingleSelectProps> = (props) => {
   const { name, initialValue, rules, isDisabled, ...rest } = props;
   const {
     field: { value, onChange, onBlur },
-    fieldState: { isTouched, isDirty, error },
+    fieldState: { error },
     formState: { isSubmitting },
   } = useController({ name, defaultValue: initialValue, rules });
 
@@ -22,7 +22,7 @@ export const FormSingleSelect: React.FC<FormSingleSelectProps> = (props) => {
     <SingleSelectWithLabels
       name={name}
       {...rest}
-      errorText={(initialValue && error?.message) || ((isTouched && isDirty && error?.message) as string)}
+      errorText={error?.message}
       isDisabled={isSubmitting || isDisabled}
       isRequired={isRequired}
       value={value}

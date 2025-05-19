@@ -276,6 +276,7 @@ const countryCodesEurope = [
   'LV',
   'MC',
   'MD',
+  'ME',
   'MK',
   'MT',
   'NL',

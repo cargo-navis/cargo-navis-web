@@ -3,24 +3,34 @@ import { useState } from 'react';
 
 import { useDeleteShipment } from '@/lib/hooks';
 import { getAuthTokens } from '@/lib/utils/session';
-import { Button, FlexLayout } from '@/ui';
+import { Button, FlexLayout, Icon, Menu } from '@/ui';
+import { MenuComponent } from '@/ui/components/Menu/types';
 
 export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
-  const { back } = useRouter();
-  const { mutateAsync, isPending } = useDeleteShipment(id);
+  const { back, push } = useRouter();
+  const { mutateAsync: deleteShipment, isPending: isDeleting } = useDeleteShipment(id);
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   async function handleDelete() {
     const answer = confirm('Jeste li sigurni da želite izbrisati ovaj nalog?');
     if (!answer) return;
 
     try {
-      await mutateAsync();
+      await deleteShipment();
       alert('Nalog izbrisan');
       void back();
     } catch {
       alert('Greška s brisanjem naloga');
     }
+  }
+
+  function handleCopyShipment() {
+    void push(`/dashboard/shipments/new?copyFromId=${id}`);
+  }
+
+  function handleCopyToSubshipment() {
+    void push(`/dashboard/shipments/new?copyFromId=${id}&parentShipmentId=${id}`);
   }
 
   async function handleDownloadPdf() {
@@ -68,25 +78,68 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
     }
   }
 
+  const menuItems: MenuComponent[] = [
+    {
+      type: 'item' as const,
+      iconLeft: 'PlusIcon',
+      text: 'Dodaj podnalog',
+      href: `/dashboard/shipments/new?parentShipmentId=${id}`,
+    },
+    {
+      type: 'item' as const,
+      iconLeft: 'ClipboardDocumentIcon',
+      text: 'Kopiraj u podnalog',
+      isDisabled: isDeleting,
+      onClick: handleCopyToSubshipment,
+    },
+    {
+      type: 'divider' as const,
+    },
+    {
+      type: 'item' as const,
+      iconLeft: 'PencilIcon',
+      text: 'Uredi',
+      isDisabled: isDeleting,
+      href: `/dashboard/shipments/${id}/edit`,
+    },
+    {
+      type: 'item' as const,
+      iconLeft: 'TrashIcon',
+      text: 'Izbriši',
+      isDisabled: isDeleting,
+      onClick: handleDelete,
+    },
+  ];
+
   return (
-    <FlexLayout className="gap-3">
+    <FlexLayout className="items-center gap-3">
+      <Button
+        iconLeft="ClipboardDocumentIcon"
+        isDisabled={isDeleting}
+        text="Kopiraj nalog"
+        variant="secondary"
+        onClick={handleCopyShipment}
+      />
       <Button
         iconLeft="ArrowDownTrayIcon"
-        isDisabled={isPending}
+        isDisabled={isDeleting}
         isLoading={isDownloadingPdf}
         text="Preuzmi PDF"
         variant="secondary"
         onClick={handleDownloadPdf}
       />
-      <Button
-        as="a"
-        href={`/dashboard/shipments/${id}/edit`}
-        iconLeft="PencilIcon"
-        isDisabled={isPending}
-        text="Uredi"
-        variant="secondary"
+      <Menu
+        control={
+          <FlexLayout className="items-center hover:bg-dark-200 dark:hover:bg-light-800 p-1 cursor-pointer rounded-s">
+            <Icon icon="EllipsisVerticalIcon" isDisabled={isDeleting} size="l" />
+          </FlexLayout>
+        }
+        isOpen={isMenuOpen}
+        items={menuItems}
+        position="bottom-end"
+        onClose={() => setIsMenuOpen(false)}
+        onOpen={() => setIsMenuOpen(true)}
       />
-      <Button iconLeft="TrashIcon" isLoading={isPending} text="Izbriši" onClick={handleDelete} />
     </FlexLayout>
   );
 };

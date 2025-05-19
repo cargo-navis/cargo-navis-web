@@ -1,3 +1,4 @@
+import { addToast } from '@heroui/react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -6,9 +7,10 @@ import type { Shipment } from '@/lib/api';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { FormTextInput } from '@/lib/components/form';
 import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
-import { Box, Button, Divider, FlexLayout, LoadingSpinner } from '@/ui';
+import { Box, Button, Divider, FlexLayout, Icon, LoadingSpinner } from '@/ui';
 
 import AddressFields from './AddressFields';
+import { AgencyField } from './AgencyField';
 import { CargoFieldList } from './CargoFieldList';
 import { ClientField } from './ClientField';
 import { ContractorField } from './ContractorField';
@@ -23,17 +25,23 @@ import { VehicleField } from './VehicleField';
 interface NewShipmentFormProps {
   shipment?: Shipment;
   tenant: Tenant;
+  parentShipmentId?: string;
+  copyFromId?: string;
 }
 
-export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tenant }) => {
+export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tenant, parentShipmentId, copyFromId }) => {
   const { push, back } = useRouter();
   const isEdit = !!shipment;
+  const isCopy = !!copyFromId;
+
+  // When copying, we use the shipment data but treat it as a new form (not an edit)
+  const formMode = isEdit && !isCopy ? 'edit' : 'new';
 
   const { mutateAsync: createShipment } = useCreateShipment();
   const { mutateAsync: updateShipment } = useUpdateShipment();
 
   const formMethods = useForm<ShipmentFields>({
-    defaultValues: getFormDefaultValues(shipment, tenant),
+    defaultValues: getFormDefaultValues(shipment, tenant, parentShipmentId, isCopy),
     resolver: yupResolver(shipmentSchema),
     mode: 'all',
   });
@@ -41,9 +49,12 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
   const { handleSubmit, formState } = formMethods;
   const { isDirty, isValid, isLoading, isSubmitting, dirtyFields } = formState;
 
+  // For a copied shipment, we should only check validity, not dirty state
+  const isFormActionable = isCopy ? isValid : isValid && isDirty;
+
   async function handleFormSubmit(data: ShipmentFields) {
     try {
-      if (isEdit && shipment) {
+      if (formMode === 'edit' && shipment) {
         // When cargo items are removed, the cargo array should always be included
         // even if dirtyFields doesn't detect it properly
         const cargoHasChanged = JSON.stringify(shipment.cargo) !== JSON.stringify(data.cargo);
@@ -56,17 +67,77 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
         }, {} as ShipmentFields);
 
         const payload = transformFormDataToPayload(dirtyData);
+        if (parentShipmentId) {
+          payload.parentShipmentId = parentShipmentId;
+        }
 
         await updateShipment({ id: shipment.id, ...payload });
+        addToast({
+          title: `Nalog "${shipment.orderNumber}" uspješno ažuriran`,
+          timeout: 2500,
+          classNames: {
+            base: 'bg-teal-700 text-white border border-teal-600',
+            content: 'text-white',
+            description: 'text-white',
+            title: 'text-white',
+            closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
+          },
+          radius: 'sm',
+          icon: <Icon color="text-white" icon="InformationCircleIcon" size="xl" />,
+          closeIcon: (
+            <FlexLayout className="bg-teal-700 p-1 items-center justify-center">
+              <Icon color="text-white" icon="XMarkIcon" size="l" />
+            </FlexLayout>
+          ),
+        });
         void back();
       } else {
         const payload = transformFormDataToPayload(data);
+        if (parentShipmentId) {
+          payload.parentShipmentId = parentShipmentId;
+        }
 
-        await createShipment(payload);
+        const newShipment = await createShipment(payload);
+        addToast({
+          title: `Nalog "${newShipment.orderNumber}" uspješno kreiran`,
+          timeout: 2500,
+          classNames: {
+            base: 'bg-teal-700 text-white border border-teal-600',
+            content: 'text-white',
+            description: 'text-white',
+            title: 'text-white',
+            closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
+          },
+          radius: 'sm',
+          icon: <Icon color="text-white" icon="InformationCircleIcon" size="xl" />,
+          closeIcon: (
+            <FlexLayout className="bg-teal-700 p-1 items-center justify-center">
+              <Icon color="text-white" icon="XMarkIcon" size="l" />
+            </FlexLayout>
+          ),
+        });
         await push('/dashboard/shipments');
       }
-    } catch {
-      alert('Dogodila se greška s unosom naloga. Pokušajte ponovno.');
+    } catch (error) {
+      console.error(error);
+      addToast({
+        title: 'Dogodila se greška s unosom naloga. Pokušajte ponovno.',
+        classNames: {
+          base: 'bg-red-600 dark:bg-red-700 text-white border border-red-600',
+          content: 'text-white',
+          description: 'text-white',
+          title: 'text-white',
+          closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
+        },
+        timeout: 2500,
+        radius: 'sm',
+        icon: <Icon color="text-white" icon="ExclamationTriangleIcon" size="xl" />,
+        closeIcon: (
+          <FlexLayout className="bg-red-600 dark:bg-red-700 p-1 items-center justify-center">
+            <Icon color="text-white" icon="XMarkIcon" size="l" />
+          </FlexLayout>
+        ),
+      });
     }
   }
 
@@ -81,6 +152,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
           <FlexLayout className="flex-row gap-7">
             <FlexLayout className="flex-1 flex-col gap-4">
               <FlexLayout as="fieldset" className="flex-col gap-5">
+                <AgencyField />
                 <FlexLayout className="gap-4">
                   <Box className="flex-1">
                     <FormTextInput iconLeft="LockClosedIcon" isDisabled label="Broj naloga" name="orderNumber" />
@@ -132,10 +204,10 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
           </FlexLayout>
           <Box className="sticky bottom-0 bg-[#e9eded] dark:bg-black border-t-[2px] border-dark-200 dark:border-light-700 p-4 -mx-4">
             <Button
-              isDisabled={!(isValid && isDirty)}
+              isDisabled={!isFormActionable}
               isFullWidth
               isLoading={isSubmitting}
-              text={isEdit ? 'Ažuriraj nalog' : 'Napravi nalog'}
+              text={formMode === 'edit' ? 'Ažuriraj nalog' : 'Napravi nalog'}
               type="submit"
               variant="primary"
             />

@@ -1,5 +1,5 @@
 export interface Address {
-  name: string;
+  streetName: string;
   postalCodeId: {
     label?: string;
     value?: string;
@@ -9,20 +9,35 @@ export interface Address {
 
 export interface ShipmentFields {
   cargoReference?: string;
-  dispatcherId?: string;
-  clientId?: string;
-  transportContractorId?: string;
-  driverId?: string;
-  vehicleId?: string;
-  trailerId?: string;
-  loadingAddress?: Address;
-  unloadingAddress?: Address;
+  dispatcherId: string;
+  clientId: string;
+  isAgencyUse?: boolean;
+  transportContractorId: string;
+  driverId?: string | null;
+  vehicleId?: string | null;
+  trailerId?: string | null;
+  loadingAddress?: {
+    streetName: string;
+    postalCodeId: {
+      label?: string;
+      value?: string;
+    };
+    countryCode?: string;
+  };
+  unloadingAddress?: {
+    streetName: string;
+    postalCodeId: {
+      label?: string;
+      value?: string;
+    };
+    countryCode?: string;
+  };
   loadingCompanyName?: string;
   unloadingCompanyName?: string;
   loadingReadyDate?: string;
-  loadingDate?: string;
+  loadingDate: string;
   loadingDescription?: string;
-  unloadingDate?: string;
+  unloadingDate: string;
   unloadingDueDate?: string;
   unloadingDescription?: string;
   price?: number;

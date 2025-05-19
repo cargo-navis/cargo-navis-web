@@ -1,12 +1,16 @@
 import { createColumnHelper } from '@tanstack/react-table';
+import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 
 import { type Shipment } from '@/lib/api';
+import { LoadStatus } from '@/lib/api/shipments';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
-import { FlexLayout, Table, Text } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
+
+import { loadStatusConfig } from './const';
 
 const columnHelper = createColumnHelper<Shipment>();
 
@@ -24,11 +28,42 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: 'Broj naloga',
         enableSorting: false,
         size: 140,
-        cell: (info) => (
-          <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-            <Text>{info.getValue()}</Text>
-          </FlexLayout>
-        ),
+        cell: (info) => {
+          const row = info.row;
+          const hasSubshipments = (info.row.original.subshipments?.length ?? 0) > 0;
+          const depth = row.depth;
+          const isExpanded = row.getIsExpanded();
+
+          return (
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500 gap-2">
+              {depth > 0 ? (
+                <FlexLayout className="items-center gap-2">
+                  <Text>{info.getValue()}</Text>
+                </FlexLayout>
+              ) : (
+                <FlexLayout className="items-center gap-2 relative">
+                  {hasSubshipments && (
+                    <Box
+                      className="absolute -left-6 cursor-pointer"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        row.toggleExpanded();
+                      }}
+                    >
+                      <Icon
+                        className={clsx(isExpanded && 'rotate-90')}
+                        color="text-dark-500 dark:text-light-300 "
+                        icon="ChevronRightIcon"
+                        size="m"
+                      />
+                    </Box>
+                  )}
+                  <Text>{info.getValue()}</Text>
+                </FlexLayout>
+              )}
+            </FlexLayout>
+          );
+        },
       }),
       columnHelper.accessor('clientId', {
         header: 'Klijent',
@@ -36,6 +71,17 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (info) => {
           const clientId = info.getValue();
           const client = clients.find((client) => client.id === clientId);
+
+          const isTenant = !client && tenant?.id === clientId;
+
+          if (isTenant) {
+            return (
+              <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+                <Text>{tenant?.name}</Text>
+              </FlexLayout>
+            );
+          }
+
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
               <Text>{client ? client.name : '—'}</Text>
@@ -160,9 +206,27 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const vehicleId = info.getValue();
           const vehicle = vehicles.find((v) => v.id === vehicleId);
           const displayValue = vehicle ? `${vehicle?.registration} (${vehicle?.brand})` : '—';
+
+          const isSubshipment = info.row.depth !== 0;
+          const isTenantTransporter = info.row.original.transportContractorId === tenant?.id;
+          const isAgencyUse = info.row.original.isAgencyUse;
+
           return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500 gap-2">
               <Text>{displayValue}</Text>
+              <DisplayIf condition={!isSubshipment && !vehicleId && isTenantTransporter && !isAgencyUse}>
+                <Tooltip
+                  content={
+                    <Box className="px-1">
+                      <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
+                        Vozilo još nije dodijeljeno
+                      </Text>
+                    </Box>
+                  }
+                >
+                  <Icon color="text-red-500" icon="ExclamationTriangleIcon" size="s" />
+                </Tooltip>
+              </DisplayIf>
             </FlexLayout>
           );
         },
@@ -174,9 +238,27 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const driverId = info.getValue();
           const employee = employees.find((employee) => employee.id === driverId);
           const fullName = employee ? `${employee.firstName || ''} ${employee.lastName || ''}`.trim() : '—';
+
+          const isSubshipment = info.row.depth !== 0;
+          const isTenantTransporter = info.row.original.transportContractorId === tenant?.id;
+          const isAgencyUse = info.row.original.isAgencyUse;
+
           return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500 gap-2">
               <Text>{fullName || '—'}</Text>
+              <DisplayIf condition={!isSubshipment && !driverId && isTenantTransporter && !isAgencyUse}>
+                <Tooltip
+                  content={
+                    <Box className="px-1">
+                      <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
+                        Vozač još nije dodijeljen
+                      </Text>
+                    </Box>
+                  }
+                >
+                  <Icon color="text-red-500" icon="ExclamationTriangleIcon" size="s" />
+                </Tooltip>
+              </DisplayIf>
             </FlexLayout>
           );
         },
@@ -196,12 +278,59 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           );
         },
       }),
+      columnHelper.accessor('loadStatus', {
+        header: 'Status utovara',
+        enableSorting: false,
+        cell: (info) => {
+          const status = info.getValue();
+          const config = status ? loadStatusConfig[status] : loadStatusConfig[LoadStatus.NotYetLoaded];
+
+          const shipment = info.row.original;
+          const isAgencyUse = shipment.isAgencyUse;
+          const isSubshipment = !!shipment?.parentShipmentId;
+
+          const shouldRenderAgencyPill = isAgencyUse && !isSubshipment;
+
+          const text = shouldRenderAgencyPill ? 'Agencijski nalog' : config.label;
+          const variant = shouldRenderAgencyPill ? 'warning' : config.variant;
+
+          return (
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+              <Pill size="s" text={text} variant={variant} />
+            </FlexLayout>
+          );
+        },
+      }),
     ];
-  }, [clients, contractors, employees, tenant, vehicles]);
+  }, [clients, contractors, employees, tenant, vehicles, router]);
 
   const handleRowClick = (shipment: Shipment) => {
     router.push(`/dashboard/shipments/${shipment.id}`);
   };
 
-  return <Table columns={columns} data={shipments} onRowClick={handleRowClick} />;
+  const getSubRows = (row: Shipment) => {
+    return row.subshipments || [];
+  };
+
+  // Add isWarning flag to shipments missing vehicleId or driverId
+  const shipmentsWithWarnings = useMemo(() => {
+    if (!shipments) return [];
+
+    return shipments.map((shipment) => {
+      // Check if vehicleId or driverId is missing
+      const isMissingVehicleOrDriver = !shipment.vehicleId || !shipment.driverId;
+
+      const subshipments = shipment.subshipments?.map((s) => ({ ...s, isSuccess: s.isInvoiceSent }));
+
+      // Add isWarning flag only to parent shipments
+      return {
+        ...shipment,
+        isWarning: isMissingVehicleOrDriver && shipment.transportContractorId === tenant?.id && !shipment.isAgencyUse,
+        isSuccess: shipment.isInvoiceSent,
+        subshipments,
+      };
+    });
+  }, [shipments]);
+
+  return <Table columns={columns} data={shipmentsWithWarnings} getSubRows={getSubRows} onRowClick={handleRowClick} />;
 }

@@ -1,4 +1,5 @@
 export * from './FormAsyncSelect';
+export * from './FormCheckbox';
 export * from './FormCheckboxGroup';
 export * from './FormDatepicker';
 export * from './FormRadioGroup';

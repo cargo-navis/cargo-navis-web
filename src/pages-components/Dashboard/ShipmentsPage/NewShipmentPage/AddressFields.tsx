@@ -37,8 +37,8 @@ export const AddressFields = () => {
           <Text color="text-color-3" variant="text-s-medium">
             Detalji utovara
           </Text>
-          <FormTextInput label="Tvrtka utovara" name="loadingCompanyName" rules={{ required: true }} />
-          <FormTextInput label="Ulica i broj" name="loadingAddress.name" rules={{ required: true }} />
+          <FormTextInput label="Tvrtka utovara" name="loadingCompanyName" />
+          <FormTextInput label="Ulica i broj" name="loadingAddress.streetName" rules={{ required: true }} />
           <FormSingleSelect
             isSearchable
             label="Država"
@@ -66,12 +66,13 @@ export const AddressFields = () => {
             Detalji istovara
           </Text>
           <FormTextInput label="Tvrtka istovara" name="unloadingCompanyName" />
-          <FormTextInput label="Ulica i broj" name="unloadingAddress.name" />
+          <FormTextInput label="Ulica i broj" name="unloadingAddress.streetName" rules={{ required: true }} />
           <FormSingleSelect
             isSearchable
             label="Država"
             name="unloadingAddress.countryCode"
             options={countryEuropeOptions}
+            rules={{ required: true }}
           />
           <PostalCodeSelectField
             countryCode={unloadingCountryCode}
@@ -81,6 +82,7 @@ export const AddressFields = () => {
             label="Poštanski broj"
             name="unloadingAddress.postalCodeId"
             placeholder="Odaberi poštanski broj"
+            rules={{ required: true }}
           />
           <FormDatepicker label="Datum istovara" name="unloadingDate" rules={{ required: true }} />
           <FormDatepicker label="Krajnji rok istovara" name="unloadingDueDate" />

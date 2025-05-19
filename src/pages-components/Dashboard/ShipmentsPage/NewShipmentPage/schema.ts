@@ -7,15 +7,21 @@ import type { CargoType } from './types.d';
 export const shipmentSchema = Yup.object().shape({
   orderNumber: Yup.string().required('Broj naloga je obavezan'),
   cargoReference: Yup.string().optional(),
-  dispatcherId: Yup.string().optional(),
-  clientId: Yup.string().optional(),
-  transportContractorId: Yup.string().optional(),
-  driverId: Yup.string().optional(),
-  vehicleId: Yup.string().optional(),
-  trailerId: Yup.string().optional(),
+  dispatcherId: Yup.string().required('Disponent je obavezan'),
+  clientId: Yup.string().required('Klijent je obavezan'),
+  isAgencyUse: Yup.boolean().optional(),
+  price: Yup.number()
+    .typeError('Cijena mora biti pozitivan broj')
+    .min(0, 'Cijena mora biti najmanje 0')
+    .positive('Mora biti pozitivan broj')
+    .optional(),
+  transportContractorId: Yup.string().required('Prijevoznik je obavezan'),
+  driverId: Yup.string().optional().nullable(),
+  vehicleId: Yup.string().optional().nullable(),
+  trailerId: Yup.string().optional().nullable(),
   loadingAddress: Yup.object()
     .shape({
-      name: Yup.string().required('Adresa utovara je obavezna'),
+      streetName: Yup.string().required('Adresa utovara je obavezna'),
       postalCodeId: Yup.object()
         .shape({
           label: Yup.string(),
@@ -27,7 +33,7 @@ export const shipmentSchema = Yup.object().shape({
     .optional(),
   unloadingAddress: Yup.object()
     .shape({
-      name: Yup.string().required('Adresa istovara je obavezna'),
+      streetName: Yup.string().required('Adresa istovara je obavezna'),
       postalCodeId: Yup.object()
         .shape({
           label: Yup.string(),
@@ -39,17 +45,24 @@ export const shipmentSchema = Yup.object().shape({
     .optional(),
   loadingCompanyName: Yup.string().optional(),
   unloadingCompanyName: Yup.string().optional(),
+  loadingDate: Yup.string()
+    .required('Datum utovara je obavezan')
+    .test(
+      'not-empty',
+      'Datum utovara je obavezan',
+      (value) => value !== undefined && value !== null && value.trim() !== ''
+    ),
   loadingReadyDate: Yup.string().optional(),
-  loadingDate: Yup.string().optional(),
   loadingDescription: Yup.string().optional(),
-  unloadingDate: Yup.string().optional(),
   unloadingDueDate: Yup.string().optional(),
+  unloadingDate: Yup.string()
+    .required('Datum istovara je obavezan')
+    .test(
+      'not-empty',
+      'Datum istovara je obavezan',
+      (value) => value !== undefined && value !== null && value.trim() !== ''
+    ),
   unloadingDescription: Yup.string().optional(),
-  price: Yup.number()
-    .typeError('Cijena mora biti pozitivan broj')
-    .min(0, 'Cijena mora biti najmanje 0')
-    .positive('Mora biti pozitivan broj')
-    .optional(),
   cargo: Yup.array()
     .of(
       Yup.object().shape({

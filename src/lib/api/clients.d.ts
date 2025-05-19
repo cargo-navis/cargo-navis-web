@@ -4,6 +4,7 @@ export interface Client {
   address: ClientAddress;
   vatNumber: string;
   nationalCompanyRegisterId: string;
+  termsOfPayment: string;
 }
 
 interface ClientAddress {
@@ -20,6 +21,7 @@ export type CreateClientParams = {
   addressPostalCodeId: string;
   vatNumber: string;
   nationalCompanyRegisterId: string;
+  termsOfPayment: string;
 };
 
 export type UpdateClientParams = Partial<CreateClientParams>;

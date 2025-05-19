@@ -1,12 +1,16 @@
+import { LoadStatus } from './shipments';
+
 export interface Shipment {
   id: string;
   cargoReference: string;
   orderNumber: string;
   dispatcherId?: string;
-  driverId?: string;
-  vehicleId?: string;
-  trailerId?: string;
+  driverId?: string | null;
+  vehicleId?: string | null;
+  trailerId?: string | null;
   clientId?: string;
+  isAgencyUse?: boolean;
+  isInvoiceSent?: boolean;
   transportContractorId?: string;
   price: number;
   cargo: Cargo[];
@@ -20,17 +24,19 @@ export interface Shipment {
   unloadingDate: string;
   unloadingDueDate: string;
   unloadingDescription: string;
-  parentShipmentId: string;
+  parentShipmentId?: string;
+  subshipments?: Shipment[];
   createdAt: string;
+  loadStatus?: LoadStatus;
 }
 
 export interface CreateShipmentData extends Omit<Shipment, 'id' | 'loadingAddress' | 'unloadingAddress'> {
   loadingAddress: {
-    name: string;
+    streetName: string;
     postalCodeId: string;
   };
   unloadingAddress: {
-    name: string;
+    streetName: string;
     postalCodeId: string;
   };
 }

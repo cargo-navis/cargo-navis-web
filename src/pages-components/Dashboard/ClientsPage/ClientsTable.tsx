@@ -94,5 +94,5 @@ export function ClientsTable({ clients }: { clients?: Client[] }) {
     ];
   }, []);
 
-  return <Table columns={columns} data={clients} />;
+  return <Table columns={columns} data={clients || []} />;
 }

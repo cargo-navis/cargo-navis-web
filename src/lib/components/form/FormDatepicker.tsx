@@ -12,6 +12,7 @@ interface FormDatepickerProps extends Omit<DatepickerWithLabelsProps, 'value' | 
 export const FormDatepicker: React.FC<FormDatepickerProps> = ({ name, isDisabled, initialValue, rules, ...rest }) => {
   const {
     field: { value, onChange },
+    fieldState: { error },
     formState: { isSubmitting },
   } = useController({ name, defaultValue: initialValue, rules });
 
@@ -20,6 +21,7 @@ export const FormDatepicker: React.FC<FormDatepickerProps> = ({ name, isDisabled
   return (
     <DatepickerWithLabels
       {...rest}
+      errorText={error?.message}
       isDisabled={isSubmitting}
       isRequired={isRequired}
       value={value}

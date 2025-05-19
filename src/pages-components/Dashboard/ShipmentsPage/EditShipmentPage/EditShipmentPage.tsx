@@ -12,34 +12,54 @@ import { Box, FlexLayout, Heading } from '@/ui';
 export const EditShipmentPage = () => {
   const { query } = useRouter();
   const id = query.id;
+  const parentShipmentId = query.parentShipmentId as string | undefined;
 
   const { data: tenant, isLoading: isTenantLoading } = useCurrentTenant();
   const { data: shipment, isLoading: isShipmentLoading } = useShipment(id as string);
+  const { data: parentShipment, isLoading: isParentShipmentLoading } = useShipment(parentShipmentId || '');
 
-  const isLoading = isTenantLoading || isShipmentLoading;
+  const isLoading = isTenantLoading || isShipmentLoading || (parentShipmentId && isParentShipmentLoading);
 
   return (
     <DashboardLayout>
       {isLoading || !shipment || !id || !tenant ? (
         <LoadingPage />
       ) : (
-        <MainContent shipment={shipment} shipmentId={id as string} tenant={tenant} />
+        <MainContent
+          parentShipment={parentShipment}
+          parentShipmentId={parentShipmentId}
+          shipment={shipment}
+          shipmentId={id as string}
+          tenant={tenant}
+        />
       )}
     </DashboardLayout>
   );
 };
 
-const MainContent = ({ shipment, shipmentId, tenant }: { tenant: Tenant; shipment: Shipment; shipmentId: string }) => {
+const MainContent = ({
+  shipment,
+  shipmentId,
+  tenant,
+  parentShipmentId,
+  parentShipment,
+}: {
+  tenant: Tenant;
+  shipment: Shipment;
+  shipmentId: string;
+  parentShipmentId?: string;
+  parentShipment?: Shipment;
+}) => {
   return (
     <Box>
       <Box className="py-5 flex flex-col gap-[40px]">
         <Heading as="h1" variant="text-xl">
-          Ažuriraj Nalog
+          {parentShipment ? `Ažuriraj podnalog od ${parentShipment.orderNumber}` : 'Ažuriraj Nalog'}
         </Heading>
       </Box>
       <FlexLayout className="flex-col gap-[40px]">
         <BackButton targetLocation={`/dashboard/shipments/${shipmentId}`} />
-        <NewShipmentForm shipment={shipment} tenant={tenant} />
+        <NewShipmentForm parentShipmentId={parentShipmentId} shipment={shipment} tenant={tenant} />
       </FlexLayout>
     </Box>
   );

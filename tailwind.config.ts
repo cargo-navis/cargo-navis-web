@@ -1,4 +1,5 @@
-import type { Config } from "tailwindcss";
+import { heroui } from '@heroui/react';
+import type { Config } from 'tailwindcss';
 import plugin from 'tailwindcss/plugin';
 
 import { theme } from './src/ui/theme';
@@ -7,11 +8,12 @@ const { colors, fontSize, borderRadius, spacing } = theme;
 
 const config: Config = {
   content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/pages-components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/ui/**/*.{ts,tsx}",
+    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/pages-components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/ui/**/*.{ts,tsx}',
+    './node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     colors,
@@ -24,15 +26,15 @@ const config: Config = {
         heading: ['var(--font-playfair)'],
       },
       backgroundImage: {
-        "sidebar-gradient": 'linear-gradient(45deg, #13949f, 35%, transparent)',
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        'sidebar-gradient': 'linear-gradient(45deg, #13949f, 35%, transparent)',
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
     },
   },
   plugins: [
-    plugin(function({ addUtilities }) {
+    heroui(),
+    plugin(function ({ addUtilities }) {
       const newUtilities = {
         '.text-color-1': {
           '@apply text-dark-800 dark:text-light-50': {},
@@ -46,10 +48,10 @@ const config: Config = {
         '.text-color-4': {
           '@apply text-dark-500 dark:text-light-300': {},
         },
-      }
+      };
 
-      addUtilities(newUtilities)
-    })
+      addUtilities(newUtilities);
+    }),
   ],
 };
 export default config;
