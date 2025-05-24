@@ -6,6 +6,7 @@ import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelect
 import type { Tenant } from '@/lib/api/tenant.d';
 import { FormDatepicker, FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useUpdateTenant } from '@/lib/hooks/api/tenant';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
 import { countryEuropeOptions } from '../../NewEmployeePage/const';
@@ -47,9 +48,10 @@ export const EditTenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
 
     try {
       await updateTenant(payload);
+      showSuccessToast({ title: 'Podaci tvrtke uspješno ažurirani' });
       void back();
     } catch {
-      alert('Dogodila se greška s ažuriranjem podataka tvrtke. Pokušajte ponovno.');
+      showErrorToast({ title: 'Dogodila se greška s ažuriranjem podataka tvrtke. Pokušajte ponovno.' });
     }
   }
 
