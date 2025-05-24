@@ -11,9 +11,8 @@ interface ContractorAddress {
   streetName: string;
   id: string;
   postalCode: string;
-  region: string;
-  city: string;
   countryCode: string;
+  placeName: string;
 }
 
 export type CreateContractorParams = {
