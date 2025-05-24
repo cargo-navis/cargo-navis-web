@@ -6,9 +6,14 @@ export interface Tenant {
   communityLicenseId: string;
   cargoInsuranceExpiryDate: string;
   address: {
-    placeName: string;
+    id: string;
+    streetName: string;
     postalCode: string;
+    placeName: string;
+    countryCode: string;
   };
 }
 
-export type UpdateTenantParams = Omit<Tenant, 'id'>;
+export type UpdateTenantParams = Omit<Tenant, 'id', 'address'> & {
+  address: { streeName: string; postalCodeId: string };
+};

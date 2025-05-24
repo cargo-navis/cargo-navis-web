@@ -3,7 +3,7 @@ import type { Tenant } from '@/lib/api/tenant.d';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useCurrentTenant } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
-import { Box, Divider, FlexLayout, Text } from '@/ui';
+import { Box, DisplayIf, Divider, FlexLayout, Text } from '@/ui';
 
 import { TenantActions } from './TenantActions';
 
@@ -43,9 +43,14 @@ const MainContent: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
                 <Text color="text-color-3" variant="text-s-medium">
                   Adresa
                 </Text>
-                <Text variant="text-l">
-                  {address.placeName}, {address.postalCode}
-                </Text>
+                <DisplayIf condition={!!address.streetName}>
+                  <Text variant="text-l">{address.streetName}</Text>
+                </DisplayIf>
+                <DisplayIf condition={!!address.postalCode}>
+                  <Text variant="text-l">
+                    {address.postalCode}, {address.placeName}
+                  </Text>
+                </DisplayIf>
               </FlexLayout>
             </Box>
 

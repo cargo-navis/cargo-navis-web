@@ -64,7 +64,7 @@ export function ContractorsTable({ contractors }: { contractors?: Contractor[] }
             <FlexLayout className="items-center gap-2 cursor-pointer text-color-3">
               <FlexLayout className="flex-col">
                 <Text variant="text-s">{address.streetName || '–'}</Text>
-                <Text variant="text-s">{`${address.city}, ${country.name}`}</Text>
+                <Text variant="text-s">{`${address.placeName}, ${address.postalCode}, ${country.name}`}</Text>
               </FlexLayout>
             </FlexLayout>
           );

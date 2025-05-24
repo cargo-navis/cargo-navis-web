@@ -6,7 +6,7 @@ import type { Contractor } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useContractor } from '@/lib/hooks';
 import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, Divider, FlexLayout, Text } from '@/ui';
+import { Box, DisplayIf, Divider, FlexLayout, Text } from '@/ui';
 
 import { ContractorActions } from './ContractorActions';
 
@@ -46,11 +46,11 @@ const MainContent: React.FC<{ contractor: Contractor }> = ({ contractor }) => {
                 <Text color="text-color-3" variant="text-m">
                   {contractor.address.streetName},
                 </Text>
-                <Text color="text-color-3" variant="text-m">
-                  {[contractor.address.city, contractor.address.region, contractor.address.postalCode, country.name]
-                    .filter(Boolean)
-                    .join(', ')}
-                </Text>
+                <DisplayIf condition={!!contractor.address.placeName}>
+                  <Text color="text-color-3" variant="text-m">
+                    {contractor.address.placeName}, {contractor.address.postalCode}, {country.name}
+                  </Text>
+                </DisplayIf>
               </FlexLayout>
               <Divider />
               <FlexLayout className="flex-col">

@@ -7,6 +7,7 @@ import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelect
 import type { Contractor } from '@/lib/api';
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateContractor, useUpdateContractor } from '@/lib/hooks';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
@@ -49,13 +50,15 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
     try {
       if (isEdit) {
         await updateContractor(payload);
+        showSuccessToast({ title: 'Kontraktor uspješno ažuriran' });
         void back();
       } else {
         await createContractor(payload);
+        showSuccessToast({ title: 'Kontraktor uspješno kreiran' });
         void back();
       }
     } catch {
-      alert('Dogodila se greška s unosom kontraktora. Pokušajte ponovno.');
+      showErrorToast({ title: 'Dogodila se greška s unosom kontraktora. Pokušajte ponovno.' });
     }
   }
 

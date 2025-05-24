@@ -6,6 +6,7 @@ import type { Employee } from '@/lib/api/employees.d';
 import { FormDatepicker, FormRadioGroup, FormTextInput } from '@/lib/components/form';
 import { useCreateEmployee, useUpdateEmployee } from '@/lib/hooks';
 import { replaceEmptyStringsWithNull } from '@/lib/utils/data';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout } from '@/ui';
 
 import { formDefaultValues, genderOptions, positionOptions } from './const';
@@ -47,9 +48,11 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
     try {
       if (isEdit) {
         await updateEmployee(processedData);
+        showSuccessToast({ title: 'Zaposlenik uspješno ažuriran' });
         void back();
       } else {
         await createEmployee(processedData);
+        showSuccessToast({ title: 'Zaposlenik uspješno kreiran' });
         void back();
       }
     } catch (error: any) {
@@ -57,9 +60,9 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
       const errorMessage = error?.response?.data?.error;
 
       if (errorMessage === emailTakenException) {
-        alert(`Korisnik s email adresom "${values.email}" već postoji`);
+        showErrorToast({ title: `Korisnik s email adresom "${values.email}" već postoji` });
       } else {
-        alert(`Error with form submit. ${error?.message}`);
+        showErrorToast({ title: `Greška s unosom zaposlenika. Pokušajte ponovno.` });
       }
     }
   }

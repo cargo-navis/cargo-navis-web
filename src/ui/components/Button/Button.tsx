@@ -1,4 +1,5 @@
 import clsx from 'clsx';
+import Link from 'next/link';
 import type React from 'react';
 
 import { DisplayIf, Icon, type IconType, LoadingSpinner, Text } from '@/ui';
@@ -30,6 +31,7 @@ export const Button: React.FC<ButtonProps> = ({
   size = 'm',
   variant = 'primary',
   text,
+  href,
   ...rest
 }) => {
   const { sizeStyles, textVariant, iconSize, loadingSize } = sizesMap[size];
@@ -37,7 +39,7 @@ export const Button: React.FC<ButtonProps> = ({
 
   const disabledAnchorStyles = as === 'a' && (isDisabled || isLoading) && variantStyles[variant].disabledAnchor;
 
-  return (
+  const buttonContent = (
     <Box
       as={as}
       className={clsx(
@@ -72,4 +74,10 @@ export const Button: React.FC<ButtonProps> = ({
       </Box>
     </Box>
   );
+
+  if (href) {
+    return <Link href={href}>{buttonContent}</Link>;
+  }
+
+  return buttonContent;
 };

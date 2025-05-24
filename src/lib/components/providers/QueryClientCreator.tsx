@@ -2,7 +2,14 @@ import { QueryClient, type QueryClientConfig, QueryClientProvider } from '@tanst
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useRef } from 'react';
 
-const config: QueryClientConfig = {};
+const config: QueryClientConfig = {
+  defaultOptions: {
+    queries: {
+      retry: 0,
+      staleTime: 30 * 1000,
+    },
+  },
+};
 
 export const QueryClientCreator: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const queryClient = useRef<QueryClient>();

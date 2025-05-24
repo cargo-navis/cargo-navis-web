@@ -1,7 +1,8 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Shipment } from '@/lib/api';
+import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { useShipments } from '@/lib/hooks';
-import { Box, Button, FlexLayout, Heading, Text } from '@/ui';
+import { Box, Button, DisplayIf, FlexLayout, Heading } from '@/ui';
 
 import { ShipmentsTable } from './ShipmentsTable';
 import { ShipmentsTableLoader } from './ShipmentsTableLoader';
@@ -12,6 +13,8 @@ export const ShipmentsPage = () => {
     select: organizeSubshipments,
   });
 
+  const isEmpty = shipments?.length === 0;
+
   return (
     <DashboardLayout>
       <Box>
@@ -19,32 +22,25 @@ export const ShipmentsPage = () => {
           <Heading as="h1" variant="text-xl">
             Nalozi
           </Heading>
-          <Button as="a" href="/dashboard/shipments/new" iconLeft="PlusIcon" text="Dodaj Nalog" />
+          <DisplayIf condition={!isEmpty}>
+            <Button as="a" href="/dashboard/shipments/new" iconLeft="PlusIcon" text="Dodaj Nalog" />
+          </DisplayIf>
         </FlexLayout>
       </Box>
       <Box className="py-5">
         {isLoading ? (
           <ShipmentsTableLoader />
-        ) : shipments?.length ? (
-          <ShipmentsTable shipments={shipments} />
+        ) : isEmpty ? (
+          <EmptyTableState
+            buttonHref="/dashboard/shipments/new"
+            buttonText="Dodaj Nalog"
+            description="Kada dodate naloge, oni će se prikazati ovdje."
+            title="📄 Još nema zapisa o nalozima."
+          />
         ) : (
-          <EmptyState />
+          <ShipmentsTable shipments={shipments} />
         )}
       </Box>
     </DashboardLayout>
-  );
-};
-
-const EmptyState = () => {
-  return (
-    <FlexLayout className="flex-col gap-4 items-center justify-center h-full my-10">
-      <Text color="text-color-2" variant="text-l-medium">
-        Nemate naloga u bazi
-      </Text>
-      <Text color="text-color-3" variant="text-s-medium">
-        Dodajte novi nalog klikom na dugme ispod
-      </Text>
-      <Button as="a" href="/dashboard/shipments/new" iconLeft="PlusIcon" text="Dodaj Nalog" />
-    </FlexLayout>
   );
 };

@@ -48,7 +48,7 @@ export const formDefaultValues: ShipmentFields = {
 };
 
 // Fetch postal code data for an address
-const fetchPostalCodeData = async (postalCodeId: string) => {
+export const fetchPostalCodeData = async (postalCodeId: string) => {
   try {
     const postalCodeData = await getPostalCode(postalCodeId);
     return {

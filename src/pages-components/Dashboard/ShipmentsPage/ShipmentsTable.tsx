@@ -8,6 +8,7 @@ import { LoadStatus } from '@/lib/api/shipments';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
+import { renderVehicleName } from '@/lib/utils/vehicles';
 import { Box, DisplayIf, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
 
 import { loadStatusConfig } from './const';
@@ -205,7 +206,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (info) => {
           const vehicleId = info.getValue();
           const vehicle = vehicles.find((v) => v.id === vehicleId);
-          const displayValue = vehicle ? `${vehicle?.registration} (${vehicle?.brand})` : '—';
+          const displayValue = vehicle ? renderVehicleName(vehicle) : '—';
 
           const isSubshipment = info.row.depth !== 0;
           const isTenantTransporter = info.row.original.transportContractorId === tenant?.id;
