@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { useDeleteEmployee } from '@/lib/hooks';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Button, FlexLayout } from '@/ui';
 
 export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
@@ -14,10 +15,10 @@ export const EmployeeActions: React.FC<{ id: string }> = ({ id }) => {
 
     try {
       await mutateAsync();
-      alert('Zaposlenik izbrisan');
+      showSuccessToast({ title: 'Zaposlenik izbrisan' });
       void back();
     } catch {
-      alert('Error with deleting the employee');
+      showErrorToast({ title: 'Greška s brisanjem zaposlenika' });
     }
   }
 

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { useDeleteContractor } from '@/lib/hooks';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Button, FlexLayout } from '@/ui';
 
 export const ContractorActions: React.FC<{ id: string }> = ({ id }) => {
@@ -14,10 +15,10 @@ export const ContractorActions: React.FC<{ id: string }> = ({ id }) => {
 
     try {
       await mutateAsync();
-      alert('Kontraktor izbrisan');
+      showSuccessToast({ title: 'Kontraktor izbrisan' });
       void back();
     } catch {
-      alert('Greška s brisanjem kontraktora');
+      showErrorToast({ title: 'Greška s brisanjem kontraktora' });
     }
   }
 

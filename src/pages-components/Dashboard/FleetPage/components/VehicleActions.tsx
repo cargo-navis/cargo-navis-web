@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 
 import type { VehicleEnum } from '@/lib/api';
 import { useDeleteVehicle } from '@/lib/hooks';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { Button, FlexLayout } from '@/ui';
 
@@ -18,10 +19,10 @@ export const VehicleActions: React.FC<{ id: string; type: VehicleEnum }> = ({ id
 
     try {
       await mutateAsync();
-      alert('Vozilo izbrisano');
+      showSuccessToast({ title: 'Vozilo izbrisano' });
       push(`/dashboard/fleet/${vehicleSegmentPath}`);
     } catch {
-      alert('Error with deleting the vehicle');
+      showErrorToast({ title: 'Greška s brisanjem vozila' });
     }
   }
 

@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { useDeleteClient } from '@/lib/hooks';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Button, FlexLayout } from '@/ui';
 
 export const ClientActions: React.FC<{ id: string }> = ({ id }) => {
@@ -14,10 +15,10 @@ export const ClientActions: React.FC<{ id: string }> = ({ id }) => {
 
     try {
       await mutateAsync();
-      alert('Klijent izbrisan');
+      showSuccessToast({ title: 'Klijent izbrisan' });
       void back();
     } catch {
-      alert('Greška s brisanjem klijenta');
+      showErrorToast({ title: 'Greška s brisanjem klijenta' });
     }
   }
 

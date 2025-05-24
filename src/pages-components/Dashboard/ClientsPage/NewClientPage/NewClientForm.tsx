@@ -7,6 +7,7 @@ import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelect
 import type { Client } from '@/lib/api';
 import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateClient, useUpdateClient } from '@/lib/hooks';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
@@ -49,13 +50,15 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
     try {
       if (isEdit) {
         await updateClient(payload);
+        showSuccessToast({ title: 'Klijent uspješno ažuriran' });
         void back();
       } else {
         await createClient(payload);
+        showSuccessToast({ title: 'Klijent uspješno kreiran' });
         void back();
       }
     } catch {
-      alert('Dogodila se greška s unosom klijenta. Pokušajte ponovno.');
+      showErrorToast({ title: 'Dogodila se greška s unosom klijenta. Pokušajte ponovno.' });
     }
   }
 

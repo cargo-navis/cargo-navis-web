@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { useDeleteShipment } from '@/lib/hooks';
 import { getAuthTokens } from '@/lib/utils/session';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Button, FlexLayout, Icon, Menu } from '@/ui';
 import { MenuComponent } from '@/ui/components/Menu/types';
 
@@ -18,10 +19,10 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
 
     try {
       await deleteShipment();
-      alert('Nalog izbrisan');
+      showSuccessToast({ title: 'Nalog izbrisan' });
       void back();
     } catch {
-      alert('Greška s brisanjem naloga');
+      showErrorToast({ title: 'Greška s brisanjem naloga' });
     }
   }
 
@@ -72,7 +73,7 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
       document.body.removeChild(a);
     } catch (error) {
       console.error('Error downloading PDF:', error);
-      alert('Greška s preuzimanjem PDF-a');
+      showErrorToast({ title: 'Greška s preuzimanjem PDF-a' });
     } finally {
       setIsDownloadingPdf(false);
     }
