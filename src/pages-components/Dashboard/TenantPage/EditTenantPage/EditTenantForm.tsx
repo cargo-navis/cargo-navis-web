@@ -1,13 +1,16 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
+import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
 import type { Tenant } from '@/lib/api/tenant.d';
-import { FormDatepicker, FormTextInput } from '@/lib/components/form';
+import { FormDatepicker, FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useUpdateTenant } from '@/lib/hooks/api/tenant';
 import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
-import { getFormDefaultValues, TenantFormData, tenantSchema } from './schema';
+import { countryEuropeOptions } from '../../NewEmployeePage/const';
+import { tenantSchema } from './schema';
+import { getFormDefaultValues, TenantFormData } from './utils';
 
 export const EditTenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
   const { back } = useRouter();
@@ -36,7 +39,10 @@ export const EditTenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
       nationalCompanyRegisterId,
       communityLicenseId,
       cargoInsuranceExpiryDate,
-      address,
+      address: {
+        streetName: address.streetName,
+        postalCodeId: address.postalCode.value,
+      },
     };
 
     try {
@@ -66,13 +72,7 @@ export const EditTenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
           </FlexLayout>
           <FormTextInput label="Broj licence" name="communityLicenseId" rules={{ required: true }} />
           <FormDatepicker label="Datum isteka osiguranja" name="cargoInsuranceExpiryDate" rules={{ required: true }} />
-          <FlexLayout className="flex-1 flex-col gap-2">
-            <Text color="text-color-3" variant="text-xxs-medium">
-              Adresa sjedišta
-            </Text>
-            <FormTextInput label="Mjesto" name="address.placeName" rules={{ required: true }} />
-            <FormTextInput label="Poštanski broj" name="address.postalCode" rules={{ required: true }} />
-          </FlexLayout>
+          <AddressFields />
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Button
             isDisabled={!(isValid && isDirty)}
@@ -83,5 +83,36 @@ export const EditTenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
         </FlexLayout>
       </FlexLayout>
     </FormProvider>
+  );
+};
+
+const AddressFields = () => {
+  const { watch } = useFormContext();
+  const countryCode = watch('address.countryCode');
+
+  return (
+    <FlexLayout className="flex-1 flex-col gap-2">
+      <Text color="text-color-3" variant="text-xxs-medium">
+        Adresa sjedišta
+      </Text>
+      <FormTextInput label="Ulica" name="address.streetName" rules={{ required: true }} />
+      <FormSingleSelect
+        isSearchable
+        label="Država"
+        name="address.countryCode"
+        options={countryEuropeOptions}
+        rules={{ required: true }}
+      />
+      <PostalCodeSelectField
+        countryCode={countryCode}
+        iconLeft="MagnifyingGlassIcon"
+        isClearable
+        isDisabled={!countryCode}
+        label="Poštanski broj"
+        name="address.postalCode"
+        placeholder="Odaberi poštanski broj"
+        rules={{ required: true }}
+      />
+    </FlexLayout>
   );
 };
