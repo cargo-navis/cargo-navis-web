@@ -8,7 +8,7 @@ import type { Shipment } from '@/lib/api';
 import { LoadStatus } from '@/lib/api/shipments';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useContractor, useCurrentTenant, useEmployee, useShipment, useUpdateShipment, useVehicle } from '@/lib/hooks';
-import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
+import { renderVehicleName, vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { Box, Divider, FlexLayout, Icon, Pill, Text } from '@/ui';
 
 import { loadStatusConfig } from '../const';
@@ -272,7 +272,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                           vehicle?.id ? `/dashboard/fleet/${vehicleTypeToPathMap[vehicle?.type]}/${vehicle?.id}` : '#'
                         }
                       >
-                        <Text variant="text-l">{vehicle ? `${vehicle?.registration} (${vehicle?.brand})` : '-'}</Text>
+                        <Text variant="text-l">{vehicle ? renderVehicleName(vehicle) : '-'}</Text>
                       </Link>
                     </FlexLayout>
                   </Box>
@@ -287,7 +287,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                           trailer?.id ? `/dashboard/fleet/${vehicleTypeToPathMap[trailer?.type]}/${trailer?.id}` : '#'
                         }
                       >
-                        <Text variant="text-l">{trailer ? `${trailer?.registration} (${trailer?.brand})` : '-'}</Text>
+                        <Text variant="text-l">{trailer ? renderVehicleName(trailer) : '-'}</Text>
                       </Link>
                     </FlexLayout>
                   </Box>
