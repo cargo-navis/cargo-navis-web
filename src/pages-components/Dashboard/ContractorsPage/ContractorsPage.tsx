@@ -30,8 +30,8 @@ const MainContent = ({ contractors }: { contractors: Contractor[] }) => {
           <EmptyTableState
             buttonHref="/dashboard/contractors/new"
             buttonText="Dodaj Kontraktora"
-            description="Kada dodate prvog kontraktora, on će se prikazati ovdje."
-            title="📄 Još nema zapisa o kontraktorima"
+            description="Kada dodate kontraktore, oni će se prikazati ovdje."
+            title="📑 Još nema zapisa o kontraktorima."
           />
         ) : (
           <ContractorsTable contractors={contractors} />
