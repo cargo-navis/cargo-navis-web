@@ -1,7 +1,7 @@
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { useDeleteClient } from '@/lib/hooks';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Button, FlexLayout } from '@/ui';
 
 export const ClientActions: React.FC<{ id: string }> = ({ id }) => {
@@ -14,18 +14,22 @@ export const ClientActions: React.FC<{ id: string }> = ({ id }) => {
 
     try {
       await mutateAsync();
-      alert('Klijent izbrisan');
+      showSuccessToast({ title: 'Klijent izbrisan' });
       void back();
     } catch {
-      alert('Greška s brisanjem klijenta');
+      showErrorToast({ title: 'Greška s brisanjem klijenta' });
     }
   }
 
   return (
     <FlexLayout className="gap-3">
-      <Link href={`/dashboard/clients/${id}/edit`}>
-        <Button iconLeft="PencilIcon" isDisabled={isPending} text="Uredi" variant="secondary" />
-      </Link>
+      <Button
+        href={`/dashboard/clients/${id}/edit`}
+        iconLeft="PencilIcon"
+        isDisabled={isPending}
+        text="Uredi"
+        variant="secondary"
+      />
       <Button iconLeft="TrashIcon" isLoading={isPending} text="Izbriši" onClick={handleDelete} />
     </FlexLayout>
   );

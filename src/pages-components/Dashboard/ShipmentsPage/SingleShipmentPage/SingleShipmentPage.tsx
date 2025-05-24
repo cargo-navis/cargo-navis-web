@@ -1,4 +1,3 @@
-import { addToast } from '@heroui/react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
@@ -8,8 +7,9 @@ import type { Shipment } from '@/lib/api';
 import { LoadStatus } from '@/lib/api/shipments';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useContractor, useCurrentTenant, useEmployee, useShipment, useUpdateShipment, useVehicle } from '@/lib/hooks';
-import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
-import { Box, Divider, FlexLayout, Icon, Pill, Text } from '@/ui';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
+import { renderVehicleName, vehicleTypeToPathMap } from '@/lib/utils/vehicles';
+import { Box, Divider, FlexLayout, Pill, Text } from '@/ui';
 
 import { loadStatusConfig } from '../const';
 import { AddressDetailsItem } from './components/AddressDetailsItem';
@@ -69,45 +69,10 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
 
       const statusText = loadStatusConfig[status].label;
 
-      addToast({
-        title: 'Status naloga ažuriran:',
-        description: statusText.toUpperCase(),
-        timeout: 2500,
-        classNames: {
-          base: 'bg-teal-700 text-white border border-teal-600',
-          content: 'text-white',
-          description: 'text-white',
-          title: 'text-white',
-          closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
-        },
-        radius: 'sm',
-        icon: <Icon color="text-white" icon="InformationCircleIcon" size="xl" />,
-        closeIcon: (
-          <FlexLayout className="bg-teal-700 p-1 items-center justify-center">
-            <Icon color="text-white" icon="XMarkIcon" size="l" />
-          </FlexLayout>
-        ),
-      });
+      showSuccessToast({ title: 'Status naloga ažuriran:', description: statusText.toUpperCase() });
     } catch (error) {
       console.error(error);
-      addToast({
-        title: 'Greška prilikom ažuriranja statusa utovara. Pokušajte ponovno.',
-        classNames: {
-          base: 'bg-red-600 dark:bg-red-700 text-white border border-red-600',
-          content: 'text-white',
-          description: 'text-white',
-          title: 'text-white',
-          closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
-        },
-        timeout: 2500,
-        radius: 'sm',
-        icon: <Icon color="text-white" icon="ExclamationTriangleIcon" size="xl" />,
-        closeIcon: (
-          <FlexLayout className="bg-red-600 dark:bg-red-700 p-1 items-center justify-center">
-            <Icon color="text-white" icon="XMarkIcon" size="l" />
-          </FlexLayout>
-        ),
-      });
+      showErrorToast({ title: 'Greška prilikom ažuriranja statusa utovara. Pokušajte ponovno.' });
     }
   };
 
@@ -118,45 +83,10 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
         isInvoiceSent,
       });
 
-      addToast({
-        title: `Nalog označen kao ${isInvoiceSent ? 'FAKTURIRAN' : 'NEFAKTURIRAN'}`,
-        timeout: 2500,
-        classNames: {
-          base: 'bg-teal-700 text-white border border-teal-600',
-          content: 'text-white',
-          description: 'text-white',
-          title: 'text-white',
-          closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
-        },
-        radius: 'sm',
-        icon: <Icon color="text-white" icon="InformationCircleIcon" size="xl" />,
-        closeIcon: (
-          <FlexLayout className="bg-teal-700 p-1 items-center justify-center">
-            <Icon color="text-white" icon="XMarkIcon" size="l" />
-          </FlexLayout>
-        ),
-      });
+      showSuccessToast({ title: `Nalog označen kao ${isInvoiceSent ? 'FAKTURIRAN' : 'NEFAKTURIRAN'}` });
     } catch (error) {
       console.error(error);
-
-      addToast({
-        title: 'Greška prilikom ažuriranja fakture. Pokušajte ponovno.',
-        classNames: {
-          base: 'bg-red-600 dark:bg-red-700 text-white border border-red-600',
-          content: 'text-white',
-          description: 'text-white',
-          title: 'text-white',
-          closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
-        },
-        timeout: 2500,
-        radius: 'sm',
-        icon: <Icon color="text-white" icon="ExclamationTriangleIcon" size="xl" />,
-        closeIcon: (
-          <FlexLayout className="bg-red-600 dark:bg-red-700 p-1 items-center justify-center">
-            <Icon color="text-white" icon="XMarkIcon" size="l" />
-          </FlexLayout>
-        ),
-      });
+      showErrorToast({ title: 'Greška prilikom ažuriranja fakture. Pokušajte ponovno.' });
     }
   };
 
@@ -272,7 +202,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                           vehicle?.id ? `/dashboard/fleet/${vehicleTypeToPathMap[vehicle?.type]}/${vehicle?.id}` : '#'
                         }
                       >
-                        <Text variant="text-l">{vehicle ? `${vehicle?.registration} (${vehicle?.brand})` : '-'}</Text>
+                        <Text variant="text-l">{vehicle ? renderVehicleName(vehicle) : '-'}</Text>
                       </Link>
                     </FlexLayout>
                   </Box>
@@ -287,7 +217,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                           trailer?.id ? `/dashboard/fleet/${vehicleTypeToPathMap[trailer?.type]}/${trailer?.id}` : '#'
                         }
                       >
-                        <Text variant="text-l">{trailer ? `${trailer?.registration} (${trailer?.brand})` : '-'}</Text>
+                        <Text variant="text-l">{trailer ? renderVehicleName(trailer) : '-'}</Text>
                       </Link>
                     </FlexLayout>
                   </Box>

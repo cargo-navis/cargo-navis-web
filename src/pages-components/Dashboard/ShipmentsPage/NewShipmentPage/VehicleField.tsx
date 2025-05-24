@@ -1,6 +1,7 @@
 import { type Vehicle, VehicleEnum } from '@/lib/api';
 import { FormSingleSelect } from '@/lib/components/form';
 import { useVehicles } from '@/lib/hooks';
+import { renderVehicleName } from '@/lib/utils/vehicles';
 
 import { useAgencyFieldReset } from './hooks';
 
@@ -12,10 +13,10 @@ function mapVehiclesToOptions(vehicles: Vehicle[]) {
   // Group vehicles by type
   const groupedOptions = filteredVehicles.reduce(
     (acc, vehicle) => {
-      const { id, registration, brand, type } = vehicle;
+      const { id, type } = vehicle;
       const option = {
         value: id,
-        label: `${registration} (${brand})`,
+        label: renderVehicleName(vehicle),
       };
 
       // Create group if it doesn't exist

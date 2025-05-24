@@ -7,6 +7,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles';
 import { FormDatepicker, FormSingleSelect, FormTextInput, FormYearpicker } from '@/lib/components/form';
 import { useCreateVehicle, useUpdateVehicle } from '@/lib/hooks';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, DisplayIf, FlexLayout, Text } from '@/ui';
 
 import { typeBrandOptionsMap, typeNameMap } from './const';
@@ -48,13 +49,15 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
     try {
       if (isEdit) {
         await updateVehicle({ type, ...updatedFields });
+        showSuccessToast({ title: 'Vozilo uspješno ažurirano' });
         void back();
       } else {
         await createVehicle({ type, ...updatedFields });
+        showSuccessToast({ title: 'Vozilo uspješno kreirano' });
         void back();
       }
-    } catch (error: any) {
-      alert(`Error with form submit. ${error?.message}`);
+    } catch {
+      showErrorToast({ title: `Greška s unosom vozila. Pokušajte ponovno.` });
     }
   }
 
