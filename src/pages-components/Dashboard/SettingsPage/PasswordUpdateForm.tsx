@@ -13,7 +13,12 @@ interface PasswordUpdateFormData {
 }
 
 const passwordUpdateSchema = object({
-  newPassword: string().required('Nova lozinka je obavezna').min(6, 'Lozinka mora imati najmanje 6 znakova'),
+  newPassword: string()
+    .required('Nova lozinka je obavezna')
+    .min(10, 'Lozinka mora imati najmanje 10 znakova')
+    .matches(/[A-Z]/, 'Lozinka mora sadržavati najmanje jedno veliko slovo')
+    .matches(/[a-z]/, 'Lozinka mora sadržavati najmanje jedno malo slovo')
+    .matches(/[0-9]/, 'Lozinka mora sadržavati najmanje jednu znamenku'),
   confirmPassword: string()
     .required('Potvrda lozinke je obavezna')
     .oneOf([ref('newPassword')], 'Lozinke se ne podudaraju'),
