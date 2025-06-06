@@ -8,12 +8,17 @@ import { LoadStatus } from '@/lib/api/shipments';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
-import { renderVehicleName } from '@/lib/utils/vehicles';
-import { Box, DisplayIf, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
+import { Box, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
 
+import { getCountryFromCode } from '../NewEmployeePage/const';
 import { loadStatusConfig } from './const';
 
 const columnHelper = createColumnHelper<Shipment>();
+
+const formatAddress = (address: Shipment['loadingAddress']) => {
+  if (!address) return '—';
+  return `${address.postalCode} ${address.placeName}, ${address.countryCode}`;
+};
 
 export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
   const router = useRouter();
@@ -34,6 +39,12 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const hasSubshipments = (info.row.original.subshipments?.length ?? 0) > 0;
           const depth = row.depth;
           const isExpanded = row.getIsExpanded();
+          const shipment = info.row.original;
+          const isSubshipment = depth !== 0;
+          const isTenantTransporter = shipment.transportContractorId === tenant?.id;
+          const isAgencyUse = shipment.isAgencyUse;
+          const isMissingVehicleOrDriver = !shipment.vehicleId || !shipment.driverId;
+          const shouldShowWarning = !isSubshipment && isMissingVehicleOrDriver && isTenantTransporter && !isAgencyUse;
 
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500 gap-2">
@@ -60,6 +71,23 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                     </Box>
                   )}
                   <Text>{info.getValue()}</Text>
+                  {shouldShowWarning && (
+                    <Tooltip
+                      content={
+                        <Box className="px-1">
+                          <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
+                            {!shipment.vehicleId && !shipment.driverId
+                              ? 'Vozilo i vozač još nisu dodijeljeni'
+                              : !shipment.vehicleId
+                                ? 'Vozilo još nije dodijeljeno'
+                                : 'Vozač još nije dodijeljen'}
+                          </Text>
+                        </Box>
+                      }
+                    >
+                      <Icon color="text-red-500" icon="ExclamationTriangleIcon" size="m" />
+                    </Tooltip>
+                  )}
                 </FlexLayout>
               )}
             </FlexLayout>
@@ -200,66 +228,62 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           );
         },
       }),
-      columnHelper.accessor('vehicleId', {
-        header: 'Vozilo',
+      columnHelper.accessor('loadingAddress', {
+        header: 'Adresa utovara',
         enableSorting: false,
         cell: (info) => {
-          const vehicleId = info.getValue();
-          const vehicle = vehicles.find((v) => v.id === vehicleId);
-          const displayValue = vehicle ? renderVehicleName(vehicle) : '—';
-
-          const isSubshipment = info.row.depth !== 0;
-          const isTenantTransporter = info.row.original.transportContractorId === tenant?.id;
-          const isAgencyUse = info.row.original.isAgencyUse;
-
+          const address = info.getValue();
           return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500 gap-2">
-              <Text>{displayValue}</Text>
-              <DisplayIf condition={!isSubshipment && !vehicleId && isTenantTransporter && !isAgencyUse}>
-                <Tooltip
-                  content={
-                    <Box className="px-1">
-                      <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
-                        Vozilo još nije dodijeljeno
-                      </Text>
-                    </Box>
-                  }
-                >
-                  <Icon color="text-red-500" icon="ExclamationTriangleIcon" size="s" />
-                </Tooltip>
-              </DisplayIf>
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+              <Tooltip
+                content={
+                  <Box className="px-1">
+                    <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
+                      {address.streetName}
+                    </Text>
+                    <br />
+                    <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
+                      {address.postalCode}, {address.placeName},
+                    </Text>
+                    <br />
+                    <Text color="text-light-50" variant="text-xs">
+                      {getCountryFromCode(address.countryCode)?.name}
+                    </Text>
+                  </Box>
+                }
+              >
+                <Text>{formatAddress(address)}</Text>
+              </Tooltip>
             </FlexLayout>
           );
         },
       }),
-      columnHelper.accessor('driverId', {
-        header: 'Vozač',
+      columnHelper.accessor('unloadingAddress', {
+        header: 'Adresa istovara',
         enableSorting: false,
         cell: (info) => {
-          const driverId = info.getValue();
-          const employee = employees.find((employee) => employee.id === driverId);
-          const fullName = employee ? `${employee.firstName || ''} ${employee.lastName || ''}`.trim() : '—';
-
-          const isSubshipment = info.row.depth !== 0;
-          const isTenantTransporter = info.row.original.transportContractorId === tenant?.id;
-          const isAgencyUse = info.row.original.isAgencyUse;
-
+          const address = info.getValue();
           return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500 gap-2">
-              <Text>{fullName || '—'}</Text>
-              <DisplayIf condition={!isSubshipment && !driverId && isTenantTransporter && !isAgencyUse}>
-                <Tooltip
-                  content={
-                    <Box className="px-1">
-                      <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
-                        Vozač još nije dodijeljen
-                      </Text>
-                    </Box>
-                  }
-                >
-                  <Icon color="text-red-500" icon="ExclamationTriangleIcon" size="s" />
-                </Tooltip>
-              </DisplayIf>
+            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+              <Tooltip
+                content={
+                  <Box className="px-1">
+                    <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
+                      {address.streetName}
+                    </Text>
+                    <br />
+                    <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
+                      {address.postalCode}, {address.placeName},
+                    </Text>
+                    <br />
+                    <Text color="text-light-50" variant="text-xs">
+                      {getCountryFromCode(address.countryCode)?.name}
+                    </Text>
+                  </Box>
+                }
+              >
+                <Text>{formatAddress(address)}</Text>
+              </Tooltip>
             </FlexLayout>
           );
         },
