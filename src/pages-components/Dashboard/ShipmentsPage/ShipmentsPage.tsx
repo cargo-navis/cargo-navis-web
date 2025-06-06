@@ -23,7 +23,7 @@ export const ShipmentsPage = () => {
             Nalozi
           </Heading>
           <DisplayIf condition={!isEmpty}>
-            <Button as="a" href="/dashboard/shipments/new" iconLeft="PlusIcon" text="Dodaj Nalog" />
+            <Button href="/dashboard/shipments/new" iconLeft="PlusIcon" text="Dodaj Nalog" />
           </DisplayIf>
         </FlexLayout>
       </Box>

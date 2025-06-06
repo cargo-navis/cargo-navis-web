@@ -31,7 +31,7 @@ const MainContent = ({ solos }: { solos: Vehicle[] }) => {
           </DisplayIf>
         </FlexLayout>
         <DisplayIf condition={!isEmpty}>
-          <Button as="a" href="/dashboard/fleet/solo-trucks/new" iconLeft="PlusIcon" text="Dodaj Solo Kamion" />
+          <Button href="/dashboard/fleet/solo-trucks/new" iconLeft="PlusIcon" text="Dodaj Solo Kamion" />
         </DisplayIf>
       </Box>
       <Box className="py-5">

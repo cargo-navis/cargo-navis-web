@@ -23,7 +23,7 @@ const MainContent = ({ employees }: { employees: Employee[] }) => {
           Zaposlenici
         </Heading>
         <DisplayIf condition={!isEmpty}>
-          <Button as="a" href="/dashboard/employees/new" iconLeft="PlusIcon" text="Dodaj Zaposlenika" />
+          <Button href="/dashboard/employees/new" iconLeft="PlusIcon" text="Dodaj Zaposlenika" />
         </DisplayIf>
       </FlexLayout>
       <Box className="py-5">
