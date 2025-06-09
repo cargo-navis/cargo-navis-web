@@ -19,7 +19,7 @@ export const EmptyTableState = ({
       <Text color="text-color-3" variant="text-s-medium">
         {description}
       </Text>
-      <Button as="a" href={buttonHref} iconLeft="PlusIcon" text={buttonText} />
+      <Button href={buttonHref} iconLeft="PlusIcon" text={buttonText} />
     </FlexLayout>
   );
 };
