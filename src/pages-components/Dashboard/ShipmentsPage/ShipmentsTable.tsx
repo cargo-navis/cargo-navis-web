@@ -8,6 +8,7 @@ import { LoadStatus } from '@/lib/api/shipments';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
+import { renderVehicleName } from '@/lib/utils/vehicles';
 import { Box, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
 
 import { getCountryFromCode } from '../NewEmployeePage/const';
@@ -288,16 +289,18 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           );
         },
       }),
-      columnHelper.accessor('trailerId', {
-        header: 'Prikolica',
+      columnHelper.accessor('vehicleId', {
+        header: 'Vozilo',
         enableSorting: false,
         cell: (info) => {
-          const trailerId = info.getValue();
-          const trailer = vehicles.find((vehicle) => vehicle.id === trailerId);
+          const vehicleId = info.getValue();
+          const vehicle = vehicles.find((v) => v.id === vehicleId);
+
+          const displayValue = vehicle ? renderVehicleName(vehicle) : '—';
 
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Text>{trailer ? trailer.registration : '—'}</Text>
+              <Text>{displayValue}</Text>
             </FlexLayout>
           );
         },
