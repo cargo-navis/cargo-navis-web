@@ -234,7 +234,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (info) => {
           const address = info.getValue();
           return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+            <FlexLayout className="items-center py-2 pr-4 group-hover/row:text-teal-500">
               <Tooltip
                 content={
                   <Box className="px-1">
@@ -264,7 +264,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (info) => {
           const address = info.getValue();
           return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+            <FlexLayout className="items-center py-2 pr-4 group-hover/row:text-teal-500">
               <Tooltip
                 content={
                   <Box className="px-1">
@@ -288,17 +288,16 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           );
         },
       }),
-      columnHelper.accessor('dispatcherId', {
-        header: 'Disponent',
+      columnHelper.accessor('trailerId', {
+        header: 'Prikolica',
         enableSorting: false,
         cell: (info) => {
-          const dispatcherId = info.getValue();
-          const employee = employees.find((employee) => employee.id === dispatcherId);
+          const trailerId = info.getValue();
+          const trailer = vehicles.find((vehicle) => vehicle.id === trailerId);
 
-          const fullName = employee ? `${employee.firstName || ''} ${employee.lastName || ''}`.trim() : '—';
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Text>{fullName || '—'}</Text>
+              <Text>{trailer ? trailer.registration : '—'}</Text>
             </FlexLayout>
           );
         },
