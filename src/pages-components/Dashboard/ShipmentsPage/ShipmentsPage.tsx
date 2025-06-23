@@ -15,11 +15,8 @@ export const ShipmentsPage = () => {
   });
   const { data: clients = [] } = useClients();
   const { data: shipments, isLoading } = useShipments<Shipment[]>({
-    select: (data) => {
-      const organized = organizeSubshipments(data);
-      if (!selectedClientId) return organized;
-      return organized.filter((shipment) => shipment.clientId === selectedClientId);
-    },
+    params: { clientId: selectedClientId ? String(selectedClientId) : undefined },
+    select: organizeSubshipments,
   });
 
   const isEmpty = shipments?.length === 0;

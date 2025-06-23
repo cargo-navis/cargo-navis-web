@@ -1,6 +1,6 @@
 import { backend } from '@/lib/services/backendService';
 
-import type { CreateShipmentData, Shipment } from './';
+import type { CreateShipmentData, GetShipmentParams, Shipment } from './';
 
 export enum LoadStatus {
   NotYetLoaded = 'not_yet_loaded',
@@ -12,8 +12,8 @@ export async function createShipment(data: CreateShipmentData) {
   return backend.post<Shipment>('/api/shipments', data);
 }
 
-export async function getShipments() {
-  const shipments = await backend.get<Shipment[]>('/api/shipments');
+export async function getShipments(params?: GetShipmentParams) {
+  const shipments = await backend.get<Shipment[]>('/api/shipments', { params });
   return shipments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 }
 

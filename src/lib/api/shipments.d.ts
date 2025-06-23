@@ -30,6 +30,10 @@ export interface Shipment {
   loadStatus?: LoadStatus;
 }
 
+export type GetShipmentParams = {
+  clientId?: string;
+};
+
 export interface CreateShipmentData extends Omit<Shipment, 'id' | 'loadingAddress' | 'unloadingAddress'> {
   loadingAddress: {
     streetName: string;

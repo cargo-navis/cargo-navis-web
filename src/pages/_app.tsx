@@ -13,7 +13,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <HeroUIProvider>
       <MantineProvider>
         <QueryClientCreator>
-          <div className={`${inter.variable} ${playfairDisplaySc.variable} font-display`}>
+          <div className={`${inter.variable} ${playfairDisplaySc.variable} font-display isolate`}>
             <Component {...pageProps} />
           </div>
           <ToastProvider placement="top-center" toastOffset={20} />
