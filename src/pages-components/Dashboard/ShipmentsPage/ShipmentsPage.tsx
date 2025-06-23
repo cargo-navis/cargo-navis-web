@@ -1,7 +1,7 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Shipment } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
-import { useClients, useEmployees, useQueryParamState, useShipments } from '@/lib/hooks';
+import { useClients, useDrivers, useQueryParamState, useShipments } from '@/lib/hooks';
 import { Box, Button, DisplayIf, FlexLayout, Heading } from '@/ui';
 
 import { ShipmentsFilter } from './ShipmentsFilter';
@@ -17,7 +17,7 @@ export const ShipmentsPage = () => {
     paramName: 'driverId',
   });
   const { data: clients = [] } = useClients();
-  const { data: employees = [] } = useEmployees();
+  const { data: drivers = [] } = useDrivers();
   const { data: shipments, isLoading } = useShipments<Shipment[]>({
     params: {
       clientId: selectedClientId ? String(selectedClientId) : undefined,
@@ -28,7 +28,7 @@ export const ShipmentsPage = () => {
 
   const isEmpty = shipments?.length === 0;
   const selectedClient = clients.find((client) => client.id === selectedClientId);
-  const selectedDriver = employees.find((employee) => employee.id === selectedDriverId);
+  const selectedDriver = drivers.find((driver) => driver.id === selectedDriverId);
 
   return (
     <DashboardLayout>
@@ -57,7 +57,7 @@ export const ShipmentsPage = () => {
             buttonText="Dodaj Nalog"
             description={
               selectedClientId || selectedDriverId
-                ? `Nema naloga za ${selectedClientId ? `klijenta "${selectedClient?.name}"` : ''}${selectedClientId && selectedDriverId ? ' i ' : ''}${selectedDriverId ? `vozača "${selectedDriver?.firstName} ${selectedDriver?.lastName}"` : ''}.`
+                ? `Nema naloga za ${selectedClientId ? `klijenta "${selectedClient?.name}"` : ''}${selectedClientId && selectedDriverId ? ' i ' : ''}${selectedDriverId ? `vozača "${selectedDriver?.fullName}"` : ''}.`
                 : 'Kada dodate naloge, oni će se prikazati ovdje.'
             }
             title={

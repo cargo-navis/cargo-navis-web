@@ -187,7 +187,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     className="hover:text-teal-500 transition-colors max-w-max"
                     href={driver?.id ? `/dashboard/employees/${driver?.id}` : '#'}
                   >
-                    <Text variant="text-l">{driver ? `${driver.firstName} ${driver.lastName}` : '-'}</Text>
+                    <Text variant="text-l">{driver ? `${driver.fullName}` : '-'}</Text>
                   </Link>
                 </FlexLayout>
                 <FlexLayout className="gap-4">
@@ -231,9 +231,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                       className="hover:text-teal-500 transition-colors max-w-max"
                       href={dispatcher?.id ? `/dashboard/employees/${dispatcher?.id}` : '#'}
                     >
-                      <Text variant="text-l">
-                        {dispatcher ? `${dispatcher.firstName} ${dispatcher.lastName}` : '-'}
-                      </Text>
+                      <Text variant="text-l">{dispatcher ? `${dispatcher.fullName}` : '-'}</Text>
                     </Link>
                   </FlexLayout>
                 </Box>

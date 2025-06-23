@@ -1,6 +1,6 @@
-import { PositionEnum } from '@/lib/api';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
-import { useClients, useEmployees } from '@/lib/hooks';
+import { useClients, useDrivers } from '@/lib/hooks';
+import { mapEmployeesToOptions } from '@/lib/utils/employees';
 import { Box, FlexLayout, SingleSelect } from '@/ui';
 import type { SelectValue } from '@/ui/components/Select/Select';
 
@@ -18,19 +18,14 @@ export const ShipmentsFilter = ({
   onDriverChange,
 }: ShipmentsFilterProps) => {
   const { data: clients = [] } = useClients();
-  const { data: employees = [] } = useEmployees();
+  const { data: drivers = [] } = useDrivers();
 
   const clientOptions = clients.map((client) => ({
     value: client.id,
     label: client.name,
   }));
 
-  const driverOptions = employees
-    .filter((employee) => employee.position === PositionEnum.Driver)
-    .map((driver) => ({
-      value: driver.id,
-      label: `${driver.firstName} ${driver.lastName}`,
-    }));
+  const driverOptions = mapEmployeesToOptions(drivers);
 
   return (
     <FlexLayout className="mt-4 gap-4">
