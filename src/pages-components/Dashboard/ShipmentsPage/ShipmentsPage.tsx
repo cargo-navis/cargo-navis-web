@@ -1,7 +1,7 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Shipment } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
-import { useClients, useQueryParamState, useShipments } from '@/lib/hooks';
+import { useClients, useEmployees, useQueryParamState, useShipments } from '@/lib/hooks';
 import { Box, Button, DisplayIf, FlexLayout, Heading } from '@/ui';
 
 import { ShipmentsFilter } from './ShipmentsFilter';
@@ -13,14 +13,22 @@ export const ShipmentsPage = () => {
   const { value: selectedClientId, onChange: onClientChange } = useQueryParamState({
     paramName: 'clientId',
   });
+  const { value: selectedDriverId, onChange: onDriverChange } = useQueryParamState({
+    paramName: 'driverId',
+  });
   const { data: clients = [] } = useClients();
+  const { data: employees = [] } = useEmployees();
   const { data: shipments, isLoading } = useShipments<Shipment[]>({
-    params: { clientId: selectedClientId ? String(selectedClientId) : undefined },
+    params: {
+      clientId: selectedClientId ? String(selectedClientId) : undefined,
+      driverId: selectedDriverId ? String(selectedDriverId) : undefined,
+    },
     select: organizeSubshipments,
   });
 
   const isEmpty = shipments?.length === 0;
   const selectedClient = clients.find((client) => client.id === selectedClientId);
+  const selectedDriver = employees.find((employee) => employee.id === selectedDriverId);
 
   return (
     <DashboardLayout>
@@ -33,7 +41,12 @@ export const ShipmentsPage = () => {
             <Button href="/dashboard/shipments/new" iconLeft="PlusIcon" text="Dodaj Nalog" />
           </DisplayIf>
         </FlexLayout>
-        <ShipmentsFilter selectedClientId={selectedClientId} onClientChange={onClientChange} />
+        <ShipmentsFilter
+          selectedClientId={selectedClientId}
+          selectedDriverId={selectedDriverId}
+          onClientChange={onClientChange}
+          onDriverChange={onDriverChange}
+        />
       </Box>
       <Box className="py-5 isolate">
         {isLoading ? (
@@ -43,11 +56,15 @@ export const ShipmentsPage = () => {
             buttonHref="/dashboard/shipments/new"
             buttonText="Dodaj Nalog"
             description={
-              selectedClientId
-                ? `Nema naloga za klijenta "${selectedClient?.name}".`
+              selectedClientId || selectedDriverId
+                ? `Nema naloga za ${selectedClientId ? `klijenta "${selectedClient?.name}"` : ''}${selectedClientId && selectedDriverId ? ' i ' : ''}${selectedDriverId ? `vozača "${selectedDriver?.firstName} ${selectedDriver?.lastName}"` : ''}.`
                 : 'Kada dodate naloge, oni će se prikazati ovdje.'
             }
-            title={selectedClientId ? '📄 Nema naloga za odabranog klijenta.' : '📄 Još nema zapisa o nalozima.'}
+            title={
+              selectedClientId || selectedDriverId
+                ? '📄 Nema naloga za odabrane filtere.'
+                : '📄 Još nema zapisa o nalozima.'
+            }
           />
         ) : (
           <ShipmentsTable shipments={shipments} />
