@@ -10,7 +10,11 @@ import { ShipmentsTableLoader } from './ShipmentsTableLoader';
 import { organizeSubshipments } from './utils';
 
 export const ShipmentsPage = () => {
-  const { value: selectedClientId, onChange: onClientChange } = useQueryParamState({
+  const {
+    value: selectedClientId,
+    onChange: onClientChange,
+    onClearAll,
+  } = useQueryParamState({
     paramName: 'clientId',
   });
   const { value: selectedDriverId, onChange: onDriverChange } = useQueryParamState({
@@ -44,6 +48,7 @@ export const ShipmentsPage = () => {
         <ShipmentsFilter
           selectedClientId={selectedClientId}
           selectedDriverId={selectedDriverId}
+          onClearAll={onClearAll}
           onClientChange={onClientChange}
           onDriverChange={onDriverChange}
         />
@@ -57,7 +62,7 @@ export const ShipmentsPage = () => {
             buttonText="Dodaj Nalog"
             description={
               selectedClientId || selectedDriverId
-                ? `Nema naloga za ${selectedClientId ? `klijenta "${selectedClient?.name}"` : ''}${selectedClientId && selectedDriverId ? ' i ' : ''}${selectedDriverId ? `vozača "${selectedDriver?.fullName}"` : ''}.`
+                ? `Nema naloga za ${selectedClientId ? `klijenta "${selectedClient?.name}"` : ''}${selectedClientId && selectedDriverId ? ' i ' : ''}${selectedDriverId ? `vozača "${selectedDriver?.firstName} ${selectedDriver?.lastName}"` : ''}.`
                 : 'Kada dodate naloge, oni će se prikazati ovdje.'
             }
             title={
