@@ -33,6 +33,7 @@ export interface Shipment {
 export type GetShipmentParams = {
   clientId?: string;
   driverId?: string;
+  loadStatus?: LoadStatus;
 };
 
 export interface CreateShipmentData extends Omit<Shipment, 'id' | 'loadingAddress' | 'unloadingAddress'> {

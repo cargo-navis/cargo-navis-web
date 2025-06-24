@@ -1,5 +1,5 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import type { Shipment } from '@/lib/api';
+import type { LoadStatus, Shipment } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { useClients, useDrivers, useQueryParamState, useShipments } from '@/lib/hooks';
 import { Box, Button, DisplayIf, FlexLayout, Heading } from '@/ui';
@@ -20,12 +20,16 @@ export const ShipmentsPage = () => {
   const { value: selectedDriverId, onChange: onDriverChange } = useQueryParamState({
     paramName: 'driverId',
   });
+  const { value: selectedLoadingStatus, onChange: onLoadingStatusChange } = useQueryParamState({
+    paramName: 'loadStatus',
+  });
   const { data: clients = [] } = useClients();
   const { data: drivers = [] } = useDrivers();
   const { data: shipments, isLoading } = useShipments<Shipment[]>({
     params: {
       clientId: selectedClientId ? String(selectedClientId) : undefined,
       driverId: selectedDriverId ? String(selectedDriverId) : undefined,
+      loadStatus: selectedLoadingStatus ? (selectedLoadingStatus as LoadStatus) : undefined,
     },
     select: organizeSubshipments,
   });
@@ -48,9 +52,11 @@ export const ShipmentsPage = () => {
         <ShipmentsFilter
           selectedClientId={selectedClientId}
           selectedDriverId={selectedDriverId}
+          selectedLoadingStatus={selectedLoadingStatus}
           onClearAll={onClearAll}
           onClientChange={onClientChange}
           onDriverChange={onDriverChange}
+          onLoadingStatusChange={onLoadingStatusChange}
         />
       </Box>
       <Box className="py-5 isolate">
