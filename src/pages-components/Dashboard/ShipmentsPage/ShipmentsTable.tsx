@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 
 import { type Shipment } from '@/lib/api';
-import { LoadStatus } from '@/lib/api/shipments';
+import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
@@ -347,13 +347,16 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       // Check if vehicleId or driverId is missing
       const isMissingVehicleOrDriver = !shipment.vehicleId || !shipment.driverId;
 
-      const subshipments = shipment.subshipments?.map((s) => ({ ...s, isSuccess: s.isInvoiceSent }));
+      const subshipments = shipment.subshipments?.map((s) => ({
+        ...s,
+        isSuccess: s.invoiceStatus === InvoiceStatus.Sent,
+      }));
 
       // Add isWarning flag only to parent shipments
       return {
         ...shipment,
         isWarning: isMissingVehicleOrDriver && shipment.transportContractorId === tenant?.id && !shipment.isAgencyUse,
-        isSuccess: shipment.isInvoiceSent,
+        isSuccess: shipment.invoiceStatus === InvoiceStatus.Sent,
         subshipments,
       };
     });
