@@ -30,8 +30,13 @@ export const useQueryParamState = ({ paramName, defaultValue = '' }: UseQueryPar
     );
   };
 
+  const handleClearAll = async () => {
+    await router.replace(router.pathname, undefined, { shallow: true });
+  };
+
   return {
     value: paramValue || defaultValue,
     onChange: handleChange,
+    onClearAll: handleClearAll,
   };
 };
