@@ -7,6 +7,8 @@ export * from './contractors';
 export * from './contractors.d';
 export * from './employees';
 export * from './employees.d';
+export * from './notifications';
+export * from './notifications.d';
 export * from './postalCodes';
 export * from './postalCodes.d';
 export * from './shipments';
