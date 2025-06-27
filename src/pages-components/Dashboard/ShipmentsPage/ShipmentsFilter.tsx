@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { LoadStatus } from '@/lib/api/shipments';
+import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { useClients, useDrivers } from '@/lib/hooks';
 import { mapEmployeesToOptions } from '@/lib/utils/employees';
@@ -8,15 +8,17 @@ import { Box, DisplayIf, FlexLayout, Icon, Text, TextButton } from '@/ui';
 import type { SelectValue } from '@/ui/components/Select/Select';
 import { SingleSelectWithLabels } from '@/ui/hocs';
 
-import { loadStatusConfig } from './const';
+import { invoiceStatusConfig, loadStatusConfig } from './const';
 
 interface ShipmentsFilterProps {
   selectedClientId: SelectValue;
   selectedDriverId: SelectValue;
   selectedLoadingStatus: SelectValue;
+  selectedInvoiceStatus: SelectValue;
   onClientChange(clientId: SelectValue): void;
   onDriverChange(driverId: SelectValue): void;
   onLoadingStatusChange(loadingStatus: SelectValue): void;
+  onInvoiceStatusChange(invoiceStatus: SelectValue): void;
   onClearAll(): void;
 }
 
@@ -27,6 +29,8 @@ export const ShipmentsFilter = ({
   onDriverChange,
   selectedLoadingStatus,
   onLoadingStatusChange,
+  selectedInvoiceStatus,
+  onInvoiceStatusChange,
   onClearAll,
 }: ShipmentsFilterProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -45,8 +49,15 @@ export const ShipmentsFilter = ({
     label: loadStatusConfig[status].label,
   }));
 
+  const invoiceStatusOptions = Object.values(InvoiceStatus).map((status) => ({
+    value: status,
+    label: invoiceStatusConfig[status].label,
+  }));
+
   // Count active filters
-  const activeFiltersCount = [selectedClientId, selectedDriverId, selectedLoadingStatus].filter(Boolean).length;
+  const activeFiltersCount = [selectedClientId, selectedDriverId, selectedLoadingStatus, selectedInvoiceStatus].filter(
+    Boolean
+  ).length;
   const hasActiveFilters = activeFiltersCount > 0;
 
   // Get selected option labels for display
@@ -54,6 +65,9 @@ export const ShipmentsFilter = ({
   const selectedDriver = drivers.find((driver) => driver.id === selectedDriverId);
   const selectedLoadingStatusLabel = selectedLoadingStatus
     ? loadStatusConfig[selectedLoadingStatus as LoadStatus]?.label
+    : null;
+  const selectedInvoiceStatusLabel = selectedInvoiceStatus
+    ? invoiceStatusConfig[selectedInvoiceStatus as InvoiceStatus]?.label
     : null;
 
   const toggleExpanded = () => {
@@ -125,6 +139,18 @@ export const ShipmentsFilter = ({
                 />
               </Box>
             </DisplayIf>
+            <DisplayIf condition={!!selectedInvoiceStatusLabel}>
+              <Box className="inline-flex items-center gap-1 px-2 py-1 bg-orange-100 dark:bg-orange-900 rounded-s text-xs">
+                <Text variant="text-xs">
+                  <strong>Status fakture:</strong> {selectedInvoiceStatusLabel}
+                </Text>
+                <Icon
+                  className="ml-1 hover:bg-orange-200 dark:hover:bg-orange-800 rounded-full w-4 h-4 flex items-center justify-center"
+                  icon="XMarkIcon"
+                  onClick={() => onInvoiceStatusChange('')}
+                />
+              </Box>
+            </DisplayIf>
           </FlexLayout>
         </Box>
       )}
@@ -174,6 +200,21 @@ export const ShipmentsFilter = ({
                   placeholder="Odaberi status..."
                   value={selectedLoadingStatus}
                   onChange={onLoadingStatusChange}
+                />
+              </ClientSideOnly>
+            </Box>
+
+            <Box className="flex-1">
+              <ClientSideOnly>
+                <SingleSelectWithLabels
+                  isClearable
+                  isPortal
+                  isSearchable
+                  label="Status fakture"
+                  options={invoiceStatusOptions}
+                  placeholder="Odaberi status fakture..."
+                  value={selectedInvoiceStatus}
+                  onChange={onInvoiceStatusChange}
                 />
               </ClientSideOnly>
             </Box>

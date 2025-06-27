@@ -1,7 +1,7 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import type { LoadStatus, Shipment } from '@/lib/api';
+import type { InvoiceStatus, LoadStatus, Shipment } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
-import { useClients, useDrivers, useQueryParamState, useShipments } from '@/lib/hooks';
+import { useQueryParamState, useShipments } from '@/lib/hooks';
 import { Box, Button, DisplayIf, FlexLayout, Heading } from '@/ui';
 
 import { ShipmentsFilter } from './ShipmentsFilter';
@@ -23,20 +23,22 @@ export const ShipmentsPage = () => {
   const { value: selectedLoadingStatus, onChange: onLoadingStatusChange } = useQueryParamState({
     paramName: 'loadStatus',
   });
-  const { data: clients = [] } = useClients();
-  const { data: drivers = [] } = useDrivers();
+  const { value: selectedInvoiceStatus, onChange: onInvoiceStatusChange } = useQueryParamState({
+    paramName: 'invoiceStatus',
+  });
   const { data: shipments, isLoading } = useShipments<Shipment[]>({
     params: {
       clientId: selectedClientId ? String(selectedClientId) : undefined,
       driverId: selectedDriverId ? String(selectedDriverId) : undefined,
       loadStatus: selectedLoadingStatus ? (selectedLoadingStatus as LoadStatus) : undefined,
+      invoiceStatus: selectedInvoiceStatus ? (selectedInvoiceStatus as InvoiceStatus) : undefined,
     },
     select: organizeSubshipments,
   });
 
   const isEmpty = shipments?.length === 0;
-  const selectedClient = clients.find((client) => client.id === selectedClientId);
-  const selectedDriver = drivers.find((driver) => driver.id === selectedDriverId);
+
+  const hasActiveFilters = selectedClientId || selectedDriverId || selectedLoadingStatus || selectedInvoiceStatus;
 
   return (
     <DashboardLayout>
@@ -52,10 +54,12 @@ export const ShipmentsPage = () => {
         <ShipmentsFilter
           selectedClientId={selectedClientId}
           selectedDriverId={selectedDriverId}
+          selectedInvoiceStatus={selectedInvoiceStatus}
           selectedLoadingStatus={selectedLoadingStatus}
           onClearAll={onClearAll}
           onClientChange={onClientChange}
           onDriverChange={onDriverChange}
+          onInvoiceStatusChange={onInvoiceStatusChange}
           onLoadingStatusChange={onLoadingStatusChange}
         />
       </Box>
@@ -67,15 +71,9 @@ export const ShipmentsPage = () => {
             buttonHref="/dashboard/shipments/new"
             buttonText="Dodaj Nalog"
             description={
-              selectedClientId || selectedDriverId
-                ? `Nema naloga za ${selectedClientId ? `klijenta "${selectedClient?.name}"` : ''}${selectedClientId && selectedDriverId ? ' i ' : ''}${selectedDriverId ? `vozača "${selectedDriver?.firstName} ${selectedDriver?.lastName}"` : ''}.`
-                : 'Kada dodate naloge, oni će se prikazati ovdje.'
+              hasActiveFilters ? 'Nema naloga za odabrane filtere.' : 'Kada dodate naloge, oni će se prikazati ovdje.'
             }
-            title={
-              selectedClientId || selectedDriverId
-                ? '📄 Nema naloga za odabrane filtere.'
-                : '📄 Još nema zapisa o nalozima.'
-            }
+            title={hasActiveFilters ? '📄 Nema naloga za odabrane filtere.' : '📄 Još nema zapisa o nalozima.'}
           />
         ) : (
           <ShipmentsTable shipments={shipments} />
