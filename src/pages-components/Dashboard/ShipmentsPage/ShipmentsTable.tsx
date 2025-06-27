@@ -289,18 +289,34 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           );
         },
       }),
-      columnHelper.accessor('vehicleId', {
-        header: 'Vozilo',
+      columnHelper.display({
+        id: 'vehicle-driver',
+        header: 'Vozilo i vozač',
         enableSorting: false,
-        cell: (info) => {
-          const vehicleId = info.getValue();
-          const vehicle = vehicles.find((v) => v.id === vehicleId);
 
-          const displayValue = vehicle ? renderVehicleName(vehicle) : '—';
+        cell: (info) => {
+          const { vehicleId, driverId } = info.row.original;
+
+          const vehicle = vehicles.find((v) => v.id === vehicleId);
+          const driver = employees.find((e) => e.id === driverId);
+
+          const vehicleName = vehicle ? renderVehicleName(vehicle) : '—';
+          const driverName = driver?.fullName ?? '—';
 
           return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Text>{displayValue}</Text>
+            <FlexLayout className="flex-col gap-2 py-2 w-[150px] group-hover/row:text-teal-500">
+              <FlexLayout className="items-start gap-1">
+                <Icon className="mt-1" icon="TruckIcon" size="s" />
+                <Text className="whitespace-nowrap overflow-hidden text-ellipsis" title={vehicleName} variant="text-xs">
+                  {vehicleName}
+                </Text>
+              </FlexLayout>
+              <FlexLayout className="items-start gap-1">
+                <Icon className="mt-1" icon="UserIcon" size="s" />
+                <Text className="whitespace-nowrap overflow-hidden text-ellipsis" title={driverName} variant="text-xs">
+                  {driverName}
+                </Text>
+              </FlexLayout>
             </FlexLayout>
           );
         },
