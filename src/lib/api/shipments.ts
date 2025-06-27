@@ -8,6 +8,12 @@ export enum LoadStatus {
   Unloaded = 'unloaded',
 }
 
+export enum InvoiceStatus {
+  NotSent = 'not_sent',
+  Sent = 'sent',
+  Paid = 'paid',
+}
+
 export async function createShipment(data: CreateShipmentData) {
   return backend.post<Shipment>('/api/shipments', data);
 }

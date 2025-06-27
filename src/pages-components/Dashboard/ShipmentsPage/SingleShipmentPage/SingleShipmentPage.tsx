@@ -3,8 +3,7 @@ import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import type { Shipment } from '@/lib/api';
-import { LoadStatus } from '@/lib/api/shipments';
+import { InvoiceStatus, LoadStatus, Shipment } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useContractor, useCurrentTenant, useEmployee, useShipment, useUpdateShipment, useVehicle } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
@@ -76,14 +75,16 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
     }
   };
 
-  const handleInvoiceChange = async (isInvoiceSent: boolean) => {
+  const handleInvoiceChange = async (invoiceStatus: InvoiceStatus) => {
     try {
       await updateShipment({
         id: shipment.id,
-        isInvoiceSent,
+        invoiceStatus,
       });
 
-      showSuccessToast({ title: `Nalog označen kao ${isInvoiceSent ? 'FAKTURIRAN' : 'NEFAKTURIRAN'}` });
+      showSuccessToast({
+        title: `Nalog označen kao ${invoiceStatus === InvoiceStatus.Sent ? 'FAKTURIRAN' : 'NEFAKTURIRAN'}`,
+      });
     } catch (error) {
       console.error(error);
       showErrorToast({ title: 'Greška prilikom ažuriranja fakture. Pokušajte ponovno.' });
@@ -126,7 +127,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                 />
               )}
               <InvoiceItem
-                isInvoiceSent={!!shipment.isInvoiceSent}
+                invoiceStatus={shipment.invoiceStatus}
                 isPending={isPending}
                 onChange={handleInvoiceChange}
               />

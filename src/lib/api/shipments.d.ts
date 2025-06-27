@@ -1,4 +1,4 @@
-import { LoadStatus } from './shipments';
+import { InvoiceStatus, LoadStatus } from './shipments';
 
 export interface Shipment {
   id: string;
@@ -10,7 +10,7 @@ export interface Shipment {
   trailerId?: string | null;
   clientId?: string;
   isAgencyUse?: boolean;
-  isInvoiceSent?: boolean;
+  invoiceStatus: InvoiceStatus;
   transportContractorId?: string;
   price: number;
   cargo: Cargo[];
