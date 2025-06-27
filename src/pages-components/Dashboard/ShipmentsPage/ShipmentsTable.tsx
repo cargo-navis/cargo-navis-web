@@ -71,7 +71,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                       />
                     </Box>
                   )}
-                  <Text>{info.getValue()}</Text>
+                  <Text variant="text-s-medium">{info.getValue()}</Text>
                   {shouldShowWarning && (
                     <Tooltip
                       content={
@@ -253,7 +253,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                   </Box>
                 }
               >
-                <Text>{formatAddress(address)}</Text>
+                <Text variant="text-xs">{formatAddress(address)}</Text>
               </Tooltip>
             </FlexLayout>
           );
@@ -283,7 +283,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                   </Box>
                 }
               >
-                <Text>{formatAddress(address)}</Text>
+                <Text variant="text-xs">{formatAddress(address)}</Text>
               </Tooltip>
             </FlexLayout>
           );
