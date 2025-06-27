@@ -1,6 +1,6 @@
-import { DriverLicenceEnum, type Employee, GenderEnum, PositionEnum } from '../api/employees.d';
+import { DriverLicenceEnum, GenderEnum, PositionEnum } from '../api/employees.d';
 
-export const employees: Employee[] = [
+export const employees: any[] = [
   {
     id: 'e8a1c9a1-f7f2-4c4e-ae5e-d1c04c1b4d76',
     firstName: 'Ivan',
