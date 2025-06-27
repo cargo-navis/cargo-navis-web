@@ -9,7 +9,7 @@ interface UseShipmentsArgs<T> {
 
 export function useShipments<TData = Shipment[]>(args?: UseShipmentsArgs<TData> & { params?: GetShipmentParams }) {
   return useQuery({
-    queryKey: ['shipments', args?.params],
+    queryKey: args?.params ? ['shipments', args.params] : ['shipments'],
     queryFn: () => getShipments(args?.params),
     ...args,
     select: args?.select,
