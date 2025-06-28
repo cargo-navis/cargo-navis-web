@@ -13,10 +13,18 @@ interface ShipmentFiltersProps {
   selectedDriverId: SelectValue;
   selectedLoadingStatus: SelectValue;
   selectedInvoiceStatus: SelectValue;
+  loadingDateFrom: string;
+  loadingDateTo: string;
+  unloadingDateFrom: string;
+  unloadingDateTo: string;
   onClientChange(clientId: SelectValue): void;
   onDriverChange(driverId: SelectValue): void;
   onLoadingStatusChange(loadingStatus: SelectValue): void;
   onInvoiceStatusChange(invoiceStatus: SelectValue): void;
+  onLoadingDateFromChange(date: string): void;
+  onLoadingDateToChange(date: string): void;
+  onUnloadingDateFromChange(date: string): void;
+  onUnloadingDateToChange(date: string): void;
   onClearAll(): void;
 }
 
@@ -29,6 +37,14 @@ export const ShipmentFilters = ({
   onLoadingStatusChange,
   selectedInvoiceStatus,
   onInvoiceStatusChange,
+  loadingDateFrom,
+  loadingDateTo,
+  unloadingDateFrom,
+  unloadingDateTo,
+  onLoadingDateFromChange,
+  onLoadingDateToChange,
+  onUnloadingDateFromChange,
+  onUnloadingDateToChange,
   onClearAll,
 }: ShipmentFiltersProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -36,9 +52,16 @@ export const ShipmentFilters = ({
   const { data: drivers = [] } = useDrivers();
 
   // Count active filters
-  const activeFiltersCount = [selectedClientId, selectedDriverId, selectedLoadingStatus, selectedInvoiceStatus].filter(
-    Boolean
-  ).length;
+  const activeFiltersCount = [
+    selectedClientId,
+    selectedDriverId,
+    selectedLoadingStatus,
+    selectedInvoiceStatus,
+    loadingDateFrom,
+    loadingDateTo,
+    unloadingDateFrom,
+    unloadingDateTo,
+  ].filter(Boolean).length;
   const hasActiveFilters = activeFiltersCount > 0;
 
   // Get selected option data for display
@@ -62,14 +85,22 @@ export const ShipmentFilters = ({
       {/* Collapsed state - show active filters */}
       {!isExpanded && hasActiveFilters && (
         <FilterTags
+          loadingDateFrom={loadingDateFrom}
+          loadingDateTo={loadingDateTo}
           selectedClient={selectedClient}
           selectedDriver={selectedDriver}
           selectedInvoiceStatus={selectedInvoiceStatus}
           selectedLoadingStatus={selectedLoadingStatus}
+          unloadingDateFrom={unloadingDateFrom}
+          unloadingDateTo={unloadingDateTo}
           onClientChange={onClientChange}
           onDriverChange={onDriverChange}
           onInvoiceStatusChange={onInvoiceStatusChange}
+          onLoadingDateFromChange={onLoadingDateFromChange}
+          onLoadingDateToChange={onLoadingDateToChange}
           onLoadingStatusChange={onLoadingStatusChange}
+          onUnloadingDateFromChange={onUnloadingDateFromChange}
+          onUnloadingDateToChange={onUnloadingDateToChange}
         />
       )}
 
@@ -78,14 +109,22 @@ export const ShipmentFilters = ({
         <FilterFields
           clients={clients}
           drivers={drivers}
+          loadingDateFrom={loadingDateFrom}
+          loadingDateTo={loadingDateTo}
           selectedClientId={selectedClientId}
           selectedDriverId={selectedDriverId}
           selectedInvoiceStatus={selectedInvoiceStatus}
           selectedLoadingStatus={selectedLoadingStatus}
+          unloadingDateFrom={unloadingDateFrom}
+          unloadingDateTo={unloadingDateTo}
           onClientChange={onClientChange}
           onDriverChange={onDriverChange}
           onInvoiceStatusChange={onInvoiceStatusChange}
+          onLoadingDateFromChange={onLoadingDateFromChange}
+          onLoadingDateToChange={onLoadingDateToChange}
           onLoadingStatusChange={onLoadingStatusChange}
+          onUnloadingDateFromChange={onUnloadingDateFromChange}
+          onUnloadingDateToChange={onUnloadingDateToChange}
         />
       </DisplayIf>
     </Box>

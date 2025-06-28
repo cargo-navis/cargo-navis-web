@@ -12,10 +12,18 @@ interface FilterTagsProps {
   selectedDriver: Employee | undefined;
   selectedLoadingStatus: SelectValue;
   selectedInvoiceStatus: SelectValue;
-  onClientChange: (clientId: SelectValue) => void;
-  onDriverChange: (driverId: SelectValue) => void;
-  onLoadingStatusChange: (loadingStatus: SelectValue) => void;
-  onInvoiceStatusChange: (invoiceStatus: SelectValue) => void;
+  loadingDateFrom: string;
+  loadingDateTo: string;
+  unloadingDateFrom: string;
+  unloadingDateTo: string;
+  onClientChange(clientId: SelectValue): void;
+  onDriverChange(driverId: SelectValue): void;
+  onLoadingStatusChange(loadingStatus: SelectValue): void;
+  onInvoiceStatusChange(invoiceStatus: SelectValue): void;
+  onLoadingDateFromChange(date: string): void;
+  onLoadingDateToChange(date: string): void;
+  onUnloadingDateFromChange(date: string): void;
+  onUnloadingDateToChange(date: string): void;
 }
 
 export const FilterTags = ({
@@ -23,10 +31,18 @@ export const FilterTags = ({
   selectedDriver,
   selectedLoadingStatus,
   selectedInvoiceStatus,
+  loadingDateFrom,
+  loadingDateTo,
+  unloadingDateFrom,
+  unloadingDateTo,
   onClientChange,
   onDriverChange,
   onLoadingStatusChange,
   onInvoiceStatusChange,
+  onLoadingDateFromChange,
+  onLoadingDateToChange,
+  onUnloadingDateFromChange,
+  onUnloadingDateToChange,
 }: FilterTagsProps) => {
   // Compute labels from values
   const selectedLoadingStatusLabel = selectedLoadingStatus
@@ -71,6 +87,38 @@ export const FilterTags = ({
             onRemove={() => onInvoiceStatusChange('')}
           />
         </DisplayIf>
+        {loadingDateFrom && (
+          <FilterTag
+            colorScheme="blue"
+            label="Datum utovara od"
+            value={loadingDateFrom}
+            onRemove={() => onLoadingDateFromChange('')}
+          />
+        )}
+        {loadingDateTo && (
+          <FilterTag
+            colorScheme="blue"
+            label="Datum utovara do"
+            value={loadingDateTo}
+            onRemove={() => onLoadingDateToChange('')}
+          />
+        )}
+        {unloadingDateFrom && (
+          <FilterTag
+            colorScheme="green"
+            label="Datum istovara od"
+            value={unloadingDateFrom}
+            onRemove={() => onUnloadingDateFromChange('')}
+          />
+        )}
+        {unloadingDateTo && (
+          <FilterTag
+            colorScheme="green"
+            label="Datum istovara do"
+            value={unloadingDateTo}
+            onRemove={() => onUnloadingDateToChange('')}
+          />
+        )}
       </FlexLayout>
     </Box>
   );
