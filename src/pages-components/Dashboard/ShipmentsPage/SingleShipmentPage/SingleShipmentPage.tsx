@@ -10,7 +10,7 @@ import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { renderVehicleName, vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { Box, Divider, FlexLayout, Pill, Text } from '@/ui';
 
-import { loadStatusConfig } from '../const';
+import { invoiceStatusConfig, loadStatusConfig } from '../const';
 import { AddressDetailsItem } from './components/AddressDetailsItem';
 import { CargoItem } from './components/CargoItem';
 import { ClientItem } from './components/ClientItem';
@@ -82,8 +82,9 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
         invoiceStatus,
       });
 
+      const invoiceStatusText = invoiceStatusConfig[invoiceStatus].label.toUpperCase();
       showSuccessToast({
-        title: `Nalog označen kao ${invoiceStatus === InvoiceStatus.Sent ? 'FAKTURIRAN' : 'NEFAKTURIRAN'}`,
+        title: `Nalog označen kao ${invoiceStatusText}`,
       });
     } catch (error) {
       console.error(error);

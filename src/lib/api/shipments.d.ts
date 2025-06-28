@@ -35,6 +35,10 @@ export type GetShipmentParams = {
   driverId?: string;
   loadStatus?: LoadStatus;
   invoiceStatus?: InvoiceStatus;
+  loadingDateFrom?: string;
+  loadingDateTo?: string;
+  unloadingDateFrom?: string;
+  unloadingDateTo?: string;
 };
 
 export interface CreateShipmentData extends Omit<Shipment, 'id' | 'loadingAddress' | 'unloadingAddress'> {
