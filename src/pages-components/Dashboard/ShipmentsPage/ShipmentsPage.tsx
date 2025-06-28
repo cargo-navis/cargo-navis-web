@@ -4,7 +4,7 @@ import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { useQueryParamState, useShipments } from '@/lib/hooks';
 import { Box, Button, DisplayIf, FlexLayout, Heading } from '@/ui';
 
-import { ShipmentsFilter } from './ShipmentsFilter';
+import { ShipmentFilters } from './ShipmentFilters';
 import { ShipmentsTable } from './ShipmentsTable';
 import { ShipmentsTableLoader } from './ShipmentsTableLoader';
 import { organizeSubshipments } from './utils';
@@ -51,7 +51,7 @@ export const ShipmentsPage = () => {
             <Button href="/dashboard/shipments/new" iconLeft="PlusIcon" text="Dodaj Nalog" />
           </DisplayIf>
         </FlexLayout>
-        <ShipmentsFilter
+        <ShipmentFilters
           selectedClientId={selectedClientId}
           selectedDriverId={selectedDriverId}
           selectedInvoiceStatus={selectedInvoiceStatus}
