@@ -12,7 +12,7 @@ import { renderVehicleName } from '@/lib/utils/vehicles';
 import { Box, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
 
 import { getCountryFromCode } from '../NewEmployeePage/const';
-import { loadStatusConfig } from './const';
+import { invoiceStatusConfig, loadStatusConfig } from './const';
 
 const columnHelper = createColumnHelper<Shipment>();
 
@@ -293,7 +293,6 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         id: 'vehicle-driver',
         header: 'Vozilo i vozač',
         enableSorting: false,
-
         cell: (info) => {
           const { vehicleId, driverId } = info.row.original;
 
@@ -321,14 +320,14 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           );
         },
       }),
-      columnHelper.accessor('loadStatus', {
-        header: 'Status utovara',
+      columnHelper.display({
+        header: 'Status',
         enableSorting: false,
         cell: (info) => {
-          const status = info.getValue();
+          const shipment = info.row.original;
+          const status = shipment.loadStatus;
           const config = status ? loadStatusConfig[status] : loadStatusConfig[LoadStatus.NotYetLoaded];
 
-          const shipment = info.row.original;
           const isAgencyUse = shipment.isAgencyUse;
           const isSubshipment = !!shipment?.parentShipmentId;
 
@@ -337,9 +336,12 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const text = shouldRenderAgencyPill ? 'Agencijski nalog' : config.label;
           const variant = shouldRenderAgencyPill ? 'warning' : config.variant;
 
+          const invoiceConfig = invoiceStatusConfig[shipment.invoiceStatus];
+
           return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Pill size="s" text={text} variant={variant} />
+            <FlexLayout className="flex-col items-end py-2 gap-1 group-hover/row:text-teal-500">
+              <Pill size="s" text={`📦 ${text}`} variant={variant} />
+              <Pill size="s" text={`💰 ${invoiceConfig.label}`} variant={invoiceConfig.variant} />
             </FlexLayout>
           );
         },
@@ -360,19 +362,18 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
     if (!shipments) return [];
 
     return shipments.map((shipment) => {
-      // Check if vehicleId or driverId is missing
       const isMissingVehicleOrDriver = !shipment.vehicleId || !shipment.driverId;
 
       const subshipments = shipment.subshipments?.map((s) => ({
         ...s,
-        isSuccess: s.invoiceStatus === InvoiceStatus.Sent,
+        isSuccess: s.invoiceStatus === InvoiceStatus.Paid && s.loadStatus === LoadStatus.Unloaded,
       }));
 
       // Add isWarning flag only to parent shipments
       return {
         ...shipment,
         isWarning: isMissingVehicleOrDriver && shipment.transportContractorId === tenant?.id && !shipment.isAgencyUse,
-        isSuccess: shipment.invoiceStatus === InvoiceStatus.Sent,
+        isSuccess: shipment.invoiceStatus === InvoiceStatus.Paid && shipment.loadStatus === LoadStatus.Unloaded,
         subshipments,
       };
     });
