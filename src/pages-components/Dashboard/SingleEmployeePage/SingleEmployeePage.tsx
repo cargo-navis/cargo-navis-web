@@ -41,7 +41,7 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
           <Avatar employee={employee} />
           <FlexLayout className="flex-col gap-3 mt-[12px]">
             <FlexLayout className="gap-4 items-center">
-              <Text variant="text-xxl-medium">{`${employee?.firstName} ${employee?.lastName}`}</Text>
+              <Text variant="text-xxl-medium">{`${employee.fullName}`}</Text>
               <OccupationPill occupation={employee.position} text={employee.position} />
             </FlexLayout>
             <FlexLayout className="gap-8">

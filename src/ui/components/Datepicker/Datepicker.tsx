@@ -19,7 +19,7 @@ export const Datepicker: React.FC<DatepickerProps> = ({ isDisabled = false, isCl
   const isClearButtonVisible = isClearable && !!value;
 
   return (
-    <DatesProvider settings={{ firstDayOfWeek: 1, weekendDays: [0] }}>
+    <DatesProvider settings={{ locale: 'hr', firstDayOfWeek: 1, weekendDays: [0] }}>
       <DateInput
         className="bg-transparent isolate"
         classNames={classnames}

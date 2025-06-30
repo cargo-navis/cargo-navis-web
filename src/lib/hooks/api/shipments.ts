@@ -1,16 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { createShipment, deleteShipment, getShipments, Shipment, updateShipment } from '@/lib/api';
+import { createShipment, deleteShipment, GetShipmentParams, getShipments, Shipment, updateShipment } from '@/lib/api';
 
 interface UseShipmentsArgs<T> {
   select?: (data: Shipment[]) => T;
   enabled?: boolean;
 }
 
-export function useShipments<TData = Shipment[]>(args?: UseShipmentsArgs<TData>) {
+export function useShipments<TData = Shipment[]>(args?: UseShipmentsArgs<TData> & { params?: GetShipmentParams }) {
   return useQuery({
-    queryKey: ['shipments'],
-    queryFn: getShipments,
+    queryKey: args?.params ? ['shipments', args.params] : ['shipments'],
+    queryFn: () => getShipments(args?.params),
     ...args,
     select: args?.select,
   });

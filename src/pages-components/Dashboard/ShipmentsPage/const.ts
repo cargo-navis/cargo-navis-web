@@ -1,4 +1,4 @@
-import { LoadStatus } from '@/lib/api/shipments';
+import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
 
 export const loadStatusConfig = {
   [LoadStatus.NotYetLoaded]: {
@@ -11,6 +11,21 @@ export const loadStatusConfig = {
   },
   [LoadStatus.Unloaded]: {
     label: 'Istovareno',
+    variant: 'success' as const,
+  },
+} as const;
+
+export const invoiceStatusConfig = {
+  [InvoiceStatus.NotSent]: {
+    label: 'Nefakturiran',
+    variant: 'danger' as const,
+  },
+  [InvoiceStatus.Sent]: {
+    label: 'Fakturiran',
+    variant: 'info' as const,
+  },
+  [InvoiceStatus.Paid]: {
+    label: 'Plaćen',
     variant: 'success' as const,
   },
 } as const;

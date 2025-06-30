@@ -11,6 +11,7 @@ export interface Employee {
   id: string;
   firstName: string;
   lastName: string;
+  fullName: string;
   phoneNumber: string;
   email: string;
   gender: GenderEnum;

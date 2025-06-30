@@ -39,7 +39,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           );
         },
       }),
-      columnHelper.accessor((row) => `${row.firstName} ${row.lastName}`, {
+      columnHelper.accessor((row) => row.fullName, {
         id: 'fullName',
         header: 'Ime',
         size: 275,

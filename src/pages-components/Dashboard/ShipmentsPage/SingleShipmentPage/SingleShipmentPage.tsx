@@ -3,15 +3,14 @@ import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import type { Shipment } from '@/lib/api';
-import { LoadStatus } from '@/lib/api/shipments';
+import { InvoiceStatus, LoadStatus, Shipment } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useContractor, useCurrentTenant, useEmployee, useShipment, useUpdateShipment, useVehicle } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { renderVehicleName, vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { Box, Divider, FlexLayout, Pill, Text } from '@/ui';
 
-import { loadStatusConfig } from '../const';
+import { invoiceStatusConfig, loadStatusConfig } from '../const';
 import { AddressDetailsItem } from './components/AddressDetailsItem';
 import { CargoItem } from './components/CargoItem';
 import { ClientItem } from './components/ClientItem';
@@ -76,14 +75,17 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
     }
   };
 
-  const handleInvoiceChange = async (isInvoiceSent: boolean) => {
+  const handleInvoiceChange = async (invoiceStatus: InvoiceStatus) => {
     try {
       await updateShipment({
         id: shipment.id,
-        isInvoiceSent,
+        invoiceStatus,
       });
 
-      showSuccessToast({ title: `Nalog označen kao ${isInvoiceSent ? 'FAKTURIRAN' : 'NEFAKTURIRAN'}` });
+      const invoiceStatusText = invoiceStatusConfig[invoiceStatus].label.toUpperCase();
+      showSuccessToast({
+        title: `Nalog označen kao ${invoiceStatusText}`,
+      });
     } catch (error) {
       console.error(error);
       showErrorToast({ title: 'Greška prilikom ažuriranja fakture. Pokušajte ponovno.' });
@@ -126,7 +128,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                 />
               )}
               <InvoiceItem
-                isInvoiceSent={!!shipment.isInvoiceSent}
+                invoiceStatus={shipment.invoiceStatus}
                 isPending={isPending}
                 onChange={handleInvoiceChange}
               />
@@ -187,7 +189,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     className="hover:text-teal-500 transition-colors max-w-max"
                     href={driver?.id ? `/dashboard/employees/${driver?.id}` : '#'}
                   >
-                    <Text variant="text-l">{driver ? `${driver.firstName} ${driver.lastName}` : '-'}</Text>
+                    <Text variant="text-l">{driver ? `${driver.fullName}` : '-'}</Text>
                   </Link>
                 </FlexLayout>
                 <FlexLayout className="gap-4">
@@ -231,9 +233,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                       className="hover:text-teal-500 transition-colors max-w-max"
                       href={dispatcher?.id ? `/dashboard/employees/${dispatcher?.id}` : '#'}
                     >
-                      <Text variant="text-l">
-                        {dispatcher ? `${dispatcher.firstName} ${dispatcher.lastName}` : '-'}
-                      </Text>
+                      <Text variant="text-l">{dispatcher ? `${dispatcher.fullName}` : '-'}</Text>
                     </Link>
                   </FlexLayout>
                 </Box>
