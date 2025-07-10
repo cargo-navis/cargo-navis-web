@@ -4,14 +4,14 @@ import React from 'react';
 import type { Alert } from '@/lib/api';
 import { FlexLayout, Icon } from '@/ui';
 
-import { getItemData } from './utils';
+import { getAlertItemData } from './utils/alerts';
 
 interface AlertMenuItemProps {
   alert: Alert;
 }
 
 export const AlertMenuItem = React.forwardRef<any, AlertMenuItemProps>(({ alert, ...rest }, ref) => {
-  const { targetUrl, descriptionNode } = getItemData(alert);
+  const { targetUrl, descriptionNode } = getAlertItemData(alert);
 
   return (
     <Link href={targetUrl}>

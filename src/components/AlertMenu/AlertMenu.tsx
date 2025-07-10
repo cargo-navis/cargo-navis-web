@@ -1,25 +1,29 @@
-import Link from 'next/link';
-import { forwardRef } from 'react';
 import { useToggle } from 'react-use';
 
-import type { Alert } from '@/lib/api';
-import { useAlerts } from '@/lib/hooks';
-import { FlexLayout, Icon, LoadingSpinner, Menu, Text } from '@/ui';
-import type { MenuComponent } from '@/ui/components/Menu/types';
+import type { Alert, Notification } from '@/lib/api';
+import { useAlerts, useNotifications } from '@/lib/hooks';
+import { Menu } from '@/ui';
+import { MenuComponent } from '@/ui/components/Menu/types';
 
 import { AlertButton } from './AlertMenuButton';
-import { mapToMenuItems } from './utils';
+import { mapToAlertMenuItems } from './utils/alerts';
+import { emptyMenuItem, loadingItem, seeMoreItem } from './utils/misc';
+import { mapToNotificationMenuItems } from './utils/notifications';
 
 export const AlertMenu = () => {
   const [isOpen, onToggleIsMenuOpen] = useToggle(false);
-  const { data, isLoading } = useAlerts();
-  const items = getMenuItems(data, isLoading);
+  const { data: alerts, isLoading: isLoadingAlerts } = useAlerts();
+  const { data: notifications, isLoading: isLoadingNotifications } = useNotifications();
 
-  const areAlertsPresent = !isLoading && !!data && data?.length > 0;
+  const isLoading = isLoadingAlerts || isLoadingNotifications;
+
+  const items = getMenuItems(alerts, notifications, isLoading);
+
+  const areItemsPresent = !isLoading && !!alerts && alerts?.length > 0 && !!notifications && notifications?.length > 0;
 
   return (
     <Menu
-      control={<AlertButton shouldDisplayIndicator={areAlertsPresent} />}
+      control={<AlertButton shouldDisplayIndicator={areItemsPresent} />}
       isOpen={isOpen}
       items={items}
       maxWidth="360px"
@@ -30,67 +34,29 @@ export const AlertMenu = () => {
   );
 };
 
-function getMenuItems(alerts: Alert[] | undefined, isLoading: boolean) {
-  let items: MenuComponent[];
+function getMenuItems(alerts: Alert[] | undefined, notifications: Notification[] | undefined, isLoading: boolean) {
+  if (isLoading) return [loadingItem];
 
-  if (alerts && alerts.length > 0) {
-    items = mapToMenuItems(alerts);
+  if (!alerts?.length && !notifications?.length) return [emptyMenuItem];
 
-    if (items.length > 4) {
-      items = items.splice(0, 4);
-      items.push(seeMoreItem);
-    }
-  } else if (isLoading) {
-    items = [loadingItem];
-  } else {
-    items = [emptyAlertsItem];
+  const notificationItems = mapToNotificationMenuItems(notifications || []);
+  const alertItems = mapToAlertMenuItems(alerts || []);
+
+  // TODO - MERGE and SORT items by 'createdAt' property
+  // TODO - backend needs to add createdAt property to Alerts!!!!!
+
+  return mergeAndSortItems(notificationItems, alertItems);
+}
+
+function mergeAndSortItems(notificationItems: MenuComponent[], alertItems: MenuComponent[]) {
+  const items = [...notificationItems, ...alertItems];
+
+  if (items.length > 4) {
+    const twoNotifs = notificationItems.slice(0, 2);
+    const twoAlerts = alertItems.slice(2, 4);
+
+    return [...twoNotifs, ...twoAlerts, seeMoreItem];
   }
 
   return items;
 }
-
-const emptyAlertsItem: MenuComponent = {
-  type: 'custom',
-  Renderer: () => (
-    <FlexLayout className="justify-center items-center p-3">
-      <Text color="text-color-2" variant="text-s">
-        Nema novih Upozorenja
-      </Text>
-    </FlexLayout>
-  ),
-};
-
-const loadingItem: MenuComponent = {
-  type: 'custom',
-  Renderer: () => (
-    <FlexLayout className="justify-center items-center px-3 py-7">
-      <LoadingSpinner />
-    </FlexLayout>
-  ),
-};
-
-const SeeMoreItem = forwardRef((props, ref) => (
-  <Link href="/dashboard">
-    <FlexLayout
-      className={`
-        justify-center items-center gap-2 py-3 
-        hover:bg-dark-50 hover:dark:bg-light-800 data-[highlighted]:bg-dark-50 data-[highlighted]:dark:bg-light-800 
-        outline-0
-      `}
-      ref={ref}
-      {...props}
-    >
-      <Text color="text-color-2" variant="text-s">
-        Vidi više
-      </Text>
-      <Icon icon="ArrowRightIcon" />
-    </FlexLayout>
-  </Link>
-));
-
-SeeMoreItem.displayName = 'SeeMoreItem';
-
-const seeMoreItem: MenuComponent = {
-  type: 'custom',
-  Renderer: SeeMoreItem,
-};
