@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type React from 'react';
 
-import { getAlertItemData } from '@/components/AlertMenu/utils/alerts';
+import { getAlertItemData } from '@/components/AppMenu/utils/alerts';
 import type { Alert } from '@/lib/api';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 

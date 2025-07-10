@@ -5,12 +5,12 @@ import { useAlerts, useNotifications } from '@/lib/hooks';
 import { Menu } from '@/ui';
 import { MenuComponent } from '@/ui/components/Menu/types';
 
-import { AlertButton } from './AlertMenuButton';
+import { AppMenuButton } from './AppMenuButton';
 import { mapToAlertMenuItems } from './utils/alerts';
 import { emptyMenuItem, loadingItem, seeMoreItem } from './utils/misc';
 import { mapToNotificationMenuItems } from './utils/notifications';
 
-export const AlertMenu = () => {
+export const AppMenu = () => {
   const [isOpen, onToggleIsMenuOpen] = useToggle(false);
   const { data: alerts, isLoading: isLoadingAlerts } = useAlerts();
   const { data: notifications, isLoading: isLoadingNotifications } = useNotifications();
@@ -23,7 +23,7 @@ export const AlertMenu = () => {
 
   return (
     <Menu
-      control={<AlertButton shouldDisplayIndicator={areItemsPresent} />}
+      control={<AppMenuButton shouldDisplayIndicator={areItemsPresent} />}
       isOpen={isOpen}
       items={items}
       maxWidth="360px"
