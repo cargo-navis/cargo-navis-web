@@ -14,7 +14,7 @@ export interface Notification {
   updatedAt: string;
 }
 
-export interface Metadata {
+export interface NotificationMetadata {
   type: NotificationType;
   shipmentId: string;
   orderNumber?: string;
