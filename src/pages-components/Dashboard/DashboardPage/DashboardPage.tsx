@@ -1,11 +1,15 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { useAlerts } from '@/lib/hooks';
+import { useAlerts, useNotifications } from '@/lib/hooks';
 import { Box, DisplayIf, FlexLayout, Heading, Text } from '@/ui';
 
 import { AlertItem } from './components/AlertItem';
+import { NotificationItem } from './components/NotificationItem';
 
 export const DashboardPage = () => {
-  const { data: alerts, isLoading } = useAlerts();
+  const { data: alerts, isLoading: isLoadingAlerts } = useAlerts();
+  const { data: notifications, isLoading: isLoadingNotifications } = useNotifications();
+
+  const isLoading = isLoadingAlerts || isLoadingNotifications;
 
   return (
     <DashboardLayout>
@@ -15,21 +19,33 @@ export const DashboardPage = () => {
         </Heading>
       </Box>
       <Box className="py-5">
-        <Text variant="text-l-medium">Upozorenja</Text>
-        <FlexLayout className="flex-col max-w-[40%]">
-          <DisplayIf condition={isLoading}>
-            <Text color="text-color-3" variant="text-m">
-              Učitavam upozorenja...
+        <FlexLayout className="gap-7 max-w-[80%]">
+          <FlexLayout className="flex-col flex-1">
+            <Text color="text-color-3" variant="text-l-medium">
+              {isLoading ? 'Učitavam obavijesti...' : 'Obavijesti'}
             </Text>
-          </DisplayIf>
-          <DisplayIf condition={!!alerts && !!alerts.length}>
-            {alerts?.map((a) => <AlertItem alert={a} key={a.alertable.uuid} />)}
-          </DisplayIf>
-          <DisplayIf condition={!isLoading && (!alerts || !alerts.length)}>
-            <Text color="text-color-3" variant="text-m">
-              Nema novih upozorenja
+            <DisplayIf condition={!!notifications && !!notifications.length}>
+              {notifications?.map((n) => <NotificationItem key={n.id} notification={n} />)}
+            </DisplayIf>
+            <DisplayIf condition={!isLoading && (!notifications || !notifications.length)}>
+              <Text color="text-color-3" variant="text-m">
+                Nema novih obavijesti
+              </Text>
+            </DisplayIf>
+          </FlexLayout>
+          <FlexLayout className="flex-col flex-1">
+            <Text color="text-color-3" variant="text-l-medium">
+              {isLoading ? 'Učitavam upozorenja...' : 'Upozorenja'}
             </Text>
-          </DisplayIf>
+            <DisplayIf condition={!!alerts && !!alerts.length}>
+              {alerts?.map((a) => <AlertItem alert={a} key={a.alertable.uuid} />)}
+            </DisplayIf>
+            <DisplayIf condition={!isLoading && (!alerts || !alerts.length)}>
+              <Text color="text-color-3" variant="text-m">
+                Nema novih upozorenja
+              </Text>
+            </DisplayIf>
+          </FlexLayout>
         </FlexLayout>
       </Box>
     </DashboardLayout>

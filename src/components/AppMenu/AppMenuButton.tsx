@@ -3,11 +3,11 @@ import React from 'react';
 
 import { FlexLayout, Icon } from '@/ui';
 
-interface AlertButtonProps {
+interface AppMenuButtonProps {
   shouldDisplayIndicator: boolean;
 }
 
-export const AlertButton = React.forwardRef<any, AlertButtonProps>(({ shouldDisplayIndicator, ...rest }, ref) => {
+export const AppMenuButton = React.forwardRef<any, AppMenuButtonProps>(({ shouldDisplayIndicator, ...rest }, ref) => {
   return (
     <FlexLayout
       {...rest}
@@ -30,4 +30,4 @@ export const AlertButton = React.forwardRef<any, AlertButtonProps>(({ shouldDisp
   );
 });
 
-AlertButton.displayName = 'AlertButton';
+AppMenuButton.displayName = 'AppMenuButton';

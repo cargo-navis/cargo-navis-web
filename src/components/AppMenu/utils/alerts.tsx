@@ -4,19 +4,20 @@ import { forwardRef } from 'react';
 import { type Employee, type Vehicle } from '@/lib/api';
 import { type Alert, AlertType } from '@/lib/api';
 import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
-import { FlexLayout, Icon, Text } from '@/ui';
-import type { MenuComponent } from '@/ui/components/Menu/types';
+import { Text } from '@/ui';
+import { MenuComponent } from '@/ui/components/Menu/types';
 
-import { AlertMenuItem } from './AlertMenuItem';
+import { AlertMenuItem } from '../AlertMenuItem';
+import { EmployeeName, VehicleRegistration } from './misc';
 
-export function mapToMenuItems(alerts: Alert[]): MenuComponent[] {
+export function mapToAlertMenuItems(alerts: Alert[]): MenuComponent[] {
   return alerts.map((a) => ({
-    type: 'custom',
+    type: 'custom' as const,
     Renderer: forwardRef((props, ref) => <AlertMenuItem alert={a} ref={ref} {...props} />),
   }));
 }
 
-export function getItemData(alert: Alert) {
+export function getAlertItemData(alert: Alert) {
   let targetUrl: string;
   let descriptionNode: React.ReactNode;
 
@@ -296,24 +297,4 @@ export function getItemData(alert: Alert) {
   }
 
   return { targetUrl, descriptionNode };
-}
-
-function EmployeeName({ employee }: { employee: Employee }) {
-  return (
-    <FlexLayout className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 align-bottom">
-      <Icon icon="UserIcon" />
-      <Text variant="text-s-bold">
-        {employee.firstName} {employee.lastName}
-      </Text>
-    </FlexLayout>
-  );
-}
-
-function VehicleRegistration({ vehicle }: { vehicle: Vehicle }) {
-  return (
-    <FlexLayout className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 align-bottom">
-      <Icon icon="TruckIcon" />
-      <Text variant="text-s-bold">{vehicle.registration}</Text>
-    </FlexLayout>
-  );
 }

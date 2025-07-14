@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import type React from 'react';
 
-import { getItemData } from '@/components/AlertMenu/utils';
+import { getAlertItemData } from '@/components/AppMenu/utils/alerts';
 import type { Alert } from '@/lib/api';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 
@@ -12,7 +12,7 @@ interface AlertItemProps {
 }
 
 export const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
-  const { targetUrl, descriptionNode } = getItemData(alert);
+  const { targetUrl, descriptionNode } = getAlertItemData(alert);
 
   const property = ruleToPropertyMap[alert.ruleName];
   const expiryDate = alert.alertable[property];

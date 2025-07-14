@@ -1,6 +1,6 @@
 import Link from 'next/link';
 
-import { AlertMenu } from '@/components/AlertMenu';
+import { AppMenu } from '@/components/AppMenu';
 import { useCurrentTenant } from '@/lib/hooks';
 import { clearAuthCookies } from '@/lib/utils/session';
 import { Box, Divider, FlexLayout, Heading, Icon, Text } from '@/ui';
@@ -29,7 +29,7 @@ export function Sidebar() {
         <Box className="grow">
           <Divider bgColor="bg-teal-900" />
         </Box>
-        <AlertMenu />
+        <AppMenu />
       </FlexLayout>
       <FlexLayout as="nav" className="flex-col flex-grow gap-2">
         {links.map((l) => (
