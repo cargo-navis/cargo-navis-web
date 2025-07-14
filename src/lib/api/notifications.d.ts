@@ -17,7 +17,9 @@ export interface Notification {
 export interface Metadata {
   type: NotificationType;
   shipmentId: string;
+  orderNumber?: string;
   driverId: string;
+  driverName?: string;
   oldStatus?: LoadStatus;
   newStatus?: LoadStatus;
 }

@@ -5,7 +5,7 @@ import { Text } from '@/ui';
 import { MenuComponent } from '@/ui/components/Menu/types';
 
 import { NotificationMenuItem } from '../NotificationMenuItem';
-import { ShipmentStatusPill } from './misc';
+import { EmployeeNameById, ShipmentStatusPill } from './misc';
 
 export function mapToNotificationMenuItems(notifications: Notification[]): MenuComponent[] {
   return notifications.map((n) => ({
@@ -22,23 +22,24 @@ export function getNotificationItemData(notification: Notification) {
 
   switch (type) {
     case NotificationType.SHIPMENT_STATUS_CHANGED: {
-      const { driverId, shipmentId, newStatus } = metadata;
+      const { driverId, shipmentId, newStatus, orderNumber } = metadata;
 
       targetUrl = `/dashboard/shipments/${shipmentId}`;
       descriptionNode = (
         <Text as="p" color="text-color-2" variant="text-s">
-          [ZAPOSLENIK] je promijenio status naloga [NALOG] u <ShipmentStatusPill status={newStatus as LoadStatus} />.
+          <EmployeeNameById id={driverId} /> je promijenio status naloga <strong>{orderNumber}</strong> u{' '}
+          <ShipmentStatusPill status={newStatus as LoadStatus} />.
         </Text>
       );
       break;
     }
     case NotificationType.SHIPMENT_MESSAGE_ACCEPTED: {
-      const { driverId, shipmentId } = metadata;
+      const { driverId, shipmentId, orderNumber } = metadata;
 
       targetUrl = `/dashboard/shipments/${shipmentId}`;
       descriptionNode = (
         <Text as="p" color="text-color-2" variant="text-s">
-          [ZAPOSLENIK] je primio obavijest o nalogu [NALOG].
+          <EmployeeNameById id={driverId} /> je primio obavijest o nalogu <strong>{orderNumber}</strong>.
         </Text>
       );
       break;

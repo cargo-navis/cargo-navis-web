@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { forwardRef } from 'react';
 
 import { type Employee, LoadStatus, type Vehicle } from '@/lib/api';
+import { useEmployee } from '@/lib/hooks';
 import { loadStatusConfig } from '@/pages-components/Dashboard/ShipmentsPage/const';
 import { Box, FlexLayout, Icon, LoadingSpinner, Pill, Text } from '@/ui';
 import { MenuComponent } from '@/ui/components/Menu/types';
@@ -14,6 +15,13 @@ export function ShipmentStatusPill({ status }: { status: LoadStatus }) {
       <Pill size="s" text={statusConfig.label} variant={statusConfig.variant} />
     </Box>
   );
+}
+
+export function EmployeeNameById({ id }: { id: string }) {
+  const { data: employee } = useEmployee(id);
+
+  if (!employee) return null;
+  return <EmployeeName employee={employee} />;
 }
 
 export function EmployeeName({ employee }: { employee: Employee }) {
