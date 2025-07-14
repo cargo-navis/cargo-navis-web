@@ -323,6 +323,7 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
             ...(item.metadata.width && { width: item.metadata.width }),
             ...(item.metadata.height && { height: item.metadata.height }),
             ...(item.metadata.length && { length: item.metadata.length }),
+            ...(item.metadata.palleteAmount && { palleteAmount: item.metadata.palleteAmount }),
           };
         }
       }

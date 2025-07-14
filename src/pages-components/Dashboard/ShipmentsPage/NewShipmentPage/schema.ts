@@ -112,7 +112,11 @@ export const shipmentSchema = Yup.object().shape({
                   .typeError('Količina paleta je obavezna')
                   .min(1, 'Količina paleta mora biti najmanje 1')
                   .required('Količina paleta je obavezna'),
-              otherwise: () => Yup.number().strip(),
+              otherwise: () =>
+                Yup.number()
+                  .typeError('Količina paleta mora biti broj')
+                  .min(1, 'Količina paleta mora biti najmanje 1')
+                  .optional(),
             }),
           })
           .required('Podaci tereta su obavezni'),

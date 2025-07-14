@@ -5,7 +5,7 @@ import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { FormTextarea } from '@/lib/components/form/FormTextarea';
 import { roundLdmValue } from '@/lib/utils/math';
 import { palleteOptions, palleteValues } from '@/lib/utils/palletes';
-import { Box, Button, FlexLayout, Icon, Text } from '@/ui';
+import { Box, Button, Checkbox, FlexLayout, Icon, Text } from '@/ui';
 
 interface CargoFieldProps {
   index: number;
@@ -115,9 +115,19 @@ const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => {
   const { watch, setValue } = useFormContext();
   const length = watch(`cargo.${index}.metadata.length`);
   const width = watch(`cargo.${index}.metadata.width`);
+  const palleteAmount = watch(`cargo.${index}.metadata.palleteAmount`);
   const isInitialMount = useRef(true);
 
   const ldmValue = length && width ? roundLdmValue((length * width) / 2.4) : 0;
+  const hasKolete = Boolean(palleteAmount);
+
+  const handleKoleteToggle = (checked: boolean) => {
+    if (checked) {
+      setValue(`cargo.${index}.metadata.palleteAmount`, 1);
+    } else {
+      setValue(`cargo.${index}.metadata.palleteAmount`, undefined);
+    }
+  };
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -163,6 +173,20 @@ const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => {
             type="number"
           />
         </Box>
+      </FlexLayout>
+      <FlexLayout className="gap-4 items-center h-[96px] -my-4">
+        <Checkbox label="Kolete" value={hasKolete} onChange={handleKoleteToggle} />
+        {hasKolete && (
+          <Box className="flex-1">
+            <FormTextInput
+              label="Broj paleta"
+              min="1"
+              name={`cargo.${index}.metadata.palleteAmount`}
+              placeholder="Unesi broj paleta"
+              type="number"
+            />
+          </Box>
+        )}
       </FlexLayout>
       <FormTextInput label="Dužni metri (LDM)" name={`cargo.${index}.ldm`} type="number" />
     </FlexLayout>
