@@ -14,6 +14,7 @@ export function mapToAlertMenuItems(alerts: Alert[]): MenuComponent[] {
   return alerts.map((a) => ({
     type: 'custom' as const,
     Renderer: forwardRef((props, ref) => <AlertMenuItem alert={a} ref={ref} {...props} />),
+    createdAt: a.createdAt,
   }));
 }
 

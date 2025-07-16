@@ -1,3 +1,4 @@
+import sortBy from 'lodash/sortBy';
 import { useToggle } from 'react-use';
 
 import type { Alert, Notification } from '@/lib/api';
@@ -42,20 +43,16 @@ function getMenuItems(alerts: Alert[] | undefined, notifications: Notification[]
   const notificationItems = mapToNotificationMenuItems(notifications || []);
   const alertItems = mapToAlertMenuItems(alerts || []);
 
-  // TODO - MERGE and SORT items by 'createdAt' property
-  // TODO - backend needs to add createdAt property to Alerts!!!!!
-
   return mergeAndSortItems(notificationItems, alertItems);
 }
 
 function mergeAndSortItems(notificationItems: MenuComponent[], alertItems: MenuComponent[]) {
   const items = [...notificationItems, ...alertItems];
+  const sortedItems = sortBy(items, 'createdAt').reverse();
 
-  if (items.length > 4) {
-    const twoNotifs = notificationItems.slice(0, 2);
-    const twoAlerts = alertItems.slice(2, 4);
-
-    return [...twoNotifs, ...twoAlerts, seeMoreItem];
+  if (sortedItems.length > 8) {
+    const displayItems = sortedItems.slice(0, 8);
+    return [...displayItems, seeMoreItem];
   }
 
   return items;
