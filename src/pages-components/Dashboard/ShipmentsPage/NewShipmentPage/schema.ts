@@ -118,6 +118,11 @@ export const shipmentSchema = Yup.object().shape({
                   .min(1, 'Količina paleta mora biti najmanje 1')
                   .optional(),
             }),
+            hasKolete: Yup.boolean().when('type', {
+              is: 'nonstandard',
+              then: () => Yup.boolean().optional(),
+              otherwise: () => Yup.boolean().strip(),
+            }),
           })
           .required('Podaci tereta su obavezni'),
       })

@@ -61,4 +61,5 @@ export interface CargoMetadata {
   length?: number;
   palleteType?: PalleteType;
   palleteAmount?: number;
+  hasKolete?: boolean;
 }
