@@ -11,6 +11,7 @@ export function mapToNotificationMenuItems(notifications: Notification[]): MenuC
   return notifications.map((n) => ({
     type: 'custom' as const,
     Renderer: forwardRef((props, ref) => <NotificationMenuItem notification={n} ref={ref} {...props} />),
+    createdAt: n.createdAt,
   }));
 }
 

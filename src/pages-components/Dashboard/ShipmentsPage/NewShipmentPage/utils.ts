@@ -13,6 +13,7 @@ export const defaultCargo: Cargo = {
     type: 'standard',
     palleteType: PalleteType.Euro,
     palleteAmount: 1,
+    hasKolete: false,
   },
 };
 
@@ -65,19 +66,28 @@ export const fetchPostalCodeData = async (postalCodeId: string) => {
 const mapCargoItems = (cargoItems?: any[]): Cargo[] => {
   if (!cargoItems?.length) return [defaultCargo];
 
-  return cargoItems.map((c) => ({
-    weight: c.weight || 0,
-    description: c.description || '',
-    ldm: c.ldm || 0.4,
-    metadata: {
-      type: (c.metadata?.type || 'standard') as CargoType,
-      palleteType: c.metadata?.palleteType || PalleteType.Euro,
-      palleteAmount: c.metadata?.palleteAmount || 1,
-      width: c.metadata?.width || 0,
-      height: c.metadata?.height || 0,
-      length: c.metadata?.length || 0,
-    },
-  }));
+  return cargoItems.map((c) => {
+    const cargoType = (c.metadata?.type || 'standard') as CargoType;
+    const palleteAmount = c.metadata?.palleteAmount || (cargoType === 'standard' ? 1 : undefined);
+
+    // Initialize hasKolete to true if cargo is nonstandard and has palleteAmount > 0
+    const hasKolete = cargoType === 'nonstandard' && palleteAmount && palleteAmount > 0;
+
+    return {
+      weight: c.weight || 0,
+      description: c.description || '',
+      ldm: c.ldm || 0.4,
+      metadata: {
+        type: cargoType,
+        palleteType: c.metadata?.palleteType || (cargoType === 'standard' ? PalleteType.Euro : undefined),
+        palleteAmount,
+        width: c.metadata?.width || 0,
+        height: c.metadata?.height || 0,
+        length: c.metadata?.length || 0,
+        hasKolete,
+      },
+    };
+  });
 };
 
 // Get cargo items from parent shipment
@@ -323,6 +333,7 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
             ...(item.metadata.width && { width: item.metadata.width }),
             ...(item.metadata.height && { height: item.metadata.height }),
             ...(item.metadata.length && { length: item.metadata.length }),
+            ...(item.metadata.palleteAmount && { palleteAmount: item.metadata.palleteAmount }),
           };
         }
       }
