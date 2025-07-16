@@ -6,6 +6,8 @@ export const alerts: Alert[] = [
   {
     id: '26217078-1282-4c94-920c-1bbe792cbda2',
     ruleName: AlertType.DRIVER_LICENCE_EXPIRED,
+    createdAt: '2025-01-01',
+    updatedAt: '2025-01-01',
     alertable: {
       id: 'f1b7d0a5-7c3a-4e5a-8c1e-1d0b1e2f3a7b',
       firstName: 'Filip',
@@ -24,6 +26,8 @@ export const alerts: Alert[] = [
   {
     id: '01ab9023-c4a5-481e-82e2-2d6a1d915ec5',
     ruleName: AlertType.DRIVER_VISA_EXPIRED,
+    createdAt: '2025-01-01',
+    updatedAt: '2025-01-01',
     alertable: {
       id: 'd2e7c3b5-5a4c-4f6a-8c1e-2d0b1f3e2a7b',
       firstName: 'Teo',
@@ -42,6 +46,8 @@ export const alerts: Alert[] = [
   {
     id: '06c73766-db1b-493d-853b-2ce4534698e3',
     ruleName: AlertType.EMPLOYEE_CONTRACT_EXPIRED,
+    createdAt: '2025-01-01',
+    updatedAt: '2025-01-01',
     alertable: {
       id: 'e4b7d0a5-8c3a-4e5a-9c1e-3d0b1e2f3a7b',
       firstName: 'Tomislav',
@@ -60,6 +66,8 @@ export const alerts: Alert[] = [
   {
     id: 'b8e167c8-7f15-4ce6-80ca-628e167c7e74',
     ruleName: AlertType.PROFESSIONAL_DRIVER_LICENCE_EXPIRED,
+    createdAt: '2025-01-01',
+    updatedAt: '2025-01-01',
     alertable: {
       id: 'e4b7d0a5-8c3a-4e5a-9c1e-3d0b1e2f3a7b',
       firstName: 'Tomislav',
@@ -78,6 +86,8 @@ export const alerts: Alert[] = [
   {
     id: 'cc0a8924-6b1d-4661-ab8f-7ab5aa7f720f',
     ruleName: AlertType.DRIVER_MEDICAL_EXAMINATION_EXPIRED,
+    createdAt: '2025-01-01',
+    updatedAt: '2025-01-01',
     alertable: {
       id: 'f4b7d0c5-7c3a-4e6a-9b1e-8d0b1e2f3a7b',
       firstName: 'Tiho',
@@ -96,6 +106,8 @@ export const alerts: Alert[] = [
   {
     id: '2f677b18-5b9a-42d2-bec9-60b7bc2322c9',
     ruleName: AlertType.VEHICLE_REGISTRATION_EXPIRED,
+    createdAt: '2025-01-01',
+    updatedAt: '2025-01-01',
     alertable: {
       id: '560989fd-947f-4fdf-99a1-b55790d4f36d',
       type: VehicleEnum.TRUCK,
@@ -130,6 +142,8 @@ export const alerts: Alert[] = [
   {
     id: 'c8b45a5a-e0a2-411e-b0f4-c5374644962c',
     ruleName: AlertType.VEHICLE_TECHNICAL_INSPECTION_EXPIRED,
+    createdAt: '2025-01-01',
+    updatedAt: '2025-01-01',
     alertable: {
       id: '55fa196a-83fe-4b8f-86ff-908addff9c9f',
       type: VehicleEnum.VAN,
@@ -164,6 +178,8 @@ export const alerts: Alert[] = [
   {
     id: '629744e9-c215-4a56-b308-4d6984b7ede6',
     ruleName: AlertType.VEHICLE_ADR_EXPIRED,
+    createdAt: '2025-01-01',
+    updatedAt: '2025-01-01',
     alertable: {
       id: '560989fd-947f-4fdf-99a1-b55790d4f36d',
       type: VehicleEnum.TRUCK,
@@ -198,6 +214,8 @@ export const alerts: Alert[] = [
   {
     id: '43fa0955-6d66-4584-87ef-b5591ba23787',
     ruleName: AlertType.VEHICLE_FIRE_EXTINGUISHER_CHECK_EXPIRED,
+    createdAt: '2025-01-01',
+    updatedAt: '2025-01-01',
     alertable: {
       id: '560989fd-947f-4fdf-99a1-b55790d4f36d',
       type: VehicleEnum.TRUCK,
@@ -232,6 +250,8 @@ export const alerts: Alert[] = [
   {
     id: 'b814c254-0755-401f-ad73-d9672c44adce',
     ruleName: AlertType.VEHICLE_TACHOGRAPH_EXPIRED,
+    createdAt: '2025-01-01',
+    updatedAt: '2025-01-01',
     alertable: {
       id: '560989fd-947f-4fdf-99a1-b55790d4f36d',
       type: VehicleEnum.TRUCK,
