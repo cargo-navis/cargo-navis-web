@@ -27,7 +27,7 @@ export function getNotificationItemData(notification: Notification) {
 
       targetUrl = `/dashboard/shipments/${shipmentId}`;
       descriptionNode = (
-        <Text as="p" color="text-color-2" variant="text-s">
+        <Text color="text-color-2" variant="text-s">
           <EmployeeNameById id={driverId} /> je promijenio status naloga <strong>{orderNumber}</strong> u{' '}
           <ShipmentStatusPill status={newStatus as LoadStatus} />.
         </Text>
@@ -39,7 +39,7 @@ export function getNotificationItemData(notification: Notification) {
 
       targetUrl = `/dashboard/shipments/${shipmentId}`;
       descriptionNode = (
-        <Text as="p" color="text-color-2" variant="text-s">
+        <Text color="text-color-2" variant="text-s">
           <EmployeeNameById id={driverId} /> je primio obavijest o nalogu <strong>{orderNumber}</strong>.
         </Text>
       );

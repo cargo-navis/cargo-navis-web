@@ -38,7 +38,7 @@ export const DashboardPage = () => {
               {isLoading ? 'Učitavam upozorenja...' : 'Upozorenja'}
             </Text>
             <DisplayIf condition={!!alerts && !!alerts.length}>
-              {alerts?.map((a) => <AlertItem alert={a} key={a.alertable.uuid} />)}
+              {alerts?.map((a) => <AlertItem alert={a} key={a.alertable.id + a.createdAt} />)}
             </DisplayIf>
             <DisplayIf condition={!isLoading && (!alerts || !alerts.length)}>
               <Text color="text-color-3" variant="text-m">
