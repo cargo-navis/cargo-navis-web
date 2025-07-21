@@ -24,15 +24,6 @@ export function useShipments<TData = Shipment[]>(args?: UseShipmentsArgs<TData> 
   });
 }
 
-// export function useShipment(id: string) {
-//   return useShipments({
-//     enabled: !!id,
-//     select: (shipments) => {
-//       return shipments.find((c) => c.id.toString() === id);
-//     },
-//   });
-// }
-
 export function useShipment(id?: string) {
   return useQuery({
     queryKey: ['shipment', id],
@@ -60,15 +51,14 @@ export function useUpdateShipment() {
       return updateShipment(id, shipmentData);
     },
     onMutate: (data) => {
-      const prevShipments = queryClient.getQueryData<Shipment[]>(['shipments']);
       const prevShipment = queryClient.getQueryData<Shipment>(['shipment', data.id]);
 
-      queryClient.setQueryData(['shipments'], (oldData: Shipment[] | undefined) => {
+      queryClient.setQueryData(['shipment', data.id], (oldData: Shipment | undefined) => {
         if (!oldData) return oldData;
-        return oldData.map((shipment) => (shipment.id === data.id ? { ...shipment, ...data } : shipment));
+        return { ...oldData, ...data };
       });
 
-      return { prevShipments, prevShipment };
+      return { prevShipment };
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['shipment', variables.id] });
@@ -76,9 +66,8 @@ export function useUpdateShipment() {
     },
     onError: (_, data, context) => {
       if (!context) return;
-      const { prevShipments, prevShipment } = context;
+      const { prevShipment } = context;
 
-      queryClient.setQueryData(['shipments'], prevShipments);
       queryClient.setQueryData(['shipment', data.id], prevShipment);
     },
   });
