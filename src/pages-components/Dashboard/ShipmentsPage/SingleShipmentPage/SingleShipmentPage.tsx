@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { InvoiceStatus, LoadStatus, Shipment } from '@/lib/api';
-import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useContractor, useCurrentTenant, useEmployee, useShipment, useUpdateShipment, useVehicle } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { renderVehicleName, vehicleTypeToPathMap } from '@/lib/utils/vehicles';
@@ -14,6 +13,7 @@ import { invoiceStatusConfig, loadStatusConfig } from '../const';
 import { AddressDetailsItem } from './components/AddressDetailsItem';
 import { CargoItem } from './components/CargoItem';
 import { ClientItem } from './components/ClientItem';
+import { ContentLoader } from './components/ContentLoader';
 import { DateItem } from './components/DateItem';
 import { DescriptionItem } from './components/DescriptionItem';
 import { InvoiceItem } from './components/InvoiceItem';
@@ -30,7 +30,7 @@ export const SingleShipmentPage = () => {
   return (
     <DashboardLayout>
       {!shipment || isLoading ? (
-        <LoadingPage />
+        <ContentLoader />
       ) : (
         <Box>
           <MainContent shipment={shipment} />
