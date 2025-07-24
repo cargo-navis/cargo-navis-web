@@ -1,49 +1,37 @@
-import type { Client } from '@/lib/api/clients.d';
-import type { Employee } from '@/lib/api/employees.d';
 import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
+import { useClients, useDrivers } from '@/lib/hooks';
 import { Box, DisplayIf, FlexLayout } from '@/ui';
-import type { SelectValue } from '@/ui/components/Select/Select';
 
 import { invoiceStatusConfig, loadStatusConfig } from '../const';
+import { useShipmentsFiltersContext } from '../providers/ShipmentsFiltersProvider';
 import { FilterTag } from './FilterTag';
 
-interface FilterTagsProps {
-  selectedClient: Client | undefined;
-  selectedDriver: Employee | undefined;
-  selectedLoadingStatus: SelectValue;
-  selectedInvoiceStatus: SelectValue;
-  loadingDateFrom: string;
-  loadingDateTo: string;
-  unloadingDateFrom: string;
-  unloadingDateTo: string;
-  onClientChange(clientId: SelectValue): void;
-  onDriverChange(driverId: SelectValue): void;
-  onLoadingStatusChange(loadingStatus: SelectValue): void;
-  onInvoiceStatusChange(invoiceStatus: SelectValue): void;
-  onLoadingDateFromChange(date: string): void;
-  onLoadingDateToChange(date: string): void;
-  onUnloadingDateFromChange(date: string): void;
-  onUnloadingDateToChange(date: string): void;
-}
+export const FilterTags = () => {
+  const {
+    selectedClientId,
+    selectedDriverId,
+    selectedLoadingStatus,
+    selectedInvoiceStatus,
+    loadingDateFrom,
+    loadingDateTo,
+    unloadingDateFrom,
+    unloadingDateTo,
+    onClientChange,
+    onDriverChange,
+    onLoadingStatusChange,
+    onInvoiceStatusChange,
+    onLoadingDateFromChange,
+    onLoadingDateToChange,
+    onUnloadingDateFromChange,
+    onUnloadingDateToChange,
+  } = useShipmentsFiltersContext();
 
-export const FilterTags = ({
-  selectedClient,
-  selectedDriver,
-  selectedLoadingStatus,
-  selectedInvoiceStatus,
-  loadingDateFrom,
-  loadingDateTo,
-  unloadingDateFrom,
-  unloadingDateTo,
-  onClientChange,
-  onDriverChange,
-  onLoadingStatusChange,
-  onInvoiceStatusChange,
-  onLoadingDateFromChange,
-  onLoadingDateToChange,
-  onUnloadingDateFromChange,
-  onUnloadingDateToChange,
-}: FilterTagsProps) => {
+  const { data: clients = [] } = useClients();
+  const { data: drivers = [] } = useDrivers();
+
+  const selectedClient = clients.find((client) => client.id === selectedClientId);
+  const selectedDriver = drivers.find((driver) => driver.id === selectedDriverId);
+
   // Compute labels from values
   const selectedLoadingStatusLabel = selectedLoadingStatus
     ? loadStatusConfig[selectedLoadingStatus as LoadStatus]?.label
