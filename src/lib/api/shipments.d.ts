@@ -39,6 +39,11 @@ export type GetShipmentParams = {
   loadingDateTo?: string;
   unloadingDateFrom?: string;
   unloadingDateTo?: string;
+  // Pagination parameters
+  page?: number;
+  size?: number;
+  sort?: string;
+  sortDirection?: 'asc' | 'desc';
 };
 
 export interface CreateShipmentData extends Omit<Shipment, 'id' | 'loadingAddress' | 'unloadingAddress'> {

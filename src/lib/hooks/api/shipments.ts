@@ -6,21 +6,89 @@ import {
   getShipment,
   GetShipmentParams,
   getShipments,
+  PaginatedResponse,
   Shipment,
   updateShipment,
 } from '@/lib/api';
 
 interface UseShipmentsArgs<T> {
-  select?: (data: Shipment[]) => T;
+  select?: (data: PaginatedResponse<Shipment>) => T;
   enabled?: boolean;
 }
 
-export function useShipments<TData = Shipment[]>(args?: UseShipmentsArgs<TData> & { params?: GetShipmentParams }) {
+export function useShipments<TData = PaginatedResponse<Shipment>>(
+  args?: UseShipmentsArgs<TData> & { params?: GetShipmentParams }
+) {
+  // Create a more specific query key that includes pagination parameters
+  const createQueryKey = () => {
+    if (!args?.params) return ['shipments'];
+
+    const { page, size, sort, sortDirection, ...filters } = args.params;
+
+    // Build query key with proper structure
+    const queryKey: any[] = ['shipments'];
+
+    // Add filters to query key if they exist
+    if (Object.keys(filters).length > 0) {
+      queryKey.push({ filters });
+    }
+
+    // Add pagination parameters if they exist
+    if (page !== undefined || size !== undefined || sort || sortDirection) {
+      queryKey.push({ pagination: { page, size, sort, sortDirection } });
+    }
+
+    return queryKey;
+  };
+
   return useQuery({
-    queryKey: args?.params ? ['shipments', args.params] : ['shipments'],
+    queryKey: createQueryKey(),
     queryFn: () => getShipments(args?.params),
     ...args,
     select: args?.select,
+  });
+}
+
+/**
+ * Possibly deprecate
+ *
+ * Convenience hook to get just the shipments array (for backward compatibility)
+ * @param args - Arguments for the useShipments hook
+ * @returns Shipments array
+ */
+export function useShipmentsData(args?: Omit<UseShipmentsArgs<Shipment[]>, 'select'> & { params?: GetShipmentParams }) {
+  return useShipments({
+    ...args,
+    select: (data: PaginatedResponse<Shipment>) => data.data,
+  });
+}
+
+/**
+ * Possibly deprecate
+ *
+ * Convenience hook to get pagination metadata
+ * @param args - Arguments for the useShipments hook
+ * @returns Pagination metadata
+ */
+export function useShipmentsPagination(
+  args?: Omit<
+    UseShipmentsArgs<{
+      currentPage: number;
+      pageSize: number;
+      totalElements: number;
+      totalPages: number;
+    }>,
+    'select'
+  > & { params?: GetShipmentParams }
+) {
+  return useShipments({
+    ...args,
+    select: (data: PaginatedResponse<Shipment>) => ({
+      currentPage: data.currentPage,
+      pageSize: data.pageSize,
+      totalElements: data.totalElements,
+      totalPages: data.totalPages,
+    }),
   });
 }
 

@@ -9,6 +9,7 @@ export * from './employees';
 export * from './employees.d';
 export * from './notifications';
 export * from './notifications.d';
+export * from './pagination.d';
 export * from './postalCodes';
 export * from './postalCodes.d';
 export * from './shipments';

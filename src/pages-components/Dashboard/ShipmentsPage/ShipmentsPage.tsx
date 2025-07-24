@@ -1,9 +1,11 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import type { InvoiceStatus, LoadStatus, Shipment } from '@/lib/api';
+import type { InvoiceStatus, LoadStatus } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { useQueryParamState, useShipments } from '@/lib/hooks';
 import { Box, Button, DisplayIf, FlexLayout, Heading } from '@/ui';
 
+import { BottomPaginationControls, TopPaginationControls } from './components';
+import { usePaginationQueryParamState } from './hooks';
 import { ShipmentFilters } from './ShipmentFilters';
 import { ShipmentsTable } from './ShipmentsTable';
 import { ShipmentsTableLoader } from './ShipmentsTableLoader';
@@ -38,7 +40,11 @@ export const ShipmentsPage = () => {
   const { value: unloadingDateTo, onChange: onUnloadingDateToChange } = useQueryParamState({
     paramName: 'unloadingDateTo',
   });
-  const { data: shipments, isLoading } = useShipments<Shipment[]>({
+
+  // Pagination state
+  const { page, pageSize, setPage, setPageSize, isRouterReady } = usePaginationQueryParamState();
+
+  const { data: response, isLoading } = useShipments({
     params: {
       clientId: selectedClientId ? String(selectedClientId) : undefined,
       driverId: selectedDriverId ? String(selectedDriverId) : undefined,
@@ -48,11 +54,24 @@ export const ShipmentsPage = () => {
       loadingDateTo: loadingDateTo ? String(loadingDateTo) : undefined,
       unloadingDateFrom: unloadingDateFrom ? String(unloadingDateFrom) : undefined,
       unloadingDateTo: unloadingDateTo ? String(unloadingDateTo) : undefined,
+      page: page,
+      size: pageSize,
     },
-    select: organizeSubshipments,
+    enabled: isRouterReady,
   });
 
-  const isEmpty = shipments?.length === 0;
+  // Get organized shipments and pagination info
+  const shipments = response ? organizeSubshipments(response.data) : [];
+  const paginationInfo = response
+    ? {
+        currentPage: response.currentPage,
+        pageSize: response.pageSize,
+        totalElements: response.totalElements,
+        totalPages: response.totalPages,
+      }
+    : null;
+
+  const isEmpty = !shipments || shipments.length === 0;
 
   const hasActiveFilters =
     selectedClientId ||
@@ -63,6 +82,8 @@ export const ShipmentsPage = () => {
     loadingDateTo ||
     unloadingDateFrom ||
     unloadingDateTo;
+
+  const shouldDisplayPagination = !isLoading && !isEmpty;
 
   return (
     <DashboardLayout>
@@ -95,7 +116,20 @@ export const ShipmentsPage = () => {
           onUnloadingDateToChange={onUnloadingDateToChange}
         />
       </Box>
-      <Box className="py-5 isolate">
+      <Box className="py-5">
+        {/* Top pagination controls */}
+        <DisplayIf condition={shouldDisplayPagination}>
+          {!!paginationInfo && paginationInfo.totalPages > 1 && (
+            <TopPaginationControls
+              isLoading={isLoading}
+              pageSize={pageSize}
+              paginationInfo={paginationInfo}
+              setPage={setPage}
+              setPageSize={setPageSize}
+            />
+          )}
+        </DisplayIf>
+
         {isLoading ? (
           <ShipmentsTableLoader />
         ) : isEmpty ? (
@@ -108,7 +142,15 @@ export const ShipmentsPage = () => {
             title={hasActiveFilters ? '📄 Nema naloga za odabrane filtere.' : '📄 Još nema zapisa o nalozima.'}
           />
         ) : (
-          <ShipmentsTable shipments={shipments} />
+          <FlexLayout className="flex-col gap-4 isolate">
+            <ShipmentsTable shipments={shipments} />
+            {/* Bottom pagination controls */}
+            <DisplayIf condition={shouldDisplayPagination}>
+              {!!paginationInfo && paginationInfo.totalPages > 1 && (
+                <BottomPaginationControls isLoading={isLoading} paginationInfo={paginationInfo} setPage={setPage} />
+              )}
+            </DisplayIf>
+          </FlexLayout>
         )}
       </Box>
     </DashboardLayout>

@@ -1,6 +1,7 @@
 import { backend } from '@/lib/services/backendService';
 
 import type { CreateShipmentData, GetShipmentParams, Shipment } from './';
+import type { PaginatedResponse } from './pagination.d';
 
 export enum LoadStatus {
   NotYetLoaded = 'not_yet_loaded',
@@ -18,9 +19,13 @@ export async function createShipment(data: CreateShipmentData) {
   return backend.post<Shipment>('/api/shipments', data);
 }
 
-export async function getShipments(params?: GetShipmentParams) {
-  const shipments = await backend.get<Shipment[]>('/api/shipments', { params });
-  return shipments.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+export async function getShipments(params?: GetShipmentParams): Promise<PaginatedResponse<Shipment>> {
+  const response = await backend.get<{ data: PaginatedResponse<Shipment> }>('/api/shipments', {
+    params,
+    fullResponse: true,
+  });
+
+  return response.data;
 }
 
 export async function getShipment(id: string) {
