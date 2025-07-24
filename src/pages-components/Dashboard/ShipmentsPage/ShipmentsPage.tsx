@@ -2,12 +2,16 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useHasMounted } from '@/lib/hooks/dom';
 import { Box, Button, DisplayIf, FlexLayout, Heading } from '@/ui';
 
-import { BottomPaginationControls, EmptyShipmentsTableState, TopPaginationControls } from './components';
+import {
+  BottomPaginationControls,
+  EmptyShipmentsTableState,
+  ShipmentsTableLoader,
+  TopPaginationControls,
+} from './components';
 import { usePaginationQueryParamState, useShipmentsPageData } from './hooks';
 import { ShipmentsFiltersProvider } from './providers/ShipmentsFiltersProvider';
 import { ShipmentFilters } from './ShipmentFilters';
 import { ShipmentsTable } from './ShipmentsTable';
-import { ShipmentsTableLoader } from './ShipmentsTableLoader';
 import { organizeSubshipments } from './utils';
 
 export const ShipmentsPage = () => {
