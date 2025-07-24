@@ -2,8 +2,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Box, Button, DisplayIf, FlexLayout, Heading } from '@/ui';
 
 import { BottomPaginationControls, EmptyShipmentsTableState, TopPaginationControls } from './components';
-import { usePaginationQueryParamState } from './hooks';
-import { useShipmentsPageData } from './hooks/useShipmentsPageData';
+import { usePaginationQueryParamState, useShipmentsPageData } from './hooks';
 import { ShipmentsFiltersProvider } from './providers/ShipmentsFiltersProvider';
 import { ShipmentFilters } from './ShipmentFilters';
 import { ShipmentsTable } from './ShipmentsTable';
