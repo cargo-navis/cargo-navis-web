@@ -1,4 +1,5 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { useHasMounted } from '@/lib/hooks/dom';
 import { Box, Button, DisplayIf, FlexLayout, Heading } from '@/ui';
 
 import { BottomPaginationControls, EmptyShipmentsTableState, TopPaginationControls } from './components';
@@ -10,6 +11,9 @@ import { ShipmentsTableLoader } from './ShipmentsTableLoader';
 import { organizeSubshipments } from './utils';
 
 export const ShipmentsPage = () => {
+  const isMounted = useHasMounted();
+  if (!isMounted) return null;
+
   return (
     <ShipmentsFiltersProvider>
       <DashboardLayout>
