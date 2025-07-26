@@ -1,5 +1,9 @@
 import { backend } from '../services/backendService';
 
+export async function getPushSubscriptions() {
+  return backend.get(`/api/push-subscriptions`);
+}
+
 export async function createPushSubscription(subscription: PushSubscription) {
   return backend.post('/api/push-subscriptions', {
     endpoint: subscription.endpoint,
