@@ -1,9 +1,12 @@
 import { useEffect } from 'react';
 
 import { createPushSubscription } from '../api';
+import { usePushSubscriptions } from './api/push-subscriptions';
 
 export function usePushNotificationSubscription(tenantId: string) {
   // TODO: "tenantId" is not consumed
+
+  const { data: pushSubscriptions, isLoading } = usePushSubscriptions();
 
   useEffect(() => {
     async function registerPush() {
@@ -11,7 +14,7 @@ export function usePushNotificationSubscription(tenantId: string) {
         try {
           // Register service worker
           const serviceWorkerRegistration = await navigator.serviceWorker.register(
-            './cargo-navis_push-service-worker.js'
+            '/cargo-navis_push-service-worker.js'
           );
 
           // Request notification permission
@@ -42,6 +45,8 @@ export function usePushNotificationSubscription(tenantId: string) {
       }
     }
 
-    registerPush();
-  }, [tenantId]);
+    if (!isLoading && pushSubscriptions && pushSubscriptions.length === 0) {
+      registerPush();
+    }
+  }, [isLoading, pushSubscriptions]);
 }
