@@ -1,7 +1,8 @@
 import { createContext, useContext } from 'react';
 
-import { useQueryParamState } from '@/lib/hooks';
 import { SelectValue } from '@/ui';
+
+import { useFiltersQueryParamState } from '../ShipmentFilters/hooks';
 
 export type ShipmentsFiltersContextType = {
   activeFiltersCount: number;
@@ -31,28 +32,28 @@ export const ShipmentsFiltersProvider = ({ children }: { children: React.ReactNo
     value: selectedClientId,
     onChange: onClientChange,
     onClearAll,
-  } = useQueryParamState({
+  } = useFiltersQueryParamState({
     paramName: 'clientId',
   });
-  const { value: selectedDriverId, onChange: onDriverChange } = useQueryParamState({
+  const { value: selectedDriverId, onChange: onDriverChange } = useFiltersQueryParamState({
     paramName: 'driverId',
   });
-  const { value: selectedLoadingStatus, onChange: onLoadingStatusChange } = useQueryParamState({
+  const { value: selectedLoadingStatus, onChange: onLoadingStatusChange } = useFiltersQueryParamState({
     paramName: 'loadStatus',
   });
-  const { value: selectedInvoiceStatus, onChange: onInvoiceStatusChange } = useQueryParamState({
+  const { value: selectedInvoiceStatus, onChange: onInvoiceStatusChange } = useFiltersQueryParamState({
     paramName: 'invoiceStatus',
   });
-  const { value: loadingDateFrom, onChange: onLoadingDateFromChange } = useQueryParamState({
+  const { value: loadingDateFrom, onChange: onLoadingDateFromChange } = useFiltersQueryParamState({
     paramName: 'loadingDateFrom',
   });
-  const { value: loadingDateTo, onChange: onLoadingDateToChange } = useQueryParamState({
+  const { value: loadingDateTo, onChange: onLoadingDateToChange } = useFiltersQueryParamState({
     paramName: 'loadingDateTo',
   });
-  const { value: unloadingDateFrom, onChange: onUnloadingDateFromChange } = useQueryParamState({
+  const { value: unloadingDateFrom, onChange: onUnloadingDateFromChange } = useFiltersQueryParamState({
     paramName: 'unloadingDateFrom',
   });
-  const { value: unloadingDateTo, onChange: onUnloadingDateToChange } = useQueryParamState({
+  const { value: unloadingDateTo, onChange: onUnloadingDateToChange } = useFiltersQueryParamState({
     paramName: 'unloadingDateTo',
   });
 
