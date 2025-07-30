@@ -26,11 +26,10 @@ self.addEventListener('notificationclick', (event) => {
 function extractNotificationData(data) {
   switch (data.type) {
     case 'shipment_message_accepted': {
-      const title = `CargoNavis - Nalog prihvaćen`;
-      const message = `Vozač ${data.metadata.driverName} je prihvatio nalog ${data.metadata.orderNumber}`;
-      const targetUrl = getShipmentUrl(data.metadata.shipmentId);
-
-      return { title, message, targetUrl };
+      return getShipmentAcceptedNotifData(data);
+    }
+    case 'shipment_status_changed': {
+      return getShipmentStatusChangedNotifData(data);
     }
     default:
       throw new Error('Unsupported notification type');
@@ -48,4 +47,29 @@ function dispatchNotification(title, message, targetUrl) {
     icon: '/logomark.png',
     data: { url: `${targetUrl}` },
   });
+}
+
+function getShipmentAcceptedNotifData(data) {
+  const { orderNumber, driverName, shipmentId } = data.metadata;
+
+  const title = `CargoNavis - Nalog prihvaćen`;
+  const message = `${driverName} je prihvatio nalog ${orderNumber}`;
+  const targetUrl = getShipmentUrl(shipmentId);
+
+  return { title, message, targetUrl };
+}
+
+function getShipmentStatusChangedNotifData(data) {
+  const { orderNumber, driverName, shipmentId, newStatus } = data.metadata;
+
+  const isShipmentLoaded = newStatus === 'loaded';
+  const newShipmentStatus = isShipmentLoaded ? 'utovaren' : 'istovaren';
+
+  const statusText = isShipmentLoaded ? 'utovario' : 'istovario';
+
+  const title = `CargoNavis - Nalog ${newShipmentStatus}`;
+  const message = `${driverName} je ${statusText} nalog ${orderNumber}`;
+  const targetUrl = getShipmentUrl(shipmentId);
+
+  return { title, message, targetUrl };
 }
