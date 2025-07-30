@@ -39,3 +39,6 @@ next-env.d.ts
 
 # vscode
 .vscode/
+
+# Ignore generated service worker
+/public/cargo-navis_push-service-worker.js
