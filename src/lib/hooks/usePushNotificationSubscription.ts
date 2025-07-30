@@ -3,9 +3,7 @@ import { useEffect } from 'react';
 import { createPushSubscription } from '../api';
 import { usePushSubscriptions } from './api/push-subscriptions';
 
-export function usePushNotificationSubscription(tenantId: string) {
-  // TODO: "tenantId" is not consumed
-
+export function usePushNotificationSubscription() {
   const { data: pushSubscriptions, isLoading } = usePushSubscriptions();
 
   useEffect(() => {

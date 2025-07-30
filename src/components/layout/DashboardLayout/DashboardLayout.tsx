@@ -5,7 +5,7 @@ import { Box, FlexLayout } from '@/ui';
 import { Sidebar } from './Sidebar';
 
 export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  usePushNotificationSubscription('2e1ae0a6-1a65-41e7-bce7-282c6c4284fa'); // TODO - remove tenantId
+  usePushNotificationSubscription();
 
   return (
     <FlexLayout className="h-screen">
