@@ -22,7 +22,7 @@ self.addEventListener('push', (event) => {
 
   self.registration.showNotification('CargoNavis', {
     body: 'This is a test notification',
-    icon: '/cargo-navis-logo.png',
+    icon: '/logomark.png',
     data: { url: 'http://localhost:3000/dashboard' }, // Tenant-specific URL
   });
 
