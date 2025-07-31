@@ -12,6 +12,7 @@ export * from './notifications.d';
 export * from './pagination.d';
 export * from './postalCodes';
 export * from './postalCodes.d';
+export * from './push-subscriptions';
 export * from './shipments';
 export * from './shipments.d';
 export * from './tenant';
