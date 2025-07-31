@@ -29,6 +29,7 @@ export function useShipmentsPageData() {
       unloadingDateTo: unloadingDateTo ? String(unloadingDateTo) : undefined,
       page: page,
       size: pageSize,
+      sort: 'createdAt,desc',
     },
     enabled: isRouterReady,
   });
