@@ -22,6 +22,11 @@ export function usePushNotificationSubscription() {
             return;
           }
 
+          if (!!pushSubscriptions?.length) {
+            console.log('Push subscription already exists.');
+            return;
+          }
+
           const publicVapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
           if (!publicVapidKey) {
             console.error('VAPID_PUBLIC_KEY is not set');
@@ -43,7 +48,7 @@ export function usePushNotificationSubscription() {
       }
     }
 
-    if (!isLoading && pushSubscriptions && pushSubscriptions.length === 0) {
+    if (!isLoading) {
       registerPush();
     }
   }, [isLoading, pushSubscriptions]);
