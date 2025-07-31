@@ -2,12 +2,12 @@ import { useRouter } from 'next/router';
 
 import type { SelectValue } from '@/ui/components/Select/Select';
 
-interface UseQueryParamStateOptions {
+interface UseFiltersQueryParamStateOptions {
   paramName: string;
   defaultValue?: SelectValue;
 }
 
-export const useQueryParamState = ({ paramName, defaultValue = '' }: UseQueryParamStateOptions) => {
+export const useFiltersQueryParamState = ({ paramName, defaultValue = '' }: UseFiltersQueryParamStateOptions) => {
   const router = useRouter();
   const paramValue = router.query[paramName] as SelectValue;
 
@@ -19,6 +19,9 @@ export const useQueryParamState = ({ paramName, defaultValue = '' }: UseQueryPar
     } else {
       delete query[paramName];
     }
+
+    // Upon filter change, reset pagination to first page
+    query.page = '1';
 
     void router.push(
       {

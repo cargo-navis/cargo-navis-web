@@ -28,6 +28,7 @@ export interface Shipment {
   subshipments?: Shipment[];
   createdAt: string;
   loadStatus?: LoadStatus;
+  childShipments?: Shipment[];
 }
 
 export type GetShipmentParams = {
@@ -39,6 +40,11 @@ export type GetShipmentParams = {
   loadingDateTo?: string;
   unloadingDateFrom?: string;
   unloadingDateTo?: string;
+  // Pagination parameters
+  page?: number;
+  size?: number;
+  sort?: string;
+  sortDirection?: 'asc' | 'desc';
 };
 
 export interface CreateShipmentData extends Omit<Shipment, 'id' | 'loadingAddress' | 'unloadingAddress'> {

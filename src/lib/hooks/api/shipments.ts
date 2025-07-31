@@ -1,40 +1,104 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { createShipment, deleteShipment, GetShipmentParams, getShipments, Shipment, updateShipment } from '@/lib/api';
+import {
+  createShipment,
+  deleteShipment,
+  getShipment,
+  GetShipmentParams,
+  getShipments,
+  PaginatedResponse,
+  Shipment,
+  updateShipment,
+} from '@/lib/api';
 
 interface UseShipmentsArgs<T> {
-  select?: (data: Shipment[]) => T;
+  select?: (data: PaginatedResponse<Shipment>) => T;
   enabled?: boolean;
 }
 
-export function useShipments<TData = Shipment[]>(args?: UseShipmentsArgs<TData> & { params?: GetShipmentParams }) {
+export function useShipments<TData = PaginatedResponse<Shipment>>(
+  args?: UseShipmentsArgs<TData> & { params?: GetShipmentParams }
+) {
+  // Create a more specific query key that includes pagination parameters
+  const createQueryKey = () => {
+    if (!args?.params) return ['shipments'];
+
+    const { page, size, sort, sortDirection, ...filters } = args.params;
+
+    // Build query key with proper structure
+    const queryKey: any[] = ['shipments'];
+
+    // Add filters to query key if they exist
+    if (Object.keys(filters).length > 0) {
+      queryKey.push({ filters });
+    }
+
+    // Add pagination parameters if they exist
+    if (page !== undefined || size !== undefined || sort || sortDirection) {
+      queryKey.push({ pagination: { page, size, sort, sortDirection } });
+    }
+
+    return queryKey;
+  };
+
   return useQuery({
-    queryKey: args?.params ? ['shipments', args.params] : ['shipments'],
+    queryKey: createQueryKey(),
     queryFn: () => getShipments(args?.params),
     ...args,
     select: args?.select,
   });
 }
 
-export function useShipment(id: string) {
+/**
+ * Possibly deprecate
+ *
+ * Convenience hook to get just the shipments array (for backward compatibility)
+ * @param args - Arguments for the useShipments hook
+ * @returns Shipments array
+ */
+export function useShipmentsData(args?: Omit<UseShipmentsArgs<Shipment[]>, 'select'> & { params?: GetShipmentParams }) {
   return useShipments({
-    enabled: !!id,
-    select: (shipments) => {
-      return shipments.find((c) => c.id.toString() === id);
-    },
+    ...args,
+    select: (data: PaginatedResponse<Shipment>) => data.data,
   });
 }
 
-// export function useShipment(id?: string) {
-//   return useQuery({
-//     queryKey: ['shipment', id],
-//     queryFn: async () => {
-//       if (!id) return null;
-//       return getShipment(id);
-//     },
-//     enabled: !!id,
-//   });
-// }
+/**
+ * Possibly deprecate
+ *
+ * Convenience hook to get pagination metadata
+ * @param args - Arguments for the useShipments hook
+ * @returns Pagination metadata
+ */
+export function useShipmentsPagination(
+  args?: Omit<
+    UseShipmentsArgs<{
+      currentPage: number;
+      pageSize: number;
+      totalElements: number;
+      totalPages: number;
+    }>,
+    'select'
+  > & { params?: GetShipmentParams }
+) {
+  return useShipments({
+    ...args,
+    select: (data: PaginatedResponse<Shipment>) => ({
+      currentPage: data.currentPage,
+      pageSize: data.pageSize,
+      totalElements: data.totalElements,
+      totalPages: data.totalPages,
+    }),
+  });
+}
+
+export function useShipment(id?: string) {
+  return useQuery({
+    queryKey: ['shipment', id],
+    queryFn: async () => getShipment(id as string),
+    enabled: !!id,
+  });
+}
 
 export function useCreateShipment() {
   const queryClient = useQueryClient();
@@ -55,15 +119,14 @@ export function useUpdateShipment() {
       return updateShipment(id, shipmentData);
     },
     onMutate: (data) => {
-      const prevShipments = queryClient.getQueryData<Shipment[]>(['shipments']);
       const prevShipment = queryClient.getQueryData<Shipment>(['shipment', data.id]);
 
-      queryClient.setQueryData(['shipments'], (oldData: Shipment[] | undefined) => {
+      queryClient.setQueryData(['shipment', data.id], (oldData: Shipment | undefined) => {
         if (!oldData) return oldData;
-        return oldData.map((shipment) => (shipment.id === data.id ? { ...shipment, ...data } : shipment));
+        return { ...oldData, ...data };
       });
 
-      return { prevShipments, prevShipment };
+      return { prevShipment };
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['shipment', variables.id] });
@@ -71,9 +134,8 @@ export function useUpdateShipment() {
     },
     onError: (_, data, context) => {
       if (!context) return;
-      const { prevShipments, prevShipment } = context;
+      const { prevShipment } = context;
 
-      queryClient.setQueryData(['shipments'], prevShipments);
       queryClient.setQueryData(['shipment', data.id], prevShipment);
     },
   });
