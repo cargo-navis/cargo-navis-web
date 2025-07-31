@@ -37,7 +37,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         size: 140,
         cell: (info) => {
           const row = info.row;
-          const hasSubshipments = (info.row.original.subshipments?.length ?? 0) > 0;
+          const hasSubshipments = (info.row.original.childShipments?.length ?? 0) > 0;
           const depth = row.depth;
           const isExpanded = row.getIsExpanded();
           const shipment = info.row.original;
@@ -354,7 +354,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
   };
 
   const getSubRows = (row: Shipment) => {
-    return row.subshipments || [];
+    return row.childShipments || [];
   };
 
   // Add isWarning flag to shipments missing vehicleId or driverId
@@ -364,7 +364,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
     return shipments.map((shipment) => {
       const isMissingVehicleOrDriver = !shipment.vehicleId || !shipment.driverId;
 
-      const subshipments = shipment.subshipments?.map((s) => ({
+      const subshipments = shipment.childShipments?.map((s) => ({
         ...s,
         isSuccess: s.invoiceStatus === InvoiceStatus.Paid && s.loadStatus === LoadStatus.Unloaded,
       }));

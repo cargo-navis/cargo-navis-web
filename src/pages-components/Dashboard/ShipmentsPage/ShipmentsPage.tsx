@@ -12,7 +12,6 @@ import { usePaginationQueryParamState, useShipmentsPageData } from './hooks';
 import { ShipmentsFiltersProvider } from './providers/ShipmentsFiltersProvider';
 import { ShipmentFilters } from './ShipmentFilters';
 import { ShipmentsTable } from './ShipmentsTable';
-import { organizeSubshipments } from './utils';
 
 export const ShipmentsPage = () => {
   const isMounted = useHasMounted();
@@ -40,7 +39,7 @@ const ShipmentPageContent = () => {
   const { pageSize, setPage, setPageSize } = usePaginationQueryParamState();
   const { data: response, isLoading } = useShipmentsPageData();
 
-  const shipments = response ? organizeSubshipments(response.data) : [];
+  const shipments = response?.data ?? [];
   const paginationInfo = response
     ? {
         currentPage: response.currentPage,

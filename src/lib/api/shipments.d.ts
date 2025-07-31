@@ -28,6 +28,7 @@ export interface Shipment {
   subshipments?: Shipment[];
   createdAt: string;
   loadStatus?: LoadStatus;
+  childShipments?: Shipment[];
 }
 
 export type GetShipmentParams = {
