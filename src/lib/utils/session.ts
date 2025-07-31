@@ -24,3 +24,22 @@ export function clearAuthCookies() {
   deleteCookie(ACCESS_TOKEN_KEY);
   // deleteCookie(REFRESH_TOKEN_KEY);
 }
+
+export async function clearServiceWorkerOnSignout() {
+  if ('serviceWorker' in navigator) {
+    try {
+      // Get all service worker registrations
+      const registrations = await navigator.serviceWorker.getRegistrations();
+
+      debugger;
+
+      // Unregister all service workers
+      for (const registration of registrations) {
+        await registration.unregister();
+        console.info('Service worker unregistered on signout');
+      }
+    } catch (error) {
+      console.error('Failed to unregister service worker:', error);
+    }
+  }
+}

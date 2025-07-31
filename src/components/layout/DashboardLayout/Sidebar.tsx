@@ -2,16 +2,19 @@ import Link from 'next/link';
 
 import { AppMenu } from '@/components/AppMenu';
 import { useCurrentTenant } from '@/lib/hooks';
-import { clearAuthCookies } from '@/lib/utils/session';
+import { clearAuthCookies, clearServiceWorkerOnSignout } from '@/lib/utils/session';
 import { Box, Divider, FlexLayout, Heading, Icon, Text } from '@/ui';
 
 import { links } from './data';
 import { NavItem } from './NavItem';
 
 export function Sidebar() {
-  function handleSignOut() {
+  async function handleSignOut() {
     const answer = confirm('Želite se odjaviti?');
     if (!answer) return;
+
+    // Clear service worker and push subscriptions
+    await clearServiceWorkerOnSignout();
 
     clearAuthCookies();
     window.location.pathname = '/login';
