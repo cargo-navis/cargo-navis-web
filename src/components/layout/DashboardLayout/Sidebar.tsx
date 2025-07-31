@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { AppMenu } from '@/components/AppMenu';
 import { useCurrentTenant } from '@/lib/hooks';
-import { clearAuthCookies, clearServiceWorkerOnSignout } from '@/lib/utils/session';
+import { clearAuthCookies, clearServiceWorkerOnLogout } from '@/lib/utils/session';
 import { Box, Divider, FlexLayout, Heading, Icon, Text } from '@/ui';
 
 import { links } from './data';
@@ -14,7 +14,7 @@ export function Sidebar() {
     if (!answer) return;
 
     // Clear service worker and push subscriptions
-    await clearServiceWorkerOnSignout();
+    await clearServiceWorkerOnLogout();
 
     clearAuthCookies();
     window.location.pathname = '/login';
