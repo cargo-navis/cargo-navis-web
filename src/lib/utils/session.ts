@@ -25,13 +25,11 @@ export function clearAuthCookies() {
   // deleteCookie(REFRESH_TOKEN_KEY);
 }
 
-export async function clearServiceWorkerOnSignout() {
+export async function clearServiceWorkerOnLogout() {
   if ('serviceWorker' in navigator) {
     try {
       // Get all service worker registrations
       const registrations = await navigator.serviceWorker.getRegistrations();
-
-      debugger;
 
       // Unregister all service workers
       for (const registration of registrations) {

@@ -9,7 +9,7 @@ import { links } from './data';
 import { NavItem } from './NavItem';
 
 export function Sidebar() {
-  async function handleSignOut() {
+  async function handleLogout() {
     const answer = confirm('Želite se odjaviti?');
     if (!answer) return;
 
@@ -43,7 +43,7 @@ export function Sidebar() {
         <NavItem navLink={{ name: 'Postavke', href: '/dashboard/settings', icon: 'Cog6ToothIcon' }} />
         <FlexLayout
           className="group cursor-pointer h-[48px] rounded-s p-3 text-sm font-medium hover:bg-light-50 hover:text-teal-900 md:flex-none md:p-2 md:px-3"
-          onClick={handleSignOut}
+          onClick={handleLogout}
         >
           <FlexLayout className="items-center justify-start gap-2 group-focus:translate-x-[4px] group-hover:translate-x-[4px] transition-transform">
             <Icon icon="ArrowLeftStartOnRectangleIcon" size="l" />
