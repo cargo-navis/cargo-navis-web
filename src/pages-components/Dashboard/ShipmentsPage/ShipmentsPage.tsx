@@ -57,7 +57,7 @@ const ShipmentPageContent = () => {
     <Box className="py-5">
       {/* Top pagination controls */}
       <DisplayIf condition={shouldDisplayPagination}>
-        {!!paginationInfo && paginationInfo.totalPages > 1 && (
+        {!!paginationInfo && (
           <TopPaginationControls
             isLoading={isLoading}
             pageSize={pageSize}
@@ -77,7 +77,7 @@ const ShipmentPageContent = () => {
           <ShipmentsTable shipments={shipments} />
           {/* Bottom pagination controls */}
           <DisplayIf condition={shouldDisplayPagination}>
-            {!!paginationInfo && paginationInfo.totalPages > 1 && (
+            {!!paginationInfo && (
               <BottomPaginationControls isLoading={isLoading} paginationInfo={paginationInfo} setPage={setPage} />
             )}
           </DisplayIf>
