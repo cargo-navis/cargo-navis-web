@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
+import { FormCheckbox, FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { FormTextarea } from '@/lib/components/form/FormTextarea';
 import { roundLdmValue } from '@/lib/utils/math';
 import { palleteOptions, palleteValues } from '@/lib/utils/palletes';
@@ -115,9 +115,25 @@ const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => {
   const { watch, setValue } = useFormContext();
   const length = watch(`cargo.${index}.metadata.length`);
   const width = watch(`cargo.${index}.metadata.width`);
+
+  const hasKoleteFieldName = `cargo.${index}.metadata.hasKolete`;
+  const palleteAmountFieldName = `cargo.${index}.metadata.palleteAmount`;
+
+  const hasKolete = watch(hasKoleteFieldName);
+  const palleteAmount = watch(palleteAmountFieldName);
+
   const isInitialMount = useRef(true);
 
   const ldmValue = length && width ? roundLdmValue((length * width) / 2.4) : 0;
+
+  // Sync palleteAmount when hasKolete changes
+  useEffect(() => {
+    if (hasKolete && !palleteAmount) {
+      setValue(palleteAmountFieldName, 1);
+    } else if (!hasKolete) {
+      setValue(palleteAmountFieldName, undefined);
+    }
+  }, [hasKolete, palleteAmount, setValue, palleteAmountFieldName]);
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -163,6 +179,20 @@ const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => {
             type="number"
           />
         </Box>
+      </FlexLayout>
+      <FlexLayout className="gap-4 items-center h-[96px] -my-4">
+        <FormCheckbox label="Kolete" name={hasKoleteFieldName} />
+        {hasKolete && (
+          <Box className="flex-1">
+            <FormTextInput
+              label="Broj paleta"
+              min="1"
+              name={palleteAmountFieldName}
+              placeholder="Unesi broj paleta"
+              type="number"
+            />
+          </Box>
+        )}
       </FlexLayout>
       <FormTextInput label="Dužni metri (LDM)" name={`cargo.${index}.ldm`} type="number" />
     </FlexLayout>

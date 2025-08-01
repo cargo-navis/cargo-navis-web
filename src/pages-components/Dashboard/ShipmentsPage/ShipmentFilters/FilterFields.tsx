@@ -1,55 +1,36 @@
-import type { Client } from '@/lib/api/clients.d';
-import type { Employee } from '@/lib/api/employees.d';
 import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
+import { useClients, useDrivers } from '@/lib/hooks';
 import { mapEmployeesToOptions } from '@/lib/utils/employees';
 import { Box, FlexLayout } from '@/ui';
-import type { SelectValue } from '@/ui/components/Select/Select';
 import { DatepickerWithLabels, SingleSelectWithLabels } from '@/ui/hocs';
 
 import { invoiceStatusConfig, loadStatusConfig } from '../const';
+import { useShipmentsFiltersContext } from '../providers/ShipmentsFiltersProvider';
 
-interface FilterFieldsProps {
-  clients: Client[];
-  drivers: Employee[];
-  selectedClientId: SelectValue;
-  selectedDriverId: SelectValue;
-  selectedLoadingStatus: SelectValue;
-  selectedInvoiceStatus: SelectValue;
-  loadingDateFrom: string;
-  loadingDateTo: string;
-  unloadingDateFrom: string;
-  unloadingDateTo: string;
-  onClientChange(clientId: SelectValue): void;
-  onDriverChange(driverId: SelectValue): void;
-  onLoadingStatusChange(loadingStatus: SelectValue): void;
-  onInvoiceStatusChange(invoiceStatus: SelectValue): void;
-  onLoadingDateFromChange(date: string): void;
-  onLoadingDateToChange(date: string): void;
-  onUnloadingDateFromChange(date: string): void;
-  onUnloadingDateToChange(date: string): void;
-}
+export const FilterFields = () => {
+  const {
+    selectedClientId,
+    selectedDriverId,
+    selectedLoadingStatus,
+    selectedInvoiceStatus,
+    loadingDateFrom,
+    loadingDateTo,
+    unloadingDateFrom,
+    unloadingDateTo,
+    onClientChange,
+    onDriverChange,
+    onLoadingStatusChange,
+    onInvoiceStatusChange,
+    onLoadingDateFromChange,
+    onLoadingDateToChange,
+    onUnloadingDateFromChange,
+    onUnloadingDateToChange,
+  } = useShipmentsFiltersContext();
 
-export const FilterFields = ({
-  clients,
-  drivers,
-  selectedClientId,
-  selectedDriverId,
-  selectedLoadingStatus,
-  selectedInvoiceStatus,
-  loadingDateFrom,
-  loadingDateTo,
-  unloadingDateFrom,
-  unloadingDateTo,
-  onClientChange,
-  onDriverChange,
-  onLoadingStatusChange,
-  onInvoiceStatusChange,
-  onLoadingDateFromChange,
-  onLoadingDateToChange,
-  onUnloadingDateFromChange,
-  onUnloadingDateToChange,
-}: FilterFieldsProps) => {
+  const { data: clients = [] } = useClients();
+  const { data: drivers = [] } = useDrivers();
+
   const clientOptions = clients.map((client) => ({
     value: client.id,
     label: client.name,

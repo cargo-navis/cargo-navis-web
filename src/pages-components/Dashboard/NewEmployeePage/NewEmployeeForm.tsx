@@ -61,6 +61,8 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
 
       if (errorMessage === emailTakenException) {
         showErrorToast({ title: `Korisnik s email adresom "${values.email}" već postoji` });
+      } else if (errorMessage === 'Account with the same email or phone number already exists') {
+        showErrorToast({ title: `Korisnik s ovom email adresom ili telefonom već postoji` });
       } else {
         showErrorToast({ title: `Greška s unosom zaposlenika. Pokušajte ponovno.` });
       }

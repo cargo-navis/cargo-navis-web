@@ -31,11 +31,21 @@ export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index }) => {
             <Text variant="text-l">{`${cargo.metadata.palleteAmount} x ${palleteNameMap[cargo.metadata.palleteType]}`}</Text>
           </FlexLayout>
         ) : (
-          <FlexLayout className="flex-col">
-            <Text color="text-color-3" variant="text-s-medium">
-              Dimenzije
-            </Text>
-            <Text variant="text-l">{`${cargo.metadata?.length}m x ${cargo.metadata?.width}m x ${cargo.metadata?.height}m`}</Text>
+          <FlexLayout className="gap-4">
+            <FlexLayout className="flex-col grow">
+              <Text color="text-color-3" variant="text-s-medium">
+                Dimenzije
+              </Text>
+              <Text variant="text-l">{`${cargo.metadata?.length}m x ${cargo.metadata?.width}m x ${cargo.metadata?.height}m`}</Text>
+            </FlexLayout>
+            {cargo.metadata?.palleteAmount && (
+              <FlexLayout className="flex-col grow">
+                <Text color="text-color-3" variant="text-s-medium">
+                  Palete
+                </Text>
+                <Text variant="text-l">{cargo.metadata.palleteAmount}</Text>
+              </FlexLayout>
+            )}
           </FlexLayout>
         )}
         <FlexLayout className="flex-col">

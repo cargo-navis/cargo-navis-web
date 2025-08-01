@@ -38,7 +38,6 @@ export const MenuItemContent = React.forwardRef<any, Omit<MenuItemProps, 'onClic
 
     const content = (
       <FlexLayout
-        as={href ? 'a' : 'div'}
         className={clsx(
           'px-4 py-2 gap-3 data-[disabled]:opacity-40 data-[disabled]:cursor-auto data-[highlighted]:outline-none',
           itemColor,

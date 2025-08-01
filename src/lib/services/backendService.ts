@@ -5,8 +5,12 @@ import { clearAuthCookies } from '@/lib/utils/session';
 
 // import { AuthResponse } from '~/apis';
 
-type AxiosFunction = <T>(url: string, config?: AxiosRequestConfig) => Promise<T>;
-type AxiosDataFunction = <T>(url: string, data?: any, config?: AxiosRequestConfig) => Promise<T>;
+type AxiosFunction = <T>(url: string, config?: AxiosRequestConfig & { fullResponse?: boolean }) => Promise<T>;
+type AxiosDataFunction = <T>(
+  url: string,
+  data?: any,
+  config?: AxiosRequestConfig & { fullResponse?: boolean }
+) => Promise<T>;
 
 type OriginalRequest = InternalAxiosRequestConfig & { _doNotRefresh: boolean; _ignoreRedirect: boolean };
 

@@ -1,17 +1,20 @@
 import Link from 'next/link';
 
-import { AlertMenu } from '@/components/AlertMenu';
+import { AppMenu } from '@/components/AppMenu';
 import { useCurrentTenant } from '@/lib/hooks';
-import { clearAuthCookies } from '@/lib/utils/session';
+import { clearAuthCookies, clearServiceWorkerOnLogout } from '@/lib/utils/session';
 import { Box, Divider, FlexLayout, Heading, Icon, Text } from '@/ui';
 
 import { links } from './data';
 import { NavItem } from './NavItem';
 
 export function Sidebar() {
-  function handleSignOut() {
+  async function handleLogout() {
     const answer = confirm('Želite se odjaviti?');
     if (!answer) return;
+
+    // Clear service worker and push subscriptions
+    await clearServiceWorkerOnLogout();
 
     clearAuthCookies();
     window.location.pathname = '/login';
@@ -29,7 +32,7 @@ export function Sidebar() {
         <Box className="grow">
           <Divider bgColor="bg-teal-900" />
         </Box>
-        <AlertMenu />
+        <AppMenu />
       </FlexLayout>
       <FlexLayout as="nav" className="flex-col flex-grow gap-2">
         {links.map((l) => (
@@ -40,7 +43,7 @@ export function Sidebar() {
         <NavItem navLink={{ name: 'Postavke', href: '/dashboard/settings', icon: 'Cog6ToothIcon' }} />
         <FlexLayout
           className="group cursor-pointer h-[48px] rounded-s p-3 text-sm font-medium hover:bg-light-50 hover:text-teal-900 md:flex-none md:p-2 md:px-3"
-          onClick={handleSignOut}
+          onClick={handleLogout}
         >
           <FlexLayout className="items-center justify-start gap-2 group-focus:translate-x-[4px] group-hover:translate-x-[4px] transition-transform">
             <Icon icon="ArrowLeftStartOnRectangleIcon" size="l" />
