@@ -43,3 +43,7 @@ export async function deleteShipment(id: string) {
 export async function getOrderNumber() {
   return backend.get<string>('api/shipments/next-order-number');
 }
+
+export async function sendShipmentToDriver(id: string, driverId: string, sentToDriver: boolean) {
+  return updateShipment(id, { driverId, sentToDriver });
+}

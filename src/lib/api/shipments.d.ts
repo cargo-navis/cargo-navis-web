@@ -29,6 +29,7 @@ export interface Shipment {
   createdAt: string;
   loadStatus?: LoadStatus;
   childShipments?: Shipment[];
+  sentToDriver?: boolean;
 }
 
 export type GetShipmentParams = {

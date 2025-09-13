@@ -5,7 +5,7 @@ import type { IconSize } from '@/ui';
 import type { TextVariant } from '@/ui/theme/fontSizes';
 
 export const sizesMap: Record<string, { textVariant: TextVariant; iconSize: IconSize }> = {
-  s: { textVariant: 'text-xxs-medium', iconSize: 'm' },
+  s: { textVariant: 'text-xxs-medium', iconSize: 's' },
   m: { textVariant: 'text-s-medium', iconSize: 'm' },
   l: { textVariant: 'text-m-medium', iconSize: 'l' },
 };
