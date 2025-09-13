@@ -7,6 +7,8 @@ export const SendToDriver = ({ shipment }: { shipment: Shipment }) => {
   const { mutateAsync: sendToDriver, isPending } = useSendShipmentToDriver(shipment.id);
   const { data: driver } = useEmployee(shipment.driverId as string);
 
+  if (!driver?.messageChannel) return null;
+
   async function handleSendToDriver() {
     try {
       await sendToDriver({ driverId: shipment.driverId as string, sentToDriver: true });
