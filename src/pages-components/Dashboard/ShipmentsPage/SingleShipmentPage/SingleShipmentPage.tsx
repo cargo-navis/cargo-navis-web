@@ -18,6 +18,7 @@ import { DateItem } from './components/DateItem';
 import { DescriptionItem } from './components/DescriptionItem';
 import { InvoiceItem } from './components/InvoiceItem';
 import { LoadStatusProgress } from './components/LoadStatusProgress';
+import { SendToDriver } from './components/SendToDriver';
 import { ShipmentActions } from './components/ShipmentActions';
 import type { CargoWithMetadata } from './components/types';
 
@@ -116,6 +117,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                   </Text>
                 </Link>
               )}
+              <SendToDriver shipment={shipment} />
             </FlexLayout>
             <FlexLayout className="items-baseline justify-between">
               {shouldRenderAgencyPill ? (

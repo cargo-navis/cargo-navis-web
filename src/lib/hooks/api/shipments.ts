@@ -160,9 +160,9 @@ export function useSendShipmentToDriver(id: string) {
   return useMutation({
     mutationFn: (data: { driverId: string; sentToDriver: boolean }) =>
       sendShipmentToDriver(id, data.driverId, data.sentToDriver),
-    onSuccess: () => {
+    onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['shipments'] });
-      queryClient.invalidateQueries({ queryKey: ['shipment', id] });
+      await queryClient.invalidateQueries({ queryKey: ['shipment', id] });
     },
   });
 }
