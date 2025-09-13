@@ -7,6 +7,7 @@ import {
   GetShipmentParams,
   getShipments,
   PaginatedResponse,
+  sendShipmentToDriver,
   Shipment,
   updateShipment,
 } from '@/lib/api';
@@ -146,6 +147,19 @@ export function useDeleteShipment(id: string) {
 
   return useMutation({
     mutationFn: () => deleteShipment(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['shipments'] });
+      queryClient.invalidateQueries({ queryKey: ['shipment', id] });
+    },
+  });
+}
+
+export function useSendShipmentToDriver(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: { driverId: string; sentToDriver: boolean }) =>
+      sendShipmentToDriver(id, data.driverId, data.sentToDriver),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['shipments'] });
       queryClient.invalidateQueries({ queryKey: ['shipment', id] });
