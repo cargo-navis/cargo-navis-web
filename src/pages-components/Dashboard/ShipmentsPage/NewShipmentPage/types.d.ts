@@ -43,6 +43,7 @@ export interface ShipmentFields {
   price?: number;
   orderNumber: string;
   cargo: Cargo[];
+  sentToDriver?: boolean;
 }
 
 export interface Cargo {
