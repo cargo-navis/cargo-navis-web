@@ -1,6 +1,7 @@
-import { FormSingleSelect } from '@/lib/components/form';
+import { FormCheckbox, FormSingleSelect } from '@/lib/components/form';
 import { useDrivers } from '@/lib/hooks';
 import { mapEmployeesToOptions } from '@/lib/utils/employees';
+import { Box, FlexLayout } from '@/ui';
 
 import { useAgencyFieldReset } from './hooks';
 
@@ -16,13 +17,18 @@ export const DriverField = () => {
   }
 
   return (
-    <FormSingleSelect
-      isClearable
-      isSearchable
-      label="Vozač"
-      name="driverId"
-      options={driverOptions}
-      placeholder="Odaberi vozača..."
-    />
+    <FlexLayout className="flex-col">
+      <FormSingleSelect
+        isClearable
+        isSearchable
+        label="Vozač"
+        name="driverId"
+        options={driverOptions}
+        placeholder="Odaberi vozača..."
+      />
+      <Box className="-mt-2">
+        <FormCheckbox label="Automatski poslati nalog vozaču" name="sentToDriver" />
+      </Box>
+    </FlexLayout>
   );
 };

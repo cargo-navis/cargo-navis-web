@@ -264,6 +264,7 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
     unloadingDueDate,
     unloadingDescription,
     cargo,
+    sentToDriver,
   } = formData;
 
   const payload: Partial<Omit<CreateShipmentData, 'id'>> = {};
@@ -279,6 +280,7 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
   if ('isAgencyUse' in formData) payload.isAgencyUse = isAgencyUse;
   if ('transportContractorId' in formData) payload.transportContractorId = transportContractorId;
   if ('price' in formData) payload.price = price || 0;
+  if ('sentToDriver' in formData) payload.sentToDriver = sentToDriver;
 
   // Handle addresses only if they exist in formData
   if (loadingAddress?.streetName && loadingAddress?.postalCodeId?.value) {
