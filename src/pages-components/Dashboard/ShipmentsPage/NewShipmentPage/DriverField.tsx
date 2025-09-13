@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { FormCheckbox, FormSingleSelect } from '@/lib/components/form';
@@ -13,11 +14,15 @@ export const DriverField = () => {
 
   const isAgencyUse = useAgencyFieldReset('driverId');
 
-  const { watch } = useFormContext();
+  const { watch, resetField } = useFormContext();
   const driverId = watch('driverId');
 
   const selectedDriver = drivers.find((driver) => driver.id === driverId);
   const isCheckboxDisplayed = !!selectedDriver?.messageChannel;
+
+  useEffect(() => {
+    resetField('sentToDriver');
+  }, [driverId]);
 
   // Hide the component completely when isAgencyUse is true
   if (isAgencyUse) {
