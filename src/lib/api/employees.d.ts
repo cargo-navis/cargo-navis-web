@@ -7,6 +7,11 @@ export enum DriverLicenceEnum {
   CE = 'CE',
 }
 
+export enum MessageChannelEnum {
+  WHATSAPP = 'whatsapp',
+  // VIBER = 'viber',
+}
+
 export interface Employee {
   id: string;
   firstName: string;
@@ -32,6 +37,7 @@ export interface Employee {
   residenceAddress?: string;
   driverTachographCardId?: string;
   driverTachographCardExpiryDate?: string;
+  messageChannel?: MessageChannelEnum | null;
 }
 
 export enum GenderEnum {

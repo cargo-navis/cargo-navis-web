@@ -44,8 +44,29 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const isSubshipment = depth !== 0;
           const isTenantTransporter = shipment.transportContractorId === tenant?.id;
           const isAgencyUse = shipment.isAgencyUse;
-          const isMissingVehicleOrDriver = !shipment.vehicleId || !shipment.driverId;
-          const shouldShowWarning = !isSubshipment && isMissingVehicleOrDriver && isTenantTransporter && !isAgencyUse;
+          const driver = employees.find((e) => e.id === shipment?.driverId);
+          const hasMessageChannel = !!driver?.messageChannel;
+          const isShipmentSentToDriver = shipment.sentToDriver;
+
+          const warningMessages: string[] = [];
+          const canRenderWarning = !isSubshipment && !isAgencyUse;
+
+          // Check for missing vehicle
+          if (canRenderWarning && !shipment.vehicleId && isTenantTransporter) {
+            warningMessages.push('Vozilo nije dodijeljeno');
+          }
+
+          // Check for missing driver
+          if (canRenderWarning && !shipment.driverId && isTenantTransporter) {
+            warningMessages.push('Vozač nije dodijeljen');
+          }
+
+          // Check if shipment not sent to driver
+          if (canRenderWarning && !isShipmentSentToDriver && hasMessageChannel) {
+            warningMessages.push('Nalog nije poslan vozaču');
+          }
+
+          const warningMessage = warningMessages.join('\n');
 
           return (
             <FlexLayout className="items-center py-2 group-hover/row:text-teal-500 gap-2">
@@ -72,17 +93,21 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                     </Box>
                   )}
                   <Text variant="text-s-medium">{info.getValue()}</Text>
-                  {shouldShowWarning && (
+                  {!!warningMessage.length && (
                     <Tooltip
                       content={
-                        <Box className="px-1">
-                          <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
-                            {!shipment.vehicleId && !shipment.driverId
-                              ? 'Vozilo i vozač još nisu dodijeljeni'
-                              : !shipment.vehicleId
-                                ? 'Vozilo još nije dodijeljeno'
-                                : 'Vozač još nije dodijeljen'}
-                          </Text>
+                        <Box as="ul" className="px-1 list-disc">
+                          {warningMessages.map((message) => (
+                            <Text
+                              as="li"
+                              className="whitespace-nowrap ml-3"
+                              color="text-light-50"
+                              key={message}
+                              variant="text-xs"
+                            >
+                              {message}
+                            </Text>
+                          ))}
                         </Box>
                       }
                     >

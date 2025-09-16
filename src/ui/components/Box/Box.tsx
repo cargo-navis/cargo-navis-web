@@ -13,7 +13,7 @@ export const Box = React.forwardRef<any, BoxProps>(
     const Component = as;
     return (
       <Component
-        className={clsx(className, isDisabled && 'no-interactions', !isDisabled && onClick && 'cursor-pointer')}
+        className={clsx(className, isDisabled && 'pointer-events-none', !isDisabled && onClick && 'cursor-pointer')}
         ref={ref}
         tabIndex={onKeyDown && !isDisabled ? 0 : undefined}
         onClick={onClick && !isDisabled ? onClick : undefined}

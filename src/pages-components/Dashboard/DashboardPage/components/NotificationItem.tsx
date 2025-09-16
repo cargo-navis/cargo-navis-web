@@ -2,7 +2,8 @@ import Link from 'next/link';
 
 import { getNotificationItemData } from '@/components/AppMenu/utils/notifications';
 import { Notification } from '@/lib/api';
-import { Box, FlexLayout, Icon } from '@/ui';
+import { getDateTimeInLocalTimezone } from '@/lib/utils/date';
+import { Box, FlexLayout, Icon, Text } from '@/ui';
 
 interface NotificationItemProps {
   notification: Notification;
@@ -22,7 +23,12 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({ notification
     >
       <FlexLayout className="flex-start gap-3 p-4">
         <Icon className="mt-[1px]" color="text-blue-500 dark:text-blue-300" icon="InformationCircleIcon" size="l" />
-        <FlexLayout className="flex-col grow gap-1">{descriptionNode}</FlexLayout>
+        <FlexLayout className="flex-col grow gap-1">
+          {descriptionNode}
+          <Text color="text-color-3" variant="text-xxs">
+            {getDateTimeInLocalTimezone(notification.createdAt)}
+          </Text>
+        </FlexLayout>
         <Box
           className={`
             self-center 

@@ -27,7 +27,6 @@ export const FilterHeader = ({
       <DisplayIf condition={hasActiveFilters}>
         <TextButton
           iconLeft="TrashIcon"
-          size="s"
           text="Očisti filtere"
           variant="secondary"
           onClick={(e) => {
