@@ -85,7 +85,13 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
               <FormTextInput label="OIB" name="nationalCompanyRegisterId" rules={{ required: true }} />
             </Box>
           </FlexLayout>
-          <FormTextInput label="Valuta plaćanja" name="termsOfPayment" rules={{ required: true }} />
+          <FormTextInput
+            label="Valuta plaćanja (u danima)"
+            min="0"
+            name="termsOfPayment"
+            rules={{ required: true }}
+            type="number"
+          />
           <FlexLayout className="flex-1 flex-col gap-2">
             <Text color="text-color-3" variant="text-xxs-medium">
               Adresa sjedišta
