@@ -2,6 +2,7 @@ export * from './FormAsyncSelect';
 export * from './FormCheckbox';
 export * from './FormCheckboxGroup';
 export * from './FormDatepicker';
+export * from './FormPhoneNumberInput';
 export * from './FormRadioGroup';
 export * from './FormSingleSelect';
 export * from './FormSwitch';

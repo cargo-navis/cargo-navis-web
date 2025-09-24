@@ -1,6 +1,7 @@
 import { FormState } from 'react-hook-form';
 
 import { MessageChannelEnum } from '@/lib/api/employees.d';
+import { PhoneNumberValue } from '@/lib/components/PhoneNumberInput';
 import { replaceEmptyStringsWithNull } from '@/lib/utils/data';
 
 export function extractDirtyFields(data: any, formState: FormState<any>) {

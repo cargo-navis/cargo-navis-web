@@ -301,7 +301,7 @@ export const countryEuropeOptions = countriesEurope.map((c) => ({ value: c.code,
 export const formDefaultValues = {
   firstName: '',
   lastName: '',
-  phoneNumber: '',
+  phoneNumber: { countryCode: '+385', phoneNumber: '' },
   email: '',
   position: '' as PositionEnum,
   governmentId: undefined as unknown as string,

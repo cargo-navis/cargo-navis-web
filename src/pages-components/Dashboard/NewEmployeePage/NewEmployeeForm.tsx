@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { type Employee, MessageChannelEnum } from '@/lib/api/employees.d';
-import { FormDatepicker, FormRadioGroup, FormSwitch, FormTextInput } from '@/lib/components/form';
+import { FormDatepicker, FormPhoneNumberInput, FormRadioGroup, FormSwitch, FormTextInput } from '@/lib/components/form';
 import { useCreateEmployee, useUpdateEmployee } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout } from '@/ui';
@@ -36,10 +36,10 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
   const values = watch();
 
   useEffect(() => {
-    if (!values.phoneNumber) {
+    if (!values.phoneNumber.phoneNumber) {
       setValue('isMessageChannelEnabled', false);
     }
-  }, [values.phoneNumber]);
+  }, [values.phoneNumber.phoneNumber]);
 
   async function handleFormSubmit(data: any) {
     const dirtyFields = extractDirtyFields(data, formState);
@@ -94,9 +94,9 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
           </FlexLayout>
           <FlexLayout className="gap-4">
             <Box className="flex-grow">
-              <FormTextInput label="Telefon *" name="phoneNumber" type="tel" />
+              <FormPhoneNumberInput label="Telefon *" name="phoneNumber" rules={{ required: true }} />
             </Box>
-            <FormSwitch isDisabled={!values.phoneNumber} label="WhatsApp" name="isMessageChannelEnabled" />
+            <FormSwitch isDisabled={!values.phoneNumber?.phoneNumber} label="WhatsApp" name="isMessageChannelEnabled" />
           </FlexLayout>
           <Box>
             <FormTextInput label="Email" name="email" type="email" />

@@ -9,7 +9,7 @@ export type PhoneNumberValue = {
   phoneNumber: string;
 };
 
-interface PhoneNumberInputProps {
+export interface PhoneNumberInputProps {
   placeholder?: string;
   isDisabled?: boolean;
   value: PhoneNumberValue;
@@ -51,7 +51,7 @@ export const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
         <SingleSelect
           isDisabled={isDisabled}
           options={countryOptions}
-          placeholder="Odaberi državu"
+          placeholder="Odaberi"
           value={value.countryCode}
           onChange={handleCountryCodeChange}
         />

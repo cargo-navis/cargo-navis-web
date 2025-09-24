@@ -10,7 +10,12 @@ export const employeeSchema = object({
   lastName: trimmedString().required('Prezime je obavezno'),
   position: string().oneOf(Object.values(PositionEnum)).required('Pozicija je obavezna'),
   email: trimmedString().email('Email mora biti validan').optional().nullable(),
-  phoneNumber: trimmedString().optional(),
+  phoneNumber: object()
+    .shape({
+      countryCode: string().required('Država je obavezna'),
+      phoneNumber: trimmedString().required('Broj telefona je obavezan'),
+    })
+    .required('Broj telefona je obavezan'),
   governmentId: whenDriver(string()),
   governmentIdExpiryDate: whenDriver(string()),
   driverLicenceId: whenDriver(string()),
