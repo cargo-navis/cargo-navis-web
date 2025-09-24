@@ -1,5 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { type Employee, MessageChannelEnum } from '@/lib/api/employees.d';
@@ -30,9 +31,15 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
     mode: 'all',
   });
 
-  const { watch, handleSubmit, formState } = formMethods;
+  const { watch, handleSubmit, formState, setValue } = formMethods;
   const { isDirty, isValid } = formState;
   const values = watch();
+
+  useEffect(() => {
+    if (!values.phoneNumber) {
+      setValue('isMessageChannelEnabled', false);
+    }
+  }, [values.phoneNumber]);
 
   async function handleFormSubmit(data: any) {
     const dirtyFields = extractDirtyFields(data, formState);
