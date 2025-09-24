@@ -2,14 +2,19 @@ import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { FormCheckbox, FormSingleSelect } from '@/lib/components/form';
-import { useDrivers } from '@/lib/hooks';
+import { useCurrentTenant, useDrivers, useEmployees } from '@/lib/hooks';
 import { mapEmployeesToOptions } from '@/lib/utils/employees';
 import { Box, DisplayIf, FlexLayout } from '@/ui';
 
 import { useAgencyFieldReset } from './hooks';
 
 export const DriverField = () => {
-  const { data: drivers = [] } = useDrivers();
+  const { data: tenant } = useCurrentTenant();
+
+  // TODO - Temporary override for PER COM d.o.o.
+  const useDriversOverride = tenant?.name === 'PER COM d.o.o.' ? useEmployees : useDrivers;
+
+  const { data: drivers = [] } = useDriversOverride();
   const driverOptions = mapEmployeesToOptions(drivers);
 
   const isAgencyUse = useAgencyFieldReset('driverId');
