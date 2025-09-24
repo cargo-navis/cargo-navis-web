@@ -27,5 +27,18 @@ export function processFormData(data: any) {
 
   delete processedData.isMessageChannelEnabled;
 
+  processedData.phoneNumber = joinPhoneNumber(processedData.phoneNumber);
+
   return processedData;
+}
+
+/**
+ * Joins country code and phone number into a single string.
+ * Removes leading "0" from phone number if present (trunk prefix).
+ */
+export function joinPhoneNumber(value: PhoneNumberValue): string {
+  const { countryCode, phoneNumber } = value;
+  const cleanPhoneNumber = phoneNumber.startsWith('0') ? phoneNumber.substring(1) : phoneNumber;
+
+  return `${countryCode}${cleanPhoneNumber}`;
 }
