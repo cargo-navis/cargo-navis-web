@@ -3,16 +3,16 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import { type Employee, MessageChannelEnum } from '@/lib/api/employees.d';
+import { type Employee } from '@/lib/api/employees.d';
 import { FormDatepicker, FormPhoneNumberInput, FormRadioGroup, FormSwitch, FormTextInput } from '@/lib/components/form';
 import { useCreateEmployee, useUpdateEmployee } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout } from '@/ui';
 
-import { formDefaultValues, genderOptions, positionOptions } from './const';
+import { genderOptions, positionOptions } from './const';
 import { DriverInfoFields } from './DriverInfoFields';
 import { employeeSchema } from './schema';
-import { extractDirtyFields, processFormData } from './utils';
+import { extractDirtyFields, initializeFormValues, processFormData } from './utils';
 
 export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee }) => {
   const { back } = useRouter();
@@ -21,9 +21,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
   const { mutateAsync: createEmployee } = useCreateEmployee();
   const { mutateAsync: updateEmployee } = useUpdateEmployee(employee?.id as string);
 
-  const defaultValues = employee
-    ? { ...employee, isMessageChannelEnabled: employee.messageChannel === MessageChannelEnum.WHATSAPP }
-    : formDefaultValues;
+  const defaultValues = initializeFormValues(employee);
 
   const formMethods = useForm<any>({
     defaultValues,
