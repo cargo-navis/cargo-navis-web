@@ -2,12 +2,12 @@ import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import type { Employee } from '@/lib/api/employees.d';
+import { type Employee, MessageChannelEnum } from '@/lib/api/employees.d';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useEmployee } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { DriverInfo } from '@/pages-components/Dashboard/SingleEmployeePage/DriverInfo';
-import { Box, DisplayIf, FlexLayout, Text } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon, Text } from '@/ui';
 
 import { OccupationPill } from '../EmployeesPage/OccupationPill';
 import { ContactInfo } from './ContactInfo';
@@ -49,7 +49,17 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
                 <ContactInfo contact={employee.governmentId} contactType="governmentId" />
               </DisplayIf>
               <DisplayIf condition={!!employee.phoneNumber}>
-                <ContactInfo contact={employee.phoneNumber} contactType="phone" />
+                <FlexLayout className="flex-col gap-1">
+                  <ContactInfo contact={employee.phoneNumber} contactType="phone" />
+                  <DisplayIf condition={employee.messageChannel === MessageChannelEnum.WHATSAPP}>
+                    <FlexLayout className="gap-1 items-center">
+                      <Icon color="text-green-500" icon="CheckCircleIcon" type="solid" />
+                      <Text color="text-color-3" variant="text-xxs">
+                        WhatsApp spojen
+                      </Text>
+                    </FlexLayout>
+                  </DisplayIf>
+                </FlexLayout>
               </DisplayIf>
               <DisplayIf condition={!!employee.email}>
                 <ContactInfo contact={employee.email} contactType="email" />
