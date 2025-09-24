@@ -320,4 +320,5 @@ export const formDefaultValues = {
   code95ExpiryDate: undefined as unknown as string,
   dateOfBirth: undefined as unknown as string,
   residenceAddress: undefined as unknown as string,
+  isMessageChannelEnabled: false,
 };

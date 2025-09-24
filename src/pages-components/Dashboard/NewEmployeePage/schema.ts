@@ -6,10 +6,10 @@ import { PositionEnum } from '@/lib/api/employees.d';
 const trimmedString = () => string().transform((value) => (value ? value.trim() : value));
 
 export const employeeSchema = object({
-  firstName: trimmedString().required('First name is required'),
-  lastName: trimmedString().required('Last name is required'),
-  position: string().oneOf(Object.values(PositionEnum)).required('Position is required'),
-  email: trimmedString().email('Email must be valid').optional().nullable(),
+  firstName: trimmedString().required('Ime je obavezno'),
+  lastName: trimmedString().required('Prezime je obavezno'),
+  position: string().oneOf(Object.values(PositionEnum)).required('Pozicija je obavezna'),
+  email: trimmedString().email('Email mora biti validan').optional().nullable(),
   phoneNumber: trimmedString().optional(),
   governmentId: whenDriver(string()),
   governmentIdExpiryDate: whenDriver(string()),
