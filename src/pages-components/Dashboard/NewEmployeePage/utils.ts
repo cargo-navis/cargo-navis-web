@@ -42,15 +42,14 @@ export function extractDirtyFields(data: any, formState: FormState<any>) {
 export function processFormData(data: any) {
   const processedData = replaceEmptyStringsWithNull(data);
 
-  if (processedData.isMessageChannelEnabled) {
-    processedData.messageChannel = MessageChannelEnum.WHATSAPP;
-  } else {
-    processedData.messageChannel = null;
+  if (processedData.hasOwnProperty('isMessageChannelEnabled')) {
+    processedData.messageChannel = processedData.isMessageChannelEnabled ? MessageChannelEnum.WHATSAPP : null;
+    delete processedData.isMessageChannelEnabled;
   }
 
-  delete processedData.isMessageChannelEnabled;
-
-  processedData.phoneNumber = joinPhoneNumber(processedData.phoneNumber);
+  if (processedData.hasOwnProperty('phoneNumber')) {
+    processedData.phoneNumber = joinPhoneNumber(processedData.phoneNumber);
+  }
 
   return processedData;
 }
