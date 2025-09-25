@@ -21,7 +21,9 @@ export function useVehicles<TData = Vehicle[]>(args?: UseVehicleArgs<TData>) {
     queryKey: ['vehicles'],
     queryFn: getVehicles,
     select: (vehicles) => {
-      const filteredVehicles = args?.type ? vehicles.filter((v) => v.type === args.type) : vehicles;
+      const sortedVehicles = vehicles.sort((a, b) => (a.registration || '').localeCompare(b.registration || ''));
+
+      const filteredVehicles = args?.type ? sortedVehicles.filter((v) => v.type === args.type) : sortedVehicles;
       return args?.select ? args.select(filteredVehicles) : (filteredVehicles as unknown as TData);
     },
     ...args,

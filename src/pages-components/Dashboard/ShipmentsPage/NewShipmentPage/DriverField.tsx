@@ -1,8 +1,9 @@
 import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 
+import { PositionEnum } from '@/lib/api';
 import { FormCheckbox, FormSingleSelect } from '@/lib/components/form';
-import { useCurrentTenant, useDrivers, useEmployees } from '@/lib/hooks';
+import { useCurrentTenant, useEmployees } from '@/lib/hooks';
 import { mapEmployeesToOptions } from '@/lib/utils/employees';
 import { Box, DisplayIf, FlexLayout } from '@/ui';
 
@@ -11,10 +12,24 @@ import { useAgencyFieldReset } from './hooks';
 export const DriverField = () => {
   const { data: tenant } = useCurrentTenant();
 
-  // TODO - Temporary override for PER COM d.o.o.
-  const useDriversOverride = tenant?.name === 'PER COM d.o.o.' ? useEmployees : useDrivers;
+  // TODO - Temporary override for PER COM d.o.o. and Animago d.o.o.
+  const { data: drivers = [] } = useEmployees({
+    select: (employees) => {
+      if (tenant?.name === 'PER COM d.o.o.') {
+        return employees;
+      }
 
-  const { data: drivers = [] } = useDriversOverride();
+      const drivers = employees.filter(({ position }) => position === PositionEnum.Driver);
+
+      if (tenant?.name === 'Animago d.o.o.') {
+        const extraDriversNames = ['Goran Pranjić', 'Milorad Pranjić'];
+        const extraDrivers = employees.filter((employee) => extraDriversNames.includes(employee.fullName));
+        return [...extraDrivers, ...drivers];
+      }
+
+      return drivers;
+    },
+  });
   const driverOptions = mapEmployeesToOptions(drivers);
 
   const isAgencyUse = useAgencyFieldReset('driverId');
