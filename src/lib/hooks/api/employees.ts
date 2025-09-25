@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import sortBy from 'lodash/sortBy';
 
 import { createEmployee, deleteEmployee, getEmployees, PositionEnum, updateEmployee } from '@/lib/api';
 import type { Employee, UpdateEmployeeParams } from '@/lib/api/employees.d';
@@ -10,8 +9,19 @@ interface UseEmployeesArgs<T> {
   enabled?: boolean;
 }
 
+const positionHierarchy = {
+  [PositionEnum.Ceo]: 1,
+  [PositionEnum.Manager]: 2,
+  [PositionEnum.Dispatcher]: 3,
+  [PositionEnum.Driver]: 4,
+};
+
 function sortEmployees(employees: Employee[]) {
-  return sortBy(employees, 'position') as Employee[];
+  return employees.sort((a, b) => {
+    const aOrder = positionHierarchy[a.position] || 999;
+    const bOrder = positionHierarchy[b.position] || 999;
+    return aOrder - bOrder;
+  });
 }
 
 export function useEmployees<TData = Employee[]>(args?: UseEmployeesArgs<TData>) {
