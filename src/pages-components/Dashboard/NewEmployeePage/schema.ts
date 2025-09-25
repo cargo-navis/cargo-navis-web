@@ -1,6 +1,6 @@
 import { array, object, type Schema, string } from 'yup';
 
-import { PositionEnum } from '@/lib/api/employees.d';
+import { GenderEnum, PositionEnum } from '@/lib/api/employees.d';
 
 // Helper function to create a trimmed string schema
 const trimmedString = () => string().transform((value) => (value ? value.trim() : value));
@@ -8,6 +8,7 @@ const trimmedString = () => string().transform((value) => (value ? value.trim() 
 export const employeeSchema = object({
   firstName: trimmedString().required('Ime je obavezno'),
   lastName: trimmedString().required('Prezime je obavezno'),
+  gender: string().oneOf(Object.values(GenderEnum)).required('Spol je obavezan'),
   position: string().oneOf(Object.values(PositionEnum)).required('Pozicija je obavezna'),
   email: trimmedString().email('Email mora biti validan').optional().nullable(),
   phoneNumber: object()

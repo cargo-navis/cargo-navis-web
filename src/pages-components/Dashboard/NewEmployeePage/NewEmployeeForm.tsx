@@ -80,7 +80,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
             </Box>
           </FlexLayout>
           <Box>
-            <FormRadioGroup label="Spol" name="gender" options={genderOptions} />
+            <FormRadioGroup label="Spol *" name="gender" options={genderOptions} rules={{ required: true }} />
           </Box>
           <FlexLayout className="gap-4">
             <Box className="flex-1">
