@@ -79,8 +79,8 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           const governmentId = props.getValue();
 
           return (
-            <Box
-              className="flex items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease"
+            <FlexLayout
+              className="items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease"
               onClick={() => copyToClipboard(governmentId)}
             >
               <Text variant="text-s">{governmentId || '–'}</Text>
@@ -88,7 +88,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
                 className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
                 icon="DocumentDuplicateIcon"
               />
-            </Box>
+            </FlexLayout>
           );
         },
       }),
@@ -136,11 +136,11 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           if (!licenceCategories || !licenceCategories.length) return '–';
 
           return (
-            <Box className="flex gap-1 align-middle text-color-3">
+            <FlexLayout className="gap-1 align-middle text-color-3">
               {licenceCategories.map((l: string) => (
                 <CategoryLabel category={l} key={l} />
               ))}
-            </Box>
+            </FlexLayout>
           );
         },
       }),
