@@ -23,12 +23,5 @@ export function getDataPointDateString(dataPoint: string | undefined) {
 }
 
 export function getDateTimeInLocalTimezone(isoString: string, format = 'DD.MM.YYYY, HH:mm') {
-  const utcDate = parseAsUtc(isoString); // TODO - remove this once BE starts sending UTC dates
-  return utcDate.local().format(format);
-}
-
-function parseAsUtc(isoString: string) {
-  // If string already ends with Z, keep it
-  // If not, treat as UTC explicitly
-  return dayjs.utc(isoString);
+  return dayjs(isoString).local().format(format);
 }

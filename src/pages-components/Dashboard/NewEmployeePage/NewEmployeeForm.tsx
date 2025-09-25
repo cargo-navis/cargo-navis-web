@@ -1,17 +1,18 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import type { Employee } from '@/lib/api/employees.d';
-import { FormDatepicker, FormRadioGroup, FormTextInput } from '@/lib/components/form';
+import { type Employee } from '@/lib/api/employees.d';
+import { FormDatepicker, FormPhoneNumberInput, FormRadioGroup, FormSwitch, FormTextInput } from '@/lib/components/form';
 import { useCreateEmployee, useUpdateEmployee } from '@/lib/hooks';
-import { replaceEmptyStringsWithNull } from '@/lib/utils/data';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout } from '@/ui';
 
-import { formDefaultValues, genderOptions, positionOptions } from './const';
+import { genderOptions, positionOptions } from './const';
 import { DriverInfoFields } from './DriverInfoFields';
 import { employeeSchema } from './schema';
+import { extractDirtyFields, initializeFormValues, processFormData } from './utils';
 
 export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee }) => {
   const { back } = useRouter();
@@ -20,7 +21,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
   const { mutateAsync: createEmployee } = useCreateEmployee();
   const { mutateAsync: updateEmployee } = useUpdateEmployee(employee?.id as string);
 
-  const defaultValues = employee ? { ...employee } : formDefaultValues;
+  const defaultValues = initializeFormValues(employee);
 
   const formMethods = useForm<any>({
     defaultValues,
@@ -28,22 +29,19 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
     mode: 'all',
   });
 
-  const { watch, handleSubmit, formState } = formMethods;
+  const { watch, handleSubmit, formState, setValue } = formMethods;
   const { isDirty, isValid } = formState;
   const values = watch();
 
-  async function handleFormSubmit(data: any) {
-    const updatedData = Object.keys(data).reduce(
-      (acc, key) => {
-        if (formState.dirtyFields[key]) {
-          acc[key] = data[key];
-        }
-        return acc;
-      },
-      {} as Record<string, any>
-    );
+  useEffect(() => {
+    if (!values.phoneNumber.phoneNumber) {
+      setValue('isMessageChannelEnabled', false);
+    }
+  }, [values.phoneNumber.phoneNumber]);
 
-    const processedData = replaceEmptyStringsWithNull(updatedData);
+  async function handleFormSubmit(data: any) {
+    const dirtyFields = extractDirtyFields(data, formState);
+    const processedData = processFormData(dirtyFields);
 
     try {
       if (isEdit) {
@@ -82,7 +80,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
             </Box>
           </FlexLayout>
           <Box>
-            <FormRadioGroup label="Spol" name="gender" options={genderOptions} />
+            <FormRadioGroup label="Spol *" name="gender" options={genderOptions} rules={{ required: true }} />
           </Box>
           <FlexLayout className="gap-4">
             <Box className="flex-1">
@@ -92,9 +90,12 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
               <FormTextInput label="Adresa" name="residenceAddress" />
             </Box>
           </FlexLayout>
-          <Box>
-            <FormTextInput label="Telefon *" name="phoneNumber" type="tel" />
-          </Box>
+          <FlexLayout className="gap-4">
+            <Box className="flex-grow">
+              <FormPhoneNumberInput label="Telefon *" name="phoneNumber" rules={{ required: true }} />
+            </Box>
+            <FormSwitch isDisabled={!values.phoneNumber?.phoneNumber} label="WhatsApp" name="isMessageChannelEnabled" />
+          </FlexLayout>
           <Box>
             <FormTextInput label="Email" name="email" type="email" />
           </Box>

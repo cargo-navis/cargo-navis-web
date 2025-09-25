@@ -9,6 +9,8 @@ import {
   type RadioGroupProps,
   SingleSelect,
   type SingleSelectProps,
+  Switch,
+  type SwitchProps,
   Textarea,
   type TextareaProps,
   TextInput,
@@ -44,3 +46,6 @@ export type AsyncSelectWithLabelsProps = React.ComponentProps<typeof AsyncSelect
 
 export const TextareaWithLabels: React.FC<TextareaProps & FieldLabelsProps> = withFieldLabels(Textarea);
 export type TextareaWithLabelsProps = React.ComponentProps<typeof TextareaWithLabels>;
+
+export const SwitchWithLabels: React.FC<SwitchProps & FieldLabelsProps> = withFieldLabels(Switch);
+export type SwitchWithLabelsProps = React.ComponentProps<typeof SwitchWithLabels>;

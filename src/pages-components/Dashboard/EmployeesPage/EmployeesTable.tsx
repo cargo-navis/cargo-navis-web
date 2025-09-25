@@ -4,10 +4,10 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 
 import { AlertsTooltip } from '@/components/alerts/AlertsTooltip';
-import { type Employee, PositionEnum } from '@/lib/api/employees.d';
+import { type Employee, MessageChannelEnum, PositionEnum } from '@/lib/api/employees.d';
 import { useEmployeeAlerts } from '@/lib/hooks';
 import { copyToClipboard } from '@/lib/utils/clipboard';
-import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon, Table, Text } from '@/ui';
 
 import { CategoryLabel } from './CategoryLabel';
 import { OccupationPill } from './OccupationPill';
@@ -79,8 +79,8 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           const governmentId = props.getValue();
 
           return (
-            <Box
-              className="flex items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease"
+            <FlexLayout
+              className="items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease"
               onClick={() => copyToClipboard(governmentId)}
             >
               <Text variant="text-s">{governmentId || '–'}</Text>
@@ -88,7 +88,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
                 className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
                 icon="DocumentDuplicateIcon"
               />
-            </Box>
+            </FlexLayout>
           );
         },
       }),
@@ -98,18 +98,31 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         enableSorting: false,
         cell: (props) => {
           const phoneNumber = props.getValue();
+          const { messageChannel } = props.row.original;
 
           return (
-            <Box
-              className="flex items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease"
-              onClick={() => copyToClipboard(phoneNumber)}
-            >
-              <Text variant="text-s">{phoneNumber}</Text>
-              <Icon
-                className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
-                icon="DocumentDuplicateIcon"
-              />
-            </Box>
+            <FlexLayout className="flex-col gap-1">
+              <FlexLayout
+                className="items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease"
+                onClick={() => copyToClipboard(phoneNumber)}
+              >
+                <Text color="text-color-2" variant="text-s-medium">
+                  {phoneNumber}
+                </Text>
+                <Icon
+                  className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
+                  icon="DocumentDuplicateIcon"
+                />
+              </FlexLayout>
+              <DisplayIf condition={messageChannel === MessageChannelEnum.WHATSAPP}>
+                <FlexLayout className="gap-1 items-center">
+                  <Icon color="text-green-500" icon="CheckCircleIcon" size="s" type="solid" />
+                  <Text color="text-color-3" variant="text-xxxs">
+                    WhatsApp spojen
+                  </Text>
+                </FlexLayout>
+              </DisplayIf>
+            </FlexLayout>
           );
         },
       }),
@@ -123,11 +136,11 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           if (!licenceCategories || !licenceCategories.length) return '–';
 
           return (
-            <Box className="flex gap-1 align-middle text-color-3">
+            <FlexLayout className="gap-1 align-middle text-color-3">
               {licenceCategories.map((l: string) => (
                 <CategoryLabel category={l} key={l} />
               ))}
-            </Box>
+            </FlexLayout>
           );
         },
       }),

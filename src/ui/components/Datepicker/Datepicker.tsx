@@ -6,7 +6,7 @@ import { DateInput, DatesProvider } from '@mantine/dates';
 import { DateTimeFormat, formatDateString, getDateInLocalTimezone } from '@/lib/utils/date';
 import { Icon } from '@/ui';
 
-import { classnames } from './styles';
+import { classnames, popoverProps } from './styles';
 
 export interface DatepickerProps {
   value: string | null;
@@ -19,16 +19,17 @@ export const Datepicker: React.FC<DatepickerProps> = ({ isDisabled = false, isCl
   const isClearButtonVisible = isClearable && !!value;
 
   return (
-    <DatesProvider settings={{ locale: 'hr', firstDayOfWeek: 1, weekendDays: [0] }}>
+    <DatesProvider settings={{ locale: 'hr', firstDayOfWeek: 1, weekendDays: [0, 6] }}>
       <DateInput
-        className="bg-transparent isolate"
         classNames={classnames}
         clearable
         dateParser={(dt) => {
           return new Date(dt);
         }}
         disabled={isDisabled}
+        highlightToday
         leftSection={<Icon icon="CalendarIcon" type="solid" />}
+        popoverProps={popoverProps}
         rightSection={isClearButtonVisible ? <Icon icon="XMarkIcon" onClick={() => onChange('')} /> : null}
         value={value ? getDateInLocalTimezone(value) : null}
         onChange={(date) => {
