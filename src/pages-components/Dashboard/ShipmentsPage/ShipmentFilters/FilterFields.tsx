@@ -54,10 +54,10 @@ export const FilterFields = () => {
 
   return (
     <Box className="px-4 pb-4">
-      <FlexLayout className="gap-4 flex-col">
-        <FlexLayout className="gap-4 flex-col md:flex-row">
-          <Box className="flex-1">
-            <ClientSideOnly>
+      <ClientSideOnly>
+        <FlexLayout className="gap-4 flex-col">
+          <FlexLayout className="gap-4 flex-col md:flex-row">
+            <Box className="flex-1">
               <SingleSelectWithLabels
                 isClearable
                 isPortal
@@ -68,11 +68,9 @@ export const FilterFields = () => {
                 value={selectedClientId}
                 onChange={onClientChange}
               />
-            </ClientSideOnly>
-          </Box>
+            </Box>
 
-          <Box className="flex-1">
-            <ClientSideOnly>
+            <Box className="flex-1">
               <SingleSelectWithLabels
                 isClearable
                 isPortal
@@ -83,11 +81,9 @@ export const FilterFields = () => {
                 value={selectedDriverId}
                 onChange={onDriverChange}
               />
-            </ClientSideOnly>
-          </Box>
+            </Box>
 
-          <Box className="flex-1">
-            <ClientSideOnly>
+            <Box className="flex-1">
               <SingleSelectWithLabels
                 isClearable
                 isPortal
@@ -98,11 +94,9 @@ export const FilterFields = () => {
                 value={selectedDispatcherId}
                 onChange={onDispatcherChange}
               />
-            </ClientSideOnly>
-          </Box>
+            </Box>
 
-          <Box className="flex-1">
-            <ClientSideOnly>
+            <Box className="flex-1">
               <SingleSelectWithLabels
                 isClearable
                 isPortal
@@ -113,11 +107,9 @@ export const FilterFields = () => {
                 value={selectedLoadingStatus}
                 onChange={onLoadingStatusChange}
               />
-            </ClientSideOnly>
-          </Box>
+            </Box>
 
-          <Box className="flex-1">
-            <ClientSideOnly>
+            <Box className="flex-1">
               <SingleSelectWithLabels
                 isClearable
                 isPortal
@@ -128,56 +120,48 @@ export const FilterFields = () => {
                 value={selectedInvoiceStatus}
                 onChange={onInvoiceStatusChange}
               />
-            </ClientSideOnly>
-          </Box>
-        </FlexLayout>
+            </Box>
+          </FlexLayout>
 
-        <FlexLayout className="gap-4 flex-col md:flex-row">
-          <Box className="flex-1">
-            <ClientSideOnly>
+          <FlexLayout className="gap-4 flex-col md:flex-row">
+            <Box className="flex-1">
               <DatepickerWithLabels
                 isClearable
                 label="Datum utovara - od"
                 value={loadingDateFrom}
                 onChange={onLoadingDateFromChange}
               />
-            </ClientSideOnly>
-          </Box>
+            </Box>
 
-          <Box className="flex-1">
-            <ClientSideOnly>
+            <Box className="flex-1">
               <DatepickerWithLabels
                 isClearable
                 label="Datum utovara - do"
                 value={loadingDateTo}
                 onChange={onLoadingDateToChange}
               />
-            </ClientSideOnly>
-          </Box>
+            </Box>
 
-          <Box className="flex-1">
-            <ClientSideOnly>
+            <Box className="flex-1">
               <DatepickerWithLabels
                 isClearable
                 label="Datum istovara - od"
                 value={unloadingDateFrom}
                 onChange={onUnloadingDateFromChange}
               />
-            </ClientSideOnly>
-          </Box>
+            </Box>
 
-          <Box className="flex-1">
-            <ClientSideOnly>
+            <Box className="flex-1">
               <DatepickerWithLabels
                 isClearable
                 label="Datum istovara - do"
                 value={unloadingDateTo}
                 onChange={onUnloadingDateToChange}
               />
-            </ClientSideOnly>
-          </Box>
+            </Box>
+          </FlexLayout>
         </FlexLayout>
-      </FlexLayout>
+      </ClientSideOnly>
     </Box>
   );
 };
