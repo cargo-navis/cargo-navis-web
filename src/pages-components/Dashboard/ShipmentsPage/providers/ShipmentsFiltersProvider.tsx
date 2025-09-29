@@ -8,6 +8,7 @@ export type ShipmentsFiltersContextType = {
   activeFiltersCount: number;
   selectedClientId: SelectValue;
   selectedDriverId: SelectValue;
+  selectedDispatcherId: SelectValue;
   selectedLoadingStatus: SelectValue;
   selectedInvoiceStatus: SelectValue;
   loadingDateFrom: string;
@@ -16,6 +17,7 @@ export type ShipmentsFiltersContextType = {
   unloadingDateTo: string;
   onClientChange(clientId: SelectValue): void;
   onDriverChange(driverId: SelectValue): void;
+  onDispatcherChange(dispatcherId: SelectValue): void;
   onLoadingStatusChange(loadingStatus: SelectValue): void;
   onInvoiceStatusChange(invoiceStatus: SelectValue): void;
   onLoadingDateFromChange(date: string): void;
@@ -37,6 +39,9 @@ export const ShipmentsFiltersProvider = ({ children }: { children: React.ReactNo
   });
   const { value: selectedDriverId, onChange: onDriverChange } = useFiltersQueryParamState({
     paramName: 'driverId',
+  });
+  const { value: selectedDispatcherId, onChange: onDispatcherChange } = useFiltersQueryParamState({
+    paramName: 'dispatcherId',
   });
   const { value: selectedLoadingStatus, onChange: onLoadingStatusChange } = useFiltersQueryParamState({
     paramName: 'loadStatus',
@@ -60,6 +65,7 @@ export const ShipmentsFiltersProvider = ({ children }: { children: React.ReactNo
   const activeFiltersCount = [
     selectedClientId,
     selectedDriverId,
+    selectedDispatcherId,
     selectedLoadingStatus,
     selectedInvoiceStatus,
     loadingDateFrom,
@@ -74,6 +80,7 @@ export const ShipmentsFiltersProvider = ({ children }: { children: React.ReactNo
         activeFiltersCount,
         selectedClientId,
         selectedDriverId,
+        selectedDispatcherId,
         selectedLoadingStatus,
         selectedInvoiceStatus,
         loadingDateFrom: String(loadingDateFrom || ''),
@@ -82,6 +89,7 @@ export const ShipmentsFiltersProvider = ({ children }: { children: React.ReactNo
         unloadingDateTo: String(unloadingDateTo || ''),
         onClientChange,
         onDriverChange,
+        onDispatcherChange,
         onLoadingStatusChange,
         onInvoiceStatusChange,
         onLoadingDateFromChange,

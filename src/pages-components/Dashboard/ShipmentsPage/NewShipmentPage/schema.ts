@@ -14,6 +14,11 @@ export const shipmentSchema = Yup.object().shape({
     .typeError('Cijena mora biti pozitivan broj')
     .min(0, 'Cijena mora biti najmanje 0')
     .positive('Mora biti pozitivan broj')
+    .test('max-decimals', 'Cijena može imati maksimalno 2 decimale', (value) => {
+      if (value === undefined || value === null) return true;
+      const decimalPlaces = (value.toString().split('.')[1] || '').length;
+      return decimalPlaces <= 2;
+    })
     .optional(),
   transportContractorId: Yup.string().required('Prijevoznik je obavezan'),
   driverId: Yup.string().optional().nullable(),
