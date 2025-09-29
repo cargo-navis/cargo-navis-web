@@ -1,6 +1,6 @@
 import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
-import { useClients, useDrivers } from '@/lib/hooks';
+import { useClients, useDispatchers, useDrivers } from '@/lib/hooks';
 import { mapEmployeesToOptions } from '@/lib/utils/employees';
 import { Box, FlexLayout } from '@/ui';
 import { DatepickerWithLabels, SingleSelectWithLabels } from '@/ui/hocs';
@@ -12,6 +12,7 @@ export const FilterFields = () => {
   const {
     selectedClientId,
     selectedDriverId,
+    selectedDispatcherId,
     selectedLoadingStatus,
     selectedInvoiceStatus,
     loadingDateFrom,
@@ -20,6 +21,7 @@ export const FilterFields = () => {
     unloadingDateTo,
     onClientChange,
     onDriverChange,
+    onDispatcherChange,
     onLoadingStatusChange,
     onInvoiceStatusChange,
     onLoadingDateFromChange,
@@ -30,6 +32,7 @@ export const FilterFields = () => {
 
   const { data: clients = [] } = useClients();
   const { data: drivers = [] } = useDrivers();
+  const { data: dispatchers = [] } = useDispatchers();
 
   const clientOptions = clients.map((client) => ({
     value: client.id,
@@ -37,6 +40,7 @@ export const FilterFields = () => {
   }));
 
   const driverOptions = mapEmployeesToOptions(drivers);
+  const dispatcherOptions = mapEmployeesToOptions(dispatchers);
 
   const loadingStatusOptions = Object.values(LoadStatus).map((status) => ({
     value: status,
@@ -78,6 +82,21 @@ export const FilterFields = () => {
                 placeholder="Odaberi vozača..."
                 value={selectedDriverId}
                 onChange={onDriverChange}
+              />
+            </ClientSideOnly>
+          </Box>
+
+          <Box className="flex-1">
+            <ClientSideOnly>
+              <SingleSelectWithLabels
+                isClearable
+                isPortal
+                isSearchable
+                label="Disponent"
+                options={dispatcherOptions}
+                placeholder="Odaberi disponenta..."
+                value={selectedDispatcherId}
+                onChange={onDispatcherChange}
               />
             </ClientSideOnly>
           </Box>
