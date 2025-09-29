@@ -125,6 +125,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
                       name="price"
                       placeholder="XXX"
                       rules={{ required: true }}
+                      step="0.01"
                       type="number"
                     />
                   </Box>
