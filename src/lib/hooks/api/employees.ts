@@ -55,6 +55,16 @@ export function useDrivers<TData = Employee[]>(args?: UseEmployeesArgs<TData>) {
   });
 }
 
+export function useDispatchers<TData = Employee[]>(args?: UseEmployeesArgs<TData>) {
+  return useEmployees<TData>({
+    ...args,
+    select: (employees) => {
+      const drivers = employees.filter((employee) => employee.position === PositionEnum.Dispatcher);
+      return args?.select ? args.select(drivers) : (drivers as unknown as TData);
+    },
+  });
+}
+
 export function useCreateEmployee() {
   const queryClient = useQueryClient();
   return useMutation({

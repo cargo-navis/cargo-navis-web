@@ -35,6 +35,7 @@ export interface Shipment {
 export type GetShipmentParams = {
   clientId?: string;
   driverId?: string;
+  dispatcherId?: string;
   loadStatus?: LoadStatus;
   invoiceStatus?: InvoiceStatus;
   loadingDateFrom?: string;

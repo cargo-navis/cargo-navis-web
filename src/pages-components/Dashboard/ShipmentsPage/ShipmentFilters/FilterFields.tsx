@@ -1,6 +1,6 @@
 import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
-import { useClients, useDrivers } from '@/lib/hooks';
+import { useClients, useDispatchers, useDrivers } from '@/lib/hooks';
 import { mapEmployeesToOptions } from '@/lib/utils/employees';
 import { Box, FlexLayout } from '@/ui';
 import { DatepickerWithLabels, SingleSelectWithLabels } from '@/ui/hocs';
@@ -12,6 +12,7 @@ export const FilterFields = () => {
   const {
     selectedClientId,
     selectedDriverId,
+    selectedDispatcherId,
     selectedLoadingStatus,
     selectedInvoiceStatus,
     loadingDateFrom,
@@ -20,6 +21,7 @@ export const FilterFields = () => {
     unloadingDateTo,
     onClientChange,
     onDriverChange,
+    onDispatcherChange,
     onLoadingStatusChange,
     onInvoiceStatusChange,
     onLoadingDateFromChange,
@@ -30,6 +32,7 @@ export const FilterFields = () => {
 
   const { data: clients = [] } = useClients();
   const { data: drivers = [] } = useDrivers();
+  const { data: dispatchers = [] } = useDispatchers();
 
   const clientOptions = clients.map((client) => ({
     value: client.id,
@@ -37,6 +40,7 @@ export const FilterFields = () => {
   }));
 
   const driverOptions = mapEmployeesToOptions(drivers);
+  const dispatcherOptions = mapEmployeesToOptions(dispatchers);
 
   const loadingStatusOptions = Object.values(LoadStatus).map((status) => ({
     value: status,
@@ -50,10 +54,10 @@ export const FilterFields = () => {
 
   return (
     <Box className="px-4 pb-4">
-      <FlexLayout className="gap-4 flex-col">
-        <FlexLayout className="gap-4 flex-col md:flex-row">
-          <Box className="flex-1">
-            <ClientSideOnly>
+      <ClientSideOnly>
+        <FlexLayout className="gap-4 flex-col">
+          <FlexLayout className="gap-4 flex-col md:flex-row">
+            <Box className="flex-1">
               <SingleSelectWithLabels
                 isClearable
                 isPortal
@@ -64,11 +68,9 @@ export const FilterFields = () => {
                 value={selectedClientId}
                 onChange={onClientChange}
               />
-            </ClientSideOnly>
-          </Box>
+            </Box>
 
-          <Box className="flex-1">
-            <ClientSideOnly>
+            <Box className="flex-1">
               <SingleSelectWithLabels
                 isClearable
                 isPortal
@@ -79,11 +81,22 @@ export const FilterFields = () => {
                 value={selectedDriverId}
                 onChange={onDriverChange}
               />
-            </ClientSideOnly>
-          </Box>
+            </Box>
 
-          <Box className="flex-1">
-            <ClientSideOnly>
+            <Box className="flex-1">
+              <SingleSelectWithLabels
+                isClearable
+                isPortal
+                isSearchable
+                label="Disponent"
+                options={dispatcherOptions}
+                placeholder="Odaberi disponenta..."
+                value={selectedDispatcherId}
+                onChange={onDispatcherChange}
+              />
+            </Box>
+
+            <Box className="flex-1">
               <SingleSelectWithLabels
                 isClearable
                 isPortal
@@ -94,11 +107,9 @@ export const FilterFields = () => {
                 value={selectedLoadingStatus}
                 onChange={onLoadingStatusChange}
               />
-            </ClientSideOnly>
-          </Box>
+            </Box>
 
-          <Box className="flex-1">
-            <ClientSideOnly>
+            <Box className="flex-1">
               <SingleSelectWithLabels
                 isClearable
                 isPortal
@@ -109,56 +120,48 @@ export const FilterFields = () => {
                 value={selectedInvoiceStatus}
                 onChange={onInvoiceStatusChange}
               />
-            </ClientSideOnly>
-          </Box>
-        </FlexLayout>
+            </Box>
+          </FlexLayout>
 
-        <FlexLayout className="gap-4 flex-col md:flex-row">
-          <Box className="flex-1">
-            <ClientSideOnly>
+          <FlexLayout className="gap-4 flex-col md:flex-row">
+            <Box className="flex-1">
               <DatepickerWithLabels
                 isClearable
                 label="Datum utovara - od"
                 value={loadingDateFrom}
                 onChange={onLoadingDateFromChange}
               />
-            </ClientSideOnly>
-          </Box>
+            </Box>
 
-          <Box className="flex-1">
-            <ClientSideOnly>
+            <Box className="flex-1">
               <DatepickerWithLabels
                 isClearable
                 label="Datum utovara - do"
                 value={loadingDateTo}
                 onChange={onLoadingDateToChange}
               />
-            </ClientSideOnly>
-          </Box>
+            </Box>
 
-          <Box className="flex-1">
-            <ClientSideOnly>
+            <Box className="flex-1">
               <DatepickerWithLabels
                 isClearable
                 label="Datum istovara - od"
                 value={unloadingDateFrom}
                 onChange={onUnloadingDateFromChange}
               />
-            </ClientSideOnly>
-          </Box>
+            </Box>
 
-          <Box className="flex-1">
-            <ClientSideOnly>
+            <Box className="flex-1">
               <DatepickerWithLabels
                 isClearable
                 label="Datum istovara - do"
                 value={unloadingDateTo}
                 onChange={onUnloadingDateToChange}
               />
-            </ClientSideOnly>
-          </Box>
+            </Box>
+          </FlexLayout>
         </FlexLayout>
-      </FlexLayout>
+      </ClientSideOnly>
     </Box>
   );
 };

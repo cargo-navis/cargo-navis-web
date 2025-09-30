@@ -8,6 +8,7 @@ export function useShipmentsPageData() {
   const {
     selectedClientId,
     selectedDriverId,
+    selectedDispatcherId,
     selectedLoadingStatus,
     selectedInvoiceStatus,
     loadingDateFrom,
@@ -21,6 +22,7 @@ export function useShipmentsPageData() {
     params: {
       clientId: selectedClientId ? String(selectedClientId) : undefined,
       driverId: selectedDriverId ? String(selectedDriverId) : undefined,
+      dispatcherId: selectedDispatcherId ? String(selectedDispatcherId) : undefined,
       loadStatus: selectedLoadingStatus ? (selectedLoadingStatus as LoadStatus) : undefined,
       invoiceStatus: selectedInvoiceStatus ? (selectedInvoiceStatus as InvoiceStatus) : undefined,
       loadingDateFrom: loadingDateFrom ? String(loadingDateFrom) : undefined,
