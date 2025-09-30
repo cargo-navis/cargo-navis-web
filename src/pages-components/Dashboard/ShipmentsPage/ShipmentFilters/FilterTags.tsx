@@ -1,5 +1,5 @@
 import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
-import { useClients, useDrivers } from '@/lib/hooks';
+import { useClients, useDispatchers, useDrivers } from '@/lib/hooks';
 import { Box, DisplayIf, FlexLayout } from '@/ui';
 
 import { invoiceStatusConfig, loadStatusConfig } from '../const';
@@ -10,6 +10,7 @@ export const FilterTags = () => {
   const {
     selectedClientId,
     selectedDriverId,
+    selectedDispatcherId,
     selectedLoadingStatus,
     selectedInvoiceStatus,
     loadingDateFrom,
@@ -18,6 +19,7 @@ export const FilterTags = () => {
     unloadingDateTo,
     onClientChange,
     onDriverChange,
+    onDispatcherChange,
     onLoadingStatusChange,
     onInvoiceStatusChange,
     onLoadingDateFromChange,
@@ -28,9 +30,11 @@ export const FilterTags = () => {
 
   const { data: clients = [] } = useClients();
   const { data: drivers = [] } = useDrivers();
+  const { data: dispatchers = [] } = useDispatchers();
 
   const selectedClient = clients.find((client) => client.id === selectedClientId);
   const selectedDriver = drivers.find((driver) => driver.id === selectedDriverId);
+  const selectedDispatcher = dispatchers.find((dispatcher) => dispatcher.id === selectedDispatcherId);
 
   // Compute labels from values
   const selectedLoadingStatusLabel = selectedLoadingStatus
@@ -57,6 +61,14 @@ export const FilterTags = () => {
             label="Vozač"
             value={selectedDriver?.fullName || ''}
             onRemove={() => onDriverChange('')}
+          />
+        </DisplayIf>
+        <DisplayIf condition={!!selectedDispatcher}>
+          <FilterTag
+            colorScheme="green"
+            label="Disponent"
+            value={selectedDispatcher?.fullName || ''}
+            onRemove={() => onDispatcherChange('')}
           />
         </DisplayIf>
         <DisplayIf condition={!!selectedLoadingStatusLabel}>
