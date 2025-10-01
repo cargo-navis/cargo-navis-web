@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { type Employee, MessageChannelEnum } from '@/lib/api/employees.d';
+import { type Employee, MessageChannelEnum, PositionEnum } from '@/lib/api/employees.d';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useEmployee } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
@@ -42,7 +42,11 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
           <FlexLayout className="flex-col gap-3 mt-[12px]">
             <FlexLayout className="gap-4 items-center">
               <Text variant="text-xxl-medium">{`${employee.fullName}`}</Text>
-              <OccupationPill occupation={employee.position} text={employee.position} />
+              <FlexLayout className="items-center gap-2">
+                {employee.positions.map((p) => (
+                  <OccupationPill key={p} occupation={p} text={p} />
+                ))}
+              </FlexLayout>
             </FlexLayout>
             <FlexLayout className="gap-8">
               <DisplayIf condition={!!employee.governmentId}>
@@ -74,7 +78,7 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
         <EmployeeActions id={employee.id} />
       </FlexLayout>
       <FlexLayout className="ml-4 gap-8">
-        <DisplayIf condition={employee.position === 'driver'}>
+        <DisplayIf condition={employee.positions.includes(PositionEnum.Driver)}>
           <DriverInfo employee={employee} />
         </DisplayIf>
       </FlexLayout>

@@ -25,11 +25,15 @@ export const UserProfilePage = () => {
 export const MainContent: React.FC<{ user: User }> = ({ user }) => {
   return (
     <FlexLayout className="flex-col gap-4 max-w-[400px]">
-      <FlexLayout className="gap-3 items-center">
+      <FlexLayout className="flex-col gap-3">
         <Text color="text-color-1" variant="text-xxl-bold">
           {user.firstName} {user.lastName}
         </Text>
-        <OccupationPill occupation={user.position} text={user.position} />
+        <FlexLayout className="items-center gap-2">
+          {user.positions.map((position) => (
+            <OccupationPill key={position} occupation={position} text={position} />
+          ))}
+        </FlexLayout>
       </FlexLayout>
       <Box>
         <TextInputWithLabels

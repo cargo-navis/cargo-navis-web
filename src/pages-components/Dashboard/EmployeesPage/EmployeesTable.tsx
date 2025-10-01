@@ -46,7 +46,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         enableSorting: false,
         cell: (props) => {
           const name = props.getValue();
-          const { position, id } = props.row.original;
+          const { positions, id } = props.row.original;
 
           const employeeAlerts = groupedAlerts[id];
 
@@ -64,7 +64,11 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
                       </AlertsTooltip>
                     )}
                   </FlexLayout>
-                  <OccupationPill occupation={position} size="s" text={position} />
+                  <FlexLayout className="items-center gap-2">
+                    {positions.map((p) => (
+                      <OccupationPill key={p} occupation={p} size="s" text={p} />
+                    ))}
+                  </FlexLayout>
                 </FlexLayout>
               </Box>
             </Link>
@@ -148,9 +152,9 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         size: 80,
         enableSorting: false,
         cell: (props) => {
-          const { position } = props.row.original;
+          const { positions } = props.row.original;
 
-          if (position !== PositionEnum.Driver) return '–';
+          if (!positions.includes(PositionEnum.Driver)) return '–';
 
           return props.getValue() ? (
             <Icon className="text-green-600" icon="CheckCircleIcon" size="l" />
