@@ -20,7 +20,7 @@ export interface Employee {
   phoneNumber: string;
   email: string;
   gender: GenderEnum;
-  position: PositionEnum;
+  positions: PositionEnum[];
   governmentId: string;
   governmentIdExpiryDate?: string;
   driverLicenceId?: string;

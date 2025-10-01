@@ -303,7 +303,7 @@ export const formDefaultValues = {
   lastName: '',
   phoneNumber: { countryCode: '+385', phoneNumber: '' },
   email: '',
-  position: '' as PositionEnum,
+  positions: [] as PositionEnum[],
   governmentId: undefined as unknown as string,
   governmentIdExpiryDate: undefined as unknown as string,
   driverLicenceId: undefined as unknown as string,

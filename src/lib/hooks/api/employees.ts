@@ -18,8 +18,8 @@ const positionHierarchy = {
 
 function sortEmployees(employees: Employee[]) {
   return employees.sort((a, b) => {
-    const aOrder = positionHierarchy[a.position] || 999;
-    const bOrder = positionHierarchy[b.position] || 999;
+    const aOrder = positionHierarchy[a.positions[0]] || 999;
+    const bOrder = positionHierarchy[b.positions[0]] || 999;
     return aOrder - bOrder;
   });
 }
@@ -49,7 +49,7 @@ export function useDrivers<TData = Employee[]>(args?: UseEmployeesArgs<TData>) {
   return useEmployees<TData>({
     ...args,
     select: (employees) => {
-      const drivers = employees.filter((employee) => employee.position === PositionEnum.Driver);
+      const drivers = employees.filter((employee) => employee.positions.includes(PositionEnum.Driver));
       return args?.select ? args.select(drivers) : (drivers as unknown as TData);
     },
   });
@@ -59,7 +59,7 @@ export function useDispatchers<TData = Employee[]>(args?: UseEmployeesArgs<TData
   return useEmployees<TData>({
     ...args,
     select: (employees) => {
-      const drivers = employees.filter((employee) => employee.position === PositionEnum.Dispatcher);
+      const drivers = employees.filter((employee) => employee.positions.includes(PositionEnum.Dispatcher));
       return args?.select ? args.select(drivers) : (drivers as unknown as TData);
     },
   });
