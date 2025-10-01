@@ -3,8 +3,15 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import { type Employee } from '@/lib/api/employees.d';
-import { FormDatepicker, FormPhoneNumberInput, FormRadioGroup, FormSwitch, FormTextInput } from '@/lib/components/form';
+import { type Employee, PositionEnum } from '@/lib/api/employees.d';
+import {
+  FormCheckboxGroup,
+  FormDatepicker,
+  FormPhoneNumberInput,
+  FormRadioGroup,
+  FormSwitch,
+  FormTextInput,
+} from '@/lib/components/form';
 import { useCreateEmployee, useUpdateEmployee } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout } from '@/ui';
@@ -99,7 +106,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
           <Box>
             <FormTextInput label="Email" name="email" type="email" />
           </Box>
-          <FormRadioGroup label="Pozicija *" name="position" options={positionOptions} />
+          <FormCheckboxGroup label="Pozicije *" name="positions" options={positionOptions} />
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Button
             isDisabled={!(isValid && isDirty)}
@@ -108,7 +115,7 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
             text={isEdit ? 'Ažuriraj Zaposlenika' : 'Dodaj Zaposlenika'}
           />
         </FlexLayout>
-        {values?.position === 'driver' && <DriverInfoFields />}
+        {values?.positions.includes(PositionEnum.Driver) && <DriverInfoFields />}
       </FlexLayout>
     </FormProvider>
   );
