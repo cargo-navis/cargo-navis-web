@@ -39,7 +39,7 @@ const TooltipListItem: React.FC<{ alert: Alert }> = ({ alert }) => {
 
   return (
     <Box as="li" className="marker:text-light-50">
-      <FlexLayout className="items-center justify-between gap-3">
+      <FlexLayout className="items-center justify-between gap-3 whitespace-nowrap">
         <Text color="text-light-50" variant="text-s">
           {text}:
         </Text>

@@ -9,7 +9,7 @@ export const employeeSchema = object({
   firstName: trimmedString().required('Ime je obavezno'),
   lastName: trimmedString().required('Prezime je obavezno'),
   gender: string().oneOf(Object.values(GenderEnum)).required('Spol je obavezan'),
-  position: string().oneOf(Object.values(PositionEnum)).required('Pozicija je obavezna'),
+  positions: array(string().oneOf(Object.values(PositionEnum))).required('Pozicija je obavezna'),
   email: trimmedString().email('Email mora biti validan').optional().nullable(),
   phoneNumber: object()
     .shape({
@@ -36,8 +36,8 @@ export const employeeSchema = object({
 }).required();
 
 function whenDriver(schema: Schema) {
-  return schema.when('position', {
-    is: PositionEnum.Driver,
+  return schema.when('positions', {
+    is: (positions: PositionEnum[]) => positions.includes(PositionEnum.Driver),
     then: (s) => s.optional().nullable(),
     otherwise: (s) => s.nullable(),
   });
