@@ -24,9 +24,9 @@ export function useNotificationUpdates() {
       if (event.data.type === 'notification-received') {
         console.log('Received notification update from service worker:', event.data);
 
-        queryClient.invalidateQueries({ queryKey: ['notifications'] });
-        queryClient.invalidateQueries({ queryKey: ['shipment', event.data.data.shipmentId] });
-        queryClient.invalidateQueries({ queryKey: ['shipments'] });
+        queryClient.invalidateQueries({ queryKey: ['notifications'], type: 'all' });
+        queryClient.invalidateQueries({ queryKey: ['shipment', event.data.data.shipmentId], type: 'all' });
+        queryClient.invalidateQueries({ queryKey: ['shipments'], type: 'all' });
       }
     };
 
