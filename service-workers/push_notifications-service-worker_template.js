@@ -12,6 +12,7 @@ self.addEventListener('push', (event) => {
     const notificationData = event.data.json();
     const { title, message, targetUrl } = extractNotificationData(notificationData);
     dispatchNotification(title, message, targetUrl);
+    broadcastNotification(notificationData.metadata.shipmentId);
   } catch (error) {
     console.log('ERROR DISPATCHING NOTIFICATION');
     console.error(error);
@@ -46,6 +47,15 @@ function dispatchNotification(title, message, targetUrl) {
     body: message,
     icon: '/logomark.png',
     data: { url: `${targetUrl}` },
+  });
+}
+
+function broadcastNotification(shipmentId) {
+  const channel = new BroadcastChannel('cargo-navis-notifications');
+  channel.postMessage({
+    type: 'notification-received',
+    data: { shipmentId },
+    timestamp: Date.now(),
   });
 }
 
