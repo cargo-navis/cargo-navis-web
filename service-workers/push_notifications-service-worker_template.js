@@ -4,6 +4,11 @@ const ENV_VARS = {
   appUrl: '__APP_URL__',
 };
 
+self.addEventListener('install', () => {
+  console.log('Service worker update installing...');
+  self.skipWaiting();
+});
+
 self.addEventListener('push', (event) => {
   console.log('PUSH RECEIVED');
   console.log(event);
