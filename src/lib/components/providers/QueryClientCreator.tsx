@@ -2,6 +2,8 @@ import { QueryClient, type QueryClientConfig, QueryClientProvider } from '@tanst
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { useRef } from 'react';
 
+import { NotificationListener } from '../NotificationListener';
+
 const config: QueryClientConfig = {
   defaultOptions: {
     queries: {
@@ -19,6 +21,7 @@ export const QueryClientCreator: React.FC<{ children: React.ReactNode }> = ({ ch
 
   return (
     <QueryClientProvider client={queryClient.current}>
+      <NotificationListener />
       {children}
       <ReactQueryDevtools buttonPosition="bottom-left" initialIsOpen={false} position="bottom" />
     </QueryClientProvider>
