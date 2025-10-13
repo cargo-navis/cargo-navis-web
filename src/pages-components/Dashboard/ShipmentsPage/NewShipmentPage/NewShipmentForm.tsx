@@ -2,7 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import type { Shipment } from '@/lib/api';
+import { type Shipment, VehicleEnum } from '@/lib/api';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { FormTextInput } from '@/lib/components/form';
 import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
@@ -17,7 +17,6 @@ import { ContractorField } from './ContractorField';
 import { DispatcherField } from './DispatcherField';
 import { DriverField } from './DriverField';
 import { shipmentSchema } from './schema';
-import { TrailerField } from './TrailerField';
 import type { ShipmentFields } from './types';
 import { getFormDefaultValues, transformFormDataToPayload } from './utils';
 import { VehicleField } from './VehicleField';
@@ -135,10 +134,15 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
                 </Box>
                 <FlexLayout className="gap-4">
                   <Box className="flex-1">
-                    <VehicleField />
+                    <VehicleField label="Vozilo" name="vehicleId" placeholder="Odaberi vozilo..." />
                   </Box>
                   <Box className="flex-1">
-                    <TrailerField />
+                    <VehicleField
+                      label="Priključno vozilo"
+                      name="trailerId"
+                      placeholder="Odaberi priključno vozilo..."
+                      type={VehicleEnum.TRAILER}
+                    />
                   </Box>
                 </FlexLayout>
                 <Box className="flex-1">

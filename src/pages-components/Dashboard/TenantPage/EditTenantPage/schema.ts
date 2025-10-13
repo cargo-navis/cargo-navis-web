@@ -4,8 +4,8 @@ export const tenantSchema = yup.object().shape({
   name: yup.string().required('Ime je obavezno'),
   vatNumber: yup.string().required('VAT je obavezan'),
   nationalCompanyRegisterId: yup.string().required('OIB je obavezan'),
-  communityLicenseId: yup.string().required('Broj licence je obavezan'),
-  cargoInsuranceExpiryDate: yup.string().required('Datum isteka osiguranja je obavezan'),
+  communityLicenseId: yup.string(),
+  cargoInsuranceExpiryDate: yup.string(),
   address: yup.object().shape({
     streetName: yup.string().required('Adresa je obavezna'),
     postalCode: yup

@@ -72,8 +72,8 @@ export const EditTenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
               <FormTextInput label="OIB" name="nationalCompanyRegisterId" rules={{ required: true }} />
             </Box>
           </FlexLayout>
-          <FormTextInput label="Broj licence" name="communityLicenseId" rules={{ required: true }} />
-          <FormDatepicker label="Datum isteka osiguranja" name="cargoInsuranceExpiryDate" rules={{ required: true }} />
+          <FormTextInput label="Broj licence" name="communityLicenseId" />
+          <FormDatepicker label="Datum isteka osiguranja" name="cargoInsuranceExpiryDate" />
           <AddressFields />
           <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Button
