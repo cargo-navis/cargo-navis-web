@@ -6,8 +6,8 @@ export interface TenantFormData {
   name: string;
   vatNumber: string;
   nationalCompanyRegisterId: string;
-  communityLicenseId: string;
-  cargoInsuranceExpiryDate: string;
+  communityLicenseId?: string;
+  cargoInsuranceExpiryDate?: string;
   address: {
     streetName: string;
     postalCode: {
