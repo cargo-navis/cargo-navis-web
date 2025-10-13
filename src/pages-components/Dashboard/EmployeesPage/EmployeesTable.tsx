@@ -24,15 +24,13 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         id: 'avatar',
         size: 100,
         cell: (props) => {
-          const memberName: string = props.row.getValue('fullName');
-          const [fName, lName] = memberName.split(' ');
-          const id = props.row.original.id;
+          const { firstName, lastName, id } = props.row.original;
 
           return (
             <Link href={`/dashboard/employees/${id}`}>
               <Box className="py-3 pl-3">
                 <FlexLayout className="items-center justify-center w-[50px] h-[50px] rounded-circle bg-teal-900">
-                  <Text className="text-light-50 group-hover/cell:text-teal-600">{fName[0] + lName[0]}</Text>
+                  <Text className="text-light-50 group-hover/cell:text-teal-600">{firstName[0] + lastName[0]}</Text>
                 </FlexLayout>
               </Box>
             </Link>
