@@ -5,8 +5,15 @@ import { renderVehicleName } from '@/lib/utils/vehicles';
 
 import { useAgencyFieldReset } from './hooks';
 
-function mapVehiclesToOptions(vehicles: Vehicle[]) {
+function mapVehiclesToOptions(vehicles: Vehicle[], type?: VehicleEnum) {
   // Filter vehicles by allowed types
+  if (type === VehicleEnum.TRAILER) {
+    return vehicles.map((vehicle) => ({
+      value: vehicle.id,
+      label: renderVehicleName(vehicle),
+    }));
+  }
+
   const allowedTypes = [VehicleEnum.TRUCK, VehicleEnum.SOLO_TRUCK, VehicleEnum.VAN];
   const filteredVehicles = vehicles.filter((vehicle) => allowedTypes.includes(vehicle.type));
 
@@ -36,11 +43,18 @@ function mapVehiclesToOptions(vehicles: Vehicle[]) {
   return Object.values(groupedOptions);
 }
 
-export const VehicleField = () => {
-  const { data: vehicles = [] } = useVehicles();
-  const vehicleOptions = mapVehiclesToOptions(vehicles);
+interface VehicleFieldInterface {
+  type?: VehicleEnum;
+  label: string;
+  name: string;
+  placeholder: string;
+}
 
-  const isAgencyUse = useAgencyFieldReset('vehicleId');
+export const VehicleField: React.FC<VehicleFieldInterface> = ({ type, label, name, placeholder }) => {
+  const { data: vehicles = [] } = useVehicles({ type });
+  const vehicleOptions = mapVehiclesToOptions(vehicles, type);
+
+  const isAgencyUse = useAgencyFieldReset(name);
 
   // Hide the component completely when isAgencyUse is true
   if (isAgencyUse) {
@@ -51,10 +65,10 @@ export const VehicleField = () => {
     <FormSingleSelect
       isClearable
       isSearchable
-      label="Vozilo"
-      name="vehicleId"
+      label={label}
+      name={name}
       options={vehicleOptions}
-      placeholder="Odaberi vozilo..."
+      placeholder={placeholder}
     />
   );
 };
