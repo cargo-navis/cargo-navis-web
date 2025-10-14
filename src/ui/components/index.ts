@@ -9,6 +9,7 @@ export * from './Heading';
 export * from './Icon';
 export * from './LoadingSpinner';
 export * from './Menu';
+export * from './NumberInput';
 export * from './PageSizeSelector';
 export * from './Pagination';
 export * from './PaginationInfo';
