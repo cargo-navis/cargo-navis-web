@@ -5,7 +5,18 @@ import { Box, Icon, type IconType } from '@/ui';
 
 type DefaultProps = Pick<
   InputHTMLAttributes<HTMLInputElement>,
-  'autoComplete' | 'autoFocus' | 'id' | 'name' | 'placeholder' | 'onBlur' | 'min' | 'max' | 'step'
+  | 'autoComplete'
+  | 'autoFocus'
+  | 'id'
+  | 'name'
+  | 'placeholder'
+  | 'onBlur'
+  | 'min'
+  | 'max'
+  | 'step'
+  | 'inputMode'
+  | 'onKeyDown'
+  | 'onPaste'
 >;
 
 export interface TextInputProps extends DefaultProps {
