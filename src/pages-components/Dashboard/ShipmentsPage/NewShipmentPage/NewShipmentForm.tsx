@@ -16,6 +16,7 @@ import { ClientField } from './ClientField';
 import { ContractorField } from './ContractorField';
 import { DispatcherField } from './DispatcherField';
 import { DriverField } from './DriverField';
+import { PriceField } from './PriceField';
 import { shipmentSchema } from './schema';
 import type { ShipmentFields } from './types';
 import { getFormDefaultValues, transformFormDataToPayload } from './utils';
@@ -117,16 +118,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
                     <ClientField />
                   </Box>
                   <Box className="flex-1">
-                    <FormTextInput
-                      iconLeft="CurrencyEuroIcon"
-                      label="Cijena (Euro)"
-                      min="0"
-                      name="price"
-                      placeholder="XXX"
-                      rules={{ required: true }}
-                      step="0.01"
-                      type="number"
-                    />
+                    <PriceField />
                   </Box>
                 </FlexLayout>
                 <Box className="flex-1">
