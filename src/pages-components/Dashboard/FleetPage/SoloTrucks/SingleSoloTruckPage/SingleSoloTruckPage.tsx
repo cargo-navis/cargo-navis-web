@@ -48,7 +48,7 @@ const MainContent: React.FC<{ solo: Vehicle }> = ({ solo }) => {
             </FlexLayout>
           </FlexLayout>
         </FlexLayout>
-        <VehicleActions id={id} type={type} />
+        <VehicleActions id={id} name={registration} type={type} />
       </FlexLayout>
       <FlexLayout className="ml-4 gap-10 flex-wrap">
         <GeneralInfo vehicle={solo} />

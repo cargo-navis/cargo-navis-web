@@ -71,7 +71,7 @@ const MainContent: React.FC<{ contractor: Contractor }> = ({ contractor }) => {
             </FlexLayout>
           </FlexLayout>
         </FlexLayout>
-        <ContractorActions id={contractor.id} />
+        <ContractorActions id={contractor.id} name={contractor.name} />
       </FlexLayout>
     </FlexLayout>
   );

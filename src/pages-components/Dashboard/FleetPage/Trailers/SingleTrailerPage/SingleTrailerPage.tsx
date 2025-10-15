@@ -47,7 +47,7 @@ const MainContent: React.FC<{ trailer: Vehicle }> = ({ trailer }) => {
             </FlexLayout>
           </FlexLayout>
         </FlexLayout>
-        <VehicleActions id={id} type={type} />
+        <VehicleActions id={id} name={registration} type={type} />
       </FlexLayout>
       <FlexLayout className="ml-4 gap-10">
         <GeneralInfo vehicle={trailer} />
