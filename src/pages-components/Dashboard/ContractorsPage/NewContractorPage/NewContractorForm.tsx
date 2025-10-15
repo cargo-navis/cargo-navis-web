@@ -47,6 +47,8 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
       addressPostalCodeId: addressPostalCode.value,
     };
 
+    payload['termsOfPayment'] = payload['termsOfPayment'] || 0;
+
     try {
       if (isEdit) {
         await updateContractor(payload);

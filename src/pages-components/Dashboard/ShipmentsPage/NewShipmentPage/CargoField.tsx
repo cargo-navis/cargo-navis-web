@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import { FormCheckbox, FormSingleSelect, FormTextInput } from '@/lib/components/form';
+import { FormCheckbox, FormNumberInput, FormSingleSelect } from '@/lib/components/form';
 import { FormTextarea } from '@/lib/components/form/FormTextarea';
 import { roundLdmValue } from '@/lib/utils/math';
 import { palleteOptions, palleteValues } from '@/lib/utils/palletes';
@@ -60,7 +60,7 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
           </Box>
         </FlexLayout>
         {isStandardCargo ? <StandardCargo index={index} /> : <NonStandardCargo index={index} />}
-        <FormTextInput label="Težina (kg)" name={`cargo.${index}.weight`} rules={{ required: true }} />
+        <FormNumberInput label="Težina (kg)" name={`cargo.${index}.weight`} rules={{ required: true }} />
         <FormTextarea label="Opis tereta" name={`cargo.${index}.description`} />
       </FlexLayout>
     </FlexLayout>
@@ -97,16 +97,10 @@ const StandardCargo: React.FC<{ index: number }> = ({ index }) => {
           />
         </Box>
         <Box className="flex-1">
-          <FormTextInput
-            label="Broj paleta"
-            min="1"
-            name={`cargo.${index}.metadata.palleteAmount`}
-            placeholder="Unesi broj paleta"
-            type="number"
-          />
+          <FormNumberInput label="Broj paleta" name={`cargo.${index}.metadata.palleteAmount`} />
         </Box>
       </FlexLayout>
-      <FormTextInput label="Dužni metri (LDM)" name={`cargo.${index}.ldm`} type="number" />
+      <FormNumberInput label="Dužni metri (LDM)" name={`cargo.${index}.ldm`} />
     </FlexLayout>
   );
 };
@@ -150,51 +144,24 @@ const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => {
     <FlexLayout className="gap-4 flex-col">
       <FlexLayout className="gap-4">
         <Box className="flex-1">
-          <FormTextInput
-            label="Duljina (m)"
-            min="0"
-            name={`cargo.${index}.metadata.length`}
-            placeholder="XXX"
-            step="0.01"
-            type="number"
-          />
+          <FormNumberInput label="Duljina (m)" name={`cargo.${index}.metadata.length`} />
         </Box>
         <Box className="flex-1">
-          <FormTextInput
-            label="Širina (m)"
-            min="0"
-            name={`cargo.${index}.metadata.width`}
-            placeholder="XXX"
-            step="0.01"
-            type="number"
-          />
+          <FormNumberInput label="Širina (m)" name={`cargo.${index}.metadata.width`} />
         </Box>
         <Box className="flex-1">
-          <FormTextInput
-            label="Visina (m)"
-            min="0"
-            name={`cargo.${index}.metadata.height`}
-            placeholder="XXX"
-            step="0.01"
-            type="number"
-          />
+          <FormNumberInput label="Visina (m)" name={`cargo.${index}.metadata.height`} />
         </Box>
       </FlexLayout>
       <FlexLayout className="gap-4 items-center h-[96px] -my-4">
         <FormCheckbox label="Kolete" name={hasKoleteFieldName} />
         {hasKolete && (
           <Box className="flex-1">
-            <FormTextInput
-              label="Broj paleta"
-              min="1"
-              name={palleteAmountFieldName}
-              placeholder="Unesi broj paleta"
-              type="number"
-            />
+            <FormNumberInput label="Broj paleta" name={palleteAmountFieldName} />
           </Box>
         )}
       </FlexLayout>
-      <FormTextInput label="Dužni metri (LDM)" name={`cargo.${index}.ldm`} type="number" />
+      <FormNumberInput label="Dužni metri (LDM)" name={`cargo.${index}.ldm`} />
     </FlexLayout>
   );
 };
