@@ -52,11 +52,11 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
     try {
       if (isEdit) {
         await updateClient(payload);
-        showSuccessToast({ title: 'Klijent uspješno ažuriran' });
+        showSuccessToast({ title: `Klijent "${name}" uspješno ažuriran` });
         void back();
       } else {
         await createClient(payload);
-        showSuccessToast({ title: 'Klijent uspješno kreiran' });
+        showSuccessToast({ title: `Klijent "${name}" uspješno kreiran` });
         void back();
       }
     } catch {

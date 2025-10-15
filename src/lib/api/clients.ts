@@ -3,7 +3,8 @@ import { backend } from '@/lib/services/backendService';
 import type { Client, CreateClientParams, UpdateClientParams } from './clients.d';
 
 export async function getClients() {
-  return backend.get<Client[]>('/api/clients');
+  const clients = await backend.get<Client[]>('/api/clients');
+  return clients.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function createClient(data: CreateClientParams) {

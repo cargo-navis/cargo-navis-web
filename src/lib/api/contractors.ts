@@ -3,7 +3,8 @@ import { backend } from '@/lib/services/backendService';
 import type { Contractor, CreateContractorParams, UpdateContractorParams } from './contractors.d';
 
 export async function getContractors() {
-  return backend.get<Contractor[]>('/api/transport-contractors');
+  const contractors = await backend.get<Contractor[]>('/api/transport-contractors');
+  return contractors.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export async function createContractor(data: CreateContractorParams) {
