@@ -14,7 +14,7 @@ export const InfoItem: React.FC<InfoItemProps> = ({ label, value, isAlert }) => 
       </Text>
       <FlexLayout className="items-center gap-2 relative">
         <Text className="whitespace-nowrap" color={isAlert ? 'text-red-500' : 'text-color-1'} variant="text-s-medium">
-          {value}
+          {value || '—'}
         </Text>
         {isAlert && (
           <Icon className="absolute right-[-32px]" color="text-red-500" icon="ExclamationTriangleIcon" size="l" />

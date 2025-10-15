@@ -5,7 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
 import type { Client } from '@/lib/api';
-import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
+import { FormNumberInput, FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateClient, useUpdateClient } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
@@ -47,14 +47,16 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
       addressPostalCodeId: addressPostalCode.value,
     };
 
+    payload['termsOfPayment'] = payload['termsOfPayment'] || 0;
+
     try {
       if (isEdit) {
         await updateClient(payload);
-        showSuccessToast({ title: 'Klijent uspješno ažuriran' });
+        showSuccessToast({ title: `Klijent "${name}" uspješno ažuriran` });
         void back();
       } else {
         await createClient(payload);
-        showSuccessToast({ title: 'Klijent uspješno kreiran' });
+        showSuccessToast({ title: `Klijent "${name}" uspješno kreiran` });
         void back();
       }
     } catch {
@@ -85,13 +87,7 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
               <FormTextInput label="OIB" name="nationalCompanyRegisterId" rules={{ required: true }} />
             </Box>
           </FlexLayout>
-          <FormTextInput
-            label="Valuta plaćanja (u danima)"
-            min="0"
-            name="termsOfPayment"
-            rules={{ required: true }}
-            type="number"
-          />
+          <FormNumberInput label="Valuta plaćanja (u danima)" name="termsOfPayment" />
           <FlexLayout className="flex-1 flex-col gap-2">
             <Text color="text-color-3" variant="text-xxs-medium">
               Adresa sjedišta

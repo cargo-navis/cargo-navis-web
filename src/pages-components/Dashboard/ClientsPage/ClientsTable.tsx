@@ -23,7 +23,9 @@ export function ClientsTable({ clients }: { clients?: Client[] }) {
             <Link href={`/dashboard/clients/${id}`}>
               <Box className="py-3 pl-3">
                 <FlexLayout className="items-center justify-center w-[50px] h-[50px] rounded-circle bg-teal-900">
-                  <Text className="text-light-50 group-hover/cell:text-teal-600 uppercase">{initials}</Text>
+                  <Text className="text-light-50 group-hover/cell:text-teal-600 uppercase" variant="text-s-medium">
+                    {initials}
+                  </Text>
                 </FlexLayout>
               </Box>
             </Link>

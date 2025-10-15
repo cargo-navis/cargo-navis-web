@@ -5,7 +5,13 @@ import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles';
-import { FormDatepicker, FormSingleSelect, FormTextInput, FormYearpicker } from '@/lib/components/form';
+import {
+  FormDatepicker,
+  FormNumberInput,
+  FormSingleSelect,
+  FormTextInput,
+  FormYearpicker,
+} from '@/lib/components/form';
 import { useCreateVehicle, useUpdateVehicle } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, DisplayIf, FlexLayout, Text } from '@/ui';
@@ -45,6 +51,16 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
       },
       {} as Record<string, any>
     );
+
+    const hasDirtyDimension = ['length', 'width', 'height'].some((field) => formState.dirtyFields[field]);
+
+    if (hasDirtyDimension) {
+      updatedFields.dimensions = {
+        length: processedData['dimensions'].length || 0,
+        width: processedData['dimensions'].width || 0,
+        height: processedData['dimensions'].height || 0,
+      };
+    }
 
     try {
       if (isEdit) {
@@ -90,14 +106,14 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
           </FlexLayout>
           <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Box>
-            <FormTextInput label="Registracija" name="registration" />
+            <FormTextInput label="Registracija" name="registration" rules={{ required: true }} />
           </Box>
           <FlexLayout className="gap-4">
             <Box className="flex-grow">
-              <FormTextInput label="Masa praznog vozila (kg)" min="0" name="emptyWeight" type="number" />
+              <FormNumberInput label="Masa praznog vozila (kg)" name="emptyWeight" />
             </Box>
             <Box className="flex-grow">
-              <FormTextInput label="Broj osovina" min="0" name="numberOfAxles" type="number" />
+              <FormNumberInput label="Broj osovina" name="numberOfAxles" />
             </Box>
           </FlexLayout>
           <Box>

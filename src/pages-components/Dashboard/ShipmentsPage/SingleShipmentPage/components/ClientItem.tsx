@@ -24,7 +24,7 @@ export const ClientItem: React.FC<{ clientId: string }> = ({ clientId }) => {
         Klijent
       </Text>
       <Link className="hover:text-teal-500 transition-colors max-w-max" href={href}>
-        <Text variant="text-l">{clientToRender?.name || '-'}</Text>
+        <Text variant="text-l">{clientToRender?.name || '—'}</Text>
       </Link>
     </FlexLayout>
   );

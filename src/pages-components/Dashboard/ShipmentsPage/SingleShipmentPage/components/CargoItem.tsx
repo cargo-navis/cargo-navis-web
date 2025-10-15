@@ -52,19 +52,19 @@ export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index }) => {
           <Text color="text-color-3" variant="text-s-medium">
             LDM
           </Text>
-          <Text variant="text-l">{cargo.ldm || '-'}</Text>
+          <Text variant="text-l">{cargo.ldm || '—'}</Text>
         </FlexLayout>
         <FlexLayout className="flex-col">
           <Text color="text-color-3" variant="text-s-medium">
             Težina (kg)
           </Text>
-          <Text variant="text-l">{cargo.weight || '-'}</Text>
+          <Text variant="text-l">{cargo.weight || '—'}</Text>
         </FlexLayout>
         <FlexLayout className="flex-col">
           <Text color="text-color-3" variant="text-s-medium">
             Opis
           </Text>
-          <Text variant="text-l">{cargo.description || '-'}</Text>
+          <Text variant="text-l">{cargo.description || '—'}</Text>
         </FlexLayout>
       </FlexLayout>
     </FlexLayout>

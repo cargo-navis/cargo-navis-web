@@ -5,7 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
 import type { Contractor } from '@/lib/api';
-import { FormSingleSelect, FormTextInput } from '@/lib/components/form';
+import { FormNumberInput, FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateContractor, useUpdateContractor } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
@@ -47,14 +47,16 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
       addressPostalCodeId: addressPostalCode.value,
     };
 
+    payload['termsOfPayment'] = payload['termsOfPayment'] || 0;
+
     try {
       if (isEdit) {
         await updateContractor(payload);
-        showSuccessToast({ title: 'Kontraktor uspješno ažuriran' });
+        showSuccessToast({ title: `Kontraktor "${name}" uspješno ažuriran` });
         void back();
       } else {
         await createContractor(payload);
-        showSuccessToast({ title: 'Kontraktor uspješno kreiran' });
+        showSuccessToast({ title: `Kontraktor "${name}" uspješno kreiran` });
         void back();
       }
     } catch {
@@ -85,7 +87,7 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
               <FormTextInput label="OIB" name="nationalCompanyRegisterId" rules={{ required: true }} />
             </Box>
           </FlexLayout>
-          <FormTextInput label="Valuta plaćanja" name="termsOfPayment" rules={{ required: true }} />
+          <FormNumberInput label="Valuta plaćanja" name="termsOfPayment" rules={{ required: true }} />
           <FlexLayout className="flex-1 flex-col gap-2">
             <Text color="text-color-3" variant="text-xxs-medium">
               Adresa sjedišta

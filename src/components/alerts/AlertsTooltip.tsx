@@ -44,7 +44,7 @@ const TooltipListItem: React.FC<{ alert: Alert }> = ({ alert }) => {
           {text}:
         </Text>
         <Text color="text-light-50" variant="text-s-bold">
-          {formattedDate || '-'}
+          {formattedDate || '—'}
         </Text>
       </FlexLayout>
     </Box>
