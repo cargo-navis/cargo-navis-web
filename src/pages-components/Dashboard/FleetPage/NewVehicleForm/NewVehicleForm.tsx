@@ -52,6 +52,16 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
       {} as Record<string, any>
     );
 
+    const hasDirtyDimension = ['length', 'width', 'height'].some((field) => formState.dirtyFields[field]);
+
+    if (hasDirtyDimension) {
+      updatedFields.dimensions = {
+        length: processedData['dimensions'].length || 0,
+        width: processedData['dimensions'].width || 0,
+        height: processedData['dimensions'].height || 0,
+      };
+    }
+
     try {
       if (isEdit) {
         await updateVehicle({ type, ...updatedFields });
