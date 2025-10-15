@@ -70,8 +70,8 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
               </DisplayIf>
             </FlexLayout>
             <FlexLayout className="gap-8">
-              <ContactInfo contact={getDataPointDateString(employee.dateOfBirth) || '-'} contactType="dateOfBirth" />
-              <ContactInfo contact={employee.residenceAddress || '-'} contactType="residenceAddress" />
+              <ContactInfo contact={getDataPointDateString(employee.dateOfBirth) || '—'} contactType="dateOfBirth" />
+              <ContactInfo contact={employee.residenceAddress || '—'} contactType="residenceAddress" />
             </FlexLayout>
           </FlexLayout>
         </FlexLayout>

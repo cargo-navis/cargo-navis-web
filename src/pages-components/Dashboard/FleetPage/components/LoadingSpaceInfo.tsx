@@ -59,7 +59,7 @@ export const LoadingSpaceInfo: React.FC<LoadingSpaceInfoProps> = ({ vehicle }) =
       </FlexLayout>
       <Divider />
       <FlexLayout className="flex-col gap-3">
-        <InfoItem label="Vrsta utovarnog prostora" value={loadType ?? '-'} />
+        <InfoItem label="Vrsta utovarnog prostora" value={loadType ?? '—'} />
       </FlexLayout>
       <Divider />
       <FlexLayout className="justify-between items-baseline">

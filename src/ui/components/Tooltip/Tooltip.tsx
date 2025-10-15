@@ -63,7 +63,7 @@ export const Tooltip: React.FC<TooltipProps> = ({ children, content, offset = 10
         right: 'left',
         bottom: 'top',
         left: 'right',
-      })[placement.split('-')[0]],
+      })[placement.split('—')[0]],
     [placement]
   ) as string;
 
