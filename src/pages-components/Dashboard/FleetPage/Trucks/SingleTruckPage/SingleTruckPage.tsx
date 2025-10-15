@@ -6,7 +6,7 @@ import type { Vehicle } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicle } from '@/lib/hooks';
 import { VehicleActions } from '@/pages-components/Dashboard/FleetPage/components/VehicleActions';
-import { Box, FlexLayout, Icon, Pill, Text } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon, Pill, Text } from '@/ui';
 
 import { GeneralInfo } from '../../components/GeneralInfo';
 import { VehicleInfo } from '../../components/VehicleInfo';
@@ -38,9 +38,11 @@ const MainContent: React.FC<{ truck: Vehicle }> = ({ truck }) => {
               {registration}
             </Text>
             <FlexLayout className="gap-3 items-center">
-              <Text color="text-color-3" variant="text-m-medium">
-                {brand} ({manufacturingYear})
-              </Text>
+              <DisplayIf condition={!!brand}>
+                <Text color="text-color-3" variant="text-m-medium">
+                  {brand} {manufacturingYear && `(${manufacturingYear})`}
+                </Text>
+              </DisplayIf>
               <Pill text="Tegljač" variant="success" />
             </FlexLayout>
           </FlexLayout>
