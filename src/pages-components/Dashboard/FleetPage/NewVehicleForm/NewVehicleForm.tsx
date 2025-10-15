@@ -106,7 +106,7 @@ export const NewVehicleForm: React.FC<{ vehicle?: Vehicle; type: VehicleEnum }> 
           </FlexLayout>
           <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
           <Box>
-            <FormTextInput label="Registracija" name="registration" />
+            <FormTextInput label="Registracija" name="registration" rules={{ required: true }} />
           </Box>
           <FlexLayout className="gap-4">
             <Box className="flex-grow">
