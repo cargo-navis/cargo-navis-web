@@ -133,8 +133,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const contractor = contractors.find((c) => c.id === transportContractorId) || tenant;
 
           return (
-            <FlexLayout className="flex-col pr-4 py-2 group-hover/row:text-teal-500 max-w-[15vw] whitespace-nowrap">
-              <Text className="overflow-hidden text-ellipsis" color="text-color-1" variant="text-m-medium">
+            <FlexLayout className="flex-col pr-4 py-2 max-w-[15vw] whitespace-nowrap">
+              <Text className="overflow-hidden text-ellipsis" color="text-color-1" variant="text-m-bold">
                 {client ? client.name : '—'}
               </Text>
               <Text className="overflow-hidden text-ellipsis" color="text-color-3" variant="text-xs">
@@ -149,7 +149,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         enableSorting: true,
         sortingFn: 'basic',
         cell: (info) => (
-          <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
+          <FlexLayout className="items-center py-2">
             <Text className="text-green-500 dark:text-green-400" variant="text-m-medium">
               {info.getValue()}€
             </Text>
@@ -167,8 +167,10 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (info) => {
           const date = info.getValue();
           return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Text>{getDataPointDateString(date)}</Text>
+            <FlexLayout className="items-center py-2">
+              <Text color="text-color-3" variant="text-s-medium">
+                {getDataPointDateString(date)}
+              </Text>
             </FlexLayout>
           );
         },
@@ -184,8 +186,10 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (info) => {
           const date = info.getValue();
           return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Text>{getDataPointDateString(date)}</Text>
+            <FlexLayout className="items-center py-2">
+              <Text color="text-color-3" variant="text-s-medium">
+                {getDataPointDateString(date)}
+              </Text>
             </FlexLayout>
           );
         },
@@ -193,15 +197,22 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       columnHelper.display({
         id: 'ldm',
         enableSorting: false,
-        header: 'LDM',
+        header: 'LDM / Težina',
         size: 100,
         cell: (props) => {
           const { cargo } = props.row.original;
 
           const ldmTotal = cargo.reduce((acc, c) => (acc += c.ldm), 0);
+          const weightTotal = cargo.reduce((acc, c) => (acc += c.weight), 0);
+
           return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Text>{roundLdmValue(ldmTotal) || '—'}</Text>
+            <FlexLayout className="flex-col py-2">
+              <Text color="text-color-2" variant="text-s-medium">
+                {roundLdmValue(ldmTotal) || '—'}
+              </Text>
+              <Text color="text-color-3" variant="text-xs">
+                {weightTotal ? `${weightTotal} kg` : '—'}
+              </Text>
             </FlexLayout>
           );
         },
@@ -221,81 +232,78 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           }, 0);
 
           return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Text>{!hasNonstandardCargo && !!palleteNo ? palleteNo : '—'}</Text>
+            <FlexLayout className="items-center py-2">
+              <Text color="text-color-2" variant="text-s-medium">
+                {!hasNonstandardCargo && !!palleteNo ? palleteNo : '—'}
+              </Text>
             </FlexLayout>
           );
         },
       }),
-      columnHelper.accessor((row) => row.cargo.reduce((acc, c) => acc + (c.weight || 0), 0), {
-        id: 'weight',
-        header: 'Težina',
-        enableSorting: true,
-        sortingFn: 'basic',
-        cell: (props) => {
-          const weight = props.getValue();
-          return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Text>{weight ? `${weight} kg` : '—'}</Text>
-            </FlexLayout>
-          );
-        },
-      }),
-      columnHelper.accessor('loadingAddress', {
-        header: 'Adresa utovara',
+      columnHelper.display({
+        id: 'addresses',
+        header: 'Adresa utovara i istovara',
         enableSorting: false,
         cell: (info) => {
-          const address = info.getValue();
+          const { loadingAddress, unloadingAddress } = info.row.original;
+
           return (
-            <FlexLayout className="items-center py-2 pr-4 group-hover/row:text-teal-500">
+            <FlexLayout className="flex-col gap-1 py-2 pr-4 max-w-[200px]">
               <Tooltip
                 content={
                   <Box className="px-1">
                     <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
-                      {address.streetName}
+                      {loadingAddress.streetName}
                     </Text>
                     <br />
                     <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
-                      {address.postalCode}, {address.placeName},
+                      {loadingAddress.postalCode}, {loadingAddress.placeName},
                     </Text>
                     <br />
                     <Text color="text-light-50" variant="text-xs">
-                      {getCountryFromCode(address.countryCode)?.name}
+                      {getCountryFromCode(loadingAddress.countryCode)?.name}
                     </Text>
                   </Box>
                 }
               >
-                <Text variant="text-xs">{formatAddress(address)}</Text>
+                <FlexLayout className="items-center gap-1">
+                  <Icon color="text-color-3" icon="ArrowRightEndOnRectangleIcon" size="xs" />
+                  <Text
+                    className="whitespace-nowrap overflow-hidden text-ellipsis"
+                    color="text-color-3"
+                    variant="text-xs"
+                  >
+                    {formatAddress(loadingAddress)}
+                  </Text>
+                </FlexLayout>
               </Tooltip>
-            </FlexLayout>
-          );
-        },
-      }),
-      columnHelper.accessor('unloadingAddress', {
-        header: 'Adresa istovara',
-        enableSorting: false,
-        cell: (info) => {
-          const address = info.getValue();
-          return (
-            <FlexLayout className="items-center py-2 pr-4 group-hover/row:text-teal-500">
               <Tooltip
                 content={
                   <Box className="px-1">
                     <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
-                      {address.streetName}
+                      {unloadingAddress.streetName}
                     </Text>
                     <br />
                     <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
-                      {address.postalCode}, {address.placeName},
+                      {unloadingAddress.postalCode}, {unloadingAddress.placeName},
                     </Text>
                     <br />
                     <Text color="text-light-50" variant="text-xs">
-                      {getCountryFromCode(address.countryCode)?.name}
+                      {getCountryFromCode(unloadingAddress.countryCode)?.name}
                     </Text>
                   </Box>
                 }
               >
-                <Text variant="text-xs">{formatAddress(address)}</Text>
+                <FlexLayout className="items-center gap-1">
+                  <Icon color="text-color-3" icon="ArrowRightStartOnRectangleIcon" size="xs" />
+                  <Text
+                    className="whitespace-nowrap overflow-hidden text-ellipsis"
+                    color="text-color-3"
+                    variant="text-xs"
+                  >
+                    {formatAddress(unloadingAddress)}
+                  </Text>
+                </FlexLayout>
               </Tooltip>
             </FlexLayout>
           );
@@ -315,7 +323,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const driverName = driver?.fullName ?? '—';
 
           return (
-            <FlexLayout className="flex-col gap-2 py-2 w-[150px] group-hover/row:text-teal-500">
+            <FlexLayout className="flex-col gap-2 py-2 w-[150px]">
               <FlexLayout className="items-start gap-1">
                 <Icon className="mt-1" icon="TruckIcon" size="s" />
                 <Text className="whitespace-nowrap overflow-hidden text-ellipsis" title={vehicleName} variant="text-xs">
@@ -351,7 +359,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const invoiceConfig = invoiceStatusConfig[shipment.invoiceStatus];
 
           return (
-            <FlexLayout className="flex-col items-end py-2 gap-1 group-hover/row:text-teal-500">
+            <FlexLayout className="flex-col items-end py-2 gap-1">
               <Pill size="s" text={`📦 ${text}`} variant={variant} />
               <Pill size="s" text={`💰 ${invoiceConfig.label}`} variant={invoiceConfig.variant} />
             </FlexLayout>
