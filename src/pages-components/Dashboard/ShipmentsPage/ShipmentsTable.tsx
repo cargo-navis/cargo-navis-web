@@ -133,7 +133,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const contractor = contractors.find((c) => c.id === transportContractorId) || tenant;
 
           return (
-            <FlexLayout className="flex-col pr-2 py-2 group-hover/row:text-teal-500 max-w-[15vw] whitespace-nowrap">
+            <FlexLayout className="flex-col pr-4 py-2 group-hover/row:text-teal-500 max-w-[15vw] whitespace-nowrap">
               <Text className="overflow-hidden text-ellipsis" color="text-color-1" variant="text-m-medium">
                 {client ? client.name : '—'}
               </Text>
@@ -150,7 +150,9 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         sortingFn: 'basic',
         cell: (info) => (
           <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-            <Text>{info.getValue()}€</Text>
+            <Text className="text-green-500 dark:text-green-400" variant="text-m-medium">
+              {info.getValue()}€
+            </Text>
           </FlexLayout>
         ),
       }),
