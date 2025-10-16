@@ -326,13 +326,23 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
             <FlexLayout className="flex-col gap-2 py-2 w-[150px]">
               <FlexLayout className="items-start gap-1">
                 <Icon className="mt-1" icon="TruckIcon" size="s" />
-                <Text className="whitespace-nowrap overflow-hidden text-ellipsis" title={vehicleName} variant="text-xs">
+                <Text
+                  className="whitespace-nowrap overflow-hidden text-ellipsis"
+                  color="text-color-2"
+                  title={vehicleName}
+                  variant="text-xs"
+                >
                   {vehicleName}
                 </Text>
               </FlexLayout>
               <FlexLayout className="items-start gap-1">
                 <Icon className="mt-1" icon="UserIcon" size="s" />
-                <Text className="whitespace-nowrap overflow-hidden text-ellipsis" title={driverName} variant="text-xs">
+                <Text
+                  className="whitespace-nowrap overflow-hidden text-ellipsis"
+                  color="text-color-2"
+                  title={driverName}
+                  variant="text-xs"
+                >
                   {driverName}
                 </Text>
               </FlexLayout>
