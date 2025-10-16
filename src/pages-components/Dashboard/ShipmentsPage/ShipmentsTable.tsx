@@ -92,69 +92,54 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                       />
                     </Box>
                   )}
-                  <Text variant="text-s-medium">{info.getValue()}</Text>
-                  {!!warningMessage.length && (
-                    <Tooltip
-                      content={
-                        <Box as="ul" className="px-1 list-disc">
-                          {warningMessages.map((message) => (
-                            <Text
-                              as="li"
-                              className="whitespace-nowrap ml-3"
-                              color="text-light-50"
-                              key={message}
-                              variant="text-xs"
-                            >
-                              {message}
-                            </Text>
-                          ))}
-                        </Box>
-                      }
-                    >
-                      <Icon color="text-red-500" icon="ExclamationTriangleIcon" size="m" />
-                    </Tooltip>
-                  )}
+                  <FlexLayout className="flex-col items-center">
+                    <Text color="text-color-2" variant="text-xs-medium">
+                      {info.getValue()}
+                    </Text>
+                    {!!warningMessage.length && (
+                      <Tooltip
+                        content={
+                          <Box as="ul" className="px-1 list-disc">
+                            {warningMessages.map((message) => (
+                              <Text
+                                as="li"
+                                className="whitespace-nowrap ml-3"
+                                color="text-light-50"
+                                key={message}
+                                variant="text-xs"
+                              >
+                                {message}
+                              </Text>
+                            ))}
+                          </Box>
+                        }
+                      >
+                        <Icon color="text-red-500" icon="ExclamationTriangleIcon" size="s" />
+                      </Tooltip>
+                    )}
+                  </FlexLayout>
                 </FlexLayout>
               )}
             </FlexLayout>
           );
         },
       }),
-      columnHelper.accessor('clientId', {
+      columnHelper.display({
         header: 'Klijent',
         enableSorting: false,
-        cell: (info) => {
-          const clientId = info.getValue();
-          const client = clients.find((client) => client.id === clientId);
-
-          const isTenant = !client && tenant?.id === clientId;
-
-          if (isTenant) {
-            return (
-              <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-                <Text>{tenant?.name}</Text>
-              </FlexLayout>
-            );
-          }
+        cell: (props) => {
+          const { clientId, transportContractorId } = props.row.original;
+          const client = clients.find((c) => c.id === clientId);
+          const contractor = contractors.find((c) => c.id === transportContractorId) || tenant;
 
           return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Text>{client ? client.name : '—'}</Text>
-            </FlexLayout>
-          );
-        },
-      }),
-      columnHelper.accessor('transportContractorId', {
-        header: 'Prijevozik',
-        enableSorting: false,
-        cell: (info) => {
-          const contractorId = info.getValue();
-          const contractor =
-            (contractorId && contractors.find((contractor) => contractor.id === contractorId)) || tenant;
-
-          return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500">
-              <Text>{contractor ? contractor.name : '—'}</Text>
+            <FlexLayout className="flex-col pr-2 py-2 group-hover/row:text-teal-500 max-w-[15vw] whitespace-nowrap">
+              <Text className="overflow-hidden text-ellipsis" color="text-color-1" variant="text-m-medium">
+                {client ? client.name : '—'}
+              </Text>
+              <Text className="overflow-hidden text-ellipsis" color="text-color-3" variant="text-xs">
+                {contractor ? contractor.name : '—'}
+              </Text>
             </FlexLayout>
           );
         },
