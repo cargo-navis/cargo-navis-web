@@ -53,11 +53,11 @@ export const NewEmployeeForm: React.FC<{ employee?: Employee }> = ({ employee })
     try {
       if (isEdit) {
         await updateEmployee(processedData);
-        showSuccessToast({ title: 'Zaposlenik uspješno ažuriran' });
+        showSuccessToast({ title: `Zaposlenik "${values.firstName} ${values.lastName}" uspješno ažuriran` });
         void back();
       } else {
         await createEmployee(processedData);
-        showSuccessToast({ title: 'Zaposlenik uspješno kreiran' });
+        showSuccessToast({ title: `Zaposlenik "${values.firstName} ${values.lastName}" uspješno kreiran` });
         void back();
       }
     } catch (error: any) {

@@ -73,8 +73,8 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
           <Text color="text-color-3" variant="text-m-medium">
             Vozačka dozvola
           </Text>
-          <InfoItem label="Broj dozvole" value={driverLicenceId ?? '-'} />
-          <InfoItem label="Država izdavanja" value={countries.find((c) => c.code === nationality)?.name || '-'} />
+          <InfoItem label="Broj dozvole" value={driverLicenceId ?? '—'} />
+          <InfoItem label="Država izdavanja" value={countries.find((c) => c.code === nationality)?.name || '—'} />
           <FlexLayout className="justify-between items-baseline">
             <Text color="text-color-3" variant="text-s-medium">
               Kategorije:
@@ -95,35 +95,35 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
           />
         </FlexLayout>
         <Divider />
-        <InfoItem label="Broj Tahografske kartice" value={driverTachographCardId || '-'} />
+        <InfoItem label="Broj Tahografske kartice" value={driverTachographCardId || '—'} />
         <InfoItem
           isAlert={propertiesWithAlert?.includes('driverTachographCardExpiryDate')}
           label="Vrijedi do"
-          value={tachographExpiryDate || '-'}
+          value={tachographExpiryDate || '—'}
         />
         <Divider />
         <InfoItem
           isAlert={propertiesWithAlert?.includes('adrExpiryDate')}
           label="ADR - Vrijedi do"
-          value={formattedAdrExpiryDate || '-'}
+          value={formattedAdrExpiryDate || '—'}
         />
         <Divider />
         <InfoItem
           isAlert={propertiesWithAlert?.includes('contractExpiryDate')}
           label="Ugovor o zaposlenju - Vrijedi do"
-          value={formattedContractExpiryDate || '-'}
+          value={formattedContractExpiryDate || '—'}
         />
         <Divider />
         <InfoItem
           isAlert={propertiesWithAlert?.includes('visaExpiryDate')}
           label="Radna dozvola - Vrijedi do"
-          value={formattedVisaExpiryDate || '-'}
+          value={formattedVisaExpiryDate || '—'}
         />
         <Divider />
         <InfoItem
           isAlert={propertiesWithAlert?.includes('medicalExaminationExpiryDate')}
           label="Lječnički pregled - Vrijedi do"
-          value={formattedMedicalExaminationExpiryDate || '-'}
+          value={formattedMedicalExaminationExpiryDate || '—'}
         />
         <Divider />
         <InfoItem

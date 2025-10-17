@@ -5,6 +5,8 @@ import {
   type CheckboxGroupProps,
   Datepicker,
   type DatepickerProps,
+  NumberInput,
+  NumberInputProps,
   RadioGroup,
   type RadioGroupProps,
   SingleSelect,
@@ -23,6 +25,9 @@ import { type FieldLabelsProps, withFieldLabels } from './form';
 export const TextInputWithLabels: React.FC<TextInputProps & FieldLabelsProps & React.RefAttributes<HTMLInputElement>> =
   withFieldLabels(TextInput);
 export type TextInputWithLabelsProps = React.ComponentPropsWithRef<typeof TextInputWithLabels>;
+
+export const NumberInputWithLabels: React.FC<NumberInputProps & FieldLabelsProps> = withFieldLabels(NumberInput);
+export type NumberInputWithLabelsProps = React.ComponentProps<typeof NumberInputWithLabels>;
 
 export const RadioGroupWithLabels: React.FC<RadioGroupProps & FieldLabelsProps> = withFieldLabels(RadioGroup);
 export type RadioGroupWithLabelsProps = React.ComponentPropsWithRef<typeof RadioGroupWithLabels>;

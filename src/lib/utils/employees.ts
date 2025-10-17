@@ -1,9 +1,11 @@
 import type { Employee } from '@/lib/api';
 
 export function mapEmployeesToOptions(employees: Employee[]) {
-  return employees.map((employee) => ({
+  const sortedEmployees = employees.sort((a, b) => a.fullName.localeCompare(b.fullName));
+
+  return sortedEmployees.map((employee) => ({
     value: employee.id,
-    label: `${employee.firstName} ${employee.lastName}`,
+    label: employee.fullName,
   }));
 }
 

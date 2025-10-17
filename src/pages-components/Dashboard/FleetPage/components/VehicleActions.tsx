@@ -6,19 +6,19 @@ import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { Button, FlexLayout } from '@/ui';
 
-export const VehicleActions: React.FC<{ id: string; type: VehicleEnum }> = ({ id, type }) => {
+export const VehicleActions: React.FC<{ id: string; type: VehicleEnum; name: string }> = ({ id, type, name }) => {
   const { asPath, push } = useRouter();
   const { mutateAsync, isPending } = useDeleteVehicle(id);
 
   const vehicleSegmentPath = vehicleTypeToPathMap[type];
 
   async function handleDelete() {
-    const answer = confirm('Jeste li sigurni da želite izbrisati ovo vozilo?');
+    const answer = confirm(`Jeste li sigurni da želite izbrisati ovo vozilo "${name}"?`);
     if (!answer) return;
 
     try {
       await mutateAsync();
-      showSuccessToast({ title: 'Vozilo izbrisano' });
+      showSuccessToast({ title: `Vozilo "${name}" izbrisano` });
       push(`/dashboard/fleet/${vehicleSegmentPath}`);
     } catch {
       showErrorToast({ title: 'Greška s brisanjem vozila' });

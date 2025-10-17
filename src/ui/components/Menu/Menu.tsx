@@ -88,7 +88,7 @@ const MenuContent = forwardRef<HTMLDivElement, MenuContentProps>(
     },
     ref
   ) => {
-    const [side, align] = position.split('-') as [Side, Align];
+    const [side, align] = position.split('—') as [Side, Align];
 
     return (
       <motion.div animate="animate" className="z-[3]" exit="exit" initial="exit" variants={motionVariantsMap}>

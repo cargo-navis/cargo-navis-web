@@ -6,6 +6,10 @@ import { ruleToPropertyMap } from '@/pages-components/Dashboard/DashboardPage/co
 import { equipmentNameMap, loadTypeOptions } from '@/pages-components/Dashboard/FleetPage/NewVehicleForm/const';
 import { Box, Divider, FlexLayout, Icon, Text } from '@/ui';
 
+function roundIfDecimal(n: number) {
+  return Number.isInteger(n) ? n : Number(n.toFixed(2));
+}
+
 interface LoadingSpaceInfoProps {
   vehicle: Vehicle;
 }
@@ -22,6 +26,10 @@ export const LoadingSpaceInfo: React.FC<LoadingSpaceInfoProps> = ({ vehicle }) =
 
   const formattedXlExpiryDate = getDataPointDateString(codeXlCertificateExpiryDate);
 
+  const length = dimensions?.length ? roundIfDecimal(dimensions.length) : '—';
+  const width = dimensions?.width ? roundIfDecimal(dimensions.width) : '—';
+  const height = dimensions?.height ? roundIfDecimal(dimensions.height) : '—';
+
   return (
     <FlexLayout className="flex-col gap-4 w-[360px]">
       <Text color="text-color-2" variant="text-l-medium">
@@ -36,9 +44,9 @@ export const LoadingSpaceInfo: React.FC<LoadingSpaceInfoProps> = ({ vehicle }) =
         <Text color="text-color-3" variant="text-m-medium">
           Dimenzije (m)
         </Text>
-        <InfoItem label="Duljina" value={dimensions?.length.toFixed(2) || '-'} />
-        <InfoItem label="Širina" value={dimensions?.width.toFixed(2) || '-'} />
-        <InfoItem label="Visina" value={dimensions?.height.toFixed(2) || '-'} />
+        <InfoItem label="Duljina" value={length} />
+        <InfoItem label="Širina" value={width} />
+        <InfoItem label="Visina" value={height} />
       </FlexLayout>
       <Divider />
       <InfoItem
@@ -59,7 +67,7 @@ export const LoadingSpaceInfo: React.FC<LoadingSpaceInfoProps> = ({ vehicle }) =
       </FlexLayout>
       <Divider />
       <FlexLayout className="flex-col gap-3">
-        <InfoItem label="Vrsta utovarnog prostora" value={loadType ?? '-'} />
+        <InfoItem label="Vrsta utovarnog prostora" value={loadType ?? '—'} />
       </FlexLayout>
       <Divider />
       <FlexLayout className="justify-between items-baseline">

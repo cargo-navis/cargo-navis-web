@@ -4,9 +4,9 @@ import { VehicleEnum, VehicleLoadEnum } from '@/lib/api';
 import {
   FormCheckboxGroup,
   FormDatepicker,
+  FormNumberInput,
   FormRadioGroup,
   FormSingleSelect,
-  FormTextInput,
 } from '@/lib/components/form';
 import { Box, FlexLayout, Text } from '@/ui';
 
@@ -29,7 +29,7 @@ export const LoadingSpaceFields: React.FC<{ type: VehicleEnum }> = ({ type }) =>
         Podaci o utovarnom prostoru
       </Text>
       <Box>
-        <FormTextInput label="Kapacitet (kg)" min="0" name="loadCapacity" type="number" />
+        <FormNumberInput label="Kapacitet (kg)" name="loadCapacity" />
       </Box>
       <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
       <Box>
@@ -38,13 +38,13 @@ export const LoadingSpaceFields: React.FC<{ type: VehicleEnum }> = ({ type }) =>
         </Text>
       </Box>
       <Box>
-        <FormTextInput label="Duljina (m)" min="0" name="length" step="0.01" type="number" />
+        <FormNumberInput label="Duljina (m)" name="length" />
       </Box>
       <Box>
-        <FormTextInput label="Širina (m)" min="0" name="width" step="0.01" type="number" />
+        <FormNumberInput label="Širina (m)" name="width" />
       </Box>
       <Box>
-        <FormTextInput label="Visina (m)" min="0" name="height" step="0.01" type="number" />
+        <FormNumberInput label="Visina (m)" name="height" />
       </Box>
       <Box as="hr" className="border-[0px] my-2 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
       <Box>

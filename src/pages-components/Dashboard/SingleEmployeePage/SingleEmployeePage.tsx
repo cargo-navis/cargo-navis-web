@@ -70,12 +70,12 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
               </DisplayIf>
             </FlexLayout>
             <FlexLayout className="gap-8">
-              <ContactInfo contact={getDataPointDateString(employee.dateOfBirth) || '-'} contactType="dateOfBirth" />
-              <ContactInfo contact={employee.residenceAddress || '-'} contactType="residenceAddress" />
+              <ContactInfo contact={getDataPointDateString(employee.dateOfBirth) || '—'} contactType="dateOfBirth" />
+              <ContactInfo contact={employee.residenceAddress || '—'} contactType="residenceAddress" />
             </FlexLayout>
           </FlexLayout>
         </FlexLayout>
-        <EmployeeActions id={employee.id} />
+        <EmployeeActions id={employee.id} name={employee.fullName} />
       </FlexLayout>
       <FlexLayout className="ml-4 gap-8">
         <DisplayIf condition={employee.positions.includes(PositionEnum.Driver)}>
