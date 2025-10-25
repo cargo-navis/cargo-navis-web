@@ -5,7 +5,7 @@ import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useCurrentTenant } from '@/lib/hooks';
 import { Box, FlexLayout, Heading } from '@/ui';
 
-import { EditTenantForm } from './EditTenantForm';
+import { TenantForm } from './TenantForm';
 
 export const EditTenantPage = () => {
   const { data: tenant, isLoading } = useCurrentTenant();
@@ -23,7 +23,7 @@ const MainContent = ({ tenant }: { tenant: Tenant }) => {
       </Box>
       <FlexLayout className="flex-col gap-[40px]">
         <BackButton targetLocation="/dashboard/tenant" />
-        <EditTenantForm tenant={tenant} />
+        <TenantForm tenant={tenant} />
       </FlexLayout>
     </Box>
   );

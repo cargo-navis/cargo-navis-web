@@ -13,7 +13,7 @@ import { countryEuropeOptions } from '../../NewEmployeePage/const';
 import { tenantSchema } from './schema';
 import { getFormDefaultValues, TenantFormData } from './utils';
 
-export const EditTenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
+export const TenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
   const { back } = useRouter();
   const { mutateAsync: updateTenant } = useUpdateTenant();
 
