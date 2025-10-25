@@ -1,24 +1,31 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Tenant } from '@/lib/api/tenant.d';
-import { LoadingPage } from '@/lib/components/LoadingPage';
+import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { useCurrentTenant } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { Box, DisplayIf, Divider, FlexLayout, Text } from '@/ui';
 
+import { ContentLoader } from './ContentLoader';
 import { TenantActions } from './TenantActions';
 
 export const TenantPage = () => {
   const { data: tenant, isLoading } = useCurrentTenant();
 
+  if (isLoading || !tenant) {
+    return (
+      <DashboardLayout>
+        <ClientSideOnly>
+          <ContentLoader />
+        </ClientSideOnly>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
-      {!tenant || isLoading ? (
-        <LoadingPage />
-      ) : (
-        <Box>
-          <MainContent tenant={tenant} />
-        </Box>
-      )}
+      <Box>
+        <MainContent tenant={tenant} />
+      </Box>
     </DashboardLayout>
   );
 };
