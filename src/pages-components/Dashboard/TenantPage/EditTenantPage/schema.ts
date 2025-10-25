@@ -17,4 +17,6 @@ export const tenantSchema = yup.object().shape({
       .required('Poštanski broj je obavezan'),
     countryCode: yup.string().required('Država je obavezna'),
   }),
+  shipmentFooter: yup.string().optional(),
+  shipmentTransportTerms: yup.string().optional(),
 });

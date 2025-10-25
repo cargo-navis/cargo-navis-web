@@ -8,6 +8,8 @@ export interface TenantFormData {
   nationalCompanyRegisterId: string;
   communityLicenseId?: string;
   cargoInsuranceExpiryDate?: string;
+  shipmentFooter?: string;
+  shipmentTransportTerms?: string;
   address: {
     streetName: string;
     postalCode: {
@@ -36,6 +38,8 @@ export const getFormDefaultValues = (tenant: Tenant) => {
           label: postalCodeData?.label || '',
         },
       },
+      shipmentFooter: tenant?.shipmentFooter || '',
+      shipmentTransportTerms: tenant?.shipmentTransportTerms || '',
     };
   };
 };

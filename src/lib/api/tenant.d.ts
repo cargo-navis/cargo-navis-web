@@ -5,6 +5,8 @@ export interface Tenant {
   nationalCompanyRegisterId: string;
   communityLicenseId: string;
   cargoInsuranceExpiryDate: string;
+  shipmentFooter?: string;
+  shipmentTransportTerms?: string;
   address: {
     id: string;
     streetName: string;
