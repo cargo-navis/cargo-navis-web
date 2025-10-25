@@ -4,10 +4,10 @@ import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
 import type { Tenant } from '@/lib/api/tenant.d';
-import { FormDatepicker, FormSingleSelect, FormTextInput } from '@/lib/components/form';
+import { FormDatepicker, FormSingleSelect, FormTextarea, FormTextInput } from '@/lib/components/form';
 import { useUpdateTenant } from '@/lib/hooks/api/tenant';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
+import { Box, Button, FlexLayout, Icon, LoadingSpinner, Text, Tooltip } from '@/ui';
 
 import { countryEuropeOptions } from '../../NewEmployeePage/const';
 import { tenantSchema } from './schema';
@@ -33,6 +33,8 @@ export const EditTenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
     communityLicenseId,
     cargoInsuranceExpiryDate,
     address,
+    shipmentFooter,
+    shipmentTransportTerms,
   }: TenantFormData) {
     const payload = {
       name,
@@ -40,6 +42,8 @@ export const EditTenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
       nationalCompanyRegisterId,
       communityLicenseId,
       cargoInsuranceExpiryDate,
+      shipmentFooter,
+      shipmentTransportTerms,
       address: {
         streetName: address.streetName,
         postalCodeId: address.postalCode.value,
@@ -62,7 +66,10 @@ export const EditTenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
   return (
     <FormProvider {...formMethods}>
       <FlexLayout as="form" className="gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
-        <FlexLayout className="flex-col gap-4 w-[640px]">
+        <FlexLayout as="section" className="flex-col gap-4 w-[640px]">
+          <Text color="text-color-2" variant="text-m-medium">
+            Podaci tvrtke
+          </Text>
           <FormTextInput label="Ime" name="name" rules={{ required: true }} />
           <FlexLayout className="gap-2">
             <Box className="flex-1">
@@ -81,6 +88,29 @@ export const EditTenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
             isFullWidth
             isLoading={formState.isSubmitting}
             text="Ažuriraj Podatke Tvrtke"
+          />
+        </FlexLayout>
+        <FlexLayout as="section" className="flex-col gap-4 w-[640px]">
+          <FlexLayout className="gap-2 items-center text-dark-700 dark:text-light-100">
+            <Text variant="text-m-medium">Podaci za naloge</Text>
+            <Tooltip
+              content={
+                <FlexLayout className="px-2 py-1">
+                  <Text className="text-light-50" variant="text-xs">
+                    Podaci koji će biti korišteni za na svakom PDF nalogu.
+                  </Text>
+                </FlexLayout>
+              }
+            >
+              <Icon icon="InformationCircleIcon" />
+            </Tooltip>
+          </FlexLayout>
+          <FormTextInput label="Podnožje naloga" name="shipmentFooter" placeholder="Unesite podnožje naloga..." />
+          <FormTextarea
+            label="Uvjeti transporta"
+            name="shipmentTransportTerms"
+            placeholder="Unesite uvjete transporta..."
+            rows={15}
           />
         </FlexLayout>
       </FlexLayout>
