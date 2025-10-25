@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { AppMenu } from '@/components/AppMenu';
 import { useCurrentTenant } from '@/lib/hooks';
 import { clearAuthCookies, clearServiceWorkerOnLogout } from '@/lib/utils/session';
-import { Box, Divider, FlexLayout, Heading, Icon, Text } from '@/ui';
+import { Box, Divider, FlexLayout, Heading, Icon, LoadingSpinner, Text } from '@/ui';
 
 import { links } from './data';
 import { NavItem } from './NavItem';
@@ -60,11 +60,16 @@ const TenantLink = () => {
 
   return (
     <Link href="/dashboard/tenant">
-      <Box className="bg-teal-600 dark:bg-teal-900 py-1 -mx-4 min-h-[40px] text-center opacity-75 hover:opacity-100 transition-opacity">
-        <Text className="text-light-50 dark:text-light-100" variant="text-m-medium">
-          {data ? data.name : 'Loading...'}
-        </Text>
-      </Box>
+      <FlexLayout className="items-center justify-center gap-3 bg-teal-600 dark:bg-teal-900 text-light-50 dark:text-light-100 py-1 -mx-4 min-h-[40px] text-center opacity-75 hover:opacity-100 transition-opacity">
+        {data ? (
+          <>
+            <Text variant="text-m-medium">{data.name}</Text>
+            <Icon icon="Cog6ToothIcon" size="m" />
+          </>
+        ) : (
+          <LoadingSpinner />
+        )}
+      </FlexLayout>
     </Link>
   );
 };
