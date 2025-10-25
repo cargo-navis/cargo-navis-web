@@ -1,16 +1,31 @@
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Tenant } from '@/lib/api/tenant.d';
-import { LoadingPage } from '@/lib/components/LoadingPage';
+import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { useCurrentTenant } from '@/lib/hooks';
 import { Box, FlexLayout, Heading } from '@/ui';
 
-import { EditTenantForm } from './EditTenantForm';
+import { ContentLoader } from './ContentLoader';
+import { TenantForm } from './TenantForm';
 
 export const EditTenantPage = () => {
   const { data: tenant, isLoading } = useCurrentTenant();
 
-  return <DashboardLayout>{isLoading || !tenant ? <LoadingPage /> : <MainContent tenant={tenant} />}</DashboardLayout>;
+  if (isLoading || !tenant) {
+    return (
+      <DashboardLayout>
+        <ClientSideOnly>
+          <ContentLoader />
+        </ClientSideOnly>
+      </DashboardLayout>
+    );
+  }
+
+  return (
+    <DashboardLayout>
+      <MainContent tenant={tenant} />
+    </DashboardLayout>
+  );
 };
 
 const MainContent = ({ tenant }: { tenant: Tenant }) => {
@@ -23,7 +38,7 @@ const MainContent = ({ tenant }: { tenant: Tenant }) => {
       </Box>
       <FlexLayout className="flex-col gap-[40px]">
         <BackButton targetLocation="/dashboard/tenant" />
-        <EditTenantForm tenant={tenant} />
+        <TenantForm tenant={tenant} />
       </FlexLayout>
     </Box>
   );
