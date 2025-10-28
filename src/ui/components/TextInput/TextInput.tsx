@@ -22,17 +22,21 @@ type DefaultProps = Pick<
 export interface TextInputProps extends DefaultProps {
   value: string;
   iconLeft?: IconType;
+  iconRight?: IconType;
   isDisabled?: boolean;
   type?: 'text' | 'email' | 'password' | 'tel' | 'number' | 'url';
-  onChange: (value: string) => void;
+  onChange(value: string): void;
+  onClickIconRight?(): void;
 }
 
 export const TextInput: React.FC<TextInputProps> = ({
   iconLeft,
+  iconRight,
   isDisabled,
   type = 'text',
   value,
   onChange,
+  onClickIconRight,
   ...rest
 }) => {
   return (
@@ -66,6 +70,11 @@ export const TextInput: React.FC<TextInputProps> = ({
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
         {...rest}
       />
+      {iconRight && (
+        <Box className="absolute z-20 right-3 top-3">
+          <Icon color="text-dark-600 dark:text-light-300" icon={iconRight} type="solid" onClick={onClickIconRight} />
+        </Box>
+      )}
     </Box>
   );
 };
