@@ -3,7 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { object, ref, string } from 'yup';
 
 import { updatePassword } from '@/lib/api/user';
-import { FormTextInput } from '@/lib/components/form';
+import { FormPasswordInput } from '@/lib/components/form';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout, Text } from '@/ui';
 
@@ -52,14 +52,13 @@ export const PasswordUpdateForm = () => {
         </Text>
         <FlexLayout className="flex-col gap-3">
           <Box>
-            <FormTextInput label="Nova lozinka" name="newPassword" placeholder="Unesite novu lozinku" type="password" />
+            <FormPasswordInput label="Nova lozinka" name="newPassword" placeholder="Unesite novu lozinku" />
           </Box>
           <Box>
-            <FormTextInput
+            <FormPasswordInput
               label="Potvrda nove lozinke"
               name="confirmPassword"
               placeholder="Potvrdite unesenu lozinku"
-              type="password"
             />
           </Box>
           <Button isDisabled={!isValid} isFullWidth isLoading={isSubmitting} size="l" text="Ažuriraj lozinku" />
