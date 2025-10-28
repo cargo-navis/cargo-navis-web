@@ -46,7 +46,7 @@ export const PasswordUpdateForm = () => {
 
   return (
     <FormProvider {...formMethods}>
-      <FlexLayout as="form" className="flex-col gap-4 w-[480px]" onSubmit={handleSubmit(handleFormSubmit)}>
+      <FlexLayout as="form" className="flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
         <Text color="text-color-2" variant="text-m-medium">
           Ažuriranje lozinke
         </Text>

@@ -1,9 +1,25 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
+import { useCurrentUser } from '@/lib/hooks';
 import { FlexLayout, Heading } from '@/ui';
 
+import { ContentLoader } from './ContentLoader';
 import { PasswordUpdateForm } from './PasswordUpdateForm';
+import { UserProfileSection } from './UserProfileSection';
 
 export const SettingsPage = () => {
+  const { data: user, isLoading } = useCurrentUser();
+
+  if (isLoading || !user) {
+    return (
+      <DashboardLayout>
+        <ClientSideOnly>
+          <ContentLoader />
+        </ClientSideOnly>
+      </DashboardLayout>
+    );
+  }
+
   return (
     <DashboardLayout>
       <FlexLayout className="flex-col gap-8">
@@ -12,7 +28,8 @@ export const SettingsPage = () => {
             Postavke
           </Heading>
         </FlexLayout>
-        <FlexLayout className="flex-col gap-[40px]">
+        <FlexLayout className="flex-col gap-[40px] w-[480px]">
+          <UserProfileSection user={user} />
           <PasswordUpdateForm />
         </FlexLayout>
       </FlexLayout>
