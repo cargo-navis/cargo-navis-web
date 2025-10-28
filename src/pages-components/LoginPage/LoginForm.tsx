@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 import { object, string } from 'yup';
 
-import { FormTextInput } from '@/lib/components/form';
+import { FormPasswordInput, FormTextInput } from '@/lib/components/form';
 import { useLogin } from '@/lib/hooks/api/auth';
 import { showErrorToast } from '@/lib/utils/toast';
 import { Button, FlexLayout } from '@/ui';
@@ -41,7 +41,7 @@ export const LoginForm = () => {
     <FormProvider {...formMethods}>
       <FlexLayout as="form" className="flex-col gap-6" onSubmit={handleSubmit(handleFormSubmit)}>
         <FormTextInput autoFocus label="Email" name="email" placeholder="Unesite svoj email" type="email" />
-        <FormTextInput label="Lozinka" name="password" placeholder="Unesite svoju lozinku" type="password" />
+        <FormPasswordInput label="Lozinka" name="password" placeholder="Unesite svoju lozinku" />
         <Button isDisabled={!isValid} isFullWidth isLoading={isSubmitting} size="l" text="Prijava" />
       </FlexLayout>
     </FormProvider>
