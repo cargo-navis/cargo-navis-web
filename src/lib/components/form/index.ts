@@ -3,6 +3,7 @@ export * from './FormCheckbox';
 export * from './FormCheckboxGroup';
 export * from './FormDatepicker';
 export * from './FormNumberInput';
+export * from './FormPasswordInput';
 export * from './FormPhoneNumberInput';
 export * from './FormRadioGroup';
 export * from './FormSingleSelect';
