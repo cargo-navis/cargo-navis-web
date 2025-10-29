@@ -1,6 +1,7 @@
 import { heroui } from '@heroui/react';
 import type { Config } from 'tailwindcss';
 import plugin from 'tailwindcss/plugin';
+import animatePlugin from 'tailwindcss-animate';
 
 import { theme } from './src/ui/theme';
 
@@ -34,6 +35,7 @@ const config: Config = {
     },
   },
   plugins: [
+    animatePlugin,
     heroui(),
     plugin(function ({ addUtilities }) {
       const newUtilities = {
