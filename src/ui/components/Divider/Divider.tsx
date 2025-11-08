@@ -18,7 +18,7 @@ export const Divider: React.FC<DividerProps> = ({ bgColor = 'bg-dark-200 dark:bg
       <Box className={clsx(bgColor, 'h-[1px] w-full')} />
       <DisplayIf condition={!!text}>
         <Text
-          className="absolute px-4 bg-white dark:bg-light-900"
+          className="absolute px-4 bg-transparent dark:bg-light-900"
           color="text-dark-400 dark:text-light-500"
           variant="text-xxxs"
         >

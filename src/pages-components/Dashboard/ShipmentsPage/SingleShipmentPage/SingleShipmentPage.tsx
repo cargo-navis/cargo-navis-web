@@ -11,12 +11,9 @@ import { renderVehicleName, vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { Box, Divider, FlexLayout, Pill, Text } from '@/ui';
 
 import { invoiceStatusConfig, loadStatusConfig } from '../const';
-import { AddressDetailsItem } from './components/AddressDetailsItem';
 import { CargoItem } from './components/CargoItem';
 import { ClientItem } from './components/ClientItem';
 import { ContentLoader } from './components/ContentLoader';
-import { DateItem } from './components/DateItem';
-import { DescriptionItem } from './components/DescriptionItem';
 import { InvoiceItem } from './components/InvoiceItem';
 import { LoadStatusProgress } from './components/LoadStatusProgress';
 import { SendToDriver } from './components/SendToDriver';
@@ -243,38 +240,10 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                   </FlexLayout>
                 </Box>
               </FlexLayout>
-
               <Box className="py-4">
                 <Divider />
               </Box>
-
-              <FlexLayout as="section" className="flex-col gap-5">
-                <FlexLayout className="gap-4">
-                  <FlexLayout className="flex-col flex-1 gap-4">
-                    <Text color="text-color-3" variant="text-s-medium">
-                      Detalji utovara
-                    </Text>
-                    <AddressDetailsItem address={shipment.loadingAddress} companyName={shipment.loadingCompanyName} />
-                    <DateItem date={shipment.loadingDate} label="Datum utovara" />
-                    <DateItem date={shipment.loadingReadyDate} label="Datum spremnosti za utovar" />
-                    <DescriptionItem description={shipment.loadingDescription} label="Opis utovara:" />
-                  </FlexLayout>
-                  <FlexLayout className="flex-col flex-1 gap-4">
-                    <Text color="text-color-3" variant="text-s-medium">
-                      Detalji istovara
-                    </Text>
-                    <AddressDetailsItem
-                      address={shipment.unloadingAddress}
-                      companyName={shipment.unloadingCompanyName}
-                    />
-                    <DateItem date={shipment.unloadingDate} label="Datum istovara" />
-                    <DateItem date={shipment.unloadingDueDate} label="Krajnji rok istovara" />
-                    <DescriptionItem description={shipment.unloadingDescription} label="Opis istovara:" />
-                  </FlexLayout>
-                </FlexLayout>
-              </FlexLayout>
             </FlexLayout>
-
             <FlexLayout as="section" className="flex-1 flex-col gap-4">
               <Text color="text-color-2" variant="text-l-medium">
                 Tereti
