@@ -1,5 +1,6 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import clsx from 'clsx';
+import uniq from 'lodash/uniq';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 
@@ -9,17 +10,12 @@ import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
 import { renderVehicleName } from '@/lib/utils/vehicles';
-import { Box, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
+import { Box, Divider, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
 
-import { getCountryFromCode } from '../NewEmployeePage/const';
+import { AddressesList } from './AddressesList';
 import { invoiceStatusConfig, loadStatusConfig } from './const';
 
 const columnHelper = createColumnHelper<Shipment>();
-
-const formatAddress = (address: Shipment['loadingAddress']) => {
-  if (!address) return '—';
-  return `${address.postalCode} ${address.placeName}, ${address.countryCode}`;
-};
 
 export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
   const router = useRouter();
@@ -156,40 +152,42 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           </FlexLayout>
         ),
       }),
-      columnHelper.accessor('loadingDate', {
-        header: 'Datum utovara',
-        enableSorting: true,
-        sortingFn: (rowA, rowB) => {
-          const a = new Date(rowA.original.loadingDate).getTime();
-          const b = new Date(rowB.original.loadingDate).getTime();
-          return a < b ? -1 : a > b ? 1 : 0;
-        },
-        cell: (info) => {
-          const date = info.getValue();
+      columnHelper.display({
+        header: 'Datumi utovara',
+        cell: (props) => {
+          const shipment = props.row.original;
+          const loadingDates = shipment.cargo.map((c) => c.loadingDate);
+
+          const dates = uniq(loadingDates).sort();
+          const isMultipleDates = dates.length > 1;
+
           return (
-            <FlexLayout className="items-center py-2">
-              <Text color="text-color-3" variant="text-s-medium">
-                {getDataPointDateString(date)}
-              </Text>
+            <FlexLayout as="ul" className={clsx('flex-col gap-1 justify-center py-2', isMultipleDates && 'list-disc')}>
+              {dates.map((date) => (
+                <Text as="li" color="text-color-3" key={date} variant="text-s">
+                  {getDataPointDateString(date)}
+                </Text>
+              ))}
             </FlexLayout>
           );
         },
       }),
-      columnHelper.accessor('unloadingDate', {
-        header: 'Datum istovara',
-        enableSorting: true,
-        sortingFn: (rowA, rowB) => {
-          const a = new Date(rowA.original.unloadingDate).getTime();
-          const b = new Date(rowB.original.unloadingDate).getTime();
-          return a < b ? -1 : a > b ? 1 : 0;
-        },
-        cell: (info) => {
-          const date = info.getValue();
+      columnHelper.display({
+        header: 'Datumi istovara',
+        cell: (props) => {
+          const shipment = props.row.original;
+          const unloadingDates = shipment.cargo.map((c) => c.unloadingDate);
+
+          const dates = uniq(unloadingDates).sort();
+          const isMultipleDates = dates.length > 1;
+
           return (
-            <FlexLayout className="items-center py-2">
-              <Text color="text-color-3" variant="text-s-medium">
-                {getDataPointDateString(date)}
-              </Text>
+            <FlexLayout as="ul" className={clsx('flex-col gap-1 justify-center py-2', isMultipleDates && 'list-disc')}>
+              {dates.map((date) => (
+                <Text as="li" color="text-color-3" key={date} variant="text-s">
+                  {getDataPointDateString(date)}
+                </Text>
+              ))}
             </FlexLayout>
           );
         },
@@ -219,6 +217,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       }),
       columnHelper.display({
         id: 'palleteNo',
+        size: 100,
         enableSorting: false,
         header: 'Broj paleta',
         cell: (props) => {
@@ -242,69 +241,18 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       }),
       columnHelper.display({
         id: 'addresses',
-        header: 'Adresa utovara i istovara',
+        header: 'Adrese utovara i istovara',
         enableSorting: false,
-        cell: (info) => {
-          const { loadingAddress, unloadingAddress } = info.row.original;
+        cell: (props) => {
+          const shipment = props.row.original;
+          const loadingAddresses = shipment.cargo.map((c) => c.loadingAddress);
+          const unloadingAddresses = shipment.cargo.map((c) => c.unloadingAddress);
 
           return (
-            <FlexLayout className="flex-col gap-1 py-2 pr-4 max-w-[200px]">
-              <Tooltip
-                content={
-                  <Box className="px-1">
-                    <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
-                      {loadingAddress.streetName}
-                    </Text>
-                    <br />
-                    <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
-                      {loadingAddress.postalCode}, {loadingAddress.placeName},
-                    </Text>
-                    <br />
-                    <Text color="text-light-50" variant="text-xs">
-                      {getCountryFromCode(loadingAddress.countryCode)?.name}
-                    </Text>
-                  </Box>
-                }
-              >
-                <FlexLayout className="items-center gap-1">
-                  <Icon color="text-color-3" icon="ArrowRightEndOnRectangleIcon" size="xs" />
-                  <Text
-                    className="whitespace-nowrap overflow-hidden text-ellipsis"
-                    color="text-color-3"
-                    variant="text-xs"
-                  >
-                    {formatAddress(loadingAddress)}
-                  </Text>
-                </FlexLayout>
-              </Tooltip>
-              <Tooltip
-                content={
-                  <Box className="px-1">
-                    <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
-                      {unloadingAddress.streetName}
-                    </Text>
-                    <br />
-                    <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
-                      {unloadingAddress.postalCode}, {unloadingAddress.placeName},
-                    </Text>
-                    <br />
-                    <Text color="text-light-50" variant="text-xs">
-                      {getCountryFromCode(unloadingAddress.countryCode)?.name}
-                    </Text>
-                  </Box>
-                }
-              >
-                <FlexLayout className="items-center gap-1">
-                  <Icon color="text-color-3" icon="ArrowRightStartOnRectangleIcon" size="xs" />
-                  <Text
-                    className="whitespace-nowrap overflow-hidden text-ellipsis"
-                    color="text-color-3"
-                    variant="text-xs"
-                  >
-                    {formatAddress(unloadingAddress)}
-                  </Text>
-                </FlexLayout>
-              </Tooltip>
+            <FlexLayout className="flex-col gap-1 py-2 pr-4 max-w-[240px]">
+              <AddressesList addresses={loadingAddresses} icon="ArrowRightEndOnRectangleIcon" />
+              <Divider />
+              <AddressesList addresses={unloadingAddresses} icon="ArrowRightStartOnRectangleIcon" />
             </FlexLayout>
           );
         },
