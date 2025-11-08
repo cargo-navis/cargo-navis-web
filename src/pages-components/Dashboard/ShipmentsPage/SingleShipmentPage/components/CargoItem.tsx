@@ -1,6 +1,6 @@
 import { getDataPointDateString } from '@/lib/utils/date';
 import { palleteNameMap } from '@/lib/utils/palletes';
-import { Divider, FlexLayout, Icon, Text } from '@/ui';
+import { DisplayIf, Divider, FlexLayout, Icon, Text } from '@/ui';
 
 import { AddressDetailsItem } from './AddressDetailsItem';
 import { DescriptionItem } from './DescriptionItem';
@@ -27,15 +27,10 @@ export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index }) => {
       <FlexLayout className="flex-col gap-4">
         {isStandardCargo ? <StandardContent cargo={cargo} /> : <NonstandardContent cargo={cargo} />}
         <LoadingFields cargo={cargo} />
-        <Divider />
-        <FlexLayout className="flex-col">
-          <Text color="text-color-1" variant="text-s-medium">
-            Opis tereta
-          </Text>
-          <Text className="whitespace-pre-line" color="text-color-1" variant="text-s">
-            {cargo.description || '—'}
-          </Text>
-        </FlexLayout>
+        <DisplayIf condition={!!cargo.description}>
+          <Divider />
+          <DescriptionItem description={cargo.description} label="OPIS TERETA" />
+        </DisplayIf>
       </FlexLayout>
     </FlexLayout>
   );
