@@ -276,7 +276,9 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
             </FlexLayout>
 
             <FlexLayout as="section" className="flex-1 flex-col gap-4">
-              <Text variant="text-l-medium">Teret</Text>
+              <Text color="text-color-2" variant="text-l-medium">
+                Tereti
+              </Text>
               {(shipment.cargo as CargoWithMetadata[]).map((item, index) => (
                 <CargoItem cargo={item} index={index} key={index} />
               ))}
