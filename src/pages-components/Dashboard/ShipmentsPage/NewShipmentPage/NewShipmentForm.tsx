@@ -7,9 +7,8 @@ import type { Tenant } from '@/lib/api/tenant.d';
 import { FormTextInput } from '@/lib/components/form';
 import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, Divider, FlexLayout, LoadingSpinner } from '@/ui';
+import { Box, Button, FlexLayout, LoadingSpinner, VerticalDivider } from '@/ui';
 
-import AddressFields from './AddressFields';
 import { AgencyField } from './AgencyField';
 import { CargoFieldList } from './CargoFieldList';
 import { ClientField } from './ClientField';
@@ -96,57 +95,58 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
 
   return (
     <FormProvider {...formMethods}>
-      <Box as="form" className="max-w-[1400px]" onSubmit={handleSubmit(handleFormSubmit)}>
+      <Box as="form" className="max-w-[1200px]" onSubmit={handleSubmit(handleFormSubmit)}>
         <FlexLayout className="relative flex-col gap-7 w-full">
           <FlexLayout className="flex-row gap-7">
-            <FlexLayout className="flex-1 flex-col gap-4">
-              <FlexLayout as="fieldset" className="flex-col gap-5">
-                <AgencyField />
-                <FlexLayout className="gap-4">
+            <FlexLayout className="grow flex-col gap-4">
+              <AgencyField />
+              <FlexLayout className="gap-4">
+                <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
+                  <FlexLayout className="gap-4">
+                    <Box className="flex-1">
+                      <FormTextInput iconLeft="LockClosedIcon" isDisabled label="Broj naloga" name="orderNumber" />
+                    </Box>
+                    <Box className="flex-1">
+                      <FormTextInput label="Referentni broj" name="cargoReference" placeholder="1234" />
+                    </Box>
+                  </FlexLayout>
                   <Box className="flex-1">
-                    <FormTextInput iconLeft="LockClosedIcon" isDisabled label="Broj naloga" name="orderNumber" />
+                    <ContractorField name="transportContractorId" tenant={tenant} />
                   </Box>
+                  <FlexLayout className="gap-4">
+                    <Box className="flex-1">
+                      <ClientField />
+                    </Box>
+                    <Box className="flex-1">
+                      <PriceField />
+                    </Box>
+                  </FlexLayout>
+                </FlexLayout>
+                <VerticalDivider />
+                <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
                   <Box className="flex-1">
-                    <FormTextInput label="Referentni broj" name="cargoReference" placeholder="1234" />
+                    <DriverField />
+                  </Box>
+                  <FlexLayout className="gap-4">
+                    <Box className="flex-1">
+                      <VehicleField label="Vozilo" name="vehicleId" placeholder="Odaberi vozilo..." />
+                    </Box>
+                    <Box className="flex-1">
+                      <VehicleField
+                        label="Priključno vozilo"
+                        name="trailerId"
+                        placeholder="Odaberi priključno vozilo..."
+                        type={VehicleEnum.TRAILER}
+                      />
+                    </Box>
+                  </FlexLayout>
+                  <Box className="flex-1">
+                    <DispatcherField />
                   </Box>
                 </FlexLayout>
-                <Box className="flex-1">
-                  <ContractorField name="transportContractorId" tenant={tenant} />
-                </Box>
-                <FlexLayout className="gap-4">
-                  <Box className="flex-1">
-                    <ClientField />
-                  </Box>
-                  <Box className="flex-1">
-                    <PriceField />
-                  </Box>
-                </FlexLayout>
-                <Box className="flex-1">
-                  <DriverField />
-                </Box>
-                <FlexLayout className="gap-4">
-                  <Box className="flex-1">
-                    <VehicleField label="Vozilo" name="vehicleId" placeholder="Odaberi vozilo..." />
-                  </Box>
-                  <Box className="flex-1">
-                    <VehicleField
-                      label="Priključno vozilo"
-                      name="trailerId"
-                      placeholder="Odaberi priključno vozilo..."
-                      type={VehicleEnum.TRAILER}
-                    />
-                  </Box>
-                </FlexLayout>
-                <Box className="flex-1">
-                  <DispatcherField />
-                </Box>
               </FlexLayout>
-              <Box className="py-4">
-                <Divider />
-              </Box>
-              <AddressFields />
+              <CargoFieldList />
             </FlexLayout>
-            <CargoFieldList />
           </FlexLayout>
           <Box className="sticky bottom-0 bg-[#e9eded] dark:bg-black border-t-[2px] border-dark-200 dark:border-light-700 p-4 -mx-4">
             <Button
