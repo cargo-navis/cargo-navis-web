@@ -17,7 +17,6 @@ export interface Shipment {
   parentShipmentId?: string;
   subshipments?: Shipment[];
   createdAt: string;
-  loadStatus?: LoadStatus;
   childShipments?: Shipment[];
   sentToDriver?: boolean;
 }
@@ -74,6 +73,7 @@ export interface LoadingAddress {
 }
 
 interface Cargo {
+  id: string;
   weight: number;
   description: string;
   ldm: number;
@@ -88,6 +88,7 @@ interface Cargo {
   unloadingDate: string;
   unloadingDueDate?: string;
   unloadingDescription?: string;
+  loadStatus?: LoadStatus;
 }
 
 export interface Metadata {
