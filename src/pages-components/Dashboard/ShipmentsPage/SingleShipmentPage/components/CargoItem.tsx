@@ -1,14 +1,14 @@
 import { LoadStatus } from '@/lib/api';
-import { useUpdateCargo } from '@/lib/hooks/api/cargo';
+import { useUpdateCargo } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { palleteNameMap } from '@/lib/utils/palletes';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { loadStatusConfig } from '@/pages-components/Dashboard/ShipmentsPage/const';
-import { LoadStatusProgress } from '@/pages-components/Dashboard/ShipmentsPage/SingleShipmentPage/components/LoadStatusProgress';
 import { DisplayIf, Divider, FlexLayout, Icon, Text } from '@/ui';
 
 import { AddressDetailsItem } from './AddressDetailsItem';
 import { DescriptionItem } from './DescriptionItem';
+import { LoadStatusProgress } from './LoadStatusProgress';
 import type { CargoWithMetadata } from './types';
 
 interface CargoItemProps {
