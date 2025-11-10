@@ -4,8 +4,8 @@ import uniq from 'lodash/uniq';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 
-import { type Shipment } from '@/lib/api';
-import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
+import { LoadStatus, type Shipment } from '@/lib/api';
+import { InvoiceStatus } from '@/lib/api/shipments';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
@@ -303,22 +303,29 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         enableSorting: false,
         cell: (info) => {
           const shipment = info.row.original;
-          const status = shipment.loadStatus;
-          const config = status ? loadStatusConfig[status] : loadStatusConfig[LoadStatus.NotYetLoaded];
+          const cargos = shipment.cargo;
+
+          const statusConfigs = cargos.map((c) => {
+            const config = c.loadStatus ? loadStatusConfig[c.loadStatus] : loadStatusConfig[LoadStatus.NotYetLoaded];
+            const id = c.id;
+
+            return { ...config, id };
+          });
 
           const isAgencyUse = shipment.isAgencyUse;
           const isSubshipment = !!shipment?.parentShipmentId;
 
           const shouldRenderAgencyPill = isAgencyUse && !isSubshipment;
 
-          const text = shouldRenderAgencyPill ? 'Agencijski nalog' : config.label;
-          const variant = shouldRenderAgencyPill ? 'warning' : config.variant;
-
           const invoiceConfig = invoiceStatusConfig[shipment.invoiceStatus];
 
           return (
             <FlexLayout className="flex-col items-end py-2 gap-1">
-              <Pill size="s" text={`📦 ${text}`} variant={variant} />
+              {shouldRenderAgencyPill ? (
+                <Pill size="s" text="Agencijski nalog" variant="warning" />
+              ) : (
+                statusConfigs.map((c) => <Pill key={c.id} size="s" text={`📦 ${c.label}`} variant={c.variant} />)
+              )}
               <Pill size="s" text={`💰 ${invoiceConfig.label}`} variant={invoiceConfig.variant} />
             </FlexLayout>
           );
@@ -342,16 +349,20 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
     return shipments.map((shipment) => {
       const isMissingVehicleOrDriver = !shipment.vehicleId || !shipment.driverId;
 
-      const subshipments = shipment.childShipments?.map((s) => ({
-        ...s,
-        isSuccess: s.invoiceStatus === InvoiceStatus.Paid && s.loadStatus === LoadStatus.Unloaded,
-      }));
+      function isShipmentComplete(s: Shipment) {
+        const isAllCargoUnloaded = s.cargo.every((c) => c.loadStatus === LoadStatus.Unloaded);
+        return s.invoiceStatus === InvoiceStatus.Paid && isAllCargoUnloaded;
+      }
+
+      const subshipments = shipment.childShipments?.map((s) => {
+        return { ...s, isSuccess: isShipmentComplete(s) };
+      });
 
       // Add isWarning flag only to parent shipments
       return {
         ...shipment,
         isWarning: isMissingVehicleOrDriver && shipment.transportContractorId === tenant?.id && !shipment.isAgencyUse,
-        isSuccess: shipment.invoiceStatus === InvoiceStatus.Paid && shipment.loadStatus === LoadStatus.Unloaded,
+        isSuccess: isShipmentComplete(shipment),
         subshipments,
       };
     });
