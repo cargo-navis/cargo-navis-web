@@ -1,6 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 
-import { FlexLayout, TextButton } from '@/ui';
+import { FlexLayout, Text, TextButton } from '@/ui';
 
 import { CargoField } from './CargoField';
 import type { Cargo, ShipmentFields } from './types';
@@ -12,6 +12,9 @@ export const CargoFieldList = () => {
 
   return (
     <FlexLayout className="flex-1 flex-col gap-4">
+      <Text color="text-color-2" variant="text-l-medium">
+        Tereti
+      </Text>
       {cargo.map((_, index: number, arr: Cargo[]) => (
         <CargoField cargoLength={arr.length} index={index} key={index} />
       ))}

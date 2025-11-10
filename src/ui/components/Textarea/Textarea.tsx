@@ -19,7 +19,7 @@ export const Textarea = forwardRef<any, TextareaProps>(
       <Box
         as="textarea"
         className={clsx(
-          'py-2 px-3 w-full bg-transparent outline-none resize-none disabled:opacity-50',
+          'py-2 px-3 w-full bg-transparent outline-none resize-y disabled:opacity-50',
           'font-display text-dark-800 dark:text-light-50',
           'placeholder:text-dark-400 dark:placeholder:text-light-800',
           'autofill:!text-dark-800 dark:autofill:!text-light-50 autofill:shadow-[0_0_0_1000px_#00000000_inset]',

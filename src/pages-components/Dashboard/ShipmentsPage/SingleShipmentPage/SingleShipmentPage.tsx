@@ -3,22 +3,18 @@ import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { InvoiceStatus, LoadStatus, Shipment } from '@/lib/api';
+import { InvoiceStatus, Shipment } from '@/lib/api';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { useContractor, useCurrentTenant, useEmployee, useShipment, useUpdateShipment, useVehicle } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { renderVehicleName, vehicleTypeToPathMap } from '@/lib/utils/vehicles';
-import { Box, Divider, FlexLayout, Pill, Text } from '@/ui';
+import { Box, DisplayIf, Divider, FlexLayout, Pill, Text } from '@/ui';
 
-import { invoiceStatusConfig, loadStatusConfig } from '../const';
-import { AddressDetailsItem } from './components/AddressDetailsItem';
+import { invoiceStatusConfig } from '../const';
 import { CargoItem } from './components/CargoItem';
 import { ClientItem } from './components/ClientItem';
 import { ContentLoader } from './components/ContentLoader';
-import { DateItem } from './components/DateItem';
-import { DescriptionItem } from './components/DescriptionItem';
 import { InvoiceItem } from './components/InvoiceItem';
-import { LoadStatusProgress } from './components/LoadStatusProgress';
 import { SendToDriver } from './components/SendToDriver';
 import { ShipmentActions } from './components/ShipmentActions';
 import type { CargoWithMetadata } from './components/types';
@@ -63,22 +59,6 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
 
   const transporterHref = contractor ? `/dashboard/contractors/${contractor?.id}` : `/dashboard/tenant`;
 
-  const handleLoadStatusChange = async (status: LoadStatus) => {
-    try {
-      await updateShipment({
-        id: shipment.id,
-        loadStatus: status,
-      });
-
-      const statusText = loadStatusConfig[status].label;
-
-      showSuccessToast({ title: 'Status naloga ažuriran:', description: statusText.toUpperCase() });
-    } catch (error) {
-      console.error(error);
-      showErrorToast({ title: 'Greška prilikom ažuriranja statusa utovara. Pokušajte ponovno.' });
-    }
-  };
-
   const handleInvoiceChange = async (invoiceStatus: InvoiceStatus) => {
     try {
       await updateShipment({
@@ -108,10 +88,20 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
         <FlexLayout className="relative flex-col gap-5 w-full">
           <FlexLayout className="flex-col gap-4">
             <FlexLayout className="flex-col gap-1">
-              <FlexLayout className="items-center gap-4">
-                <Text as="h1" variant="text-xl-medium">
-                  Nalog #{shipment.orderNumber}
-                </Text>
+              <FlexLayout className="items-center justify-between">
+                <FlexLayout className="items-center gap-4">
+                  <Text as="h1" variant="text-xl-medium">
+                    Nalog #{shipment.orderNumber}
+                  </Text>
+                  <DisplayIf condition={shouldRenderAgencyPill}>
+                    <Pill size="s" text="Agencijski Nalog" variant="warning" />
+                  </DisplayIf>
+                </FlexLayout>
+                <InvoiceItem
+                  invoiceStatus={shipment.invoiceStatus}
+                  isPending={isPending}
+                  onChange={handleInvoiceChange}
+                />
               </FlexLayout>
               {shipment.parentShipmentId && parentShipment && (
                 <Link className="max-w-max" href={`/dashboard/shipments/${parentShipment.id}`}>
@@ -121,22 +111,6 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                 </Link>
               )}
               <SendToDriver shipment={shipment} />
-            </FlexLayout>
-            <FlexLayout className="items-baseline justify-between">
-              {shouldRenderAgencyPill ? (
-                <Pill text="Agencijski Nalog" variant="warning" />
-              ) : (
-                <LoadStatusProgress
-                  currentStatus={shipment.loadStatus || LoadStatus.NotYetLoaded}
-                  isPending={isPending}
-                  onStatusChange={handleLoadStatusChange}
-                />
-              )}
-              <InvoiceItem
-                invoiceStatus={shipment.invoiceStatus}
-                isPending={isPending}
-                onChange={handleInvoiceChange}
-              />
             </FlexLayout>
           </FlexLayout>
           <Divider />
@@ -243,42 +217,16 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                   </FlexLayout>
                 </Box>
               </FlexLayout>
-
               <Box className="py-4">
                 <Divider />
               </Box>
-
-              <FlexLayout as="section" className="flex-col gap-5">
-                <FlexLayout className="gap-4">
-                  <FlexLayout className="flex-col flex-1 gap-4">
-                    <Text color="text-color-3" variant="text-s-medium">
-                      Detalji utovara
-                    </Text>
-                    <AddressDetailsItem address={shipment.loadingAddress} companyName={shipment.loadingCompanyName} />
-                    <DateItem date={shipment.loadingDate} label="Datum utovara" />
-                    <DateItem date={shipment.loadingReadyDate} label="Datum spremnosti za utovar" />
-                    <DescriptionItem description={shipment.loadingDescription} label="Opis utovara:" />
-                  </FlexLayout>
-                  <FlexLayout className="flex-col flex-1 gap-4">
-                    <Text color="text-color-3" variant="text-s-medium">
-                      Detalji istovara
-                    </Text>
-                    <AddressDetailsItem
-                      address={shipment.unloadingAddress}
-                      companyName={shipment.unloadingCompanyName}
-                    />
-                    <DateItem date={shipment.unloadingDate} label="Datum istovara" />
-                    <DateItem date={shipment.unloadingDueDate} label="Krajnji rok istovara" />
-                    <DescriptionItem description={shipment.unloadingDescription} label="Opis istovara:" />
-                  </FlexLayout>
-                </FlexLayout>
-              </FlexLayout>
             </FlexLayout>
-
             <FlexLayout as="section" className="flex-1 flex-col gap-4">
-              <Text variant="text-l-medium">Teret</Text>
+              <Text color="text-color-2" variant="text-l-medium">
+                Tereti
+              </Text>
               {(shipment.cargo as CargoWithMetadata[]).map((item, index) => (
-                <CargoItem cargo={item} index={index} key={index} />
+                <CargoItem cargo={item} index={index} key={index} shipmentId={shipment.id} />
               ))}
             </FlexLayout>
           </FlexLayout>

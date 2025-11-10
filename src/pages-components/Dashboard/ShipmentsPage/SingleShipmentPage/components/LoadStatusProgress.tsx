@@ -3,15 +3,21 @@ import { useState } from 'react';
 
 import { LoadStatus } from '@/lib/api/shipments';
 import { loadStatusConfig } from '@/pages-components/Dashboard/ShipmentsPage/const';
-import { Box, FlexLayout, Pill } from '@/ui';
+import { Box, FlexLayout, Pill, PillSize } from '@/ui';
 
 interface LoadStatusProgressProps {
   currentStatus: LoadStatus;
   onStatusChange: (status: LoadStatus) => void;
   isPending: boolean;
+  size?: PillSize;
 }
 
-export const LoadStatusProgress: React.FC<LoadStatusProgressProps> = ({ currentStatus, onStatusChange, isPending }) => {
+export const LoadStatusProgress: React.FC<LoadStatusProgressProps> = ({
+  currentStatus,
+  onStatusChange,
+  isPending,
+  size,
+}) => {
   const statuses = Object.values(LoadStatus);
   const currentIndex = statuses.indexOf(currentStatus);
   const [hoveredStatus, setHoveredStatus] = useState<LoadStatus | null>(null);
@@ -36,7 +42,7 @@ export const LoadStatusProgress: React.FC<LoadStatusProgressProps> = ({ currentS
                 onMouseEnter={() => !isPending && setHoveredStatus(status)}
                 onMouseLeave={() => !isPending && setHoveredStatus(null)}
               >
-                <Pill text={config.label} variant={variant} />
+                <Pill size={size} text={config.label} variant={variant} />
               </Box>
               {index < statuses.length - 1 && <Box className="w-8 h-[2px] bg-light-200 dark:bg-white-alpha-25 mx-2" />}
             </FlexLayout>

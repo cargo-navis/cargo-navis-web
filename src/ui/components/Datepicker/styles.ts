@@ -7,6 +7,7 @@ import { variantMap } from '@/ui/theme/fontSizes';
 export const classnames: Partial<Record<DatePickerInputStylesNames, string>> = {
   wrapper: clsx(
     // 'h-[44px]',
+    'isolate',
     'text-dark-600 dark:text-light-300',
     'border-[2px] rounded-s !border-dark-300 dark:!border-light-800',
     'hover:!border-dark-500 hover:dark:!border-light-700',

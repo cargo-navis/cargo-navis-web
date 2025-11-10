@@ -15,18 +15,6 @@ export const defaultCargo: Cargo = {
     palleteAmount: 1,
     hasKolete: false,
   },
-};
-
-export const formDefaultValues: ShipmentFields = {
-  orderNumber: '',
-  cargoReference: '',
-  transportContractorId: '',
-  clientId: '',
-  isAgencyUse: false,
-  price: 0,
-  driverId: '',
-  vehicleId: '',
-  dispatcherId: '',
   loadingAddress: {
     streetName: '',
     countryCode: '',
@@ -45,6 +33,18 @@ export const formDefaultValues: ShipmentFields = {
   unloadingDate: '',
   unloadingDueDate: '',
   unloadingDescription: '',
+};
+
+export const formDefaultValues: ShipmentFields = {
+  orderNumber: '',
+  cargoReference: '',
+  transportContractorId: '',
+  clientId: '',
+  isAgencyUse: false,
+  price: 0,
+  driverId: '',
+  vehicleId: '',
+  dispatcherId: '',
   cargo: [defaultCargo],
 };
 
@@ -63,31 +63,55 @@ export const fetchPostalCodeData = async (postalCodeId: string) => {
 };
 
 // Map cargo items from a shipment to the format expected by the form
-const mapCargoItems = (cargoItems?: any[]): Cargo[] => {
+const mapCargoItems = async (cargoItems?: any[]): Promise<Cargo[]> => {
   if (!cargoItems?.length) return [defaultCargo];
 
-  return cargoItems.map((c) => {
-    const cargoType = (c.metadata?.type || 'standard') as CargoType;
-    const palleteAmount = c.metadata?.palleteAmount || (cargoType === 'standard' ? 1 : undefined);
+  return Promise.all(
+    cargoItems.map(async (c) => {
+      const cargoType = (c.metadata?.type || 'standard') as CargoType;
+      const palleteAmount = c.metadata?.palleteAmount || (cargoType === 'standard' ? 1 : undefined);
 
-    // Initialize hasKolete to true if cargo is nonstandard and has palleteAmount > 0
-    const hasKolete = cargoType === 'nonstandard' && palleteAmount && palleteAmount > 0;
+      // Initialize hasKolete to true if cargo is nonstandard and has palleteAmount > 0
+      const hasKolete = cargoType === 'nonstandard' && palleteAmount && palleteAmount > 0;
 
-    return {
-      weight: c.weight || 0,
-      description: c.description || '',
-      ldm: c.ldm || 0.4,
-      metadata: {
-        type: cargoType,
-        palleteType: c.metadata?.palleteType || (cargoType === 'standard' ? PalleteType.Euro : undefined),
-        palleteAmount,
-        width: c.metadata?.width || 0,
-        height: c.metadata?.height || 0,
-        length: c.metadata?.length || 0,
-        hasKolete,
-      },
-    };
-  });
+      // Fetch postal code data for addresses
+      const loadingPostalCode = c.loadingAddress?.id ? await fetchPostalCodeData(c.loadingAddress.id) : {};
+      const unloadingPostalCode = c.unloadingAddress?.id ? await fetchPostalCodeData(c.unloadingAddress.id) : {};
+
+      return {
+        weight: c.weight || 0,
+        description: c.description || '',
+        ldm: c.ldm || 0.4,
+        metadata: {
+          type: cargoType,
+          palleteType: c.metadata?.palleteType || (cargoType === 'standard' ? PalleteType.Euro : undefined),
+          palleteAmount,
+          width: c.metadata?.width || 0,
+          height: c.metadata?.height || 0,
+          length: c.metadata?.length || 0,
+          hasKolete,
+        },
+        loadingAddress: {
+          streetName: c.loadingAddress?.streetName || '',
+          countryCode: c.loadingAddress?.countryCode,
+          postalCodeId: loadingPostalCode,
+        },
+        unloadingAddress: {
+          streetName: c.unloadingAddress?.streetName || '',
+          countryCode: c.unloadingAddress?.countryCode,
+          postalCodeId: unloadingPostalCode,
+        },
+        loadingCompanyName: c.loadingCompanyName || '',
+        unloadingCompanyName: c.unloadingCompanyName || '',
+        loadingReadyDate: c.loadingReadyDate || '',
+        loadingDate: c.loadingDate || '',
+        loadingDescription: c.loadingDescription || '',
+        unloadingDate: c.unloadingDate || '',
+        unloadingDueDate: c.unloadingDueDate || '',
+        unloadingDescription: c.unloadingDescription || '',
+      };
+    })
+  );
 };
 
 // Get cargo items from parent shipment
@@ -131,13 +155,7 @@ const getNewSubShipmentFormValues = async (tenant: Tenant, parentShipmentId: str
 // Create form values when copying a shipment
 const getCopyShipmentFormValues = async (shipment: Shipment) => {
   const orderNumber = await getOrderNumber();
-
-  // Fetch postal code data if needed
-  const loadingPostalCode = shipment.loadingAddress?.id ? await fetchPostalCodeData(shipment.loadingAddress.id) : {};
-
-  const unloadingPostalCode = shipment.unloadingAddress?.id
-    ? await fetchPostalCodeData(shipment.unloadingAddress.id)
-    : {};
+  const cargo = await mapCargoItems(shipment.cargo);
 
   return {
     orderNumber, // Use new orderNumber
@@ -149,36 +167,13 @@ const getCopyShipmentFormValues = async (shipment: Shipment) => {
     vehicleId: shipment.vehicleId || '',
     dispatcherId: shipment.dispatcherId || '',
     isAgencyUse: shipment.isAgencyUse || false,
-    loadingAddress: {
-      streetName: shipment.loadingAddress?.streetName || '',
-      countryCode: shipment.loadingAddress?.countryCode,
-      postalCodeId: loadingPostalCode,
-    },
-    unloadingAddress: {
-      streetName: shipment.unloadingAddress?.streetName || '',
-      countryCode: shipment.unloadingAddress?.countryCode,
-      postalCodeId: unloadingPostalCode,
-    },
-    loadingCompanyName: shipment.loadingCompanyName || '',
-    unloadingCompanyName: shipment.unloadingCompanyName || '',
-    loadingReadyDate: shipment.loadingReadyDate || '',
-    loadingDate: shipment.loadingDate || '',
-    loadingDescription: shipment.loadingDescription || '',
-    unloadingDate: shipment.unloadingDate || '',
-    unloadingDueDate: shipment.unloadingDueDate || '',
-    unloadingDescription: shipment.unloadingDescription || '',
-    cargo: mapCargoItems(shipment.cargo),
+    cargo,
   };
 };
 
 // Create form values for editing an existing shipment
 const getEditShipmentFormValues = async (shipment: Shipment) => {
-  // Fetch postal code data if needed
-  const loadingPostalCode = shipment.loadingAddress?.id ? await fetchPostalCodeData(shipment.loadingAddress.id) : {};
-
-  const unloadingPostalCode = shipment.unloadingAddress?.id
-    ? await fetchPostalCodeData(shipment.unloadingAddress.id)
-    : {};
+  const cargo = await mapCargoItems(shipment.cargo);
 
   return {
     orderNumber: shipment.orderNumber || '',
@@ -190,25 +185,7 @@ const getEditShipmentFormValues = async (shipment: Shipment) => {
     vehicleId: shipment.vehicleId || '',
     dispatcherId: shipment.dispatcherId || '',
     isAgencyUse: shipment.isAgencyUse || false,
-    loadingAddress: {
-      streetName: shipment.loadingAddress?.streetName || '',
-      countryCode: shipment.loadingAddress?.countryCode,
-      postalCodeId: loadingPostalCode,
-    },
-    unloadingAddress: {
-      streetName: shipment.unloadingAddress?.streetName || '',
-      countryCode: shipment.unloadingAddress?.countryCode,
-      postalCodeId: unloadingPostalCode,
-    },
-    loadingCompanyName: shipment.loadingCompanyName || '',
-    unloadingCompanyName: shipment.unloadingCompanyName || '',
-    loadingReadyDate: shipment.loadingReadyDate || '',
-    loadingDate: shipment.loadingDate || '',
-    loadingDescription: shipment.loadingDescription || '',
-    unloadingDate: shipment.unloadingDate || '',
-    unloadingDueDate: shipment.unloadingDueDate || '',
-    unloadingDescription: shipment.unloadingDescription || '',
-    cargo: mapCargoItems(shipment.cargo),
+    cargo,
   };
 };
 
@@ -235,7 +212,7 @@ export const getFormDefaultValues = (
       return getNewSubShipmentFormValues(tenant, parentShipmentId);
     }
 
-    // Case 4: Create a brand new shipment
+    // Case 4: Create a brand-new shipment
     return getNewShipmentFormValues(tenant, [defaultCargo]);
   };
 };
@@ -253,23 +230,13 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
     isAgencyUse,
     transportContractorId,
     price,
-    loadingAddress,
-    unloadingAddress,
-    loadingCompanyName,
-    unloadingCompanyName,
-    loadingReadyDate,
-    loadingDate,
-    loadingDescription,
-    unloadingDate,
-    unloadingDueDate,
-    unloadingDescription,
     cargo,
     sentToDriver,
   } = formData;
 
   const payload: Partial<Omit<CreateShipmentData, 'id'>> = {};
 
-  // Only add fields that are present in formData
+  // Only add shipment-level fields that are present in formData
   if ('cargoReference' in formData) payload.cargoReference = cargoReference || '';
   if ('orderNumber' in formData) payload.orderNumber = orderNumber;
   if ('dispatcherId' in formData) payload.dispatcherId = dispatcherId;
@@ -282,34 +249,7 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
   if ('price' in formData) payload.price = price || 0;
   if ('sentToDriver' in formData && sentToDriver !== undefined) payload.sentToDriver = sentToDriver;
 
-  // Handle addresses only if they exist in formData
-  if (loadingAddress?.streetName && loadingAddress?.postalCodeId?.value) {
-    payload.loadingAddress = {
-      streetName: loadingAddress.streetName || '',
-      postalCodeId: loadingAddress.postalCodeId?.value || '',
-    };
-  }
-
-  if (unloadingAddress?.streetName && unloadingAddress?.postalCodeId?.value) {
-    payload.unloadingAddress = {
-      streetName: unloadingAddress.streetName || '',
-      postalCodeId: unloadingAddress.postalCodeId?.value || '',
-    };
-  }
-
-  // Handle company names
-  if ('loadingCompanyName' in formData) payload.loadingCompanyName = loadingCompanyName || '';
-  if ('unloadingCompanyName' in formData) payload.unloadingCompanyName = unloadingCompanyName || '';
-
-  // Handle dates and descriptions only if they exist in formData
-  if ('loadingReadyDate' in formData) payload.loadingReadyDate = loadingReadyDate || '';
-  if ('loadingDate' in formData) payload.loadingDate = loadingDate || '';
-  if ('loadingDescription' in formData) payload.loadingDescription = loadingDescription || '';
-  if ('unloadingDate' in formData) payload.unloadingDate = unloadingDate || '';
-  if ('unloadingDueDate' in formData) payload.unloadingDueDate = unloadingDueDate || '';
-  if ('unloadingDescription' in formData) payload.unloadingDescription = unloadingDescription || '';
-
-  // Handle cargo only if it exists in formData
+  // Handle cargo with addresses
   if (cargo) {
     payload.cargo = cargo.map((item) => {
       const result: any = {
@@ -317,10 +257,42 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
         ldm: item.ldm,
       };
 
+      // Add description if present
       if ('description' in item) {
         result.description = item.description || '';
       }
 
+      // Add loading address
+      if (item.loadingAddress?.streetName && item.loadingAddress?.postalCodeId?.value) {
+        result.loadingAddress = {
+          streetName: item.loadingAddress.streetName,
+          postalCodeId: item.loadingAddress.postalCodeId.value,
+        };
+      }
+
+      // Add unloading address
+      if (item.unloadingAddress?.streetName && item.unloadingAddress?.postalCodeId?.value) {
+        result.unloadingAddress = {
+          streetName: item.unloadingAddress.streetName,
+          postalCodeId: item.unloadingAddress.postalCodeId.value,
+        };
+      }
+
+      // Add company names
+      if ('loadingCompanyName' in item) result.loadingCompanyName = item.loadingCompanyName || '';
+      if ('unloadingCompanyName' in item) result.unloadingCompanyName = item.unloadingCompanyName || '';
+
+      // Add dates
+      if ('loadingReadyDate' in item) result.loadingReadyDate = item.loadingReadyDate || '';
+      if ('loadingDate' in item) result.loadingDate = item.loadingDate || '';
+      if ('unloadingDate' in item) result.unloadingDate = item.unloadingDate || '';
+      if ('unloadingDueDate' in item) result.unloadingDueDate = item.unloadingDueDate || '';
+
+      // Add descriptions
+      if ('loadingDescription' in item) result.loadingDescription = item.loadingDescription || '';
+      if ('unloadingDescription' in item) result.unloadingDescription = item.unloadingDescription || '';
+
+      // Add metadata
       if (item.metadata) {
         const { type } = item.metadata;
         if (type === 'standard') {
