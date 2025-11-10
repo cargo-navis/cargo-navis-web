@@ -1,5 +1,10 @@
+import { LoadStatus } from '@/lib/api';
+import { useUpdateCargo } from '@/lib/hooks/api/cargo';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { palleteNameMap } from '@/lib/utils/palletes';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
+import { loadStatusConfig } from '@/pages-components/Dashboard/ShipmentsPage/const';
+import { LoadStatusProgress } from '@/pages-components/Dashboard/ShipmentsPage/SingleShipmentPage/components/LoadStatusProgress';
 import { DisplayIf, Divider, FlexLayout, Icon, Text } from '@/ui';
 
 import { AddressDetailsItem } from './AddressDetailsItem';
@@ -9,20 +14,47 @@ import type { CargoWithMetadata } from './types';
 interface CargoItemProps {
   cargo: CargoWithMetadata;
   index: number;
+  shipmentId: string;
 }
 
-export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index }) => {
+export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index, shipmentId }) => {
   const isStandardCargo = cargo.metadata?.type === 'standard';
+
+  const { mutateAsync: updateCargo, isPending } = useUpdateCargo(shipmentId);
+
+  const handleLoadStatusChange = async (status: LoadStatus) => {
+    try {
+      await updateCargo({
+        id: cargo.id,
+        loadStatus: status,
+      });
+
+      const statusText = loadStatusConfig[status].label;
+
+      showSuccessToast({ title: 'Status tereta ažuriran:', description: statusText.toUpperCase() });
+    } catch (error) {
+      console.error(error);
+      showErrorToast({ title: 'Greška prilikom ažuriranja statusa utovara. Pokušajte ponovno.' });
+    }
+  };
 
   return (
     <FlexLayout className="flex-col gap-4 p-4 rounded-s bg-black-alpha-05 dark:bg-white-alpha-10">
-      <FlexLayout className="flex-col">
-        <Text color="text-color-1" variant="text-s-medium">
-          TERET {index + 1}
-        </Text>
-        <Text color="text-color-3" variant="text-s">
-          {isStandardCargo ? 'Standardni teret' : 'Nestandardni teret'}
-        </Text>
+      <FlexLayout className="justify-between items-center">
+        <FlexLayout className="flex-col">
+          <Text color="text-color-1" variant="text-s-medium">
+            TERET {index + 1}
+          </Text>
+          <Text color="text-color-3" variant="text-s">
+            {isStandardCargo ? 'Standardni teret' : 'Nestandardni teret'}
+          </Text>
+        </FlexLayout>
+        <LoadStatusProgress
+          currentStatus={cargo.loadStatus || LoadStatus.NotYetLoaded}
+          isPending={isPending}
+          size="s"
+          onStatusChange={handleLoadStatusChange}
+        />
       </FlexLayout>
       <FlexLayout className="flex-col gap-4">
         {isStandardCargo ? <StandardContent cargo={cargo} /> : <NonstandardContent cargo={cargo} />}
