@@ -14,6 +14,7 @@ export interface ShipmentFields {
 }
 
 export interface Cargo {
+  id?: string;
   weight: number;
   description?: string;
   ldm: number;

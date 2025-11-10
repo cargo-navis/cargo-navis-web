@@ -41,7 +41,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
 
   const formMethods = useForm<ShipmentFields>({
     defaultValues: getFormDefaultValues(shipment, tenant, parentShipmentId, isCopy),
-    resolver: yupResolver(shipmentSchema),
+    resolver: yupResolver(shipmentSchema) as any,
     mode: 'all',
   });
 

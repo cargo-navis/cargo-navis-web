@@ -35,6 +35,7 @@ const cargoMetadataSchema = Yup.object().shape({
 });
 
 const cargoSchema = Yup.object().shape({
+  id: Yup.string().optional(),
   weight: Yup.number().typeError('Težina je obavezna').positive('Mora biti pozitivan broj').required(),
   description: Yup.string().optional(),
   ldm: Yup.number().typeError('LDM je obavezan').positive('Mora biti pozitivan broj').required(),
