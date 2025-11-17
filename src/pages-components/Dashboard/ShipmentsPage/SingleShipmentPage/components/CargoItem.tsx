@@ -4,10 +4,9 @@ import { getDataPointDateString } from '@/lib/utils/date';
 import { palleteNameMap } from '@/lib/utils/palletes';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { loadStatusConfig } from '@/pages-components/Dashboard/ShipmentsPage/const';
-import { DisplayIf, Divider, FlexLayout, Icon, Text } from '@/ui';
+import { Collapsible, DisplayIf, Divider, FlexLayout, Icon, Text } from '@/ui';
 
 import { AddressDetailsItem } from './AddressDetailsItem';
-import { DescriptionItem } from './DescriptionItem';
 import { LoadStatusProgress } from './LoadStatusProgress';
 import type { CargoWithMetadata } from './types';
 
@@ -61,7 +60,7 @@ export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index, shipmentId }
         <LoadingFields cargo={cargo} />
         <DisplayIf condition={!!cargo.description}>
           <Divider />
-          <DescriptionItem description={cargo.description} label="OPIS TERETA" />
+          <Collapsible description={cargo.description} label="OPIS TERETA" />
         </DisplayIf>
       </FlexLayout>
     </FlexLayout>
@@ -182,7 +181,7 @@ const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
             </Text>
           </FlexLayout>
         </FlexLayout>
-        <DescriptionItem description={cargo.loadingDescription} label="Opis utovara" />
+        <Collapsible description={cargo.loadingDescription} label="Napomena" />
       </FlexLayout>
       <Divider />
       <FlexLayout className="relative flex-col gap-4 before:block before:absolute before:top-0 before:-bottom-[4px] before:-left-[16px] before:w-[4px] before:bg-teal-600 dark:before:bg-teal-500 before:rounded-l">
@@ -214,7 +213,7 @@ const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
             </Text>
           </FlexLayout>
         </FlexLayout>
-        <DescriptionItem description={cargo.unloadingDescription} label="Opis istovara" />
+        <Collapsible description={cargo.unloadingDescription} label="Napomena" />
       </FlexLayout>
     </FlexLayout>
   );
