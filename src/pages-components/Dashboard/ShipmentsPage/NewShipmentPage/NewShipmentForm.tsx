@@ -7,7 +7,7 @@ import type { Tenant } from '@/lib/api/tenant.d';
 import { FormTextInput } from '@/lib/components/form';
 import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, FlexLayout, LoadingSpinner, VerticalDivider } from '@/ui';
+import { Box, Button, Divider, FlexLayout, LoadingSpinner } from '@/ui';
 
 import { AgencyField } from './AgencyField';
 import { CargoFieldList } from './CargoFieldList';
@@ -95,12 +95,12 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
 
   return (
     <FormProvider {...formMethods}>
-      <Box as="form" className="max-w-[1200px]" onSubmit={handleSubmit(handleFormSubmit)}>
+      <Box as="form" className="max-w-[1320px]" onSubmit={handleSubmit(handleFormSubmit)}>
         <FlexLayout className="relative flex-col gap-7 w-full">
           <FlexLayout className="flex-row gap-7">
-            <FlexLayout className="grow flex-col gap-4">
+            <FlexLayout className="flex-1 flex-col gap-4">
               <AgencyField />
-              <FlexLayout className="gap-4">
+              <FlexLayout className="flex-col gap-4">
                 <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
                   <FlexLayout className="gap-4">
                     <Box className="flex-1">
@@ -122,7 +122,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
                     </Box>
                   </FlexLayout>
                 </FlexLayout>
-                <VerticalDivider />
+                <Divider />
                 <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
                   <Box className="flex-1">
                     <DriverField />
@@ -145,8 +145,8 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
                   </Box>
                 </FlexLayout>
               </FlexLayout>
-              <CargoFieldList />
             </FlexLayout>
+            <CargoFieldList />
           </FlexLayout>
           <Box className="sticky bottom-0 bg-[#e9eded] dark:bg-black border-t-[2px] border-dark-200 dark:border-light-700 p-4 -mx-4">
             <Button
