@@ -2,9 +2,11 @@ import { useState } from 'react';
 
 import { getDataPointDateString } from '@/lib/utils/date';
 import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, Collapsible, FlexLayout, Text, TextButton } from '@/ui';
+import { Box, Collapsible, DisplayIf, Divider, FlexLayout, Text, TextButton } from '@/ui';
 
+import { useHasCargoLoads } from '../hooks/useHasCargoLoads';
 import { CargoLoadModal } from './CargoLoadModal';
+import { LoadSelect } from './LoadSelect';
 
 export enum CargoLoadFieldType {
   Load,
@@ -67,12 +69,24 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onC
     address: cargo[fieldNames.address],
   };
 
+  const hasCargoLoads = useHasCargoLoads();
+
   return (
     <>
       {!initialValues.address?.streetName ? (
-        <Box>
-          <TextButton iconLeft="PlusIcon" text={addLabel} type="button" variant="primary" onClick={openModal} />
-        </Box>
+        <FlexLayout className="items-center gap-4">
+          <Box className="flex-1">
+            <TextButton iconLeft="PlusIcon" text={addLabel} type="button" variant="primary" onClick={openModal} />
+          </Box>
+          <DisplayIf condition={hasCargoLoads}>
+            <Box className="flex-1">
+              <Divider text="Ili" />
+            </Box>
+            <Box className="w-1/2 shrink-0">
+              <LoadSelect onChange={onChange} />
+            </Box>
+          </DisplayIf>
+        </FlexLayout>
       ) : (
         <FlexLayout className="relative flex-col gap-4 before:block before:absolute before:top-0 before:-bottom-[4px] before:-left-[16px] before:w-[4px] before:bg-teal-600 dark:before:bg-teal-500 before:rounded-l">
           <FlexLayout className="gap-2 items-center">
