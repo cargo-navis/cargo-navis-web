@@ -19,7 +19,7 @@ interface TextButtonProps extends DefaultProps {
 export const TextButton = memo(
   React.forwardRef<any, TextButtonProps>(
     ({ as = 'button', size = 'm', variant = 'primary', iconLeft, iconRight, text, isDisabled, ...rest }, ref) => {
-      const { textVariant, iconSize } = sizesMap[size];
+      const { textVariant, iconSize, gap } = sizesMap[size];
       const styles = variantsMap[variant];
 
       const disabledAnchorStyles = as === 'a' && isDisabled && variantStyles[variant].disabledAnchor;
@@ -27,7 +27,7 @@ export const TextButton = memo(
       return (
         <FlexLayout
           as={as}
-          className={clsx(styles, disabledAnchorStyles, 'w-max shrink-0 items-center gap-2 focus:outline-none')}
+          className={clsx(styles, disabledAnchorStyles, gap, 'w-max shrink-0 items-center focus:outline-none')}
           isDisabled={isDisabled}
           ref={ref}
           tabIndex={isDisabled ? -1 : 0}

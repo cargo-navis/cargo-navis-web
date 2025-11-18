@@ -4,10 +4,10 @@ import omit from 'lodash/omit';
 import type { IconSize } from '@/ui';
 import type { TextVariant } from '@/ui/theme/fontSizes';
 
-export const sizesMap: Record<string, { textVariant: TextVariant; iconSize: IconSize }> = {
-  s: { textVariant: 'text-xxs-medium', iconSize: 's' },
-  m: { textVariant: 'text-s-medium', iconSize: 'm' },
-  l: { textVariant: 'text-m-medium', iconSize: 'l' },
+export const sizesMap: Record<string, { textVariant: TextVariant; iconSize: IconSize; gap: string }> = {
+  s: { textVariant: 'text-xxs-medium', iconSize: 's', gap: 'gap-1' },
+  m: { textVariant: 'text-s-medium', iconSize: 'm', gap: 'gap-2' },
+  l: { textVariant: 'text-m-medium', iconSize: 'l', gap: 'gap-2' },
 };
 export type Size = keyof typeof sizesMap;
 
@@ -32,6 +32,13 @@ export const variantStyles = {
     active: 'active:text-light-200',
     disabled: 'disabled:opacity-30',
     disabledAnchor: 'opacity-30',
+  },
+  danger: {
+    normal: 'text-red-600 dark:text-red-400',
+    hover: 'hover:text-red-400 focus:text-red-400 dark:hover:text-red-500 dark:focus:text-red-500',
+    active: 'active:text-red-400',
+    disabled: 'disabled:opacity-50',
+    disabledAnchor: 'opacity-50',
   },
 };
 export type Variant = keyof typeof variantStyles;
