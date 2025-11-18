@@ -17,7 +17,7 @@ export const typeLabelsMap = {
     companyLabel: 'Tvrtka utovara',
     primaryDateLabel: 'Datum utovara',
     secondaryDateLabel: 'spremno za utovar',
-    ctaLabel: 'Dodijeli utovar',
+    ctaLabel: 'Potvrdi utovar',
     fieldNames: {
       companyName: 'loadingCompanyName',
       primaryDate: 'loadingDate',
@@ -31,7 +31,7 @@ export const typeLabelsMap = {
     companyLabel: 'Tvrtka istovara',
     primaryDateLabel: 'Datum istovara',
     secondaryDateLabel: 'krajnji rok za istovar',
-    ctaLabel: 'Dodijeli istovar',
+    ctaLabel: 'Potvrdi istovar',
     fieldNames: {
       companyName: 'unloadingCompanyName',
       primaryDate: 'unloadingDate',
