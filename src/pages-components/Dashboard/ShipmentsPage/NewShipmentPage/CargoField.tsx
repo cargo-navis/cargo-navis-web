@@ -61,6 +61,36 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
     );
   }
 
+  function removeLoadData() {
+    setValue(
+      `cargo.${index}`,
+      {
+        ...cargo,
+        loadingCompanyName: '',
+        loadingDate: '',
+        loadingReadyDate: '',
+        loadingDescription: '',
+        loadingAddress: {},
+      },
+      { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+    );
+  }
+
+  function removeUnloadData() {
+    setValue(
+      `cargo.${index}`,
+      {
+        ...cargo,
+        unloadingCompanyName: '',
+        unloadingDate: '',
+        unloadingReadyDate: '',
+        unloadingDescription: '',
+        unloadingAddress: {},
+      },
+      { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+    );
+  }
+
   return (
     <FlexLayout as="fieldset" className="flex-col max-h-max gap-4 bg-dark-100 dark:bg-white-alpha-10 p-4 rounded-s">
       <FlexLayout className="justify-between items-center">
@@ -93,9 +123,14 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
         {isStandardCargo ? <StandardCargo index={index} /> : <NonStandardCargo index={index} />}
         <FormTextarea label="Opis tereta" name={`cargo.${index}.description`} />
       </FlexLayout>
-      <CargoLoadField cargo={cargo} type={CargoLoadFieldType.Load} onChange={setLoadData} />
+      <CargoLoadField cargo={cargo} type={CargoLoadFieldType.Load} onChange={setLoadData} onRemove={removeLoadData} />
       <Divider />
-      <CargoLoadField cargo={cargo} type={CargoLoadFieldType.Unload} onChange={setUnloadData} />
+      <CargoLoadField
+        cargo={cargo}
+        type={CargoLoadFieldType.Unload}
+        onChange={setUnloadData}
+        onRemove={removeUnloadData}
+      />
     </FlexLayout>
   );
 };

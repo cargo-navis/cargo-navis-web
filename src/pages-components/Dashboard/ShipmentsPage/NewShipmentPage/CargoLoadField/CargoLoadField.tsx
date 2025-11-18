@@ -17,6 +17,7 @@ export const typeLabelsMap = {
     companyLabel: 'Tvrtka utovara',
     primaryDateLabel: 'Datum utovara',
     secondaryDateLabel: 'spremno za utovar',
+    addLabel: 'Dodijeli utovar',
     ctaLabel: 'Potvrdi utovar',
     fieldNames: {
       companyName: 'loadingCompanyName',
@@ -31,6 +32,7 @@ export const typeLabelsMap = {
     companyLabel: 'Tvrtka istovara',
     primaryDateLabel: 'Datum istovara',
     secondaryDateLabel: 'krajnji rok za istovar',
+    addLabel: 'Dodijeli istovar',
     ctaLabel: 'Potvrdi istovar',
     fieldNames: {
       companyName: 'unloadingCompanyName',
@@ -46,15 +48,16 @@ interface CargoLoadFieldProps {
   cargo: any;
   type: CargoLoadFieldType;
   onChange(values: any): void;
+  onRemove(): void;
 }
 
-export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onChange }) => {
+export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onChange, onRemove }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const { title, primaryDateLabel, secondaryDateLabel, companyLabel, ctaLabel, fieldNames } = typeLabelsMap[type];
+  const { title, primaryDateLabel, secondaryDateLabel, companyLabel, addLabel, fieldNames } = typeLabelsMap[type];
 
   const initialValues = {
     companyName: cargo[fieldNames.companyName],
@@ -68,7 +71,7 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onC
     <>
       {!initialValues.address?.streetName ? (
         <Box>
-          <TextButton iconLeft="PlusIcon" text={ctaLabel} type="button" variant="primary" onClick={openModal} />
+          <TextButton iconLeft="PlusIcon" text={addLabel} type="button" variant="primary" onClick={openModal} />
         </Box>
       ) : (
         <FlexLayout className="relative flex-col gap-4 before:block before:absolute before:top-0 before:-bottom-[4px] before:-left-[16px] before:w-[4px] before:bg-teal-600 dark:before:bg-teal-500 before:rounded-l">
@@ -84,6 +87,7 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onC
               variant="secondary"
               onClick={openModal}
             />
+            <TextButton iconLeft="XMarkIcon" size="s" text="Ukloni" type="button" variant="danger" onClick={onRemove} />
           </FlexLayout>
           <FlexLayout className="flex-col gap-4 flex-1">
             <FlexLayout className="flex-col">
