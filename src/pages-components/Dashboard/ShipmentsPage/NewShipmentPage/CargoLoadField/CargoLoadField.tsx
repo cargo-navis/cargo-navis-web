@@ -76,7 +76,14 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onC
             <Text color="text-color-1" variant="text-s-medium">
               {title}
             </Text>
-            <TextButton iconLeft="PencilSquareIcon" size="s" text="Uredi" variant="secondary" onClick={openModal} />
+            <TextButton
+              iconLeft="PencilSquareIcon"
+              size="s"
+              text="Uredi"
+              type="button"
+              variant="secondary"
+              onClick={openModal}
+            />
           </FlexLayout>
           <FlexLayout className="flex-col gap-4 flex-1">
             <FlexLayout className="flex-col">
