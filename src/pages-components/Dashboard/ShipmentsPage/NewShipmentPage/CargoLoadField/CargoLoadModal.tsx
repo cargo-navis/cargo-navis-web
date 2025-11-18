@@ -55,7 +55,6 @@ const CargoLoadForm = ({ type, initialValues, onSubmit }: Omit<CargoLoadModalPro
   const { isValid } = formMethods.formState;
 
   function handleFormSubmit(values: any) {
-    console.log(values);
     onSubmit(values);
   }
 
@@ -63,7 +62,14 @@ const CargoLoadForm = ({ type, initialValues, onSubmit }: Omit<CargoLoadModalPro
 
   return (
     <FormProvider {...formMethods}>
-      <FlexLayout as="form" className="flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
+      <FlexLayout
+        as="form"
+        className="flex-col gap-4"
+        onSubmit={(e) => {
+          e.stopPropagation();
+          void handleSubmit(handleFormSubmit)(e);
+        }}
+      >
         <FlexLayout className="gap-4 grow">
           <FlexLayout className="flex-col gap-4 flex-1">
             <Box className="flex-1">
