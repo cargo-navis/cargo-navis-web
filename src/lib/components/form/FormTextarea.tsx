@@ -25,6 +25,7 @@ export const FormTextarea: React.FC<FormTextareaProps> = (props) => {
       {...rest}
       errorText={initialErrorMessage || dirtyErrorMessage}
       isDisabled={isSubmitting}
+      name={name}
       value={value}
       onBlur={onBlur}
       onChange={onChange}
