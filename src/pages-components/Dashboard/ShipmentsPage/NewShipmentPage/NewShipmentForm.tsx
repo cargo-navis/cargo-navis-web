@@ -30,11 +30,12 @@ interface NewShipmentFormProps {
 
 export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tenant, parentShipmentId, copyFromId }) => {
   const { push, back } = useRouter();
-  const isEdit = !!shipment;
+  const isShipmentPresent = !!shipment;
   const isCopy = !!copyFromId;
 
   // When copying, we use the shipment data but treat it as a new form (not an edit)
-  const formMode = isEdit && !isCopy ? 'edit' : 'new';
+  const formMode = isShipmentPresent && !isCopy ? 'edit' : 'new';
+  const isEdit = formMode === 'edit';
 
   const { mutateAsync: createShipment } = useCreateShipment();
   const { mutateAsync: updateShipment } = useUpdateShipment();
@@ -53,7 +54,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
 
   async function handleFormSubmit(data: ShipmentFields) {
     try {
-      if (formMode === 'edit' && shipment) {
+      if (isEdit && shipment) {
         // When cargo items are removed, the cargo array should always be included
         // even if dirtyFields doesn't detect it properly
         const cargoHasChanged = JSON.stringify(shipment.cargo) !== JSON.stringify(data.cargo);
@@ -153,7 +154,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
               isDisabled={!isFormActionable}
               isFullWidth
               isLoading={isSubmitting}
-              text={formMode === 'edit' ? 'Ažuriraj nalog' : 'Napravi nalog'}
+              text={isEdit ? 'Ažuriraj nalog' : 'Napravi nalog'}
               type="submit"
               variant="primary"
             />
