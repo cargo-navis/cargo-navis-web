@@ -32,25 +32,33 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
   const cargo = watch(`cargo.${index}`);
 
   function setLoadData(values: any) {
-    setValue(`cargo.${index}`, {
-      ...cargo,
-      loadingCompanyName: values.companyName,
-      loadingDate: values.primaryDate,
-      loadingReadyDate: values.secondaryDate,
-      loadingDescription: values.description,
-      loadingAddress: values.address,
-    });
+    setValue(
+      `cargo.${index}`,
+      {
+        ...cargo,
+        loadingCompanyName: values.companyName,
+        loadingDate: values.primaryDate,
+        loadingReadyDate: values.secondaryDate,
+        loadingDescription: values.description,
+        loadingAddress: values.address,
+      },
+      { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+    );
   }
 
   function setUnloadData(values: any) {
-    setValue(`cargo.${index}`, {
-      ...cargo,
-      unloadingCompanyName: values.companyName,
-      unloadingDate: values.primaryDate,
-      unloadingDueDate: values.secondaryDate,
-      unloadingDescription: values.description,
-      unloadingAddress: values.address,
-    });
+    setValue(
+      `cargo.${index}`,
+      {
+        ...cargo,
+        unloadingCompanyName: values.companyName,
+        unloadingDate: values.primaryDate,
+        unloadingDueDate: values.secondaryDate,
+        unloadingDescription: values.description,
+        unloadingAddress: values.address,
+      },
+      { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+    );
   }
 
   return (
