@@ -4,10 +4,9 @@ import { getDataPointDateString } from '@/lib/utils/date';
 import { palleteNameMap } from '@/lib/utils/palletes';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { loadStatusConfig } from '@/pages-components/Dashboard/ShipmentsPage/const';
-import { DisplayIf, Divider, FlexLayout, Icon, Text } from '@/ui';
+import { Collapsible, DisplayIf, Divider, FlexLayout, Icon, Text } from '@/ui';
 
 import { AddressDetailsItem } from './AddressDetailsItem';
-import { DescriptionItem } from './DescriptionItem';
 import { LoadStatusProgress } from './LoadStatusProgress';
 import type { CargoWithMetadata } from './types';
 
@@ -61,7 +60,7 @@ export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index, shipmentId }
         <LoadingFields cargo={cargo} />
         <DisplayIf condition={!!cargo.description}>
           <Divider />
-          <DescriptionItem description={cargo.description} label="OPIS TERETA" />
+          <Collapsible description={cargo.description} label="OPIS TERETA" />
         </DisplayIf>
       </FlexLayout>
     </FlexLayout>
@@ -161,6 +160,15 @@ const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
           <Icon icon="ArrowRightEndOnRectangleIcon" />
         </FlexLayout>
         <FlexLayout className="flex-col gap-4 flex-1">
+          <FlexLayout className="flex-col">
+            <Text color="text-color-3" variant="text-xs-medium">
+              Datum utovara {cargo.loadingReadyDate ? '(spremno za utovar)' : null}
+            </Text>
+            <Text color="text-color-1" variant="text-s">
+              {getDataPointDateString(cargo.loadingDate)}{' '}
+              {cargo.loadingReadyDate ? `(${getDataPointDateString(cargo.loadingReadyDate)})` : null}
+            </Text>
+          </FlexLayout>
           <FlexLayout className="justify-between items-start">
             <FlexLayout className="flex-col">
               <Text color="text-color-3" variant="text-xs-medium">
@@ -172,17 +180,8 @@ const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
             </FlexLayout>
             <AddressDetailsItem address={cargo.loadingAddress} />
           </FlexLayout>
-          <FlexLayout className="flex-col">
-            <Text color="text-color-3" variant="text-xs-medium">
-              Datum utovara {cargo.loadingReadyDate ? '(spremno za utovar)' : null}
-            </Text>
-            <Text color="text-color-1" variant="text-s">
-              {getDataPointDateString(cargo.loadingDate)}{' '}
-              {cargo.loadingReadyDate ? `(${getDataPointDateString(cargo.loadingReadyDate)})` : null}
-            </Text>
-          </FlexLayout>
         </FlexLayout>
-        <DescriptionItem description={cargo.loadingDescription} label="Opis utovara" />
+        <Collapsible description={cargo.loadingDescription} label="Napomena" />
       </FlexLayout>
       <Divider />
       <FlexLayout className="relative flex-col gap-4 before:block before:absolute before:top-0 before:-bottom-[4px] before:-left-[16px] before:w-[4px] before:bg-teal-600 dark:before:bg-teal-500 before:rounded-l">
@@ -193,6 +192,15 @@ const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
           <Icon icon="ArrowRightStartOnRectangleIcon" />
         </FlexLayout>
         <FlexLayout className="flex-col gap-4 flex-1">
+          <FlexLayout className="flex-col">
+            <Text color="text-color-3" variant="text-xs-medium">
+              Datum istovara {cargo.unloadingDueDate ? '(rok za istovar)' : null}
+            </Text>
+            <Text color="text-color-1" variant="text-s">
+              {getDataPointDateString(cargo.unloadingDate)}{' '}
+              {cargo.unloadingDueDate ? `(${getDataPointDateString(cargo.unloadingDueDate)})` : null}
+            </Text>
+          </FlexLayout>
           <FlexLayout className="justify-between items-start">
             <FlexLayout className="flex-col">
               <Text color="text-color-3" variant="text-xs-medium">
@@ -204,17 +212,8 @@ const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
             </FlexLayout>
             <AddressDetailsItem address={cargo.unloadingAddress} />
           </FlexLayout>
-          <FlexLayout className="flex-col">
-            <Text color="text-color-3" variant="text-xs-medium">
-              Datum istovara {cargo.unloadingDueDate ? '(rok za istovar)' : null}
-            </Text>
-            <Text color="text-color-1" variant="text-s">
-              {getDataPointDateString(cargo.unloadingDate)}{' '}
-              {cargo.unloadingDueDate ? `(${getDataPointDateString(cargo.unloadingDueDate)})` : null}
-            </Text>
-          </FlexLayout>
         </FlexLayout>
-        <DescriptionItem description={cargo.unloadingDescription} label="Opis istovara" />
+        <Collapsible description={cargo.unloadingDescription} label="Napomena" />
       </FlexLayout>
     </FlexLayout>
   );

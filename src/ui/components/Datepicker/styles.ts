@@ -72,4 +72,5 @@ export const popoverProps: PopoverProps = {
       'border border-dark-100 dark:border-light-800 shadow-dark-3 rounded-xl !p-3'
     ),
   },
+  withinPortal: false,
 };

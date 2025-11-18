@@ -7,7 +7,7 @@ import type { Tenant } from '@/lib/api/tenant.d';
 import { FormTextInput } from '@/lib/components/form';
 import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, FlexLayout, LoadingSpinner, VerticalDivider } from '@/ui';
+import { Box, Button, Divider, FlexLayout, LoadingSpinner } from '@/ui';
 
 import { AgencyField } from './AgencyField';
 import { CargoFieldList } from './CargoFieldList';
@@ -30,11 +30,12 @@ interface NewShipmentFormProps {
 
 export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tenant, parentShipmentId, copyFromId }) => {
   const { push, back } = useRouter();
-  const isEdit = !!shipment;
+  const isShipmentPresent = !!shipment;
   const isCopy = !!copyFromId;
 
   // When copying, we use the shipment data but treat it as a new form (not an edit)
-  const formMode = isEdit && !isCopy ? 'edit' : 'new';
+  const formMode = isShipmentPresent && !isCopy ? 'edit' : 'new';
+  const isEdit = formMode === 'edit';
 
   const { mutateAsync: createShipment } = useCreateShipment();
   const { mutateAsync: updateShipment } = useUpdateShipment();
@@ -53,7 +54,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
 
   async function handleFormSubmit(data: ShipmentFields) {
     try {
-      if (formMode === 'edit' && shipment) {
+      if (isEdit && shipment) {
         // When cargo items are removed, the cargo array should always be included
         // even if dirtyFields doesn't detect it properly
         const cargoHasChanged = JSON.stringify(shipment.cargo) !== JSON.stringify(data.cargo);
@@ -95,12 +96,12 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
 
   return (
     <FormProvider {...formMethods}>
-      <Box as="form" className="max-w-[1200px]" onSubmit={handleSubmit(handleFormSubmit)}>
+      <Box as="form" className="max-w-[1320px]" onSubmit={handleSubmit(handleFormSubmit)}>
         <FlexLayout className="relative flex-col gap-7 w-full">
           <FlexLayout className="flex-row gap-7">
-            <FlexLayout className="grow flex-col gap-4">
+            <FlexLayout className="flex-1 flex-col gap-4">
               <AgencyField />
-              <FlexLayout className="gap-4">
+              <FlexLayout className="flex-col gap-4">
                 <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
                   <FlexLayout className="gap-4">
                     <Box className="flex-1">
@@ -122,7 +123,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
                     </Box>
                   </FlexLayout>
                 </FlexLayout>
-                <VerticalDivider />
+                <Divider />
                 <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
                   <Box className="flex-1">
                     <DriverField />
@@ -145,15 +146,15 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
                   </Box>
                 </FlexLayout>
               </FlexLayout>
-              <CargoFieldList />
             </FlexLayout>
+            <CargoFieldList />
           </FlexLayout>
           <Box className="sticky bottom-0 bg-[#e9eded] dark:bg-black border-t-[2px] border-dark-200 dark:border-light-700 p-4 -mx-4">
             <Button
               isDisabled={!isFormActionable}
               isFullWidth
               isLoading={isSubmitting}
-              text={formMode === 'edit' ? 'Ažuriraj nalog' : 'Napravi nalog'}
+              text={isEdit ? 'Ažuriraj nalog' : 'Napravi nalog'}
               type="submit"
               variant="primary"
             />

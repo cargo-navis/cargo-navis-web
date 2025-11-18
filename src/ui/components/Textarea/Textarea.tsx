@@ -5,16 +5,17 @@ import { Box } from '@/ui';
 
 export interface TextareaProps {
   value: string;
-  onChange(value: string): void;
-  onBlur?: () => void;
   isDisabled?: boolean;
   placeholder?: string;
   charLimit?: number;
   rows?: number;
+  name?: string;
+  onChange(value: string): void;
+  onBlur?(): void;
 }
 
 export const Textarea = forwardRef<any, TextareaProps>(
-  ({ isDisabled = false, placeholder, charLimit, rows = 4, value, onChange, onBlur }, ref) => {
+  ({ isDisabled = false, placeholder, charLimit, rows = 4, value, name, onChange, onBlur }, ref) => {
     return (
       <Box
         as="textarea"
@@ -32,6 +33,7 @@ export const Textarea = forwardRef<any, TextareaProps>(
         )}
         isDisabled={isDisabled}
         maxLength={charLimit}
+        name={name}
         placeholder={placeholder}
         ref={ref}
         rows={rows}

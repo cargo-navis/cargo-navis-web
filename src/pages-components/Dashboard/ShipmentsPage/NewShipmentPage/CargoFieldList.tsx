@@ -1,6 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 
-import { FlexLayout, Text, TextButton } from '@/ui';
+import { Button, FlexLayout, Text } from '@/ui';
 
 import { CargoField } from './CargoField';
 import type { Cargo, ShipmentFields } from './types';
@@ -18,8 +18,9 @@ export const CargoFieldList = () => {
       {cargo.map((_, index: number, arr: Cargo[]) => (
         <CargoField cargoLength={arr.length} index={index} key={index} />
       ))}
-      <TextButton
+      <Button
         iconLeft="PlusIcon"
+        isFullWidth
         text="Dodaj teret"
         type="button"
         variant="secondary"
