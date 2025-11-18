@@ -83,13 +83,13 @@ function getSingleDimensionSchema({ message }: { message: string }) {
   });
 }
 
-function getRequiredDateSchema({ message }: { message: string }) {
+export function getRequiredDateSchema({ message }: { message: string }) {
   return Yup.string()
     .required(message)
     .test('not-empty', message, (value) => value !== undefined && value !== null && value.trim() !== '');
 }
 
-function getAddressSchema({ message }: { message: string }) {
+export function getAddressSchema({ message }: { message: string }) {
   return Yup.object()
     .shape({
       streetName: Yup.string().required(message),

@@ -5,9 +5,9 @@ import { FormCheckbox, FormNumberInput, FormSingleSelect } from '@/lib/component
 import { FormTextarea } from '@/lib/components/form/FormTextarea';
 import { roundLdmValue } from '@/lib/utils/math';
 import { palleteOptions, palleteValues } from '@/lib/utils/palletes';
-import { Box, Button, FlexLayout, Icon, Text } from '@/ui';
+import { Box, Button, Divider, FlexLayout, Icon, Text } from '@/ui';
 
-import { AddressFields } from './AddressFields';
+import { CargoLoadField, CargoLoadFieldType } from './CargoLoadField';
 
 interface CargoFieldProps {
   index: number;
@@ -28,6 +28,30 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
     const updatedCargo = currentCargo.filter((_: any, i: number) => i !== index);
     setValue('cargo', updatedCargo, { shouldDirty: true });
   };
+
+  const cargo = watch(`cargo.${index}`);
+
+  function setLoadData(values: any) {
+    setValue(`cargo.${index}`, {
+      ...cargo,
+      loadingCompanyName: values.companyName,
+      loadingDate: values.primaryDate,
+      loadingReadyDate: values.secondaryDate,
+      loadingDescription: values.description,
+      loadingAddress: values.address,
+    });
+  }
+
+  function setUnloadData(values: any) {
+    setValue(`cargo.${index}`, {
+      ...cargo,
+      unloadingCompanyName: values.companyName,
+      unloadingDate: values.primaryDate,
+      unloadingDueDate: values.secondaryDate,
+      unloadingDescription: values.description,
+      unloadingAddress: values.address,
+    });
+  }
 
   return (
     <FlexLayout as="fieldset" className="flex-col max-h-max gap-4 bg-dark-100 dark:bg-white-alpha-10 p-4 rounded-s">
@@ -61,7 +85,9 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
         {isStandardCargo ? <StandardCargo index={index} /> : <NonStandardCargo index={index} />}
         <FormTextarea label="Opis tereta" name={`cargo.${index}.description`} />
       </FlexLayout>
-      <AddressFields index={index} />
+      <CargoLoadField cargo={cargo} type={CargoLoadFieldType.Load} onChange={setLoadData} />
+      <Divider />
+      <CargoLoadField cargo={cargo} type={CargoLoadFieldType.Unload} onChange={setUnloadData} />
     </FlexLayout>
   );
 };
@@ -86,7 +112,7 @@ const StandardCargo: React.FC<{ index: number }> = ({ index }) => {
   return (
     <FlexLayout className="gap-4 flex-col">
       <FlexLayout className="gap-4">
-        <Box className="flex-1">
+        <Box className="w-1/2">
           <FormSingleSelect
             isSearchable
             label="Vrsta palete"
@@ -101,10 +127,10 @@ const StandardCargo: React.FC<{ index: number }> = ({ index }) => {
         <Box className="flex-1">
           <FormNumberInput label="Dužni metri (LDM)" name={`cargo.${index}.ldm`} />
         </Box>
-        <Box className="flex-1">
-          <FormNumberInput label="Težina (kg)" name={`cargo.${index}.weight`} rules={{ required: true }} />
-        </Box>
       </FlexLayout>
+      <Box className="flex-1">
+        <FormNumberInput label="Težina (kg)" name={`cargo.${index}.weight`} rules={{ required: true }} />
+      </Box>
     </FlexLayout>
   );
 };
@@ -147,7 +173,7 @@ const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => {
   return (
     <FlexLayout className="gap-4 flex-col">
       <FlexLayout className="gap-4">
-        <FlexLayout className="gap-4 w-1/2">
+        <FlexLayout className="gap-4 w-3/4">
           <Box className="flex-1">
             <FormNumberInput label="Duljina (m)" name={`cargo.${index}.metadata.length`} />
           </Box>
@@ -158,15 +184,15 @@ const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => {
             <FormNumberInput label="Visina (m)" name={`cargo.${index}.metadata.height`} />
           </Box>
         </FlexLayout>
-        <FlexLayout className="gap-4 w-1/2">
+        <FlexLayout className="gap-4">
           <Box className="flex-1">
             <FormNumberInput label="Dužni metri (LDM)" name={`cargo.${index}.ldm`} />
           </Box>
-          <Box className="flex-1">
-            <FormNumberInput label="Težina (kg)" name={`cargo.${index}.weight`} rules={{ required: true }} />
-          </Box>
         </FlexLayout>
       </FlexLayout>
+      <Box className="flex-1">
+        <FormNumberInput label="Težina (kg)" name={`cargo.${index}.weight`} rules={{ required: true }} />
+      </Box>
       <FlexLayout className="gap-4 items-center h-[96px] -my-4">
         <FormCheckbox label="Kolete" name={hasKoleteFieldName} />
         {hasKolete && (
