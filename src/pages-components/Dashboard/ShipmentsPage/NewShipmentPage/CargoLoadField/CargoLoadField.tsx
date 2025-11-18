@@ -42,13 +42,13 @@ export const typeLabelsMap = {
   },
 };
 
-interface LoadingFieldProps {
+interface CargoLoadFieldProps {
   cargo: any;
   type: CargoLoadFieldType;
   onChange(values: any): void;
 }
 
-export const CargoLoadField: React.FC<LoadingFieldProps> = ({ cargo, type, onChange }) => {
+export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onChange }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = () => setIsModalOpen(true);

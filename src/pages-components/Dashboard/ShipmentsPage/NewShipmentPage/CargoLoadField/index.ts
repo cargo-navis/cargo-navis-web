@@ -1,1 +1,1 @@
-export * from './CargoLoadField';
+export { CargoLoadField, CargoLoadFieldType } from './CargoLoadField';
