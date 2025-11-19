@@ -115,7 +115,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
           </FlexLayout>
           <Divider />
           <FlexLayout className="flex-row gap-7">
-            <FlexLayout className="flex-1 flex-col gap-4">
+            <FlexLayout className="w-[500px] flex-col gap-4">
               <FlexLayout as="section" className="flex-col gap-5">
                 <FlexLayout className="gap-4">
                   <Box className="flex-1">

@@ -88,7 +88,7 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onC
           </DisplayIf>
         </FlexLayout>
       ) : (
-        <FlexLayout className="relative flex-col gap-4 before:block before:absolute before:top-0 before:-bottom-[4px] before:-left-[16px] before:w-[4px] before:bg-teal-600 dark:before:bg-teal-500 before:rounded-l">
+        <FlexLayout className="relative flex-col gap-4 before:block before:absolute before:top-0 before:-bottom-[4px] before:-left-[16px] before:w-[4px] before:bg-teal-600 dark:before:bg-teal-500 before:rounded-tr-l before:rounded-br-l">
           <FlexLayout className="gap-2 items-center">
             <Text color="text-color-1" variant="text-s-medium">
               {title}

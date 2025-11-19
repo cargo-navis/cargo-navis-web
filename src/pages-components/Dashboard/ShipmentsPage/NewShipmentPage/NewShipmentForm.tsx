@@ -96,10 +96,10 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
 
   return (
     <FormProvider {...formMethods}>
-      <Box as="form" className="max-w-[1320px]" onSubmit={handleSubmit(handleFormSubmit)}>
+      <Box as="form" className="max-w-[1400px]" onSubmit={handleSubmit(handleFormSubmit)}>
         <FlexLayout className="relative flex-col gap-7 w-full">
           <FlexLayout className="flex-row gap-7">
-            <FlexLayout className="flex-1 flex-col gap-4">
+            <FlexLayout className="w-[500px] flex-col gap-4">
               <AgencyField />
               <FlexLayout className="flex-col gap-4">
                 <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
