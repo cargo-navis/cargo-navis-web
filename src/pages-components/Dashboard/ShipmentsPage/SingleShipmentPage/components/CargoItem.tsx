@@ -57,11 +57,11 @@ export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index, shipmentId }
       </FlexLayout>
       <FlexLayout className="flex-col gap-4">
         {isStandardCargo ? <StandardContent cargo={cargo} /> : <NonstandardContent cargo={cargo} />}
-        <LoadingFields cargo={cargo} />
         <DisplayIf condition={!!cargo.description}>
-          <Divider />
-          <Collapsible description={cargo.description} label="OPIS TERETA" />
+          <Collapsible description={cargo.description} label="Opis tereta" />
         </DisplayIf>
+        <Divider />
+        <LoadingFields cargo={cargo} />
       </FlexLayout>
     </FlexLayout>
   );
