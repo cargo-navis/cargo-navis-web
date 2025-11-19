@@ -18,7 +18,8 @@ export const typeLabelsMap = {
     title: 'Detalji utovara',
     companyLabel: 'Tvrtka utovara',
     primaryDateLabel: 'Datum utovara',
-    secondaryDateLabel: 'spremno za utovar',
+    secondaryDateLabel: 'Spremno za utovar',
+    loadReferenceLabel: 'Referenca utovara',
     addLabel: 'Dodijeli utovar',
     ctaLabel: 'Potvrdi utovar',
     fieldNames: {
@@ -26,6 +27,7 @@ export const typeLabelsMap = {
       primaryDate: 'loadingDate',
       secondaryDate: 'loadingReadyDate',
       description: 'loadingDescription',
+      loadReference: 'loadingReference',
       address: 'loadingAddress',
     },
   },
@@ -33,13 +35,15 @@ export const typeLabelsMap = {
     title: 'Detalji istovara',
     companyLabel: 'Tvrtka istovara',
     primaryDateLabel: 'Datum istovara',
-    secondaryDateLabel: 'krajnji rok za istovar',
+    secondaryDateLabel: 'Krajnji rok za istovar',
+    loadReferenceLabel: 'Referenca istovara',
     addLabel: 'Dodijeli istovar',
     ctaLabel: 'Potvrdi istovar',
     fieldNames: {
       companyName: 'unloadingCompanyName',
       primaryDate: 'unloadingDate',
       secondaryDate: 'unloadingDueDate',
+      loadReference: 'unloadingReference',
       description: 'unloadingDescription',
       address: 'unloadingAddress',
     },
@@ -59,12 +63,14 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onC
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const { title, primaryDateLabel, secondaryDateLabel, companyLabel, addLabel, fieldNames } = typeLabelsMap[type];
+  const { title, primaryDateLabel, secondaryDateLabel, loadReferenceLabel, companyLabel, addLabel, fieldNames } =
+    typeLabelsMap[type];
 
   const initialValues = {
     companyName: cargo[fieldNames.companyName],
     primaryDate: cargo[fieldNames.primaryDate],
     secondaryDate: cargo[fieldNames.secondaryDate],
+    loadReference: cargo[fieldNames.loadReference],
     description: cargo[fieldNames.description],
     address: cargo[fieldNames.address],
   };
@@ -124,6 +130,16 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onC
               </FlexLayout>
               <AddressDisplay address={initialValues.address} />
             </FlexLayout>
+            <DisplayIf condition={!!initialValues.loadReference}>
+              <FlexLayout className="flex-col">
+                <Text color="text-color-3" variant="text-xs-medium">
+                  {loadReferenceLabel}
+                </Text>
+                <Text color="text-color-1" variant="text-s">
+                  {initialValues.loadReference}
+                </Text>
+              </FlexLayout>
+            </DisplayIf>
           </FlexLayout>
           <Collapsible description={initialValues.description} label="Napomena" />
         </FlexLayout>

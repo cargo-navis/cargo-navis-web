@@ -40,6 +40,7 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
         loadingDate: values.primaryDate,
         loadingReadyDate: values.secondaryDate,
         loadingDescription: values.description,
+        loadingReference: values.loadReference,
         loadingAddress: values.address,
       },
       { shouldDirty: true, shouldTouch: true, shouldValidate: true }
@@ -55,6 +56,7 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
         unloadingDate: values.primaryDate,
         unloadingDueDate: values.secondaryDate,
         unloadingDescription: values.description,
+        unloadingReference: values.loadReference,
         unloadingAddress: values.address,
       },
       { shouldDirty: true, shouldTouch: true, shouldValidate: true }

@@ -15,6 +15,7 @@ const cargoLoadSchema = Yup.object().shape({
   companyName: Yup.string().optional(),
   primaryDate: getRequiredDateSchema({ message: 'Datum je obavezan' }),
   secondaryDate: Yup.string().optional(),
+  loadReference: Yup.string().optional(),
   description: Yup.string().optional(),
 });
 
@@ -58,7 +59,7 @@ const CargoLoadForm = ({ type, initialValues, onSubmit }: Omit<CargoLoadModalPro
     onSubmit(values);
   }
 
-  const { primaryDateLabel, secondaryDateLabel, companyLabel, ctaLabel } = typeLabelsMap[type];
+  const { primaryDateLabel, secondaryDateLabel, companyLabel, ctaLabel, loadReferenceLabel } = typeLabelsMap[type];
 
   return (
     <FormProvider {...formMethods}>
@@ -99,6 +100,7 @@ const CargoLoadForm = ({ type, initialValues, onSubmit }: Omit<CargoLoadModalPro
             <PostalCodeField />
           </FlexLayout>
         </FlexLayout>
+        <FormTextInput label={loadReferenceLabel} name="loadReference" />
         <FormTextarea label="Napomena" name="description" />
         <Box className="mt-4 isolate">
           <Button isDisabled={!isValid} isFullWidth text={ctaLabel} />

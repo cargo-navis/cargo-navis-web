@@ -63,7 +63,7 @@ export const fetchPostalCodeData = async (postalCodeId: string) => {
 };
 
 // Map cargo items from a shipment to the format expected by the form
-const mapCargoItems = async (cargoItems?: any[]): Promise<Cargo[]> => {
+const mapCargoItems = async (cargoItems?: any[], isEdit = false): Promise<Cargo[]> => {
   if (!cargoItems?.length) return [defaultCargo];
 
   return Promise.all(
@@ -79,6 +79,7 @@ const mapCargoItems = async (cargoItems?: any[]): Promise<Cargo[]> => {
       const unloadingPostalCode = c.unloadingAddress?.id ? await fetchPostalCodeData(c.unloadingAddress.id) : {};
 
       return {
+        ...(isEdit ? { id: c.id } : {}),
         weight: c.weight || 0,
         description: c.description || '',
         ldm: c.ldm || 0.4,
@@ -173,7 +174,7 @@ const getCopyShipmentFormValues = async (shipment: Shipment) => {
 
 // Create form values for editing an existing shipment
 const getEditShipmentFormValues = async (shipment: Shipment) => {
-  const cargo = await mapCargoItems(shipment.cargo);
+  const cargo = await mapCargoItems(shipment.cargo, true);
 
   return {
     orderNumber: shipment.orderNumber || '',
@@ -257,6 +258,11 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
         ldm: item.ldm,
       };
 
+      // Add cargo id (in case of edit)
+      if ('id' in item) {
+        result.id = item.id;
+      }
+
       // Add description if present
       if ('description' in item) {
         result.description = item.description || '';
@@ -291,6 +297,10 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
       // Add descriptions
       if ('loadingDescription' in item) result.loadingDescription = item.loadingDescription || '';
       if ('unloadingDescription' in item) result.unloadingDescription = item.unloadingDescription || '';
+
+      // Add loading references
+      if ('loadingReference' in item) result.loadingReference = item.loadingReference || '';
+      if ('unloadingReference' in item) result.unloadingReference = item.unloadingReference || '';
 
       // Add metadata
       if (item.metadata) {

@@ -43,11 +43,13 @@ const cargoSchema = Yup.object().shape({
   loadingCompanyName: Yup.string().optional(),
   loadingDate: getRequiredDateSchema({ message: 'Datum utovara je obavezan' }),
   loadingReadyDate: Yup.string().optional(),
+  loadingReference: Yup.string().optional(),
   loadingDescription: Yup.string().optional(),
   unloadingAddress: getAddressSchema({ message: 'Adresa istovara je obavezna' }),
   unloadingCompanyName: Yup.string().optional(),
   unloadingDate: getRequiredDateSchema({ message: 'Datum istovara je obavezan' }),
   unloadingDueDate: Yup.string().optional(),
+  unloadingReference: Yup.string().optional(),
   unloadingDescription: Yup.string().optional(),
   metadata: cargoMetadataSchema.required('Podaci tereta su obavezni'),
 });

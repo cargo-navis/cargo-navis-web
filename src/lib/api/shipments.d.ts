@@ -82,11 +82,13 @@ interface Cargo {
   loadingCompanyName?: string;
   loadingReadyDate?: string;
   loadingDate: string;
+  loadingReference?: string;
   loadingDescription?: string;
   unloadingAddress: LoadingAddress;
   unloadingCompanyName?: string;
   unloadingDate: string;
   unloadingDueDate?: string;
+  unloadingReference?: string;
   unloadingDescription?: string;
   loadStatus?: LoadStatus;
 }
