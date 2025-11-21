@@ -180,6 +180,16 @@ const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
             </FlexLayout>
             <AddressDetailsItem address={cargo.loadingAddress} />
           </FlexLayout>
+          <DisplayIf condition={!!cargo.loadingReference}>
+            <FlexLayout className="flex-col">
+              <Text color="text-color-3" variant="text-xs-medium">
+                Referenca utovara
+              </Text>
+              <Text color="text-color-1" variant="text-s">
+                {cargo.loadingReference}
+              </Text>
+            </FlexLayout>
+          </DisplayIf>
         </FlexLayout>
         <Collapsible description={cargo.loadingDescription} label="Napomena" />
       </FlexLayout>
@@ -212,6 +222,16 @@ const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
             </FlexLayout>
             <AddressDetailsItem address={cargo.unloadingAddress} />
           </FlexLayout>
+          <DisplayIf condition={!!cargo.unloadingReference}>
+            <FlexLayout className="flex-col">
+              <Text color="text-color-3" variant="text-xs-medium">
+                Referenca istovara
+              </Text>
+              <Text color="text-color-1" variant="text-s">
+                {cargo.unloadingReference}
+              </Text>
+            </FlexLayout>
+          </DisplayIf>
         </FlexLayout>
         <Collapsible description={cargo.unloadingDescription} label="Napomena" />
       </FlexLayout>

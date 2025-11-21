@@ -107,9 +107,11 @@ const mapCargoItems = async (cargoItems?: any[], isEdit = false): Promise<Cargo[
         loadingReadyDate: c.loadingReadyDate || '',
         loadingDate: c.loadingDate || '',
         loadingDescription: c.loadingDescription || '',
+        loadingReference: c.loadingReference || '',
         unloadingDate: c.unloadingDate || '',
         unloadingDueDate: c.unloadingDueDate || '',
         unloadingDescription: c.unloadingDescription || '',
+        unloadingReference: c.unloadingReference || '',
       };
     })
   );
