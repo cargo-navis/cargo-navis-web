@@ -1,3 +1,4 @@
+import { forwardRef } from 'react';
 import { useController, type UseControllerProps } from 'react-hook-form';
 import type { AsyncProps } from 'react-select/async';
 
@@ -10,7 +11,7 @@ export interface FormAsyncSelectProps extends Omit<AsyncSelectWithLabelsProps, '
   promisedOptions: AsyncProps<any, false, any>['loadOptions'];
 }
 
-export const FormAsyncSelect: React.FC<FormAsyncSelectProps> = (props) => {
+export const FormAsyncSelect = forwardRef<any, FormAsyncSelectProps>((props, ref) => {
   const { name, initialValue, rules, isDisabled, promisedOptions, ...rest } = props;
   const {
     field: { value, onChange, onBlur },
@@ -28,6 +29,7 @@ export const FormAsyncSelect: React.FC<FormAsyncSelectProps> = (props) => {
       isDisabled={isSubmitting || isDisabled}
       isRequired={isRequired}
       loadOptions={promisedOptions}
+      ref={ref}
       value={value}
       onBlur={onBlur}
       onChange={(newValue) => {
@@ -37,4 +39,4 @@ export const FormAsyncSelect: React.FC<FormAsyncSelectProps> = (props) => {
       }}
     />
   );
-};
+});

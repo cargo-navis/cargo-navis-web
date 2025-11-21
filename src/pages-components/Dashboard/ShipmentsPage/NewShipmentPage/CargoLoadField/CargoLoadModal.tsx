@@ -9,6 +9,7 @@ import { Box, Button, Dialog, DialogContent, DialogHeader, DialogTitle, FlexLayo
 
 import { getAddressSchema, getRequiredDateSchema } from '../schema';
 import { CargoLoadFieldType, typeLabelsMap } from './CargoLoadField';
+import { useFormFocusOverride, usePostalCodeFieldFocusOverride } from './hooks';
 
 const cargoLoadSchema = Yup.object().shape({
   address: getAddressSchema({ message: 'Adresa je obavezna' }),
@@ -55,6 +56,8 @@ const CargoLoadForm = ({ type, initialValues, onSubmit }: Omit<CargoLoadModalPro
   const { handleSubmit } = formMethods;
   const { isValid } = formMethods.formState;
 
+  const { formRef, handleTabChange } = useFormFocusOverride();
+
   function handleFormSubmit(values: any) {
     onSubmit(values);
   }
@@ -66,6 +69,8 @@ const CargoLoadForm = ({ type, initialValues, onSubmit }: Omit<CargoLoadModalPro
       <FlexLayout
         as="form"
         className="flex-col gap-4"
+        ref={formRef}
+        onKeyDown={handleTabChange}
         onSubmit={(e) => {
           e.stopPropagation();
           void handleSubmit(handleFormSubmit)(e);
@@ -74,7 +79,7 @@ const CargoLoadForm = ({ type, initialValues, onSubmit }: Omit<CargoLoadModalPro
         <FlexLayout className="gap-4 grow">
           <FlexLayout className="flex-col gap-4 flex-1">
             <Box className="flex-1">
-              <FormTextInput label={companyLabel} name="companyName" />
+              <FormTextInput autoFocus label={companyLabel} name="companyName" />
             </Box>
             <Box className="flex-1">
               <FormDatepicker label={primaryDateLabel} name="primaryDate" rules={{ required: true }} />
@@ -114,6 +119,8 @@ const PostalCodeField = () => {
   const { watch } = useFormContext();
   const loadingCountryCode = watch(`address.countryCode`);
 
+  const { postalCodeFieldRef, handleMenuOpen, handleMenuClose } = usePostalCodeFieldFocusOverride();
+
   return (
     <Box className="flex-1">
       <PostalCodeSelectField
@@ -124,7 +131,10 @@ const PostalCodeField = () => {
         label="Poštanski broj"
         name="address.postalCodeId"
         placeholder="Odaberi poštanski broj"
+        ref={postalCodeFieldRef}
         rules={{ required: true }}
+        onMenuClose={handleMenuClose}
+        onMenuOpen={handleMenuOpen}
       />
     </Box>
   );
