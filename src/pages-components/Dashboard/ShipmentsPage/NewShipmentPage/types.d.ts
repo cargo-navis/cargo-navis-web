@@ -1,12 +1,3 @@
-export interface Address {
-  streetName: string;
-  postalCodeId: {
-    label?: string;
-    value?: string;
-  };
-  countryCode?: string;
-}
-
 export interface ShipmentFields {
   cargoReference?: string;
   dispatcherId: string;
@@ -16,30 +7,6 @@ export interface ShipmentFields {
   driverId?: string | null;
   vehicleId?: string | null;
   trailerId?: string | null;
-  loadingAddress?: {
-    streetName: string;
-    postalCodeId: {
-      label?: string;
-      value?: string;
-    };
-    countryCode?: string;
-  };
-  unloadingAddress?: {
-    streetName: string;
-    postalCodeId: {
-      label?: string;
-      value?: string;
-    };
-    countryCode?: string;
-  };
-  loadingCompanyName?: string;
-  unloadingCompanyName?: string;
-  loadingReadyDate?: string;
-  loadingDate: string;
-  loadingDescription?: string;
-  unloadingDate: string;
-  unloadingDueDate?: string;
-  unloadingDescription?: string;
   price?: number;
   orderNumber: string;
   cargo: Cargo[];
@@ -47,10 +14,21 @@ export interface ShipmentFields {
 }
 
 export interface Cargo {
+  id?: string;
   weight: number;
   description?: string;
   ldm: number;
   metadata: CargoMetadata;
+  loadingAddress: Address;
+  loadingCompanyName?: string;
+  loadingReadyDate?: string;
+  loadingDate: string;
+  loadingDescription?: string;
+  unloadingAddress: Address;
+  unloadingCompanyName?: string;
+  unloadingDate: string;
+  unloadingDueDate?: string;
+  unloadingDescription?: string;
 }
 
 export type CargoType = 'standard' | 'nonstandard';
@@ -63,4 +41,13 @@ export interface CargoMetadata {
   palleteType?: PalleteType;
   palleteAmount?: number;
   hasKolete?: boolean;
+}
+
+interface Address {
+  streetName: string;
+  countryCode?: string;
+  postalCodeId: {
+    label?: string;
+    value?: string;
+  };
 }

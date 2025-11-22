@@ -5,7 +5,9 @@ import { FormCheckbox, FormNumberInput, FormSingleSelect } from '@/lib/component
 import { FormTextarea } from '@/lib/components/form/FormTextarea';
 import { roundLdmValue } from '@/lib/utils/math';
 import { palleteOptions, palleteValues } from '@/lib/utils/palletes';
-import { Box, Button, FlexLayout, Icon, Text } from '@/ui';
+import { Box, Button, Divider, FlexLayout, Icon, Text } from '@/ui';
+
+import { CargoLoadField, CargoLoadFieldType } from './CargoLoadField';
 
 interface CargoFieldProps {
   index: number;
@@ -27,11 +29,72 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
     setValue('cargo', updatedCargo, { shouldDirty: true });
   };
 
+  const cargo = watch(`cargo.${index}`);
+
+  function setLoadData(values: any) {
+    setValue(
+      `cargo.${index}`,
+      {
+        ...cargo,
+        loadingCompanyName: values.companyName,
+        loadingDate: values.primaryDate,
+        loadingReadyDate: values.secondaryDate,
+        loadingDescription: values.description,
+        loadingReference: values.loadReference,
+        loadingAddress: values.address,
+      },
+      { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+    );
+  }
+
+  function setUnloadData(values: any) {
+    setValue(
+      `cargo.${index}`,
+      {
+        ...cargo,
+        unloadingCompanyName: values.companyName,
+        unloadingDate: values.primaryDate,
+        unloadingDueDate: values.secondaryDate,
+        unloadingDescription: values.description,
+        unloadingReference: values.loadReference,
+        unloadingAddress: values.address,
+      },
+      { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+    );
+  }
+
+  function removeLoadData() {
+    setValue(
+      `cargo.${index}`,
+      {
+        ...cargo,
+        loadingCompanyName: '',
+        loadingDate: '',
+        loadingReadyDate: '',
+        loadingDescription: '',
+        loadingAddress: {},
+      },
+      { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+    );
+  }
+
+  function removeUnloadData() {
+    setValue(
+      `cargo.${index}`,
+      {
+        ...cargo,
+        unloadingCompanyName: '',
+        unloadingDate: '',
+        unloadingReadyDate: '',
+        unloadingDescription: '',
+        unloadingAddress: {},
+      },
+      { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+    );
+  }
+
   return (
-    <FlexLayout
-      as="fieldset"
-      className="flex-col max-h-max gap-4 bg-black-alpha-10 dark:bg-white-alpha-10 p-4 rounded-s"
-    >
+    <FlexLayout as="fieldset" className="flex-col max-h-max gap-4 bg-dark-100 dark:bg-white-alpha-10 p-4 rounded-s">
       <FlexLayout className="justify-between items-center">
         <Text color="text-color-3" variant="text-s-medium">
           TERET {index + 1}
@@ -60,9 +123,16 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
           </Box>
         </FlexLayout>
         {isStandardCargo ? <StandardCargo index={index} /> : <NonStandardCargo index={index} />}
-        <FormNumberInput label="Težina (kg)" name={`cargo.${index}.weight`} rules={{ required: true }} />
         <FormTextarea label="Opis tereta" name={`cargo.${index}.description`} />
       </FlexLayout>
+      <CargoLoadField cargo={cargo} type={CargoLoadFieldType.Load} onChange={setLoadData} onRemove={removeLoadData} />
+      <Divider />
+      <CargoLoadField
+        cargo={cargo}
+        type={CargoLoadFieldType.Unload}
+        onChange={setUnloadData}
+        onRemove={removeUnloadData}
+      />
     </FlexLayout>
   );
 };
@@ -87,7 +157,7 @@ const StandardCargo: React.FC<{ index: number }> = ({ index }) => {
   return (
     <FlexLayout className="gap-4 flex-col">
       <FlexLayout className="gap-4">
-        <Box className="flex-1">
+        <Box className="w-1/2">
           <FormSingleSelect
             isSearchable
             label="Vrsta palete"
@@ -99,8 +169,13 @@ const StandardCargo: React.FC<{ index: number }> = ({ index }) => {
         <Box className="flex-1">
           <FormNumberInput label="Broj paleta" name={`cargo.${index}.metadata.palleteAmount`} />
         </Box>
+        <Box className="flex-1">
+          <FormNumberInput label="Dužni metri (LDM)" name={`cargo.${index}.ldm`} />
+        </Box>
       </FlexLayout>
-      <FormNumberInput label="Dužni metri (LDM)" name={`cargo.${index}.ldm`} />
+      <Box className="flex-1">
+        <FormNumberInput label="Težina (kg)" name={`cargo.${index}.weight`} rules={{ required: true }} />
+      </Box>
     </FlexLayout>
   );
 };
@@ -143,16 +218,26 @@ const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => {
   return (
     <FlexLayout className="gap-4 flex-col">
       <FlexLayout className="gap-4">
-        <Box className="flex-1">
-          <FormNumberInput label="Duljina (m)" name={`cargo.${index}.metadata.length`} />
-        </Box>
-        <Box className="flex-1">
-          <FormNumberInput label="Širina (m)" name={`cargo.${index}.metadata.width`} />
-        </Box>
-        <Box className="flex-1">
-          <FormNumberInput label="Visina (m)" name={`cargo.${index}.metadata.height`} />
-        </Box>
+        <FlexLayout className="gap-4 w-3/4">
+          <Box className="flex-1">
+            <FormNumberInput label="Duljina (m)" name={`cargo.${index}.metadata.length`} />
+          </Box>
+          <Box className="flex-1">
+            <FormNumberInput label="Širina (m)" name={`cargo.${index}.metadata.width`} />
+          </Box>
+          <Box className="flex-1">
+            <FormNumberInput label="Visina (m)" name={`cargo.${index}.metadata.height`} />
+          </Box>
+        </FlexLayout>
+        <FlexLayout className="gap-4">
+          <Box className="flex-1">
+            <FormNumberInput label="Dužni metri (LDM)" name={`cargo.${index}.ldm`} />
+          </Box>
+        </FlexLayout>
       </FlexLayout>
+      <Box className="flex-1">
+        <FormNumberInput label="Težina (kg)" name={`cargo.${index}.weight`} rules={{ required: true }} />
+      </Box>
       <FlexLayout className="gap-4 items-center h-[96px] -my-4">
         <FormCheckbox label="Kolete" name={hasKoleteFieldName} />
         {hasKolete && (
@@ -161,7 +246,6 @@ const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => {
           </Box>
         )}
       </FlexLayout>
-      <FormNumberInput label="Dužni metri (LDM)" name={`cargo.${index}.ldm`} />
     </FlexLayout>
   );
 };

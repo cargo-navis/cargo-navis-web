@@ -74,7 +74,7 @@ export const Table: React.FC<TableProps> = ({ data, columns, onRowClick, getSubR
             <Box
               as="tr"
               className={clsx(
-                'group/row border-b border-b-black-alpha-05 dark:border-b-white-alpha-10 last:border-b-0',
+                'group/row border-b border-b-black-alpha-10 dark:border-b-white-alpha-25 last:border-b-0',
                 onRowClick && 'cursor-pointer',
                 isSubRow
                   ? 'bg-dark-200 dark:bg-white-alpha-10 hover:bg-black-alpha-05 dark:hover:bg-white-alpha-10'

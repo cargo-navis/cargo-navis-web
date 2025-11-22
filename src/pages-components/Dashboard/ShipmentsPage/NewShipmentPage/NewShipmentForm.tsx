@@ -9,7 +9,6 @@ import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, Divider, FlexLayout, LoadingSpinner } from '@/ui';
 
-import AddressFields from './AddressFields';
 import { AgencyField } from './AgencyField';
 import { CargoFieldList } from './CargoFieldList';
 import { ClientField } from './ClientField';
@@ -31,18 +30,19 @@ interface NewShipmentFormProps {
 
 export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tenant, parentShipmentId, copyFromId }) => {
   const { push, back } = useRouter();
-  const isEdit = !!shipment;
+  const isShipmentPresent = !!shipment;
   const isCopy = !!copyFromId;
 
   // When copying, we use the shipment data but treat it as a new form (not an edit)
-  const formMode = isEdit && !isCopy ? 'edit' : 'new';
+  const formMode = isShipmentPresent && !isCopy ? 'edit' : 'new';
+  const isEdit = formMode === 'edit';
 
   const { mutateAsync: createShipment } = useCreateShipment();
   const { mutateAsync: updateShipment } = useUpdateShipment();
 
   const formMethods = useForm<ShipmentFields>({
     defaultValues: getFormDefaultValues(shipment, tenant, parentShipmentId, isCopy),
-    resolver: yupResolver(shipmentSchema),
+    resolver: yupResolver(shipmentSchema) as any,
     mode: 'all',
   });
 
@@ -54,7 +54,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
 
   async function handleFormSubmit(data: ShipmentFields) {
     try {
-      if (formMode === 'edit' && shipment) {
+      if (isEdit && shipment) {
         // When cargo items are removed, the cargo array should always be included
         // even if dirtyFields doesn't detect it properly
         const cargoHasChanged = JSON.stringify(shipment.cargo) !== JSON.stringify(data.cargo);
@@ -99,52 +99,53 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
       <Box as="form" className="max-w-[1400px]" onSubmit={handleSubmit(handleFormSubmit)}>
         <FlexLayout className="relative flex-col gap-7 w-full">
           <FlexLayout className="flex-row gap-7">
-            <FlexLayout className="flex-1 flex-col gap-4">
-              <FlexLayout as="fieldset" className="flex-col gap-5">
-                <AgencyField />
-                <FlexLayout className="gap-4">
+            <FlexLayout className="w-[500px] flex-col gap-4">
+              <AgencyField />
+              <FlexLayout className="flex-col gap-4">
+                <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
+                  <FlexLayout className="gap-4">
+                    <Box className="flex-1">
+                      <FormTextInput iconLeft="LockClosedIcon" isDisabled label="Broj naloga" name="orderNumber" />
+                    </Box>
+                    <Box className="flex-1">
+                      <FormTextInput label="Referentni broj" name="cargoReference" placeholder="1234" />
+                    </Box>
+                  </FlexLayout>
                   <Box className="flex-1">
-                    <FormTextInput iconLeft="LockClosedIcon" isDisabled label="Broj naloga" name="orderNumber" />
+                    <ContractorField name="transportContractorId" tenant={tenant} />
                   </Box>
-                  <Box className="flex-1">
-                    <FormTextInput label="Referentni broj" name="cargoReference" placeholder="1234" />
-                  </Box>
+                  <FlexLayout className="gap-4">
+                    <Box className="flex-1">
+                      <ClientField />
+                    </Box>
+                    <Box className="flex-1">
+                      <PriceField />
+                    </Box>
+                  </FlexLayout>
                 </FlexLayout>
-                <Box className="flex-1">
-                  <ContractorField name="transportContractorId" tenant={tenant} />
-                </Box>
-                <FlexLayout className="gap-4">
-                  <Box className="flex-1">
-                    <ClientField />
-                  </Box>
-                  <Box className="flex-1">
-                    <PriceField />
-                  </Box>
-                </FlexLayout>
-                <Box className="flex-1">
-                  <DriverField />
-                </Box>
-                <FlexLayout className="gap-4">
-                  <Box className="flex-1">
-                    <VehicleField label="Vozilo" name="vehicleId" placeholder="Odaberi vozilo..." />
-                  </Box>
-                  <Box className="flex-1">
-                    <VehicleField
-                      label="Priključno vozilo"
-                      name="trailerId"
-                      placeholder="Odaberi priključno vozilo..."
-                      type={VehicleEnum.TRAILER}
-                    />
-                  </Box>
-                </FlexLayout>
-                <Box className="flex-1">
-                  <DispatcherField />
-                </Box>
-              </FlexLayout>
-              <Box className="py-4">
                 <Divider />
-              </Box>
-              <AddressFields />
+                <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
+                  <Box className="flex-1">
+                    <DriverField />
+                  </Box>
+                  <FlexLayout className="gap-4">
+                    <Box className="flex-1">
+                      <VehicleField label="Vozilo" name="vehicleId" placeholder="Odaberi vozilo..." />
+                    </Box>
+                    <Box className="flex-1">
+                      <VehicleField
+                        label="Priključno vozilo"
+                        name="trailerId"
+                        placeholder="Odaberi priključno vozilo..."
+                        type={VehicleEnum.TRAILER}
+                      />
+                    </Box>
+                  </FlexLayout>
+                  <Box className="flex-1">
+                    <DispatcherField />
+                  </Box>
+                </FlexLayout>
+              </FlexLayout>
             </FlexLayout>
             <CargoFieldList />
           </FlexLayout>
@@ -153,7 +154,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
               isDisabled={!isFormActionable}
               isFullWidth
               isLoading={isSubmitting}
-              text={formMode === 'edit' ? 'Ažuriraj nalog' : 'Napravi nalog'}
+              text={isEdit ? 'Ažuriraj nalog' : 'Napravi nalog'}
               type="submit"
               variant="primary"
             />

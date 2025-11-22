@@ -1,5 +1,5 @@
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
-import { useCallback } from 'react';
+import { forwardRef, useCallback } from 'react';
 
 import { type PostalCode, searchPostalCodes } from '@/lib/api';
 import { FormAsyncSelect, type FormAsyncSelectProps } from '@/lib/components/form';
@@ -27,11 +27,11 @@ interface PostalCodeSelectFieldProps extends Omit<FormAsyncSelectProps, 'promise
   countryCode: string;
 }
 
-export const PostalCodeSelectField: React.FC<PostalCodeSelectFieldProps> = ({ countryCode, ...rest }) => {
+export const PostalCodeSelectField = forwardRef<any, PostalCodeSelectFieldProps>(({ countryCode, ...rest }, ref) => {
   const promisedOptionsDebounced = useCallback(
     AwesomeDebouncePromise((inputVal) => promisedOptions(inputVal, countryCode), 400),
     [countryCode]
   );
 
-  return <FormAsyncSelect promisedOptions={promisedOptionsDebounced} {...rest} />;
-};
+  return <FormAsyncSelect promisedOptions={promisedOptionsDebounced} {...rest} ref={ref} />;
+});

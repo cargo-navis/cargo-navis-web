@@ -14,20 +14,9 @@ export interface Shipment {
   transportContractorId?: string;
   price: number;
   cargo: Cargo[];
-  loadingAddress: LoadingAddress;
-  loadingCompanyName?: string;
-  loadingReadyDate: string;
-  loadingDate: string;
-  loadingDescription: string;
-  unloadingAddress: LoadingAddress;
-  unloadingCompanyName?: string;
-  unloadingDate: string;
-  unloadingDueDate: string;
-  unloadingDescription: string;
   parentShipmentId?: string;
   subshipments?: Shipment[];
   createdAt: string;
-  loadStatus?: LoadStatus;
   childShipments?: Shipment[];
   sentToDriver?: boolean;
 }
@@ -49,15 +38,29 @@ export type GetShipmentParams = {
   sortDirection?: 'asc' | 'desc';
 };
 
-export interface CreateShipmentData extends Omit<Shipment, 'id' | 'loadingAddress' | 'unloadingAddress'> {
-  loadingAddress: {
-    streetName: string;
-    postalCodeId: string;
-  };
-  unloadingAddress: {
-    streetName: string;
-    postalCodeId: string;
-  };
+export interface CreateShipmentData extends Omit<Shipment, 'id' | 'cargo'> {
+  cargo: {
+    weight: number;
+    description?: string;
+    ldm: number;
+    metadata: Metadata;
+    loadingAddress: {
+      streetName: string;
+      postalCodeId: string;
+    };
+    loadingCompanyName?: string;
+    loadingReadyDate?: string;
+    loadingDate: string;
+    loadingDescription?: string;
+    unloadingAddress: {
+      streetName: string;
+      postalCodeId: string;
+    };
+    unloadingCompanyName?: string;
+    unloadingDate: string;
+    unloadingDueDate?: string;
+    unloadingDescription?: string;
+  }[];
 }
 
 // TODO - this should be for Create shipment
@@ -70,10 +73,24 @@ export interface LoadingAddress {
 }
 
 interface Cargo {
+  id: string;
   weight: number;
   description: string;
   ldm: number;
   metadata: Metadata;
+  loadingAddress: LoadingAddress;
+  loadingCompanyName?: string;
+  loadingReadyDate?: string;
+  loadingDate: string;
+  loadingReference?: string;
+  loadingDescription?: string;
+  unloadingAddress: LoadingAddress;
+  unloadingCompanyName?: string;
+  unloadingDate: string;
+  unloadingDueDate?: string;
+  unloadingReference?: string;
+  unloadingDescription?: string;
+  loadStatus?: LoadStatus;
 }
 
 export interface Metadata {

@@ -6,21 +6,30 @@ import { Box, FlexLayout, Skeleton } from '@/ui';
 export const ShipmentsTableLoader: React.FC = () => {
   return (
     <ClientSideOnly>
-      <Box className="w-full">
+      <FlexLayout className="flex-col gap-5 w-full">
+        <FlexLayout className="mb-4 justify-between items-center">
+          <FlexLayout className="flex-col gap-3">
+            <Skeleton borderRadius="m" height={44} width={200} />
+            <Skeleton borderRadius="m" height={24} width={240} />
+          </FlexLayout>
+          <FlexLayout className="flex gap-2">
+            <Skeleton borderRadius="m" height={32} width={132} />
+            <Skeleton borderRadius="m" height={32} width={32} />
+            <Skeleton borderRadius="m" height={32} width={32} />
+            <Skeleton borderRadius="m" height={32} width={132} />
+          </FlexLayout>
+        </FlexLayout>
         {/* Table Header Skeleton */}
-        <Box className="border-b border-b-black-alpha-05 dark:border-b-white-alpha-25  pb-3 mb-4">
+        <Box className="border-b border-b-black-alpha-10 dark:border-b-white-alpha-25  pb-3 mb-4">
           <FlexLayout className="gap-4 items-center justify-between">
             <Skeleton borderRadius="m" height={22} width={140} /> {/* Broj naloga */}
-            <Skeleton borderRadius="m" height={22} width={150} /> {/* Klijent */}
-            <Skeleton borderRadius="m" height={22} width={150} /> {/* Prijevozik */}
+            <Skeleton borderRadius="m" height={22} width={150} /> {/* Klijent / Prijevozik */}
             <Skeleton borderRadius="m" height={22} width={100} /> {/* Cijena */}
             <Skeleton borderRadius="m" height={22} width={90} /> {/* Datum utovara */}
             <Skeleton borderRadius="m" height={22} width={90} /> {/* Datum istovara */}
-            <Skeleton borderRadius="m" height={22} width={100} /> {/* LDM */}
+            <Skeleton borderRadius="m" height={22} width={100} /> {/* LDM / Težina */}
             <Skeleton borderRadius="m" height={22} width={80} /> {/* Broj paleta */}
-            <Skeleton borderRadius="m" height={22} width={60} /> {/* Težina */}
-            <Skeleton borderRadius="m" height={22} width={120} /> {/* Adresa utovara */}
-            <Skeleton borderRadius="m" height={22} width={120} /> {/* Adresa istovara */}
+            <Skeleton borderRadius="m" height={22} width={120} /> {/* Adrese utovara i istovara */}
             <Skeleton borderRadius="m" height={22} width={150} /> {/* Vozilo i vozač */}
             <Skeleton borderRadius="m" height={22} width={120} /> {/* Status */}
           </FlexLayout>
@@ -39,14 +48,9 @@ export const ShipmentsTableLoader: React.FC = () => {
                   <Skeleton borderRadius="m" height={22} width={100} />
                 </FlexLayout>
 
-                {/* Klijent */}
+                {/* Klijent / Prijevozik */}
                 <Box className="flex justify-between" style={{ width: '150px' }}>
                   <Skeleton borderRadius="m" height={22} width={85} />
-                </Box>
-
-                {/* Prijevozik */}
-                <Box className="flex justify-between" style={{ width: '150px' }}>
-                  <Skeleton borderRadius="m" height={22} width={90} />
                 </Box>
 
                 {/* Cijena */}
@@ -64,7 +68,7 @@ export const ShipmentsTableLoader: React.FC = () => {
                   <Skeleton borderRadius="m" height={22} width={70} />
                 </Box>
 
-                {/* LDM */}
+                {/* LDM / Težina */}
                 <Box className="flex justify-between" style={{ width: '100px' }}>
                   <Skeleton borderRadius="m" height={22} width={30} />
                 </Box>
@@ -74,17 +78,7 @@ export const ShipmentsTableLoader: React.FC = () => {
                   <Skeleton borderRadius="m" height={22} width={25} />
                 </Box>
 
-                {/* Težina */}
-                <Box className="flex justify-between" style={{ width: '60px' }}>
-                  <Skeleton borderRadius="m" height={22} width={40} />
-                </Box>
-
-                {/* Adresa utovara */}
-                <Box className="flex justify-between" style={{ width: '120px' }}>
-                  <Skeleton borderRadius="m" height={22} width={100} />
-                </Box>
-
-                {/* Adresa istovara */}
+                {/* Adrese utovara i istovara */}
                 <Box className="flex justify-between" style={{ width: '120px' }}>
                   <Skeleton borderRadius="m" height={22} width={100} />
                 </Box>
@@ -112,7 +106,7 @@ export const ShipmentsTableLoader: React.FC = () => {
             </Box>
           ))}
         </FlexLayout>
-      </Box>
+      </FlexLayout>
     </ClientSideOnly>
   );
 };

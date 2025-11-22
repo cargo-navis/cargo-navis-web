@@ -9,8 +9,10 @@ import mergeStyles from './mergeStyles';
 
 export interface AsyncSelectProps extends Omit<SelectProps, 'options'> {
   value: SelectOption;
-  onChange: (newValue: SelectOption) => void;
   loadOptions?: AsyncProps<any, false, any>['loadOptions'];
+  onChange(newValue: SelectOption): void;
+  onMenuOpen?(): void;
+  onMenuClose?(): void;
 }
 
 export const AsyncSelect = forwardRef<any, AsyncSelectProps>((props, ref) => {
@@ -22,10 +24,12 @@ export const AsyncSelect = forwardRef<any, AsyncSelectProps>((props, ref) => {
     value,
     name,
     placeholder = 'Select',
-    onChange,
-    onBlur,
     menuPlacement = 'auto',
     loadOptions,
+    onChange,
+    onBlur,
+    onMenuOpen,
+    onMenuClose,
   } = props;
 
   const instanceId = useId();
@@ -49,11 +53,14 @@ export const AsyncSelect = forwardRef<any, AsyncSelectProps>((props, ref) => {
       placeholder={placeholder}
       ref={ref}
       styles={mergeStyles}
+      tabSelectsValue={false}
       value={value}
       onBlur={onBlur}
       onChange={(newValue) => {
         onChange(newValue as SelectOption);
       }}
+      onMenuClose={onMenuClose}
+      onMenuOpen={onMenuOpen}
     />
   );
 });

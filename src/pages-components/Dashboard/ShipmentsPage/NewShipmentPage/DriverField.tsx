@@ -40,7 +40,7 @@ export const DriverField = () => {
         placeholder="Odaberi vozača..."
       />
       <DisplayIf condition={isCheckboxDisplayed}>
-        <Box className="-mt-2">
+        <Box className="mt-2">
           <FormCheckbox label="Automatski poslati nalog vozaču" name="sentToDriver" />
         </Box>
       </DisplayIf>

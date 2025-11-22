@@ -1,6 +1,5 @@
 import {
   AsyncSelect,
-  type AsyncSelectProps,
   CheckboxGroup,
   type CheckboxGroupProps,
   Datepicker,
@@ -45,9 +44,8 @@ export const SingleSelectWithLabels: React.FC<Omit<SingleSelectProps & FieldLabe
   withFieldLabels(SingleSelect);
 export type SingleSelectWithLabelsProps = React.ComponentProps<typeof SingleSelectWithLabels>;
 
-export const AsyncSelectWithLabels: React.FC<Omit<AsyncSelectProps & FieldLabelsProps, 'charLimitText'>> =
-  withFieldLabels(AsyncSelect);
-export type AsyncSelectWithLabelsProps = React.ComponentProps<typeof AsyncSelectWithLabels>;
+export const AsyncSelectWithLabels = withFieldLabels(AsyncSelect);
+export type AsyncSelectWithLabelsProps = React.ComponentPropsWithRef<typeof AsyncSelectWithLabels>;
 
 export const TextareaWithLabels: React.FC<TextareaProps & FieldLabelsProps> = withFieldLabels(Textarea);
 export type TextareaWithLabelsProps = React.ComponentProps<typeof TextareaWithLabels>;
