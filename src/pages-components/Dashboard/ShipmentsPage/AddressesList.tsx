@@ -11,7 +11,7 @@ const formatAddress = (address: LoadingAddress) => {
 };
 
 export const AddressesList = ({ addresses, icon }: { addresses: LoadingAddress[]; icon: IconType }) => {
-  const uniqAddresses = uniqBy(compact(addresses), (a) => `${a.countryCode}-${a.placeName}`);
+  const uniqAddresses = uniqBy(compact(addresses), (a) => `${a.countryCode}-${a.placeName}-${a.streetName}`);
   // const isMultipleLoadingAddresses = uniqueLoadingAddresses.length > 1;
 
   return uniqAddresses.map((address: LoadingAddress) => {
