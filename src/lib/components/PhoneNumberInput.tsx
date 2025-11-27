@@ -21,6 +21,8 @@ const countryOptions = [
   { value: '+386', label: '🇸🇮 +386' },
   { value: '+387', label: '🇧🇦 +387' },
   { value: '+381', label: '🇷🇸 +381' },
+  { value: '+383', label: '🇦🇱 +383' },
+  { value: '+43', label: '🇦🇹 +43' },
 ];
 
 export const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
