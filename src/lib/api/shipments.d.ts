@@ -34,8 +34,8 @@ export type GetShipmentParams = {
   // Pagination parameters
   page?: number;
   size?: number;
+  // Sort parameters
   sort?: string;
-  sortDirection?: 'asc' | 'desc';
 };
 
 export interface CreateShipmentData extends Omit<Shipment, 'id' | 'cargo'> {
