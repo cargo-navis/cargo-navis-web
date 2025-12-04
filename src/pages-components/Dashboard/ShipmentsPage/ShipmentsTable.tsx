@@ -10,10 +10,11 @@ import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
 import { renderVehicleName } from '@/lib/utils/vehicles';
-import { Box, Divider, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
+import { Box, DisplayIf, Divider, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
 
 import { AddressesList } from './AddressesList';
 import { invoiceStatusConfig, loadStatusConfig } from './const';
+import { SortFieldEnum, useShipmentsSortQueryParamState } from './hooks';
 
 const columnHelper = createColumnHelper<Shipment>();
 
@@ -24,6 +25,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
   const { data: tenant } = useCurrentTenant();
   const { data: vehicles = [] } = useVehicles();
   const { data: employees = [] } = useEmployees();
+  const { toggleSort, isFieldSorted, getSortDirection } = useShipmentsSortQueryParamState();
 
   const columns = useMemo(() => {
     return [
@@ -141,9 +143,20 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         },
       }),
       columnHelper.accessor('price', {
-        header: 'Cijena',
-        enableSorting: true,
-        sortingFn: 'basic',
+        header: () => (
+          <FlexLayout
+            className="items-center gap-1 cursor-pointer select-none hover:text-teal-500"
+            onClick={() => toggleSort(SortFieldEnum.Price)}
+          >
+            <Text className="whitespace-nowrap" variant="text-s-medium">
+              Cijena
+            </Text>
+            <DisplayIf condition={isFieldSorted(SortFieldEnum.Price) && !!getSortDirection(SortFieldEnum.Price)}>
+              {getSortDirection(SortFieldEnum.Price) === 'desc' ? ' ↓' : ' ↑'}
+            </DisplayIf>
+          </FlexLayout>
+        ),
+        enableSorting: false,
         cell: (info) => (
           <FlexLayout className="items-center py-2">
             <Text className="text-green-500 dark:text-green-400" variant="text-m-medium">
@@ -153,7 +166,23 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         ),
       }),
       columnHelper.display({
-        header: 'Datumi utovara',
+        id: 'loadingDates',
+        header: () => (
+          <FlexLayout
+            className="items-center gap-1 cursor-pointer select-none hover:text-teal-500"
+            onClick={() => toggleSort(SortFieldEnum.LoadingDate)}
+          >
+            <Text className="whitespace-nowrap" variant="text-s-medium">
+              Datumi utovara
+            </Text>
+            <DisplayIf
+              condition={isFieldSorted(SortFieldEnum.LoadingDate) && !!getSortDirection(SortFieldEnum.LoadingDate)}
+            >
+              {getSortDirection(SortFieldEnum.LoadingDate) === 'desc' ? ' ↓' : ' ↑'}
+            </DisplayIf>
+          </FlexLayout>
+        ),
+        enableSorting: false,
         cell: (props) => {
           const shipment = props.row.original;
           const loadingDates = shipment.cargo.map((c) => c.loadingDate);
@@ -173,7 +202,23 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         },
       }),
       columnHelper.display({
-        header: 'Datumi istovara',
+        id: 'unloadingDates',
+        header: () => (
+          <FlexLayout
+            className="items-center gap-1 cursor-pointer select-none hover:text-teal-500"
+            onClick={() => toggleSort(SortFieldEnum.UnloadingDate)}
+          >
+            <Text className="whitespace-nowrap" variant="text-s-medium">
+              Datumi istovara
+            </Text>
+            <DisplayIf
+              condition={isFieldSorted(SortFieldEnum.UnloadingDate) && !!getSortDirection(SortFieldEnum.UnloadingDate)}
+            >
+              {getSortDirection(SortFieldEnum.UnloadingDate) === 'desc' ? ' ↓' : ' ↑'}
+            </DisplayIf>
+          </FlexLayout>
+        ),
+        enableSorting: false,
         cell: (props) => {
           const shipment = props.row.original;
           const unloadingDates = shipment.cargo.map((c) => c.unloadingDate);
@@ -332,7 +377,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         },
       }),
     ];
-  }, [clients, contractors, employees, tenant, vehicles, router]);
+  }, [clients, contractors, employees, tenant, vehicles, router, toggleSort, isFieldSorted, getSortDirection]);
 
   const handleRowClick = (shipment: Shipment) => {
     router.push(`/dashboard/shipments/${shipment.id}`);

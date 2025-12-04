@@ -24,7 +24,7 @@ export function useShipments<TData = PaginatedResponse<Shipment>>(
   const createQueryKey = () => {
     if (!args?.params) return ['shipments'];
 
-    const { page, size, sort, sortDirection, ...filters } = args.params;
+    const { page, size, sort, ...filters } = args.params;
 
     // Build query key with proper structure
     const queryKey: any[] = ['shipments'];
@@ -35,8 +35,8 @@ export function useShipments<TData = PaginatedResponse<Shipment>>(
     }
 
     // Add pagination parameters if they exist
-    if (page !== undefined || size !== undefined || sort || sortDirection) {
-      queryKey.push({ pagination: { page, size, sort, sortDirection } });
+    if (page !== undefined || size !== undefined || sort) {
+      queryKey.push({ pagination: { page, size, sort } });
     }
 
     return queryKey;
