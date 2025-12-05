@@ -10,11 +10,13 @@ import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
 import { renderVehicleName } from '@/lib/utils/vehicles';
-import { Box, DisplayIf, Divider, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
+import { Box, DisplayIf, Divider, FlexLayout, Icon, Pill, Table, Text } from '@/ui';
 
 import { AddressesList } from './AddressesList';
 import { invoiceStatusConfig, loadStatusConfig } from './const';
 import { SortFieldEnum, useShipmentsSortQueryParamState } from './hooks';
+import { ReferenceNumberTooltip } from './ReferenceNumberTooltip';
+import { WarningTooltip } from './WarningTooltip';
 
 const columnHelper = createColumnHelper<Shipment>();
 
@@ -29,16 +31,16 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
 
   const columns = useMemo(() => {
     return [
-      columnHelper.accessor('orderNumber', {
+      columnHelper.display({
+        id: 'orderNumber',
         header: 'Broj naloga',
         enableSorting: false,
         size: 140,
-        cell: (info) => {
-          const row = info.row;
-          const hasSubshipments = (info.row.original.childShipments?.length ?? 0) > 0;
+        cell: ({ row }) => {
+          const shipment = row.original;
+          const hasSubshipments = (shipment.childShipments?.length ?? 0) > 0;
           const depth = row.depth;
           const isExpanded = row.getIsExpanded();
-          const shipment = info.row.original;
           const isSubshipment = depth !== 0;
           const isTenantTransporter = shipment.transportContractorId === tenant?.id;
           const isAgencyUse = shipment.isAgencyUse;
@@ -46,31 +48,20 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const hasMessageChannel = !!driver?.messageChannel;
           const isShipmentSentToDriver = shipment.sentToDriver;
 
-          const warningMessages: string[] = [];
           const canRenderWarning = !isSubshipment && !isAgencyUse;
 
           // Check for missing vehicle
-          if (canRenderWarning && !shipment.vehicleId && isTenantTransporter) {
-            warningMessages.push('Vozilo nije dodijeljeno');
-          }
-
-          // Check for missing driver
-          if (canRenderWarning && !shipment.driverId && isTenantTransporter) {
-            warningMessages.push('Vozač nije dodijeljen');
-          }
-
-          // Check if shipment not sent to driver
-          if (canRenderWarning && !isShipmentSentToDriver && hasMessageChannel) {
-            warningMessages.push('Nalog nije poslan vozaču');
-          }
-
-          const warningMessage = warningMessages.join('\n');
+          const isVehicleMissing = canRenderWarning && !shipment.vehicleId && isTenantTransporter;
+          const isDriverMissing = canRenderWarning && !shipment.driverId && isTenantTransporter;
+          const isNotSentToDriver = canRenderWarning && !isShipmentSentToDriver && hasMessageChannel;
 
           return (
-            <FlexLayout className="items-center py-2 group-hover/row:text-teal-500 gap-2">
+            <FlexLayout className="items-center py-2 text-dark-700 dark:text-light-100 group-hover/row:text-teal-500 gap-2">
               {depth > 0 ? (
                 <FlexLayout className="items-center gap-2">
-                  <Text>{info.getValue()}</Text>
+                  <Text color="text-color-2" variant="text-xs-medium">
+                    {shipment.orderNumber}
+                  </Text>
                 </FlexLayout>
               ) : (
                 <FlexLayout className="items-center gap-2 relative">
@@ -91,30 +82,15 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                     </Box>
                   )}
                   <FlexLayout className="flex-col items-center">
-                    <Text color="text-color-2" variant="text-xs-medium">
-                      {info.getValue()}
-                    </Text>
-                    {!!warningMessage.length && (
-                      <Tooltip
-                        content={
-                          <Box as="ul" className="px-1 list-disc">
-                            {warningMessages.map((message) => (
-                              <Text
-                                as="li"
-                                className="whitespace-nowrap ml-3"
-                                color="text-light-50"
-                                key={message}
-                                variant="text-xs"
-                              >
-                                {message}
-                              </Text>
-                            ))}
-                          </Box>
-                        }
-                      >
-                        <Icon color="text-red-500" icon="ExclamationTriangleIcon" size="s" />
-                      </Tooltip>
-                    )}
+                    <FlexLayout className="items-center gap-1">
+                      <Text variant="text-xs-medium">{shipment.orderNumber}</Text>
+                      <ReferenceNumberTooltip cargoReference={shipment.cargoReference} />
+                    </FlexLayout>
+                    <WarningTooltip
+                      isDriverMissing={isDriverMissing}
+                      isNotSentToDriver={isNotSentToDriver}
+                      isVehicleMissing={isVehicleMissing}
+                    />
                   </FlexLayout>
                 </FlexLayout>
               )}
