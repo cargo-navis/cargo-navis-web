@@ -1,8 +1,13 @@
-import { createContext, useContext } from 'react';
+import { useRouter } from 'next/router';
+import { createContext, useCallback, useContext } from 'react';
 
 import { SelectValue } from '@/ui';
 
-import { useFiltersQueryParamState } from '../ShipmentFilters/hooks';
+import {
+  ShipmentsFiltersStorageProvider,
+  useShipmentsFiltersLocalStorage,
+} from '../hooks/useShipmentsFiltersLocalStorage';
+import { useFiltersLocalStorageState } from '../ShipmentFilters/useFiltersLocalStorageState';
 
 export type ShipmentsFiltersContextType = {
   activeFiltersCount: number;
@@ -29,38 +34,50 @@ export type ShipmentsFiltersContextType = {
 
 const ShipmentsFiltersContext = createContext<ShipmentsFiltersContextType | undefined>(undefined);
 
-export const ShipmentsFiltersProvider = ({ children }: { children: React.ReactNode }) => {
-  const {
-    value: selectedClientId,
-    onChange: onClientChange,
-    onClearAll,
-  } = useFiltersQueryParamState({
+const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter();
+  const { clearAll: clearAllFilters } = useShipmentsFiltersLocalStorage();
+
+  const { value: selectedClientId, onChange: onClientChange } = useFiltersLocalStorageState({
     paramName: 'clientId',
   });
-  const { value: selectedDriverId, onChange: onDriverChange } = useFiltersQueryParamState({
+  const { value: selectedDriverId, onChange: onDriverChange } = useFiltersLocalStorageState({
     paramName: 'driverId',
   });
-  const { value: selectedDispatcherId, onChange: onDispatcherChange } = useFiltersQueryParamState({
+  const { value: selectedDispatcherId, onChange: onDispatcherChange } = useFiltersLocalStorageState({
     paramName: 'dispatcherId',
   });
-  const { value: selectedLoadingStatus, onChange: onLoadingStatusChange } = useFiltersQueryParamState({
+  const { value: selectedLoadingStatus, onChange: onLoadingStatusChange } = useFiltersLocalStorageState({
     paramName: 'loadStatus',
   });
-  const { value: selectedInvoiceStatus, onChange: onInvoiceStatusChange } = useFiltersQueryParamState({
+  const { value: selectedInvoiceStatus, onChange: onInvoiceStatusChange } = useFiltersLocalStorageState({
     paramName: 'invoiceStatus',
   });
-  const { value: loadingDateFrom, onChange: onLoadingDateFromChange } = useFiltersQueryParamState({
+  const { value: loadingDateFrom, onChange: onLoadingDateFromChange } = useFiltersLocalStorageState({
     paramName: 'loadingDateFrom',
   });
-  const { value: loadingDateTo, onChange: onLoadingDateToChange } = useFiltersQueryParamState({
+  const { value: loadingDateTo, onChange: onLoadingDateToChange } = useFiltersLocalStorageState({
     paramName: 'loadingDateTo',
   });
-  const { value: unloadingDateFrom, onChange: onUnloadingDateFromChange } = useFiltersQueryParamState({
+  const { value: unloadingDateFrom, onChange: onUnloadingDateFromChange } = useFiltersLocalStorageState({
     paramName: 'unloadingDateFrom',
   });
-  const { value: unloadingDateTo, onChange: onUnloadingDateToChange } = useFiltersQueryParamState({
+  const { value: unloadingDateTo, onChange: onUnloadingDateToChange } = useFiltersLocalStorageState({
     paramName: 'unloadingDateTo',
   });
+
+  const onClearAll = useCallback(async () => {
+    clearAllFilters();
+    // Reset pagination to first page
+    await router.push(
+      {
+        pathname: router.pathname,
+        query: { ...router.query, page: '1' },
+      },
+      undefined,
+      { shallow: true }
+    );
+  }, [clearAllFilters, router]);
 
   const activeFiltersCount = [
     selectedClientId,
@@ -101,6 +118,14 @@ export const ShipmentsFiltersProvider = ({ children }: { children: React.ReactNo
     >
       {children}
     </ShipmentsFiltersContext.Provider>
+  );
+};
+
+export const ShipmentsFiltersProvider = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <ShipmentsFiltersStorageProvider>
+      <ShipmentsFiltersProviderInner>{children}</ShipmentsFiltersProviderInner>
+    </ShipmentsFiltersStorageProvider>
   );
 };
 

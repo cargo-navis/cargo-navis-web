@@ -39,7 +39,7 @@ export const AddressesList = ({ addresses, icon }: { addresses: LoadingAddress[]
             </Text>
           </Box>
         }
-        key={address.id}
+        key={`${address.countryCode}-${address.placeName}-${address.streetName}`}
       >
         <FlexLayout className="items-center gap-1">
           <Icon color="text-color-3" icon={icon} size="s" />
