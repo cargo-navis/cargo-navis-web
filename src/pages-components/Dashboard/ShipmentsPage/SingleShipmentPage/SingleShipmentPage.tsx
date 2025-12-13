@@ -98,7 +98,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
             </FlexLayout>
           </FlexLayout>
           <Divider />
-          <FlexLayout className="flex-row gap-7">
+          <FlexLayout className="flex-row gap-5">
             <FlexLayout className="w-[380px] flex-col gap-4">
               <BasicInfo shipment={shipment} />
               <Box className="py-4">

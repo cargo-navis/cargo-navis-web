@@ -11,7 +11,7 @@ export const AddressDetailsItem: React.FC<{ address: LoadingAddress }> = ({ addr
   if (address.countryCode) addressString.push(getCountryFromCode(address?.countryCode || '')?.name);
 
   return (
-    <FlexLayout className="flex-col gap-1 text-end">
+    <FlexLayout className="flex-col gap-1">
       <Text color="text-color-3" variant="text-xs-medium">
         Adresa
       </Text>
