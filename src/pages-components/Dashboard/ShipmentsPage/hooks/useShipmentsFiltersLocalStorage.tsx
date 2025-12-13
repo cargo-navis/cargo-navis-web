@@ -85,7 +85,7 @@ export const ShipmentsFiltersStorageProvider = ({ children }: { children: React.
       if (value === undefined || value === null || value === '') {
         delete updated[field];
       } else {
-        updated[field] = String(value);
+        (updated[field] as string) = String(value);
       }
 
       writeToStorage(updated);
