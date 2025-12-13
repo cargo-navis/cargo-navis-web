@@ -15,6 +15,7 @@ export interface ShipmentsFiltersStorage {
   unloadingDateFrom?: string;
   unloadingDateTo?: string;
   sort?: string; // format: "field,direction" e.g. "loadingDate,desc"
+  pageSize?: number;
 }
 
 interface StorageContextType {

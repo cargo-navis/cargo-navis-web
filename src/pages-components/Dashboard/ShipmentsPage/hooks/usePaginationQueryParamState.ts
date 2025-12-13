@@ -1,5 +1,7 @@
 import { useRouter } from 'next/router';
 
+import { useShipmentsFiltersLocalStorage } from './useShipmentsFiltersLocalStorage';
+
 interface UsePaginationQueryParamStateOptions {
   defaultPage?: number;
   defaultPageSize?: number;
@@ -20,10 +22,13 @@ export const usePaginationQueryParamState = ({
   defaultPageSize = 25,
 }: UsePaginationQueryParamStateOptions = {}): PaginationState => {
   const router = useRouter();
+  const { storage, updateField, isReady: isStorageReady } = useShipmentsFiltersLocalStorage();
 
-  // Get current values from URL or use defaults
+  // Get current page from URL query params
   const currentPage = router.query.page ? Number(router.query.page) : defaultPage;
-  const currentPageSize = router.query.pageSize ? Number(router.query.pageSize) : defaultPageSize;
+
+  // Get current pageSize from localStorage, fallback to default
+  const currentPageSize = storage.pageSize ? Number(storage.pageSize) : defaultPageSize;
 
   // Helper function to update pagination parameters atomically
   const updatePaginationParams = (newPage?: number, newPageSize?: number) => {
@@ -34,23 +39,26 @@ export const usePaginationQueryParamState = ({
     }
 
     if (newPageSize !== undefined) {
-      query.pageSize = String(newPageSize);
+      updateField('pageSize', String(newPageSize));
     }
 
-    void router.push(
-      {
-        pathname: router.pathname,
-        query,
-      },
-      undefined,
-      { shallow: true }
-    );
+    // Only update router if page changed
+    if (newPage !== undefined) {
+      void router.push(
+        {
+          pathname: router.pathname,
+          query,
+        },
+        undefined,
+        { shallow: true }
+      );
+    }
   };
 
   return {
     page: currentPage,
     pageSize: currentPageSize,
-    isRouterReady: router.isReady,
+    isRouterReady: router.isReady && isStorageReady,
     // Update only page param
     setPage: (page: number) => updatePaginationParams(page),
     // Update only page size param (resets to page 1)
