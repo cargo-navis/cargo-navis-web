@@ -5,7 +5,7 @@ import { FormCheckbox, FormNumberInput, FormSingleSelect } from '@/lib/component
 import { FormTextarea } from '@/lib/components/form/FormTextarea';
 import { roundLdmValue } from '@/lib/utils/math';
 import { palleteOptions, palleteValues } from '@/lib/utils/palletes';
-import { Box, Button, Divider, FlexLayout, Icon, Text } from '@/ui';
+import { Box, Button, Divider, FlexLayout, Icon, Text, VerticalDivider } from '@/ui';
 
 import { CargoLoadField, CargoLoadFieldType } from './CargoLoadField';
 
@@ -125,14 +125,17 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
         {isStandardCargo ? <StandardCargo index={index} /> : <NonStandardCargo index={index} />}
         <FormTextarea label="Opis tereta" name={`cargo.${index}.description`} />
       </FlexLayout>
-      <CargoLoadField cargo={cargo} type={CargoLoadFieldType.Load} onChange={setLoadData} onRemove={removeLoadData} />
       <Divider />
-      <CargoLoadField
-        cargo={cargo}
-        type={CargoLoadFieldType.Unload}
-        onChange={setUnloadData}
-        onRemove={removeUnloadData}
-      />
+      <FlexLayout className="gap-4">
+        <CargoLoadField cargo={cargo} type={CargoLoadFieldType.Load} onChange={setLoadData} onRemove={removeLoadData} />
+        <VerticalDivider />
+        <CargoLoadField
+          cargo={cargo}
+          type={CargoLoadFieldType.Unload}
+          onChange={setUnloadData}
+          onRemove={removeUnloadData}
+        />
+      </FlexLayout>
     </FlexLayout>
   );
 };
