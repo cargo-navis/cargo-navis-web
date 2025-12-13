@@ -4,7 +4,7 @@ import { getDataPointDateString } from '@/lib/utils/date';
 import { palleteNameMap } from '@/lib/utils/palletes';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { loadStatusConfig } from '@/pages-components/Dashboard/ShipmentsPage/const';
-import { Collapsible, DisplayIf, Divider, FlexLayout, Icon, Text } from '@/ui';
+import { Collapsible, DisplayIf, Divider, FlexLayout, Icon, Text, VerticalDivider } from '@/ui';
 
 import { AddressDetailsItem } from './AddressDetailsItem';
 import { LoadStatusProgress } from './LoadStatusProgress';
@@ -151,87 +151,95 @@ const NonstandardContent = ({ cargo }: { cargo: CargoWithMetadata }) => {
 
 const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
   return (
-    <FlexLayout as="section" className="flex-col gap-4">
-      <FlexLayout className="relative flex-col gap-4 before:block before:absolute before:top-0 before:-bottom-[4px] before:-left-[16px] before:w-[4px] before:bg-teal-600 dark:before:bg-teal-500 before:rounded-tr-l before:rounded-br-l">
+    <FlexLayout as="section" className="justify-between gap-4">
+      <FlexLayout className="flex-1 flex-col gap-4">
         <FlexLayout className="gap-2 items-center">
-          <Text color="text-color-1" variant="text-s-medium">
+          <Text
+            className="underline underline-offset-2 decoration-2 decoration-teal-600 dark:decoration-teal-500"
+            color="text-color-1"
+            variant="text-s-medium"
+          >
             Detalji utovara
           </Text>
           <Icon icon="ArrowRightEndOnRectangleIcon" />
         </FlexLayout>
         <FlexLayout className="flex-col gap-4 flex-1">
+          <FlexLayout className="gap-4 justify-between items-start">
+            <FlexLayout className="flex-col">
+              <Text color="text-color-3" variant="text-xs-medium">
+                Datum utovara {cargo.loadingReadyDate ? '(spremno za utovar)' : null}
+              </Text>
+              <Text color="text-color-1" variant="text-s">
+                {getDataPointDateString(cargo.loadingDate)}{' '}
+                {cargo.loadingReadyDate ? `(${getDataPointDateString(cargo.loadingReadyDate)})` : null}
+              </Text>
+            </FlexLayout>
+            <DisplayIf condition={!!cargo.loadingReference}>
+              <FlexLayout className="flex-col text-end">
+                <Text color="text-color-3" variant="text-xs-medium">
+                  Referenca utovara
+                </Text>
+                <Text color="text-color-1" variant="text-s">
+                  {cargo.loadingReference}
+                </Text>
+              </FlexLayout>
+            </DisplayIf>
+          </FlexLayout>
           <FlexLayout className="flex-col">
             <Text color="text-color-3" variant="text-xs-medium">
-              Datum utovara {cargo.loadingReadyDate ? '(spremno za utovar)' : null}
+              Tvrtka utovara
             </Text>
             <Text color="text-color-1" variant="text-s">
-              {getDataPointDateString(cargo.loadingDate)}{' '}
-              {cargo.loadingReadyDate ? `(${getDataPointDateString(cargo.loadingReadyDate)})` : null}
+              {cargo.loadingCompanyName || '—'}
             </Text>
           </FlexLayout>
-          <FlexLayout className="justify-between items-start">
-            <FlexLayout className="flex-col">
-              <Text color="text-color-3" variant="text-xs-medium">
-                Tvrtka utovara
-              </Text>
-              <Text color="text-color-1" variant="text-s">
-                {cargo.loadingCompanyName || '—'}
-              </Text>
-            </FlexLayout>
-            <AddressDetailsItem address={cargo.loadingAddress} />
-          </FlexLayout>
-          <DisplayIf condition={!!cargo.loadingReference}>
-            <FlexLayout className="flex-col">
-              <Text color="text-color-3" variant="text-xs-medium">
-                Referenca utovara
-              </Text>
-              <Text color="text-color-1" variant="text-s">
-                {cargo.loadingReference}
-              </Text>
-            </FlexLayout>
-          </DisplayIf>
+          <AddressDetailsItem address={cargo.loadingAddress} />
         </FlexLayout>
         <Collapsible description={cargo.loadingDescription} label="Napomena" />
       </FlexLayout>
-      <Divider />
-      <FlexLayout className="relative flex-col gap-4 before:block before:absolute before:top-0 before:-bottom-[4px] before:-left-[16px] before:w-[4px] before:bg-teal-600 dark:before:bg-teal-500 before:rounded-tr-l before:rounded-br-l">
+      <VerticalDivider />
+      <FlexLayout className="flex-1 flex-col gap-4">
         <FlexLayout className="gap-2 items-center">
-          <Text color="text-color-1" variant="text-s-medium">
+          <Text
+            className="underline underline-offset-2 decoration-2 decoration-teal-600 dark:decoration-teal-500"
+            color="text-color-1"
+            variant="text-s-medium"
+          >
             Detalji istovara
           </Text>
           <Icon icon="ArrowRightStartOnRectangleIcon" />
         </FlexLayout>
         <FlexLayout className="flex-col gap-4 flex-1">
+          <FlexLayout className="gap-4 justify-between items-start">
+            <FlexLayout className="flex-col">
+              <Text color="text-color-3" variant="text-xs-medium">
+                Datum istovara {cargo.unloadingDueDate ? '(rok za istovar)' : null}
+              </Text>
+              <Text color="text-color-1" variant="text-s">
+                {getDataPointDateString(cargo.unloadingDate)}{' '}
+                {cargo.unloadingDueDate ? `(${getDataPointDateString(cargo.unloadingDueDate)})` : null}
+              </Text>
+            </FlexLayout>
+            <DisplayIf condition={!!cargo.unloadingReference}>
+              <FlexLayout className="flex-col text-end">
+                <Text color="text-color-3" variant="text-xs-medium">
+                  Referenca istovara
+                </Text>
+                <Text color="text-color-1" variant="text-s">
+                  {cargo.unloadingReference}
+                </Text>
+              </FlexLayout>
+            </DisplayIf>
+          </FlexLayout>
           <FlexLayout className="flex-col">
             <Text color="text-color-3" variant="text-xs-medium">
-              Datum istovara {cargo.unloadingDueDate ? '(rok za istovar)' : null}
+              Tvrtka istovara
             </Text>
             <Text color="text-color-1" variant="text-s">
-              {getDataPointDateString(cargo.unloadingDate)}{' '}
-              {cargo.unloadingDueDate ? `(${getDataPointDateString(cargo.unloadingDueDate)})` : null}
+              {cargo.unloadingCompanyName || '—'}
             </Text>
           </FlexLayout>
-          <FlexLayout className="justify-between items-start">
-            <FlexLayout className="flex-col">
-              <Text color="text-color-3" variant="text-xs-medium">
-                Tvrtka istovara
-              </Text>
-              <Text color="text-color-1" variant="text-s">
-                {cargo.unloadingCompanyName || '—'}
-              </Text>
-            </FlexLayout>
-            <AddressDetailsItem address={cargo.unloadingAddress} />
-          </FlexLayout>
-          <DisplayIf condition={!!cargo.unloadingReference}>
-            <FlexLayout className="flex-col">
-              <Text color="text-color-3" variant="text-xs-medium">
-                Referenca istovara
-              </Text>
-              <Text color="text-color-1" variant="text-s">
-                {cargo.unloadingReference}
-              </Text>
-            </FlexLayout>
-          </DisplayIf>
+          <AddressDetailsItem address={cargo.unloadingAddress} />
         </FlexLayout>
         <Collapsible description={cargo.unloadingDescription} label="Napomena" />
       </FlexLayout>

@@ -94,9 +94,13 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onC
           </DisplayIf>
         </FlexLayout>
       ) : (
-        <FlexLayout className="relative flex-col gap-4 before:block before:absolute before:top-0 before:-bottom-[4px] before:-left-[16px] before:w-[4px] before:bg-teal-600 dark:before:bg-teal-500 before:rounded-tr-l before:rounded-br-l">
+        <FlexLayout className="flex-1 flex-col gap-4">
           <FlexLayout className="gap-2 items-center">
-            <Text color="text-color-1" variant="text-s-medium">
+            <Text
+              className="underline underline-offset-2 decoration-2 decoration-teal-600 dark:decoration-teal-500"
+              color="text-color-1"
+              variant="text-s-medium"
+            >
               {title}
             </Text>
             <TextButton
@@ -110,14 +114,26 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onC
             <TextButton iconLeft="XMarkIcon" size="s" text="Ukloni" type="button" variant="danger" onClick={onRemove} />
           </FlexLayout>
           <FlexLayout className="flex-col gap-4 flex-1">
-            <FlexLayout className="flex-col">
-              <Text color="text-color-3" variant="text-xs-medium">
-                {primaryDateLabel} {initialValues.secondaryDate ? `(${secondaryDateLabel})` : null}
-              </Text>
-              <Text color="text-color-1" variant="text-s">
-                {getDataPointDateString(initialValues.primaryDate)}{' '}
-                {initialValues.secondaryDate ? `(${getDataPointDateString(initialValues.secondaryDate)})` : null}
-              </Text>
+            <FlexLayout className="justify-between gap-4">
+              <FlexLayout className="flex-col">
+                <Text color="text-color-3" variant="text-xs-medium">
+                  {primaryDateLabel} {initialValues.secondaryDate ? `(${secondaryDateLabel})` : null}
+                </Text>
+                <Text color="text-color-1" variant="text-s">
+                  {getDataPointDateString(initialValues.primaryDate)}{' '}
+                  {initialValues.secondaryDate ? `(${getDataPointDateString(initialValues.secondaryDate)})` : null}
+                </Text>
+              </FlexLayout>
+              <DisplayIf condition={!!initialValues.loadReference}>
+                <FlexLayout className="flex-col text-end">
+                  <Text color="text-color-3" variant="text-xs-medium">
+                    {loadReferenceLabel}
+                  </Text>
+                  <Text color="text-color-1" variant="text-s">
+                    {initialValues.loadReference}
+                  </Text>
+                </FlexLayout>
+              </DisplayIf>
             </FlexLayout>
             <FlexLayout className="justify-between items-start">
               <FlexLayout className="flex-col">
@@ -128,18 +144,8 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onC
                   {initialValues.companyName || '—'}
                 </Text>
               </FlexLayout>
-              <AddressDisplay address={initialValues.address} />
             </FlexLayout>
-            <DisplayIf condition={!!initialValues.loadReference}>
-              <FlexLayout className="flex-col">
-                <Text color="text-color-3" variant="text-xs-medium">
-                  {loadReferenceLabel}
-                </Text>
-                <Text color="text-color-1" variant="text-s">
-                  {initialValues.loadReference}
-                </Text>
-              </FlexLayout>
-            </DisplayIf>
+            <AddressDisplay address={initialValues.address} />
           </FlexLayout>
           <Collapsible description={initialValues.description} label="Napomena" />
         </FlexLayout>
@@ -164,7 +170,7 @@ const AddressDisplay = ({ address }: { address: any }) => {
   if (address.countryCode) addressString.push(getCountryFromCode(address?.countryCode || '')?.name);
 
   return (
-    <FlexLayout className="flex-col gap-1 text-end">
+    <FlexLayout className="flex-col gap-1">
       <Text color="text-color-3" variant="text-xs-medium">
         Adresa
       </Text>

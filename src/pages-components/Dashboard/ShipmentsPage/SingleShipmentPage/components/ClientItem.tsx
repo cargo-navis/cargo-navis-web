@@ -20,11 +20,13 @@ export const ClientItem: React.FC<{ clientId: string }> = ({ clientId }) => {
 
   return (
     <FlexLayout className="flex-col">
-      <Text color="text-color-3" variant="text-s-medium">
+      <Text color="text-color-3" variant="text-xs-medium">
         Klijent
       </Text>
       <Link className="hover:text-teal-500 transition-colors max-w-max" href={href}>
-        <Text variant="text-l">{clientToRender?.name || '—'}</Text>
+        <Text color="text-color-1" variant="text-m-medium">
+          {clientToRender?.name || '—'}
+        </Text>
       </Link>
     </FlexLayout>
   );
