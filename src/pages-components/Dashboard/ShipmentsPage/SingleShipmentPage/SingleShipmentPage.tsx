@@ -5,14 +5,13 @@ import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { InvoiceStatus, Shipment } from '@/lib/api';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
-import { useContractor, useCurrentTenant, useEmployee, useShipment, useUpdateShipment, useVehicle } from '@/lib/hooks';
+import { useShipment, useUpdateShipment } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { renderVehicleName, vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { Box, DisplayIf, Divider, FlexLayout, Pill, Text } from '@/ui';
 
 import { invoiceStatusConfig } from '../const';
+import { BasicInfo } from './components/BasicInfo';
 import { CargoItem } from './components/CargoItem';
-import { ClientItem } from './components/ClientItem';
 import { ContentLoader } from './components/ContentLoader';
 import { InvoiceItem } from './components/InvoiceItem';
 import { SendToDriver } from './components/SendToDriver';
@@ -41,23 +40,8 @@ export const SingleShipmentPage = () => {
 };
 
 const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
-  const { data: tenant } = useCurrentTenant();
-  const { data: contractor } = useContractor(shipment.transportContractorId || '');
-
-  const { data: driver } = useEmployee(shipment.driverId || '');
-  const { data: vehicle } = useVehicle(shipment.vehicleId || '');
-  const { data: trailer } = useVehicle(shipment.trailerId || '');
-  const { data: dispatcher } = useEmployee(shipment.dispatcherId || '');
   const { data: parentShipment } = useShipment(shipment.parentShipmentId || '');
   const { mutateAsync: updateShipment, isPending } = useUpdateShipment();
-
-  let transporter: any = contractor;
-
-  if (!contractor && shipment.transportContractorId === tenant?.id) {
-    transporter = tenant;
-  }
-
-  const transporterHref = contractor ? `/dashboard/contractors/${contractor?.id}` : `/dashboard/tenant`;
 
   const handleInvoiceChange = async (invoiceStatus: InvoiceStatus) => {
     try {
@@ -114,109 +98,9 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
             </FlexLayout>
           </FlexLayout>
           <Divider />
-          <FlexLayout className="flex-row gap-7">
-            <FlexLayout className="w-[500px] flex-col gap-4">
-              <FlexLayout as="section" className="flex-col gap-5">
-                <FlexLayout className="gap-4">
-                  <Box className="flex-1">
-                    <FlexLayout className="flex-col">
-                      <Text color="text-color-3" variant="text-s-medium">
-                        Broj naloga
-                      </Text>
-                      <Text variant="text-l">{shipment.orderNumber}</Text>
-                    </FlexLayout>
-                  </Box>
-                  <Box className="flex-1">
-                    <FlexLayout className="flex-col">
-                      <Text color="text-color-3" variant="text-s-medium">
-                        Referentni broj
-                      </Text>
-                      <Text variant="text-l">{shipment.cargoReference || '—'}</Text>
-                    </FlexLayout>
-                  </Box>
-                </FlexLayout>
-
-                <Box className="flex-1">
-                  <FlexLayout className="flex-col">
-                    <Text color="text-color-3" variant="text-s-medium">
-                      Prijevoznik
-                    </Text>
-                    <Link className="hover:text-teal-500 transition-colors max-w-max" href={transporterHref || '#'}>
-                      <Text variant="text-l">{transporter?.name || '—'}</Text>
-                    </Link>
-                  </FlexLayout>
-                </Box>
-
-                <FlexLayout className="gap-4">
-                  <Box className="flex-1">
-                    <ClientItem clientId={shipment.clientId || ''} />
-                  </Box>
-                  <Box className="flex-1">
-                    <FlexLayout className="flex-col">
-                      <Text color="text-color-3" variant="text-s-medium">
-                        Cijena
-                      </Text>
-                      <Text variant="text-l">{shipment.price}€</Text>
-                    </FlexLayout>
-                  </Box>
-                </FlexLayout>
-                <FlexLayout className="flex-col">
-                  <Text color="text-color-3" variant="text-s-medium">
-                    Vozač
-                  </Text>
-                  <Link
-                    className="hover:text-teal-500 transition-colors max-w-max"
-                    href={driver?.id ? `/dashboard/employees/${driver?.id}` : '#'}
-                  >
-                    <Text variant="text-l">{driver ? `${driver.fullName}` : '—'}</Text>
-                  </Link>
-                </FlexLayout>
-                <FlexLayout className="gap-4">
-                  <Box className="flex-1">
-                    <FlexLayout className="flex-col">
-                      <Text color="text-color-3" variant="text-s-medium">
-                        Vozilo
-                      </Text>
-                      <Link
-                        className="hover:text-teal-500 transition-colors max-w-max"
-                        href={
-                          vehicle?.id ? `/dashboard/fleet/${vehicleTypeToPathMap[vehicle?.type]}/${vehicle?.id}` : '#'
-                        }
-                      >
-                        <Text variant="text-l">{vehicle ? renderVehicleName(vehicle) : '—'}</Text>
-                      </Link>
-                    </FlexLayout>
-                  </Box>
-                  <Box className="flex-1">
-                    <FlexLayout className="flex-col">
-                      <Text color="text-color-3" variant="text-s-medium">
-                        Priključno vozilo
-                      </Text>
-                      <Link
-                        className="hover:text-teal-500 transition-colors max-w-max"
-                        href={
-                          trailer?.id ? `/dashboard/fleet/${vehicleTypeToPathMap[trailer?.type]}/${trailer?.id}` : '#'
-                        }
-                      >
-                        <Text variant="text-l">{trailer ? renderVehicleName(trailer) : '—'}</Text>
-                      </Link>
-                    </FlexLayout>
-                  </Box>
-                </FlexLayout>
-                <Box className="flex-1">
-                  <FlexLayout className="flex-col">
-                    <Text color="text-color-3" variant="text-s-medium">
-                      Disponent
-                    </Text>
-                    <Link
-                      className="hover:text-teal-500 transition-colors max-w-max"
-                      href={dispatcher?.id ? `/dashboard/employees/${dispatcher?.id}` : '#'}
-                    >
-                      <Text variant="text-l">{dispatcher ? `${dispatcher.fullName}` : '—'}</Text>
-                    </Link>
-                  </FlexLayout>
-                </Box>
-              </FlexLayout>
+          <FlexLayout className="flex-row gap-5">
+            <FlexLayout className="w-[380px] flex-col gap-4">
+              <BasicInfo shipment={shipment} />
               <Box className="py-4">
                 <Divider />
               </Box>
