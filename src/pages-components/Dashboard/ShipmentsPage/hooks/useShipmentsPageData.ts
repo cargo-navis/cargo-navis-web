@@ -1,7 +1,7 @@
 import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
 import { useShipments } from '@/lib/hooks';
 
-import { usePaginationQueryParamState, useShipmentsSortQueryParamState } from '../hooks';
+import { usePaginationQueryParamState, useShipmentsSortLocalStorage } from '../hooks';
 import { useShipmentsFiltersContext } from '../providers/ShipmentsFiltersProvider';
 
 export function useShipmentsPageData() {
@@ -17,7 +17,7 @@ export function useShipmentsPageData() {
     unloadingDateTo,
   } = useShipmentsFiltersContext();
   const { page, pageSize, isRouterReady: isPaginationReady } = usePaginationQueryParamState();
-  const { sort, isRouterReady: isSortReady } = useShipmentsSortQueryParamState();
+  const { sort, isRouterReady: isSortReady } = useShipmentsSortLocalStorage();
 
   const isRouterReady = isPaginationReady && isSortReady;
 

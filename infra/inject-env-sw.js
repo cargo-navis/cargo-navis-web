@@ -12,7 +12,14 @@ const swOutputPath = path.join(__dirname, './public/cargo-navis_push-service-wor
 
 const swTemplate = fs.readFileSync(swTemplatePath, 'utf-8');
 
-const injected = swTemplate.replace('__APP_URL__', process.env.NEXT_PUBLIC_APP_URL);
+const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+if (!appUrl || appUrl.trim() === '') {
+  console.error('❌ ERROR: NEXT_PUBLIC_APP_URL environment variable is not defined or is empty');
+  console.error('   Please set NEXT_PUBLIC_APP_URL in your .env.local file');
+  process.exit(1);
+}
+
+const injected = swTemplate.replace('__APP_URL__', appUrl);
 
 fs.writeFileSync(swOutputPath, injected);
 console.log('✅ Injected env into service-worker.js');

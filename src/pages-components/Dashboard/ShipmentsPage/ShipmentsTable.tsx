@@ -14,7 +14,7 @@ import { Box, DisplayIf, Divider, FlexLayout, Icon, Pill, Table, Text } from '@/
 
 import { AddressesList } from './AddressesList';
 import { invoiceStatusConfig, loadStatusConfig } from './const';
-import { SortFieldEnum, useShipmentsSortQueryParamState } from './hooks';
+import { SortFieldEnum, useShipmentsSortLocalStorage } from './hooks';
 import { ReferenceNumberTooltip } from './ReferenceNumberTooltip';
 import { WarningTooltip } from './WarningTooltip';
 
@@ -27,7 +27,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
   const { data: tenant } = useCurrentTenant();
   const { data: vehicles = [] } = useVehicles();
   const { data: employees = [] } = useEmployees();
-  const { toggleSort, isFieldSorted, getSortDirection } = useShipmentsSortQueryParamState();
+  const { toggleSort, isFieldSorted, getSortDirection } = useShipmentsSortLocalStorage();
 
   const columns = useMemo(() => {
     return [
