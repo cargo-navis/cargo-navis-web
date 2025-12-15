@@ -8,7 +8,6 @@ export interface ShipmentFields {
   vehicleId?: string | null;
   trailerId?: string | null;
   price?: number;
-  orderNumber: string;
   cargo: Cargo[];
   sentToDriver?: boolean;
 }

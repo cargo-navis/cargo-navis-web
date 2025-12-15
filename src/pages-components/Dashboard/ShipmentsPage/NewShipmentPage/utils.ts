@@ -1,4 +1,4 @@
-import { type CreateShipmentData, getOrderNumber, getShipment, type Shipment } from '@/lib/api';
+import { type CreateShipmentData, getShipment, type Shipment } from '@/lib/api';
 import { getPostalCode } from '@/lib/api/postalCodes';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { PalleteType } from '@/lib/utils/palletes';
@@ -36,7 +36,6 @@ export const defaultCargo: Cargo = {
 };
 
 export const formDefaultValues: ShipmentFields = {
-  orderNumber: '',
   cargoReference: '',
   transportContractorId: '',
   clientId: '',
@@ -130,11 +129,8 @@ const getParentShipmentCargo = async (parentShipmentId: string): Promise<Cargo[]
 
 // Create form values for a new shipment
 const getNewShipmentFormValues = async (tenant: Tenant, cargo: Cargo[]) => {
-  const orderNumber = await getOrderNumber();
-
   return {
     ...formDefaultValues,
-    orderNumber,
     transportContractorId: tenant.id,
     clientId: '',
     cargo,
@@ -143,12 +139,10 @@ const getNewShipmentFormValues = async (tenant: Tenant, cargo: Cargo[]) => {
 
 // Create form values for a new sub-shipment
 const getNewSubShipmentFormValues = async (tenant: Tenant, parentShipmentId: string) => {
-  const orderNumber = await getOrderNumber();
   const cargo = await getParentShipmentCargo(parentShipmentId);
 
   return {
     ...formDefaultValues,
-    orderNumber,
     transportContractorId: tenant.id,
     clientId: tenant.id,
     cargo,
@@ -157,11 +151,9 @@ const getNewSubShipmentFormValues = async (tenant: Tenant, parentShipmentId: str
 
 // Create form values when copying a shipment
 const getCopyShipmentFormValues = async (shipment: Shipment) => {
-  const orderNumber = await getOrderNumber();
   const cargo = await mapCargoItems(shipment.cargo);
 
   return {
-    orderNumber, // Use new orderNumber
     cargoReference: shipment.cargoReference || '',
     transportContractorId: shipment.transportContractorId || '',
     clientId: shipment.clientId || '',
@@ -179,7 +171,6 @@ const getEditShipmentFormValues = async (shipment: Shipment) => {
   const cargo = await mapCargoItems(shipment.cargo, true);
 
   return {
-    orderNumber: shipment.orderNumber || '',
     cargoReference: shipment.cargoReference || '',
     transportContractorId: shipment.transportContractorId || '',
     clientId: shipment.clientId || '',
@@ -224,7 +215,6 @@ export const getFormDefaultValues = (
 export const transformFormDataToPayload = (formData: ShipmentFields): Omit<CreateShipmentData, 'id'> => {
   const {
     cargoReference,
-    orderNumber,
     dispatcherId,
     driverId,
     vehicleId,
@@ -241,7 +231,6 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
 
   // Only add shipment-level fields that are present in formData
   if ('cargoReference' in formData) payload.cargoReference = cargoReference || '';
-  if ('orderNumber' in formData) payload.orderNumber = orderNumber;
   if ('dispatcherId' in formData) payload.dispatcherId = dispatcherId;
   if ('driverId' in formData) payload.driverId = driverId;
   if ('vehicleId' in formData) payload.vehicleId = vehicleId;
