@@ -15,7 +15,7 @@ export const WarningTooltip = ({ isVehicleMissing, isDriverMissing, isNotSentToD
 
   // Check if shipment not sent to driver
   if (isNotSentToDriver) {
-    warningMessages.push('Nalog nije poslan dwadwa vozaču');
+    warningMessages.push('Nalog nije poslan vozaču');
   }
 
   const warningMessage = warningMessages.join('\n');
