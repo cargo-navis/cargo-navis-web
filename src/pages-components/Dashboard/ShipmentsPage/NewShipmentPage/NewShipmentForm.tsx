@@ -105,9 +105,6 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
                 <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
                   <FlexLayout className="gap-4">
                     <Box className="flex-1">
-                      <FormTextInput iconLeft="LockClosedIcon" isDisabled label="Broj naloga" name="orderNumber" />
-                    </Box>
-                    <Box className="flex-1">
                       <FormTextInput label="Referentni broj" name="cargoReference" placeholder="1234" />
                     </Box>
                   </FlexLayout>
