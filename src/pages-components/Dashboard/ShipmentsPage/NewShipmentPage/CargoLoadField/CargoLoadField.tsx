@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { getDataPointDateString } from '@/lib/utils/date';
 import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, Collapsible, DisplayIf, Divider, FlexLayout, Text, TextButton } from '@/ui';
+import { Collapsible, DisplayIf, Divider, FlexLayout, Text, TextButton } from '@/ui';
 
 import { useHasCargoLoads } from '../hooks/useHasCargoLoads';
 import { CargoLoadModal } from './CargoLoadModal';
@@ -80,21 +80,15 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onC
   return (
     <>
       {!initialValues.address?.streetName ? (
-        <FlexLayout className="items-center gap-4">
-          <Box className="flex-1">
-            <TextButton iconLeft="PlusIcon" text={addLabel} type="button" variant="primary" onClick={openModal} />
-          </Box>
+        <FlexLayout className="min-w-0 flex-1 flex-col justify-center gap-4">
+          <TextButton iconLeft="PlusIcon" text={addLabel} type="button" variant="primary" onClick={openModal} />
           <DisplayIf condition={hasCargoLoads}>
-            <Box className="flex-1">
-              <Divider text="Ili" />
-            </Box>
-            <Box className="w-1/2 shrink-0">
-              <LoadSelect onChange={onChange} />
-            </Box>
+            <Divider text="Ili" />
+            <LoadSelect onChange={onChange} />
           </DisplayIf>
         </FlexLayout>
       ) : (
-        <FlexLayout className="flex-1 flex-col gap-4">
+        <FlexLayout className="flex-1 flex-col gap-4 min-w-0">
           <FlexLayout className="gap-2 items-center">
             <Text
               className="underline underline-offset-2 decoration-2 decoration-teal-600 dark:decoration-teal-500"

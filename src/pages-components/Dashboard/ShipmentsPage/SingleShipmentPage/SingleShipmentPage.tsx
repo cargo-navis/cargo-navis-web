@@ -105,7 +105,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                 <Divider />
               </Box>
             </FlexLayout>
-            <FlexLayout as="section" className="flex-1 flex-col gap-4">
+            <FlexLayout as="section" className="flex-1 flex-col gap-4 min-w-0">
               <Text color="text-color-2" variant="text-l-medium">
                 Tereti
               </Text>
