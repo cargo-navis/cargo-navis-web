@@ -152,7 +152,7 @@ const NonstandardContent = ({ cargo }: { cargo: CargoWithMetadata }) => {
 const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
   return (
     <FlexLayout as="section" className="justify-between gap-4">
-      <FlexLayout className="flex-1 flex-col gap-4">
+      <FlexLayout className="flex-1 flex-col gap-4 min-w-0">
         <FlexLayout className="gap-2 items-center">
           <Text
             className="underline underline-offset-2 decoration-2 decoration-teal-600 dark:decoration-teal-500"
@@ -198,7 +198,7 @@ const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
         <Collapsible description={cargo.loadingDescription} label="Napomena" />
       </FlexLayout>
       <VerticalDivider />
-      <FlexLayout className="flex-1 flex-col gap-4">
+      <FlexLayout className="flex-1 flex-col gap-4 min-w-0">
         <FlexLayout className="gap-2 items-center">
           <Text
             className="underline underline-offset-2 decoration-2 decoration-teal-600 dark:decoration-teal-500"
