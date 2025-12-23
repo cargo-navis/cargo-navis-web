@@ -1,4 +1,4 @@
-import { type CreateShipmentData, getShipment, type Shipment } from '@/lib/api';
+import { type CreateShipmentData, type Shipment } from '@/lib/api';
 import { getPostalCode } from '@/lib/api/postalCodes';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { PalleteType } from '@/lib/utils/palletes';
@@ -116,17 +116,6 @@ const mapCargoItems = async (cargoItems?: any[], isEdit = false): Promise<Cargo[
   );
 };
 
-// Get cargo items from parent shipment
-const getParentShipmentCargo = async (parentShipmentId: string): Promise<Cargo[]> => {
-  try {
-    const parentShipment = await getShipment(parentShipmentId);
-    return mapCargoItems(parentShipment.cargo);
-  } catch (error) {
-    console.error('Error fetching parent shipment cargo:', error);
-    return [defaultCargo];
-  }
-};
-
 // Create form values for a new shipment
 const getNewShipmentFormValues = async (tenant: Tenant, cargo: Cargo[]) => {
   return {
@@ -138,14 +127,12 @@ const getNewShipmentFormValues = async (tenant: Tenant, cargo: Cargo[]) => {
 };
 
 // Create form values for a new sub-shipment
-const getNewSubShipmentFormValues = async (tenant: Tenant, parentShipmentId: string) => {
-  const cargo = await getParentShipmentCargo(parentShipmentId);
-
+const getNewSubShipmentFormValues = async (tenant: Tenant) => {
   return {
     ...formDefaultValues,
     transportContractorId: tenant.id,
     clientId: tenant.id,
-    cargo,
+    cargo: [{ ...defaultCargo }],
   };
 };
 
@@ -203,7 +190,7 @@ export const getFormDefaultValues = (
 
     // Case 3: Create a sub-shipment
     if (parentShipmentId) {
-      return getNewSubShipmentFormValues(tenant, parentShipmentId);
+      return getNewSubShipmentFormValues(tenant);
     }
 
     // Case 4: Create a brand-new shipment
