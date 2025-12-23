@@ -11,7 +11,7 @@ export const CargoFieldList = () => {
   const cargo = watch('cargo');
 
   return (
-    <FlexLayout className="flex-1 flex-col gap-4">
+    <FlexLayout className="flex-1 flex-col gap-4 min-w-0">
       <Text color="text-color-2" variant="text-l-medium">
         Tereti
       </Text>

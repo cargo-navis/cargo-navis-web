@@ -18,7 +18,7 @@ export const Collapsible: React.FC<{ label: string; description: string | undefi
           </FlexLayout>
         </RadixCollapsible.Trigger>
         <RadixCollapsible.Content asChild>
-          <Text className="whitespace-pre-line" color="text-color-1" variant="text-s">
+          <Text className="whitespace-pre-line break-words" color="text-color-1" variant="text-s">
             {description || '—'}
           </Text>
         </RadixCollapsible.Content>
