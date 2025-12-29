@@ -43,3 +43,11 @@ export async function deleteShipment(id: string) {
 export async function sendShipmentToDriver(id: string, driverId: string, sentToDriver: boolean) {
   return updateShipment(id, { driverId, sentToDriver });
 }
+
+export async function uploadShipmentFile(id: string, file: File, fileName: string) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('fileName', fileName);
+
+  return backend.post<Shipment>(`/api/shipments/${id}/upload-file`, formData);
+}

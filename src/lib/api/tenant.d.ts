@@ -14,6 +14,13 @@ export interface Tenant {
     placeName: string;
     countryCode: string;
   };
+  logo?: {
+    id: string;
+    createdAt: string;
+    name: string;
+    mimeType: string;
+    status: string;
+  };
 }
 
 export type UpdateTenantParams = Omit<Tenant, 'id', 'address'> & {

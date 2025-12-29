@@ -10,6 +10,7 @@ import {
   sendShipmentToDriver,
   Shipment,
   updateShipment,
+  uploadShipmentFile,
 } from '@/lib/api';
 
 interface UseShipmentsArgs<T> {
@@ -163,6 +164,17 @@ export function useSendShipmentToDriver(id: string) {
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['shipments'] });
       await queryClient.invalidateQueries({ queryKey: ['shipment', id] });
+    },
+  });
+}
+
+export function useUploadShipmentFile(id: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: { file: File; fileName: string }) => uploadShipmentFile(id, params.file, params.fileName),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['shipment', id] });
     },
   });
 }

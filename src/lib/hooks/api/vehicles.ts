@@ -6,6 +6,7 @@ import {
   getVehicles,
   updateVehicle,
   type UpdateVehicleParams,
+  uploadVehicleFile,
   type Vehicle,
   VehicleEnum,
 } from '@/lib/api';
@@ -85,6 +86,16 @@ export function useDeleteVehicle(id: string) {
     mutationFn: () => deleteVehicle(id),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: ['vehicles'], type: 'all' });
+    },
+  });
+}
+
+export function useUploadVehicleFile(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (params: { file: File; fileName: string }) => uploadVehicleFile(id, params.file, params.fileName),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['vehicles'], type: 'all' });
     },
   });
 }
