@@ -175,8 +175,6 @@ const TenantLogoField: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
 
   const displayUrl = previewUrl || tenant.logo?.publicUrl;
 
-  console.log(displayUrl);
-
   return (
     <FlexLayout className="flex-col gap-5">
       <Box className="relative rounded-l w-fit overflow-hidden">
