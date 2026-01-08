@@ -26,7 +26,7 @@ export const FileCard: React.FC<FileCardProps> = ({ id, name, createdAt, onDownl
     <FlexLayout
       className={clsx(
         'items-start gap-2 max-w-[300px] border border-dark-300 dark:border-light-400 shadow-md rounded-s px-3 py-2',
-        'hover:border-dark-500 dark:hover:border-light-50 hover:shadow-lg transition-colors duration-150',
+        'hover:border-dark-500 dark:hover:border-light-50 hover:shadow-lg transition-all duration-150',
         onDownload && 'cursor-pointer'
       )}
       onClick={handleClick}

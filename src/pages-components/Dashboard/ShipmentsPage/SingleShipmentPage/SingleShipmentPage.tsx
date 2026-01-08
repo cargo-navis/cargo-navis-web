@@ -14,6 +14,7 @@ import { invoiceStatusConfig } from '../const';
 import { BasicInfo } from './components/BasicInfo';
 import { CargoItem } from './components/CargoItem';
 import { ContentLoader } from './components/ContentLoader';
+import { FileUploadButton } from './components/FileUploadButton';
 import { InvoiceItem } from './components/InvoiceItem';
 import { SendToDriver } from './components/SendToDriver';
 import { ShipmentActions } from './components/ShipmentActions';
@@ -96,11 +97,10 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                 </Link>
               )}
               <SendToDriver shipment={shipment} />
-              <DisplayIf condition={!!shipment.documents?.length}>
-                <FlexLayout className="gap-4">
-                  {shipment.documents?.map((document) => <FileCard key={document.id} {...document} />)}
-                </FlexLayout>
-              </DisplayIf>
+              <FlexLayout className="gap-4 mt-2">
+                {shipment.documents?.map((document) => <FileCard key={document.id} {...document} />)}
+                <FileUploadButton id={shipment.id} />
+              </FlexLayout>
             </FlexLayout>
           </FlexLayout>
           <Divider />
