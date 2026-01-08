@@ -49,5 +49,5 @@ export async function uploadShipmentFile(id: string, file: File, fileName: strin
   formData.append('file', file);
   formData.append('fileName', fileName);
 
-  return backend.post<Shipment>(`/api/shipments/${id}/upload-file`, formData);
+  return backend.post<Shipment>(`/api/shipments/${id}/files`, formData);
 }

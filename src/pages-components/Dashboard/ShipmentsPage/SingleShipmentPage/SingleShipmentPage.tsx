@@ -5,6 +5,7 @@ import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { InvoiceStatus, Shipment } from '@/lib/api';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
+import { FileCard } from '@/lib/components/FileCard';
 import { useShipment, useUpdateShipment } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, DisplayIf, Divider, FlexLayout, Pill, Text } from '@/ui';
@@ -95,6 +96,11 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                 </Link>
               )}
               <SendToDriver shipment={shipment} />
+              <DisplayIf condition={!!shipment.documents?.length}>
+                <FlexLayout className="gap-4">
+                  {shipment.documents?.map((document) => <FileCard key={document.id} {...document} />)}
+                </FlexLayout>
+              </DisplayIf>
             </FlexLayout>
           </FlexLayout>
           <Divider />

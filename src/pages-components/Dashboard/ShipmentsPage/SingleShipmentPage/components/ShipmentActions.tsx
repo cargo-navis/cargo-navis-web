@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import { useDeleteShipment } from '@/lib/hooks';
+import { useDeleteShipment, useUploadShipmentFile } from '@/lib/hooks';
+import { getFileInput } from '@/lib/utils/file';
 import { getAuthTokens } from '@/lib/utils/session';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Button, FlexLayout, Icon, Menu } from '@/ui';
@@ -10,6 +11,8 @@ import { MenuComponent } from '@/ui/components/Menu/types';
 export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
   const { back, push } = useRouter();
   const { mutateAsync: deleteShipment, isPending: isDeleting } = useDeleteShipment(id);
+  const { mutateAsync: uploadShipmentFile, isPending: isUploading } = useUploadShipmentFile(id);
+
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -79,6 +82,18 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
     }
   }
 
+  async function handleFileUpload(files: FileList | null) {
+    const file = files?.[0];
+    if (!file) return;
+
+    try {
+      await uploadShipmentFile({ file, fileName: file.name });
+      showSuccessToast({ title: 'Datoteka uploadana' });
+    } catch {
+      showErrorToast({ title: 'Greška prilikom uploadanja datoteke. Pokušajte ponovno.' });
+    }
+  }
+
   const menuItems: MenuComponent[] = [
     {
       type: 'item' as const,
@@ -114,6 +129,13 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
 
   return (
     <FlexLayout className="items-center gap-3">
+      <Button
+        iconLeft="ArrowUpTrayIcon"
+        isLoading={isUploading}
+        text="Dodaj dokument"
+        variant="secondary"
+        onClick={() => getFileInput(handleFileUpload)}
+      />
       <Button
         iconLeft="ClipboardDocumentIcon"
         isDisabled={isDeleting}
