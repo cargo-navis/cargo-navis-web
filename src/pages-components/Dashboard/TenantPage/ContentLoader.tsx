@@ -10,10 +10,19 @@ export const ContentLoader = () => {
           <Skeleton borderRadius="s" height={40} width={120} />
         </FlexLayout>
 
+        {/* Tenant Logo Field */}
+        <FlexLayout className="flex-col gap-5">
+          <Skeleton borderRadius="l" height={150} width={150} />
+          <FlexLayout className="gap-2">
+            <Skeleton borderRadius="s" height={36} width={140} />
+            <Skeleton borderRadius="s" height={36} width={110} />
+          </FlexLayout>
+        </FlexLayout>
+
         {/* Two column layout */}
         <FlexLayout className="gap-8">
           {/* Left column - Company data */}
-          <FlexLayout className="flex-col gap-4 max-w-[640px]">
+          <FlexLayout className="flex-col gap-4 w-[420px] shrink-0">
             <Skeleton borderRadius="xs" height={24} width={120} />
             <FlexLayout className="relative flex-col gap-7 w-full">
               <FlexLayout as="section" className="flex-col gap-5">

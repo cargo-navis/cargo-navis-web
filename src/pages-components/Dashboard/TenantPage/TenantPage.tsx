@@ -1,9 +1,13 @@
+import { useEffect, useState } from 'react';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
-import { useCurrentTenant } from '@/lib/hooks';
+import { useCurrentTenant, useDeleteTenantLogo, useUploadTenantLogo } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
-import { Box, DisplayIf, Divider, FlexLayout, Text } from '@/ui';
+import { getFileInput } from '@/lib/utils/file';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
+import { Box, Button, DisplayIf, Divider, FlexLayout, Icon, LoadingSpinner, Text } from '@/ui';
 
 import { ContentLoader } from './ContentLoader';
 import { TenantActions } from './TenantActions';
@@ -41,9 +45,9 @@ const MainContent: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
         </Text>
         <TenantActions />
       </FlexLayout>
-
+      <TenantLogoField tenant={tenant} />
       <FlexLayout className="gap-8">
-        <FlexLayout className="flex-col gap-4 max-w-[640px]">
+        <FlexLayout className="flex-col gap-4 w-[420px] shrink-0">
           <Text color="text-color-2" variant="text-m-medium">
             Podaci tvrtke
           </Text>
@@ -121,6 +125,92 @@ const DataItem: React.FC<{ label: string; value: string }> = ({ label, value }) 
       <Text className="whitespace-pre-wrap" color="text-color-1" variant="text-s">
         {value}
       </Text>
+    </FlexLayout>
+  );
+};
+
+const TenantLogoField: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>(undefined);
+
+  const { mutateAsync: uploadTenantLogo, isPending: isUploading } = useUploadTenantLogo();
+  const { mutateAsync: deleteTenantLogo, isPending: isDeleting } = useDeleteTenantLogo();
+
+  // Cleanup object URL on unmount
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
+  const handleDeleteLogo = async () => {
+    const answer = confirm('Jeste li sigurni da želite izbrisati logo?');
+    if (!answer) return;
+
+    try {
+      await deleteTenantLogo();
+      showSuccessToast({ title: 'Logo uspješno izbrisan' });
+    } catch {
+      showErrorToast({ title: 'Dogodila se greška s brisanjem logoa. Pokušajte ponovno.' });
+    }
+  };
+
+  const handleLogoChange = async (files: FileList | null) => {
+    const file = files?.[0];
+    if (!file) return;
+
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
+
+    try {
+      await uploadTenantLogo({ file, fileName: file.name });
+      showSuccessToast({ title: 'Logo uspješno dodan' });
+    } catch {
+      showErrorToast({ title: 'Dogodila se greška s dodavanjem logoa. Pokušajte ponovno.' });
+    } finally {
+      setPreviewUrl(undefined);
+    }
+  };
+
+  const isLoading = isUploading || isDeleting;
+
+  const displayUrl = previewUrl || tenant.logo?.publicUrl;
+
+  console.log(displayUrl);
+
+  return (
+    <FlexLayout className="flex-col gap-5">
+      <Box className="relative rounded-l w-fit overflow-hidden">
+        {displayUrl ? (
+          <img alt={tenant.name} className="h-[150px] max-w-full" height="auto" src={displayUrl} width="auto" />
+        ) : (
+          <FlexLayout className=" bg-black-alpha-25 dark:bg-white-alpha-25 h-[150px] w-[150px] items-center justify-center">
+            <Icon color="text-white" icon="PhotoIcon" size="xl" />
+          </FlexLayout>
+        )}
+        <DisplayIf condition={isLoading}>
+          <FlexLayout className="absolute inset-0 bg-black-alpha-50 items-center justify-center">
+            <LoadingSpinner color="text-white" size="l" />
+          </FlexLayout>
+        </DisplayIf>
+      </Box>
+      <FlexLayout className="gap-2">
+        <Button
+          isDisabled={isLoading}
+          isLoading={isUploading}
+          size="s"
+          text="Dodaj novi logo"
+          variant="secondary"
+          onClick={() => getFileInput(handleLogoChange, { accept: 'image/*' })}
+        />
+        <Button
+          isDisabled={!tenant.logo?.publicUrl || isLoading}
+          isLoading={isDeleting}
+          size="s"
+          text="Ukloni logo"
+          variant="secondary"
+          onClick={handleDeleteLogo}
+        />
+      </FlexLayout>
     </FlexLayout>
   );
 };

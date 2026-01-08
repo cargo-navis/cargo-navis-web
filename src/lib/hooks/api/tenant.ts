@@ -32,7 +32,7 @@ export const useUploadTenantLogo = () => {
   return useMutation({
     mutationFn: (params: UploadTenantLogoParams) => uploadTenantLogo(params.file, params.fileName),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['tenant'] });
+      return queryClient.invalidateQueries({ queryKey: ['tenant'] });
     },
   });
 };
@@ -43,7 +43,7 @@ export const useDeleteTenantLogo = () => {
   return useMutation({
     mutationFn: () => deleteTenantLogo(),
     onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['tenant'] });
+      return queryClient.invalidateQueries({ queryKey: ['tenant'] });
     },
   });
 };
