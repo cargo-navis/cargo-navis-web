@@ -20,6 +20,7 @@ export interface Tenant {
     name: string;
     mimeType: string;
     status: string;
+    publicUrl: string;
   };
 }
 

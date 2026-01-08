@@ -16,3 +16,7 @@ export async function uploadTenantLogo(file: File, fileName: string) {
 
   return backend.post<Tenant>(`/api/tenant/logo`, formData);
 }
+
+export async function deleteTenantLogo() {
+  return backend.delete<void>(`/api/tenant/logo`);
+}
