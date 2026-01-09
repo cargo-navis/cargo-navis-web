@@ -10,7 +10,7 @@ import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
 import { renderVehicleName } from '@/lib/utils/vehicles';
-import { Box, DisplayIf, Divider, FlexLayout, Icon, Pill, Table, Text } from '@/ui';
+import { Box, DisplayIf, Divider, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
 
 import { AddressesList } from './AddressesList';
 import { invoiceStatusConfig, loadStatusConfig } from './const';
@@ -102,17 +102,37 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: 'Klijent',
         enableSorting: false,
         cell: (props) => {
-          const { clientId, transportContractorId } = props.row.original;
+          const { clientId, transportContractorId, documents } = props.row.original;
           const client = clients.find((c) => c.id === clientId);
           const contractor = contractors.find((c) => c.id === transportContractorId) || tenant;
 
           return (
             <FlexLayout className="flex-col pr-4 py-2 max-w-[15vw] whitespace-nowrap">
-              <Text className="overflow-hidden text-ellipsis" color="text-color-1" variant="text-m-bold">
-                {client ? client.name : '—'}
-              </Text>
+              <FlexLayout className="gap-4 items-center">
+                <Text className="overflow-hidden text-ellipsis" color="text-color-1" variant="text-m-bold">
+                  {client ? client.name : '—'}
+                </Text>
+                <FlexLayout className="self-baseline mt-1">
+                  {documents?.map((document) => (
+                    <Tooltip
+                      content={
+                        <Box className="px-1">
+                          <Text color="text-light-50" variant="text-xs">
+                            {document.name}
+                          </Text>
+                        </Box>
+                      }
+                      key={document.id}
+                    >
+                      <Box key={document.id}>
+                        <Icon color="text-color-4" icon="DocumentTextIcon" size="l" type="outline" />
+                      </Box>
+                    </Tooltip>
+                  ))}
+                </FlexLayout>
+              </FlexLayout>
               <Text className="overflow-hidden text-ellipsis" color="text-color-3" variant="text-xs">
-                {contractor ? contractor.name : '—'}
+                {contractor?.name || '—'}
               </Text>
             </FlexLayout>
           );
