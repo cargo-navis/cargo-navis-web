@@ -5,7 +5,9 @@ import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { InvoiceStatus, Shipment } from '@/lib/api';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
+import { FileCard } from '@/lib/components/FileCard';
 import { useShipment, useUpdateShipment } from '@/lib/hooks';
+import { downloadShipmentFile } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, DisplayIf, Divider, FlexLayout, Pill, Text } from '@/ui';
 
@@ -16,6 +18,7 @@ import { ContentLoader } from './components/ContentLoader';
 import { InvoiceItem } from './components/InvoiceItem';
 import { SendToDriver } from './components/SendToDriver';
 import { ShipmentActions } from './components/ShipmentActions';
+import { ShipmentFileUploadButton } from './components/ShipmentFileUploadButton';
 import type { CargoWithMetadata } from './components/types';
 
 export const SingleShipmentPage = () => {
@@ -62,6 +65,10 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
 
   const shouldRenderAgencyPill = !!shipment?.isAgencyUse && !shipment?.parentShipmentId;
 
+  function handleDownloadFile(documentId: string) {
+    downloadShipmentFile(shipment.id, documentId);
+  }
+
   return (
     <FlexLayout className="py-5 flex-col gap-5">
       <FlexLayout className="justify-between">
@@ -95,6 +102,14 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                 </Link>
               )}
               <SendToDriver shipment={shipment} />
+              <FlexLayout className="gap-4 mt-2">
+                {shipment.documents?.map((document) => (
+                  <Box className="max-w-[300px]" key={document.id}>
+                    <FileCard {...document} onDownload={handleDownloadFile} />
+                  </Box>
+                ))}
+                <ShipmentFileUploadButton id={shipment.id} />
+              </FlexLayout>
             </FlexLayout>
           </FlexLayout>
           <Divider />

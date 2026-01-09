@@ -10,6 +10,7 @@ import { MenuComponent } from '@/ui/components/Menu/types';
 export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
   const { back, push } = useRouter();
   const { mutateAsync: deleteShipment, isPending: isDeleting } = useDeleteShipment(id);
+
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 

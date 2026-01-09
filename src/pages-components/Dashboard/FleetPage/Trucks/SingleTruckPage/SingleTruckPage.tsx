@@ -2,12 +2,13 @@ import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import type { Vehicle } from '@/lib/api';
+import { type Vehicle } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicle } from '@/lib/hooks';
 import { VehicleActions } from '@/pages-components/Dashboard/FleetPage/components/VehicleActions';
 import { Box, DisplayIf, FlexLayout, Icon, Pill, Text } from '@/ui';
 
+import { DocumentsSection } from '../../components/DocumentsSection';
 import { GeneralInfo } from '../../components/GeneralInfo';
 import { VehicleInfo } from '../../components/VehicleInfo';
 
@@ -49,9 +50,10 @@ const MainContent: React.FC<{ truck: Vehicle }> = ({ truck }) => {
         </FlexLayout>
         <VehicleActions id={id} name={registration} type={type} />
       </FlexLayout>
-      <FlexLayout className="ml-4 gap-10">
+      <FlexLayout className="ml-4 gap-9">
         <GeneralInfo vehicle={truck} />
         <VehicleInfo vehicle={truck} />
+        <DocumentsSection vehicle={truck} />
       </FlexLayout>
     </FlexLayout>
   );

@@ -30,3 +30,14 @@ export async function updateVehicle(id: string, data: UpdateVehicleParams) {
 export async function deleteVehicle(id: string) {
   return backend.delete<Vehicle>(`/api/fleet/${id}`);
 }
+
+export async function uploadVehicleFile(id: string, file: File, fileName: string) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('fileName', fileName);
+  return backend.post<Vehicle>(`/api/fleet/${id}/files`, formData);
+}
+
+export async function getVehicleDocumentUrl(id: string, documentId: string) {
+  return backend.get<string>(`/api/fleet/${id}/files/${documentId}`);
+}
