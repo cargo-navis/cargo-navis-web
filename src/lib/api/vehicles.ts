@@ -35,6 +35,5 @@ export async function uploadVehicleFile(id: string, file: File, fileName: string
   const formData = new FormData();
   formData.append('file', file);
   formData.append('fileName', fileName);
-
-  return backend.post<Vehicle>(`/api/fleet/${id}/upload-file`, formData);
+  return backend.post<Vehicle>(`/api/fleet/${id}/files`, formData);
 }

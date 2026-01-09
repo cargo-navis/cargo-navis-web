@@ -8,6 +8,7 @@ import { useVehicle } from '@/lib/hooks';
 import { VehicleInfo } from '@/pages-components/Dashboard/FleetPage/components/VehicleInfo';
 import { Box, DisplayIf, FlexLayout, Icon, Pill, Text } from '@/ui';
 
+import { DocumentsSection } from '../../components/DocumentsSection';
 import { GeneralInfo } from '../../components/GeneralInfo';
 import { LoadingSpaceInfo } from '../../components/LoadingSpaceInfo';
 import { VehicleActions } from '../../components/VehicleActions';
@@ -54,6 +55,7 @@ const MainContent: React.FC<{ solo: Vehicle }> = ({ solo }) => {
         <GeneralInfo vehicle={solo} />
         <VehicleInfo vehicle={solo} />
         <LoadingSpaceInfo vehicle={solo} />
+        <DocumentsSection vehicle={solo} />
       </FlexLayout>
     </FlexLayout>
   );

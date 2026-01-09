@@ -7,6 +7,7 @@ import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicle } from '@/lib/hooks';
 import { Box, DisplayIf, FlexLayout, Icon, Pill, Text } from '@/ui';
 
+import { DocumentsSection } from '../../components/DocumentsSection';
 import { GeneralInfo } from '../../components/GeneralInfo';
 import { LoadingSpaceInfo } from '../../components/LoadingSpaceInfo';
 import { VehicleActions } from '../../components/VehicleActions';
@@ -52,6 +53,7 @@ const MainContent: React.FC<{ trailer: Vehicle }> = ({ trailer }) => {
       <FlexLayout className="ml-4 gap-10">
         <GeneralInfo vehicle={trailer} />
         <LoadingSpaceInfo vehicle={trailer} />
+        <DocumentsSection vehicle={trailer} />
       </FlexLayout>
     </FlexLayout>
   );
