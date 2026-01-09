@@ -7,6 +7,7 @@ import { InvoiceStatus, Shipment } from '@/lib/api';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { FileCard } from '@/lib/components/FileCard';
 import { useShipment, useUpdateShipment } from '@/lib/hooks';
+import { downloadFileByUuid } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, DisplayIf, Divider, FlexLayout, Pill, Text } from '@/ui';
 
@@ -64,6 +65,10 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
 
   const shouldRenderAgencyPill = !!shipment?.isAgencyUse && !shipment?.parentShipmentId;
 
+  function handleDownloadFile(documentId: string) {
+    downloadFileByUuid(shipment.id, documentId);
+  }
+
   return (
     <FlexLayout className="py-5 flex-col gap-5">
       <FlexLayout className="justify-between">
@@ -98,7 +103,9 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
               )}
               <SendToDriver shipment={shipment} />
               <FlexLayout className="gap-4 mt-2">
-                {shipment.documents?.map((document) => <FileCard key={document.id} {...document} />)}
+                {shipment.documents?.map((document) => (
+                  <FileCard key={document.id} {...document} onDownload={handleDownloadFile} />
+                ))}
                 <FileUploadButton id={shipment.id} />
               </FlexLayout>
             </FlexLayout>

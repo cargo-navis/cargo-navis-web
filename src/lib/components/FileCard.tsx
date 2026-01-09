@@ -10,16 +10,10 @@ interface FileCardProps {
   name: string;
   createdAt: string;
   mimeType: string;
-  onDownload?: (id: string) => void;
+  onDownload?(id: string): void;
 }
 
 export const FileCard: React.FC<FileCardProps> = ({ id, name, createdAt, onDownload }) => {
-  const handleClick = () => {
-    if (onDownload) {
-      onDownload(id);
-    }
-  };
-
   const formattedDate = getDataPointDateString(createdAt);
 
   return (
@@ -29,7 +23,7 @@ export const FileCard: React.FC<FileCardProps> = ({ id, name, createdAt, onDownl
         'hover:border-dark-500 dark:hover:border-light-50 hover:shadow-lg transition-all duration-150',
         onDownload && 'cursor-pointer'
       )}
-      onClick={handleClick}
+      onClick={() => onDownload?.(id)}
     >
       <Icon className="shrink-0 mt-1" color="text-dark-800 dark:text-light-50" icon="DocumentTextIcon" size="m" />
       <FlexLayout className="flex-col overflow-hidden">
