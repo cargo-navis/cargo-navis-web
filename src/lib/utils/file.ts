@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios';
 
 import { getShipmentDocumentUrl } from '../api/shipments';
+import { getVehicleDocumentUrl } from '../api/vehicles';
 import { showErrorToast } from './toast';
 
 export const getFileInput = (
@@ -24,14 +25,26 @@ export const getFileInput = (
   input.remove();
 };
 
-export async function downloadFileByUuid(shipmentId: string, documentId: string) {
+export async function downloadVehicleFile(id: string, documentId: string) {
   try {
-    const downloadUrl = await getShipmentDocumentUrl(shipmentId, documentId);
-    handleLocalDownload(downloadUrl, 'file');
+    const url = await getVehicleDocumentUrl(id, documentId);
+    handleLocalDownload(url, 'file');
   } catch (err) {
     const error = err as AxiosError<any>;
     const message = error?.response?.data?.message?.[0];
-    showErrorToast({ title: 'File download failed', description: message });
+    showErrorToast({ title: 'Greška prilikom preuzimanja dokumenta', description: message });
+    return;
+  }
+}
+
+export async function downloadShipmentFile(id: string, documentId: string) {
+  try {
+    const url = await getShipmentDocumentUrl(id, documentId);
+    handleLocalDownload(url, 'file');
+  } catch (err) {
+    const error = err as AxiosError<any>;
+    const message = error?.response?.data?.message?.[0];
+    showErrorToast({ title: 'Greška prilikom preuzimanja dokumenta', description: message });
     return;
   }
 }
