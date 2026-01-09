@@ -1,13 +1,15 @@
 import { Shipment } from '@/lib/api/shipments.d';
 import { useEmployee, useSendShipmentToDriver } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { FlexLayout, Text, TextButton } from '@/ui';
+import { Box, FlexLayout, Text, TextButton } from '@/ui';
 
 export const SendToDriver = ({ shipment }: { shipment: Shipment }) => {
   const { mutateAsync: sendToDriver, isPending } = useSendShipmentToDriver(shipment.id);
   const { data: driver } = useEmployee(shipment.driverId as string);
 
-  if (!driver?.messageChannel) return null;
+  if (!driver?.messageChannel) {
+    return <Box className="h-[24px] mb-2" />;
+  }
 
   async function handleSendToDriver() {
     try {

@@ -36,13 +36,13 @@ export const ContentLoader = () => {
 
               {/* Send to Driver */}
               <FlexLayout className="mb-2">
-                <Skeleton borderRadius="s" height={20} width={240} />
+                <Skeleton borderRadius="s" height={24} width={240} />
               </FlexLayout>
 
               {/* File Upload Section */}
               <FlexLayout className="gap-4 mt-2">
-                <Skeleton borderRadius="s" height={58} width={140} />
-                <Skeleton borderRadius="s" height={58} width={140} />
+                <Skeleton borderRadius="s" height={58} width={240} />
+                <Skeleton borderRadius="s" height={58} width={240} />
               </FlexLayout>
             </FlexLayout>
           </FlexLayout>
