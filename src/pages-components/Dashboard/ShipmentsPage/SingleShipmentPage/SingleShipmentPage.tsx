@@ -15,10 +15,10 @@ import { invoiceStatusConfig } from '../const';
 import { BasicInfo } from './components/BasicInfo';
 import { CargoItem } from './components/CargoItem';
 import { ContentLoader } from './components/ContentLoader';
-import { FileUploadButton } from './components/FileUploadButton';
 import { InvoiceItem } from './components/InvoiceItem';
 import { SendToDriver } from './components/SendToDriver';
 import { ShipmentActions } from './components/ShipmentActions';
+import { ShipmentFileUploadButton } from './components/ShipmentFileUploadButton';
 import type { CargoWithMetadata } from './components/types';
 
 export const SingleShipmentPage = () => {
@@ -106,7 +106,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                 {shipment.documents?.map((document) => (
                   <FileCard key={document.id} {...document} onDownload={handleDownloadFile} />
                 ))}
-                <FileUploadButton id={shipment.id} />
+                <ShipmentFileUploadButton id={shipment.id} />
               </FlexLayout>
             </FlexLayout>
           </FlexLayout>
