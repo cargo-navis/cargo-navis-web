@@ -19,6 +19,13 @@ export interface Shipment {
   createdAt: string;
   childShipments?: Shipment[];
   sentToDriver?: boolean;
+  documents?: {
+    id: string;
+    createdAt: string;
+    name: string;
+    mimeType: string;
+    status: string;
+  }[];
 }
 
 export type GetShipmentParams = {

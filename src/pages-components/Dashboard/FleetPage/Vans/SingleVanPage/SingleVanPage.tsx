@@ -9,6 +9,7 @@ import { VehicleActions } from '@/pages-components/Dashboard/FleetPage/component
 import { VehicleInfo } from '@/pages-components/Dashboard/FleetPage/components/VehicleInfo';
 import { Box, DisplayIf, FlexLayout, Icon, Pill, Text } from '@/ui';
 
+import { DocumentsSection } from '../../components/DocumentsSection';
 import { GeneralInfo } from '../../components/GeneralInfo';
 import { LoadingSpaceInfo } from '../../components/LoadingSpaceInfo';
 
@@ -54,6 +55,7 @@ const MainContent: React.FC<{ van: Vehicle }> = ({ van }) => {
         <GeneralInfo vehicle={van} />
         <VehicleInfo vehicle={van} />
         <LoadingSpaceInfo vehicle={van} />
+        <DocumentsSection vehicle={van} />
       </FlexLayout>
     </FlexLayout>
   );

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { getCurrentTenant, updateTenant } from '@/lib/api';
+import { deleteTenantLogo, getCurrentTenant, updateTenant, uploadTenantLogo } from '@/lib/api';
 import type { UpdateTenantParams } from '@/lib/api/tenant.d';
 
 export function useCurrentTenant() {
@@ -17,6 +17,33 @@ export const useUpdateTenant = () => {
     mutationFn: (data: UpdateTenantParams) => updateTenant(data),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['tenant'] });
+    },
+  });
+};
+
+type UploadTenantLogoParams = {
+  file: File;
+  fileName: string;
+};
+
+export const useUploadTenantLogo = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (params: UploadTenantLogoParams) => uploadTenantLogo(params.file, params.fileName),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ['tenant'] });
+    },
+  });
+};
+
+export const useDeleteTenantLogo = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: () => deleteTenantLogo(),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ['tenant'] });
     },
   });
 };

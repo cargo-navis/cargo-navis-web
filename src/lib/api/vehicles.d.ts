@@ -32,6 +32,13 @@ export interface Vehicle {
   registrationExpiryDate: string;
   emptyWeight: number;
   vehicleIdentificationNumber: string;
+  documents?: {
+    id: string;
+    createdAt: string;
+    name: string;
+    mimeType: string;
+    status: string;
+  }[];
 }
 
 export interface Dimensions {
