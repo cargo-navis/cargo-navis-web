@@ -55,3 +55,7 @@ export async function uploadShipmentFile(id: string, file: File, fileName: strin
 export async function getShipmentDocumentUrl(shipmentId: string, documentId: string) {
   return backend.get<string>(`/api/shipments/${shipmentId}/files/${documentId}`);
 }
+
+export async function deleteShipmentFile(shipmentId: string, documentId: string) {
+  return backend.delete<void>(`/api/shipments/${shipmentId}/files/${documentId}`);
+}
