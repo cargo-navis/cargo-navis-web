@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createShipment,
   deleteShipment,
+  deleteShipmentFile,
   getShipment,
   GetShipmentParams,
   getShipments,
@@ -175,6 +176,17 @@ export function useUploadShipmentFile(id: string) {
     mutationFn: (params: { file: File; fileName: string }) => uploadShipmentFile(id, params.file, params.fileName),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['shipment', id] });
+    },
+  });
+}
+
+export function useDeleteShipmentFile(shipmentId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (documentId: string) => deleteShipmentFile(shipmentId, documentId),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ['shipment', shipmentId] });
     },
   });
 }

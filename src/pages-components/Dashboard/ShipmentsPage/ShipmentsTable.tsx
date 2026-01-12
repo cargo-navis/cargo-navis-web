@@ -106,6 +106,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const client = clients.find((c) => c.id === clientId);
           const contractor = contractors.find((c) => c.id === transportContractorId) || tenant;
 
+          const hasDocuments = !!documents?.length;
+
           return (
             <FlexLayout className="flex-col pr-4 py-2 max-w-[15vw] whitespace-nowrap">
               <FlexLayout className="gap-4 items-center">
@@ -113,22 +115,23 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                   {client ? client.name : '—'}
                 </Text>
                 <FlexLayout className="self-baseline mt-1">
-                  {documents?.map((document) => (
+                  <DisplayIf condition={hasDocuments}>
                     <Tooltip
                       content={
-                        <Box className="px-1">
-                          <Text color="text-light-50" variant="text-xs">
-                            {document.name}
-                          </Text>
-                        </Box>
+                        <FlexLayout as="ul" className="flex-col gap-1 px-2 list-disc list-inside">
+                          {documents?.map((document) => (
+                            <Text as="li" color="text-light-50" key={document.id} variant="text-xs">
+                              {document.name}
+                            </Text>
+                          ))}
+                        </FlexLayout>
                       }
-                      key={document.id}
                     >
-                      <Box key={document.id}>
+                      <Box>
                         <Icon color="text-color-4" icon="DocumentTextIcon" size="l" type="outline" />
                       </Box>
                     </Tooltip>
-                  ))}
+                  </DisplayIf>
                 </FlexLayout>
               </FlexLayout>
               <Text className="overflow-hidden text-ellipsis" color="text-color-3" variant="text-xs">
