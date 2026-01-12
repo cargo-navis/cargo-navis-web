@@ -41,3 +41,7 @@ export async function uploadVehicleFile(id: string, file: File, fileName: string
 export async function getVehicleDocumentUrl(id: string, documentId: string) {
   return backend.get<string>(`/api/fleet/${id}/files/${documentId}`);
 }
+
+export async function deleteVehicleFile(id: string, documentId: string) {
+  return backend.delete<void>(`/api/fleet/${id}/files/${documentId}`);
+}

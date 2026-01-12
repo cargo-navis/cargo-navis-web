@@ -186,7 +186,7 @@ export function useDeleteShipmentFile(shipmentId: string) {
   return useMutation({
     mutationFn: (documentId: string) => deleteShipmentFile(shipmentId, documentId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['shipment', shipmentId] });
+      return queryClient.invalidateQueries({ queryKey: ['shipment', shipmentId] });
     },
   });
 }

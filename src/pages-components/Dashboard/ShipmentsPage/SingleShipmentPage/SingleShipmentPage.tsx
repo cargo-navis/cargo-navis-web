@@ -6,7 +6,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { InvoiceStatus, Shipment } from '@/lib/api';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { FileCard } from '@/lib/components/FileCard';
-import { useShipment, useUpdateShipment } from '@/lib/hooks';
+import { useDeleteShipmentFile, useShipment, useUpdateShipment } from '@/lib/hooks';
 import { downloadShipmentFile } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, DisplayIf, Divider, FlexLayout, Pill, Text } from '@/ui';
@@ -45,6 +45,7 @@ export const SingleShipmentPage = () => {
 const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
   const { data: parentShipment } = useShipment(shipment.parentShipmentId || '');
   const { mutateAsync: updateShipment, isPending } = useUpdateShipment();
+  const { mutateAsync: deleteFile, isPending: isDeletingFile } = useDeleteShipmentFile(shipment.id);
 
   const handleInvoiceChange = async (invoiceStatus: InvoiceStatus) => {
     try {
@@ -67,6 +68,19 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
 
   function handleDownloadFile(documentId: string) {
     downloadShipmentFile(shipment.id, documentId);
+  }
+
+  async function handleDeleteFile(documentId: string, documentName: string) {
+    const answer = confirm(`Jeste li sigurni da želite izbrisati ovaj dokument "${documentName}"?`);
+    if (!answer) return;
+
+    try {
+      await deleteFile(documentId);
+      showSuccessToast({ title: `Dokument "${documentName}" izbrisan` });
+    } catch (error) {
+      console.error(error);
+      showErrorToast({ title: 'Greška prilikom brisanja dokumenta. Pokušajte ponovno.' });
+    }
   }
 
   return (
@@ -105,7 +119,12 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
               <FlexLayout className="gap-4 mt-2">
                 {shipment.documents?.map((document) => (
                   <Box className="max-w-[300px]" key={document.id}>
-                    <FileCard {...document} onDownload={handleDownloadFile} />
+                    <FileCard
+                      {...document}
+                      isLoading={isDeletingFile}
+                      onDelete={(documentId) => handleDeleteFile(documentId, document.name)}
+                      onDownload={handleDownloadFile}
+                    />
                   </Box>
                 ))}
                 <ShipmentFileUploadButton id={shipment.id} />
