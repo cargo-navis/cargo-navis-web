@@ -5,6 +5,7 @@ import {
   deleteShipment,
   deleteShipmentFile,
   getShipment,
+  getShipmentDocumentUrl,
   GetShipmentParams,
   getShipments,
   PaginatedResponse,
@@ -100,6 +101,13 @@ export function useShipment(id?: string) {
     queryKey: ['shipment', id],
     queryFn: async () => getShipment(id as string),
     enabled: !!id,
+  });
+}
+
+export function useGetShipmentDocumentUrl(shipmentId?: string) {
+  return useMutation({
+    mutationFn: async (params: { documentId: string; disposition: 'inline' | 'attachment' }) =>
+      getShipmentDocumentUrl(shipmentId as string, params.documentId, params.disposition),
   });
 }
 

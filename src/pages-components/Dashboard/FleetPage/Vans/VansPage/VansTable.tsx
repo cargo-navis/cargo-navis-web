@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { VehicleAlertTooltip } from '@/components/alerts/VehicleAlertTooltip';
 import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles';
-import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon, Table, Text, Tooltip } from '@/ui';
 
 const columnHelper = createColumnHelper<Vehicle>();
 
@@ -16,7 +16,8 @@ export const VansTable = ({ vans }: { vans: Vehicle[] }) => {
         size: 150,
         header: () => <Box className="pl-3">Kombi</Box>,
         cell: (props) => {
-          const { brand, registration, id } = props.row.original;
+          const { brand, registration, id, documents } = props.row.original;
+          const hasDocuments = !!documents?.length;
 
           return (
             <Link href={`/dashboard/fleet/vans/${id}`}>
@@ -26,6 +27,25 @@ export const VansTable = ({ vans }: { vans: Vehicle[] }) => {
                     {registration}
                   </Text>
                   <VehicleAlertTooltip id={id} type={VehicleEnum.VAN} />
+                  <FlexLayout className="self-baseline mt-1">
+                    <DisplayIf condition={hasDocuments}>
+                      <Tooltip
+                        content={
+                          <FlexLayout as="ul" className="flex-col gap-1 px-2 list-disc list-inside w-max">
+                            {documents?.map((document) => (
+                              <Text as="li" color="text-light-50" key={document.id} variant="text-xs">
+                                {document.name}
+                              </Text>
+                            ))}
+                          </FlexLayout>
+                        }
+                      >
+                        <Box>
+                          <Icon color="text-color-4" icon="DocumentTextIcon" size="l" type="outline" />
+                        </Box>
+                      </Tooltip>
+                    </DisplayIf>
+                  </FlexLayout>
                 </FlexLayout>
                 <Text className="text-color-3 group-hover/cell:text-teal-600">{brand}</Text>
               </FlexLayout>

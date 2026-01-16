@@ -27,7 +27,7 @@ export const getFileInput = (
 
 export async function downloadVehicleFile(id: string, documentId: string) {
   try {
-    const url = await getVehicleDocumentUrl(id, documentId);
+    const url = await getVehicleDocumentUrl(id, documentId, 'attachment');
     handleLocalDownload(url, 'file');
   } catch (err) {
     const error = err as AxiosError<any>;
@@ -39,7 +39,7 @@ export async function downloadVehicleFile(id: string, documentId: string) {
 
 export async function downloadShipmentFile(id: string, documentId: string) {
   try {
-    const url = await getShipmentDocumentUrl(id, documentId);
+    const url = await getShipmentDocumentUrl(id, documentId, 'attachment');
     handleLocalDownload(url, 'file');
   } catch (err) {
     const error = err as AxiosError<any>;

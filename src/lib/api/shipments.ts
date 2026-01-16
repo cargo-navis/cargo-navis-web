@@ -52,8 +52,12 @@ export async function uploadShipmentFile(id: string, file: File, fileName: strin
   return backend.post<Shipment>(`/api/shipments/${id}/files`, formData);
 }
 
-export async function getShipmentDocumentUrl(shipmentId: string, documentId: string) {
-  return backend.get<string>(`/api/shipments/${shipmentId}/files/${documentId}`);
+export async function getShipmentDocumentUrl(
+  shipmentId: string,
+  documentId: string,
+  disposition: 'inline' | 'attachment' = 'attachment'
+) {
+  return backend.get<string>(`/api/shipments/${shipmentId}/files/${documentId}`, { params: { disposition } });
 }
 
 export async function deleteShipmentFile(shipmentId: string, documentId: string) {
