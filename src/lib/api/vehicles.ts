@@ -38,8 +38,12 @@ export async function uploadVehicleFile(id: string, file: File, fileName: string
   return backend.post<Vehicle>(`/api/fleet/${id}/files`, formData);
 }
 
-export async function getVehicleDocumentUrl(id: string, documentId: string) {
-  return backend.get<string>(`/api/fleet/${id}/files/${documentId}`);
+export async function getVehicleDocumentUrl(
+  id: string,
+  documentId: string,
+  disposition: 'inline' | 'attachment' = 'attachment'
+) {
+  return backend.get<string>(`/api/fleet/${id}/files/${documentId}`, { params: { disposition } });
 }
 
 export async function deleteVehicleFile(id: string, documentId: string) {

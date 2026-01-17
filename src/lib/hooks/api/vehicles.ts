@@ -4,6 +4,7 @@ import {
   createVehicle,
   deleteVehicle,
   deleteVehicleFile,
+  getVehicleDocumentUrl,
   getVehicles,
   updateVehicle,
   type UpdateVehicleParams,
@@ -108,5 +109,12 @@ export function useDeleteVehicleFile(id: string) {
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: ['vehicles'], type: 'all' });
     },
+  });
+}
+
+export function useGetVehicleDocumentUrl(id: string) {
+  return useMutation({
+    mutationFn: async (params: { documentId: string; disposition: 'inline' | 'attachment' }) =>
+      getVehicleDocumentUrl(id, params.documentId, params.disposition),
   });
 }

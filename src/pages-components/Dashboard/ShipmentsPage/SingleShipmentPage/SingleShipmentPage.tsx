@@ -6,7 +6,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { InvoiceStatus, Shipment } from '@/lib/api';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { FileCard } from '@/lib/components/FileCard';
-import { useDeleteShipmentFile, useShipment, useUpdateShipment } from '@/lib/hooks';
+import { useDeleteShipmentFile, useGetShipmentDocumentUrl, useShipment, useUpdateShipment } from '@/lib/hooks';
 import { downloadShipmentFile } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, DisplayIf, Divider, FlexLayout, Pill, Text } from '@/ui';
@@ -46,6 +46,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
   const { data: parentShipment } = useShipment(shipment.parentShipmentId || '');
   const { mutateAsync: updateShipment, isPending } = useUpdateShipment();
   const { mutateAsync: deleteFile, isPending: isDeletingFile } = useDeleteShipmentFile(shipment.id);
+  const { mutateAsync: getDocumentUrl, isPending: isGettingDocumentUrl } = useGetShipmentDocumentUrl(shipment.id);
 
   const handleInvoiceChange = async (invoiceStatus: InvoiceStatus) => {
     try {
@@ -67,7 +68,22 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
   const shouldRenderAgencyPill = !!shipment?.isAgencyUse && !shipment?.parentShipmentId;
 
   function handleDownloadFile(documentId: string) {
-    downloadShipmentFile(shipment.id, documentId);
+    try {
+      downloadShipmentFile(shipment.id, documentId);
+    } catch (error) {
+      console.error(error);
+      showErrorToast({ title: 'Greška prilikom preuzimanja dokumenta. Pokušajte ponovno.' });
+    }
+  }
+
+  async function handlePreview(documentId: string) {
+    try {
+      const url = await getDocumentUrl({ documentId, disposition: 'inline' });
+      window.open(url, '_blank');
+    } catch (error) {
+      console.error(error);
+      showErrorToast({ title: 'Greška prilikom pregleda dokumenta. Pokušajte ponovno.' });
+    }
   }
 
   async function handleDeleteFile(documentId: string, documentName: string) {
@@ -82,6 +98,8 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
       showErrorToast({ title: 'Greška prilikom brisanja dokumenta. Pokušajte ponovno.' });
     }
   }
+
+  const isLoading = isPending || isDeletingFile || isGettingDocumentUrl;
 
   return (
     <FlexLayout className="py-5 flex-col gap-5">
@@ -121,9 +139,10 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                   <Box className="max-w-[300px]" key={document.id}>
                     <FileCard
                       {...document}
-                      isLoading={isDeletingFile}
+                      isLoading={isLoading}
                       onDelete={(documentId) => handleDeleteFile(documentId, document.name)}
                       onDownload={handleDownloadFile}
+                      onPreview={handlePreview}
                     />
                   </Box>
                 ))}
