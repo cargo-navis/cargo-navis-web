@@ -65,16 +65,7 @@ export enum VehicleLoadEnum {
   TILT_TRUCK = 'tilt_truck',
   FRIGO = 'frigo',
   CONTAINER_TRAILER = 'container_trailer',
-  TAUTLINER = 'tautliner',
 }
-
-// SOLO TRUCK TYPES
-// export enum VehicleLoadEnum {
-//   TILT_TRUCK = 'tilt_truck',
-//   FRIGO = 'frigo',
-//   FURGON = 'furgon',
-//   TAUTLINER = 'tautliner',
-// }
 
 export enum EquipmentEnum {
   EDGE_PROTECTION = 'edge_protection',
