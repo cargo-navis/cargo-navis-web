@@ -29,6 +29,7 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
     contractExpiryDate,
     visaExpiryDate,
     medicalExaminationExpiryDate,
+    postingDeclarationExpiryDate,
   } = employee;
 
   const { data } = useEmployeeAlerts();
@@ -47,7 +48,7 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
   const formattedContractExpiryDate = getDataPointDateString(contractExpiryDate);
   const formattedVisaExpiryDate = getDataPointDateString(visaExpiryDate);
   const formattedMedicalExaminationExpiryDate = getDataPointDateString(medicalExaminationExpiryDate);
-
+  const formattedPostingDeclarationExpiryDate = getDataPointDateString(postingDeclarationExpiryDate);
   const tachographExpiryDate = getDataPointDateString(driverTachographCardExpiryDate);
 
   return (
@@ -130,6 +131,12 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
           isAlert={propertiesWithAlert?.includes('code95ExpiryDate')}
           label="Kod 95 - Vrijedi do"
           value={formattedCode95ExpiryDate}
+        />
+        <Divider />
+        <InfoItem
+          isAlert={propertiesWithAlert?.includes('postingDeclarationExpiryDate')}
+          label="Izjava o upućivanju - Vrijedi do"
+          value={formattedPostingDeclarationExpiryDate || '—'}
         />
       </FlexLayout>
       <Divider />

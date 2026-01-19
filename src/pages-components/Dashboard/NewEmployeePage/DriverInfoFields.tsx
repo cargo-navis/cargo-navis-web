@@ -98,6 +98,13 @@ export const DriverInfoFields = () => {
           </Text>
           <FormDatepicker label="Vrijedi do" name="code95ExpiryDate" />
         </Box>
+        <hr className="border-[0px] my-4 border-b-[1px] border-light-200 dark:border-white-alpha-25" />
+        <Box className="flex flex-col gap-2">
+          <Text className="uppercase" color="text-color-3" variant="text-xs-medium">
+            Izjava o upućivanju
+          </Text>
+          <FormDatepicker label="Vrijedi do" name="postingDeclarationExpiryDate" />
+        </Box>
       </Box>
     </>
   );
