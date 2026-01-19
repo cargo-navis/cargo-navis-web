@@ -58,3 +58,7 @@ export function handleLocalDownload(href: string, name: string) {
   link.click();
   document.body.removeChild(link);
 }
+
+export function bytesToMegabytes(bytes: number) {
+  return bytes / 1024 ** 2;
+}
