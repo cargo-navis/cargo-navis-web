@@ -31,6 +31,7 @@ export const employeeSchema = object({
   medicalExaminationExpiryDate: whenDriver(string()),
   visaExpiryDate: whenDriver(string()),
   code95ExpiryDate: whenDriver(string()),
+  postingDeclarationExpiryDate: whenDriver(string()),
   dateOfBirth: whenDriver(string()),
   residenceAddress: whenDriver(trimmedString()),
 }).required();

@@ -33,6 +33,7 @@ export interface Employee {
   medicalExaminationExpiryDate?: string;
   visaExpiryDate?: string;
   code95ExpiryDate?: string;
+  postingDeclarationExpiryDate?: string;
   dateOfBirth?: string;
   residenceAddress?: string;
   driverTachographCardId?: string;

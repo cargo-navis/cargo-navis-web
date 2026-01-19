@@ -15,9 +15,7 @@ import { equipmentOptions, loadTypeOptions, rampOptions } from './const';
 export const LoadingSpaceFields: React.FC<{ type: VehicleEnum }> = ({ type }) => {
   let loadOptions = loadTypeOptions;
 
-  if (type === VehicleEnum.TRAILER) {
-    loadOptions = loadOptions.filter((o) => o.value !== VehicleLoadEnum.TAUTLINER);
-  } else if (type === VehicleEnum.SOLO_TRUCK) {
+  if (type === VehicleEnum.SOLO_TRUCK) {
     loadOptions = loadOptions.filter(
       (o) => ![VehicleLoadEnum.CISTERN, VehicleLoadEnum.CONTAINER_TRAILER].includes(o.value as VehicleLoadEnum)
     );

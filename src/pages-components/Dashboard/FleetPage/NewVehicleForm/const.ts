@@ -97,7 +97,6 @@ export const loadTypeOptions: SelectOption[] = [
   { value: VehicleLoadEnum.FRIGO, label: 'Frigo' },
   { value: VehicleLoadEnum.CISTERN, label: 'Cistern' },
   { value: VehicleLoadEnum.CONTAINER_TRAILER, label: 'Undercarriage for containers' },
-  { value: VehicleLoadEnum.TAUTLINER, label: 'Tautliner' },
 ];
 
 export const formDefaultValues = {
