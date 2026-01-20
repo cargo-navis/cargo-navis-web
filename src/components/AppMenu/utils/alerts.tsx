@@ -133,6 +133,17 @@ export function getAlertItemData(alert: Alert) {
       );
       break;
     }
+    case AlertType.DRIVER_POSTING_DECLARATION_EXPIRED: {
+      const employee = alertable as Employee;
+
+      targetUrl = `/dashboard/employees/${employee.id}`;
+      descriptionNode = (
+        <Text color="text-color-2" variant="text-s">
+          Vozaču (<EmployeeName employee={employee} />) istječe izjava o upućivanju.
+        </Text>
+      );
+      break;
+    }
     case AlertType.VEHICLE_REGISTRATION_EXPIRED: {
       const vehicle = alertable as Vehicle;
       const path = vehicleTypeToPathMap[vehicle.type];
