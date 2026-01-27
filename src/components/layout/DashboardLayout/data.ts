@@ -41,5 +41,5 @@ export const links: NavLink[] = [
   },
   // { name: 'Assign Trucks', href: '/dashboard/assign-trucks', icon: 'SquaresPlusIcon' }, // TODO
   { name: 'Zaposlenici', href: '/dashboard/employees', icon: 'UserGroupIcon' },
-  // { name: 'Analytics', href: '/dashboard/analytics', icon: 'PresentationChartLineIcon' }, // TODO
+  { name: 'Analitika', href: '/dashboard/analytics', icon: 'ChartBarIcon' },
 ];
