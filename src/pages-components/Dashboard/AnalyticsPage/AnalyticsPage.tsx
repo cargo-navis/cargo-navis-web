@@ -14,12 +14,14 @@ import {
 import { FlexLayout, Heading, Text } from '@/ui';
 
 import { DateRangeFilter, DateRangeOption, getDateRange } from './DateRangeFilter';
+import { GranularityFilter, GranularityOption } from './GranularityFilter';
 import { TotalAnalyticsSection } from './TotalAnalyticsSection';
 
 const TOP_N = 5;
 
 export const AnalyticsPage = () => {
   const [selectedDateRange, setSelectedDateRange] = useState<DateRangeOption>('last-6-months');
+  const [selectedGranularity, setSelectedGranularity] = useState<GranularityOption>('month');
 
   // Compute date range based on selection
   const { from, to } = useMemo(() => getDateRange(selectedDateRange), [selectedDateRange]);
@@ -28,7 +30,7 @@ export const AnalyticsPage = () => {
   const analyticsParams = {
     from,
     to,
-    granularity: 'month' as const,
+    granularity: selectedGranularity,
   };
 
   const dateRangeParams = {
@@ -63,13 +65,16 @@ export const AnalyticsPage = () => {
           <Heading as="h1" variant="text-xl">
             Analitika
           </Heading>
-          <DateRangeFilter value={selectedDateRange} onChange={setSelectedDateRange} />
+          <FlexLayout className="gap-3">
+            <DateRangeFilter value={selectedDateRange} onChange={setSelectedDateRange} />
+            <GranularityFilter value={selectedGranularity} onChange={setSelectedGranularity} />
+          </FlexLayout>
         </FlexLayout>
         {isLoading || !hasAllData ? (
           <LoadingPage />
         ) : (
           <FlexLayout className="flex-col gap-5">
-            <TotalAnalyticsSection countData={countData} priceData={priceData} />
+            <TotalAnalyticsSection countData={countData} granularity={selectedGranularity} priceData={priceData} />
             <FlexLayout className="w-full gap-5">
               <DriversTable data={topDrivers} />
               <VehiclesTable data={topVehicles} />

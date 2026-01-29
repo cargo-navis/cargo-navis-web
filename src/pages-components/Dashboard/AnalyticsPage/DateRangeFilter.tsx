@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 
-import { Box, SelectOption, SingleSelect } from '@/ui';
+import { Box, SelectOption } from '@/ui';
+import { SingleSelectWithLabels } from '@/ui/hocs';
 
 export type DateRangeOption = 'last-3-months' | 'last-6-months' | 'last-12-months' | 'year-to-date';
 
@@ -41,7 +42,8 @@ interface DateRangeFilterProps {
 export const DateRangeFilter = ({ value, onChange }: DateRangeFilterProps) => {
   return (
     <Box className="w-[220px]">
-      <SingleSelect
+      <SingleSelectWithLabels
+        label="Razdoblje"
         options={DATE_RANGE_OPTIONS}
         value={value}
         onChange={(newValue) => onChange(newValue as DateRangeOption)}

@@ -3,10 +3,26 @@ import type { ChartData, ChartOptions } from 'chart.js';
 import { ShipmentAnalytics, ShipmentPriceAnalytics } from '@/lib/api';
 import { Box, ComboChart, FlexLayout, Icon, Text } from '@/ui';
 
+import type { GranularityOption } from './GranularityFilter';
+
 interface TotalAnalyticsSectionProps {
   countData: ShipmentAnalytics;
   priceData: ShipmentPriceAnalytics;
+  granularity: GranularityOption;
 }
+
+const getGranularityLabel = (granularity: GranularityOption): string => {
+  switch (granularity) {
+    case 'day':
+      return '/ dnevno';
+    case 'week':
+      return '/ tjedno';
+    case 'month':
+      return '/ mjesečno';
+    case 'year':
+      return '/ godišnje';
+  }
+};
 
 const chartOptions: ChartOptions<'bar' | 'line'> = {
   elements: {
@@ -68,7 +84,8 @@ const chartOptions: ChartOptions<'bar' | 'line'> = {
   },
 };
 
-export const TotalAnalyticsSection = ({ countData, priceData }: TotalAnalyticsSectionProps) => {
+export const TotalAnalyticsSection = ({ countData, priceData, granularity }: TotalAnalyticsSectionProps) => {
+  const granularityLabel = getGranularityLabel(granularity);
   // Prepare combo chart data (bar + line)
   const chartData: ChartData<'bar' | 'line'> = {
     labels: countData.periods.map((period) => period.period),
@@ -120,7 +137,7 @@ export const TotalAnalyticsSection = ({ countData, priceData }: TotalAnalyticsSe
           <Text color="text-color-1" variant="text-xl-bold">
             {countData.average.toFixed(0)}{' '}
             <Text as="small" color="text-color-3" variant="text-m-medium">
-              / mj.
+              {granularityLabel}
             </Text>
           </Text>
         </FlexLayout>
@@ -145,7 +162,7 @@ export const TotalAnalyticsSection = ({ countData, priceData }: TotalAnalyticsSe
           <Text color="text-color-1" variant="text-xl-bold">
             {priceData.average.toLocaleString('hr-HR', { style: 'currency', currency: 'EUR' })}{' '}
             <Text as="small" color="text-color-3" variant="text-m-medium">
-              / mj.
+              {granularityLabel}
             </Text>
           </Text>
         </FlexLayout>
