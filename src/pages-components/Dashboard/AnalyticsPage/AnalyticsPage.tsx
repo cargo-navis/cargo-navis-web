@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { DriverAnalyticsItem, VehicleAnalyticsItem } from '@/lib/api';
-import { LoadingPage } from '@/lib/components/LoadingPage';
 import {
   useDriversAnalytics,
   useEmployee,
@@ -13,6 +12,7 @@ import {
 } from '@/lib/hooks/api';
 import { FlexLayout, Heading, Text } from '@/ui';
 
+import { ContentLoader } from './ContentLoader';
 import { DateRangeFilter, DateRangeOption, getDateRange } from './DateRangeFilter';
 import { GranularityFilter, GranularityOption } from './GranularityFilter';
 import { TotalAnalyticsSection } from './TotalAnalyticsSection';
@@ -71,7 +71,7 @@ export const AnalyticsPage = () => {
           </FlexLayout>
         </FlexLayout>
         {isLoading || !hasAllData ? (
-          <LoadingPage />
+          <ContentLoader />
         ) : (
           <FlexLayout className="flex-col gap-5">
             <TotalAnalyticsSection countData={countData} granularity={selectedGranularity} priceData={priceData} />
