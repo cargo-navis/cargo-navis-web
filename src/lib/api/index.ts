@@ -1,5 +1,7 @@
 export * from './alerts';
 export * from './alerts.d';
+export * from './analytics';
+export * from './analytics.d';
 export * from './auth';
 export * from './cargo';
 export * from './clients';

@@ -1,4 +1,5 @@
 export * from './alerts';
+export * from './analytics';
 export * from './cargo';
 export * from './clients';
 export * from './contractors';
