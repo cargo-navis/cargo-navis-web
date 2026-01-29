@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { DriverAnalyticsItem, VehicleAnalyticsItem } from '@/lib/api';
@@ -11,23 +11,29 @@ import {
   useVehicle,
   useVehiclesAnalytics,
 } from '@/lib/hooks/api';
-import { Box, FlexLayout, Heading, Text } from '@/ui';
+import { FlexLayout, Heading, Text } from '@/ui';
 
+import { DateRangeFilter, DateRangeOption, getDateRange } from './DateRangeFilter';
 import { TotalAnalyticsSection } from './TotalAnalyticsSection';
 
 const TOP_N = 5;
 
 export const AnalyticsPage = () => {
+  const [selectedDateRange, setSelectedDateRange] = useState<DateRangeOption>('last-6-months');
+
+  // Compute date range based on selection
+  const { from, to } = useMemo(() => getDateRange(selectedDateRange), [selectedDateRange]);
+
   // Common date range parameters
   const analyticsParams = {
-    from: '2025-01-01',
-    to: '2025-12-31',
+    from,
+    to,
     granularity: 'month' as const,
   };
 
   const dateRangeParams = {
-    from: '2025-01-01',
-    to: '2025-12-31',
+    from,
+    to,
   };
 
   // Fetch analytics data
@@ -53,11 +59,12 @@ export const AnalyticsPage = () => {
   return (
     <DashboardLayout>
       <FlexLayout className="flex-col gap-5">
-        <Box>
+        <FlexLayout className="flex-col gap-4">
           <Heading as="h1" variant="text-xl">
             Analitika
           </Heading>
-        </Box>
+          <DateRangeFilter value={selectedDateRange} onChange={setSelectedDateRange} />
+        </FlexLayout>
         {isLoading || !hasAllData ? (
           <LoadingPage />
         ) : (

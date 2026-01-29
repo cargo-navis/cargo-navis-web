@@ -118,7 +118,7 @@ export const TotalAnalyticsSection = ({ countData, priceData }: TotalAnalyticsSe
             </Text>
           </FlexLayout>
           <Text color="text-color-1" variant="text-xl-bold">
-            {countData.average.toFixed(1)}{' '}
+            {countData.average.toFixed(0)}{' '}
             <Text as="small" color="text-color-3" variant="text-m-medium">
               / mj.
             </Text>
