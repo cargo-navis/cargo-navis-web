@@ -1,10 +1,12 @@
 import type { ChartData, ChartOptions } from 'chart.js';
 import {
+  BarController,
   BarElement,
   CategoryScale,
   Chart as ChartJS,
   Legend,
   LinearScale,
+  LineController,
   LineElement,
   PointElement,
   Title,
@@ -13,7 +15,18 @@ import {
 import { Chart } from 'react-chartjs-2';
 
 // Register Chart.js components for mixed chart types
-ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, Title, Tooltip, Legend);
+ChartJS.register(
+  BarController,
+  BarElement,
+  CategoryScale,
+  Legend,
+  LinearScale,
+  LineController,
+  LineElement,
+  PointElement,
+  Title,
+  Tooltip
+);
 
 interface ComboChartProps {
   data: ChartData<'bar' | 'line'>;
