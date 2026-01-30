@@ -1,4 +1,4 @@
-import { Box, SelectOption } from '@/ui';
+import { Box, FlexLayout, Icon, SelectOption, Text } from '@/ui';
 import { SingleSelectWithLabels } from '@/ui/hocs';
 
 export type GranularityOption = 'day' | 'week' | 'month' | 'year';
@@ -19,7 +19,14 @@ export const GranularityFilter = ({ value, onChange }: GranularityFilterProps) =
   return (
     <Box className="w-[160px]">
       <SingleSelectWithLabels
-        label="Podjela po"
+        label={
+          <FlexLayout className="gap-1 items-center justify-between">
+            <Icon icon="AdjustmentsHorizontalIcon" />
+            <Text color="text-color-3" variant="text-xxs-medium">
+              Podjela po
+            </Text>
+          </FlexLayout>
+        }
         options={GRANULARITY_OPTIONS}
         value={value}
         onChange={(newValue) => onChange(newValue as GranularityOption)}

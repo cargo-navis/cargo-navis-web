@@ -19,8 +19,8 @@ export interface ShipmentPriceAnalytics {
 }
 
 export interface GetShipmentAnalyticsParams {
-  from: string;
-  to: string;
+  from?: string;
+  to?: string;
   granularity: 'day' | 'week' | 'month' | 'year';
   driverId?: string;
   vehicleId?: string;
@@ -28,13 +28,13 @@ export interface GetShipmentAnalyticsParams {
 
 // Query params for driver/vehicle analytics endpoints
 export interface GetDriversAnalyticsParams {
-  from: string;
-  to: string;
+  from?: string;
+  to?: string;
 }
 
 export interface GetVehiclesAnalyticsParams {
-  from: string;
-  to: string;
+  from?: string;
+  to?: string;
 }
 
 export interface DriverAnalyticsItem {
