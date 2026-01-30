@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-import { Box, SelectOption } from '@/ui';
+import { Box, FlexLayout, Icon, SelectOption, Text } from '@/ui';
 import { SingleSelectWithLabels } from '@/ui/hocs';
 
 export type DateRangeOption =
@@ -63,7 +63,14 @@ export const DateRangeFilter = ({ value, onChange }: DateRangeFilterProps) => {
   return (
     <Box className="w-[220px]">
       <SingleSelectWithLabels
-        label="Razdoblje"
+        label={
+          <FlexLayout className="gap-1 items-center justify-between">
+            <Icon icon="CalendarDateRangeIcon" />
+            <Text color="text-color-3" variant="text-xxs-medium">
+              Razdoblje
+            </Text>
+          </FlexLayout>
+        }
         options={DATE_RANGE_OPTIONS}
         value={value}
         onChange={(newValue) => onChange(newValue as DateRangeOption)}

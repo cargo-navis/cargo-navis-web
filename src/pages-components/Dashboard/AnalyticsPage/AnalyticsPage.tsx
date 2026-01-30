@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { DriverAnalyticsItem, VehicleAnalyticsItem } from '@/lib/api';
+import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import {
   useDriversAnalytics,
   useEmployee,
@@ -14,14 +15,32 @@ import { FlexLayout, Heading, Text } from '@/ui';
 
 import { ContentLoader } from './ContentLoader';
 import { DateRangeFilter, DateRangeOption, getDateRange } from './DateRangeFilter';
+import { DriverFilter } from './DriverFilter';
 import { GranularityFilter, GranularityOption } from './GranularityFilter';
 import { TotalAnalyticsSection } from './TotalAnalyticsSection';
+import { VehicleFilter } from './VehicleFilter';
 
 const TOP_N = 5;
 
 export const AnalyticsPage = () => {
   const [selectedDateRange, setSelectedDateRange] = useState<DateRangeOption>('last-6-months');
   const [selectedGranularity, setSelectedGranularity] = useState<GranularityOption>('month');
+  const [selectedDriverId, setSelectedDriverId] = useState<string | undefined>(undefined);
+  const [selectedVehicleId, setSelectedVehicleId] = useState<string | undefined>(undefined);
+
+  const handleDriverChange = (value: string | undefined) => {
+    setSelectedDriverId(value);
+    if (value) {
+      setSelectedVehicleId(undefined);
+    }
+  };
+
+  const handleVehicleChange = (value: string | undefined) => {
+    setSelectedVehicleId(value);
+    if (value) {
+      setSelectedDriverId(undefined);
+    }
+  };
 
   // Compute date range based on selection
   const { from, to } = useMemo(() => getDateRange(selectedDateRange), [selectedDateRange]);
@@ -31,6 +50,8 @@ export const AnalyticsPage = () => {
     from,
     to,
     granularity: selectedGranularity,
+    driverId: selectedDriverId,
+    vehicleId: selectedVehicleId,
   };
 
   const dateRangeParams = {
@@ -68,10 +89,16 @@ export const AnalyticsPage = () => {
           <FlexLayout className="gap-3">
             <DateRangeFilter value={selectedDateRange} onChange={setSelectedDateRange} />
             <GranularityFilter value={selectedGranularity} onChange={setSelectedGranularity} />
+            <FlexLayout className="gap-3 items-center">
+              <DriverFilter isDisabled={!!selectedVehicleId} value={selectedDriverId} onChange={handleDriverChange} />
+              <VehicleFilter isDisabled={!!selectedDriverId} value={selectedVehicleId} onChange={handleVehicleChange} />
+            </FlexLayout>
           </FlexLayout>
         </FlexLayout>
         {isLoading || !hasAllData ? (
-          <ContentLoader />
+          <ClientSideOnly>
+            <ContentLoader />
+          </ClientSideOnly>
         ) : (
           <FlexLayout className="flex-col gap-5">
             <TotalAnalyticsSection countData={countData} granularity={selectedGranularity} priceData={priceData} />
@@ -134,7 +161,7 @@ const DriversTable = ({ data }: DriversTableProps) => {
           Br. naloga
         </Text>
         <Text className="basis-[200px] text-right" color="text-color-2" variant="text-s-medium">
-          Ukupna cijena
+          Ukupna zarada
         </Text>
       </FlexLayout>
 
@@ -182,7 +209,7 @@ interface VehiclesTableProps {
 
 const VehiclesTable = ({ data }: VehiclesTableProps) => {
   return (
-    <FlexLayout className="flex-1 flex-col gap-4 p-4 bg-white dark:bg-white-alpha-10 border border-dark-100 dark:border-light-900 shadow-sm rounded-m">
+    <FlexLayout className="flex-1 flex-col gap-4 p-4 bg-white dark:bg-white-alpha-10 border border-dark-100 dark:border-light-900 shadow-md rounded-m">
       <Text color="text-color-1" variant="text-xl-bold">
         Top {TOP_N} vozila
       </Text>
@@ -196,7 +223,7 @@ const VehiclesTable = ({ data }: VehiclesTableProps) => {
           Br. naloga
         </Text>
         <Text className="basis-[200px] text-right" color="text-color-2" variant="text-s-medium">
-          Ukupna cijena
+          Ukupna zarada
         </Text>
       </FlexLayout>
 

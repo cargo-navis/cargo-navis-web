@@ -3,7 +3,7 @@ import { forwardRef } from 'react';
 import { Box, DisplayIf, FlexLayout, Text } from '@/ui';
 
 export interface FieldLabelsProps {
-  label?: string;
+  label?: string | React.ReactNode;
   helperText?: string;
   errorText?: string;
   isRequired?: boolean;
