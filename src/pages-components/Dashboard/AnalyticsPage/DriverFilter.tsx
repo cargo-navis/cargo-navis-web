@@ -25,6 +25,7 @@ export const DriverFilter = ({ value, onChange, isDisabled }: DriverFilterProps)
       <SingleSelectWithLabels
         isClearable
         isDisabled={isLoading || isDisabled}
+        isSearchable
         label={
           <FlexLayout className="gap-1 items-center justify-between">
             <Icon icon="UserIcon" />

@@ -26,6 +26,7 @@ export const VehicleFilter = ({ value, onChange, isDisabled }: VehicleFilterProp
       <SingleSelectWithLabels
         isClearable
         isDisabled={isLoading || isDisabled}
+        isSearchable
         label={
           <FlexLayout className="gap-1 items-center justify-between">
             <Icon icon="TruckIcon" />

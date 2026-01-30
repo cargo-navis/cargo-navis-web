@@ -169,11 +169,11 @@ export const TotalAnalyticsSection = ({ countData, priceData, granularity }: Tot
       },
       {
         type: 'line' as const,
-        label: 'Cijena (€)',
+        label: 'Zarada (€)',
         data: priceData.periods.map((period) => period.price),
         backgroundColor: '#13949Fad',
         borderColor: '#13949F',
-        borderWidth: 2,
+        borderWidth: 3,
         tension: 0.2,
         yAxisID: 'y1',
         order: 0,
