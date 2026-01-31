@@ -1,3 +1,4 @@
+import { PositionEnum } from '@/lib/api/employees.d';
 import type { IconType } from '@/ui/components/Icon';
 
 export interface NavLink {
@@ -5,6 +6,7 @@ export interface NavLink {
   href: string;
   icon: IconType;
   subItems?: NavLink[];
+  allowedPositions?: PositionEnum[];
 }
 
 export const links: NavLink[] = [
@@ -41,5 +43,10 @@ export const links: NavLink[] = [
   },
   // { name: 'Assign Trucks', href: '/dashboard/assign-trucks', icon: 'SquaresPlusIcon' }, // TODO
   { name: 'Zaposlenici', href: '/dashboard/employees', icon: 'UserGroupIcon' },
-  { name: 'Analitika', href: '/dashboard/analytics', icon: 'ChartBarIcon' },
+  {
+    name: 'Analitika',
+    href: '/dashboard/analytics',
+    icon: 'ChartBarIcon',
+    allowedPositions: [PositionEnum.Manager, PositionEnum.Ceo],
+  },
 ];

@@ -1,14 +1,35 @@
 import Link from 'next/link';
+import { useMemo } from 'react';
 
 import { AppMenu } from '@/components/AppMenu';
-import { useCurrentTenant } from '@/lib/hooks';
+import { PositionEnum } from '@/lib/api/employees.d';
+import { useCurrentTenant, useCurrentUser } from '@/lib/hooks';
 import { clearAuthCookies, clearServiceWorkerOnLogout } from '@/lib/utils/session';
 import { Box, Divider, FlexLayout, Heading, Icon, LoadingSpinner, Text } from '@/ui';
 
-import { links } from './data';
+import { links, NavLink } from './data';
 import { NavItem } from './NavItem';
 
+function canAccessLink(link: NavLink, userPositions: PositionEnum[] | undefined): boolean {
+  // If no restrictions, everyone can access
+  if (!link.allowedPositions || link.allowedPositions.length === 0) {
+    return true;
+  }
+  // If user has no positions, deny access to restricted links
+  if (!userPositions || userPositions.length === 0) {
+    return false;
+  }
+  // Check if user has at least one allowed position
+  return link.allowedPositions.some((pos) => userPositions.includes(pos));
+}
+
 export function Sidebar() {
+  const { data: user } = useCurrentUser();
+
+  const filteredLinks = useMemo(() => {
+    return links.filter((link) => canAccessLink(link, user?.positions));
+  }, [user?.positions]);
+
   async function handleLogout() {
     const answer = confirm('Želite se odjaviti?');
     if (!answer) return;
@@ -35,7 +56,7 @@ export function Sidebar() {
         <AppMenu />
       </FlexLayout>
       <FlexLayout as="nav" className="flex-col flex-grow gap-2">
-        {links.map((l) => (
+        {filteredLinks.map((l) => (
           <NavItem key={l.name} navLink={l} />
         ))}
       </FlexLayout>

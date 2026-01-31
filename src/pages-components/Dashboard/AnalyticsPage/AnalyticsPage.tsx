@@ -1,9 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useRouter } from 'next/router';
+import { useEffect, useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { DriverAnalyticsItem, VehicleAnalyticsItem } from '@/lib/api';
+import { PositionEnum } from '@/lib/api/employees.d';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import {
+  useCurrentUser,
   useDriversAnalytics,
   useEmployee,
   useShipmentAnalytics,
@@ -23,10 +26,21 @@ import { VehicleFilter } from './VehicleFilter';
 const TOP_N = 5;
 
 export const AnalyticsPage = () => {
+  const router = useRouter();
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
+
   const [selectedDateRange, setSelectedDateRange] = useState<DateRangeOption>('last-6-months');
   const [selectedGranularity, setSelectedGranularity] = useState<GranularityOption>('month');
   const [selectedDriverId, setSelectedDriverId] = useState<string | undefined>(undefined);
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | undefined>(undefined);
+
+  const isAuthorized = user?.positions?.some((p) => p === PositionEnum.Ceo || p === PositionEnum.Manager);
+
+  useEffect(() => {
+    if (!isUserLoading && user && !isAuthorized) {
+      router.replace('/dashboard');
+    }
+  }, [isUserLoading, user, isAuthorized, router]);
 
   const handleDriverChange = (value: string | undefined) => {
     setSelectedDriverId(value);
@@ -78,6 +92,17 @@ export const AnalyticsPage = () => {
 
   const isLoading = isCountLoading || isPriceLoading || isDriversLoading || isVehiclesLoading;
   const hasAllData = countData && priceData && driversData && vehiclesData;
+
+  // Show loading state while checking authorization
+  if (isUserLoading || !isAuthorized) {
+    return (
+      <DashboardLayout>
+        <ClientSideOnly>
+          <ContentLoader />
+        </ClientSideOnly>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
