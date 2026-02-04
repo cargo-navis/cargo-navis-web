@@ -133,8 +133,16 @@ export const AnalyticsPage = () => {
             <DateRangeFilter value={selectedDateRange} onChange={setSelectedDateRange} />
             <GranularityFilter value={selectedGranularity} onChange={setSelectedGranularity} />
             <FlexLayout className="gap-3 items-center">
-              <DriverFilter isDisabled={!!selectedVehicleId} value={selectedDriverId} onChange={handleDriverChange} />
-              <VehicleFilter isDisabled={!!selectedDriverId} value={selectedVehicleId} onChange={handleVehicleChange} />
+              <DriverFilter
+                isDisabled={!!selectedVehicleId || !!selectedClientId}
+                value={selectedDriverId}
+                onChange={handleDriverChange}
+              />
+              <VehicleFilter
+                isDisabled={!!selectedDriverId || !!selectedClientId}
+                value={selectedVehicleId}
+                onChange={handleVehicleChange}
+              />
               <ClientFilter
                 isDisabled={!!selectedVehicleId || !!selectedDriverId}
                 value={selectedClientId}
