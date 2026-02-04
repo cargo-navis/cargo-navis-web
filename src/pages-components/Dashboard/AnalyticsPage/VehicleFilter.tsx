@@ -5,9 +5,9 @@ import { Box, FlexLayout, Icon, SelectOption, Text } from '@/ui';
 import { SingleSelectWithLabels } from '@/ui/hocs';
 
 interface VehicleFilterProps {
-  value: string | undefined;
-  onChange: (value: string | undefined) => void;
   isDisabled?: boolean;
+  value: string | undefined;
+  onChange(value: string | undefined): void;
 }
 
 export const VehicleFilter = ({ value, onChange, isDisabled }: VehicleFilterProps) => {

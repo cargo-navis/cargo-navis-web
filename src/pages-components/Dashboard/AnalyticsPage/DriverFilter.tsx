@@ -4,9 +4,9 @@ import { useDrivers } from '@/lib/hooks/api';
 import { Box, FlexLayout, Icon, SelectOption, Text } from '@/ui';
 import { SingleSelectWithLabels } from '@/ui/hocs';
 interface DriverFilterProps {
-  value: string | undefined;
-  onChange: (value: string | undefined) => void;
   isDisabled?: boolean;
+  value: string | undefined;
+  onChange(value: string | undefined): void;
 }
 
 export const DriverFilter = ({ value, onChange, isDisabled }: DriverFilterProps) => {
