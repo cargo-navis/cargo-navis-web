@@ -338,6 +338,12 @@ const ClientsTable = ({ data }: ClientsTableProps) => {
         <Text className="flex-1" color="text-color-2" variant="text-s-medium">
           Klijent
         </Text>
+        <Text className="basis-[140px] text-right" color="text-color-2" variant="text-s-medium">
+          Br. naloga
+        </Text>
+        <Text className="basis-[200px] text-right" color="text-color-2" variant="text-s-medium">
+          Ukupna zarada
+        </Text>
       </FlexLayout>
 
       {/* Table Body */}
