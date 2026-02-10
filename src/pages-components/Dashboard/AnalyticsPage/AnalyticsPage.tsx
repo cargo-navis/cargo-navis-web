@@ -301,7 +301,7 @@ interface ClientRowProps {
 
 const ClientRow = ({ client, index }: ClientRowProps) => {
   const { data: clientData } = useClient(client.clientId);
-  const displayName = clientData?.name || client.clientId;
+  const displayName = clientData?.name || '—';
 
   return (
     <FlexLayout
