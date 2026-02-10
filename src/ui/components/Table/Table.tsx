@@ -17,15 +17,16 @@ interface TableProps {
   columns: any[];
   onRowClick?: (row: any) => void;
   getSubRows?: (row: any) => any[];
+  areRowsExpanded?: boolean;
 }
 
-export const Table: React.FC<TableProps> = ({ data, columns, onRowClick, getSubRows }) => {
+export const Table: React.FC<TableProps> = ({ data, columns, onRowClick, getSubRows, areRowsExpanded }) => {
   const [sorting, setSorting] = useState([]);
 
   const table = useReactTable({
     data,
     columns,
-    state: { sorting },
+    state: { sorting, ...(areRowsExpanded && { expanded: true }) },
     enableExpanding: true,
     getSubRows,
     getCoreRowModel: getCoreRowModel(),
