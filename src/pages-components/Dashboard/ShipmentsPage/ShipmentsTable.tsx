@@ -425,5 +425,13 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
     });
   }, [shipments]);
 
-  return <Table columns={columns} data={shipmentsWithWarnings} getSubRows={getSubRows} onRowClick={handleRowClick} />;
+  return (
+    <Table
+      areRowsExpanded
+      columns={columns}
+      data={shipmentsWithWarnings}
+      getSubRows={getSubRows}
+      onRowClick={handleRowClick}
+    />
+  );
 }
