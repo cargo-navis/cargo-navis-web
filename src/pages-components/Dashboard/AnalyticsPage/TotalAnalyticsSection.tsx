@@ -103,7 +103,7 @@ const chartOptions: ChartOptions<'bar' | 'line'> = {
     },
     title: {
       display: true,
-      text: 'Broj naloga i zarada po periodu',
+      text: 'Broj naloga i prihod po periodu',
     },
   },
   scales: {
@@ -139,7 +139,7 @@ const chartOptions: ChartOptions<'bar' | 'line'> = {
       beginAtZero: true,
       title: {
         display: true,
-        text: 'Zarada (€)',
+        text: 'Prihod (€)',
       },
       grid: {
         drawOnChartArea: false,
@@ -169,7 +169,7 @@ export const TotalAnalyticsSection = ({ countData, priceData, granularity }: Tot
       },
       {
         type: 'line' as const,
-        label: 'Zarada (€)',
+        label: 'Prihod (€)',
         data: priceData.periods.map((period) => period.price),
         backgroundColor: '#13949Fad',
         borderColor: '#13949F',
@@ -214,7 +214,7 @@ export const TotalAnalyticsSection = ({ countData, priceData, granularity }: Tot
           <FlexLayout className="items-center gap-2 text-dark-600 dark:text-light-300">
             <Icon icon="BanknotesIcon" size="l" />
             <Text color="text-color-3" variant="text-m">
-              Ukupna zarada
+              Ukupni prihod
             </Text>
           </FlexLayout>
           <Text color="text-color-1" variant="text-xl-bold">
@@ -225,7 +225,7 @@ export const TotalAnalyticsSection = ({ countData, priceData, granularity }: Tot
           <FlexLayout className="items-center gap-2 text-dark-600 dark:text-light-300">
             <Icon icon="BanknotesIcon" size="l" />
             <Text color="text-color-3" variant="text-m">
-              Prosječna zarada
+              Prosječni prihod
             </Text>
           </FlexLayout>
           <Text color="text-color-1" variant="text-xl-bold">

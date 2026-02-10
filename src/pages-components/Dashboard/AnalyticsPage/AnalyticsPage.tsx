@@ -218,7 +218,7 @@ const DriversTable = ({ data }: DriversTableProps) => {
           Br. naloga
         </Text>
         <Text className="basis-[200px] text-right" color="text-color-2" variant="text-s-medium">
-          Ukupna zarada
+          Ukupni prihod
         </Text>
       </FlexLayout>
 
@@ -280,7 +280,7 @@ const VehiclesTable = ({ data }: VehiclesTableProps) => {
           Br. naloga
         </Text>
         <Text className="basis-[200px] text-right" color="text-color-2" variant="text-s-medium">
-          Ukupna zarada
+          Ukupni prihod
         </Text>
       </FlexLayout>
 
@@ -342,7 +342,7 @@ const ClientsTable = ({ data }: ClientsTableProps) => {
           Br. naloga
         </Text>
         <Text className="basis-[200px] text-right" color="text-color-2" variant="text-s-medium">
-          Ukupna zarada
+          Ukupni prihod
         </Text>
       </FlexLayout>
 
