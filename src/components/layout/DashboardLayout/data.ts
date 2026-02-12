@@ -47,6 +47,5 @@ export const links: NavLink[] = [
     name: 'Analitika',
     href: '/dashboard/analytics',
     icon: 'ChartBarIcon',
-    allowedPositions: [PositionEnum.Manager, PositionEnum.Ceo, PositionEnum.Dispatcher],
   },
 ];
