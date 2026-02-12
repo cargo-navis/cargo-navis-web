@@ -27,12 +27,7 @@ export interface GetShipmentAnalyticsParams {
 }
 
 // Query params for driver/vehicle analytics endpoints
-export interface GetDriversAnalyticsParams {
-  from?: string;
-  to?: string;
-}
-
-export interface GetVehiclesAnalyticsParams {
+export interface GetAnalyticsParams {
   from?: string;
   to?: string;
 }
@@ -45,6 +40,12 @@ export interface DriverAnalyticsItem {
 
 export interface VehicleAnalyticsItem {
   vehicleId: string;
+  shipmentCount: number;
+  totalPrice: number;
+}
+
+export interface ClientAnalyticsItem {
+  clientId: string;
   shipmentCount: number;
   totalPrice: number;
 }

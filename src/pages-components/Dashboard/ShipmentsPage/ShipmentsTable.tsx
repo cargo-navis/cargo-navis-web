@@ -156,13 +156,26 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           </FlexLayout>
         ),
         enableSorting: false,
-        cell: (info) => (
-          <FlexLayout className="items-center py-2">
-            <Text className="text-green-500 dark:text-green-400" variant="text-m-medium">
-              {info.getValue()}€
-            </Text>
-          </FlexLayout>
-        ),
+        cell: (info) => {
+          const isAgencySubshipment = !!info.row.getParentRow()?.original.isAgencyUse;
+          const colorClass = isAgencySubshipment
+            ? 'text-red-500 dark:text-red-400'
+            : 'text-green-500 dark:text-green-400';
+
+          let value = info.getValue() + '€';
+
+          if (isAgencySubshipment) {
+            value = `-${value}`;
+          }
+
+          return (
+            <FlexLayout className="items-center py-2">
+              <Text className={colorClass} variant="text-m-medium">
+                {value}
+              </Text>
+            </FlexLayout>
+          );
+        },
       }),
       columnHelper.display({
         id: 'loadingDates',
@@ -412,5 +425,13 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
     });
   }, [shipments]);
 
-  return <Table columns={columns} data={shipmentsWithWarnings} getSubRows={getSubRows} onRowClick={handleRowClick} />;
+  return (
+    <Table
+      areRowsExpanded
+      columns={columns}
+      data={shipmentsWithWarnings}
+      getSubRows={getSubRows}
+      onRowClick={handleRowClick}
+    />
+  );
 }

@@ -1,25 +1,25 @@
 import { useMemo } from 'react';
 
-import { useVehicles } from '@/lib/hooks/api';
+import { useClients } from '@/lib/hooks/api';
 import { Box, FlexLayout, Icon, SelectOption, Text } from '@/ui';
 import { SingleSelectWithLabels } from '@/ui/hocs';
 
-interface VehicleFilterProps {
+interface ClientFilterProps {
   isDisabled?: boolean;
   value: string | undefined;
   onChange(value: string | undefined): void;
 }
 
-export const VehicleFilter = ({ value, onChange, isDisabled }: VehicleFilterProps) => {
-  const { data: vehicles, isLoading } = useVehicles();
+export const ClientFilter = ({ value, onChange, isDisabled }: ClientFilterProps) => {
+  const { data: clients, isLoading } = useClients();
 
   const options: SelectOption[] = useMemo(() => {
-    if (!vehicles) return [];
-    return vehicles.map((vehicle) => ({
-      value: vehicle.id,
-      label: vehicle.registration || vehicle.id,
+    if (!clients) return [];
+    return clients.map((client) => ({
+      value: client.id,
+      label: client.name,
     }));
-  }, [vehicles]);
+  }, [clients]);
 
   return (
     <Box className="w-[300px]">
@@ -29,9 +29,9 @@ export const VehicleFilter = ({ value, onChange, isDisabled }: VehicleFilterProp
         isSearchable
         label={
           <FlexLayout className="gap-1 items-center justify-between">
-            <Icon icon="TruckIcon" />
+            <Icon icon="BriefcaseIcon" />
             <Text color="text-color-3" variant="text-xxs-medium">
-              Vozilo
+              Klijent
             </Text>
           </FlexLayout>
         }

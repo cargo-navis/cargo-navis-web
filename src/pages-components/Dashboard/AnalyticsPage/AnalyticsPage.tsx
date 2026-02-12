@@ -2,10 +2,12 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { DriverAnalyticsItem, VehicleAnalyticsItem } from '@/lib/api';
+import { ClientAnalyticsItem, DriverAnalyticsItem, VehicleAnalyticsItem } from '@/lib/api';
 import { PositionEnum } from '@/lib/api/employees.d';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import {
+  useClient,
+  useClientsAnalytics,
   useCurrentUser,
   useDriversAnalytics,
   useEmployee,
@@ -16,6 +18,7 @@ import {
 } from '@/lib/hooks/api';
 import { FlexLayout, Heading, Text } from '@/ui';
 
+import { ClientFilter } from './ClientFilter';
 import { ContentLoader } from './ContentLoader';
 import { DateRangeFilter, DateRangeOption, getDateRange } from './DateRangeFilter';
 import { DriverFilter } from './DriverFilter';
@@ -33,6 +36,7 @@ export const AnalyticsPage = () => {
   const [selectedGranularity, setSelectedGranularity] = useState<GranularityOption>('month');
   const [selectedDriverId, setSelectedDriverId] = useState<string | undefined>(undefined);
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | undefined>(undefined);
+  const [selectedClientId, setSelectedClientId] = useState<string | undefined>(undefined);
 
   const isAuthorized = user?.positions?.some((p) => p === PositionEnum.Ceo || p === PositionEnum.Manager);
 
@@ -56,6 +60,13 @@ export const AnalyticsPage = () => {
     }
   };
 
+  const handleClientChange = (value: string | undefined) => {
+    setSelectedClientId(value);
+    if (value) {
+      setSelectedVehicleId(undefined);
+    }
+  };
+
   // Compute date range based on selection
   const { from, to } = useMemo(() => getDateRange(selectedDateRange), [selectedDateRange]);
 
@@ -66,6 +77,7 @@ export const AnalyticsPage = () => {
     granularity: selectedGranularity,
     driverId: selectedDriverId,
     vehicleId: selectedVehicleId,
+    clientId: selectedClientId,
   };
 
   const dateRangeParams = {
@@ -78,6 +90,7 @@ export const AnalyticsPage = () => {
   const { data: priceData, isLoading: isPriceLoading } = useShipmentPriceAnalytics(analyticsParams);
   const { data: driversData, isLoading: isDriversLoading } = useDriversAnalytics(dateRangeParams);
   const { data: vehiclesData, isLoading: isVehiclesLoading } = useVehiclesAnalytics(dateRangeParams);
+  const { data: clientsData, isLoading: isClientsLoading } = useClientsAnalytics(dateRangeParams);
 
   // Get top 5 drivers and vehicles
   const topDrivers = useMemo(() => {
@@ -90,7 +103,12 @@ export const AnalyticsPage = () => {
     return [...vehiclesData].sort((a, b) => b.shipmentCount - a.shipmentCount).slice(0, TOP_N);
   }, [vehiclesData]);
 
-  const isLoading = isCountLoading || isPriceLoading || isDriversLoading || isVehiclesLoading;
+  const topClients = useMemo(() => {
+    if (!clientsData) return [];
+    return [...clientsData].sort((a, b) => b.shipmentCount - a.shipmentCount).slice(0, TOP_N);
+  }, [clientsData]);
+
+  const isLoading = isCountLoading || isPriceLoading || isDriversLoading || isVehiclesLoading || isClientsLoading;
   const hasAllData = countData && priceData && driversData && vehiclesData;
 
   // Show loading state while checking authorization
@@ -115,8 +133,21 @@ export const AnalyticsPage = () => {
             <DateRangeFilter value={selectedDateRange} onChange={setSelectedDateRange} />
             <GranularityFilter value={selectedGranularity} onChange={setSelectedGranularity} />
             <FlexLayout className="gap-3 items-center">
-              <DriverFilter isDisabled={!!selectedVehicleId} value={selectedDriverId} onChange={handleDriverChange} />
-              <VehicleFilter isDisabled={!!selectedDriverId} value={selectedVehicleId} onChange={handleVehicleChange} />
+              <DriverFilter
+                isDisabled={!!selectedVehicleId || !!selectedClientId}
+                value={selectedDriverId}
+                onChange={handleDriverChange}
+              />
+              <VehicleFilter
+                isDisabled={!!selectedDriverId || !!selectedClientId}
+                value={selectedVehicleId}
+                onChange={handleVehicleChange}
+              />
+              <ClientFilter
+                isDisabled={!!selectedVehicleId || !!selectedDriverId}
+                value={selectedClientId}
+                onChange={handleClientChange}
+              />
             </FlexLayout>
           </FlexLayout>
         </FlexLayout>
@@ -131,6 +162,7 @@ export const AnalyticsPage = () => {
               <DriversTable data={topDrivers} />
               <VehiclesTable data={topVehicles} />
             </FlexLayout>
+            <ClientsTable data={topClients} />
           </FlexLayout>
         )}
       </FlexLayout>
@@ -186,7 +218,7 @@ const DriversTable = ({ data }: DriversTableProps) => {
           Br. naloga
         </Text>
         <Text className="basis-[200px] text-right" color="text-color-2" variant="text-s-medium">
-          Ukupna zarada
+          Ukupni prihod
         </Text>
       </FlexLayout>
 
@@ -248,7 +280,7 @@ const VehiclesTable = ({ data }: VehiclesTableProps) => {
           Br. naloga
         </Text>
         <Text className="basis-[200px] text-right" color="text-color-2" variant="text-s-medium">
-          Ukupna zarada
+          Ukupni prihod
         </Text>
       </FlexLayout>
 
@@ -256,6 +288,68 @@ const VehiclesTable = ({ data }: VehiclesTableProps) => {
       <FlexLayout className="flex-col">
         {data.map((vehicle, index) => (
           <VehicleRow index={index} key={vehicle.vehicleId} vehicle={vehicle} />
+        ))}
+      </FlexLayout>
+    </FlexLayout>
+  );
+};
+
+interface ClientRowProps {
+  client: ClientAnalyticsItem;
+  index: number;
+}
+
+const ClientRow = ({ client, index }: ClientRowProps) => {
+  const { data: clientData } = useClient(client.clientId);
+  const displayName = clientData?.name || '—';
+
+  return (
+    <FlexLayout
+      className={`w-full py-3 px-4 border-b border-b-black-alpha-10 dark:border-b-white-alpha-25 last:border-b-0 ${
+        index % 2 === 0 ? 'bg-transparent' : 'bg-black-alpha-05 dark:bg-white-alpha-05'
+      }`}
+    >
+      <Text className="flex-1" color="text-color-1" variant="text-s-medium">
+        {displayName}
+      </Text>
+      <Text className="basis-[140px] text-right" color="text-color-1" variant="text-s">
+        {client.shipmentCount}
+      </Text>
+      <Text className="basis-[200px] text-right" color="text-color-1" variant="text-s">
+        {client.totalPrice.toLocaleString('hr-HR', { style: 'currency', currency: 'EUR' })}
+      </Text>
+    </FlexLayout>
+  );
+};
+
+interface ClientsTableProps {
+  data: ClientAnalyticsItem[];
+}
+
+const ClientsTable = ({ data }: ClientsTableProps) => {
+  return (
+    <FlexLayout className="flex-1 flex-col gap-4 p-4 bg-white dark:bg-white-alpha-10 border border-dark-100 dark:border-light-900 shadow-md rounded-m">
+      <Text color="text-color-1" variant="text-xl-bold">
+        Top {TOP_N} klijenata
+      </Text>
+
+      {/* Table Header */}
+      <FlexLayout className="w-full py-3 px-4 bg-dark-200 dark:bg-white-alpha-10 rounded-t-s">
+        <Text className="flex-1" color="text-color-2" variant="text-s-medium">
+          Klijent
+        </Text>
+        <Text className="basis-[140px] text-right" color="text-color-2" variant="text-s-medium">
+          Br. naloga
+        </Text>
+        <Text className="basis-[200px] text-right" color="text-color-2" variant="text-s-medium">
+          Ukupni prihod
+        </Text>
+      </FlexLayout>
+
+      {/* Table Body */}
+      <FlexLayout className="flex-col">
+        {data.map((client, index) => (
+          <ClientRow client={client} index={index} key={client.clientId} />
         ))}
       </FlexLayout>
     </FlexLayout>

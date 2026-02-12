@@ -1,13 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 
 import {
+  GetAnalyticsParams,
+  getClientsAnalytics,
   getDriversAnalytics,
-  GetDriversAnalyticsParams,
   getShipmentAnalytics,
   GetShipmentAnalyticsParams,
   getShipmentPriceAnalytics,
   getVehiclesAnalytics,
-  GetVehiclesAnalyticsParams,
 } from '@/lib/api';
 
 export function useShipmentAnalytics(params: GetShipmentAnalyticsParams) {
@@ -24,16 +24,23 @@ export function useShipmentPriceAnalytics(params: GetShipmentAnalyticsParams) {
   });
 }
 
-export function useDriversAnalytics(params: GetDriversAnalyticsParams) {
+export function useDriversAnalytics(params: GetAnalyticsParams) {
   return useQuery({
     queryKey: ['drivers-analytics', params],
     queryFn: () => getDriversAnalytics(params),
   });
 }
 
-export function useVehiclesAnalytics(params: GetVehiclesAnalyticsParams) {
+export function useVehiclesAnalytics(params: GetAnalyticsParams) {
   return useQuery({
     queryKey: ['vehicles-analytics', params],
     queryFn: () => getVehiclesAnalytics(params),
+  });
+}
+
+export function useClientsAnalytics(params: GetAnalyticsParams) {
+  return useQuery({
+    queryKey: ['clients-analytics', params],
+    queryFn: () => getClientsAnalytics(params),
   });
 }
