@@ -13,11 +13,11 @@ import {
   useVehicle,
   useVehiclesAnalytics,
 } from '@/lib/hooks/api';
-import { FlexLayout, Heading, Text } from '@/ui';
+import { FlexLayout, Heading, Icon, Text } from '@/ui';
 
 import { ClientFilter } from './ClientFilter';
 import { ContentLoader } from './ContentLoader';
-import { DateRangeFilter, DateRangeOption, getDateRange } from './DateRangeFilter';
+import { DateRange, DateRangeFilterWithLabels, getInitialDateRange } from './DateRangeFilter';
 import { DriverFilter } from './DriverFilter';
 import { GranularityFilter, GranularityOption } from './GranularityFilter';
 import { TotalAnalyticsSection } from './TotalAnalyticsSection';
@@ -26,7 +26,7 @@ import { VehicleFilter } from './VehicleFilter';
 const TOP_N = 5;
 
 export const AnalyticsPage = () => {
-  const [selectedDateRange, setSelectedDateRange] = useState<DateRangeOption>('last-6-months');
+  const [dateRange, setDateRange] = useState<DateRange>(() => getInitialDateRange('last-6-months'));
   const [selectedGranularity, setSelectedGranularity] = useState<GranularityOption>('month');
   const [selectedDriverId, setSelectedDriverId] = useState<string | undefined>(undefined);
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | undefined>(undefined);
@@ -53,10 +53,8 @@ export const AnalyticsPage = () => {
     }
   };
 
-  // Compute date range based on selection
-  const { from, to } = useMemo(() => getDateRange(selectedDateRange), [selectedDateRange]);
+  const { from, to } = dateRange;
 
-  // Common date range parameters
   const analyticsParams = {
     from,
     to,
@@ -105,7 +103,18 @@ export const AnalyticsPage = () => {
             Analitika
           </Heading>
           <FlexLayout className="gap-3">
-            <DateRangeFilter value={selectedDateRange} onChange={setSelectedDateRange} />
+            <DateRangeFilterWithLabels
+              label={
+                <FlexLayout className="gap-1 items-center justify-between">
+                  <Icon icon="CalendarDateRangeIcon" />
+                  <Text color="text-color-3" variant="text-xxs-medium">
+                    Razdoblje
+                  </Text>
+                </FlexLayout>
+              }
+              value={dateRange}
+              onChange={setDateRange}
+            />
             <GranularityFilter value={selectedGranularity} onChange={setSelectedGranularity} />
             <FlexLayout className="gap-3 items-center">
               <DriverFilter
