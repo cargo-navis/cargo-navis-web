@@ -13,9 +13,20 @@ export interface DatepickerProps {
   onChange(date: string | null): void;
   isDisabled?: boolean;
   isClearable?: boolean;
+  placeholder?: string;
+  minDate?: string;
+  maxDate?: string;
 }
 
-export const Datepicker: React.FC<DatepickerProps> = ({ isDisabled = false, isClearable = true, value, onChange }) => {
+export const Datepicker: React.FC<DatepickerProps> = ({
+  placeholder,
+  isDisabled = false,
+  isClearable = true,
+  value,
+  onChange,
+  minDate,
+  maxDate,
+}) => {
   const isClearButtonVisible = isClearable && !!value;
 
   return (
@@ -29,6 +40,9 @@ export const Datepicker: React.FC<DatepickerProps> = ({ isDisabled = false, isCl
         disabled={isDisabled}
         highlightToday
         leftSection={<Icon icon="CalendarIcon" type="solid" />}
+        maxDate={maxDate ? getDateInLocalTimezone(maxDate) : undefined}
+        minDate={minDate ? getDateInLocalTimezone(minDate) : undefined}
+        placeholder={placeholder}
         popoverProps={popoverProps}
         rightSection={isClearButtonVisible ? <Icon icon="XMarkIcon" onClick={() => onChange('')} /> : null}
         value={value ? getDateInLocalTimezone(value) : null}
