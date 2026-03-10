@@ -1,1 +1,1 @@
-export { RootPage as default, getServerSideProps } from '@/pages-components/RootPage';
+export { RootPage as default } from '@/pages-components/RootPage';
