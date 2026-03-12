@@ -6,9 +6,9 @@ import type { CargoType } from './types.d';
 
 const cargoMetadataSchema = Yup.object().shape({
   type: Yup.string().oneOf<CargoType>(['standard', 'nonstandard']).required('Tip tereta je obavezan'),
-  width: getSingleDimensionSchema({ message: 'Širina je obavezna' }),
-  height: getSingleDimensionSchema({ message: 'Visina je obavezna' }),
-  length: getSingleDimensionSchema({ message: 'Duljina je obavezna' }),
+  width: getSingleDimensionSchema(),
+  height: getSingleDimensionSchema(),
+  length: getSingleDimensionSchema(),
   palleteType: Yup.mixed<PalleteType>().when('type', {
     is: 'standard',
     then: () => Yup.mixed<PalleteType>().oneOf(Object.values(PalleteType)).required('Vrsta palete je obavezna'),
@@ -38,7 +38,10 @@ const cargoSchema = Yup.object().shape({
   id: Yup.string().optional(),
   weight: Yup.number().typeError('Težina je obavezna').positive('Mora biti pozitivan broj').required(),
   description: Yup.string().optional(),
-  ldm: Yup.number().typeError('LDM je obavezan').positive('Mora biti pozitivan broj').required(),
+  ldm: Yup.number()
+    .transform((value, original) => (original === '' ? undefined : value))
+    .positive('Mora biti pozitivan broj')
+    .optional(),
   loadingAddress: getAddressSchema({ message: 'Adresa utovara je obavezna' }),
   loadingCompanyName: Yup.string().optional(),
   loadingDate: getRequiredDateSchema({ message: 'Datum utovara je obavezan' }),
@@ -76,12 +79,18 @@ export const shipmentSchema = Yup.object().shape({
   cargo: Yup.array().of(cargoSchema).required('Potreban je najmanje jedan teret'),
 });
 
-function getSingleDimensionSchema({ message }: { message: string }) {
-  return Yup.number().when('type', {
-    is: 'nonstandard',
-    then: () => Yup.number().typeError(message).positive('Mora biti pozitivan broj').required(message),
-    otherwise: () => Yup.number().strip(),
-  });
+function getSingleDimensionSchema() {
+  return Yup.number()
+    .transform((value, original) => (original === '' ? undefined : value))
+    .when('type', {
+      is: 'nonstandard',
+      then: () =>
+        Yup.number()
+          .transform((value, original) => (original === '' ? undefined : value))
+          .positive('Mora biti pozitivan broj')
+          .optional(),
+      otherwise: () => Yup.number().strip(),
+    });
 }
 
 export function getRequiredDateSchema({ message }: { message: string }) {
