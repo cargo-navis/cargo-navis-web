@@ -56,6 +56,7 @@ const MainContent = ({ employees }: { employees: Employee[] }) => {
           <>
             <Box className="max-w-xs mb-4">
               <TextInput
+                autoFocus
                 iconLeft="MagnifyingGlassIcon"
                 iconRight={search ? 'XMarkIcon' : undefined}
                 placeholder="Pretraži zaposlenike..."

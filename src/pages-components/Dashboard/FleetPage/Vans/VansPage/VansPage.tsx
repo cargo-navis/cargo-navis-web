@@ -1,11 +1,19 @@
+import Fuse from 'fuse.js';
+import { useMemo, useState } from 'react';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Vehicle } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVans } from '@/lib/hooks';
-import { Box, Button, DisplayIf, Divider, FlexLayout, Heading, Text } from '@/ui';
+import { Box, Button, DisplayIf, Divider, FlexLayout, Heading, Text, TextInput } from '@/ui';
 
 import { VansTable } from './VansTable';
+
+const FUSE_OPTIONS: ConstructorParameters<typeof Fuse<Vehicle>>[1] = {
+  keys: ['registration', 'brand', 'vehicleLoadType'],
+  threshold: 0.35,
+};
 
 export const VansPage = () => {
   const { vans, isLoading } = useVans();
@@ -15,6 +23,16 @@ export const VansPage = () => {
 
 const MainContent = ({ vans }: { vans: Vehicle[] }) => {
   const isEmpty = vans.length === 0;
+  const [search, setSearch] = useState('');
+
+  const fuse = useMemo(() => new Fuse(vans, FUSE_OPTIONS), [vans]);
+
+  const filteredVans = useMemo(() => {
+    const query = search.trim();
+    if (!query) return vans;
+
+    return fuse.search(query).map((result) => result.item);
+  }, [vans, search, fuse]);
 
   return (
     <Box>
@@ -43,7 +61,20 @@ const MainContent = ({ vans }: { vans: Vehicle[] }) => {
             title="🚐 Još nema zapisa o kombijima."
           />
         ) : (
-          <VansTable vans={vans} />
+          <>
+            <Box className="max-w-xs mb-4">
+              <TextInput
+                autoFocus
+                iconLeft="MagnifyingGlassIcon"
+                iconRight={search ? 'XMarkIcon' : undefined}
+                placeholder="Pretraži kombije..."
+                value={search}
+                onChange={setSearch}
+                onClickIconRight={() => setSearch('')}
+              />
+            </Box>
+            <VansTable vans={filteredVans} />
+          </>
         )}
       </Box>
     </Box>

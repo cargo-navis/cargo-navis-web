@@ -55,6 +55,7 @@ const MainContent = ({ clients }: { clients: Client[] }) => {
           <>
             <Box className="max-w-xs mb-4">
               <TextInput
+                autoFocus
                 iconLeft="MagnifyingGlassIcon"
                 iconRight={search ? 'XMarkIcon' : undefined}
                 placeholder="Pretraži klijente..."
