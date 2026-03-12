@@ -27,4 +27,5 @@ export interface SelectProps {
   menuPlacement?: MenuPlacement;
   isBrand?: boolean;
   onBlur?: () => void;
+  onInputChange?: (newValue: string, actionMeta: { action: string }) => void;
 }

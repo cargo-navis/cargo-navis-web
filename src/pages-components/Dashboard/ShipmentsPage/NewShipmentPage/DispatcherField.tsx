@@ -1,10 +1,12 @@
 import { FormSingleSelect } from '@/lib/components/form';
-import { useDispatchers } from '@/lib/hooks';
+import { useDispatchers, useFuseSelectFilter } from '@/lib/hooks';
 import { mapEmployeesToOptions } from '@/lib/utils/employees';
+
+const FUSE_OPTIONS = { keys: ['fullName'] };
 
 export const DispatcherField = () => {
   const { data: dispatchers = [] } = useDispatchers();
-  const dispatcherOptions = mapEmployeesToOptions(dispatchers);
+  const { data: filtered, onInputChange } = useFuseSelectFilter(dispatchers, FUSE_OPTIONS);
 
   return (
     <FormSingleSelect
@@ -12,9 +14,10 @@ export const DispatcherField = () => {
       isSearchable
       label="Disponent"
       name="dispatcherId"
-      options={dispatcherOptions}
+      options={mapEmployeesToOptions(filtered)}
       placeholder="Odaberi disponenta..."
       rules={{ required: true }}
+      onInputChange={onInputChange}
     />
   );
 };
