@@ -23,8 +23,8 @@ export const InvoiceItem: React.FC<InvoiceItemProps> = ({ invoiceStatus, onChang
           'cursor-pointer transition-opacity',
           isInvoiceNotSent || hoveredIndex === 0 ? 'opacity-100' : 'opacity-50'
         )}
-        isDisabled={isPending}
-        onClick={() => !isPending && onChange(InvoiceStatus.NotSent)}
+        isDisabled={isPending || isInvoiceNotSent}
+        onClick={() => !isPending && !isInvoiceNotSent && onChange(InvoiceStatus.NotSent)}
         onMouseEnter={() => !isPending && setHoveredIndex(0)}
         onMouseLeave={() => !isPending && setHoveredIndex(null)}
       >
@@ -36,8 +36,8 @@ export const InvoiceItem: React.FC<InvoiceItemProps> = ({ invoiceStatus, onChang
           'cursor-pointer transition-opacity',
           isInvoiceSent || hoveredIndex === 1 ? 'opacity-100' : 'opacity-50'
         )}
-        isDisabled={isPending}
-        onClick={() => !isPending && onChange(InvoiceStatus.Sent)}
+        isDisabled={isPending || isInvoiceSent}
+        onClick={() => !isPending && !isInvoiceSent && onChange(InvoiceStatus.Sent)}
         onMouseEnter={() => !isPending && setHoveredIndex(1)}
         onMouseLeave={() => !isPending && setHoveredIndex(null)}
       >
@@ -49,8 +49,8 @@ export const InvoiceItem: React.FC<InvoiceItemProps> = ({ invoiceStatus, onChang
           'cursor-pointer transition-opacity',
           isInvoicePaid || hoveredIndex === 2 ? 'opacity-100' : 'opacity-50'
         )}
-        isDisabled={isPending}
-        onClick={() => !isPending && onChange(InvoiceStatus.Paid)}
+        isDisabled={isPending || isInvoicePaid}
+        onClick={() => !isPending && !isInvoicePaid && onChange(InvoiceStatus.Paid)}
         onMouseEnter={() => !isPending && setHoveredIndex(2)}
         onMouseLeave={() => !isPending && setHoveredIndex(null)}
       >
