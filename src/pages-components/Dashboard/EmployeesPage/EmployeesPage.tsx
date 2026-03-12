@@ -1,11 +1,19 @@
+import Fuse from 'fuse.js';
+import { useMemo, useState } from 'react';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Employee } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useEmployees } from '@/lib/hooks/';
-import { Box, Button, DisplayIf, FlexLayout, Heading } from '@/ui';
+import { Box, Button, DisplayIf, FlexLayout, Heading, TextInput } from '@/ui';
 
 import { EmployeesTable } from './EmployeesTable';
+
+const FUSE_OPTIONS: ConstructorParameters<typeof Fuse<Employee>>[1] = {
+  keys: ['fullName', 'firstName', 'lastName', 'email', 'phoneNumber'],
+  threshold: 0.35,
+};
 
 export const EmployeesPage = () => {
   const { data, isLoading } = useEmployees();
@@ -15,6 +23,16 @@ export const EmployeesPage = () => {
 
 const MainContent = ({ employees }: { employees: Employee[] }) => {
   const isEmpty = employees.length === 0;
+  const [search, setSearch] = useState('');
+
+  const fuse = useMemo(() => new Fuse(employees, FUSE_OPTIONS), [employees]);
+
+  const filteredEmployees = useMemo(() => {
+    const query = search.trim();
+    if (!query) return employees;
+
+    return fuse.search(query).map((result) => result.item);
+  }, [employees, search, fuse]);
 
   return (
     <Box>
@@ -35,7 +53,19 @@ const MainContent = ({ employees }: { employees: Employee[] }) => {
             title="👥 Još nema zapisa o zaposlenicima"
           />
         ) : (
-          <EmployeesTable employees={employees} />
+          <>
+            <Box className="max-w-xs mb-4">
+              <TextInput
+                iconLeft="MagnifyingGlassIcon"
+                iconRight={search ? 'XMarkIcon' : undefined}
+                placeholder="Pretraži zaposlenike..."
+                value={search}
+                onChange={setSearch}
+                onClickIconRight={() => setSearch('')}
+              />
+            </Box>
+            <EmployeesTable employees={filteredEmployees} />
+          </>
         )}
       </Box>
     </Box>

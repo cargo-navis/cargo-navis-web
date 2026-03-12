@@ -1,10 +1,18 @@
+import Fuse from 'fuse.js';
+import { useMemo, useState } from 'react';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Contractor } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useContractors } from '@/lib/hooks';
 import { ContractorsTable } from '@/pages-components/Dashboard/ContractorsPage/ContractorsTable';
-import { Box, Button, DisplayIf, FlexLayout, Heading } from '@/ui';
+import { Box, Button, DisplayIf, FlexLayout, Heading, TextInput } from '@/ui';
+
+const FUSE_OPTIONS: ConstructorParameters<typeof Fuse<Contractor>>[1] = {
+  keys: ['name', 'address.placeName', 'address.streetName'],
+  threshold: 0.35,
+};
 
 export const ContractorsPage = () => {
   const { data, isLoading } = useContractors();
@@ -14,6 +22,16 @@ export const ContractorsPage = () => {
 
 const MainContent = ({ contractors }: { contractors: Contractor[] }) => {
   const isEmpty = contractors.length === 0;
+  const [search, setSearch] = useState('');
+
+  const fuse = useMemo(() => new Fuse(contractors, FUSE_OPTIONS), [contractors]);
+
+  const filteredContractors = useMemo(() => {
+    const query = search.trim();
+    if (!query) return contractors;
+
+    return fuse.search(query).map((result) => result.item);
+  }, [contractors, search, fuse]);
 
   return (
     <Box>
@@ -34,7 +52,19 @@ const MainContent = ({ contractors }: { contractors: Contractor[] }) => {
             title="📑 Još nema zapisa o kontraktorima."
           />
         ) : (
-          <ContractorsTable contractors={contractors} />
+          <>
+            <Box className="max-w-xs mb-4">
+              <TextInput
+                iconLeft="MagnifyingGlassIcon"
+                iconRight={search ? 'XMarkIcon' : undefined}
+                placeholder="Pretraži kontraktore..."
+                value={search}
+                onChange={setSearch}
+                onClickIconRight={() => setSearch('')}
+              />
+            </Box>
+            <ContractorsTable contractors={filteredContractors} />
+          </>
         )}
       </Box>
     </Box>
