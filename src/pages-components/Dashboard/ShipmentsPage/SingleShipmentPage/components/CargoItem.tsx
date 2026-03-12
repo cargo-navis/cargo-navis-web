@@ -107,7 +107,10 @@ const NonstandardContent = ({ cargo }: { cargo: CargoWithMetadata }) => {
   const width = cargo.metadata?.width;
   const height = cargo.metadata?.height;
 
-  const dimensionsString = [length, width, height].map((d) => d + 'm').join(' x ');
+  const hasDimensions = [length, width, height].some((d) => !!d);
+  const dimensionsString = hasDimensions
+    ? [length, width, height].map((d) => (d != null ? d + 'm' : '—')).join(' x ')
+    : '—';
 
   return (
     <FlexLayout className="justify-between gap-4">

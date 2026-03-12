@@ -257,7 +257,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (props) => {
           const { cargo } = props.row.original;
 
-          const ldmTotal = cargo.reduce((acc, c) => (acc += c.ldm), 0);
+          const ldmTotal = cargo.reduce((acc, c) => (acc += c.ldm || 0), 0);
           const weightTotal = cargo.reduce((acc, c) => (acc += c.weight), 0);
 
           return (
