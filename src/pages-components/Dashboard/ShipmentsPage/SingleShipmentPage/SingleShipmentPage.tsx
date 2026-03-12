@@ -122,6 +122,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                 </FlexLayout>
                 <InvoiceItem
                   invoiceStatus={shipment.invoiceStatus}
+                  invoiceStatusUpdatedAt={shipment.invoiceStatusUpdatedAt}
                   isPending={isPending}
                   onChange={handleInvoiceChange}
                 />
