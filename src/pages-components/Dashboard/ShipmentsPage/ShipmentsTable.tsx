@@ -41,16 +41,6 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const hasSubshipments = (shipment.childShipments?.length ?? 0) > 0;
           const depth = row.depth;
           const isExpanded = row.getIsExpanded();
-          const isSubshipment = depth !== 0;
-          const isAgencyUse = shipment.isAgencyUse;
-          const driver = employees.find((e) => e.id === shipment?.driverId);
-          const hasMessageChannel = !!driver?.messageChannel;
-          const isShipmentSentToDriver = shipment.sentToDriver;
-
-          const canRenderWarning = !isSubshipment && !isAgencyUse;
-
-          const isNotSentToDriver = canRenderWarning && !isShipmentSentToDriver && hasMessageChannel;
-
           return (
             <FlexLayout className="items-center py-2 text-dark-700 dark:text-light-100 group-hover/row:text-teal-500 gap-2">
               {depth > 0 ? (
@@ -321,6 +311,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
 
           const isVehicleMissing = !vehicle;
           const isDriverMissing = !driver;
+          const hasMessageChannel = !!driver?.messageChannel;
+          const isNotSentToDriver = !info.row.original.sentToDriver && hasMessageChannel;
 
           const vehicleName = vehicle ? renderVehicleName(vehicle) : 'Vozilo nedodijeljeno';
           const driverName = driver?.fullName ?? 'Vozač nedodijeljen';
@@ -343,17 +335,46 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                   {vehicleName}
                 </Text>
               </FlexLayout>
-              <FlexLayout className="items-start gap-1">
-                <Icon className="mt-1" color={isDriverMissing ? 'text-red-500' : undefined} icon="UserIcon" size="s" />
-                <Text
-                  className="whitespace-nowrap overflow-hidden text-ellipsis"
-                  color={isDriverMissing ? 'text-red-500' : 'text-color-2'}
-                  title={driverName}
-                  variant="text-xs"
+              {isNotSentToDriver ? (
+                <Tooltip
+                  content={
+                    <Box className="px-2 whitespace-nowrap">
+                      <Text color="text-light-50" variant="text-xs">
+                        Nalog nije poslan vozaču
+                      </Text>
+                    </Box>
+                  }
                 >
-                  {driverName}
-                </Text>
-              </FlexLayout>
+                  <FlexLayout className="items-start gap-1">
+                    <Icon className="mt-1" color="text-orange-500" icon="ExclamationTriangleIcon" size="s" />
+                    <Text
+                      className="whitespace-nowrap overflow-hidden text-ellipsis"
+                      color="text-orange-500"
+                      title={driverName}
+                      variant="text-xs"
+                    >
+                      {driverName}
+                    </Text>
+                  </FlexLayout>
+                </Tooltip>
+              ) : (
+                <FlexLayout className="items-start gap-1">
+                  <Icon
+                    className="mt-1"
+                    color={isDriverMissing ? 'text-red-500' : undefined}
+                    icon="UserIcon"
+                    size="s"
+                  />
+                  <Text
+                    className="whitespace-nowrap overflow-hidden text-ellipsis"
+                    color={isDriverMissing ? 'text-red-500' : 'text-color-2'}
+                    title={driverName}
+                    variant="text-xs"
+                  >
+                    {driverName}
+                  </Text>
+                </FlexLayout>
+              )}
             </FlexLayout>
           );
         },
