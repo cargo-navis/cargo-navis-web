@@ -61,6 +61,7 @@ export const SingleSelect = forwardRef<any, SingleSelectProps>((props, ref) => {
     onAddOption,
     menuPlacement = 'auto',
     isBrand,
+    onInputChange,
   } = props;
 
   const instanceId = useId();
@@ -107,6 +108,7 @@ export const SingleSelect = forwardRef<any, SingleSelectProps>((props, ref) => {
         onAddOption(newOption);
         onChange(val);
       }}
+      onInputChange={onInputChange}
       {...{ isBrand }}
     />
   );

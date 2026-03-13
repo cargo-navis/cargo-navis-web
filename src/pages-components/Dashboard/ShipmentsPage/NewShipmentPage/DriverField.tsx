@@ -2,15 +2,17 @@ import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { FormCheckbox, FormSingleSelect } from '@/lib/components/form';
-import { useDrivers } from '@/lib/hooks';
+import { useDrivers, useFuseSelectFilter } from '@/lib/hooks';
 import { mapEmployeesToOptions } from '@/lib/utils/employees';
 import { Box, DisplayIf, FlexLayout } from '@/ui';
 
 import { useAgencyFieldReset } from './hooks';
 
+const FUSE_OPTIONS = { keys: ['fullName'] };
+
 export const DriverField = () => {
   const { data: drivers = [] } = useDrivers();
-  const driverOptions = mapEmployeesToOptions(drivers);
+  const { data: filtered, onInputChange } = useFuseSelectFilter(drivers, FUSE_OPTIONS);
 
   const isAgencyUse = useAgencyFieldReset('driverId');
 
@@ -24,7 +26,6 @@ export const DriverField = () => {
     resetField('sentToDriver');
   }, [driverId]);
 
-  // Hide the component completely when isAgencyUse is true
   if (isAgencyUse) {
     return null;
   }
@@ -36,8 +37,9 @@ export const DriverField = () => {
         isSearchable
         label="Vozač"
         name="driverId"
-        options={driverOptions}
+        options={mapEmployeesToOptions(filtered)}
         placeholder="Odaberi vozača..."
+        onInputChange={onInputChange}
       />
       <DisplayIf condition={isCheckboxDisplayed}>
         <Box className="mt-2">

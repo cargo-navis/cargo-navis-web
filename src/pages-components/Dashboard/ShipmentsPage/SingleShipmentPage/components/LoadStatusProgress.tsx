@@ -37,8 +37,8 @@ export const LoadStatusProgress: React.FC<LoadStatusProgressProps> = ({
             <FlexLayout className="items-center" key={status}>
               <Box
                 className={clsx('cursor-pointer transition-opacity', opacity)}
-                isDisabled={isPending}
-                onClick={() => !isPending && onStatusChange(status)}
+                isDisabled={isPending || isCurrent}
+                onClick={() => !isPending && !isCurrent && onStatusChange(status)}
                 onMouseEnter={() => !isPending && setHoveredStatus(status)}
                 onMouseLeave={() => !isPending && setHoveredStatus(null)}
               >

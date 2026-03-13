@@ -1,12 +1,17 @@
+import { useMemo } from 'react';
+
 import type { Tenant } from '@/lib/api/tenant.d';
 import { FormSingleSelect } from '@/lib/components/form';
-import { useContractors } from '@/lib/hooks';
+import { useContractors, useFuseSelectFilter } from '@/lib/hooks';
+
 function mapContractorsToOptions(contractors: { name: string; id: string }[]) {
   return contractors.map((contractor) => ({
     value: contractor?.id,
     label: contractor?.name,
   }));
 }
+
+const FUSE_OPTIONS = { keys: ['name'] };
 
 interface ContractorFieldProps {
   name: string;
@@ -15,15 +20,17 @@ interface ContractorFieldProps {
 
 export const ContractorField: React.FC<ContractorFieldProps> = ({ name, tenant }) => {
   const { data: contractors = [] } = useContractors();
-  const contractorOptions = mapContractorsToOptions([tenant, ...contractors]);
+  const allContractors = useMemo(() => [tenant, ...contractors], [tenant, contractors]);
+  const { data: filtered, onInputChange } = useFuseSelectFilter(allContractors, FUSE_OPTIONS);
 
   return (
     <FormSingleSelect
       isSearchable
       label="Prijevoznik"
       name={name}
-      options={contractorOptions}
+      options={mapContractorsToOptions(filtered)}
       placeholder="Odaberi prijevoznika..."
+      onInputChange={onInputChange}
     />
   );
 };

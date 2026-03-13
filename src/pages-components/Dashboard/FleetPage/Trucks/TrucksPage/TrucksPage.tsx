@@ -1,11 +1,19 @@
+import Fuse from 'fuse.js';
+import { useMemo, useState } from 'react';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Vehicle } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useTrucks } from '@/lib/hooks';
-import { Box, Button, DisplayIf, Divider, FlexLayout, Heading, Text } from '@/ui';
+import { Box, Button, DisplayIf, Divider, FlexLayout, Heading, Text, TextInput } from '@/ui';
 
 import { TrucksTable } from './TrucksTable';
+
+const FUSE_OPTIONS: ConstructorParameters<typeof Fuse<Vehicle>>[1] = {
+  keys: ['registration', 'brand', 'vehicleLoadType'],
+  threshold: 0.35,
+};
 
 export const TrucksPage = () => {
   const { trucks, isLoading } = useTrucks();
@@ -15,6 +23,16 @@ export const TrucksPage = () => {
 
 const MainContent = ({ trucks }: { trucks: Vehicle[] }) => {
   const isEmpty = trucks.length === 0;
+  const [search, setSearch] = useState('');
+
+  const fuse = useMemo(() => new Fuse(trucks, FUSE_OPTIONS), [trucks]);
+
+  const filteredTrucks = useMemo(() => {
+    const query = search.trim();
+    if (!query) return trucks;
+
+    return fuse.search(query).map((result) => result.item);
+  }, [trucks, search, fuse]);
 
   return (
     <Box>
@@ -43,7 +61,20 @@ const MainContent = ({ trucks }: { trucks: Vehicle[] }) => {
             title="🚛 Još nema zapisa o tegljačima."
           />
         ) : (
-          <TrucksTable trucks={trucks} />
+          <>
+            <Box className="max-w-xs mb-4">
+              <TextInput
+                autoFocus
+                iconLeft="MagnifyingGlassIcon"
+                iconRight={search ? 'XMarkIcon' : undefined}
+                placeholder="Pretraži tegljače..."
+                value={search}
+                onChange={setSearch}
+                onClickIconRight={() => setSearch('')}
+              />
+            </Box>
+            <TrucksTable trucks={filteredTrucks} />
+          </>
         )}
       </Box>
     </Box>

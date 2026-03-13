@@ -9,14 +9,15 @@ import { InvoiceStatus } from '@/lib/api/shipments';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
+import { getShipmentOverdueInfo } from '@/lib/utils/shipments';
 import { renderVehicleName } from '@/lib/utils/vehicles';
 import { Box, DisplayIf, Divider, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
 
 import { AddressesList } from './AddressesList';
 import { invoiceStatusConfig, loadStatusConfig } from './const';
 import { SortFieldEnum, useShipmentsSortLocalStorage } from './hooks';
+import { OverdueIndicator } from './OverdueIndicator';
 import { ReferenceNumberTooltip } from './ReferenceNumberTooltip';
-import { WarningTooltip } from './WarningTooltip';
 
 const columnHelper = createColumnHelper<Shipment>();
 
@@ -41,20 +42,6 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const hasSubshipments = (shipment.childShipments?.length ?? 0) > 0;
           const depth = row.depth;
           const isExpanded = row.getIsExpanded();
-          const isSubshipment = depth !== 0;
-          const isTenantTransporter = shipment.transportContractorId === tenant?.id;
-          const isAgencyUse = shipment.isAgencyUse;
-          const driver = employees.find((e) => e.id === shipment?.driverId);
-          const hasMessageChannel = !!driver?.messageChannel;
-          const isShipmentSentToDriver = shipment.sentToDriver;
-
-          const canRenderWarning = !isSubshipment && !isAgencyUse;
-
-          // Check for missing vehicle
-          const isVehicleMissing = canRenderWarning && !shipment.vehicleId && isTenantTransporter;
-          const isDriverMissing = canRenderWarning && !shipment.driverId && isTenantTransporter;
-          const isNotSentToDriver = canRenderWarning && !isShipmentSentToDriver && hasMessageChannel;
-
           return (
             <FlexLayout className="items-center py-2 text-dark-700 dark:text-light-100 group-hover/row:text-teal-500 gap-2">
               {depth > 0 ? (
@@ -86,11 +73,6 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                       <Text variant="text-xs-medium">{shipment.orderNumber}</Text>
                       <ReferenceNumberTooltip cargoReference={shipment.cargoReference} />
                     </FlexLayout>
-                    <WarningTooltip
-                      isDriverMissing={isDriverMissing}
-                      isNotSentToDriver={isNotSentToDriver}
-                      isVehicleMissing={isVehicleMissing}
-                    />
                   </FlexLayout>
                 </FlexLayout>
               )}
@@ -102,18 +84,30 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: 'Klijent',
         enableSorting: false,
         cell: (props) => {
-          const { clientId, transportContractorId, documents } = props.row.original;
+          const shipment = props.row.original;
+          const { clientId, transportContractorId, documents } = shipment;
           const client = clients.find((c) => c.id === clientId);
           const contractor = contractors.find((c) => c.id === transportContractorId) || tenant;
 
           const hasDocuments = !!documents?.length;
 
+          const { isOverdue } = getShipmentOverdueInfo({
+            invoiceStatus: shipment.invoiceStatus,
+            invoiceStatusUpdatedAt: shipment.invoiceStatusUpdatedAt,
+            termsOfPayment: client?.termsOfPayment,
+          });
+
           return (
             <FlexLayout className="flex-col pr-4 py-2 max-w-[15vw] whitespace-nowrap">
               <FlexLayout className="gap-4 items-center">
-                <Text className="overflow-hidden text-ellipsis" color="text-color-1" variant="text-m-bold">
+                <Text
+                  className={clsx('overflow-hidden text-ellipsis', isOverdue && 'text-orange-500 dark:text-orange-400')}
+                  color={isOverdue ? undefined : 'text-color-1'}
+                  variant="text-m-bold"
+                >
                   {client ? client.name : '—'}
                 </Text>
+                <OverdueIndicator shipment={shipment} variant="compact" />
                 <FlexLayout className="self-baseline mt-1">
                   <DisplayIf condition={hasDocuments}>
                     <Tooltip
@@ -257,7 +251,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (props) => {
           const { cargo } = props.row.original;
 
-          const ldmTotal = cargo.reduce((acc, c) => (acc += c.ldm), 0);
+          const ldmTotal = cargo.reduce((acc, c) => (acc += c.ldm || 0), 0);
           const weightTotal = cargo.reduce((acc, c) => (acc += c.weight), 0);
 
           return (
@@ -319,38 +313,84 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: 'Vozilo i vozač',
         enableSorting: false,
         cell: (info) => {
-          const { vehicleId, driverId } = info.row.original;
+          const { vehicleId, driverId, isAgencyUse } = info.row.original;
+
+          if (isAgencyUse) return null;
 
           const vehicle = vehicles.find((v) => v.id === vehicleId);
           const driver = employees.find((e) => e.id === driverId);
 
-          const vehicleName = vehicle ? renderVehicleName(vehicle) : '—';
-          const driverName = driver?.fullName ?? '—';
+          const isVehicleMissing = !vehicle;
+          const isDriverMissing = !driver;
+          const hasMessageChannel = !!driver?.messageChannel;
+          const isNotSentToDriver = !info.row.original.sentToDriver && hasMessageChannel;
+
+          const vehicleName = vehicle ? renderVehicleName(vehicle) : 'Vozilo nedodijeljeno';
+          const driverName = driver?.fullName ?? 'Vozač nedodijeljen';
 
           return (
             <FlexLayout className="flex-col gap-2 py-2 w-[150px]">
               <FlexLayout className="items-start gap-1">
-                <Icon className="mt-1" icon="TruckIcon" size="s" />
+                <Icon
+                  className="mt-1"
+                  color={isVehicleMissing ? 'text-red-500' : undefined}
+                  icon="TruckIcon"
+                  size="s"
+                />
                 <Text
                   className="whitespace-nowrap overflow-hidden text-ellipsis"
-                  color="text-color-2"
+                  color={isVehicleMissing ? 'text-red-500' : 'text-color-2'}
                   title={vehicleName}
                   variant="text-xs"
                 >
                   {vehicleName}
                 </Text>
               </FlexLayout>
-              <FlexLayout className="items-start gap-1">
-                <Icon className="mt-1" icon="UserIcon" size="s" />
-                <Text
-                  className="whitespace-nowrap overflow-hidden text-ellipsis"
-                  color="text-color-2"
-                  title={driverName}
-                  variant="text-xs"
+              {isNotSentToDriver ? (
+                <Tooltip
+                  content={
+                    <Box className="px-2 whitespace-nowrap">
+                      <Text color="text-light-50" variant="text-xs">
+                        Nalog nije poslan vozaču
+                      </Text>
+                    </Box>
+                  }
                 >
-                  {driverName}
-                </Text>
-              </FlexLayout>
+                  <FlexLayout className="items-start gap-1">
+                    <Icon
+                      className="mt-1"
+                      color="text-orange-500 dark:text-orange-400"
+                      icon="ExclamationTriangleIcon"
+                      size="s"
+                    />
+                    <Text
+                      className="whitespace-nowrap overflow-hidden text-ellipsis"
+                      color="text-orange-500 dark:text-orange-400"
+                      title={driverName}
+                      variant="text-xs"
+                    >
+                      {driverName}
+                    </Text>
+                  </FlexLayout>
+                </Tooltip>
+              ) : (
+                <FlexLayout className="items-start gap-1">
+                  <Icon
+                    className="mt-1"
+                    color={isDriverMissing ? 'text-red-500' : undefined}
+                    icon="UserIcon"
+                    size="s"
+                  />
+                  <Text
+                    className="whitespace-nowrap overflow-hidden text-ellipsis"
+                    color={isDriverMissing ? 'text-red-500' : 'text-color-2'}
+                    title={driverName}
+                    variant="text-xs"
+                  >
+                    {driverName}
+                  </Text>
+                </FlexLayout>
+              )}
             </FlexLayout>
           );
         },
