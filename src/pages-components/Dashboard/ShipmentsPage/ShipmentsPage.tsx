@@ -1,4 +1,5 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { useHasMounted } from '@/lib/hooks/dom';
 import { Box, Button, DisplayIf, FlexLayout, Heading } from '@/ui';
 
@@ -37,7 +38,20 @@ export const ShipmentsPage = () => {
 
 const ShipmentPageContent = () => {
   const { pageSize, setPage, setPageSize } = usePaginationQueryParamState();
-  const { data: response, isLoading } = useShipmentsPageData();
+  const { data: response, isLoading: isShipmentsLoading } = useShipmentsPageData();
+  const { isLoading: isClientsLoading } = useClients();
+  const { isLoading: isContractorsLoading } = useContractors();
+  const { isLoading: isTenantLoading } = useCurrentTenant();
+  const { isLoading: isVehiclesLoading } = useVehicles();
+  const { isLoading: isEmployeesLoading } = useEmployees();
+
+  const isLoading =
+    isShipmentsLoading ||
+    isClientsLoading ||
+    isContractorsLoading ||
+    isTenantLoading ||
+    isVehiclesLoading ||
+    isEmployeesLoading;
 
   const shipments = response?.data ?? [];
   const paginationInfo = response
