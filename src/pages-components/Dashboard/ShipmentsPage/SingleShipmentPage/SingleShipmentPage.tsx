@@ -12,6 +12,7 @@ import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, DisplayIf, Divider, FlexLayout, Pill, Text } from '@/ui';
 
 import { invoiceStatusConfig } from '../const';
+import { OverdueIndicator } from '../OverdueIndicator';
 import { BasicInfo } from './components/BasicInfo';
 import { CargoItem } from './components/CargoItem';
 import { ContentLoader } from './components/ContentLoader';
@@ -119,6 +120,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                   <DisplayIf condition={shouldRenderAgencyPill}>
                     <Pill size="s" text="Agencijski Nalog" variant="warning" />
                   </DisplayIf>
+                  <OverdueIndicator shipment={shipment} />
                 </FlexLayout>
                 <InvoiceItem
                   invoiceStatus={shipment.invoiceStatus}
