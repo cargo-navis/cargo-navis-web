@@ -9,6 +9,7 @@ import { InvoiceStatus } from '@/lib/api/shipments';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
+import { getShipmentOverdueInfo } from '@/lib/utils/shipments';
 import { renderVehicleName } from '@/lib/utils/vehicles';
 import { Box, DisplayIf, Divider, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
 
@@ -90,10 +91,20 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
 
           const hasDocuments = !!documents?.length;
 
+          const { isOverdue } = getShipmentOverdueInfo({
+            invoiceStatus: shipment.invoiceStatus,
+            invoiceStatusUpdatedAt: shipment.invoiceStatusUpdatedAt,
+            termsOfPayment: client?.termsOfPayment,
+          });
+
           return (
             <FlexLayout className="flex-col pr-4 py-2 max-w-[15vw] whitespace-nowrap">
               <FlexLayout className="gap-4 items-center">
-                <Text className="overflow-hidden text-ellipsis" color="text-color-1" variant="text-m-bold">
+                <Text
+                  className={clsx('overflow-hidden text-ellipsis', isOverdue && 'text-orange-500 dark:text-orange-400')}
+                  color={isOverdue ? undefined : 'text-color-1'}
+                  variant="text-m-bold"
+                >
                   {client ? client.name : '—'}
                 </Text>
                 <OverdueIndicator shipment={shipment} variant="compact" />
@@ -346,10 +357,15 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                   }
                 >
                   <FlexLayout className="items-start gap-1">
-                    <Icon className="mt-1" color="text-orange-500" icon="ExclamationTriangleIcon" size="s" />
+                    <Icon
+                      className="mt-1"
+                      color="text-orange-500 dark:text-orange-400"
+                      icon="ExclamationTriangleIcon"
+                      size="s"
+                    />
                     <Text
                       className="whitespace-nowrap overflow-hidden text-ellipsis"
-                      color="text-orange-500"
+                      color="text-orange-500 dark:text-orange-400"
                       title={driverName}
                       variant="text-xs"
                     >

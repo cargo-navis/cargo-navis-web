@@ -34,7 +34,7 @@ export const SendToDriver = ({ shipment }: { shipment: Shipment }) => {
 
   return (
     <FlexLayout className="gap-3 items-center mb-2">
-      <FlexLayout className="gap-1 items-center text-orange-500">
+      <FlexLayout className="gap-1 items-center text-orange-500 dark:text-orange-400">
         <Icon icon="ExclamationTriangleIcon" size="m" />
         <Text as="small" variant="text-s">
           Nalog nije poslan vozaču.
