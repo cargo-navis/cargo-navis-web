@@ -15,6 +15,7 @@ import { Box, DisplayIf, Divider, FlexLayout, Icon, Pill, Table, Text, Tooltip }
 import { AddressesList } from './AddressesList';
 import { invoiceStatusConfig, loadStatusConfig } from './const';
 import { SortFieldEnum, useShipmentsSortLocalStorage } from './hooks';
+import { OverdueIndicator } from './OverdueIndicator';
 import { ReferenceNumberTooltip } from './ReferenceNumberTooltip';
 import { WarningTooltip } from './WarningTooltip';
 
@@ -102,7 +103,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: 'Klijent',
         enableSorting: false,
         cell: (props) => {
-          const { clientId, transportContractorId, documents } = props.row.original;
+          const shipment = props.row.original;
+          const { clientId, transportContractorId, documents } = shipment;
           const client = clients.find((c) => c.id === clientId);
           const contractor = contractors.find((c) => c.id === transportContractorId) || tenant;
 
@@ -114,6 +116,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                 <Text className="overflow-hidden text-ellipsis" color="text-color-1" variant="text-m-bold">
                   {client ? client.name : '—'}
                 </Text>
+                <OverdueIndicator shipment={shipment} variant="compact" />
                 <FlexLayout className="self-baseline mt-1">
                   <DisplayIf condition={hasDocuments}>
                     <Tooltip
