@@ -27,7 +27,7 @@ export const OverdueIndicator: React.FC<OverdueIndicatorProps> = ({ shipment, va
       content={
         <Box className="px-2">
           <Text as="p" color="text-light-50" variant="text-xs">
-            Nalog dospio prije {daysOverdue} {daysOverdue === 1 ? 'dan' : 'dana'} (
+            Valuta istekla prije {daysOverdue} {daysOverdue === 1 ? 'dan' : 'dana'} (
             {dueDate ? getDateTimeInLocalTimezone(dueDate.toISOString(), 'DD.MM.YYYY') : ''}).
           </Text>
         </Box>
