@@ -11,6 +11,7 @@ export interface Shipment {
   clientId?: string;
   isAgencyUse?: boolean;
   invoiceStatus: InvoiceStatus;
+  invoiceStatusUpdatedAt: string | null;
   transportContractorId?: string;
   price: number;
   cargo: Cargo[];

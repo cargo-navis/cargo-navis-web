@@ -86,9 +86,9 @@ const mapCargoItems = async (cargoItems?: any[], isEdit = false): Promise<Cargo[
           type: cargoType,
           palleteType: c.metadata?.palleteType || (cargoType === 'standard' ? PalleteType.Euro : undefined),
           palleteAmount,
-          width: c.metadata?.width || 0,
-          height: c.metadata?.height || 0,
-          length: c.metadata?.length || 0,
+          width: c.metadata?.width ?? undefined,
+          height: c.metadata?.height ?? undefined,
+          length: c.metadata?.length ?? undefined,
           hasKolete,
         },
         loadingAddress: {

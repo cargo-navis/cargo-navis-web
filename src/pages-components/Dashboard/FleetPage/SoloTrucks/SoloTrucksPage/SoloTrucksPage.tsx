@@ -1,11 +1,19 @@
+import Fuse from 'fuse.js';
+import { useMemo, useState } from 'react';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Vehicle } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useSolos } from '@/lib/hooks';
-import { Box, Button, DisplayIf, Divider, FlexLayout, Heading, Text } from '@/ui';
+import { Box, Button, DisplayIf, Divider, FlexLayout, Heading, Text, TextInput } from '@/ui';
 
 import { SoloTrucksTable } from './SoloTrucksTable';
+
+const FUSE_OPTIONS: ConstructorParameters<typeof Fuse<Vehicle>>[1] = {
+  keys: ['registration', 'brand', 'vehicleLoadType'],
+  threshold: 0.35,
+};
 
 export const SoloTrucksPage = () => {
   const { solos, isLoading } = useSolos();
@@ -15,6 +23,16 @@ export const SoloTrucksPage = () => {
 
 const MainContent = ({ solos }: { solos: Vehicle[] }) => {
   const isEmpty = solos.length === 0;
+  const [search, setSearch] = useState('');
+
+  const fuse = useMemo(() => new Fuse(solos, FUSE_OPTIONS), [solos]);
+
+  const filteredSolos = useMemo(() => {
+    const query = search.trim();
+    if (!query) return solos;
+
+    return fuse.search(query).map((result) => result.item);
+  }, [solos, search, fuse]);
 
   return (
     <Box>
@@ -43,7 +61,20 @@ const MainContent = ({ solos }: { solos: Vehicle[] }) => {
             title="🚚 Još nema zapisa o solo kamionima."
           />
         ) : (
-          <SoloTrucksTable solos={solos} />
+          <>
+            <Box className="max-w-xs mb-4">
+              <TextInput
+                autoFocus
+                iconLeft="MagnifyingGlassIcon"
+                iconRight={search ? 'XMarkIcon' : undefined}
+                placeholder="Pretraži solo kamione..."
+                value={search}
+                onChange={setSearch}
+                onClickIconRight={() => setSearch('')}
+              />
+            </Box>
+            <SoloTrucksTable solos={filteredSolos} />
+          </>
         )}
       </Box>
     </Box>

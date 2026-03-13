@@ -45,11 +45,15 @@ export function useEmployee(id: string) {
   });
 }
 
+function sortByFullName(employees: Employee[]) {
+  return [...employees].sort((a, b) => a.fullName.localeCompare(b.fullName));
+}
+
 export function useDrivers<TData = Employee[]>(args?: UseEmployeesArgs<TData>) {
   return useEmployees<TData>({
     ...args,
     select: (employees) => {
-      const drivers = employees.filter((employee) => employee.positions.includes(PositionEnum.Driver));
+      const drivers = sortByFullName(employees.filter((employee) => employee.positions.includes(PositionEnum.Driver)));
       return args?.select ? args.select(drivers) : (drivers as unknown as TData);
     },
   });
@@ -59,8 +63,10 @@ export function useDispatchers<TData = Employee[]>(args?: UseEmployeesArgs<TData
   return useEmployees<TData>({
     ...args,
     select: (employees) => {
-      const drivers = employees.filter((employee) => employee.positions.includes(PositionEnum.Dispatcher));
-      return args?.select ? args.select(drivers) : (drivers as unknown as TData);
+      const dispatchers = sortByFullName(
+        employees.filter((employee) => employee.positions.includes(PositionEnum.Dispatcher))
+      );
+      return args?.select ? args.select(dispatchers) : (dispatchers as unknown as TData);
     },
   });
 }
