@@ -17,7 +17,6 @@ import { invoiceStatusConfig, loadStatusConfig } from './const';
 import { SortFieldEnum, useShipmentsSortLocalStorage } from './hooks';
 import { OverdueIndicator } from './OverdueIndicator';
 import { ReferenceNumberTooltip } from './ReferenceNumberTooltip';
-import { WarningTooltip } from './WarningTooltip';
 
 const columnHelper = createColumnHelper<Shipment>();
 
@@ -43,7 +42,6 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const depth = row.depth;
           const isExpanded = row.getIsExpanded();
           const isSubshipment = depth !== 0;
-          const isTenantTransporter = shipment.transportContractorId === tenant?.id;
           const isAgencyUse = shipment.isAgencyUse;
           const driver = employees.find((e) => e.id === shipment?.driverId);
           const hasMessageChannel = !!driver?.messageChannel;
@@ -51,9 +49,6 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
 
           const canRenderWarning = !isSubshipment && !isAgencyUse;
 
-          // Check for missing vehicle
-          const isVehicleMissing = canRenderWarning && !shipment.vehicleId && isTenantTransporter;
-          const isDriverMissing = canRenderWarning && !shipment.driverId && isTenantTransporter;
           const isNotSentToDriver = canRenderWarning && !isShipmentSentToDriver && hasMessageChannel;
 
           return (
@@ -87,11 +82,6 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                       <Text variant="text-xs-medium">{shipment.orderNumber}</Text>
                       <ReferenceNumberTooltip cargoReference={shipment.cargoReference} />
                     </FlexLayout>
-                    <WarningTooltip
-                      isDriverMissing={isDriverMissing}
-                      isNotSentToDriver={isNotSentToDriver}
-                      isVehicleMissing={isVehicleMissing}
-                    />
                   </FlexLayout>
                 </FlexLayout>
               )}
@@ -322,21 +312,31 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: 'Vozilo i vozač',
         enableSorting: false,
         cell: (info) => {
-          const { vehicleId, driverId } = info.row.original;
+          const { vehicleId, driverId, isAgencyUse } = info.row.original;
+
+          if (isAgencyUse) return null;
 
           const vehicle = vehicles.find((v) => v.id === vehicleId);
           const driver = employees.find((e) => e.id === driverId);
 
-          const vehicleName = vehicle ? renderVehicleName(vehicle) : '—';
-          const driverName = driver?.fullName ?? '—';
+          const isVehicleMissing = !vehicle;
+          const isDriverMissing = !driver;
+
+          const vehicleName = vehicle ? renderVehicleName(vehicle) : 'Vozilo nedodijeljeno';
+          const driverName = driver?.fullName ?? 'Vozač nedodijeljen';
 
           return (
             <FlexLayout className="flex-col gap-2 py-2 w-[150px]">
               <FlexLayout className="items-start gap-1">
-                <Icon className="mt-1" icon="TruckIcon" size="s" />
+                <Icon
+                  className="mt-1"
+                  color={isVehicleMissing ? 'text-red-500' : undefined}
+                  icon="TruckIcon"
+                  size="s"
+                />
                 <Text
                   className="whitespace-nowrap overflow-hidden text-ellipsis"
-                  color="text-color-2"
+                  color={isVehicleMissing ? 'text-red-500' : 'text-color-2'}
                   title={vehicleName}
                   variant="text-xs"
                 >
@@ -344,10 +344,10 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                 </Text>
               </FlexLayout>
               <FlexLayout className="items-start gap-1">
-                <Icon className="mt-1" icon="UserIcon" size="s" />
+                <Icon className="mt-1" color={isDriverMissing ? 'text-red-500' : undefined} icon="UserIcon" size="s" />
                 <Text
                   className="whitespace-nowrap overflow-hidden text-ellipsis"
-                  color="text-color-2"
+                  color={isDriverMissing ? 'text-red-500' : 'text-color-2'}
                   title={driverName}
                   variant="text-xs"
                 >
