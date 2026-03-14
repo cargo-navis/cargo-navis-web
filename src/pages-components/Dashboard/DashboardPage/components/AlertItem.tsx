@@ -5,7 +5,7 @@ import { getAlertItemData } from '@/components/AppMenu/utils/alerts';
 import type { Alert } from '@/lib/api';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 
-import { ruleToPropertyMap } from './utils';
+import { useAlertExpiryDate } from './useAlertExpiryDate';
 
 interface AlertItemProps {
   alert: Alert;
@@ -13,9 +13,7 @@ interface AlertItemProps {
 
 export const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
   const { targetUrl, descriptionNode } = getAlertItemData(alert);
-
-  const property = ruleToPropertyMap[alert.ruleName];
-  const expiryDate = alert.alertable[property];
+  const expiryDate = useAlertExpiryDate(alert);
 
   const formattedDate = expiryDate
     ? new Intl.DateTimeFormat('hr-HR', { dateStyle: 'short' }).format(new Date(expiryDate))
