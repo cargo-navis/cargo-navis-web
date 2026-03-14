@@ -15,6 +15,7 @@ export const FilterFields = () => {
     selectedDispatcherId,
     selectedLoadingStatus,
     selectedInvoiceStatus,
+    selectedIsInvoiceOverdue,
     loadingDateFrom,
     loadingDateTo,
     unloadingDateFrom,
@@ -24,6 +25,7 @@ export const FilterFields = () => {
     onDispatcherChange,
     onLoadingStatusChange,
     onInvoiceStatusChange,
+    onIsInvoiceOverdueChange,
     onLoadingDateFromChange,
     onLoadingDateToChange,
     onUnloadingDateFromChange,
@@ -51,6 +53,11 @@ export const FilterFields = () => {
     value: status,
     label: invoiceStatusConfig[status].label,
   }));
+
+  const isInvoiceOverdueOptions = [
+    { value: 'true', label: 'Da' },
+    { value: 'false', label: 'Ne' },
+  ];
 
   return (
     <Box className="px-4 pb-4">
@@ -119,6 +126,18 @@ export const FilterFields = () => {
                 placeholder="Odaberi status fakture..."
                 value={selectedInvoiceStatus}
                 onChange={onInvoiceStatusChange}
+              />
+            </Box>
+
+            <Box className="flex-1">
+              <SingleSelectWithLabels
+                isClearable
+                isPortal
+                label="Valuta istekla"
+                options={isInvoiceOverdueOptions}
+                placeholder="Odaberi..."
+                value={selectedIsInvoiceOverdue}
+                onChange={onIsInvoiceOverdueChange}
               />
             </Box>
           </FlexLayout>

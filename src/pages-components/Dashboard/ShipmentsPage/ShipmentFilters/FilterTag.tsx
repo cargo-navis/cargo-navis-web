@@ -17,12 +17,16 @@ const colorClasses = {
     background: 'bg-orange-100 dark:bg-orange-900',
     hover: 'hover:bg-orange-200 dark:hover:bg-orange-800',
   },
+  red: {
+    background: 'bg-red-100 dark:bg-red-900',
+    hover: 'hover:bg-red-200 dark:hover:bg-red-800',
+  },
 };
 
 interface FilterTagProps {
   label: string;
   value: string;
-  colorScheme: 'blue' | 'green' | 'purple' | 'orange';
+  colorScheme: 'blue' | 'green' | 'purple' | 'orange' | 'red';
   onRemove: () => void;
 }
 

@@ -25,6 +25,7 @@ export const ruleToPropertyMap: Record<AlertType, keyof Employee | keyof Vehicle
   [AlertType.VEHICLE_TIRES_REPLACEMENT_EXPIRED]: 'tiresReplacementExpiryDate',
   [AlertType.VEHICLE_LEASING_EXPIRED]: 'leasingExpiryDate',
   [AlertType.VEHICLE_CODE_XL_EXPIRED]: 'codeXlCertificateExpiryDate',
+  [AlertType.SHIPMENT_INVOICE_OVERDUE]: 'invoiceStatusUpdatedAt',
 };
 
 export const ruleToTextMap: Record<AlertType, string> = {
@@ -52,4 +53,5 @@ export const ruleToTextMap: Record<AlertType, string> = {
   [AlertType.VEHICLE_TIRES_REPLACEMENT_EXPIRED]: 'Zamjena guma',
   [AlertType.VEHICLE_LEASING_EXPIRED]: 'Leasing',
   [AlertType.VEHICLE_CODE_XL_EXPIRED]: 'Kod XL',
+  [AlertType.SHIPMENT_INVOICE_OVERDUE]: 'Valuta naloga',
 };

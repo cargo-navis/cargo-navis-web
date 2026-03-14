@@ -35,6 +35,7 @@ export type GetShipmentParams = {
   dispatcherId?: string;
   loadStatus?: LoadStatus;
   invoiceStatus?: InvoiceStatus;
+  isInvoiceOverdue?: string;
   loadingDateFrom?: string;
   loadingDateTo?: string;
   unloadingDateFrom?: string;
