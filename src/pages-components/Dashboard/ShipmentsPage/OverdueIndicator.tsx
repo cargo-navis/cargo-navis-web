@@ -22,13 +22,18 @@ export const OverdueIndicator: React.FC<OverdueIndicatorProps> = ({ shipment, va
 
   if (!isOverdue) return null;
 
+  const formattedDueDate = dueDate ? getDateTimeInLocalTimezone(dueDate.toISOString(), 'DD.MM.YYYY') : '';
+  const overdueMessage =
+    daysOverdue > 0
+      ? `Valuta istekla prije ${daysOverdue} ${daysOverdue === 1 ? 'dan' : 'dana'} (${formattedDueDate}).`
+      : `Valuta istekla (${formattedDueDate}).`;
+
   return (
     <Tooltip
       content={
         <Box className="px-2">
           <Text as="p" color="text-light-50" variant="text-xs">
-            Valuta istekla prije {daysOverdue} {daysOverdue === 1 ? 'dan' : 'dana'} (
-            {dueDate ? getDateTimeInLocalTimezone(dueDate.toISOString(), 'DD.MM.YYYY') : ''}).
+            {overdueMessage}
           </Text>
         </Box>
       }
