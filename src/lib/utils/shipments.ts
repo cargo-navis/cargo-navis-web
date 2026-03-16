@@ -19,7 +19,7 @@ export function getShipmentOverdueInfo({
   invoiceStatusUpdatedAt,
   termsOfPayment,
 }: OverdueCheckParams): OverdueInfo {
-  if (invoiceStatus === InvoiceStatus.Paid || !invoiceStatusUpdatedAt || !termsOfPayment) {
+  if (invoiceStatus === InvoiceStatus.Paid || !invoiceStatusUpdatedAt || termsOfPayment === null) {
     return { isOverdue: false, dueDate: null, daysOverdue: 0 };
   }
 
@@ -29,8 +29,8 @@ export function getShipmentOverdueInfo({
   const daysOverdue = Math.floor((Date.now() - dueDateMs) / MS_PER_DAY);
 
   return {
-    isOverdue: daysOverdue > 0,
     dueDate,
+    isOverdue: Date.now() > dueDateMs,
     daysOverdue: Math.max(daysOverdue, 0),
   };
 }

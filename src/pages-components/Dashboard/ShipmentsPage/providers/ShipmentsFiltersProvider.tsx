@@ -16,6 +16,7 @@ export type ShipmentsFiltersContextType = {
   selectedDispatcherId: SelectValue;
   selectedLoadingStatus: SelectValue;
   selectedInvoiceStatus: SelectValue;
+  selectedIsInvoiceOverdue: SelectValue;
   loadingDateFrom: string;
   loadingDateTo: string;
   unloadingDateFrom: string;
@@ -25,6 +26,7 @@ export type ShipmentsFiltersContextType = {
   onDispatcherChange(dispatcherId: SelectValue): void;
   onLoadingStatusChange(loadingStatus: SelectValue): void;
   onInvoiceStatusChange(invoiceStatus: SelectValue): void;
+  onIsInvoiceOverdueChange(isInvoiceOverdue: SelectValue): void;
   onLoadingDateFromChange(date: string): void;
   onLoadingDateToChange(date: string): void;
   onUnloadingDateFromChange(date: string): void;
@@ -52,6 +54,9 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
   });
   const { value: selectedInvoiceStatus, onChange: onInvoiceStatusChange } = useFiltersLocalStorageState({
     paramName: 'invoiceStatus',
+  });
+  const { value: selectedIsInvoiceOverdue, onChange: onIsInvoiceOverdueChange } = useFiltersLocalStorageState({
+    paramName: 'isInvoiceOverdue',
   });
   const { value: loadingDateFrom, onChange: onLoadingDateFromChange } = useFiltersLocalStorageState({
     paramName: 'loadingDateFrom',
@@ -85,6 +90,7 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
     selectedDispatcherId,
     selectedLoadingStatus,
     selectedInvoiceStatus,
+    selectedIsInvoiceOverdue,
     loadingDateFrom,
     loadingDateTo,
     unloadingDateFrom,
@@ -100,6 +106,7 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
         selectedDispatcherId,
         selectedLoadingStatus,
         selectedInvoiceStatus,
+        selectedIsInvoiceOverdue,
         loadingDateFrom: String(loadingDateFrom || ''),
         loadingDateTo: String(loadingDateTo || ''),
         unloadingDateFrom: String(unloadingDateFrom || ''),
@@ -109,6 +116,7 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
         onDispatcherChange,
         onLoadingStatusChange,
         onInvoiceStatusChange,
+        onIsInvoiceOverdueChange,
         onLoadingDateFromChange,
         onLoadingDateToChange,
         onUnloadingDateFromChange,

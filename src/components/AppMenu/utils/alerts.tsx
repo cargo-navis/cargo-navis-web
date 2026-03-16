@@ -1,7 +1,7 @@
 import type React from 'react';
 import { forwardRef } from 'react';
 
-import { type Employee, type Vehicle } from '@/lib/api';
+import { type Employee, type Shipment, type Vehicle } from '@/lib/api';
 import { type Alert, AlertType } from '@/lib/api';
 import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 import { Text } from '@/ui';
@@ -296,6 +296,17 @@ export function getAlertItemData(alert: Alert) {
       descriptionNode = (
         <Text color="text-color-2" variant="text-s">
           Vozilu (<VehicleRegistration vehicle={vehicle} />) istječe dozvola Kod XL.
+        </Text>
+      );
+      break;
+    }
+    case AlertType.SHIPMENT_INVOICE_OVERDUE: {
+      const shipment = alertable as Shipment;
+
+      targetUrl = `/dashboard/shipments/${shipment.id}`;
+      descriptionNode = (
+        <Text color="text-color-2" variant="text-s">
+          Valuta naloga <strong>({shipment.orderNumber})</strong> je istekla.
         </Text>
       );
       break;

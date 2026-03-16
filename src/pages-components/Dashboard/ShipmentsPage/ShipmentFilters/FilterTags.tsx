@@ -13,6 +13,7 @@ export const FilterTags = () => {
     selectedDispatcherId,
     selectedLoadingStatus,
     selectedInvoiceStatus,
+    selectedIsInvoiceOverdue,
     loadingDateFrom,
     loadingDateTo,
     unloadingDateFrom,
@@ -22,6 +23,7 @@ export const FilterTags = () => {
     onDispatcherChange,
     onLoadingStatusChange,
     onInvoiceStatusChange,
+    onIsInvoiceOverdueChange,
     onLoadingDateFromChange,
     onLoadingDateToChange,
     onUnloadingDateFromChange,
@@ -42,6 +44,11 @@ export const FilterTags = () => {
     : null;
   const selectedInvoiceStatusLabel = selectedInvoiceStatus
     ? invoiceStatusConfig[selectedInvoiceStatus as InvoiceStatus]?.label
+    : null;
+  const selectedIsInvoiceOverdueLabel = selectedIsInvoiceOverdue
+    ? selectedIsInvoiceOverdue === 'true'
+      ? 'Da'
+      : 'Ne'
     : null;
 
   return (
@@ -85,6 +92,14 @@ export const FilterTags = () => {
             label="Status fakture"
             value={selectedInvoiceStatusLabel || ''}
             onRemove={() => onInvoiceStatusChange('')}
+          />
+        </DisplayIf>
+        <DisplayIf condition={!!selectedIsInvoiceOverdueLabel}>
+          <FilterTag
+            colorScheme="red"
+            label="Valuta istekla"
+            value={selectedIsInvoiceOverdueLabel || ''}
+            onRemove={() => onIsInvoiceOverdueChange('')}
           />
         </DisplayIf>
         {loadingDateFrom && (
