@@ -4,7 +4,7 @@ import { bytesToMegabytes, getFileInput } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { DisplayIf, FlexLayout, Icon, LoadingSpinner, Text } from '@/ui';
 
-const FILE_SIZE_LIMIT_IN_MB = 2;
+const FILE_SIZE_LIMIT_IN_MB = 10;
 
 interface FileUploadButtonProps {
   isLoading: boolean;
@@ -17,7 +17,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({ isLoading, u
     if (!file) return;
 
     if (bytesToMegabytes(file.size) > FILE_SIZE_LIMIT_IN_MB) {
-      showErrorToast({ title: 'Datoteka je prevelika. Maksimalna veličina je 2MB.' });
+      showErrorToast({ title: 'Datoteka je prevelika. Maksimalna veličina je 10MB.' });
       return;
     }
 
