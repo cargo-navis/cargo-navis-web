@@ -4,7 +4,7 @@ import { bytesToMegabytes, getFileInput } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { DisplayIf, FlexLayout, Icon, LoadingSpinner, Text } from '@/ui';
 
-const FILE_SIZE_LIMIT_IN_MB = 2;
+const FILE_SIZE_LIMIT_IN_MB = 10;
 
 interface FileUploadButtonProps {
   isLoading: boolean;
@@ -13,19 +13,43 @@ interface FileUploadButtonProps {
 
 export const FileUploadButton: React.FC<FileUploadButtonProps> = ({ isLoading, uploadFile }) => {
   async function handleFileUpload(files: FileList | null) {
-    const file = files?.[0];
-    if (!file) return;
+    if (!files || files.length === 0) return;
 
-    if (bytesToMegabytes(file.size) > FILE_SIZE_LIMIT_IN_MB) {
-      showErrorToast({ title: 'Datoteka je prevelika. Maksimalna veličina je 2MB.' });
-      return;
+    let successCount = 0;
+    let skippedCount = 0;
+
+    for (const file of Array.from(files)) {
+      if (bytesToMegabytes(file.size) > FILE_SIZE_LIMIT_IN_MB) {
+        skippedCount++;
+        continue;
+      }
+
+      try {
+        await uploadFile({ file, fileName: file.name });
+        successCount++;
+      } catch {
+        // individual failure — continue with remaining files
+      }
     }
 
-    try {
-      await uploadFile({ file, fileName: file.name });
-      showSuccessToast({ title: 'Datoteka uploadana' });
-    } catch {
-      showErrorToast({ title: 'Greška prilikom uploadanja datoteke. Pokušajte ponovno.' });
+    const totalCount = files.length;
+    if (skippedCount > 0) {
+      showErrorToast({
+        title: `${skippedCount} datoteka preskočeno (maks. ${FILE_SIZE_LIMIT_IN_MB}MB)`,
+      });
+    }
+    if (successCount > 0) {
+      showSuccessToast({
+        title:
+          successCount === 1 && totalCount === 1
+            ? 'Datoteka uploadana'
+            : `Uploadano ${successCount}/${totalCount} datoteka`,
+      });
+    }
+    if (successCount === 0 && skippedCount === 0) {
+      showErrorToast({
+        title: 'Greška prilikom uploadanja datoteka. Pokušajte ponovno.',
+      });
     }
   }
 
@@ -34,7 +58,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({ isLoading, u
       as="button"
       className={clsx('h-[58px] relative')}
       isDisabled={isLoading}
-      onClick={!isLoading ? () => getFileInput(handleFileUpload) : undefined}
+      onClick={!isLoading ? () => getFileInput(handleFileUpload, { multiple: true }) : undefined}
     >
       <FlexLayout
         className={clsx(
@@ -48,7 +72,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({ isLoading, u
         )}
       >
         <Icon icon="PlusIcon" size="m" />
-        <Text variant="text-xxs-medium">Dodaj dokument</Text>
+        <Text variant="text-xxs-medium">Dodaj dokumente</Text>
       </FlexLayout>
       <DisplayIf condition={isLoading}>
         <FlexLayout className="absolute inset-0 items-center justify-center">
