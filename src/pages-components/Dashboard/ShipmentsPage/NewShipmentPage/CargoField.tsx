@@ -4,7 +4,7 @@ import { useFormContext } from 'react-hook-form';
 import { FormCheckbox, FormNumberInput, FormSingleSelect } from '@/lib/components/form';
 import { FormTextarea } from '@/lib/components/form/FormTextarea';
 import { roundLdmValue } from '@/lib/utils/math';
-import { palleteOptions, palleteValues } from '@/lib/utils/palletes';
+import { palleteOptions, PalleteType, palleteValues } from '@/lib/utils/palletes';
 import { Box, Button, Divider, FlexLayout, Icon, Text, VerticalDivider } from '@/ui';
 
 import { CargoLoadField, CargoLoadFieldType } from './CargoLoadField';
@@ -21,6 +21,20 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
 
   const setCargoType = (type: 'standard' | 'nonstandard') => {
     setValue(`cargo.${index}.metadata.type`, type);
+
+    if (type === 'nonstandard') {
+      setValue(`cargo.${index}.metadata.hasKolete`, false);
+      setValue(`cargo.${index}.metadata.palleteAmount`, undefined);
+
+      const length = getValues(`cargo.${index}.metadata.length`);
+      const width = getValues(`cargo.${index}.metadata.width`);
+      setValue(`cargo.${index}.ldm`, length && width ? roundLdmValue((length * width) / 2.4) : '');
+    } else {
+      const palleteType = getValues(`cargo.${index}.metadata.palleteType`) || PalleteType.Euro;
+      setValue(`cargo.${index}.metadata.palleteType`, palleteType);
+      setValue(`cargo.${index}.metadata.palleteAmount`, 1);
+      setValue(`cargo.${index}.ldm`, roundLdmValue(palleteValues[palleteType] * 1));
+    }
   };
 
   const removeCargo = () => {
@@ -201,7 +215,6 @@ const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => {
 
   const ldmValue = length && width ? roundLdmValue((length * width) / 2.4) : 0;
 
-  // Sync palleteAmount when hasKolete changes
   useEffect(() => {
     if (hasKolete && !palleteAmount) {
       setValue(palleteAmountFieldName, 1);
