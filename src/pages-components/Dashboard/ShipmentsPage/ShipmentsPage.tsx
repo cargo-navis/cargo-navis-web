@@ -9,7 +9,7 @@ import {
   ShipmentsTableLoader,
   TopPaginationControls,
 } from './components';
-import { usePaginationQueryParamState, useShipmentsPageData } from './hooks';
+import { usePaginationQueryParamState, useShipmentsPageData, useShipmentsScrollRestoration } from './hooks';
 import { ShipmentsFiltersProvider } from './providers/ShipmentsFiltersProvider';
 import { ShipmentFilters } from './ShipmentFilters';
 import { ShipmentsTable } from './ShipmentsTable';
@@ -54,6 +54,7 @@ const ShipmentPageContent = () => {
     isEmployeesLoading;
 
   const shipments = response?.data ?? [];
+  const { saveScrollPosition } = useShipmentsScrollRestoration({ isReady: !isLoading && shipments.length > 0 });
   const paginationInfo = response
     ? {
         currentPage: response.currentPage,
@@ -88,7 +89,7 @@ const ShipmentPageContent = () => {
         <EmptyShipmentsTableState />
       ) : (
         <FlexLayout className="flex-col gap-4 isolate">
-          <ShipmentsTable shipments={shipments} />
+          <ShipmentsTable shipments={shipments} onBeforeNavigate={saveScrollPosition} />
           {/* Bottom pagination controls */}
           <DisplayIf condition={shouldDisplayPagination}>
             {!!paginationInfo && (

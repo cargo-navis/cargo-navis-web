@@ -21,7 +21,12 @@ import { ReferenceNumberTooltip } from './ReferenceNumberTooltip';
 
 const columnHelper = createColumnHelper<Shipment>();
 
-export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
+interface ShipmentsTableProps {
+  shipments?: Shipment[];
+  onBeforeNavigate?(): void;
+}
+
+export function ShipmentsTable({ shipments, onBeforeNavigate }: ShipmentsTableProps) {
   const router = useRouter();
   const { data: clients = [] } = useClients();
   const { data: contractors = [] } = useContractors();
@@ -432,6 +437,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
   }, [clients, contractors, employees, tenant, vehicles, router, toggleSort, isFieldSorted, getSortDirection]);
 
   const handleRowClick = (shipment: Shipment) => {
+    onBeforeNavigate?.();
     router.push(`/dashboard/shipments/${shipment.id}`);
   };
 
