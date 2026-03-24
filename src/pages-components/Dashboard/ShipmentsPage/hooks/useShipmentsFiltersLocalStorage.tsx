@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import { createContext, useCallback, useContext, useState } from 'react';
 
 import type { SelectValue } from '@/ui/components/Select/Select';
 
@@ -77,15 +77,8 @@ const clearStorage = (): void => {
 };
 
 export const ShipmentsFiltersStorageProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
-  const [storage, setStorage] = useState<ShipmentsFiltersStorage>(getDefaultStorage);
-  const [isReady, setIsReady] = useState(false);
-
-  // Initialize from localStorage on mount
-  useEffect(() => {
-    const initialStorage = readFromStorage();
-    setStorage(initialStorage);
-    setIsReady(true);
-  }, []);
+  const [storage, setStorage] = useState<ShipmentsFiltersStorage>(readFromStorage);
+  const [isReady] = useState(() => typeof window !== 'undefined');
 
   // Update a specific field in storage
   const updateField = useCallback((field: keyof ShipmentsFiltersStorage, value: SelectValue | string | undefined) => {
