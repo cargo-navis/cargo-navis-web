@@ -1,5 +1,12 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
+import {
+  useClients,
+  useContractors,
+  useCurrentTenant,
+  useEmployees,
+  useScrollRestoration,
+  useVehicles,
+} from '@/lib/hooks';
 import { useHasMounted } from '@/lib/hooks/dom';
 import { Box, Button, DisplayIf, FlexLayout, Heading } from '@/ui';
 
@@ -9,7 +16,7 @@ import {
   ShipmentsTableLoader,
   TopPaginationControls,
 } from './components';
-import { usePaginationQueryParamState, useShipmentsPageData, useShipmentsScrollRestoration } from './hooks';
+import { usePaginationQueryParamState, useShipmentsPageData } from './hooks';
 import { ShipmentsFiltersProvider } from './providers/ShipmentsFiltersProvider';
 import { ShipmentFilters } from './ShipmentFilters';
 import { ShipmentsTable } from './ShipmentsTable';
@@ -54,7 +61,7 @@ const ShipmentPageContent = () => {
     isEmployeesLoading;
 
   const shipments = response?.data ?? [];
-  useShipmentsScrollRestoration({ isReady: !isLoading && shipments.length > 0 });
+  useScrollRestoration('shipments', { isReady: !isLoading && shipments.length > 0 });
   const paginationInfo = response
     ? {
         currentPage: response.currentPage,

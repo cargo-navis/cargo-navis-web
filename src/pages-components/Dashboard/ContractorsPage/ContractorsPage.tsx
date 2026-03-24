@@ -5,7 +5,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Contractor } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
-import { useContractors } from '@/lib/hooks';
+import { useContractors, useScrollRestoration } from '@/lib/hooks';
 import { ContractorsTable } from '@/pages-components/Dashboard/ContractorsPage/ContractorsTable';
 import { Box, Button, DisplayIf, FlexLayout, Heading, TextInput } from '@/ui';
 
@@ -22,6 +22,7 @@ export const ContractorsPage = () => {
 
 const MainContent = ({ contractors }: { contractors: Contractor[] }) => {
   const isEmpty = contractors.length === 0;
+  useScrollRestoration('contractors', { isReady: !isEmpty });
   const [search, setSearch] = useState('');
 
   const fuse = useMemo(() => new Fuse(contractors, FUSE_OPTIONS), [contractors]);

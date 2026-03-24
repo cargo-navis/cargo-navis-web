@@ -5,7 +5,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Vehicle } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
-import { useSolos } from '@/lib/hooks';
+import { useScrollRestoration, useSolos } from '@/lib/hooks';
 import { Box, Button, DisplayIf, Divider, FlexLayout, Heading, Text, TextInput } from '@/ui';
 
 import { SoloTrucksTable } from './SoloTrucksTable';
@@ -23,6 +23,7 @@ export const SoloTrucksPage = () => {
 
 const MainContent = ({ solos }: { solos: Vehicle[] }) => {
   const isEmpty = solos.length === 0;
+  useScrollRestoration('solo-trucks', { isReady: !isEmpty });
   const [search, setSearch] = useState('');
 
   const fuse = useMemo(() => new Fuse(solos, FUSE_OPTIONS), [solos]);
