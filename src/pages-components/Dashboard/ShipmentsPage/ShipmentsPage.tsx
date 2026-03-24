@@ -54,7 +54,7 @@ const ShipmentPageContent = () => {
     isEmployeesLoading;
 
   const shipments = response?.data ?? [];
-  const { saveScrollPosition } = useShipmentsScrollRestoration({ isReady: !isLoading && shipments.length > 0 });
+  useShipmentsScrollRestoration({ isReady: !isLoading && shipments.length > 0 });
   const paginationInfo = response
     ? {
         currentPage: response.currentPage,
@@ -89,7 +89,7 @@ const ShipmentPageContent = () => {
         <EmptyShipmentsTableState />
       ) : (
         <FlexLayout className="flex-col gap-4 isolate">
-          <ShipmentsTable shipments={shipments} onBeforeNavigate={saveScrollPosition} />
+          <ShipmentsTable shipments={shipments} />
           {/* Bottom pagination controls */}
           <DisplayIf condition={shouldDisplayPagination}>
             {!!paginationInfo && (
