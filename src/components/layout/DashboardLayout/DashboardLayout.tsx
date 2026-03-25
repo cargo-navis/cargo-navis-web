@@ -8,11 +8,11 @@ export const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ child
   usePushNotificationSubscription();
 
   return (
-    <FlexLayout className="h-screen">
-      <FlexLayout className="shrink-0 translate-x-[-16rem] flex-col absolute w-[256px] py-5 px-4 md:static md:h-full md:w-64 md:translate-x-0 bg-sidebar-gradient transition ease-in-out overflow-y-auto">
+    <FlexLayout className="min-h-screen">
+      <FlexLayout className="shrink-0 translate-x-[-16rem] flex-col fixed left-0 top-0 h-screen w-[256px] py-5 px-4 md:w-64 md:translate-x-0 bg-sidebar-gradient transition ease-in-out overflow-y-auto z-30">
         <Sidebar />
       </FlexLayout>
-      <Box as="main" className="flex-grow overflow-y-auto">
+      <Box as="main" className="flex-grow md:ml-[256px]">
         <TopBar />
         <Box className="p-5 md:p-7">{children}</Box>
       </Box>

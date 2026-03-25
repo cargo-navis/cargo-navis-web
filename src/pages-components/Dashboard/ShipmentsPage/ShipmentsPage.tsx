@@ -1,5 +1,12 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
+import {
+  useClients,
+  useContractors,
+  useCurrentTenant,
+  useEmployees,
+  useScrollRestoration,
+  useVehicles,
+} from '@/lib/hooks';
 import { useHasMounted } from '@/lib/hooks/dom';
 import { Box, Button, DisplayIf, FlexLayout, Heading } from '@/ui';
 
@@ -54,6 +61,7 @@ const ShipmentPageContent = () => {
     isEmployeesLoading;
 
   const shipments = response?.data ?? [];
+  useScrollRestoration('shipments', { isReady: !isLoading && shipments.length > 0 });
   const paginationInfo = response
     ? {
         currentPage: response.currentPage,

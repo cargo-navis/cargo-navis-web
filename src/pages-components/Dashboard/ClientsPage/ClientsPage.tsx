@@ -5,7 +5,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Client } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
-import { useClients } from '@/lib/hooks';
+import { useClients, useScrollRestoration } from '@/lib/hooks';
 import { ClientsTable } from '@/pages-components/Dashboard/ClientsPage/ClientsTable';
 import { Box, Button, DisplayIf, FlexLayout, Heading, TextInput } from '@/ui';
 
@@ -22,6 +22,7 @@ export const ClientsPage = () => {
 
 const MainContent = ({ clients }: { clients: Client[] }) => {
   const isEmpty = clients.length === 0;
+  useScrollRestoration('clients', { isReady: !isEmpty });
   const [search, setSearch] = useState('');
 
   const fuse = useMemo(() => new Fuse(clients, FUSE_OPTIONS), [clients]);

@@ -5,7 +5,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Vehicle } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
-import { useVans } from '@/lib/hooks';
+import { useScrollRestoration, useVans } from '@/lib/hooks';
 import { Box, Button, DisplayIf, Divider, FlexLayout, Heading, Text, TextInput } from '@/ui';
 
 import { VansTable } from './VansTable';
@@ -23,6 +23,7 @@ export const VansPage = () => {
 
 const MainContent = ({ vans }: { vans: Vehicle[] }) => {
   const isEmpty = vans.length === 0;
+  useScrollRestoration('vans', { isReady: !isEmpty });
   const [search, setSearch] = useState('');
 
   const fuse = useMemo(() => new Fuse(vans, FUSE_OPTIONS), [vans]);

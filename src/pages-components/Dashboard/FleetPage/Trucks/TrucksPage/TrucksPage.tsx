@@ -5,7 +5,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Vehicle } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
-import { useTrucks } from '@/lib/hooks';
+import { useScrollRestoration, useTrucks } from '@/lib/hooks';
 import { Box, Button, DisplayIf, Divider, FlexLayout, Heading, Text, TextInput } from '@/ui';
 
 import { TrucksTable } from './TrucksTable';
@@ -23,6 +23,7 @@ export const TrucksPage = () => {
 
 const MainContent = ({ trucks }: { trucks: Vehicle[] }) => {
   const isEmpty = trucks.length === 0;
+  useScrollRestoration('trucks', { isReady: !isEmpty });
   const [search, setSearch] = useState('');
 
   const fuse = useMemo(() => new Fuse(trucks, FUSE_OPTIONS), [trucks]);

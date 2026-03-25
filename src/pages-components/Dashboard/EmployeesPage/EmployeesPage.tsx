@@ -5,7 +5,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import type { Employee } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
-import { useEmployees } from '@/lib/hooks/';
+import { useEmployees, useScrollRestoration } from '@/lib/hooks/';
 import { Box, Button, DisplayIf, FlexLayout, Heading, TextInput } from '@/ui';
 
 import { EmployeesTable } from './EmployeesTable';
@@ -23,6 +23,7 @@ export const EmployeesPage = () => {
 
 const MainContent = ({ employees }: { employees: Employee[] }) => {
   const isEmpty = employees.length === 0;
+  useScrollRestoration('employees', { isReady: !isEmpty });
   const [search, setSearch] = useState('');
 
   const fuse = useMemo(() => new Fuse(employees, FUSE_OPTIONS), [employees]);
