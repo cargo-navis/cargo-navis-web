@@ -29,8 +29,8 @@ export const ShipmentsTableLoader: React.FC = () => {
             <Skeleton borderRadius="m" height={22} width={90} /> {/* Datum istovara */}
             <Skeleton borderRadius="m" height={22} width={100} /> {/* LDM / Težina */}
             <Skeleton borderRadius="m" height={22} width={80} /> {/* Broj paleta */}
-            <Skeleton borderRadius="m" height={22} width={120} /> {/* Adrese utovara i istovara */}
-            <Skeleton borderRadius="m" height={22} width={150} /> {/* Vozilo i vozač */}
+            {/* <Skeleton borderRadius="m" height={22} width={120} /> {/* Adrese utovara i istovara */}
+            {/* <Skeleton borderRadius="m" height={22} width={150} /> {/* Vozilo i vozač */}
             <Skeleton borderRadius="m" height={22} width={120} /> {/* Status */}
           </FlexLayout>
         </Box>

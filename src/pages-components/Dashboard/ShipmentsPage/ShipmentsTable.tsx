@@ -9,11 +9,8 @@ import { InvoiceStatus } from '@/lib/api/shipments';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
-import { getShipmentOverdueInfo } from '@/lib/utils/shipments';
-import { renderVehicleName } from '@/lib/utils/vehicles';
-import { Box, DisplayIf, Divider, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
 
-import { AddressesList } from './AddressesList';
 import { invoiceStatusConfig, loadStatusConfig } from './const';
 import { SortFieldEnum, useShipmentsSortLocalStorage } from './hooks';
 import { OverdueIndicator } from './OverdueIndicator';
@@ -85,24 +82,21 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         enableSorting: false,
         cell: (props) => {
           const shipment = props.row.original;
-          const { clientId, transportContractorId, documents } = shipment;
+          const { clientId, documents, isInvoiceOverdue } = shipment;
           const client = clients.find((c) => c.id === clientId);
-          const contractor = contractors.find((c) => c.id === transportContractorId) || tenant;
+          // const contractor = contractors.find((c) => c.id === transportContractorId) || tenant;
 
           const hasDocuments = !!documents?.length;
 
-          const { isOverdue } = getShipmentOverdueInfo({
-            invoiceStatus: shipment.invoiceStatus,
-            invoiceStatusUpdatedAt: shipment.invoiceStatusUpdatedAt,
-            termsOfPayment: client?.termsOfPayment,
-          });
-
           return (
-            <FlexLayout className="flex-col pr-4 py-2 max-w-[15vw] whitespace-nowrap">
+            <FlexLayout className="flex-col pr-4 py-5 max-w-[15vw] whitespace-nowrap">
               <FlexLayout className="gap-4 items-center">
                 <Text
-                  className={clsx('overflow-hidden text-ellipsis', isOverdue && 'text-orange-500 dark:text-orange-400')}
-                  color={isOverdue ? undefined : 'text-color-1'}
+                  className={clsx(
+                    'overflow-hidden text-ellipsis',
+                    isInvoiceOverdue && 'text-orange-500 dark:text-orange-400'
+                  )}
+                  color={isInvoiceOverdue ? undefined : 'text-color-1'}
                   variant="text-m-bold"
                 >
                   {client ? client.name : '—'}
@@ -128,9 +122,9 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                   </DisplayIf>
                 </FlexLayout>
               </FlexLayout>
-              <Text className="overflow-hidden text-ellipsis" color="text-color-3" variant="text-xs">
+              {/* <Text className="overflow-hidden text-ellipsis" color="text-color-3" variant="text-xs">
                 {contractor?.name || '—'}
-              </Text>
+              </Text> */}
             </FlexLayout>
           );
         },
@@ -151,7 +145,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         ),
         enableSorting: false,
         cell: (info) => {
-          const isAgencySubshipment = !!info.row.getParentRow()?.original.isAgencyUse;
+          // const isAgencySubshipment = !!info.row.getParentRow()?.original.isAgencyUse;
+          const isAgencySubshipment = false;
           const colorClass = isAgencySubshipment
             ? 'text-red-500 dark:text-red-400'
             : 'text-green-500 dark:text-green-400';
@@ -176,22 +171,24 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: () => (
           <FlexLayout
             className="items-center gap-1 cursor-pointer select-none hover:text-teal-500"
-            onClick={() => toggleSort(SortFieldEnum.LoadingDate)}
+            onClick={() => toggleSort(SortFieldEnum.LoadingReadyDate)}
           >
             <Text className="whitespace-nowrap" variant="text-s-medium">
-              Datumi utovara
+              Utovar spreman
             </Text>
             <DisplayIf
-              condition={isFieldSorted(SortFieldEnum.LoadingDate) && !!getSortDirection(SortFieldEnum.LoadingDate)}
+              condition={
+                isFieldSorted(SortFieldEnum.LoadingReadyDate) && !!getSortDirection(SortFieldEnum.LoadingReadyDate)
+              }
             >
-              {getSortDirection(SortFieldEnum.LoadingDate) === 'desc' ? ' ↓' : ' ↑'}
+              {getSortDirection(SortFieldEnum.LoadingReadyDate) === 'desc' ? ' ↓' : ' ↑'}
             </DisplayIf>
           </FlexLayout>
         ),
         enableSorting: false,
         cell: (props) => {
           const shipment = props.row.original;
-          const loadingDates = shipment.cargo.map((c) => c.loadingDate);
+          const loadingDates = shipment.cargo.map((c) => c.loadingReadyDate);
 
           const dates = uniq(loadingDates).sort();
           const isMultipleDates = dates.length > 1;
@@ -212,22 +209,24 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: () => (
           <FlexLayout
             className="items-center gap-1 cursor-pointer select-none hover:text-teal-500"
-            onClick={() => toggleSort(SortFieldEnum.UnloadingDate)}
+            onClick={() => toggleSort(SortFieldEnum.UnloadingDueDate)}
           >
             <Text className="whitespace-nowrap" variant="text-s-medium">
-              Datumi istovara
+              Rok istovara
             </Text>
             <DisplayIf
-              condition={isFieldSorted(SortFieldEnum.UnloadingDate) && !!getSortDirection(SortFieldEnum.UnloadingDate)}
+              condition={
+                isFieldSorted(SortFieldEnum.UnloadingDueDate) && !!getSortDirection(SortFieldEnum.UnloadingDueDate)
+              }
             >
-              {getSortDirection(SortFieldEnum.UnloadingDate) === 'desc' ? ' ↓' : ' ↑'}
+              {getSortDirection(SortFieldEnum.UnloadingDueDate) === 'desc' ? ' ↓' : ' ↑'}
             </DisplayIf>
           </FlexLayout>
         ),
         enableSorting: false,
         cell: (props) => {
           const shipment = props.row.original;
-          const unloadingDates = shipment.cargo.map((c) => c.unloadingDate);
+          const unloadingDates = shipment.cargo.map((c) => c.unloadingDueDate);
 
           const dates = uniq(unloadingDates).sort();
           const isMultipleDates = dates.length > 1;
@@ -247,7 +246,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         id: 'ldm',
         enableSorting: false,
         header: 'LDM / Težina',
-        size: 100,
+        size: 200,
         cell: (props) => {
           const { cargo } = props.row.original;
 
@@ -290,113 +289,120 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           );
         },
       }),
+      // columnHelper.display({
+      //   id: 'addresses',
+      //   header: 'Adrese utovara i istovara',
+      //   enableSorting: false,
+      //   cell: (props) => {
+      //     const shipment = props.row.original;
+      //     const loadingAddresses = shipment.cargo.map((c) => c.loadingAddress);
+      //     const unloadingAddresses = shipment.cargo.map((c) => c.unloadingAddress);
+
+      //     return (
+      //       <FlexLayout className="flex-col gap-1 py-2 pr-4 max-w-[240px]">
+      //         <AddressesList addresses={loadingAddresses} icon="ArrowRightEndOnRectangleIcon" />
+      //         <Divider />
+      //         <AddressesList addresses={unloadingAddresses} icon="ArrowRightStartOnRectangleIcon" />
+      //       </FlexLayout>
+      //     );
+      //   },
+      // }),
+      // columnHelper.display({
+      //   id: 'vehicle-driver',
+      //   header: 'Vozilo i vozač',
+      //   enableSorting: false,
+      //   cell: (info) => {
+      //     const { vehicleId, driverId, isAgencyUse } = info.row.original;
+
+      //     if (isAgencyUse) return null;
+
+      //     const vehicle = vehicles.find((v) => v.id === vehicleId);
+      //     const driver = employees.find((e) => e.id === driverId);
+
+      //     const isVehicleMissing = !vehicle;
+      //     const isDriverMissing = !driver;
+      //     const hasMessageChannel = !!driver?.messageChannel;
+      //     const isNotSentToDriver = !info.row.original.sentToDriver && hasMessageChannel;
+
+      //     const vehicleName = vehicle ? renderVehicleName(vehicle) : 'Vozilo nedodijeljeno';
+      //     const driverName = driver?.fullName ?? 'Vozač nedodijeljen';
+
+      //     return (
+      //       <FlexLayout className="flex-col gap-2 py-2 w-[150px]">
+      //         <FlexLayout className="items-start gap-1">
+      //           <Icon
+      //             className="mt-1"
+      //             color={isVehicleMissing ? 'text-red-500' : undefined}
+      //             icon="TruckIcon"
+      //             size="s"
+      //           />
+      //           <Text
+      //             className="whitespace-nowrap overflow-hidden text-ellipsis"
+      //             color={isVehicleMissing ? 'text-red-500' : 'text-color-2'}
+      //             title={vehicleName}
+      //             variant="text-xs"
+      //           >
+      //             {vehicleName}
+      //           </Text>
+      //         </FlexLayout>
+      //         {isNotSentToDriver ? (
+      //           <Tooltip
+      //             content={
+      //               <Box className="px-2 whitespace-nowrap">
+      //                 <Text color="text-light-50" variant="text-xs">
+      //                   Nalog nije poslan vozaču
+      //                 </Text>
+      //               </Box>
+      //             }
+      //           >
+      //             <FlexLayout className="items-start gap-1">
+      //               <Icon
+      //                 className="mt-1"
+      //                 color="text-orange-500 dark:text-orange-400"
+      //                 icon="ExclamationTriangleIcon"
+      //                 size="s"
+      //               />
+      //               <Text
+      //                 className="whitespace-nowrap overflow-hidden text-ellipsis"
+      //                 color="text-orange-500 dark:text-orange-400"
+      //                 title={driverName}
+      //                 variant="text-xs"
+      //               >
+      //                 {driverName}
+      //               </Text>
+      //             </FlexLayout>
+      //           </Tooltip>
+      //         ) : (
+      //           <FlexLayout className="items-start gap-1">
+      //             <Icon
+      //               className="mt-1"
+      //               color={isDriverMissing ? 'text-red-500' : undefined}
+      //               icon="UserIcon"
+      //               size="s"
+      //             />
+      //             <Text
+      //               className="whitespace-nowrap overflow-hidden text-ellipsis"
+      //               color={isDriverMissing ? 'text-red-500' : 'text-color-2'}
+      //               title={driverName}
+      //               variant="text-xs"
+      //             >
+      //               {driverName}
+      //             </Text>
+      //           </FlexLayout>
+      //         )}
+      //       </FlexLayout>
+      //     );
+      //   },
+      // }),
       columnHelper.display({
-        id: 'addresses',
-        header: 'Adrese utovara i istovara',
-        enableSorting: false,
-        cell: (props) => {
-          const shipment = props.row.original;
-          const loadingAddresses = shipment.cargo.map((c) => c.loadingAddress);
-          const unloadingAddresses = shipment.cargo.map((c) => c.unloadingAddress);
-
-          return (
-            <FlexLayout className="flex-col gap-1 py-2 pr-4 max-w-[240px]">
-              <AddressesList addresses={loadingAddresses} icon="ArrowRightEndOnRectangleIcon" />
-              <Divider />
-              <AddressesList addresses={unloadingAddresses} icon="ArrowRightStartOnRectangleIcon" />
-            </FlexLayout>
-          );
-        },
-      }),
-      columnHelper.display({
-        id: 'vehicle-driver',
-        header: 'Vozilo i vozač',
-        enableSorting: false,
-        cell: (info) => {
-          const { vehicleId, driverId, isAgencyUse } = info.row.original;
-
-          if (isAgencyUse) return null;
-
-          const vehicle = vehicles.find((v) => v.id === vehicleId);
-          const driver = employees.find((e) => e.id === driverId);
-
-          const isVehicleMissing = !vehicle;
-          const isDriverMissing = !driver;
-          const hasMessageChannel = !!driver?.messageChannel;
-          const isNotSentToDriver = !info.row.original.sentToDriver && hasMessageChannel;
-
-          const vehicleName = vehicle ? renderVehicleName(vehicle) : 'Vozilo nedodijeljeno';
-          const driverName = driver?.fullName ?? 'Vozač nedodijeljen';
-
-          return (
-            <FlexLayout className="flex-col gap-2 py-2 w-[150px]">
-              <FlexLayout className="items-start gap-1">
-                <Icon
-                  className="mt-1"
-                  color={isVehicleMissing ? 'text-red-500' : undefined}
-                  icon="TruckIcon"
-                  size="s"
-                />
-                <Text
-                  className="whitespace-nowrap overflow-hidden text-ellipsis"
-                  color={isVehicleMissing ? 'text-red-500' : 'text-color-2'}
-                  title={vehicleName}
-                  variant="text-xs"
-                >
-                  {vehicleName}
-                </Text>
-              </FlexLayout>
-              {isNotSentToDriver ? (
-                <Tooltip
-                  content={
-                    <Box className="px-2 whitespace-nowrap">
-                      <Text color="text-light-50" variant="text-xs">
-                        Nalog nije poslan vozaču
-                      </Text>
-                    </Box>
-                  }
-                >
-                  <FlexLayout className="items-start gap-1">
-                    <Icon
-                      className="mt-1"
-                      color="text-orange-500 dark:text-orange-400"
-                      icon="ExclamationTriangleIcon"
-                      size="s"
-                    />
-                    <Text
-                      className="whitespace-nowrap overflow-hidden text-ellipsis"
-                      color="text-orange-500 dark:text-orange-400"
-                      title={driverName}
-                      variant="text-xs"
-                    >
-                      {driverName}
-                    </Text>
-                  </FlexLayout>
-                </Tooltip>
-              ) : (
-                <FlexLayout className="items-start gap-1">
-                  <Icon
-                    className="mt-1"
-                    color={isDriverMissing ? 'text-red-500' : undefined}
-                    icon="UserIcon"
-                    size="s"
-                  />
-                  <Text
-                    className="whitespace-nowrap overflow-hidden text-ellipsis"
-                    color={isDriverMissing ? 'text-red-500' : 'text-color-2'}
-                    title={driverName}
-                    variant="text-xs"
-                  >
-                    {driverName}
-                  </Text>
-                </FlexLayout>
-              )}
-            </FlexLayout>
-          );
-        },
-      }),
-      columnHelper.display({
-        header: 'Status',
+        id: 'status',
+        header: () => (
+          <FlexLayout className="grow items-center justify-end px-3">
+            <Text className="whitespace-nowrap" variant="text-s-medium">
+              Status
+            </Text>
+          </FlexLayout>
+        ),
         enableSorting: false,
         cell: (info) => {
           const shipment = info.row.original;
@@ -409,10 +415,12 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
             return { ...config, id };
           });
 
-          const isAgencyUse = shipment.isAgencyUse;
-          const isSubshipment = !!shipment?.parentShipmentId;
+          // const isAgencyUse = shipment.isAgencyUse;
+          // const isSubshipment = !!shipment?.parentShipmentId;
 
-          const shouldRenderAgencyPill = isAgencyUse && !isSubshipment;
+          // const shouldRenderAgencyPill = isAgencyUse && !isSubshipment;
+
+          const shouldRenderAgencyPill = false;
 
           const invoiceConfig = invoiceStatusConfig[shipment.invoiceStatus];
 
@@ -435,32 +443,32 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
     router.push(`/dashboard/shipments/${shipment.id}`);
   };
 
-  const getSubRows = (row: Shipment) => {
-    return row.childShipments || [];
-  };
+  // const getSubRows = (row: Shipment) => {
+  //   return row.childShipments || [];
+  // };
 
   // Add isWarning flag to shipments missing vehicleId or driverId
   const shipmentsWithWarnings = useMemo(() => {
     if (!shipments) return [];
 
     return shipments.map((shipment) => {
-      const isMissingVehicleOrDriver = !shipment.vehicleId || !shipment.driverId;
+      // const isMissingVehicleOrDriver = !shipment.vehicleId || !shipment.driverId;
 
       function isShipmentComplete(s: Shipment) {
         const isAllCargoUnloaded = s.cargo.every((c) => c.loadStatus === LoadStatus.Unloaded);
         return s.invoiceStatus === InvoiceStatus.Paid && isAllCargoUnloaded;
       }
 
-      const subshipments = shipment.childShipments?.map((s) => {
-        return { ...s, isSuccess: isShipmentComplete(s) };
-      });
+      // const subshipments = shipment.childShipments?.map((s) => {
+      //   return { ...s, isSuccess: isShipmentComplete(s) };
+      // });
 
       // Add isWarning flag only to parent shipments
       return {
         ...shipment,
-        isWarning: isMissingVehicleOrDriver && shipment.transportContractorId === tenant?.id && !shipment.isAgencyUse,
+        // isWarning: isMissingVehicleOrDriver && shipment.transportContractorId === tenant?.id && !shipment.isAgencyUse,
         isSuccess: isShipmentComplete(shipment),
-        subshipments,
+        // subshipments,
       };
     });
   }, [shipments]);
@@ -470,7 +478,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       areRowsExpanded
       columns={columns}
       data={shipmentsWithWarnings}
-      getSubRows={getSubRows}
+      // getSubRows={getSubRows}
       onRowClick={handleRowClick}
     />
   );

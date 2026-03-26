@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
@@ -44,7 +43,7 @@ export const SingleShipmentPage = () => {
 };
 
 const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
-  const { data: parentShipment } = useShipment(shipment.parentShipmentId || '');
+  // const { data: parentShipment } = useShipment(shipment.parentShipmentId || '');
   const { mutateAsync: updateShipment, isPending } = useUpdateShipment();
   const { mutateAsync: deleteFile, isPending: isDeletingFile } = useDeleteShipmentFile(shipment.id);
   const { mutateAsync: getDocumentUrl, isPending: isGettingDocumentUrl } = useGetShipmentDocumentUrl(shipment.id);
@@ -66,7 +65,8 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
     }
   };
 
-  const shouldRenderAgencyPill = !!shipment?.isAgencyUse && !shipment?.parentShipmentId;
+  // const shouldRenderAgencyPill = !!shipment?.isAgencyUse && !shipment?.parentShipmentId;
+  const shouldRenderAgencyPill = false;
 
   function handleDownloadFile(documentId: string) {
     try {
@@ -129,13 +129,13 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                   onChange={handleInvoiceChange}
                 />
               </FlexLayout>
-              {shipment.parentShipmentId && parentShipment && (
+              {/* {shipment.parentShipmentId && parentShipment && (
                 <Link className="max-w-max" href={`/dashboard/shipments/${parentShipment.id}`}>
                   <Text className="hover:text-teal-500 transition-colors" color="text-color-3" variant="text-s">
                     Podnalog od #{parentShipment.orderNumber}
                   </Text>
                 </Link>
-              )}
+              )} */}
               <SendToDriver shipment={shipment} />
               <FlexLayout className="gap-4 mt-2">
                 {shipment.documents?.map((document) => (

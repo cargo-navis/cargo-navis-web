@@ -14,7 +14,8 @@ interface OverdueIndicatorProps {
 export const OverdueIndicator: React.FC<OverdueIndicatorProps> = ({ shipment, variant = 'default' }) => {
   const { data: client } = useClient(shipment.clientId || '');
 
-  const { isOverdue, dueDate, daysOverdue } = getShipmentOverdueInfo({
+  const isOverdue = shipment.isInvoiceOverdue;
+  const { dueDate, daysOverdue } = getShipmentOverdueInfo({
     invoiceStatus: shipment.invoiceStatus,
     invoiceStatusUpdatedAt: shipment.invoiceStatusUpdatedAt,
     termsOfPayment: client?.termsOfPayment,
