@@ -7,7 +7,6 @@ import { loadStatusConfig } from '@/pages-components/Dashboard/ShipmentsPage/con
 import { Collapsible, DisplayIf, Divider, FlexLayout, Icon, Text, VerticalDivider } from '@/ui';
 
 import { AddressDetailsItem } from './AddressDetailsItem';
-import { LoadStatusProgress } from './LoadStatusProgress';
 import type { CargoWithMetadata } from './types';
 
 interface CargoItemProps {
@@ -48,12 +47,12 @@ export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index, shipmentId }
             {isStandardCargo ? 'Standardni teret' : 'Nestandardni teret'}
           </Text>
         </FlexLayout>
-        <LoadStatusProgress
+        {/* <LoadStatusProgress
           currentStatus={cargo.loadStatus || LoadStatus.NotYetLoaded}
           isPending={isPending}
           size="s"
           onStatusChange={handleLoadStatusChange}
-        />
+        /> */}
       </FlexLayout>
       <FlexLayout className="flex-col gap-4">
         {isStandardCargo ? <StandardContent cargo={cargo} /> : <NonstandardContent cargo={cargo} />}

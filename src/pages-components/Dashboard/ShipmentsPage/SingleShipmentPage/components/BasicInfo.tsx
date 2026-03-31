@@ -27,7 +27,7 @@ export const BasicInfo = ({ shipment }: { shipment: Shipment }) => {
             <Text color="text-color-3" variant="text-xs-medium">
               Cijena
             </Text>
-            <Text className="text-green-500 dark:text-green-400" variant="text-l-medium">
+            <Text className="text-green-500 dark:text-green-400" variant="text-xl-medium">
               {shipment.price}€
             </Text>
           </FlexLayout>
