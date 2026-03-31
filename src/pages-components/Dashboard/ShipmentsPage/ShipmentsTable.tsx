@@ -4,14 +4,14 @@ import uniq from 'lodash/uniq';
 import { useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 
-import { LoadStatus, type Shipment } from '@/lib/api';
+import { type Shipment } from '@/lib/api';
 import { InvoiceStatus } from '@/lib/api/shipments';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
 import { Box, DisplayIf, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
 
-import { invoiceStatusConfig, loadStatusConfig } from './const';
+import { invoiceStatusConfig } from './const';
 import { SortFieldEnum, useShipmentsSortLocalStorage } from './hooks';
 import { OverdueIndicator } from './OverdueIndicator';
 import { ReferenceNumberTooltip } from './ReferenceNumberTooltip';
@@ -243,29 +243,17 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: () => (
           <FlexLayout className="grow items-center justify-end px-3">
             <Text className="whitespace-nowrap" variant="text-s-medium">
-              Status
+              Status Fakture
             </Text>
           </FlexLayout>
         ),
         enableSorting: false,
         cell: (info) => {
           const shipment = info.row.original;
-          const cargos = shipment.cargo;
-
-          const statusConfigs = cargos.map((c) => {
-            const config = c.loadStatus ? loadStatusConfig[c.loadStatus] : loadStatusConfig[LoadStatus.NotYetLoaded];
-            const id = c.id;
-
-            return { ...config, id };
-          });
-
           const invoiceConfig = invoiceStatusConfig[shipment.invoiceStatus];
 
           return (
             <FlexLayout className="flex-col items-end py-2 gap-1">
-              {statusConfigs.map((c) => (
-                <Pill key={c.id} size="s" text={`📦 ${c.label}`} variant={c.variant} />
-              ))}
               <Pill size="s" text={`💰 ${invoiceConfig.label}`} variant={invoiceConfig.variant} />
             </FlexLayout>
           );
@@ -284,8 +272,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
 
     return shipments.map((shipment) => {
       function isShipmentComplete(s: Shipment) {
-        const isAllCargoUnloaded = s.cargo.every((c) => c.loadStatus === LoadStatus.Unloaded);
-        return s.invoiceStatus === InvoiceStatus.Paid && isAllCargoUnloaded;
+        // const isAllCargoUnloaded = s.cargo.every((c) => c.loadStatus === LoadStatus.Unloaded);
+        return s.invoiceStatus === InvoiceStatus.Paid; //&& isAllCargoUnloaded;
       }
 
       return {
