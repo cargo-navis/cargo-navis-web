@@ -172,7 +172,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                 Tereti
               </Text>
               {(shipment.cargo as CargoWithMetadata[]).map((item, index) => (
-                <CargoItem cargo={item} index={index} key={index} shipmentId={shipment.id} />
+                <CargoItem cargo={item} index={index} key={shipment.cargo[index].id} />
               ))}
             </FlexLayout>
           </FlexLayout>
