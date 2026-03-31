@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
@@ -5,10 +6,16 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { InvoiceStatus, Shipment } from '@/lib/api';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { FileCard } from '@/lib/components/FileCard';
-import { useDeleteShipmentFile, useGetShipmentDocumentUrl, useShipment, useUpdateShipment } from '@/lib/hooks';
+import {
+  useClient,
+  useDeleteShipmentFile,
+  useGetShipmentDocumentUrl,
+  useShipment,
+  useUpdateShipment,
+} from '@/lib/hooks';
 import { downloadShipmentFile } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, DisplayIf, Divider, FlexLayout, Pill, Text } from '@/ui';
+import { Box, Divider, FlexLayout, Icon, Text } from '@/ui';
 
 import { invoiceStatusConfig } from '../const';
 import { OverdueIndicator } from '../OverdueIndicator';
@@ -43,10 +50,11 @@ export const SingleShipmentPage = () => {
 };
 
 const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
-  // const { data: parentShipment } = useShipment(shipment.parentShipmentId || '');
   const { mutateAsync: updateShipment, isPending } = useUpdateShipment();
   const { mutateAsync: deleteFile, isPending: isDeletingFile } = useDeleteShipmentFile(shipment.id);
   const { mutateAsync: getDocumentUrl, isPending: isGettingDocumentUrl } = useGetShipmentDocumentUrl(shipment.id);
+
+  const { data: client } = useClient(shipment.clientId || '');
 
   const handleInvoiceChange = async (invoiceStatus: InvoiceStatus) => {
     try {
@@ -64,9 +72,6 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
       showErrorToast({ title: 'Greška prilikom ažuriranja fakture. Pokušajte ponovno.' });
     }
   };
-
-  // const shouldRenderAgencyPill = !!shipment?.isAgencyUse && !shipment?.parentShipmentId;
-  const shouldRenderAgencyPill = false;
 
   function handleDownloadFile(documentId: string) {
     try {
@@ -113,14 +118,22 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
           <FlexLayout className="flex-col gap-4">
             <FlexLayout className="flex-col gap-1">
               <FlexLayout className="items-center justify-between">
-                <FlexLayout className="items-center gap-4">
-                  <Text as="h1" variant="text-xl-medium">
-                    Nalog #{shipment.orderNumber}
-                  </Text>
-                  <DisplayIf condition={shouldRenderAgencyPill}>
-                    <Pill size="s" text="Agencijski Nalog" variant="warning" />
-                  </DisplayIf>
-                  <OverdueIndicator shipment={shipment} />
+                <FlexLayout className="flex-col">
+                  <FlexLayout className="items-center gap-4">
+                    <Text as="h1" color="text-color-1" variant="text-xl-bold">
+                      {shipment.orderNumber}
+                    </Text>
+                    <OverdueIndicator shipment={shipment} />
+                  </FlexLayout>
+                  <Link
+                    className="flex items-center gap-1 text-dark-600 dark:text-light-300 hover:text-teal-500 transition-colors"
+                    href={`/dashboard/clients/${client?.id}`}
+                  >
+                    <Icon icon="BriefcaseIcon" size="m" />
+                    <Text className="overflow-hidden text-ellipsis" variant="text-m">
+                      {client?.name}
+                    </Text>
+                  </Link>
                 </FlexLayout>
                 <InvoiceItem
                   invoiceStatus={shipment.invoiceStatus}
@@ -129,13 +142,6 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                   onChange={handleInvoiceChange}
                 />
               </FlexLayout>
-              {/* {shipment.parentShipmentId && parentShipment && (
-                <Link className="max-w-max" href={`/dashboard/shipments/${parentShipment.id}`}>
-                  <Text className="hover:text-teal-500 transition-colors" color="text-color-3" variant="text-s">
-                    Podnalog od #{parentShipment.orderNumber}
-                  </Text>
-                </Link>
-              )} */}
               <SendToDriver shipment={shipment} />
               <FlexLayout className="gap-4 mt-2">
                 {shipment.documents?.map((document) => (

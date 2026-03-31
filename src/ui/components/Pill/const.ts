@@ -1,7 +1,7 @@
 import type { TextVariant } from '@/ui/theme/fontSizes';
 
 export const variantsMap = {
-  default: 'bg-dark-50 dark:bg-light-800 text-dark-800 dark:text-light-100',
+  default: 'bg-dark-50 dark:bg-light-800 border-transparent text-dark-800 dark:text-light-100',
   success:
     'bg-green-100 dark:bg-green-900 border-green-500/20 dark:border-green-700 text-green-800 dark:text-green-100',
   warning:
