@@ -20,11 +20,10 @@ import { getFormDefaultValues, transformFormDataToPayload } from './utils';
 interface NewShipmentFormProps {
   shipment?: Shipment;
   tenant: Tenant;
-  parentShipmentId?: string;
   copyFromId?: string;
 }
 
-export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tenant, parentShipmentId, copyFromId }) => {
+export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tenant, copyFromId }) => {
   const { push, back } = useRouter();
   const isShipmentPresent = !!shipment;
   const isCopy = !!copyFromId;
@@ -37,7 +36,7 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
   const { mutateAsync: updateShipment } = useUpdateShipment();
 
   const formMethods = useForm<ShipmentFields>({
-    defaultValues: getFormDefaultValues(shipment, tenant, parentShipmentId, isCopy),
+    defaultValues: getFormDefaultValues(shipment, tenant, isCopy),
     resolver: yupResolver(shipmentSchema) as any,
     mode: 'all',
   });

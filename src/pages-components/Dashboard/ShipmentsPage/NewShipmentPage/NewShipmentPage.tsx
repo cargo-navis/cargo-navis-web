@@ -11,21 +11,16 @@ import { NewShipmentForm } from './NewShipmentForm';
 export const NewShipmentPage = () => {
   const { query } = useRouter();
   const { data: tenant, isLoading: isTenantLoading } = useCurrentTenant();
-  const parentShipmentId = query.parentShipmentId as string | undefined;
   const copyFromId = query.copyFromId as string | undefined;
 
-  const { data: parentShipment, isLoading: isParentShipmentLoading } = useShipment(parentShipmentId || '');
   const { data: copyFromShipment, isLoading: isCopyFromShipmentLoading } = useShipment(copyFromId || '');
 
-  const isLoading =
-    isTenantLoading || (parentShipmentId && isParentShipmentLoading) || (copyFromId && isCopyFromShipmentLoading);
+  const isLoading = isTenantLoading || (copyFromId && isCopyFromShipmentLoading);
 
   if (isLoading || !tenant) return <LoadingPage />;
 
   let pageTitle = 'Novi Nalog';
-  if (parentShipment) {
-    pageTitle = `Novi podnalog za ${parentShipment.orderNumber}`;
-  } else if (copyFromShipment) {
+  if (copyFromShipment) {
     pageTitle = `Kopija naloga ${copyFromShipment.orderNumber}`;
   }
 
@@ -39,12 +34,7 @@ export const NewShipmentPage = () => {
         </FlexLayout>
         <FlexLayout className="py-5 flex-col gap-[40px]">
           <BackButton targetLocation="/dashboard/shipments" />
-          <NewShipmentForm
-            copyFromId={copyFromId}
-            parentShipmentId={parentShipmentId}
-            shipment={copyFromShipment}
-            tenant={tenant}
-          />
+          <NewShipmentForm copyFromId={copyFromId} shipment={copyFromShipment} tenant={tenant} />
         </FlexLayout>
       </Box>
     </DashboardLayout>

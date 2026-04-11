@@ -119,16 +119,6 @@ const getNewShipmentFormValues = async (tenant: Tenant, cargo: Cargo[]) => {
   };
 };
 
-// Create form values for a new sub-shipment
-const getNewSubShipmentFormValues = async (tenant: Tenant) => {
-  return {
-    ...formDefaultValues,
-    transportContractorId: tenant.id,
-    clientId: tenant.id,
-    cargo: [{ ...defaultCargo }],
-  };
-};
-
 // Create form values when copying a shipment
 const getCopyShipmentFormValues = async (shipment: Shipment) => {
   const cargo = await mapCargoItems(shipment.cargo);
@@ -158,12 +148,7 @@ const getEditShipmentFormValues = async (shipment: Shipment) => {
 };
 
 // Main function to get form default values based on context
-export const getFormDefaultValues = (
-  shipment: Shipment | undefined,
-  tenant: Tenant,
-  parentShipmentId?: string,
-  isCopy: boolean = false
-) => {
+export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Tenant, isCopy: boolean = false) => {
   return async () => {
     // Case 1: Copy existing shipment
     if (shipment && isCopy) {
@@ -175,12 +160,7 @@ export const getFormDefaultValues = (
       return getEditShipmentFormValues(shipment);
     }
 
-    // Case 3: Create a sub-shipment
-    if (parentShipmentId) {
-      return getNewSubShipmentFormValues(tenant);
-    }
-
-    // Case 4: Create a brand-new shipment
+    // Case 3: Create a brand-new shipment
     return getNewShipmentFormValues(tenant, [defaultCargo]);
   };
 };

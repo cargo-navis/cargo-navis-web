@@ -31,10 +31,6 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
     void push(`/dashboard/shipments/new?copyFromId=${id}`);
   }
 
-  function handleCopyToSubshipment() {
-    void push(`/dashboard/shipments/new?copyFromId=${id}&parentShipmentId=${id}`);
-  }
-
   async function handleDownloadPdf() {
     setIsDownloadingPdf(true);
     try {
@@ -81,22 +77,6 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
   }
 
   const menuItems: MenuComponent[] = [
-    {
-      type: 'item' as const,
-      iconLeft: 'PlusIcon',
-      text: 'Dodaj podnalog',
-      href: `/dashboard/shipments/new?parentShipmentId=${id}`,
-    },
-    {
-      type: 'item' as const,
-      iconLeft: 'ClipboardDocumentIcon',
-      text: 'Kopiraj u podnalog',
-      isDisabled: isDeleting,
-      onClick: handleCopyToSubshipment,
-    },
-    {
-      type: 'divider' as const,
-    },
     {
       type: 'item' as const,
       iconLeft: 'PencilIcon',
