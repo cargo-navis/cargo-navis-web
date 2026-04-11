@@ -23,7 +23,6 @@ import { BasicInfo } from './components/BasicInfo';
 import { CargoItem } from './components/CargoItem';
 import { ContentLoader } from './components/ContentLoader';
 import { InvoiceItem } from './components/InvoiceItem';
-import { SendToDriver } from './components/SendToDriver';
 import { ShipmentActions } from './components/ShipmentActions';
 import { ShipmentFileUploadButton } from './components/ShipmentFileUploadButton';
 import type { CargoWithMetadata } from './components/types';
@@ -142,7 +141,6 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                   onChange={handleInvoiceChange}
                 />
               </FlexLayout>
-              <SendToDriver shipment={shipment} />
               <FlexLayout className="gap-4 mt-2">
                 {shipment.documents?.map((document) => (
                   <Box className="max-w-[300px]" key={document.id}>

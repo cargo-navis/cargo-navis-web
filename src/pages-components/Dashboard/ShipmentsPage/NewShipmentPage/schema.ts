@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import * as Yup from 'yup';
 
 import { PalleteType } from '@/lib/utils/palletes';
@@ -34,6 +35,9 @@ const cargoMetadataSchema = Yup.object().shape({
   }),
 });
 
+/** Shared with CargoLoadModal date validation */
+export const cargoLoadUnloadDatesMessage = 'Krajnji rok za istovar mora biti na ili nakon datuma spremnosti za utovar.';
+
 const cargoSchema = Yup.object().shape({
   id: Yup.string().optional(),
   weight: Yup.number()
@@ -47,12 +51,30 @@ const cargoSchema = Yup.object().shape({
     .optional(),
   loadingAddress: getAddressSchema({ message: 'Adresa utovara je obavezna' }),
   loadingCompanyName: Yup.string().optional(),
-  loadingReadyDate: Yup.string().optional(),
+  loadingReadyDate: Yup.string()
+    .optional()
+    .test('not-after-unload', cargoLoadUnloadDatesMessage, function (loadVal) {
+      const unloadRaw = (this.parent as { unloadingDueDate?: string })?.unloadingDueDate?.trim();
+      if (!String(loadVal ?? '').trim() || !unloadRaw) return true;
+      const load = dayjs(loadVal);
+      const unload = dayjs(unloadRaw);
+      if (!load.isValid() || !unload.isValid()) return true;
+      return !load.isAfter(unload, 'day');
+    }),
   loadingReference: Yup.string().optional(),
   loadingDescription: Yup.string().optional(),
   unloadingAddress: getAddressSchema({ message: 'Adresa istovara je obavezna' }),
   unloadingCompanyName: Yup.string().optional(),
-  unloadingDueDate: Yup.string().optional(),
+  unloadingDueDate: Yup.string()
+    .optional()
+    .test('not-before-load', cargoLoadUnloadDatesMessage, function (unloadVal) {
+      const loadRaw = (this.parent as { loadingReadyDate?: string })?.loadingReadyDate?.trim();
+      if (!String(unloadVal ?? '').trim() || !loadRaw) return true;
+      const load = dayjs(loadRaw);
+      const unload = dayjs(unloadVal);
+      if (!load.isValid() || !unload.isValid()) return true;
+      return !unload.isBefore(load, 'day');
+    }),
   unloadingReference: Yup.string().optional(),
   unloadingDescription: Yup.string().optional(),
   metadata: cargoMetadataSchema.required('Podaci tereta su obavezni'),

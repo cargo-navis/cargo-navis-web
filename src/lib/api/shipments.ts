@@ -40,9 +40,9 @@ export async function deleteShipment(id: string) {
   return backend.delete<void>(`/api/shipments/${id}`);
 }
 
-export async function sendShipmentToDriver(id: string, driverId: string, sentToDriver: boolean) {
-  return updateShipment(id, { driverId, sentToDriver });
-}
+// export async function sendShipmentToDriver(id: string, driverId: string, sentToDriver: boolean) {
+// return updateShipment(id, { driverId, sentToDriver });
+// }
 
 export async function uploadShipmentFile(id: string, file: File, fileName: string) {
   const formData = new FormData();

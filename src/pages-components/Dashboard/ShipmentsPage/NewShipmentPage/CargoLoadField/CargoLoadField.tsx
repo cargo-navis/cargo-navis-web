@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 import { getDataPointDateString } from '@/lib/utils/date';
 import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
@@ -47,14 +48,21 @@ export const typeLabelsMap = {
 };
 
 interface CargoLoadFieldProps {
+  cargoIndex: number;
   cargo: any;
   type: CargoLoadFieldType;
   onChange(values: any): void;
   onRemove(): void;
 }
 
-export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onChange, onRemove }) => {
+export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargoIndex, cargo, type, onChange, onRemove }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const {
+    formState: { errors },
+  } = useFormContext();
+  const dateFieldKey = typeLabelsMap[type].fieldNames.date as 'loadingReadyDate' | 'unloadingDueDate';
+  const dateError = errors.cargo?.[cargoIndex]?.[dateFieldKey]?.message as string | undefined;
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -110,6 +118,11 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onC
                 <Text color="text-color-1" variant="text-s">
                   {getDataPointDateString(initialValues.date)}
                 </Text>
+                {dateError ? (
+                  <Text className="text-red-600 dark:text-red-500" variant="text-xs-medium">
+                    {dateError}
+                  </Text>
+                ) : null}
               </FlexLayout>
               <DisplayIf condition={!!initialValues.loadReference}>
                 <FlexLayout className="flex-col text-end">
@@ -138,6 +151,7 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onC
         </FlexLayout>
       )}
       <CargoLoadModal
+        cargo={cargo}
         initialValues={initialValues}
         isOpen={isModalOpen}
         type={type}

@@ -9,7 +9,6 @@ import {
   GetShipmentParams,
   getShipments,
   PaginatedResponse,
-  sendShipmentToDriver,
   Shipment,
   updateShipment,
   uploadShipmentFile,
@@ -168,8 +167,8 @@ export function useSendShipmentToDriver(id: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { driverId: string; sentToDriver: boolean }) =>
-      sendShipmentToDriver(id, data.driverId, data.sentToDriver),
+    mutationFn: (data: { driverId: string; sentToDriver: boolean }) => Promise.resolve(data),
+    // sendShipmentToDriver(id, data.driverId, data.sentToDriver),
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['shipments'] });
       await queryClient.invalidateQueries({ queryKey: ['shipment', id] });

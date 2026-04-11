@@ -1,4 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
+import dayjs from 'dayjs';
+import { useMemo } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 import * as Yup from 'yup';
 
@@ -7,22 +9,47 @@ import { FormDatepicker, FormSingleSelect, FormTextarea, FormTextInput } from '@
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Button, Dialog, DialogContent, DialogHeader, DialogTitle, FlexLayout, Icon, VerticalDivider } from '@/ui';
 
-import { getAddressSchema } from '../schema';
+import { cargoLoadUnloadDatesMessage, getAddressSchema } from '../schema';
 import { CargoLoadFieldType, typeLabelsMap } from './CargoLoadField';
 import { useFormFocusOverride, usePostalCodeFieldFocusOverride } from './hooks';
 
-const cargoLoadSchema = Yup.object().shape({
-  address: getAddressSchema({ message: 'Adresa je obavezna' }),
-  companyName: Yup.string().optional(),
-  date: Yup.string().optional(),
-  loadReference: Yup.string().optional(),
-  description: Yup.string().optional(),
-});
+function buildCargoLoadSchema(
+  type: CargoLoadFieldType,
+  cargo?: { loadingReadyDate?: string; unloadingDueDate?: string }
+) {
+  return Yup.object().shape({
+    address: getAddressSchema({ message: 'Adresa je obavezna' }),
+    companyName: Yup.string().optional(),
+    date: Yup.string()
+      .optional()
+      .test('load-unload-order', cargoLoadUnloadDatesMessage, function (dateVal) {
+        if (!String(dateVal ?? '').trim()) return true;
+        const d = dayjs(dateVal);
+        if (!d.isValid()) return true;
+        if (type === CargoLoadFieldType.Load) {
+          const due = cargo?.unloadingDueDate?.trim();
+          if (!due) return true;
+          const dueD = dayjs(due);
+          if (!dueD.isValid()) return true;
+          return !d.isAfter(dueD, 'day');
+        }
+        const ready = cargo?.loadingReadyDate?.trim();
+        if (!ready) return true;
+        const readyD = dayjs(ready);
+        if (!readyD.isValid()) return true;
+        return !d.isBefore(readyD, 'day');
+      }),
+    loadReference: Yup.string().optional(),
+    description: Yup.string().optional(),
+  });
+}
 
 interface CargoLoadModalProps {
   isOpen: boolean;
   initialValues: any;
   type: CargoLoadFieldType;
+  /** Peer dates on the cargo row for calendar bounds and validation */
+  cargo?: { loadingReadyDate?: string; unloadingDueDate?: string };
   onClose(): void;
   onSubmit(values: any): void; // todo - any fix
 }
@@ -41,16 +68,30 @@ export const CargoLoadModal: React.FC<CargoLoadModalProps> = ({ isOpen, onClose,
           <DialogTitle className="font-medium">{title}</DialogTitle>
           <Icon icon="XMarkIcon" onClick={onClose} />
         </DialogHeader>
-        <CargoLoadForm {...rest} />
+        <CargoLoadForm
+          key={
+            isOpen
+              ? `${rest.type}-${rest.cargo?.loadingReadyDate ?? ''}-${rest.cargo?.unloadingDueDate ?? ''}`
+              : 'closed'
+          }
+          {...rest}
+        />
       </DialogContent>
     </Dialog>
   );
 };
 
-const CargoLoadForm = ({ type, initialValues, onSubmit }: Omit<CargoLoadModalProps, 'isOpen' | 'onClose'>) => {
+const CargoLoadForm = ({ type, initialValues, cargo, onSubmit }: Omit<CargoLoadModalProps, 'isOpen' | 'onClose'>) => {
+  const cargoLoadSchema = useMemo(() => buildCargoLoadSchema(type, cargo), [type, cargo]);
+
+  const minDateForPicker =
+    type === CargoLoadFieldType.Unload ? cargo?.loadingReadyDate?.trim() || undefined : undefined;
+  const maxDateForPicker = type === CargoLoadFieldType.Load ? cargo?.unloadingDueDate?.trim() || undefined : undefined;
+
   const formMethods = useForm({
     defaultValues: initialValues,
     resolver: yupResolver(cargoLoadSchema),
+    mode: 'onChange',
   });
   const { handleSubmit } = formMethods;
   const { isValid } = formMethods.formState;
@@ -81,7 +122,7 @@ const CargoLoadForm = ({ type, initialValues, onSubmit }: Omit<CargoLoadModalPro
               <FormTextInput autoFocus label={companyLabel} name="companyName" />
             </Box>
             <Box className="flex-1">
-              <FormDatepicker label={dateLabel} name="date" />
+              <FormDatepicker label={dateLabel} maxDate={maxDateForPicker} minDate={minDateForPicker} name="date" />
             </Box>
           </FlexLayout>
           <VerticalDivider />

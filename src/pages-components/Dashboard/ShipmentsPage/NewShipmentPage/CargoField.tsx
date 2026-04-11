@@ -142,10 +142,17 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
       </FlexLayout>
       <Divider />
       <FlexLayout className="gap-4">
-        <CargoLoadField cargo={cargo} type={CargoLoadFieldType.Load} onChange={setLoadData} onRemove={removeLoadData} />
+        <CargoLoadField
+          cargo={cargo}
+          cargoIndex={index}
+          type={CargoLoadFieldType.Load}
+          onChange={setLoadData}
+          onRemove={removeLoadData}
+        />
         <VerticalDivider />
         <CargoLoadField
           cargo={cargo}
+          cargoIndex={index}
           type={CargoLoadFieldType.Unload}
           onChange={setUnloadData}
           onRemove={removeUnloadData}
