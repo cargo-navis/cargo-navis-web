@@ -17,13 +17,13 @@ import { shipmentSchema } from './schema';
 import type { ShipmentFields } from './types';
 import { getFormDefaultValues, transformFormDataToPayload } from './utils';
 
-interface NewShipmentFormProps {
+interface ShipmentFormProps {
   shipment?: Shipment;
   tenant: Tenant;
   copyFromId?: string;
 }
 
-export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tenant, copyFromId }) => {
+export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, copyFromId }) => {
   const { push, back } = useRouter();
   const isShipmentPresent = !!shipment;
   const isCopy = !!copyFromId;

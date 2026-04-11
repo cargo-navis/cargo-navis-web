@@ -6,7 +6,7 @@ import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useCurrentTenant, useShipment } from '@/lib/hooks';
 import { Box, FlexLayout, Heading } from '@/ui';
 
-import { NewShipmentForm } from './NewShipmentForm';
+import { ShipmentForm } from './ShipmentForm';
 
 export const NewShipmentPage = () => {
   const { query } = useRouter();
@@ -34,7 +34,7 @@ export const NewShipmentPage = () => {
         </FlexLayout>
         <FlexLayout className="py-5 flex-col gap-[40px]">
           <BackButton targetLocation="/dashboard/shipments" />
-          <NewShipmentForm copyFromId={copyFromId} shipment={copyFromShipment} tenant={tenant} />
+          <ShipmentForm copyFromId={copyFromId} shipment={copyFromShipment} tenant={tenant} />
         </FlexLayout>
       </Box>
     </DashboardLayout>

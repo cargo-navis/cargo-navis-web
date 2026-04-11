@@ -6,7 +6,7 @@ import type { Shipment } from '@/lib/api';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useCurrentTenant, useShipment } from '@/lib/hooks';
-import { NewShipmentForm } from '@/pages-components/Dashboard/ShipmentsPage/NewShipmentPage/NewShipmentForm';
+import { ShipmentForm } from '@/pages-components/Dashboard/ShipmentsPage/NewShipmentPage/ShipmentForm';
 import { Box, FlexLayout, Heading } from '@/ui';
 
 export const EditShipmentPage = () => {
@@ -39,7 +39,7 @@ const MainContent = ({ shipment, shipmentId, tenant }: { tenant: Tenant; shipmen
       </Box>
       <FlexLayout className="flex-col gap-[40px]">
         <BackButton targetLocation={`/dashboard/shipments/${shipmentId}`} />
-        <NewShipmentForm shipment={shipment} tenant={tenant} />
+        <ShipmentForm shipment={shipment} tenant={tenant} />
       </FlexLayout>
     </Box>
   );
