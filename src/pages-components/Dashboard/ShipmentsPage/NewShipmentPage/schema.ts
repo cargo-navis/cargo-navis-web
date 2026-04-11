@@ -36,7 +36,10 @@ const cargoMetadataSchema = Yup.object().shape({
 
 const cargoSchema = Yup.object().shape({
   id: Yup.string().optional(),
-  weight: Yup.number().typeError('Težina je obavezna').positive('Mora biti pozitivan broj').required(),
+  weight: Yup.number()
+    .typeError('Težina mora biti broj')
+    .required('Težina je obavezna')
+    .positive('Težina mora biti pozitivan broj'),
   description: Yup.string().optional(),
   ldm: Yup.number()
     .transform((value, original) => (original === '' ? undefined : value))
@@ -44,13 +47,11 @@ const cargoSchema = Yup.object().shape({
     .optional(),
   loadingAddress: getAddressSchema({ message: 'Adresa utovara je obavezna' }),
   loadingCompanyName: Yup.string().optional(),
-  loadingDate: getRequiredDateSchema({ message: 'Datum utovara je obavezan' }),
   loadingReadyDate: Yup.string().optional(),
   loadingReference: Yup.string().optional(),
   loadingDescription: Yup.string().optional(),
   unloadingAddress: getAddressSchema({ message: 'Adresa istovara je obavezna' }),
   unloadingCompanyName: Yup.string().optional(),
-  unloadingDate: getRequiredDateSchema({ message: 'Datum istovara je obavezan' }),
   unloadingDueDate: Yup.string().optional(),
   unloadingReference: Yup.string().optional(),
   unloadingDescription: Yup.string().optional(),
@@ -59,23 +60,18 @@ const cargoSchema = Yup.object().shape({
 
 export const shipmentSchema = Yup.object().shape({
   cargoReference: Yup.string().optional(),
-  dispatcherId: Yup.string().required('Disponent je obavezan'),
+  externalOrderReference: Yup.string().optional(),
   clientId: Yup.string().required('Klijent je obavezan'),
-  isAgencyUse: Yup.boolean().optional(),
   price: Yup.number()
-    .typeError('Cijena mora biti pozitivan broj')
-    .min(0, 'Cijena mora biti najmanje 0')
-    .positive('Mora biti pozitivan broj')
+    .typeError('Cijena mora biti broj')
+    .required('Cijena je obavezna')
+    .positive('Cijena mora biti pozitivan broj')
     .test('max-decimals', 'Cijena može imati maksimalno 2 decimale', (value) => {
       if (value === undefined || value === null) return true;
       const decimalPlaces = (value.toString().split('.')[1] || '').length;
       return decimalPlaces <= 2;
-    })
-    .optional(),
+    }),
   transportContractorId: Yup.string().required('Prijevoznik je obavezan'),
-  driverId: Yup.string().optional().nullable(),
-  vehicleId: Yup.string().optional().nullable(),
-  trailerId: Yup.string().optional().nullable(),
   cargo: Yup.array().of(cargoSchema).required('Potreban je najmanje jedan teret'),
 });
 
@@ -91,12 +87,6 @@ function getSingleDimensionSchema() {
           .optional(),
       otherwise: () => Yup.number().strip(),
     });
-}
-
-export function getRequiredDateSchema({ message }: { message: string }) {
-  return Yup.string()
-    .required(message)
-    .test('not-empty', message, (value) => value !== undefined && value !== null && value.trim() !== '');
 }
 
 export function getAddressSchema({ message }: { message: string }) {

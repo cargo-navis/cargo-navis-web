@@ -3,25 +3,17 @@ import { InvoiceStatus, LoadStatus } from './shipments';
 export interface Shipment {
   id: string;
   cargoReference: string;
+  externalOrderReference?: string;
   orderNumber: string;
   createdById: string;
-  // dispatcherId?: string; // Todo - [Refactor] Remove
-  // driverId?: string | null; // Todo - [Refactor] Remove
-  // vehicleId?: string | null; // Todo - [Refactor] Remove
-  // trailerId?: string | null; // Todo - [Refactor] Remove
   clientId?: string;
-  // isAgencyUse?: boolean; // Todo - [Refactor] Remove
   invoiceStatus: InvoiceStatus;
   invoiceStatusUpdatedAt: string | null;
   isInvoiceOverdue: boolean | null; // todo - [added]
   transportContractorId?: string;
   price: number;
   cargo: Cargo[];
-  // parentShipmentId?: string; // Todo - [Refactor] Remove
-  // subshipments?: Shipment[]; // Todo - [Refactor] Remove
   createdAt: string;
-  // childShipments?: Shipment[]; // Todo - [Refactor] Remove
-  // sentToDriver?: boolean; // Todo - [Refactor] Remove
   documents?: {
     id: string;
     createdAt: string;
@@ -61,14 +53,12 @@ export interface CreateShipmentData extends Omit<Shipment, 'id' | 'cargo'> {
     };
     loadingCompanyName?: string;
     loadingReadyDate?: string;
-    // loadingDate: string; // Todo - [Refactor] Remove
     loadingDescription?: string;
     unloadingAddress: {
       streetName: string;
       postalCodeId: string;
     };
     unloadingCompanyName?: string;
-    // unloadingDate: string; // Todo - [Refactor] Remove
     unloadingDueDate?: string;
     unloadingDescription?: string;
   }[];
@@ -92,17 +82,14 @@ interface Cargo {
   loadingAddress: LoadingAddress;
   loadingCompanyName?: string;
   loadingReadyDate?: string;
-  // loadingDate: string; // TODO - [Refactor] Remove
   loadingReference?: string;
   loadingDescription?: string;
   unloadingAddress: LoadingAddress;
   unloadingCompanyName?: string;
-  // unloadingDate: string; // TODO - [Refactor] Remove
   unloadingDueDate?: string;
   unloadingReference?: string;
   unloadingDescription?: string;
   loadStatus?: LoadStatus;
-  // vehicleStops?: VehicleStop[]; // TODO - [Refactor] Add
 }
 
 export interface Metadata {

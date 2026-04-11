@@ -46,7 +46,7 @@ export const BasicInfo = ({ shipment }: { shipment: Shipment }) => {
           </Link>
         </FlexLayout>
       </Box>
-      <FlexLayout className="gap-4">
+      <FlexLayout className="flex-col gap-4">
         <Box className="flex-1">
           <FlexLayout className="flex-col">
             <Text color="text-color-3" variant="text-xs-medium">
@@ -54,6 +54,16 @@ export const BasicInfo = ({ shipment }: { shipment: Shipment }) => {
             </Text>
             <Text color="text-color-1" variant="text-m-medium">
               {shipment.cargoReference || '—'}
+            </Text>
+          </FlexLayout>
+        </Box>
+        <Box className="flex-1">
+          <FlexLayout className="flex-col">
+            <Text color="text-color-3" variant="text-xs-medium">
+              Vanjska referenca narudžbe
+            </Text>
+            <Text color="text-color-1" variant="text-m-medium">
+              {shipment.externalOrderReference || '—'}
             </Text>
           </FlexLayout>
         </Box>

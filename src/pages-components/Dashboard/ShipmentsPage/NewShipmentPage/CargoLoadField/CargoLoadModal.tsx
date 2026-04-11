@@ -7,15 +7,14 @@ import { FormDatepicker, FormSingleSelect, FormTextarea, FormTextInput } from '@
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Button, Dialog, DialogContent, DialogHeader, DialogTitle, FlexLayout, Icon, VerticalDivider } from '@/ui';
 
-import { getAddressSchema, getRequiredDateSchema } from '../schema';
+import { getAddressSchema } from '../schema';
 import { CargoLoadFieldType, typeLabelsMap } from './CargoLoadField';
 import { useFormFocusOverride, usePostalCodeFieldFocusOverride } from './hooks';
 
 const cargoLoadSchema = Yup.object().shape({
   address: getAddressSchema({ message: 'Adresa je obavezna' }),
   companyName: Yup.string().optional(),
-  primaryDate: getRequiredDateSchema({ message: 'Datum je obavezan' }),
-  secondaryDate: Yup.string().optional(),
+  date: Yup.string().optional(),
   loadReference: Yup.string().optional(),
   description: Yup.string().optional(),
 });
@@ -62,7 +61,7 @@ const CargoLoadForm = ({ type, initialValues, onSubmit }: Omit<CargoLoadModalPro
     onSubmit(values);
   }
 
-  const { primaryDateLabel, secondaryDateLabel, companyLabel, ctaLabel, loadReferenceLabel } = typeLabelsMap[type];
+  const { dateLabel, companyLabel, ctaLabel, loadReferenceLabel } = typeLabelsMap[type];
 
   return (
     <FormProvider {...formMethods}>
@@ -82,10 +81,7 @@ const CargoLoadForm = ({ type, initialValues, onSubmit }: Omit<CargoLoadModalPro
               <FormTextInput autoFocus label={companyLabel} name="companyName" />
             </Box>
             <Box className="flex-1">
-              <FormDatepicker label={primaryDateLabel} name="primaryDate" rules={{ required: true }} />
-            </Box>
-            <Box className="flex-1">
-              <FormDatepicker label={secondaryDateLabel} name="secondaryDate" />
+              <FormDatepicker label={dateLabel} name="date" />
             </Box>
           </FlexLayout>
           <VerticalDivider />

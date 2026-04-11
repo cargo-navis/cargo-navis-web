@@ -17,14 +17,13 @@ export const LoadSelect: React.FC<LoadSelectProps> = ({ onChange }) => {
   const options = cargo.flatMap((c) => {
     const loadArr: any[] = [];
 
-    if (c.loadingDate) {
-      const { label, helper } = getOptionLabels(c.loadingAddress, c.loadingDate, c.loadingCompanyName);
+    if (c.loadingReadyDate) {
+      const { label, helper } = getOptionLabels(c.loadingAddress, c.loadingReadyDate, c.loadingCompanyName);
       loadArr.push({
         value: {
           address: c.loadingAddress,
           companyName: c.loadingCompanyName,
-          primaryDate: c.loadingDate,
-          secondaryDate: c.loadingReadyDate,
+          date: c.loadingReadyDate,
           description: c.loadingDescription,
         },
         label,
@@ -32,14 +31,13 @@ export const LoadSelect: React.FC<LoadSelectProps> = ({ onChange }) => {
       });
     }
 
-    if (c.unloadingDate) {
-      const { label, helper } = getOptionLabels(c.unloadingAddress, c.unloadingDate, c.unloadingCompanyName);
+    if (c.unloadingDueDate) {
+      const { label, helper } = getOptionLabels(c.unloadingAddress, c.unloadingDueDate, c.unloadingCompanyName);
       loadArr.push({
         value: {
           address: c.unloadingAddress,
           companyName: c.unloadingCompanyName,
-          primaryDate: c.unloadingDate,
-          secondaryDate: c.unloadingDueDate,
+          date: c.unloadingDueDate,
           description: c.unloadingDescription,
         },
         label,

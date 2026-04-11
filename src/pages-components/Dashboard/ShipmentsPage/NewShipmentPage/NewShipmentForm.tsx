@@ -2,24 +2,20 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import { type Shipment, VehicleEnum } from '@/lib/api';
+import { type Shipment } from '@/lib/api';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { FormTextInput } from '@/lib/components/form';
 import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, Divider, FlexLayout, LoadingSpinner } from '@/ui';
+import { Box, Button, FlexLayout, LoadingSpinner } from '@/ui';
 
-import { AgencyField } from './AgencyField';
 import { CargoFieldList } from './CargoFieldList';
 import { ClientField } from './ClientField';
 import { ContractorField } from './ContractorField';
-import { DispatcherField } from './DispatcherField';
-import { DriverField } from './DriverField';
 import { PriceField } from './PriceField';
 import { shipmentSchema } from './schema';
 import type { ShipmentFields } from './types';
 import { getFormDefaultValues, transformFormDataToPayload } from './utils';
-import { VehicleField } from './VehicleField';
 
 interface NewShipmentFormProps {
   shipment?: Shipment;
@@ -67,18 +63,12 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
         }, {} as ShipmentFields);
 
         const payload = transformFormDataToPayload(dirtyData);
-        if (parentShipmentId) {
-          payload.parentShipmentId = parentShipmentId;
-        }
 
         await updateShipment({ id: shipment.id, ...payload });
         showSuccessToast({ title: `Nalog "${shipment.orderNumber}" uspješno ažuriran` });
         void back();
       } else {
         const payload = transformFormDataToPayload(data);
-        if (parentShipmentId) {
-          payload.parentShipmentId = parentShipmentId;
-        }
 
         const newShipment = await createShipment(payload);
         showSuccessToast({ title: `Nalog "${newShipment.orderNumber}" uspješno kreiran` });
@@ -100,48 +90,24 @@ export const NewShipmentForm: React.FC<NewShipmentFormProps> = ({ shipment, tena
         <FlexLayout className="relative flex-col gap-7 w-full">
           <FlexLayout className="flex-row gap-7">
             <FlexLayout className="w-[500px] flex-col gap-4">
-              <AgencyField />
-              <FlexLayout className="flex-col gap-4">
-                <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
-                  <FlexLayout className="gap-4">
-                    <Box className="flex-1">
-                      <FormTextInput label="Referentni broj" name="cargoReference" placeholder="1234" />
-                    </Box>
-                  </FlexLayout>
+              <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
+                <FlexLayout className="gap-4">
                   <Box className="flex-1">
-                    <ContractorField name="transportContractorId" tenant={tenant} />
+                    <FormTextInput label="Referentni broj" name="cargoReference" placeholder="1234" />
                   </Box>
-                  <FlexLayout className="gap-4">
-                    <Box className="flex-1">
-                      <ClientField />
-                    </Box>
-                    <Box className="flex-1">
-                      <PriceField />
-                    </Box>
-                  </FlexLayout>
-                </FlexLayout>
-                <Divider />
-                <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
                   <Box className="flex-1">
-                    <DriverField />
-                  </Box>
-                  <FlexLayout className="gap-4">
-                    <Box className="flex-1">
-                      <VehicleField label="Vozilo" name="vehicleId" placeholder="Odaberi vozilo..." />
-                    </Box>
-                    <Box className="flex-1">
-                      <VehicleField
-                        label="Priključno vozilo"
-                        name="trailerId"
-                        placeholder="Odaberi priključno vozilo..."
-                        type={VehicleEnum.TRAILER}
-                      />
-                    </Box>
-                  </FlexLayout>
-                  <Box className="flex-1">
-                    <DispatcherField />
+                    <FormTextInput label="Vanjska referenca narudžbe" name="externalOrderReference" />
                   </Box>
                 </FlexLayout>
+                <FlexLayout className="gap-4">
+                  <Box className="flex-1">
+                    <ClientField />
+                  </Box>
+                  <Box className="flex-1">
+                    <PriceField />
+                  </Box>
+                </FlexLayout>
+                <ContractorField name="transportContractorId" tenant={tenant} />
               </FlexLayout>
             </FlexLayout>
             <CargoFieldList />
