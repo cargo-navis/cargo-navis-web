@@ -9,3 +9,4 @@ export * from './shipments';
 export * from './tenant';
 export * from './user';
 export * from './vehicles';
+export * from './vehicleStops';
