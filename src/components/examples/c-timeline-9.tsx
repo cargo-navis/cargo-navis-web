@@ -1,4 +1,4 @@
-"use client"
+'use client';
 
 import {
   Timeline,
@@ -9,42 +9,34 @@ import {
   TimelineItem,
   TimelineSeparator,
   TimelineTitle,
-} from "@/components/reui/timeline"
+} from '@/components/reui/timeline';
 
 const projectJourney = [
   {
     id: 1,
-    date: "Oct 2024",
-    title: "Kickoff",
-    description: "Defining project goals and core team selection.",
+    date: 'Oct 2024',
+    title: 'Kickoff',
+    description: 'Defining project goals and core team selection.',
   },
   {
     id: 2,
-    date: "Nov 2024",
-    title: "Discovery",
-    description: "User research and requirements gathering phase.",
+    date: 'Nov 2024',
+    title: 'Discovery',
+    description: 'User research and requirements gathering phase.',
   },
   {
     id: 3,
-    date: "Dec 2024",
-    title: "Implementation",
-    description: "Core development and sprint execution.",
+    date: 'Dec 2024',
+    title: 'Implementation',
+    description: 'Core development and sprint execution.',
   },
-]
+];
 
 export function Pattern() {
   return (
-    <Timeline
-      defaultValue={2}
-      orientation="horizontal"
-      className="w-full max-w-xl"
-    >
+    <Timeline defaultValue={2} orientation="horizontal" className="w-full max-w-xl">
       {projectJourney.map((item) => (
-        <TimelineItem
-          key={item.id}
-          step={item.id}
-          className="group-data-[orientation=horizontal]/timeline:mt-0"
-        >
+        <TimelineItem key={item.id} step={item.id} className="group-data-[orientation=horizontal]/timeline:mt-0">
           <TimelineHeader>
             <TimelineSeparator className="group-data-[orientation=horizontal]/timeline:top-8" />
             <TimelineDate className="mb-10">{item.date}</TimelineDate>
@@ -55,5 +47,5 @@ export function Pattern() {
         </TimelineItem>
       ))}
     </Timeline>
-  )
+  );
 }

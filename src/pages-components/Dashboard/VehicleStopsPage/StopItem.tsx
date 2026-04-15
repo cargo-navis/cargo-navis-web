@@ -88,7 +88,9 @@ export const StopTimelineEntry = ({ stop, step }: StopTimelineItemProps) => {
         </Tooltip>
       </TimelineHeader>
       <TimelineContent>
-        <Text color="text-color-3" variant="text-xxxs">{address.streetName}</Text>
+        <Text color="text-color-3" variant="text-xxxs">
+          {address.streetName}
+        </Text>
       </TimelineContent>
     </TimelineItem>
   );

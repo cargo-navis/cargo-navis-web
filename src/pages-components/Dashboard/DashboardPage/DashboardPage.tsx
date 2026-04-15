@@ -25,7 +25,9 @@ export const DashboardPage = () => {
               {isLoading ? 'Učitavam obavijesti...' : 'Obavijesti'}
             </Text>
             <DisplayIf condition={!!notifications && !!notifications.length}>
-              {notifications?.map((n) => <NotificationItem key={n.id} notification={n} />)}
+              {notifications?.map((n) => (
+                <NotificationItem key={n.id} notification={n} />
+              ))}
             </DisplayIf>
             <DisplayIf condition={!isLoading && (!notifications || !notifications.length)}>
               <Text color="text-color-3" variant="text-m">
@@ -38,7 +40,9 @@ export const DashboardPage = () => {
               {isLoading ? 'Učitavam upozorenja...' : 'Upozorenja'}
             </Text>
             <DisplayIf condition={!!alerts && !!alerts.length}>
-              {alerts?.map((a) => <AlertItem alert={a} key={a.alertable.id + a.createdAt} />)}
+              {alerts?.map((a) => (
+                <AlertItem alert={a} key={a.alertable.id + a.createdAt} />
+              ))}
             </DisplayIf>
             <DisplayIf condition={!isLoading && (!alerts || !alerts.length)}>
               <Text color="text-color-3" variant="text-m">

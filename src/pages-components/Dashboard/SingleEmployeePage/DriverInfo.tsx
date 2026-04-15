@@ -81,7 +81,9 @@ export const DriverInfo: React.FC<DriverInfoProps> = ({ employee }) => {
               Kategorije:
             </Text>
             <FlexLayout className="gap-1">
-              {driverLicenceCategories?.map((l: string) => <CategoryLabel category={l} key={l} />)}
+              {driverLicenceCategories?.map((l: string) => (
+                <CategoryLabel category={l} key={l} />
+              ))}
             </FlexLayout>
           </FlexLayout>
           <InfoItem
