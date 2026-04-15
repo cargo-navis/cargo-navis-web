@@ -1,0 +1,53 @@
+import * as React from 'react';
+
+import { Timeline } from '@/components/reui/timeline';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import type { Vehicle } from '@/lib/api';
+import type { VehicleStopGroup } from '@/lib/api/vehicleStops';
+import { FlexLayout, Icon, Text } from '@/ui';
+
+import { StopTimelineEntry } from './StopItem';
+
+interface VehicleStopCardProps {
+  group: VehicleStopGroup;
+  vehicle: Vehicle;
+}
+
+export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
+  const stops = group.stops.slice(-5);
+
+  // activeStep = index of last visited stop (before the first one without a date)
+  const firstUnvisitedIndex = stops.findIndex((s) => !s.date);
+  const activeStep = firstUnvisitedIndex === -1 ? stops.length : firstUnvisitedIndex;
+
+  return (
+    <Card className="rounded-m">
+      <CardHeader className="p-4 pb-4">
+        <FlexLayout className="flex-col">
+          <FlexLayout className="items-center gap-2">
+            <Text color="text-color-1" variant="text-m-medium">
+              {vehicle.registration}
+            </Text>
+          </FlexLayout>
+          <FlexLayout className="items-center gap-1 text-dark-600 dark:text-light-300">
+            <Icon icon="TruckIcon" size="m" />
+            <Text variant="text-s">{vehicle.brand}</Text>
+          </FlexLayout>
+        </FlexLayout>
+      </CardHeader>
+      <CardContent className="px-4 pb-4 pt-0">
+        {stops.length === 0 ? (
+          <Text color="text-color-3" variant="text-s">
+            Nema stanica za ovo vozilo.
+          </Text>
+        ) : (
+          <Timeline className="w-full" defaultValue={activeStep} orientation="horizontal">
+            {stops.map((stop, i) => (
+              <StopTimelineEntry key={stop.id} step={i + 1} stop={stop} />
+            ))}
+          </Timeline>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
