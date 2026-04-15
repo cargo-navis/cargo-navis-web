@@ -34,9 +34,9 @@ const projectJourney = [
 
 export function Pattern() {
   return (
-    <Timeline defaultValue={2} orientation="horizontal" className="w-full max-w-xl">
+    <Timeline className="w-full max-w-xl" defaultValue={2} orientation="horizontal">
       {projectJourney.map((item) => (
-        <TimelineItem key={item.id} step={item.id} className="group-data-[orientation=horizontal]/timeline:mt-0">
+        <TimelineItem className="group-data-[orientation=horizontal]/timeline:mt-0" key={item.id} step={item.id}>
           <TimelineHeader>
             <TimelineSeparator className="group-data-[orientation=horizontal]/timeline:top-8" />
             <TimelineDate className="mb-10">{item.date}</TimelineDate>

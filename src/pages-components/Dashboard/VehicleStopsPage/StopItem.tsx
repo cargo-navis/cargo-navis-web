@@ -82,8 +82,8 @@ export const StopTimelineEntry = ({ stop, step }: StopTimelineItemProps) => {
         <Tooltip content={<StopTooltipContent stop={stop} />} isPortal>
           <TimelineIndicator
             className="z-10 cursor-default"
-            onClick={(e) => e.preventDefault()}
             style={{ top: '28px', left: 0, transform: 'translateY(-50%)' }}
+            onClick={(e) => e.preventDefault()}
           />
         </Tooltip>
       </TimelineHeader>

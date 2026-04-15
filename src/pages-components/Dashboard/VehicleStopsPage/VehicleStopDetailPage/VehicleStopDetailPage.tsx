@@ -1,10 +1,10 @@
 import dayjs from 'dayjs';
-import { useMemo } from 'react';
 import { useRouter } from 'next/router';
+import { useMemo } from 'react';
 
 import { BackButton } from '@/components/BackButton';
-import { Timeline } from '@/components/reui/timeline';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { Timeline } from '@/components/reui/timeline';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicles } from '@/lib/hooks';

@@ -1,5 +1,5 @@
-import * as React from 'react';
 import Link from 'next/link';
+import * as React from 'react';
 
 import { Timeline } from '@/components/reui/timeline';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
