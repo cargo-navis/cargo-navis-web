@@ -72,9 +72,9 @@ function Timeline({
 // TimelineContent
 function TimelineContent({ className, children, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
-    <Text className={cn(className)} color="text-color-3" data-slot="timeline-content" variant="text-xxxs" {...props}>
+    <Box className={cn(className)} data-slot="timeline-content" {...props}>
       {children}
-    </Text>
+    </Box>
   );
 }
 
@@ -149,12 +149,14 @@ TimelineIndicator.displayName = 'TimelineIndicator';
 // TimelineItem
 interface TimelineItemProps extends HTMLAttributes<HTMLDivElement> {
   step: number;
+  completed?: boolean;
+  separatorActive?: boolean;
 }
 
-function TimelineItem({ step, className, ...props }: TimelineItemProps) {
+function TimelineItem({ step, completed, separatorActive, className, ...props }: TimelineItemProps) {
   const { activeStep } = useTimeline();
-  const isCompleted = step <= activeStep;
-  const isNextCompleted = step < activeStep;
+  const isCompleted = completed ?? step <= activeStep;
+  const isNextCompleted = separatorActive ?? step < activeStep;
 
   return (
     <FlexLayout
@@ -187,12 +189,12 @@ function TimelineSeparator({ className, ...props }: HTMLAttributes<HTMLDivElemen
 }
 
 // TimelineTitle
-const TimelineTitle = forwardRef<HTMLHeadingElement, HTMLAttributes<HTMLHeadingElement>>(
+const TimelineTitle = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, children, ...props }, ref) => {
     return (
-      <Text as="h3" className={cn(className)} data-slot="timeline-title" ref={ref} variant="text-xxs-medium" {...props}>
+      <Box className={cn(className)} data-slot="timeline-title" ref={ref} {...props}>
         {children}
-      </Text>
+      </Box>
     );
   }
 );

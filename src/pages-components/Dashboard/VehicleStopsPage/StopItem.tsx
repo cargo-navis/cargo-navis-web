@@ -79,11 +79,17 @@ export const StopTimelineEntry = ({ stop, step }: StopTimelineItemProps) => {
             )}
           </Text>
         </TimelineTitle>
-        <Tooltip content={<StopTooltipContent stop={stop} />}>
-          <TimelineIndicator style={{ top: '28px', left: 0, transform: 'translateY(-50%)' }} />
+        <Tooltip content={<StopTooltipContent stop={stop} />} isPortal>
+          <TimelineIndicator
+            className="z-10 cursor-default"
+            onClick={(e) => e.preventDefault()}
+            style={{ top: '28px', left: 0, transform: 'translateY(-50%)' }}
+          />
         </Tooltip>
       </TimelineHeader>
-      <TimelineContent>{address.streetName}</TimelineContent>
+      <TimelineContent>
+        <Text color="text-color-3" variant="text-xxxs">{address.streetName}</Text>
+      </TimelineContent>
     </TimelineItem>
   );
 };
