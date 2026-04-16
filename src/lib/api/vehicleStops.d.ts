@@ -1,7 +1,51 @@
 export interface VehicleStopAddress {
-  streetName: string;
+  id: string;
+  streetName: string | null;
   postalCode: string;
-  city: string;
+  countryCode: string | null;
+  placeName: string | null;
+}
+
+export interface VehicleStopAddressRequest {
+  streetName: string;
+  postalCodeId: string;
+}
+
+export interface VehicleStopCargo {
+  id: string;
+  weight: number;
+  ldm: number;
+  description: string | null;
+  metadata: VehicleStopCargoMetadata;
+  position: number;
+  loadingAddress: VehicleStopAddress | null;
+  loadingCompanyName: string | null;
+  loadingReadyDate: string | null;
+  loadingDescription: string | null;
+  loadingReference: string | null;
+  unloadingAddress: VehicleStopAddress | null;
+  unloadingCompanyName: string | null;
+  unloadingDueDate: string | null;
+  unloadingDescription: string | null;
+  unloadingReference: string | null;
+}
+
+export interface VehicleStopCargoMetadata {
+  type: string;
+  palleteType: string;
+  palleteAmount: number;
+  width: number;
+  height: number;
+  length: number;
+}
+
+export interface VehicleStopDocument {
+  id: string;
+  createdAt: string;
+  name: string;
+  mimeType: string;
+  status: string;
+  publicUrl: string | null;
 }
 
 export interface VehicleStop {
@@ -9,18 +53,37 @@ export interface VehicleStop {
   createdAt: string;
   vehicleId: string;
   previousStopId: string | null;
-  address: VehicleStopAddress;
-  date?: string;
-  driverId: string;
+  address: VehicleStopAddress | null;
+  date: string | null;
+  driverId: string | null;
   trailerId: string | null;
-  disponentId: string;
-  loadingCargos: unknown[];
-  unloadingCargos: unknown[];
-  documents: unknown[];
+  disponentId: string | null;
+  loadingCargos: VehicleStopCargo[];
+  unloadingCargos: VehicleStopCargo[];
+  documents: VehicleStopDocument[];
   messageSentAt: string | null;
 }
 
 export interface VehicleStopGroup {
   vehicleId: string;
   stops: VehicleStop[];
+}
+
+export interface CreateVehicleStopParams {
+  vehicleId: string;
+  previousStopId?: string | null;
+  address?: VehicleStopAddressRequest | null;
+  date?: string | null;
+  driverId?: string | null;
+  trailerId?: string | null;
+  disponentId?: string | null;
+  sendMessage?: boolean;
+}
+
+export type UpdateVehicleStopParams = Partial<Omit<CreateVehicleStopParams, 'sendMessage'>>;
+
+export interface GetVehicleStopsParams {
+  vehicleId?: string;
+  page: number;
+  size: number;
 }

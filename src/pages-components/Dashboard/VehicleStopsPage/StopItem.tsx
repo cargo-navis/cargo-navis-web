@@ -23,10 +23,14 @@ const StopTooltipContent = ({ stop }: { stop: VehicleStop }) => {
 
   return (
     <FlexLayout className="p-2 flex-col text-light-50">
-      <Text variant="text-xxs-medium">{address.streetName}</Text>
-      <Text variant="text-s">
-        {address.postalCode}, {address.city}
-      </Text>
+      {address && (
+        <>
+          <Text variant="text-xxs-medium">{address.streetName}</Text>
+          <Text variant="text-s">
+            {address.postalCode}, {address.placeName}
+          </Text>
+        </>
+      )}
       {date && (
         <Text as="span" color="text-color-4" variant="text-xxs">
           {dayjs(date).format('DD.MM.YYYY')}
@@ -70,7 +74,7 @@ export const StopTimelineEntry = ({ stop, step }: StopTimelineItemProps) => {
         <TimelineDate style={{ marginBottom: '20px' }}>{date ? dayjs(date).format('DD.MM.YYYY') : '-'}</TimelineDate>
         <TimelineTitle>
           <Text as="span" className="inline-flex items-center gap-1" color="text-color-1" variant="text-s-medium">
-            {address.city}
+            {address?.placeName ?? '-'}
             {hasLoading && (
               <Icon className="text-dark-500 dark:text-light-300" icon="ArrowRightEndOnRectangleIcon" size="s" />
             )}
@@ -89,7 +93,7 @@ export const StopTimelineEntry = ({ stop, step }: StopTimelineItemProps) => {
       </TimelineHeader>
       <TimelineContent>
         <Text color="text-color-3" variant="text-xxxs">
-          {address.streetName}
+          {address?.streetName}
         </Text>
       </TimelineContent>
     </TimelineItem>

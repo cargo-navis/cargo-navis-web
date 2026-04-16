@@ -47,12 +47,12 @@ export const VerticalStopEntry = ({ stop, step, completed, separatorActive }: Ve
       </TimelineDate>
       <TimelineTitle>
         <Text as="span" color="text-color-1" variant="text-l-medium">
-          {address.city}
+          {address?.placeName ?? '-'}
         </Text>
       </TimelineTitle>
       <TimelineContent>
         <Text color="text-color-3" variant="text-xxs">
-          {address.streetName}, {address.postalCode}
+          {address ? `${address.streetName}, ${address.postalCode}` : '-'}
         </Text>
       </TimelineContent>
       {(hasLoading || hasUnloading) && (
