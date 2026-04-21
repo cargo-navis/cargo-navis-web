@@ -17,10 +17,6 @@ interface VehicleStopCardProps {
 export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
   const stops = group.stops.slice(-5);
 
-  // activeStep = index of last visited stop (before the first one without a date)
-  const firstUnvisitedIndex = stops.findIndex((s) => !s.date);
-  const activeStep = firstUnvisitedIndex === -1 ? stops.length : firstUnvisitedIndex;
-
   return (
     <Link className="block" href={`/dashboard/vehicle-stops/${group.vehicleId}`}>
       <Card className="rounded-m hover:border-teal-500/50 transition-colors cursor-pointer">
@@ -43,7 +39,7 @@ export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
               Nema stanica za ovo vozilo.
             </Text>
           ) : (
-            <Timeline className="w-full" defaultValue={activeStep} orientation="horizontal">
+            <Timeline className="w-full" defaultValue={stops.length} orientation="horizontal">
               {stops.map((stop, i) => (
                 <StopTimelineEntry key={stop.id} step={i + 1} stop={stop} />
               ))}

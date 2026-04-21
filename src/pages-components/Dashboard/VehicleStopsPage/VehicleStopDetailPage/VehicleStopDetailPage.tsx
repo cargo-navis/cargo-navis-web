@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
 
@@ -15,12 +14,6 @@ import { Box, FlexLayout, Icon, Text } from '@/ui';
 import { VehicleStopModal } from './VehicleStopModal';
 import { VerticalStopEntry } from './VerticalStopEntry';
 
-function sortStops(stops: VehicleStop[]): VehicleStop[] {
-  const unvisited = stops.filter((s) => !s.date);
-  const visited = stops.filter((s) => s.date).sort((a, b) => dayjs(b.date).valueOf() - dayjs(a.date).valueOf());
-  return [...unvisited, ...visited];
-}
-
 export const VehicleStopDetailPage = () => {
   const { query } = useRouter();
   const vehicleId = query.vehicleId as string;
@@ -35,7 +28,7 @@ export const VehicleStopDetailPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStop, setEditingStop] = useState<VehicleStop | undefined>(undefined);
 
-  const sortedStops = useMemo(() => (group ? sortStops(group.stops) : []), [group]);
+  const stops = group?.stops ?? [];
 
   const isLoading = isLoadingStops || isLoadingVehicles;
 
@@ -117,21 +110,18 @@ export const VehicleStopDetailPage = () => {
               </Text>
             </FlexLayout>
           </Box>
-          <Timeline className="w-full" defaultValue={0} orientation="vertical">
-            {sortedStops.map((stop, i) => {
-              const nextStop = sortedStops[i + 1];
-              return (
-                <VerticalStopEntry
-                  completed={!!stop.date}
-                  key={stop.id}
-                  separatorActive={!!stop.date && !!nextStop?.date}
-                  step={i + 1}
-                  stop={stop}
-                  onDelete={handleDelete}
-                  onEdit={openEditModal}
-                />
-              );
-            })}
+          <Timeline className="w-full" defaultValue={stops.length} orientation="vertical">
+            {stops.map((stop, i) => (
+              <VerticalStopEntry
+                completed
+                key={stop.id}
+                separatorActive
+                step={i + 1}
+                stop={stop}
+                onDelete={handleDelete}
+                onEdit={openEditModal}
+              />
+            ))}
           </Timeline>
         </Box>
       </FlexLayout>
