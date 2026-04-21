@@ -22,11 +22,18 @@ import {
 interface VehicleStopFormProps {
   vehicleId: string;
   stop?: VehicleStop;
+  previousStopId?: string | null;
   onSuccess(): void;
   onDirtyChange?(isDirty: boolean): void;
 }
 
-export const VehicleStopForm = ({ vehicleId, stop, onSuccess, onDirtyChange }: VehicleStopFormProps) => {
+export const VehicleStopForm = ({
+  vehicleId,
+  stop,
+  previousStopId,
+  onSuccess,
+  onDirtyChange,
+}: VehicleStopFormProps) => {
   const isEditMode = !!stop;
 
   const { data: drivers = [] } = useDrivers();
@@ -69,7 +76,7 @@ export const VehicleStopForm = ({ vehicleId, stop, onSuccess, onDirtyChange }: V
         await updateStop({ id: stop.id, data: payload });
         showSuccessToast({ title: 'Stanica ažurirana' });
       } else {
-        await createStop({ vehicleId, ...payload });
+        await createStop({ vehicleId, previousStopId: previousStopId ?? null, ...payload });
         showSuccessToast({ title: 'Stanica kreirana' });
       }
       onSuccess();

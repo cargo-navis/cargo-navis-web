@@ -125,8 +125,13 @@ export const VehicleStopDetailPage = () => {
           </Timeline>
         </Box>
       </FlexLayout>
-
-      <VehicleStopModal isOpen={isModalOpen} stop={editingStop} vehicleId={vehicleId} onClose={closeModal} />
+      <VehicleStopModal
+        isOpen={isModalOpen}
+        previousStopId={stops[0]?.id ?? null}
+        stop={editingStop}
+        vehicleId={vehicleId}
+        onClose={closeModal}
+      />
     </DashboardLayout>
   );
 };
