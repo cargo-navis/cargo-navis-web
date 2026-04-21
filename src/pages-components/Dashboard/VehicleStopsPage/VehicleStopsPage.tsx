@@ -39,7 +39,7 @@ export const VehicleStopsPage = () => {
     <DashboardLayout>
       <Box>
         <Heading as="h1" variant="text-xl">
-          Stanice Vozila
+          Prijevozi
         </Heading>
       </Box>
 

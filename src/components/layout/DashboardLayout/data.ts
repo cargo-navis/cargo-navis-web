@@ -21,7 +21,7 @@ export const links: NavLink[] = [
     subItems: [{ name: 'Novi Nalog', href: '/dashboard/shipments/new', icon: 'PlusIcon' }],
   },
   {
-    name: 'Stanice Vozila',
+    name: 'Prijevozi',
     href: '/dashboard/vehicle-stops',
     icon: 'StopCircleIcon',
   },
