@@ -10,7 +10,7 @@ import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicles } from '@/lib/hooks';
 import { useDeleteVehicleStop, useVehicleStopsByVehicle } from '@/lib/hooks/api/vehicleStops';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, FlexLayout, Icon, Text } from '@/ui';
+import { Box, FlexLayout, Icon, Text } from '@/ui';
 
 import { VehicleStopModal } from './VehicleStopModal';
 import { VerticalStopEntry } from './VerticalStopEntry';
@@ -92,20 +92,31 @@ export const VehicleStopDetailPage = () => {
       <FlexLayout className="py-5 flex-col gap-5">
         <BackButton targetLocation="/dashboard/vehicle-stops" />
 
-        <FlexLayout className="justify-between items-start">
-          <Box>
-            <Text as="h1" color="text-color-1" variant="text-xl-medium">
-              {vehicle.registration}
-            </Text>
-            <FlexLayout className="items-center gap-1 text-dark-600 dark:text-light-300">
-              <Icon icon="TruckIcon" size="l" />
-              <Text variant="text-m">{vehicle.brand}</Text>
-            </FlexLayout>
-          </Box>
-          <Button iconLeft="PlusIcon" text="Nova stanica" onClick={openCreateModal} />
-        </FlexLayout>
+        <Box>
+          <Text as="h1" color="text-color-1" variant="text-xl-medium">
+            {vehicle.registration}
+          </Text>
+          <FlexLayout className="items-center gap-1 text-dark-600 dark:text-light-300">
+            <Icon icon="TruckIcon" size="l" />
+            <Text variant="text-m">{vehicle.brand}</Text>
+          </FlexLayout>
+        </Box>
 
         <Box className="max-w-xl">
+          <Box className="relative">
+            <FlexLayout
+              as="button"
+              className="items-center gap-4 mb-6 text-teal-500 hover:text-teal-700 border-teal-500 hover:border-teal-700"
+              onClick={openCreateModal}
+            >
+              <FlexLayout className="items-center justify-center w-[32px] h-[32px] shrink-0 -ml-2 rounded-circle border-2 border-dashed border-inherit">
+                <Icon className="text-inherit" icon="PlusIcon" size="m" />
+              </FlexLayout>
+              <Text color="text-inherit" variant="text-s-medium">
+                Dodaj novu stanicu
+              </Text>
+            </FlexLayout>
+          </Box>
           <Timeline className="w-full" defaultValue={0} orientation="vertical">
             {sortedStops.map((stop, i) => {
               const nextStop = sortedStops[i + 1];

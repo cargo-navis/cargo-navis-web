@@ -39,7 +39,7 @@ export const VerticalStopEntry = ({
       completed={completed}
       separatorActive={separatorActive}
       step={step}
-      style={{ paddingLeft: '32px', paddingBottom: '24px' }}
+      style={{ paddingLeft: '32px', paddingBottom: '48px' }}
     >
       <TimelineHeader>
         <TimelineSeparator

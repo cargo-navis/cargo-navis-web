@@ -36,6 +36,10 @@ export const VehicleStopModal: React.FC<VehicleStopModalProps> = ({ isOpen, vehi
       <DialogContent
         aria-describedby={undefined}
         className="max-w-[800px]"
+        onEscapeKeyDown={(e) => {
+          if (isDirty) e.preventDefault();
+          else onClose();
+        }}
         onInteractOutside={(e) => {
           if (isDirty) e.preventDefault();
           else onClose();
