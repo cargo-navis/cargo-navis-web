@@ -50,9 +50,7 @@ export function getVehicleStopFormDefaults(stop: VehicleStop): VehicleStopFormVa
     address: {
       streetName: address?.streetName ?? '',
       countryCode: address?.countryCode ?? '',
-      addressPostalCode: address
-        ? { value: address.id, label: postalCodeLabelParts.join(', ') }
-        : {},
+      addressPostalCode: address ? { value: address.id, label: postalCodeLabelParts.join(', ') } : {},
     },
     date: stop.date ?? null,
     driverId: stop.driverId ?? null,
