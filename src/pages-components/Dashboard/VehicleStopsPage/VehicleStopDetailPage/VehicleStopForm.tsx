@@ -1,43 +1,59 @@
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useEffect } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
 import type { Vehicle } from '@/lib/api';
 import type { Employee } from '@/lib/api/employees.d';
+import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { FormDatepicker, FormSingleSelect, FormTextInput } from '@/lib/components/form';
-import { useCreateVehicleStop, useDispatchers, useDrivers, useTrailers } from '@/lib/hooks';
+import { useCreateVehicleStop, useDispatchers, useDrivers, useTrailers, useUpdateVehicleStop } from '@/lib/hooks';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Button, FlexLayout } from '@/ui';
 
-import { vehicleStopDefaultValues, type VehicleStopFormValues, vehicleStopSchema } from './schema';
+import {
+  getVehicleStopFormDefaults,
+  vehicleStopDefaultValues,
+  type VehicleStopFormValues,
+  vehicleStopSchema,
+} from './schema';
 
 interface VehicleStopFormProps {
   vehicleId: string;
+  stop?: VehicleStop;
   onSuccess(): void;
+  onDirtyChange?(isDirty: boolean): void;
 }
 
-export const VehicleStopForm = ({ vehicleId, onSuccess }: VehicleStopFormProps) => {
+export const VehicleStopForm = ({ vehicleId, stop, onSuccess, onDirtyChange }: VehicleStopFormProps) => {
+  const isEditMode = !!stop;
+
   const { data: drivers = [] } = useDrivers();
   const { data: dispatchers = [] } = useDispatchers();
   const { trailers = [] } = useTrailers();
 
-  const { mutateAsync: createStop, isPending } = useCreateVehicleStop();
+  const { mutateAsync: createStop, isPending: isCreating } = useCreateVehicleStop();
+  const { mutateAsync: updateStop, isPending: isUpdating } = useUpdateVehicleStop();
 
   const formMethods = useForm<VehicleStopFormValues>({
-    defaultValues: vehicleStopDefaultValues,
+    defaultValues: stop ? getVehicleStopFormDefaults(stop) : vehicleStopDefaultValues,
     resolver: yupResolver(vehicleStopSchema) as any,
     mode: 'onChange',
   });
 
   const { handleSubmit, formState } = formMethods;
 
+  useEffect(() => {
+    onDirtyChange?.(formState.isDirty);
+  }, [formState.isDirty, onDirtyChange]);
+
   const driverOptions = drivers.map((d: Employee) => ({ value: d.id, label: d.fullName }));
   const dispatcherOptions = dispatchers.map((d: Employee) => ({ value: d.id, label: d.fullName }));
   const trailerOptions = trailers.map((t: Vehicle) => ({ value: t.id, label: t.registration }));
 
   async function handleFormSubmit(values: VehicleStopFormValues) {
-    await createStop({
-      vehicleId,
+    const payload = {
       address: {
         streetName: values.address.streetName,
         postalCodeId: values.address.addressPostalCode.value as string,
@@ -46,8 +62,20 @@ export const VehicleStopForm = ({ vehicleId, onSuccess }: VehicleStopFormProps) 
       driverId: values.driverId || null,
       trailerId: values.trailerId || null,
       disponentId: values.disponentId || null,
-    });
-    onSuccess();
+    };
+
+    try {
+      if (isEditMode) {
+        await updateStop({ id: stop.id, data: payload });
+        showSuccessToast({ title: 'Stanica ažurirana' });
+      } else {
+        await createStop({ vehicleId, ...payload });
+        showSuccessToast({ title: 'Stanica kreirana' });
+      }
+      onSuccess();
+    } catch {
+      showErrorToast({ title: isEditMode ? 'Greška s ažuriranjem stanice' : 'Greška s kreiranjem stanice' });
+    }
   }
 
   return (
@@ -85,7 +113,12 @@ export const VehicleStopForm = ({ vehicleId, onSuccess }: VehicleStopFormProps) 
         </FlexLayout>
         <FormSingleSelect isClearable isSearchable label="Prikolica" name="trailerId" options={trailerOptions} />
         <Box className="mt-4">
-          <Button isDisabled={!formState.isValid} isFullWidth isLoading={isPending} text="Spremi stanicu" />
+          <Button
+            isDisabled={!formState.isValid || (isEditMode && !formState.isDirty)}
+            isFullWidth
+            isLoading={isCreating || isUpdating}
+            text={isEditMode ? 'Spremi promjene' : 'Spremi stanicu'}
+          />
         </Box>
       </FlexLayout>
     </FormProvider>

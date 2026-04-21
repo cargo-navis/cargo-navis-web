@@ -50,20 +50,20 @@ export function useCreateVehicleStop() {
   });
 }
 
-export function useUpdateVehicleStop(id: string) {
+export function useUpdateVehicleStop() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: UpdateVehicleStopParams) => updateVehicleStop(id, data),
+    mutationFn: ({ id, data }: { id: string; data: UpdateVehicleStopParams }) => updateVehicleStop(id, data),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
     },
   });
 }
 
-export function useDeleteVehicleStop(id: string) {
+export function useDeleteVehicleStop() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => deleteVehicleStop(id),
+    mutationFn: (id: string) => deleteVehicleStop(id),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
     },

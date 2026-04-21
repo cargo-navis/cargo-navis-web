@@ -8,10 +8,11 @@ import { Timeline } from '@/components/reui/timeline';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicles } from '@/lib/hooks';
-import { useVehicleStopsByVehicle } from '@/lib/hooks/api/vehicleStops';
+import { useDeleteVehicleStop, useVehicleStopsByVehicle } from '@/lib/hooks/api/vehicleStops';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout, Icon, Text } from '@/ui';
 
-import { CreateVehicleStopModal } from './CreateVehicleStopModal';
+import { VehicleStopModal } from './VehicleStopModal';
 import { VerticalStopEntry } from './VerticalStopEntry';
 
 function sortStops(stops: VehicleStop[]): VehicleStop[] {
@@ -26,15 +27,44 @@ export const VehicleStopDetailPage = () => {
 
   const { data: groups, isLoading: isLoadingStops } = useVehicleStopsByVehicle();
   const { data: vehicles, isLoading: isLoadingVehicles } = useVehicles();
+  const { mutateAsync: deleteStop } = useDeleteVehicleStop();
 
   const group = useMemo(() => groups?.find((g) => g.vehicleId === vehicleId), [groups, vehicleId]);
   const vehicle = useMemo(() => vehicles?.find((v) => v.id === vehicleId), [vehicles, vehicleId]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingStop, setEditingStop] = useState<VehicleStop | undefined>(undefined);
 
   const sortedStops = useMemo(() => (group ? sortStops(group.stops) : []), [group]);
 
   const isLoading = isLoadingStops || isLoadingVehicles;
+
+  function openCreateModal() {
+    setEditingStop(undefined);
+    setIsModalOpen(true);
+  }
+
+  function openEditModal(stop: VehicleStop) {
+    setEditingStop(stop);
+    setIsModalOpen(true);
+  }
+
+  function closeModal() {
+    setIsModalOpen(false);
+    setEditingStop(undefined);
+  }
+
+  async function handleDelete(stop: VehicleStop) {
+    const answer = confirm('Jeste li sigurni da želite izbrisati ovu stanicu?');
+    if (!answer) return;
+
+    try {
+      await deleteStop(stop.id);
+      showSuccessToast({ title: 'Stanica izbrisana' });
+    } catch {
+      showErrorToast({ title: 'Greška s brisanjem stanice' });
+    }
+  }
 
   if (isLoading) {
     return (
@@ -72,7 +102,7 @@ export const VehicleStopDetailPage = () => {
               <Text variant="text-m">{vehicle.brand}</Text>
             </FlexLayout>
           </Box>
-          <Button iconLeft="PlusIcon" text="Nova stanica" onClick={() => setIsModalOpen(true)} />
+          <Button iconLeft="PlusIcon" text="Nova stanica" onClick={openCreateModal} />
         </FlexLayout>
 
         <Box className="max-w-xl">
@@ -86,6 +116,8 @@ export const VehicleStopDetailPage = () => {
                   separatorActive={!!stop.date && !!nextStop?.date}
                   step={i + 1}
                   stop={stop}
+                  onDelete={handleDelete}
+                  onEdit={openEditModal}
                 />
               );
             })}
@@ -93,7 +125,7 @@ export const VehicleStopDetailPage = () => {
         </Box>
       </FlexLayout>
 
-      <CreateVehicleStopModal isOpen={isModalOpen} vehicleId={vehicleId} onClose={() => setIsModalOpen(false)} />
+      <VehicleStopModal isOpen={isModalOpen} stop={editingStop} vehicleId={vehicleId} onClose={closeModal} />
     </DashboardLayout>
   );
 };

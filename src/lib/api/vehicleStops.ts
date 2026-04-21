@@ -9,7 +9,6 @@ import type {
   VehicleStopDocument,
   VehicleStopGroup,
 } from './vehicleStops.d';
-import { mockVehicleStopGroups } from './vehicleStops.mock';
 
 export type {
   CreateVehicleStopParams,
@@ -33,11 +32,9 @@ export async function getVehicleStops(params: GetVehicleStopsParams) {
 }
 
 export async function getVehicleStopsByVehicle(limit?: number) {
-  // TODO: restore API call
-  // return backend.get<VehicleStopGroup[]>('/api/vehicle-stops/by-vehicle', {
-  //   params: limit ? { limit } : undefined,
-  // });
-  return mockVehicleStopGroups;
+  return backend.get<VehicleStopGroup[]>('/api/vehicle-stops/by-vehicle', {
+    params: limit ? { limit } : undefined,
+  });
 }
 
 export async function createVehicleStop(data: CreateVehicleStopParams) {

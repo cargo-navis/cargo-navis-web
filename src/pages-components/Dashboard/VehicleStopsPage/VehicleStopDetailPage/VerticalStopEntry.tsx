@@ -10,22 +10,32 @@ import {
   TimelineTitle,
 } from '@/components/reui/timeline';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
-import { FlexLayout, Icon, Text } from '@/ui';
+import { Box, FlexLayout, Icon, Text } from '@/ui';
 
 interface VerticalStopEntryProps {
   stop: VehicleStop;
   step: number;
   completed?: boolean;
   separatorActive?: boolean;
+  onEdit?(stop: VehicleStop): void;
+  onDelete?(stop: VehicleStop): void;
 }
 
-export const VerticalStopEntry = ({ stop, step, completed, separatorActive }: VerticalStopEntryProps) => {
+export const VerticalStopEntry = ({
+  stop,
+  step,
+  completed,
+  separatorActive,
+  onEdit,
+  onDelete,
+}: VerticalStopEntryProps) => {
   const { address, date, loadingCargos, unloadingCargos } = stop;
   const hasLoading = loadingCargos.length > 0;
   const hasUnloading = unloadingCargos.length > 0;
 
   return (
     <TimelineItem
+      className="group/stop-entry relative"
       completed={completed}
       separatorActive={separatorActive}
       step={step}
@@ -70,6 +80,28 @@ export const VerticalStopEntry = ({ stop, step, completed, separatorActive }: Ve
             </FlexLayout>
           )}
         </FlexLayout>
+      )}
+      {(onEdit || onDelete) && (
+        <Box className="absolute top-0 right-0 hidden group-hover/stop-entry:block">
+          <FlexLayout className="items-center gap-2">
+            {onEdit && (
+              <Icon
+                className="cursor-pointer text-dark-600 hover:text-teal-500 dark:text-light-300"
+                icon="PencilSquareIcon"
+                size="m"
+                onClick={() => onEdit(stop)}
+              />
+            )}
+            {onDelete && (
+              <Icon
+                className="cursor-pointer text-dark-600 hover:text-red-500 dark:text-light-300"
+                icon="TrashIcon"
+                size="m"
+                onClick={() => onDelete(stop)}
+              />
+            )}
+          </FlexLayout>
+        </Box>
       )}
     </TimelineItem>
   );
