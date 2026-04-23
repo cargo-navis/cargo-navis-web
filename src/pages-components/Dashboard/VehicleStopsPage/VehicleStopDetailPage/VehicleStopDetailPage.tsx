@@ -57,7 +57,7 @@ export const VehicleStopDetailPage = () => {
     setPreviousStop(undefined);
   }
 
-  async function handleDelete(stop: VehicleStop) {
+  async function _handleDelete(stop: VehicleStop) {
     const answer = confirm('Jeste li sigurni da želite izbrisati ovu stanicu?');
     if (!answer) return;
 
@@ -128,7 +128,7 @@ export const VehicleStopDetailPage = () => {
                 separatorActive
                 step={i + 1}
                 stop={stop}
-                onDelete={handleDelete}
+                // onDelete={handleDelete} TODO - enable once we decide how to handle this on BE
                 onEdit={openEditModal}
                 onInsertBefore={() => openInsertBeforeModal(stops[i + 1])}
               />
