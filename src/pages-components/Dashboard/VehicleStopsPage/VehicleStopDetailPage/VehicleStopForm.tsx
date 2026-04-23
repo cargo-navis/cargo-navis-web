@@ -2,6 +2,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
+import { ClientName } from '@/components/clients/ClientName';
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
 import type { Cargo, Vehicle } from '@/lib/api';
 import type { Employee } from '@/lib/api/employees.d';
@@ -12,8 +13,7 @@ import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Button, FlexLayout, Icon, Text, TextButton, VerticalDivider } from '@/ui';
 
-import { CargoSelectDrawer } from './CargoSelectDrawer';
-
+import { CargoSelectDrawer, CargoWithClient } from './CargoSelectDrawer';
 import {
   getCreateDefaultsFromPreviousStop,
   getVehicleStopFormDefaults,
@@ -45,12 +45,33 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
     mode: 'onChange',
   });
 
-  const { handleSubmit, formState } = formMethods;
+  const { handleSubmit, formState, setValue, watch } = formMethods;
 
   const [loadingDrawerOpen, setLoadingDrawerOpen] = useState(false);
   const [unloadingDrawerOpen, setUnloadingDrawerOpen] = useState(false);
   const [loadingCargos, setLoadingCargos] = useState<Cargo[]>([]);
   const [unloadingCargos, setUnloadingCargos] = useState<Cargo[]>([]);
+
+  const loadingCargoIds = watch('loadingCargoIds');
+  const unloadingCargoIds = watch('unloadingCargoIds');
+
+  function handleLoadingCargosChange(cargos: Cargo[]) {
+    setLoadingCargos(cargos);
+    setValue(
+      'loadingCargoIds',
+      cargos.map((c) => c.id),
+      { shouldDirty: true, shouldValidate: true }
+    );
+  }
+
+  function handleUnloadingCargosChange(cargos: Cargo[]) {
+    setUnloadingCargos(cargos);
+    setValue(
+      'unloadingCargoIds',
+      cargos.map((c) => c.id),
+      { shouldDirty: true, shouldValidate: true }
+    );
+  }
 
   useEffect(() => {
     onDirtyChange?.(formState.isDirty);
@@ -70,6 +91,8 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
       driverId: values.driverId || null,
       trailerId: values.trailerId || null,
       disponentId: values.disponentId || null,
+      loadingCargoIds: values.loadingCargoIds,
+      unloadingCargoIds: values.unloadingCargoIds,
     };
 
     try {
@@ -124,26 +147,28 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
           <FlexLayout className="flex-1 flex-col gap-2">
             <TextButton
               iconLeft="ArrowRightEndOnRectangleIcon"
-              text={loadingCargos.length > 0 ? `Utovari (${loadingCargos.length})` : 'Utovari'}
+              text={loadingCargoIds.length > 0 ? `Utovari (${loadingCargoIds.length})` : 'Utovari'}
+              type="button"
               variant="secondary"
               onClick={() => setLoadingDrawerOpen(true)}
             />
             <SelectedCargoList
               cargos={loadingCargos}
-              onRemove={(id) => setLoadingCargos((prev) => prev.filter((c) => c.id !== id))}
+              onRemove={(id) => handleLoadingCargosChange(loadingCargos.filter((c) => c.id !== id))}
             />
           </FlexLayout>
           <VerticalDivider />
           <FlexLayout className="flex-1 flex-col gap-2">
             <TextButton
               iconLeft="ArrowRightStartOnRectangleIcon"
-              text={unloadingCargos.length > 0 ? `Istovari (${unloadingCargos.length})` : 'Istovari'}
+              text={unloadingCargoIds.length > 0 ? `Istovari (${unloadingCargoIds.length})` : 'Istovari'}
+              type="button"
               variant="secondary"
               onClick={() => setUnloadingDrawerOpen(true)}
             />
             <SelectedCargoList
               cargos={unloadingCargos}
-              onRemove={(id) => setUnloadingCargos((prev) => prev.filter((c) => c.id !== id))}
+              onRemove={(id) => handleUnloadingCargosChange(unloadingCargos.filter((c) => c.id !== id))}
             />
           </FlexLayout>
         </FlexLayout>
@@ -161,7 +186,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
         isOpen={loadingDrawerOpen}
         selected={loadingCargos}
         title="Utovari"
-        onConfirm={setLoadingCargos}
+        onConfirm={handleLoadingCargosChange}
         onOpenChange={setLoadingDrawerOpen}
       />
       <CargoSelectDrawer
@@ -169,7 +194,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
         isOpen={unloadingDrawerOpen}
         selected={unloadingCargos}
         title="Istovari"
-        onConfirm={setUnloadingCargos}
+        onConfirm={handleUnloadingCargosChange}
         onOpenChange={setUnloadingDrawerOpen}
       />
     </FormProvider>
@@ -187,15 +212,13 @@ const SelectedCargoList = ({ cargos, onRemove }: { cargos: Cargo[]; onRemove(id:
           key={cargo.id}
         >
           <FlexLayout className="flex-col">
+            <ClientName color="text-color-3" id={(cargo as CargoWithClient).clientId} variant="text-xxs" />
             <FlexLayout className="items-center gap-1">
               <Icon icon="CubeIcon" size="s" />
               <Text color="text-color-1" variant="text-xs-medium">
                 {cargo.description || '-'}
               </Text>
             </FlexLayout>
-            <Text color="text-color-4" variant="text-xxs">
-              {cargo.weight} kg
-            </Text>
           </FlexLayout>
           <Box as="button" className="text-color-4 hover:text-color-1" type="button" onClick={() => onRemove(cargo.id)}>
             <Icon icon="XMarkIcon" />

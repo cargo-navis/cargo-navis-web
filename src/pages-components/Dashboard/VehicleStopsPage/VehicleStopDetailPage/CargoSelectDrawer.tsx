@@ -1,14 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import {
-  Drawer,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-} from '@/components/ui/drawer';
+import { ClientName } from '@/components/clients/ClientName';
+import { Drawer, DrawerContent, DrawerFooter, DrawerHeader } from '@/components/ui/drawer';
 import type { Cargo } from '@/lib/api';
 import { useShipmentsData } from '@/lib/hooks';
 import { Box, Button, FlexLayout, Icon, Skeleton, Text } from '@/ui';
+
+export type CargoWithClient = Cargo & { clientId?: string };
 
 interface CargoSelectDrawerProps {
   isOpen: boolean;
@@ -29,7 +27,10 @@ export const CargoSelectDrawer = ({
 }: CargoSelectDrawerProps) => {
   const { data: shipments, isLoading } = useShipmentsData({ params: { active: true }, enabled: isOpen });
 
-  const cargos = useMemo<Cargo[]>(() => shipments?.flatMap((s) => s.cargo) ?? [], [shipments]);
+  const cargos = useMemo<CargoWithClient[]>(
+    () => shipments?.flatMap((s) => s.cargo.map((c) => ({ ...c, clientId: s.clientId }))) ?? [],
+    [shipments]
+  );
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set(selected.map((c) => c.id)));
 
@@ -96,6 +97,7 @@ export const CargoSelectDrawer = ({
                     onClick={() => toggle(cargo.id)}
                   >
                     <FlexLayout className="flex-col">
+                      <ClientName color="text-color-3" id={cargo.clientId} variant="text-xxs" />
                       <Text color="text-color-1" variant="text-s-medium">
                         {cargo.description || '-'}
                       </Text>

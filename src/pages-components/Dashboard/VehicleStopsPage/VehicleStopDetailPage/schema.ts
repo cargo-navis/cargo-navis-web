@@ -17,6 +17,8 @@ export const vehicleStopSchema = Yup.object().shape({
   driverId: Yup.string().nullable().optional(),
   trailerId: Yup.string().nullable().optional(),
   disponentId: Yup.string().nullable().optional(),
+  loadingCargoIds: Yup.array().of(Yup.string().required()).default([]),
+  unloadingCargoIds: Yup.array().of(Yup.string().required()).default([]),
 });
 
 export interface VehicleStopFormValues {
@@ -29,6 +31,8 @@ export interface VehicleStopFormValues {
   driverId?: string | null;
   trailerId?: string | null;
   disponentId?: string | null;
+  loadingCargoIds: string[];
+  unloadingCargoIds: string[];
 }
 
 export const vehicleStopDefaultValues: VehicleStopFormValues = {
@@ -41,6 +45,8 @@ export const vehicleStopDefaultValues: VehicleStopFormValues = {
   driverId: null,
   trailerId: null,
   disponentId: null,
+  loadingCargoIds: [],
+  unloadingCargoIds: [],
 };
 
 export function getCreateDefaultsFromPreviousStop(previousStop?: VehicleStop): VehicleStopFormValues {
@@ -65,5 +71,7 @@ export function getVehicleStopFormDefaults(stop: VehicleStop): VehicleStopFormVa
     driverId: stop.driverId ?? null,
     trailerId: stop.trailerId ?? null,
     disponentId: stop.disponentId ?? null,
+    loadingCargoIds: stop.loadingCargos?.map((c) => c.id) ?? [],
+    unloadingCargoIds: stop.unloadingCargos?.map((c) => c.id) ?? [],
   };
 }

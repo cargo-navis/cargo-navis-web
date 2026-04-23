@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 
+import { ClientName } from '@/components/clients/ClientName';
 import {
   TimelineContent,
   TimelineDate,
@@ -9,8 +10,8 @@ import {
   TimelineSeparator,
   TimelineTitle,
 } from '@/components/reui/timeline';
-import type { VehicleStop } from '@/lib/api/vehicleStops';
-import { Box, FlexLayout, Icon, Text } from '@/ui';
+import type { VehicleStop, VehicleStopCargo } from '@/lib/api/vehicleStops';
+import { Box, FlexLayout, Icon, Text, Tooltip } from '@/ui';
 
 interface VerticalStopEntryProps {
   stop: VehicleStop;
@@ -66,18 +67,22 @@ export const VerticalStopEntry = ({
         </Text>
       </TimelineContent>
       {(hasLoading || hasUnloading) && (
-        <FlexLayout className="items-center gap-2 mt-1">
+        <FlexLayout className="items-center gap-3 mt-1">
           {hasLoading && (
-            <FlexLayout className="items-center gap-1 text-orange-500">
-              <Icon icon="ArrowRightEndOnRectangleIcon" size="m" />
-              <Text variant="text-xs">{loadingCargos.length} utovar</Text>
-            </FlexLayout>
+            <Tooltip content={<CargoTooltipList cargos={loadingCargos} />}>
+              <FlexLayout className="items-center gap-1 text-orange-500">
+                <Icon icon="ArrowRightEndOnRectangleIcon" size="m" />
+                <Text variant="text-xs">Utovar ({loadingCargos.length})</Text>
+              </FlexLayout>
+            </Tooltip>
           )}
           {hasUnloading && (
-            <FlexLayout className="items-center gap-1 text-teal-500">
-              <Icon icon="ArrowRightStartOnRectangleIcon" size="m" />
-              <Text variant="text-xs">{unloadingCargos.length} istovar</Text>
-            </FlexLayout>
+            <Tooltip content={<CargoTooltipList cargos={unloadingCargos} />}>
+              <FlexLayout className="items-center gap-1 text-teal-500">
+                <Icon icon="ArrowRightStartOnRectangleIcon" size="m" />
+                <Text variant="text-xs">Istovar ({unloadingCargos.length})</Text>
+              </FlexLayout>
+            </Tooltip>
           )}
         </FlexLayout>
       )}
@@ -118,3 +123,16 @@ export const VerticalStopEntry = ({
     </TimelineItem>
   );
 };
+
+const CargoTooltipList = ({ cargos }: { cargos: VehicleStopCargo[] }) => (
+  <FlexLayout as="ul" className="flex-col gap-2 px-2 py-1">
+    {cargos.map((cargo) => (
+      <FlexLayout as="li" className="flex-col list-disc list-inside" key={cargo.id}>
+        {/*<ClientName color="text-color-3" id={cargo.clientId} variant="text-xxs" />*/}
+        <Text color="text-white" variant="text-xxs-medium">
+          {cargo.description || '-'}
+        </Text>
+      </FlexLayout>
+    ))}
+  </FlexLayout>
+);

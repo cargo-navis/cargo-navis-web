@@ -77,6 +77,8 @@ export interface CreateVehicleStopParams {
   driverId?: string | null;
   trailerId?: string | null;
   disponentId?: string | null;
+  loadingCargoIds?: string[];
+  unloadingCargoIds?: string[];
   sendMessage?: boolean;
 }
 
