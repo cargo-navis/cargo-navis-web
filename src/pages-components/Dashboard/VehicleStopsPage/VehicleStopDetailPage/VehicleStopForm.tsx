@@ -13,8 +13,8 @@ import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePa
 import { Box, Button, FlexLayout } from '@/ui';
 
 import {
+  getCreateDefaultsFromPreviousStop,
   getVehicleStopFormDefaults,
-  vehicleStopDefaultValues,
   type VehicleStopFormValues,
   vehicleStopSchema,
 } from './schema';
@@ -22,18 +22,12 @@ import {
 interface VehicleStopFormProps {
   vehicleId: string;
   stop?: VehicleStop;
-  previousStopId?: string | null;
+  previousStop?: VehicleStop;
   onSuccess(): void;
   onDirtyChange?(isDirty: boolean): void;
 }
 
-export const VehicleStopForm = ({
-  vehicleId,
-  stop,
-  previousStopId,
-  onSuccess,
-  onDirtyChange,
-}: VehicleStopFormProps) => {
+export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDirtyChange }: VehicleStopFormProps) => {
   const isEditMode = !!stop;
 
   const { data: drivers = [] } = useDrivers();
@@ -44,7 +38,7 @@ export const VehicleStopForm = ({
   const { mutateAsync: updateStop, isPending: isUpdating } = useUpdateVehicleStop();
 
   const formMethods = useForm<VehicleStopFormValues>({
-    defaultValues: stop ? getVehicleStopFormDefaults(stop) : vehicleStopDefaultValues,
+    defaultValues: stop ? getVehicleStopFormDefaults(stop) : getCreateDefaultsFromPreviousStop(previousStop),
     resolver: yupResolver(vehicleStopSchema) as any,
     mode: 'onChange',
   });
@@ -76,7 +70,7 @@ export const VehicleStopForm = ({
         await updateStop({ id: stop.id, data: payload });
         showSuccessToast({ title: 'Stanica ažurirana' });
       } else {
-        await createStop({ vehicleId, previousStopId: previousStopId ?? null, ...payload });
+        await createStop({ vehicleId, previousStopId: previousStop?.id ?? null, ...payload });
         showSuccessToast({ title: 'Stanica kreirana' });
       }
       onSuccess();

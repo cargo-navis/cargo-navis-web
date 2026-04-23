@@ -19,7 +19,7 @@ interface VerticalStopEntryProps {
   separatorActive?: boolean;
   onEdit?(stop: VehicleStop): void;
   onDelete?(stop: VehicleStop): void;
-  onInsertAfter?(stop: VehicleStop): void;
+  onInsertBefore?(): void;
 }
 
 export const VerticalStopEntry = ({
@@ -29,7 +29,7 @@ export const VerticalStopEntry = ({
   separatorActive,
   onEdit,
   onDelete,
-  onInsertAfter,
+  onInsertBefore,
 }: VerticalStopEntryProps) => {
   const { address, date, loadingCargos, unloadingCargos } = stop;
   const hasLoading = loadingCargos.length > 0;
@@ -83,13 +83,13 @@ export const VerticalStopEntry = ({
           )}
         </FlexLayout>
       )}
-      {onInsertAfter && (
+      {onInsertBefore && (
         <FlexLayout className="flex-col absolute hidden group-hover/stop-entry:flex justify-center -left-2 top-2 bottom-0">
           <FlexLayout
             as="button"
             className="items-center justify-center w-[32px] h-[32px] rounded-circle bg-white dark:bg-black border-2 border-dashed border-teal-500 hover:border-teal-700 text-teal-500 hover:text-teal-700"
             type="button"
-            onClick={() => onInsertAfter(stop)}
+            onClick={onInsertBefore}
           >
             <Icon className="text-inherit" icon="PlusIcon" size="m" />
           </FlexLayout>
@@ -102,7 +102,7 @@ export const VerticalStopEntry = ({
               <Icon
                 className="cursor-pointer text-dark-600 hover:text-teal-500 dark:text-light-300"
                 icon="PencilSquareIcon"
-                size="m"
+                size="l"
                 onClick={() => onEdit(stop)}
               />
             )}
@@ -110,7 +110,7 @@ export const VerticalStopEntry = ({
               <Icon
                 className="cursor-pointer text-dark-600 hover:text-red-500 dark:text-light-300"
                 icon="TrashIcon"
-                size="m"
+                size="l"
                 onClick={() => onDelete(stop)}
               />
             )}

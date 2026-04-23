@@ -27,7 +27,7 @@ export const VehicleStopDetailPage = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStop, setEditingStop] = useState<VehicleStop | undefined>(undefined);
-  const [insertAfterStopId, setInsertAfterStopId] = useState<string | null>(null);
+  const [previousStop, setPreviousStop] = useState<VehicleStop | undefined>(undefined);
 
   const stops = group?.stops ?? [];
 
@@ -35,26 +35,26 @@ export const VehicleStopDetailPage = () => {
 
   function openCreateModal() {
     setEditingStop(undefined);
-    setInsertAfterStopId(null);
+    setPreviousStop(stops[0]);
     setIsModalOpen(true);
   }
 
   function openEditModal(stop: VehicleStop) {
     setEditingStop(stop);
-    setInsertAfterStopId(null);
+    setPreviousStop(undefined);
     setIsModalOpen(true);
   }
 
-  function openInsertAfterModal(previousStopId: string | null) {
+  function openInsertBeforeModal(prev: VehicleStop | undefined) {
     setEditingStop(undefined);
-    setInsertAfterStopId(previousStopId);
+    setPreviousStop(prev);
     setIsModalOpen(true);
   }
 
   function closeModal() {
     setIsModalOpen(false);
     setEditingStop(undefined);
-    setInsertAfterStopId(null);
+    setPreviousStop(undefined);
   }
 
   async function handleDelete(stop: VehicleStop) {
@@ -89,8 +89,6 @@ export const VehicleStopDetailPage = () => {
       </DashboardLayout>
     );
   }
-
-  console.log({ insertAfterStopId});
 
   return (
     <DashboardLayout>
@@ -132,7 +130,7 @@ export const VehicleStopDetailPage = () => {
                 stop={stop}
                 onDelete={handleDelete}
                 onEdit={openEditModal}
-                onInsertAfter={() => openInsertAfterModal(stops[i + 1]?.id ?? null)}
+                onInsertBefore={() => openInsertBeforeModal(stops[i + 1])}
               />
             ))}
           </Timeline>
@@ -140,7 +138,7 @@ export const VehicleStopDetailPage = () => {
       </FlexLayout>
       <VehicleStopModal
         isOpen={isModalOpen}
-        previousStopId={insertAfterStopId ?? stops[0]?.id ?? null}
+        previousStop={previousStop}
         stop={editingStop}
         vehicleId={vehicleId}
         onClose={closeModal}

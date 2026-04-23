@@ -11,7 +11,7 @@ interface VehicleStopModalProps {
   isOpen: boolean;
   vehicleId: string;
   stop?: VehicleStop;
-  previousStopId?: string | null;
+  previousStop?: VehicleStop;
   onClose(): void;
 }
 
@@ -19,7 +19,7 @@ export const VehicleStopModal: React.FC<VehicleStopModalProps> = ({
   isOpen,
   vehicleId,
   stop,
-  previousStopId,
+  previousStop,
   onClose,
 }) => {
   const isEditMode = !!stop;
@@ -27,18 +27,18 @@ export const VehicleStopModal: React.FC<VehicleStopModalProps> = ({
 
   const [shouldRenderForm, setShouldRenderForm] = useState(isOpen);
   const [renderedStop, setRenderedStop] = useState<VehicleStop | undefined>(stop);
-  const [renderedPreviousStopId, setRenderedPreviousStopId] = useState<string | null | undefined>(previousStopId);
+  const [renderedPreviousStop, setRenderedPreviousStop] = useState<VehicleStop | undefined>(previousStop);
 
   useEffect(() => {
     if (isOpen) {
       setShouldRenderForm(true);
       setRenderedStop(stop);
-      setRenderedPreviousStopId(previousStopId);
+      setRenderedPreviousStop(previousStop);
       return;
     }
     const timeoutId = setTimeout(() => setShouldRenderForm(false), DIALOG_TRANSITION_MS);
     return () => clearTimeout(timeoutId);
-  }, [isOpen, stop, previousStopId]);
+  }, [isOpen, stop, previousStop]);
 
   return (
     <Dialog open={isOpen}>
@@ -63,8 +63,8 @@ export const VehicleStopModal: React.FC<VehicleStopModalProps> = ({
         </DialogHeader>
         {shouldRenderForm && (
           <VehicleStopForm
-            key={renderedStop?.id ?? 'create'}
-            previousStopId={renderedPreviousStopId}
+            key={renderedStop?.id ?? `create:${renderedPreviousStop?.id ?? 'top'}`}
+            previousStop={renderedPreviousStop}
             stop={renderedStop}
             vehicleId={vehicleId}
             onDirtyChange={setIsDirty}

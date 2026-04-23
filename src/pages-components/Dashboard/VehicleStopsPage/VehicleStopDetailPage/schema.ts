@@ -43,6 +43,15 @@ export const vehicleStopDefaultValues: VehicleStopFormValues = {
   disponentId: null,
 };
 
+export function getCreateDefaultsFromPreviousStop(previousStop?: VehicleStop): VehicleStopFormValues {
+  return {
+    ...vehicleStopDefaultValues,
+    driverId: previousStop?.driverId ?? null,
+    trailerId: previousStop?.trailerId ?? null,
+    disponentId: previousStop?.disponentId ?? null,
+  };
+}
+
 export function getVehicleStopFormDefaults(stop: VehicleStop): VehicleStopFormValues {
   const { address } = stop;
   const postalCodeLabelParts = [address?.postalCode, address?.placeName].filter(Boolean);
