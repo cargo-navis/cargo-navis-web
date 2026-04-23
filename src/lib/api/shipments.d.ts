@@ -34,6 +34,7 @@ export type GetShipmentParams = {
   loadingDateTo?: string;
   unloadingDateFrom?: string;
   unloadingDateTo?: string;
+  active?: boolean;
   // Pagination parameters
   page?: number;
   size?: number;
@@ -73,7 +74,7 @@ export interface LoadingAddress {
   placeName: string;
 }
 
-interface Cargo {
+export interface Cargo {
   id: string;
   weight: number;
   description: string;

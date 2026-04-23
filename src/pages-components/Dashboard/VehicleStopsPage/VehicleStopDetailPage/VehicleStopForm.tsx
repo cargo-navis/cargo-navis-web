@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
-import type { Vehicle } from '@/lib/api';
+import type { Cargo, Vehicle } from '@/lib/api';
 import type { Employee } from '@/lib/api/employees.d';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { FormDatepicker, FormSingleSelect, FormTextInput } from '@/lib/components/form';
@@ -12,7 +12,7 @@ import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Button, FlexLayout, TextButton } from '@/ui';
 
-import { type CargoItem, CargoSelectDrawer } from './CargoSelectDrawer';
+import { CargoSelectDrawer } from './CargoSelectDrawer';
 
 import {
   getCreateDefaultsFromPreviousStop,
@@ -49,8 +49,8 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
 
   const [loadingDrawerOpen, setLoadingDrawerOpen] = useState(false);
   const [unloadingDrawerOpen, setUnloadingDrawerOpen] = useState(false);
-  const [loadingCargos, setLoadingCargos] = useState<CargoItem[]>([]);
-  const [unloadingCargos, setUnloadingCargos] = useState<CargoItem[]>([]);
+  const [loadingCargos, setLoadingCargos] = useState<Cargo[]>([]);
+  const [unloadingCargos, setUnloadingCargos] = useState<Cargo[]>([]);
 
   useEffect(() => {
     onDirtyChange?.(formState.isDirty);
@@ -148,6 +148,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
         </Box>
       </FlexLayout>
       <CargoSelectDrawer
+        addressType="loading"
         isOpen={loadingDrawerOpen}
         selected={loadingCargos}
         title="Utovari"
@@ -155,6 +156,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
         onOpenChange={setLoadingDrawerOpen}
       />
       <CargoSelectDrawer
+        addressType="unloading"
         isOpen={unloadingDrawerOpen}
         selected={unloadingCargos}
         title="Istovari"

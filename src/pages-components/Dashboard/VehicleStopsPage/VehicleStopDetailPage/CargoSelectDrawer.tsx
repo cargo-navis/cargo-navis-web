@@ -1,52 +1,36 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   Drawer,
   DrawerContent,
-  DrawerDescription,
   DrawerFooter,
   DrawerHeader,
-  DrawerTitle,
 } from '@/components/ui/drawer';
+import type { Cargo } from '@/lib/api';
+import { useShipmentsData } from '@/lib/hooks';
 import { Box, Button, FlexLayout, Icon, Text } from '@/ui';
-
-export interface CargoItem {
-  id: string;
-  description: string;
-  weight: number;
-}
-
-const CARGO_TYPES = [
-  'Paleta EUR',
-  'Paleta industrijska',
-  'Sanduk',
-  'Vreća',
-  'Bala',
-  'Kontejner 20ft',
-  'Kontejner 40ft',
-  'Bubanj',
-  'Kanta',
-  'Kutija',
-];
-
-const DUMMY_CARGOS: CargoItem[] = Array.from({ length: 50 }, (_, i) => {
-  const type = CARGO_TYPES[i % CARGO_TYPES.length];
-  return {
-    id: String(i + 1),
-    description: `${type} #${i + 1}`,
-    weight: 25 + ((i * 37) % 2500),
-  };
-});
 
 interface CargoSelectDrawerProps {
   isOpen: boolean;
   title: string;
-  selected: CargoItem[];
+  addressType: 'loading' | 'unloading';
+  selected: Cargo[];
   onOpenChange(isOpen: boolean): void;
-  onConfirm(cargos: CargoItem[]): void;
+  onConfirm(cargos: Cargo[]): void;
 }
 
-export const CargoSelectDrawer = ({ isOpen, title, selected, onOpenChange, onConfirm }: CargoSelectDrawerProps) => {
+export const CargoSelectDrawer = ({
+  isOpen,
+  title,
+  addressType,
+  selected,
+  onOpenChange,
+  onConfirm,
+}: CargoSelectDrawerProps) => {
+  const { data: shipments, isLoading } = useShipmentsData({ params: { active: true }, enabled: isOpen });
+
+  const cargos = useMemo<Cargo[]>(() => shipments?.flatMap((s) => s.cargo) ?? [], [shipments]);
+
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set(selected.map((c) => c.id)));
 
   useEffect(() => {
@@ -63,7 +47,7 @@ export const CargoSelectDrawer = ({ isOpen, title, selected, onOpenChange, onCon
   }
 
   function handleConfirm() {
-    onConfirm(DUMMY_CARGOS.filter((c) => selectedIds.has(c.id)));
+    onConfirm(cargos.filter((c) => selectedIds.has(c.id)));
     onOpenChange(false);
   }
 
@@ -79,34 +63,55 @@ export const CargoSelectDrawer = ({ isOpen, title, selected, onOpenChange, onCon
           </Text>
         </DrawerHeader>
         <Box className="flex-1 overflow-y-auto px-4">
-          <FlexLayout className="flex-col gap-2">
-            {DUMMY_CARGOS.map((cargo) => {
-              const isSelected = selectedIds.has(cargo.id);
-              return (
-                <FlexLayout
-                  as="button"
-                  className={`items-center justify-between gap-3 rounded-m border p-3 text-left ${
-                    isSelected
-                      ? 'border-teal-500 bg-teal-500/10'
-                      : 'border-dark-100 hover:border-teal-500/70 dark:border-light-800'
-                  }`}
-                  key={cargo.id}
-                  type="button"
-                  onClick={() => toggle(cargo.id)}
-                >
-                  <FlexLayout className="flex-col">
-                    <Text color="text-color-1" variant="text-s-medium">
-                      {cargo.description}
-                    </Text>
-                    <Text color="text-color-3" variant="text-xxs">
-                      {cargo.weight} kg
-                    </Text>
+          {isLoading ? (
+            <Text color="text-color-3" variant="text-s">
+              Učitavanje...
+            </Text>
+          ) : cargos.length === 0 ? (
+            <Text color="text-color-3" variant="text-s">
+              Nema tereta u aktivnim pošiljkama.
+            </Text>
+          ) : (
+            <FlexLayout className="flex-col gap-2">
+              {cargos.map((cargo) => {
+                const isSelected = selectedIds.has(cargo.id);
+                const address = addressType === 'loading' ? cargo.loadingAddress : cargo.unloadingAddress;
+                const addressLine = address
+                  ? [address.streetName, [address.postalCode, address.placeName].filter(Boolean).join(' ')]
+                      .filter(Boolean)
+                      .join(', ')
+                  : null;
+                return (
+                  <FlexLayout
+                    as="button"
+                    className={`items-center justify-between gap-3 rounded-m border p-3 text-left ${
+                      isSelected
+                        ? 'border-teal-500 bg-teal-500/10'
+                        : 'border-dark-100 hover:border-teal-500/70 dark:border-light-800'
+                    }`}
+                    key={cargo.id}
+                    type="button"
+                    onClick={() => toggle(cargo.id)}
+                  >
+                    <FlexLayout className="flex-col">
+                      <Text color="text-color-1" variant="text-s-medium">
+                        {cargo.description || '-'}
+                      </Text>
+                      {addressLine && (
+                        <Text color="text-color-3" variant="text-xxs">
+                          {addressLine}
+                        </Text>
+                      )}
+                      <Text color="text-color-4" variant="text-xxs">
+                        {cargo.weight} kg
+                      </Text>
+                    </FlexLayout>
+                    {isSelected && <Icon className="text-teal-500" icon="CheckIcon" size="m" />}
                   </FlexLayout>
-                  {isSelected && <Icon className="text-teal-500" icon="CheckIcon" size="m" />}
-                </FlexLayout>
-              );
-            })}
-          </FlexLayout>
+                );
+              })}
+            </FlexLayout>
+          )}
         </Box>
         <DrawerFooter>
           <Button isFullWidth text={`Potvrdi (${selectedIds.size})`} onClick={handleConfirm} />
