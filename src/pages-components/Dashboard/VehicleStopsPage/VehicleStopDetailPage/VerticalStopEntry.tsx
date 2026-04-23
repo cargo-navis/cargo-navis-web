@@ -19,6 +19,7 @@ interface VerticalStopEntryProps {
   separatorActive?: boolean;
   onEdit?(stop: VehicleStop): void;
   onDelete?(stop: VehicleStop): void;
+  onInsertAfter?(stop: VehicleStop): void;
 }
 
 export const VerticalStopEntry = ({
@@ -28,6 +29,7 @@ export const VerticalStopEntry = ({
   separatorActive,
   onEdit,
   onDelete,
+  onInsertAfter,
 }: VerticalStopEntryProps) => {
   const { address, date, loadingCargos, unloadingCargos } = stop;
   const hasLoading = loadingCargos.length > 0;
@@ -53,7 +55,7 @@ export const VerticalStopEntry = ({
         <TimelineIndicator style={{ top: 0, left: 0 }} />
       </TimelineHeader>
       <TimelineDate>
-        {date ? dayjs(date).format('DD.MM.YYYY') : <span className="italic">Nije posjećeno</span>}
+        {date ? dayjs(date).format('DD.MM.YYYY') : '-'}
       </TimelineDate>
       <TimelineTitle>
         <Text as="span" color="text-color-1" variant="text-l-medium">
@@ -79,6 +81,18 @@ export const VerticalStopEntry = ({
               <Text variant="text-xs">{unloadingCargos.length} istovar</Text>
             </FlexLayout>
           )}
+        </FlexLayout>
+      )}
+      {onInsertAfter && (
+        <FlexLayout className="flex-col absolute hidden group-hover/stop-entry:flex justify-center -left-2 top-2 bottom-0">
+          <FlexLayout
+            as="button"
+            className="items-center justify-center w-[32px] h-[32px] rounded-circle bg-white dark:bg-black border-2 border-dashed border-teal-500 hover:border-teal-700 text-teal-500 hover:text-teal-700"
+            type="button"
+            onClick={() => onInsertAfter(stop)}
+          >
+            <Icon className="text-inherit" icon="PlusIcon" size="m" />
+          </FlexLayout>
         </FlexLayout>
       )}
       {(onEdit || onDelete) && (

@@ -18,7 +18,7 @@ export const VehicleStopDetailPage = () => {
   const { query } = useRouter();
   const vehicleId = query.vehicleId as string;
 
-  const { data: groups, isLoading: isLoadingStops } = useVehicleStopsByVehicle();
+  const { data: groups, isLoading: isLoadingStops } = useVehicleStopsByVehicle(10);
   const { data: vehicles, isLoading: isLoadingVehicles } = useVehicles();
   const { mutateAsync: deleteStop } = useDeleteVehicleStop();
 
@@ -27,6 +27,7 @@ export const VehicleStopDetailPage = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStop, setEditingStop] = useState<VehicleStop | undefined>(undefined);
+  const [insertAfterStopId, setInsertAfterStopId] = useState<string | null>(null);
 
   const stops = group?.stops ?? [];
 
@@ -34,17 +35,26 @@ export const VehicleStopDetailPage = () => {
 
   function openCreateModal() {
     setEditingStop(undefined);
+    setInsertAfterStopId(null);
     setIsModalOpen(true);
   }
 
   function openEditModal(stop: VehicleStop) {
     setEditingStop(stop);
+    setInsertAfterStopId(null);
+    setIsModalOpen(true);
+  }
+
+  function openInsertAfterModal(previousStopId: string | null) {
+    setEditingStop(undefined);
+    setInsertAfterStopId(previousStopId);
     setIsModalOpen(true);
   }
 
   function closeModal() {
     setIsModalOpen(false);
     setEditingStop(undefined);
+    setInsertAfterStopId(null);
   }
 
   async function handleDelete(stop: VehicleStop) {
@@ -79,6 +89,8 @@ export const VehicleStopDetailPage = () => {
       </DashboardLayout>
     );
   }
+
+  console.log({ insertAfterStopId});
 
   return (
     <DashboardLayout>
@@ -120,6 +132,7 @@ export const VehicleStopDetailPage = () => {
                 stop={stop}
                 onDelete={handleDelete}
                 onEdit={openEditModal}
+                onInsertAfter={() => openInsertAfterModal(stops[i + 1]?.id ?? null)}
               />
             ))}
           </Timeline>
@@ -127,7 +140,7 @@ export const VehicleStopDetailPage = () => {
       </FlexLayout>
       <VehicleStopModal
         isOpen={isModalOpen}
-        previousStopId={stops[0]?.id ?? null}
+        previousStopId={insertAfterStopId ?? stops[0]?.id ?? null}
         stop={editingStop}
         vehicleId={vehicleId}
         onClose={closeModal}
