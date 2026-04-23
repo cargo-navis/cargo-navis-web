@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/drawer';
 import type { Cargo } from '@/lib/api';
 import { useShipmentsData } from '@/lib/hooks';
-import { Box, Button, FlexLayout, Icon, Text } from '@/ui';
+import { Box, Button, FlexLayout, Icon, Skeleton, Text } from '@/ui';
 
 interface CargoSelectDrawerProps {
   isOpen: boolean;
@@ -64,9 +64,11 @@ export const CargoSelectDrawer = ({
         </DrawerHeader>
         <Box className="flex-1 overflow-y-auto px-4">
           {isLoading ? (
-            <Text color="text-color-3" variant="text-s">
-              Učitavanje...
-            </Text>
+            <FlexLayout className="flex-col gap-4">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton borderRadius="m" height={64} key={i} width="100%" />
+              ))}
+            </FlexLayout>
           ) : cargos.length === 0 ? (
             <Text color="text-color-3" variant="text-s">
               Nema tereta u aktivnim pošiljkama.
