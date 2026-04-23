@@ -10,7 +10,7 @@ import { FormDatepicker, FormSingleSelect, FormTextInput } from '@/lib/component
 import { useCreateVehicleStop, useDispatchers, useDrivers, useTrailers, useUpdateVehicleStop } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, Button, FlexLayout, TextButton } from '@/ui';
+import { Box, Button, FlexLayout, Icon, Text, TextButton, VerticalDivider } from '@/ui';
 
 import { CargoSelectDrawer } from './CargoSelectDrawer';
 
@@ -120,21 +120,30 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
           </Box>
         </FlexLayout>
         <FormSingleSelect isClearable isSearchable label="Prikolica" name="trailerId" options={trailerOptions} />
-        <FlexLayout className="items-center gap-6 mt-2">
-          <FlexLayout className="flex-1">
+        <FlexLayout className="items-start gap-6 mt-2">
+          <FlexLayout className="flex-1 flex-col gap-2">
             <TextButton
               iconLeft="ArrowRightEndOnRectangleIcon"
               text={loadingCargos.length > 0 ? `Utovari (${loadingCargos.length})` : 'Utovari'}
               variant="secondary"
               onClick={() => setLoadingDrawerOpen(true)}
             />
+            <SelectedCargoList
+              cargos={loadingCargos}
+              onRemove={(id) => setLoadingCargos((prev) => prev.filter((c) => c.id !== id))}
+            />
           </FlexLayout>
-          <FlexLayout className="flex-1">
+          <VerticalDivider />
+          <FlexLayout className="flex-1 flex-col gap-2">
             <TextButton
               iconLeft="ArrowRightStartOnRectangleIcon"
               text={unloadingCargos.length > 0 ? `Istovari (${unloadingCargos.length})` : 'Istovari'}
               variant="secondary"
               onClick={() => setUnloadingDrawerOpen(true)}
+            />
+            <SelectedCargoList
+              cargos={unloadingCargos}
+              onRemove={(id) => setUnloadingCargos((prev) => prev.filter((c) => c.id !== id))}
             />
           </FlexLayout>
         </FlexLayout>
@@ -164,6 +173,36 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
         onOpenChange={setUnloadingDrawerOpen}
       />
     </FormProvider>
+  );
+};
+
+const SelectedCargoList = ({ cargos, onRemove }: { cargos: Cargo[]; onRemove(id: string): void }) => {
+  if (cargos.length === 0) return null;
+
+  return (
+    <FlexLayout className="flex-col gap-1">
+      {cargos.map((cargo) => (
+        <FlexLayout
+          className="items-center justify-between gap-2 rounded-m border border-dark-100 dark:border-light-800 px-3 py-2"
+          key={cargo.id}
+        >
+          <FlexLayout className="flex-col">
+            <FlexLayout className="items-center gap-1">
+              <Icon icon="CubeIcon" size="s" />
+              <Text color="text-color-1" variant="text-xs-medium">
+                {cargo.description || '-'}
+              </Text>
+            </FlexLayout>
+            <Text color="text-color-4" variant="text-xxs">
+              {cargo.weight} kg
+            </Text>
+          </FlexLayout>
+          <Box as="button" className="text-color-4 hover:text-color-1" type="button" onClick={() => onRemove(cargo.id)}>
+            <Icon icon="XMarkIcon" />
+          </Box>
+        </FlexLayout>
+      ))}
+    </FlexLayout>
   );
 };
 
