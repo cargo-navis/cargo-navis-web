@@ -54,9 +54,7 @@ export const VerticalStopEntry = ({
         />
         <TimelineIndicator style={{ top: 0, left: 0 }} />
       </TimelineHeader>
-      <TimelineDate>
-        {date ? dayjs(date).format('DD.MM.YYYY') : '-'}
-      </TimelineDate>
+      <TimelineDate>{date ? dayjs(date).format('DD.MM.YYYY') : '-'}</TimelineDate>
       <TimelineTitle>
         <Text as="span" color="text-color-1" variant="text-l-medium">
           {address?.placeName ?? '-'}
