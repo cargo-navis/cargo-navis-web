@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FormProvider, useForm, useFormContext } from 'react-hook-form';
 
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
@@ -10,7 +10,9 @@ import { FormDatepicker, FormSingleSelect, FormTextInput } from '@/lib/component
 import { useCreateVehicleStop, useDispatchers, useDrivers, useTrailers, useUpdateVehicleStop } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, Button, FlexLayout } from '@/ui';
+import { Box, Button, FlexLayout, TextButton } from '@/ui';
+
+import { type CargoItem, CargoSelectDrawer } from './CargoSelectDrawer';
 
 import {
   getCreateDefaultsFromPreviousStop,
@@ -44,6 +46,11 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
   });
 
   const { handleSubmit, formState } = formMethods;
+
+  const [loadingDrawerOpen, setLoadingDrawerOpen] = useState(false);
+  const [unloadingDrawerOpen, setUnloadingDrawerOpen] = useState(false);
+  const [loadingCargos, setLoadingCargos] = useState<CargoItem[]>([]);
+  const [unloadingCargos, setUnloadingCargos] = useState<CargoItem[]>([]);
 
   useEffect(() => {
     onDirtyChange?.(formState.isDirty);
@@ -113,6 +120,24 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
           </Box>
         </FlexLayout>
         <FormSingleSelect isClearable isSearchable label="Prikolica" name="trailerId" options={trailerOptions} />
+        <FlexLayout className="items-center gap-6 mt-2">
+          <FlexLayout className="flex-1">
+            <TextButton
+              iconLeft="ArrowRightEndOnRectangleIcon"
+              text={loadingCargos.length > 0 ? `Utovari (${loadingCargos.length})` : 'Utovari'}
+              variant="secondary"
+              onClick={() => setLoadingDrawerOpen(true)}
+            />
+          </FlexLayout>
+          <FlexLayout className="flex-1">
+            <TextButton
+              iconLeft="ArrowRightStartOnRectangleIcon"
+              text={unloadingCargos.length > 0 ? `Istovari (${unloadingCargos.length})` : 'Istovari'}
+              variant="secondary"
+              onClick={() => setUnloadingDrawerOpen(true)}
+            />
+          </FlexLayout>
+        </FlexLayout>
         <Box className="mt-4">
           <Button
             isDisabled={!formState.isValid || (isEditMode && !formState.isDirty)}
@@ -122,6 +147,20 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
           />
         </Box>
       </FlexLayout>
+      <CargoSelectDrawer
+        isOpen={loadingDrawerOpen}
+        selected={loadingCargos}
+        title="Utovari"
+        onConfirm={setLoadingCargos}
+        onOpenChange={setLoadingDrawerOpen}
+      />
+      <CargoSelectDrawer
+        isOpen={unloadingDrawerOpen}
+        selected={unloadingCargos}
+        title="Istovari"
+        onConfirm={setUnloadingCargos}
+        onOpenChange={setUnloadingDrawerOpen}
+      />
     </FormProvider>
   );
 };
