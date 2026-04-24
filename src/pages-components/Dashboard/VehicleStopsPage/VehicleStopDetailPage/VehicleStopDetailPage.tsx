@@ -105,7 +105,7 @@ export const VehicleStopDetailPage = () => {
           </FlexLayout>
         </Box>
 
-        <Box className="max-w-xl">
+        <Box className="max-w-[1200px]">
           <Box className="relative">
             <FlexLayout
               as="button"

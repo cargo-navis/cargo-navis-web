@@ -213,8 +213,8 @@ const SelectedCargoList = ({ cargos, onRemove }: { cargos: Cargo[]; onRemove(id:
         >
           <FlexLayout className="flex-col">
             <ClientName color="text-color-3" id={(cargo as CargoWithClient).clientId} variant="text-xxs" />
-            <FlexLayout className="items-center gap-1">
-              <Icon icon="CubeIcon" size="s" />
+            <FlexLayout className="gap-1">
+              <Icon className="mt-1" icon="CubeIcon" size="s" />
               <Text color="text-color-1" variant="text-xs-medium">
                 {cargo.description || '-'}
               </Text>

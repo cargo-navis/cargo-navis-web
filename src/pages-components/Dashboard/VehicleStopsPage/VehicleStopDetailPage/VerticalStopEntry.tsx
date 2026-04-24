@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 
-import { ClientName } from '@/components/clients/ClientName';
+import { EmployeeName } from '@/components/employees/EmployeeName';
+// import { ClientName } from '@/components/clients/ClientName';
 import {
   TimelineContent,
   TimelineDate,
@@ -11,7 +12,8 @@ import {
   TimelineTitle,
 } from '@/components/reui/timeline';
 import type { VehicleStop, VehicleStopCargo } from '@/lib/api/vehicleStops';
-import { Box, FlexLayout, Icon, Text, Tooltip } from '@/ui';
+import { Box, FlexLayout, Icon, Text } from '@/ui';
+import type { IconType } from '@/ui/components/Icon/Icon';
 
 interface VerticalStopEntryProps {
   stop: VehicleStop;
@@ -56,6 +58,10 @@ export const VerticalStopEntry = ({
         <TimelineIndicator style={{ top: 0, left: 0 }} />
       </TimelineHeader>
       <TimelineDate>{date ? dayjs(date).format('DD.MM.YYYY') : '-'}</TimelineDate>
+      <FlexLayout className="items-center gap-1">
+        <Icon color="text-color-3" icon="TruckIcon" size="s" />
+        <EmployeeName color="text-color-3" id={stop.driverId} variant="text-xs" />
+      </FlexLayout>
       <TimelineTitle>
         <Text as="span" color="text-color-1" variant="text-l-medium">
           {address?.placeName ?? '-'}
@@ -67,22 +73,24 @@ export const VerticalStopEntry = ({
         </Text>
       </TimelineContent>
       {(hasLoading || hasUnloading) && (
-        <FlexLayout className="items-center gap-3 mt-1">
+        <FlexLayout className="gap-3 mt-2">
           {hasLoading && (
-            <Tooltip content={<CargoTooltipList cargos={loadingCargos} />}>
-              <FlexLayout className="items-center gap-1 text-orange-500">
-                <Icon icon="ArrowRightEndOnRectangleIcon" size="m" />
-                <Text variant="text-xs">Utovar ({loadingCargos.length})</Text>
-              </FlexLayout>
-            </Tooltip>
+            <CargoSection
+              addressType="loading"
+              cargos={loadingCargos}
+              className="text-orange-500"
+              icon="ArrowRightEndOnRectangleIcon"
+              label="Utovar"
+            />
           )}
           {hasUnloading && (
-            <Tooltip content={<CargoTooltipList cargos={unloadingCargos} />}>
-              <FlexLayout className="items-center gap-1 text-teal-500">
-                <Icon icon="ArrowRightStartOnRectangleIcon" size="m" />
-                <Text variant="text-xs">Istovar ({unloadingCargos.length})</Text>
-              </FlexLayout>
-            </Tooltip>
+            <CargoSection
+              addressType="unloading"
+              cargos={unloadingCargos}
+              className="text-teal-500"
+              icon="ArrowRightStartOnRectangleIcon"
+              label="Istovar"
+            />
           )}
         </FlexLayout>
       )}
@@ -124,15 +132,54 @@ export const VerticalStopEntry = ({
   );
 };
 
-const CargoTooltipList = ({ cargos }: { cargos: VehicleStopCargo[] }) => (
-  <FlexLayout as="ul" className="flex-col gap-2 px-2 py-1">
-    {cargos.map((cargo) => (
-      <FlexLayout as="li" className="flex-col list-disc list-inside" key={cargo.id}>
-        {/*<ClientName color="text-color-3" id={cargo.clientId} variant="text-xxs" />*/}
-        <Text color="text-white" variant="text-xxs-medium">
-          {cargo.description || '-'}
-        </Text>
-      </FlexLayout>
-    ))}
+interface CargoSectionProps {
+  cargos: VehicleStopCargo[];
+  addressType: 'loading' | 'unloading';
+  icon: IconType;
+  label: string;
+  className?: string;
+}
+
+const CargoSection = ({ cargos, addressType, icon, label, className }: CargoSectionProps) => (
+  <FlexLayout className="flex-1 flex-col gap-1">
+    <FlexLayout className={`items-center gap-1 ${className ?? ''}`}>
+      <Icon icon={icon} size="m" />
+      <Text variant="text-xs">
+        {label} ({cargos.length})
+      </Text>
+    </FlexLayout>
+    <FlexLayout as="ul" className="flex-col gap-2">
+      {cargos.map((cargo) => {
+        const companyName = addressType === 'loading' ? cargo.loadingCompanyName : cargo.unloadingCompanyName;
+        const companyLabel = addressType === 'loading' ? 'Tvrtka utovara' : 'Tvrtka istovara';
+        return (
+          <FlexLayout
+            as="li"
+            className="flex-col rounded-m border border-dark-100 dark:border-light-800 bg-white dark:bg-dark-800 p-3"
+            key={cargo.id}
+          >
+            {/*<ClientName color="text-color-3" id={cargo.clientId} variant="text-xxs" />*/}
+            <FlexLayout className="items-center justify-between gap-2">
+              <Text color="text-color-1" variant="text-xs-medium">
+                {cargo.description || '-'}
+              </Text>
+            </FlexLayout>
+            <Text color="text-color-3" variant="text-xxs">
+              {cargo.weight} kg
+            </Text>
+            {companyName && (
+              <FlexLayout className="items-center gap-1">
+                <Text color="text-color-4" variant="text-xxs-medium">
+                  {companyLabel}:
+                </Text>
+                <Text color="text-color-4" variant="text-xxs">
+                  {companyName}
+                </Text>
+              </FlexLayout>
+            )}
+          </FlexLayout>
+        );
+      })}
+    </FlexLayout>
   </FlexLayout>
 );
