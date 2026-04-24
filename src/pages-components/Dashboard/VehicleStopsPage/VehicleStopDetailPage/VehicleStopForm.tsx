@@ -10,9 +10,11 @@ import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { FormDatepicker, FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateVehicleStop, useDispatchers, useDrivers, useTrailers, useUpdateVehicleStop } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, Button, FlexLayout, Icon, Text, TextButton, VerticalDivider } from '@/ui';
+import { SingleSelectWithLabels } from '@/ui/hocs';
 
+import { countryEuropeOptions } from '../../NewEmployeePage/const';
+import { buildAddressKey, formatPostalCodeLabel, parseAddressKey } from './addressHelpers';
 import { CargoSelectDrawer, CargoWithClient } from './CargoSelectDrawer';
 import {
   getCreateDefaultsFromPreviousStop,
@@ -20,6 +22,8 @@ import {
   type VehicleStopFormValues,
   vehicleStopSchema,
 } from './schema';
+import { useAddressOptions } from './useAddressOptions';
+import { useCargoSelection } from './useCargoSelection';
 
 interface VehicleStopFormProps {
   vehicleId: string;
@@ -49,28 +53,63 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
 
   const [loadingDrawerOpen, setLoadingDrawerOpen] = useState(false);
   const [unloadingDrawerOpen, setUnloadingDrawerOpen] = useState(false);
-  const [loadingCargos, setLoadingCargos] = useState<Cargo[]>([]);
-  const [unloadingCargos, setUnloadingCargos] = useState<Cargo[]>([]);
+  const [selectedAddressKey, setSelectedAddressKey] = useState<string>(() =>
+    stop?.address ? buildAddressKey(stop.id, stop.address.id) : ''
+  );
+  const [isCustomAddress, setIsCustomAddress] = useState(false);
+
+  const { shipments, addressOptions } = useAddressOptions(stop);
+  const { loadingCargos, unloadingCargos, setCargos } = useCargoSelection(setValue);
 
   const loadingCargoIds = watch('loadingCargoIds');
   const unloadingCargoIds = watch('unloadingCargoIds');
 
-  function handleLoadingCargosChange(cargos: Cargo[]) {
-    setLoadingCargos(cargos);
-    setValue(
-      'loadingCargoIds',
-      cargos.map((c) => c.id),
-      { shouldDirty: true, shouldValidate: true }
+  const setFieldValue = (name: Parameters<typeof setValue>[0], value: unknown) =>
+    setValue(name, value as never, { shouldDirty: true, shouldValidate: true });
+
+  const handleLoadingCargosChange = (cargos: Cargo[]) => setCargos('loading', cargos);
+  const handleUnloadingCargosChange = (cargos: Cargo[]) => setCargos('unloading', cargos);
+
+  function resetAddressAndCargos() {
+    setFieldValue('address.streetName', '');
+    setFieldValue('address.countryCode', '');
+    setFieldValue('address.addressPostalCode', {});
+    setCargos('loading', []);
+    setCargos('unloading', []);
+  }
+
+  function handleAddressChange(key: string | undefined) {
+    setSelectedAddressKey(key ?? '');
+    if (!key) return resetAddressAndCargos();
+
+    const { shipmentId, addressId } = parseAddressKey(key);
+    const shipment = shipments.find((s) => s.id === shipmentId);
+    if (!shipment) return;
+
+    const cargo = shipment.cargo.find(
+      (c) => c.loadingAddress?.id === addressId || c.unloadingAddress?.id === addressId
+    );
+    const address = cargo?.loadingAddress?.id === addressId ? cargo?.loadingAddress : cargo?.unloadingAddress;
+    if (!address) return;
+
+    setFieldValue('address.streetName', address.streetName ?? '');
+    setFieldValue('address.countryCode', address.countryCode ?? '');
+    setFieldValue('address.addressPostalCode', { value: address.id, label: formatPostalCodeLabel(address) });
+
+    setCargos(
+      'loading',
+      shipment.cargo.filter((c) => c.loadingAddress?.id === addressId)
+    );
+    setCargos(
+      'unloading',
+      shipment.cargo.filter((c) => c.unloadingAddress?.id === addressId)
     );
   }
 
-  function handleUnloadingCargosChange(cargos: Cargo[]) {
-    setUnloadingCargos(cargos);
-    setValue(
-      'unloadingCargoIds',
-      cargos.map((c) => c.id),
-      { shouldDirty: true, shouldValidate: true }
-    );
+  function toggleCustomAddress() {
+    setIsCustomAddress((prev) => !prev);
+    setSelectedAddressKey('');
+    resetAddressAndCargos();
   }
 
   useEffect(() => {
@@ -112,20 +151,44 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
   return (
     <FormProvider {...formMethods}>
       <FlexLayout as="form" className="flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
-        <FormTextInput autoFocus label="Ulica i broj" name="address.streetName" rules={{ required: true }} />
-        <FlexLayout className="gap-4">
-          <Box className="flex-1">
-            <FormSingleSelect
-              isSearchable
-              label="Država"
-              name="address.countryCode"
-              options={countryEuropeOptions}
-              rules={{ required: true }}
-            />
-          </Box>
-          <Box className="flex-1">
-            <PostalCodeField />
-          </Box>
+        {isCustomAddress ? (
+          <>
+            <FormTextInput autoFocus label="Ulica i broj" name="address.streetName" rules={{ required: true }} />
+            <FlexLayout className="gap-4">
+              <Box className="flex-1">
+                <FormSingleSelect
+                  isSearchable
+                  label="Država"
+                  name="address.countryCode"
+                  options={countryEuropeOptions}
+                  rules={{ required: true }}
+                />
+              </Box>
+              <Box className="flex-1">
+                <PostalCodeField />
+              </Box>
+            </FlexLayout>
+          </>
+        ) : (
+          <SingleSelectWithLabels
+            isClearable
+            isSearchable
+            label="Adresa"
+            options={addressOptions}
+            placeholder="Pretraži adrese aktivnih pošiljki"
+            value={selectedAddressKey}
+            onChange={(v) => handleAddressChange(v ? String(v) : undefined)}
+          />
+        )}
+        <FlexLayout className="-mt-2">
+          <TextButton
+            iconLeft={isCustomAddress ? 'MagnifyingGlassIcon' : undefined}
+            size="s"
+            text={isCustomAddress ? 'Pretraži adrese' : 'Prilagođena adresa?'}
+            type="button"
+            variant="secondary"
+            onClick={toggleCustomAddress}
+          />
         </FlexLayout>
         <FormDatepicker label="Datum" name="date" />
         <FlexLayout className="gap-4">
@@ -246,3 +309,4 @@ const PostalCodeField = () => {
     />
   );
 };
+
