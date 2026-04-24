@@ -13,7 +13,7 @@ export const vehicleStopSchema = Yup.object().shape({
       })
       .required('Poštanski broj je obavezan'),
   }),
-  date: Yup.string().nullable().optional(),
+  date: Yup.string().required('Datum je obavezan'),
   driverId: Yup.string().nullable().optional(),
   trailerId: Yup.string().nullable().optional(),
   disponentId: Yup.string().nullable().optional(),
@@ -27,7 +27,7 @@ export interface VehicleStopFormValues {
     countryCode: string;
     addressPostalCode: { value?: string; label?: string };
   };
-  date?: string | null;
+  date: string;
   driverId?: string | null;
   trailerId?: string | null;
   disponentId?: string | null;
@@ -41,7 +41,7 @@ export const vehicleStopDefaultValues: VehicleStopFormValues = {
     countryCode: '',
     addressPostalCode: {},
   },
-  date: null,
+  date: '',
   driverId: null,
   trailerId: null,
   disponentId: null,
@@ -67,7 +67,7 @@ export function getVehicleStopFormDefaults(stop: VehicleStop): VehicleStopFormVa
       countryCode: address?.countryCode ?? '',
       addressPostalCode: address ? { value: address.id, label: postalCodeLabelParts.join(', ') } : {},
     },
-    date: stop.date ?? null,
+    date: stop.date ?? '',
     driverId: stop.driverId ?? null,
     trailerId: stop.trailerId ?? null,
     disponentId: stop.disponentId ?? null,

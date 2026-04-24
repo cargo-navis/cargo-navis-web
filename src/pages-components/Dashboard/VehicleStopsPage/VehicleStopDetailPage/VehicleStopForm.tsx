@@ -190,7 +190,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
             onClick={toggleCustomAddress}
           />
         </FlexLayout>
-        <FormDatepicker label="Datum" name="date" />
+        <FormDatepicker label="Datum" name="date" rules={{ required: true }} />
         <FlexLayout className="gap-4">
           <Box className="flex-1">
             <FormSingleSelect isClearable isSearchable label="Vozač" name="driverId" options={driverOptions} />
