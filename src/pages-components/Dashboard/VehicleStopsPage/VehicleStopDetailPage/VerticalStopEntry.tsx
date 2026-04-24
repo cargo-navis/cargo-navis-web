@@ -59,8 +59,15 @@ export const VerticalStopEntry = ({
       </TimelineHeader>
       <TimelineDate>{date ? dayjs(date).format('DD.MM.YYYY') : '-'}</TimelineDate>
       <FlexLayout className="items-center gap-1">
-        <Icon color="text-color-3" icon="TruckIcon" size="s" />
-        <EmployeeName color="text-color-3" id={stop.driverId} variant="text-xs" />
+        <FlexLayout className="items-center gap-1">
+          <Icon color="text-color-3" icon="TruckIcon" size="s" />
+          <EmployeeName color="text-color-3" id={stop.driverId} variant="text-xs" />
+        </FlexLayout>
+        <Text color="text-color-3" variant="text-xs">•</Text>
+        <FlexLayout className="items-center gap-1">
+          <Icon color="text-color-3" icon="UserIcon" size="s" />
+          <EmployeeName color="text-color-3" id={stop.disponentId} variant="text-xs" />
+        </FlexLayout>
       </FlexLayout>
       <TimelineTitle>
         <Text as="span" color="text-color-1" variant="text-l-medium">
