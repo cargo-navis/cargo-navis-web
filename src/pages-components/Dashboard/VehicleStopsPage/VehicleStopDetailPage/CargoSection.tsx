@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 import { ClientName } from '@/components/clients/ClientName';
 import type { VehicleStopCargo, VehicleStopCargoShipment } from '@/lib/api/vehicleStops';
 import { FlexLayout, Icon, Text } from '@/ui';
@@ -16,7 +18,10 @@ export const CargoSection = ({ cargos, addressType, icon, label, className }: Ca
   const borderClass = addressType === 'loading' ? 'border-orange-500' : 'border-teal-500';
   const textClass =
     addressType === 'loading' ? 'text-orange-500 dark:text-orange-300' : 'text-teal-500 dark:text-teal-300';
-  const bgClass = addressType === 'loading' ? 'bg-[#ECE4D9] dark:bg-[#321D0C]' : 'bg-[#DFEDEE] dark:bg-[#092A26]';
+  const bgClass =
+    addressType === 'loading'
+      ? 'bg-[#ECE4D9] dark:bg-[#321D0C] hover:bg-orange-100 dark:hover:bg-orange-800'
+      : 'bg-[#DFEDEE] dark:bg-[#092A26] hover:bg-teal-100 dark:hover:bg-teal-800';
 
   return (
     <FlexLayout className="flex-1 flex-col gap-3">
@@ -30,7 +35,7 @@ export const CargoSection = ({ cargos, addressType, icon, label, className }: Ca
         {groups.map((group) => (
           <FlexLayout
             as="li"
-            className={`relative flex-col gap-2 rounded-m border-2 border-dashed ${borderClass} px-2 pt-3 pb-2`}
+            className={`relative flex-col gap-2 rounded-m border-2 ${borderClass} px-2 pt-3 pb-2`}
             key={group.shipment.id}
           >
             <ShipmentHeader
@@ -76,8 +81,9 @@ interface ShipmentHeaderProps {
 }
 
 const ShipmentHeader = ({ shipment, borderClass, textClass, bgClass, className }: ShipmentHeaderProps) => (
-  <FlexLayout
-    className={`items-center gap-1 rounded-xxl border ${borderClass} ${bgClass} px-2 py-0.5 ${className ?? ''}`}
+  <Link
+    className={`flex items-center gap-1 rounded-xxl border ${borderClass} ${bgClass} px-2 py-0.5 transition-colors ${className ?? ''}`}
+    href={`/dashboard/shipments/${shipment.id}`}
   >
     <Icon color={textClass} icon="DocumentTextIcon" size="s" />
     <Text color={textClass} variant="text-xxs-medium">
@@ -91,7 +97,7 @@ const ShipmentHeader = ({ shipment, borderClass, textClass, bgClass, className }
         <ClientName color={textClass} id={shipment.clientId} variant="text-xxs" />
       </>
     )}
-  </FlexLayout>
+  </Link>
 );
 
 interface CargoCardProps {
