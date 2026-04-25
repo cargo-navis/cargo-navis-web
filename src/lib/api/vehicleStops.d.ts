@@ -11,8 +11,15 @@ export interface VehicleStopAddressRequest {
   postalCodeId: string;
 }
 
+export interface VehicleStopCargoShipment {
+  id: string;
+  orderNumber: string;
+  clientId: string | null;
+}
+
 export interface VehicleStopCargo {
   id: string;
+  shipment: VehicleStopCargoShipment;
   weight: number;
   ldm: number;
   description: string | null;

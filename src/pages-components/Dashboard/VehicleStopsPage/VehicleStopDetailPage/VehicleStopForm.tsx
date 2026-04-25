@@ -13,8 +13,8 @@ import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout, Icon, Text, TextButton, VerticalDivider } from '@/ui';
 
 import { countryEuropeOptions } from '../../NewEmployeePage/const';
-import { AddressSearchSelect, type SelectedAddress } from './AddressSearchSelect';
 import { buildAddressKey, formatPostalCodeLabel } from './addressHelpers';
+import { AddressSearchSelect, type SelectedAddress } from './AddressSearchSelect';
 import { CargoSelectDrawer, CargoWithClient } from './CargoSelectDrawer';
 import {
   getCreateDefaultsFromPreviousStop,

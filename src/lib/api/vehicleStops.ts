@@ -19,6 +19,7 @@ export type {
   VehicleStopAddressRequest,
   VehicleStopCargo,
   VehicleStopCargoMetadata,
+  VehicleStopCargoShipment,
   VehicleStopDocument,
   VehicleStopGroup,
 } from './vehicleStops.d';
