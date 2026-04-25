@@ -11,10 +11,10 @@ import { FormDatepicker, FormSingleSelect, FormTextInput } from '@/lib/component
 import { useCreateVehicleStop, useDispatchers, useDrivers, useTrailers, useUpdateVehicleStop } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout, Icon, Text, TextButton, VerticalDivider } from '@/ui';
-import { SingleSelectWithLabels } from '@/ui/hocs';
 
 import { countryEuropeOptions } from '../../NewEmployeePage/const';
-import { buildAddressKey, formatPostalCodeLabel, parseAddressKey } from './addressHelpers';
+import { AddressSearchSelect, type SelectedAddress } from './AddressSearchSelect';
+import { buildAddressKey, formatPostalCodeLabel } from './addressHelpers';
 import { CargoSelectDrawer, CargoWithClient } from './CargoSelectDrawer';
 import {
   getCreateDefaultsFromPreviousStop,
@@ -22,7 +22,6 @@ import {
   type VehicleStopFormValues,
   vehicleStopSchema,
 } from './schema';
-import { useAddressOptions } from './useAddressOptions';
 import { useCargoSelection } from './useCargoSelection';
 
 interface VehicleStopFormProps {
@@ -58,7 +57,6 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
   );
   const [isCustomAddress, setIsCustomAddress] = useState(false);
 
-  const { shipments, addressOptions } = useAddressOptions(stop);
   const { loadingCargos, unloadingCargos, setCargos } = useCargoSelection(setValue);
 
   const loadingCargoIds = watch('loadingCargoIds');
@@ -78,32 +76,26 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
     setCargos('unloading', []);
   }
 
-  function handleAddressChange(key: string | undefined) {
-    setSelectedAddressKey(key ?? '');
-    if (!key) return resetAddressAndCargos();
+  function handleAddressChange(picked: SelectedAddress | null) {
+    if (!picked) {
+      setSelectedAddressKey('');
+      return resetAddressAndCargos();
+    }
 
-    const { shipmentId, addressId } = parseAddressKey(key);
-    const shipment = shipments.find((s) => s.id === shipmentId);
-    if (!shipment) return;
+    const addressKey = buildAddressKey(picked.shipmentId, picked.address.id);
+    setSelectedAddressKey(addressKey);
 
-    const cargo = shipment.cargo.find(
-      (c) => c.loadingAddress?.id === addressId || c.unloadingAddress?.id === addressId
-    );
-    const address = cargo?.loadingAddress?.id === addressId ? cargo?.loadingAddress : cargo?.unloadingAddress;
-    if (!address) return;
+    const streetName = picked.address.streetName ?? '';
+    setFieldValue('address.streetName', streetName);
 
-    setFieldValue('address.streetName', address.streetName ?? '');
-    setFieldValue('address.countryCode', address.countryCode ?? '');
-    setFieldValue('address.addressPostalCode', { value: address.id, label: formatPostalCodeLabel(address) });
+    const countryCode = picked.address.countryCode ?? '';
+    setFieldValue('address.countryCode', countryCode);
 
-    setCargos(
-      'loading',
-      shipment.cargo.filter((c) => c.loadingAddress?.id === addressId)
-    );
-    setCargos(
-      'unloading',
-      shipment.cargo.filter((c) => c.unloadingAddress?.id === addressId)
-    );
+    const postalCode = { value: picked.address.id, label: formatPostalCodeLabel(picked.address) };
+    setFieldValue('address.addressPostalCode', postalCode);
+
+    setCargos('loading', picked.loadingCargos);
+    setCargos('unloading', picked.unloadingCargos);
   }
 
   function toggleCustomAddress() {
@@ -170,15 +162,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
             </FlexLayout>
           </>
         ) : (
-          <SingleSelectWithLabels
-            isClearable
-            isSearchable
-            label="Adresa"
-            options={addressOptions}
-            placeholder="Pretraži adrese aktivnih pošiljki"
-            value={selectedAddressKey}
-            onChange={(v) => handleAddressChange(v ? String(v) : undefined)}
-          />
+          <AddressSearchSelect stop={stop} value={selectedAddressKey} onChange={handleAddressChange} />
         )}
         <FlexLayout className="-mt-2">
           <TextButton
@@ -309,4 +293,3 @@ const PostalCodeField = () => {
     />
   );
 };
-

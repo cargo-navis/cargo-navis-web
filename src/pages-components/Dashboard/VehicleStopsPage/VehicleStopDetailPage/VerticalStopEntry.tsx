@@ -63,7 +63,9 @@ export const VerticalStopEntry = ({
           <Icon color="text-color-3" icon="TruckIcon" size="s" />
           <EmployeeName color="text-color-3" id={stop.driverId} variant="text-xs" />
         </FlexLayout>
-        <Text color="text-color-3" variant="text-xs">•</Text>
+        <Text color="text-color-3" variant="text-xs">
+          •
+        </Text>
         <FlexLayout className="items-center gap-1">
           <Icon color="text-color-3" icon="UserIcon" size="s" />
           <EmployeeName color="text-color-3" id={stop.disponentId} variant="text-xs" />
