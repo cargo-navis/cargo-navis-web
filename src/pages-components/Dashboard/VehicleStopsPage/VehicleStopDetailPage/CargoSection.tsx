@@ -22,6 +22,10 @@ export const CargoSection = ({ cargos, addressType, icon, label, className }: Ca
     addressType === 'loading'
       ? 'bg-[#ECE4D9] dark:bg-[#321D0C] hover:bg-orange-100 dark:hover:bg-orange-800'
       : 'bg-[#DFEDEE] dark:bg-[#092A26] hover:bg-teal-100 dark:hover:bg-teal-800';
+  const divideClass =
+    addressType === 'loading'
+      ? 'divide-y divide-orange-500 dark:divide-orange-800'
+      : 'divide-y divide-teal-500 dark:divide-teal-800';
 
   return (
     <FlexLayout className="flex-1 flex-col gap-3">
@@ -35,7 +39,7 @@ export const CargoSection = ({ cargos, addressType, icon, label, className }: Ca
         {groups.map((group) => (
           <FlexLayout
             as="li"
-            className={`relative flex-col gap-2 rounded-m border-2 ${borderClass} px-2 pt-3 pb-2`}
+            className={`relative flex-col gap-2 rounded-m border-1 ${borderClass} px-2 pt-3 pb-2`}
             key={group.shipment.id}
           >
             <ShipmentHeader
@@ -45,7 +49,7 @@ export const CargoSection = ({ cargos, addressType, icon, label, className }: Ca
               shipment={group.shipment}
               textClass={textClass}
             />
-            <FlexLayout className="flex-col gap-2">
+            <FlexLayout className={`flex-col ${divideClass}`}>
               {group.cargos.map((cargo) => (
                 <CargoCard addressType={addressType} cargo={cargo} key={cargo.id} />
               ))}
@@ -84,6 +88,7 @@ const ShipmentHeader = ({ shipment, borderClass, textClass, bgClass, className }
   <Link
     className={`flex items-center gap-1 rounded-xxl border ${borderClass} ${bgClass} px-2 py-0.5 transition-colors ${className ?? ''}`}
     href={`/dashboard/shipments/${shipment.id}`}
+    target="_blank"
   >
     <Icon color={textClass} icon="DocumentTextIcon" size="s" />
     <Text color={textClass} variant="text-xxs-medium">
@@ -111,7 +116,8 @@ const CargoCard = ({ cargo, addressType }: CargoCardProps) => {
 
   return (
     <FlexLayout className="flex-col p-2">
-      <FlexLayout className="items-center justify-between gap-2">
+      <FlexLayout className="gap-2">
+        <Icon className="mt-[2px]" icon="CubeIcon" size="m" />
         <Text color="text-color-1" variant="text-xs-medium">
           {cargo.description || '-'}
         </Text>
