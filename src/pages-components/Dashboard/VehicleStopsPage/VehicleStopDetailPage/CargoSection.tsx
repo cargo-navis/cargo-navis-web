@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 import { ClientName } from '@/components/clients/ClientName';
 import type { VehicleStopCargo, VehicleStopCargoShipment } from '@/lib/api/vehicleStops';
+import { palleteNameMap, PalleteType } from '@/lib/utils/palletes';
 import { FlexLayout, Icon, Text } from '@/ui';
 import type { IconType } from '@/ui/components/Icon/Icon';
 
@@ -110,6 +111,24 @@ interface CargoCardProps {
   addressType: 'loading' | 'unloading';
 }
 
+function getCargoLabel(cargo: VehicleStopCargo) {
+  if (cargo.description) return cargo.description;
+
+  const { type, palleteAmount, palleteType, length, width, height } = cargo.metadata;
+
+  if (type === 'standard' && palleteAmount) {
+    const palleteName = palleteNameMap[palleteType as PalleteType];
+    return palleteName ? `${palleteAmount} x ${palleteName}` : `${palleteAmount} paleta`;
+  }
+
+  if (type === 'nonstandard') {
+    const dimensions = [length, width, height].filter((d) => d != null);
+    if (dimensions.length > 0) return `${dimensions.map((d) => `${d}m`).join(' x ')}`;
+  }
+
+  return '-';
+}
+
 const CargoCard = ({ cargo, addressType }: CargoCardProps) => {
   const companyName = addressType === 'loading' ? cargo.loadingCompanyName : cargo.unloadingCompanyName;
   const companyLabel = addressType === 'loading' ? 'Tvrtka utovara' : 'Tvrtka istovara';
@@ -119,7 +138,7 @@ const CargoCard = ({ cargo, addressType }: CargoCardProps) => {
       <FlexLayout className="gap-2">
         <Icon className="mt-[2px]" icon="CubeIcon" size="m" />
         <Text color="text-color-1" variant="text-xs-medium">
-          {cargo.description || '-'}
+          {getCargoLabel(cargo)}
         </Text>
       </FlexLayout>
       <Text color="text-color-3" variant="text-xxs">
