@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
+  assignShipmentToVehicle,
   createVehicleStop,
   deleteVehicleStop,
   deleteVehicleStopFile,
@@ -64,6 +65,16 @@ export function useDeleteVehicleStop() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => deleteVehicleStop(id),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
+    },
+  });
+}
+
+export function useAssignShipmentToVehicle() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: assignShipmentToVehicle,
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
     },

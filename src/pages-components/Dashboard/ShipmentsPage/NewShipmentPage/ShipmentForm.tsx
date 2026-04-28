@@ -1,5 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { type Shipment } from '@/lib/api';
@@ -9,6 +10,7 @@ import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout, LoadingSpinner } from '@/ui';
 
+import { AssignVehicleModal } from './AssignVehicleModal';
 import { CargoFieldList } from './CargoFieldList';
 import { ClientField } from './ClientField';
 import { ContractorField } from './ContractorField';
@@ -34,6 +36,8 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
 
   const { mutateAsync: createShipment } = useCreateShipment();
   const { mutateAsync: updateShipment } = useUpdateShipment();
+
+  const [assignVehicleFor, setAssignVehicleFor] = useState<{ id: string; orderNumber: string } | null>(null);
 
   const formMethods = useForm<ShipmentFields>({
     defaultValues: getFormDefaultValues(shipment, tenant, isCopy),
@@ -71,7 +75,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
 
         const newShipment = await createShipment(payload);
         showSuccessToast({ title: `Nalog "${newShipment.orderNumber}" uspješno kreiran` });
-        await push('/dashboard/shipments');
+        setAssignVehicleFor({ id: newShipment.id, orderNumber: newShipment.orderNumber });
       }
     } catch (error) {
       console.error(error);
@@ -83,8 +87,21 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
     return <LoadingSpinner size="l" />;
   }
 
+  async function handleAssignClose() {
+    setAssignVehicleFor(null);
+    await push('/dashboard/shipments');
+  }
+
   return (
     <FormProvider {...formMethods}>
+      {assignVehicleFor && (
+        <AssignVehicleModal
+          isOpen={!!assignVehicleFor}
+          shipmentId={assignVehicleFor.id}
+          shipmentOrderNumber={assignVehicleFor.orderNumber}
+          onClose={handleAssignClose}
+        />
+      )}
       <Box as="form" className="max-w-[1400px]" onSubmit={handleSubmit(handleFormSubmit)}>
         <FlexLayout className="relative flex-col gap-7 w-full">
           <FlexLayout className="flex-row gap-7">

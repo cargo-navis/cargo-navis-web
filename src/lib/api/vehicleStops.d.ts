@@ -96,3 +96,8 @@ export interface GetVehicleStopsParams {
   page: number;
   size: number;
 }
+
+export interface AssignShipmentToVehicleParams {
+  vehicleId: string;
+  shipmentId: string;
+}
