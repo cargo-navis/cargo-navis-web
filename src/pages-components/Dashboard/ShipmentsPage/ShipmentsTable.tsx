@@ -1,8 +1,7 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import clsx from 'clsx';
-import uniq from 'lodash/uniq';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 
 import { type Shipment } from '@/lib/api';
 import { InvoiceStatus } from '@/lib/api/shipments';
@@ -11,6 +10,7 @@ import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
 import { Box, DisplayIf, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
 
+import { AddressItem } from './AddressesList';
 import { invoiceStatusConfig } from './const';
 import { SortFieldEnum, useShipmentsSortLocalStorage } from './hooks';
 import { OverdueIndicator } from './OverdueIndicator';
@@ -90,6 +90,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         },
       }),
       columnHelper.accessor('price', {
+        size: 120,
         header: () => (
           <FlexLayout
             className="items-center gap-1 cursor-pointer select-none hover:text-teal-500"
@@ -116,76 +117,65 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         },
       }),
       columnHelper.display({
-        id: 'loadingDates',
-        header: () => (
-          <FlexLayout
-            className="items-center gap-1 cursor-pointer select-none hover:text-teal-500"
-            onClick={() => toggleSort(SortFieldEnum.LoadingReadyDate)}
-          >
-            <Text className="whitespace-nowrap" variant="text-s-medium">
-              Utovar spreman
-            </Text>
-            <DisplayIf
-              condition={
-                isFieldSorted(SortFieldEnum.LoadingReadyDate) && !!getSortDirection(SortFieldEnum.LoadingReadyDate)
-              }
-            >
-              {getSortDirection(SortFieldEnum.LoadingReadyDate) === 'desc' ? ' ↓' : ' ↑'}
-            </DisplayIf>
-          </FlexLayout>
-        ),
+        id: 'route',
         enableSorting: false,
+        size: 360,
+        header: 'Utovar / Istovar',
         cell: (props) => {
-          const shipment = props.row.original;
-          const loadingDates = shipment.cargo.map((c) => c.loadingReadyDate);
+          const { cargo } = props.row.original;
 
-          const dates = uniq(loadingDates).sort();
-          const isMultipleDates = dates.length > 1;
+          const uniquePairs = new Map<string, (typeof cargo)[number]>();
+          cargo.forEach((c) => {
+            const key = `${c.loadingAddress?.id ?? ''}|${c.unloadingAddress?.id ?? ''}`;
+            if (!uniquePairs.has(key)) uniquePairs.set(key, c);
+          });
+
+          const loadingGroups = new Map<string, (typeof cargo)[number][]>();
+          uniquePairs.forEach((c) => {
+            const key = c.loadingAddress?.id ?? '';
+            if (!loadingGroups.has(key)) loadingGroups.set(key, []);
+            loadingGroups.get(key)!.push(c);
+          });
 
           return (
-            <FlexLayout as="ul" className={clsx('flex-col gap-1 justify-center py-2', isMultipleDates && 'list-disc')}>
-              {dates.map((date) => (
-                <Text as="li" color="text-color-3" key={date} variant="text-s">
-                  {getDataPointDateString(date)}
-                </Text>
-              ))}
-            </FlexLayout>
-          );
-        },
-      }),
-      columnHelper.display({
-        id: 'unloadingDates',
-        header: () => (
-          <FlexLayout
-            className="items-center gap-1 cursor-pointer select-none hover:text-teal-500"
-            onClick={() => toggleSort(SortFieldEnum.UnloadingDueDate)}
-          >
-            <Text className="whitespace-nowrap" variant="text-s-medium">
-              Rok istovara
-            </Text>
-            <DisplayIf
-              condition={
-                isFieldSorted(SortFieldEnum.UnloadingDueDate) && !!getSortDirection(SortFieldEnum.UnloadingDueDate)
-              }
-            >
-              {getSortDirection(SortFieldEnum.UnloadingDueDate) === 'desc' ? ' ↓' : ' ↑'}
-            </DisplayIf>
-          </FlexLayout>
-        ),
-        enableSorting: false,
-        cell: (props) => {
-          const shipment = props.row.original;
-          const unloadingDates = shipment.cargo.map((c) => c.unloadingDueDate);
-
-          const dates = uniq(unloadingDates).sort();
-          const isMultipleDates = dates.length > 1;
-
-          return (
-            <FlexLayout as="ul" className={clsx('flex-col gap-1 justify-center py-2', isMultipleDates && 'list-disc')}>
-              {dates.map((date) => (
-                <Text as="li" color="text-color-3" key={date} variant="text-s">
-                  {getDataPointDateString(date)}
-                </Text>
+            <FlexLayout className="flex-col gap-3 py-2 pr-6">
+              {Array.from(loadingGroups.values()).map((groupCargos, gi) => (
+                <Box
+                  className="grid grid-cols-[240px_auto_240px] gap-x-2 gap-y-2"
+                  key={gi}
+                  style={{ gridTemplateRows: `repeat(${groupCargos.length}, auto)` }}
+                >
+                  <Box
+                    className="self-center flex flex-col"
+                    style={{ gridColumn: 1, gridRow: `1 / span ${groupCargos.length}` }}
+                  >
+                    <AddressItem
+                      address={groupCargos[0].loadingAddress}
+                      textColor="text-color-2"
+                      textVariant="text-xs-medium"
+                    />
+                    <Text color="text-color-4" variant="text-xxs">
+                      {getDataPointDateString(groupCargos[0].loadingReadyDate)}
+                    </Text>
+                  </Box>
+                  {groupCargos.map((c, ci) => (
+                    <Fragment key={ci}>
+                      <Box className="self-center" style={{ gridColumn: 2, gridRow: ci + 1 }}>
+                        <Icon color="text-color-4" icon="ArrowRightIcon" size="s" />
+                      </Box>
+                      <Box className="flex flex-col self-center" style={{ gridColumn: 3, gridRow: ci + 1 }}>
+                        <AddressItem
+                          address={c.unloadingAddress}
+                          textColor="text-color-2"
+                          textVariant="text-xs-medium"
+                        />
+                        <Text color="text-color-4" variant="text-xxs">
+                          {getDataPointDateString(c.unloadingDueDate)}
+                        </Text>
+                      </Box>
+                    </Fragment>
+                  ))}
+                </Box>
               ))}
             </FlexLayout>
           );
