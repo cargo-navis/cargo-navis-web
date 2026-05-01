@@ -10,7 +10,7 @@ import {
   TimelineTitle,
 } from '@/components/reui/timeline';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
-import { FlexLayout, Icon, Text } from '@/ui';
+import { Box, FlexLayout, Icon, Text } from '@/ui';
 import { Tooltip } from '@/ui/components/Tooltip/Tooltip';
 
 interface StopTimelineItemProps {
@@ -71,7 +71,15 @@ export const StopTimelineEntry = ({ stop, step }: StopTimelineItemProps) => {
             transform: 'translateX(18px) translateY(-50%)',
           }}
         />
-        <TimelineDate style={{ marginBottom: '20px' }}>{date ? dayjs(date).format('DD.MM.YYYY') : '-'}</TimelineDate>
+        <TimelineDate style={{ marginBottom: '20px' }}>
+          {date ? (
+            dayjs(date).format('DD.MM.YYYY')
+          ) : (
+            <Box as="span" className="text-red-700 italic">
+              Datum nedostaje
+            </Box>
+          )}
+        </TimelineDate>
         <TimelineTitle>
           <Text as="span" className="inline-flex items-center gap-1" color="text-color-1" variant="text-s-medium">
             {address?.placeName ?? '-'}

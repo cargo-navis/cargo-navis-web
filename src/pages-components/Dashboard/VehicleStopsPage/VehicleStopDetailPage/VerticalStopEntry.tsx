@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import dayjs from 'dayjs';
 
 import { EmployeeName } from '@/components/employees/EmployeeName';
@@ -57,18 +58,42 @@ export const VerticalStopEntry = ({
         />
         <TimelineIndicator style={{ top: 0, left: 0 }} />
       </TimelineHeader>
-      <TimelineDate>{date ? dayjs(date).format('DD.MM.YYYY') : '-'}</TimelineDate>
+      <TimelineDate>
+        {date ? (
+          dayjs(date).format('DD.MM.YYYY')
+        ) : (
+          <Box as="span" className="text-red-700 italic">
+            Datum nedostaje
+          </Box>
+        )}
+      </TimelineDate>
       <FlexLayout className="items-center gap-1">
-        <FlexLayout className="items-center gap-1">
-          <Icon color="text-color-3" icon="TruckIcon" size="s" />
-          <EmployeeName color="text-color-3" id={stop.driverId} variant="text-xs" />
+        <FlexLayout
+          className={clsx('items-center gap-1 text-dark-600 dark:text-light-300', !stop.driverId && 'text-red-700')}
+        >
+          <Icon icon="TruckIcon" size="s" />
+          {stop.driverId ? (
+            <EmployeeName id={stop.driverId} variant="text-xs" />
+          ) : (
+            <Text as="span" variant="text-xs">
+              Vozač nedostaje
+            </Text>
+          )}
         </FlexLayout>
         <Text color="text-color-3" variant="text-xs">
           •
         </Text>
-        <FlexLayout className="items-center gap-1">
-          <Icon color="text-color-3" icon="UserIcon" size="s" />
-          <EmployeeName color="text-color-3" id={stop.disponentId} variant="text-xs" />
+        <FlexLayout
+          className={clsx('items-center gap-1 text-dark-600 dark:text-light-300', !stop.disponentId && 'text-red-700')}
+        >
+          <Icon icon="UserIcon" size="s" />
+          {stop.disponentId ? (
+            <EmployeeName id={stop.disponentId} variant="text-xs" />
+          ) : (
+            <Text as="span" variant="text-xs">
+              Disponent nedostaje
+            </Text>
+          )}
         </FlexLayout>
       </FlexLayout>
       <TimelineTitle>
