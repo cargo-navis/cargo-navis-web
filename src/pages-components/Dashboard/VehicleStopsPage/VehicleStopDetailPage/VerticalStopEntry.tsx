@@ -62,14 +62,17 @@ export const VerticalStopEntry = ({
         {date ? (
           dayjs(date).format('DD.MM.YYYY')
         ) : (
-          <Box as="span" className="text-red-700 italic">
+          <Box as="span" className="text-red-600 italic">
             Datum nedostaje
           </Box>
         )}
       </TimelineDate>
       <FlexLayout className="items-center gap-1">
         <FlexLayout
-          className={clsx('items-center gap-1 text-dark-600 dark:text-light-300', !stop.driverId && 'text-red-700')}
+          className={clsx(
+            'items-center gap-1 text-dark-600 dark:text-light-300',
+            !stop.driverId && 'text-red-600 dark:text-red-600'
+          )}
         >
           <Icon icon="TruckIcon" size="s" />
           {stop.driverId ? (
@@ -84,7 +87,10 @@ export const VerticalStopEntry = ({
           •
         </Text>
         <FlexLayout
-          className={clsx('items-center gap-1 text-dark-600 dark:text-light-300', !stop.disponentId && 'text-red-700')}
+          className={clsx(
+            'items-center gap-1 text-dark-600 dark:text-light-300',
+            !stop.disponentId && 'text-red-600 dark:text-red-600'
+          )}
         >
           <Icon icon="UserIcon" size="s" />
           {stop.disponentId ? (
