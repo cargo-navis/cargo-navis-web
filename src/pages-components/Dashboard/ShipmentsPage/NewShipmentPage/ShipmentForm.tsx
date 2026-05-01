@@ -87,9 +87,14 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
     return <LoadingSpinner size="l" />;
   }
 
-  async function handleAssignClose() {
+  async function handleAssignDismiss() {
     setAssignVehicleFor(null);
     await push('/dashboard/shipments');
+  }
+
+  async function handleVehicleAssigned(vehicleId: string) {
+    setAssignVehicleFor(null);
+    await push(`/dashboard/vehicle-stops/${vehicleId}`);
   }
 
   return (
@@ -99,7 +104,8 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
           isOpen={!!assignVehicleFor}
           shipmentId={assignVehicleFor.id}
           shipmentOrderNumber={assignVehicleFor.orderNumber}
-          onClose={handleAssignClose}
+          onAssigned={handleVehicleAssigned}
+          onClose={handleAssignDismiss}
         />
       )}
       <Box as="form" className="max-w-[1400px]" onSubmit={handleSubmit(handleFormSubmit)}>

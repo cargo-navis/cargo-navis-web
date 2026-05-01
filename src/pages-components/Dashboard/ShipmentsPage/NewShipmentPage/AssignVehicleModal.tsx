@@ -1,17 +1,31 @@
+import Fuse from 'fuse.js';
 import { useEffect, useMemo, useState } from 'react';
 
 import { EmployeeName } from '@/components/employees/EmployeeName';
 import type { Vehicle } from '@/lib/api';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
-import { useAssignShipmentToVehicle, useVehicles, useVehicleStopsByVehicle } from '@/lib/hooks';
+import { useAssignShipmentToVehicle, useEmployees, useVehicles, useVehicleStopsByVehicle } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, Dialog, DialogContent, DialogHeader, DialogTitle, FlexLayout, Icon, Skeleton, Text } from '@/ui';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  FlexLayout,
+  Icon,
+  Skeleton,
+  Text,
+  TextInput,
+} from '@/ui';
 
 interface AssignVehicleModalProps {
   isOpen: boolean;
   shipmentId: string;
   shipmentOrderNumber: string;
   onClose(): void;
+  onAssigned(vehicleId: string): void;
 }
 
 export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
@@ -19,24 +33,44 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
   shipmentId,
   shipmentOrderNumber,
   onClose,
+  onAssigned,
 }) => {
   const { data: vehicleGroups, isLoading: isGroupsLoading } = useVehicleStopsByVehicle(1);
   const { data: vehicles, isLoading: isVehiclesLoading } = useVehicles({ enabled: isOpen });
+  const { data: employees } = useEmployees({ enabled: isOpen });
   const { mutateAsync: assignShipment, isPending } = useAssignShipmentToVehicle();
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
 
   const isLoading = isGroupsLoading || isVehiclesLoading;
-  const rows = useMemo<{ vehicle: Vehicle; latestStop?: VehicleStop }[]>(() => {
+  const rows = useMemo<{ vehicle: Vehicle; latestStop?: VehicleStop; driverName?: string }[]>(() => {
     if (!vehicleGroups || !vehicles) return [];
     const vehiclesById = new Map(vehicles.map((v) => [v.id, v]));
+    const employeesById = new Map((employees ?? []).map((e) => [e.id, e]));
     return vehicleGroups.flatMap((g) => {
       const vehicle = vehiclesById.get(g.vehicleId);
-      return vehicle ? [{ vehicle, latestStop: g.stops[0] }] : [];
+      if (!vehicle) return [];
+      const latestStop = g.stops[0];
+      const driverName = latestStop?.driverId ? employeesById.get(latestStop.driverId)?.fullName : undefined;
+      return [{ vehicle, latestStop, driverName }];
     });
-  }, [vehicleGroups, vehicles]);
+  }, [vehicleGroups, vehicles, employees]);
+
+  const fuse = useMemo(
+    () => new Fuse(rows, { keys: ['vehicle.registration', 'vehicle.brand', 'driverName'], threshold: 0.4 }),
+    [rows]
+  );
+
+  const filteredRows = useMemo(() => {
+    if (!search.trim()) return rows;
+    return fuse.search(search).map((r) => r.item);
+  }, [rows, fuse, search]);
 
   useEffect(() => {
-    if (!isOpen) setSelectedVehicleId(null);
+    if (!isOpen) {
+      setSelectedVehicleId(null);
+      setSearch('');
+    }
   }, [isOpen]);
 
   async function handleConfirm() {
@@ -44,7 +78,7 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
     try {
       await assignShipment({ vehicleId: selectedVehicleId, shipmentId });
       showSuccessToast({ title: `Nalog "${shipmentOrderNumber}" dodijeljen vozilu` });
-      onClose();
+      onAssigned(selectedVehicleId);
     } catch {
       showErrorToast({ title: 'Greška pri dodjeli naloga vozilu' });
     }
@@ -64,7 +98,19 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
             Odaberi vozilo na koje će se dodijeliti nalog &quot;{shipmentOrderNumber}&quot;.
           </Text>
         </DialogHeader>
-        <Box className="max-h-[400px] overflow-y-auto">
+        <Box className="px-1">
+          <TextInput
+            autoFocus
+            iconLeft="MagnifyingGlassIcon"
+            iconRight={search ? 'XMarkIcon' : undefined}
+            isDisabled={isLoading}
+            placeholder="Pretraži po registraciji, marki ili vozaču..."
+            value={search}
+            onChange={setSearch}
+            onClickIconRight={() => setSearch('')}
+          />
+        </Box>
+        <Box className="h-[400px] overflow-y-auto">
           {isLoading ? (
             <FlexLayout className="flex-col gap-2">
               {Array.from({ length: 6 }).map((_, i) => (
@@ -75,9 +121,13 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
             <Text color="text-color-3" variant="text-s">
               Nema dostupnih vozila.
             </Text>
+          ) : filteredRows.length === 0 ? (
+            <Text color="text-color-3" variant="text-s">
+              Nema rezultata.
+            </Text>
           ) : (
             <FlexLayout className="flex-col gap-2">
-              {rows.map(({ vehicle, latestStop }) => (
+              {filteredRows.map(({ vehicle, latestStop }) => (
                 <VehicleRow
                   isSelected={vehicle.id === selectedVehicleId}
                   key={vehicle.id}
