@@ -1,7 +1,17 @@
+import dayjs from 'dayjs';
 import Fuse from 'fuse.js';
 import { useEffect, useMemo, useState } from 'react';
 
 import { EmployeeName } from '@/components/employees/EmployeeName';
+import {
+  Timeline,
+  TimelineDate,
+  TimelineHeader,
+  TimelineIndicator,
+  TimelineItem,
+  TimelineSeparator,
+  TimelineTitle,
+} from '@/components/reui/timeline';
 import type { Vehicle } from '@/lib/api';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { useAssignShipmentToVehicle, useEmployees, useVehicles, useVehicleStopsByVehicle } from '@/lib/hooks';
@@ -20,6 +30,7 @@ import {
   TextInput,
 } from '@/ui';
 
+
 interface AssignVehicleModalProps {
   isOpen: boolean;
   shipmentId: string;
@@ -35,7 +46,7 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
   onClose,
   onAssigned,
 }) => {
-  const { data: vehicleGroups, isLoading: isGroupsLoading } = useVehicleStopsByVehicle(1);
+  const { data: vehicleGroups, isLoading: isGroupsLoading } = useVehicleStopsByVehicle(5);
   const { data: vehicles, isLoading: isVehiclesLoading } = useVehicles({ enabled: isOpen });
   const { data: employees } = useEmployees({ enabled: isOpen });
   const { mutateAsync: assignShipment, isPending } = useAssignShipmentToVehicle();
@@ -43,21 +54,34 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
   const [search, setSearch] = useState('');
 
   const isLoading = isGroupsLoading || isVehiclesLoading;
-  const rows = useMemo<{ vehicle: Vehicle; latestStop?: VehicleStop; driverName?: string }[]>(() => {
+  const rows = useMemo<
+    {
+      vehicle: Vehicle;
+      stops: VehicleStop[];
+      latestStop?: VehicleStop;
+      driverName?: string;
+      placeNames: string[];
+    }[]
+  >(() => {
     if (!vehicleGroups || !vehicles) return [];
     const vehiclesById = new Map(vehicles.map((v) => [v.id, v]));
     const employeesById = new Map((employees ?? []).map((e) => [e.id, e]));
     return vehicleGroups.flatMap((g) => {
       const vehicle = vehiclesById.get(g.vehicleId);
       if (!vehicle) return [];
-      const latestStop = g.stops[0];
+      const latestStop = g.stops[g.stops.length - 1];
       const driverName = latestStop?.driverId ? employeesById.get(latestStop.driverId)?.fullName : undefined;
-      return [{ vehicle, latestStop, driverName }];
+      const placeNames = g.stops.map((s) => s.address?.placeName).filter((p): p is string => !!p);
+      return [{ vehicle, stops: g.stops, latestStop, driverName, placeNames }];
     });
   }, [vehicleGroups, vehicles, employees]);
 
   const fuse = useMemo(
-    () => new Fuse(rows, { keys: ['vehicle.registration', 'vehicle.brand', 'driverName'], threshold: 0.4 }),
+    () =>
+      new Fuse(rows, {
+        keys: ['vehicle.registration', 'vehicle.brand', 'driverName', 'placeNames'],
+        threshold: 0.4,
+      }),
     [rows]
   );
 
@@ -104,7 +128,7 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
             iconLeft="MagnifyingGlassIcon"
             iconRight={search ? 'XMarkIcon' : undefined}
             isDisabled={isLoading}
-            placeholder="Pretraži po registraciji, marki ili vozaču..."
+            placeholder="Pretraži po registraciji, marki, vozaču ili mjestu..."
             value={search}
             onChange={setSearch}
             onClickIconRight={() => setSearch('')}
@@ -127,11 +151,12 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
             </Text>
           ) : (
             <FlexLayout className="flex-col gap-2">
-              {filteredRows.map(({ vehicle, latestStop }) => (
+              {filteredRows.map(({ vehicle, latestStop, stops }) => (
                 <VehicleRow
                   isSelected={vehicle.id === selectedVehicleId}
                   key={vehicle.id}
                   latestStop={latestStop}
+                  stops={stops}
                   vehicle={vehicle}
                   onSelect={() => setSelectedVehicleId(vehicle.id)}
                 />
@@ -158,36 +183,86 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
   );
 };
 
+const CompactStopTimelineEntry = ({ stop, step }: { stop: VehicleStop; step: number }) => (
+  <TimelineItem step={step} style={{ paddingRight: '24px' }}>
+    <TimelineHeader>
+      <TimelineSeparator
+        style={{
+          top: '24px',
+          height: '2px',
+          width: 'calc(100% - 16px)',
+          transform: 'translateX(14px) translateY(-50%)',
+        }}
+      />
+      <TimelineDate style={{ marginBottom: '12px' }}>
+        {stop.date ? dayjs(stop.date).format('DD.MM.YYYY') : '-'}
+      </TimelineDate>
+      <TimelineIndicator className="z-10" style={{ top: '24px', left: 0, transform: 'translateY(-50%)' }} />
+      <TimelineTitle>
+        <Text as="span" color="text-color-1" variant="text-xxs">
+          {stop.address?.placeName ?? '-'}
+        </Text>
+      </TimelineTitle>
+    </TimelineHeader>
+  </TimelineItem>
+);
+
 interface VehicleRowProps {
   vehicle: Vehicle;
   latestStop?: VehicleStop;
+  stops: VehicleStop[];
   isSelected: boolean;
   onSelect(): void;
 }
 
-const VehicleRow = ({ vehicle, latestStop, isSelected, onSelect }: VehicleRowProps) => (
-  <FlexLayout
-    as="button"
-    className={`items-center justify-between gap-3 rounded-m border p-3 text-left ${
-      isSelected ? 'border-teal-500 bg-teal-500/10' : 'border-dark-100 hover:border-teal-500/70 dark:border-light-800'
-    }`}
-    type="button"
-    onClick={onSelect}
-  >
-    <FlexLayout className="flex-col">
-      <Text color="text-color-1" variant="text-s-medium">
-        {vehicle.registration}
-      </Text>
-      <Text color="text-color-3" variant="text-xxs">
-        {vehicle.brand}
-      </Text>
-      {latestStop?.driverId && (
-        <FlexLayout className="items-center gap-1">
-          <Icon color="text-color-3" icon="UserIcon" size="s" />
-          <EmployeeName color="text-color-3" id={latestStop.driverId} variant="text-xxs" />
+const VehicleRow = ({ vehicle, latestStop, stops, isSelected, onSelect }: VehicleRowProps) => {
+  const recentStops = stops.slice(-3);
+
+  return (
+    <FlexLayout
+      as="button"
+      className={`flex-col gap-3 relative rounded-m border p-3 text-left ${
+        isSelected ? 'border-teal-500 bg-teal-500/10' : 'border-dark-100 hover:border-teal-500/70 dark:border-light-800'
+      }`}
+      type="button"
+      onClick={onSelect}
+    >
+      <FlexLayout className="gap-3 items-start">
+        <FlexLayout className="flex-col">
+          <FlexLayout className="items-center gap-1">
+            <Icon color="text-color-1" icon="TruckIcon" size="m" />
+            <Text color="text-color-1" variant="text-s-medium">
+              {vehicle.registration}
+            </Text>
+          </FlexLayout>
+          <Text color="text-color-3" variant="text-xxs">
+            {vehicle.brand}
+          </Text>
+        </FlexLayout>
+        {latestStop?.driverId && (
+          <>
+            •
+            <FlexLayout className="items-center gap-1">
+              <Icon color="text-color-1" icon="UserIcon" size="m" />
+              <EmployeeName color="text-color-1" id={latestStop.driverId} variant="text-s-medium" />
+            </FlexLayout>
+          </>
+        )}
+      </FlexLayout>
+      {recentStops.length > 0 && (
+        <Box className="flex-1 min-w-0">
+          <Timeline className="w-full" defaultValue={recentStops.length} orientation="horizontal">
+            {recentStops.map((stop, i) => (
+              <CompactStopTimelineEntry key={stop.id} step={i + 1} stop={stop} />
+            ))}
+          </Timeline>
+        </Box>
+      )}
+      {isSelected && (
+        <FlexLayout className="flex-col absolute justify-center top-0 bottom-0 right-4">
+          <Icon className="text-teal-500 shrink-0" icon="CheckIcon" size="m" />
         </FlexLayout>
       )}
     </FlexLayout>
-    {isSelected && <Icon className="text-teal-500" icon="CheckIcon" size="m" />}
-  </FlexLayout>
-);
+  );
+};

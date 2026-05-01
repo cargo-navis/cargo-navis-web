@@ -99,6 +99,13 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
 
   return (
     <FormProvider {...formMethods}>
+      <AssignVehicleModal
+        isOpen
+        shipmentId={`assignVehicleFor.id`}
+        shipmentOrderNumber={`assignVehicleFor.orderNumber`}
+        onAssigned={handleVehicleAssigned}
+        onClose={handleAssignDismiss}
+      />
       {assignVehicleFor && (
         <AssignVehicleModal
           isOpen={!!assignVehicleFor}
