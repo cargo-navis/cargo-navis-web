@@ -13,10 +13,10 @@ import {
 } from '@/components/reui/timeline';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { FileCard } from '@/lib/components/FileCard';
-import { useDeleteVehicleStopFile, useGetVehicleStopFileUrl } from '@/lib/hooks';
+import { useDeleteVehicleStopFile, useGetVehicleStopFileUrl, useSendVehicleStopMessage } from '@/lib/hooks';
 import { downloadVehicleStopFile } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, FlexLayout, Icon, Text } from '@/ui';
+import { Box, FlexLayout, Icon, Text, TextButton, Tooltip } from '@/ui';
 
 import { CargoSection } from './CargoSection';
 import { VehicleStopFileUploadButton } from './VehicleStopFileUploadButton';
@@ -46,7 +46,22 @@ export const VerticalStopEntry = ({
 
   const { mutateAsync: deleteFile, isPending: isDeletingFile } = useDeleteVehicleStopFile(stop.id);
   const { mutateAsync: getDocumentUrl, isPending: isGettingDocumentUrl } = useGetVehicleStopFileUrl(stop.id);
+  const { mutateAsync: sendMessage, isPending: isSendingMessage } = useSendVehicleStopMessage(stop.id);
   const isFileLoading = isDeletingFile || isGettingDocumentUrl;
+
+  async function handleSendMessage() {
+    if (stop.messageSentAt) {
+      const ok = confirm('Poruka je već poslana. Pošalji ponovno?');
+      if (!ok) return;
+    }
+    try {
+      await sendMessage();
+      showSuccessToast({ title: 'Poruka poslana' });
+    } catch (error) {
+      console.error(error);
+      showErrorToast({ title: 'Greška prilikom slanja poruke. Pokušajte ponovno.' });
+    }
+  }
 
   function handleDownloadFile(documentId: string) {
     try {
@@ -139,6 +154,45 @@ export const VerticalStopEntry = ({
           ) : (
             <Text as="span" variant="text-xs">
               Disponent nedostaje
+            </Text>
+          )}
+        </FlexLayout>
+        <FlexLayout className="flex-col ml-10 relative">
+          {stop.driverId ? (
+            <TextButton
+              iconRight="ArrowUpRightIcon"
+              isDisabled={isSendingMessage}
+              size="s"
+              text={stop.messageSentAt ? 'Obavijesti vozača ponovno' : 'Obavijesti vozača'}
+              type="button"
+              variant="secondary"
+              onClick={handleSendMessage}
+            />
+          ) : (
+            <Tooltip
+              content={
+                <Box className="px-2 w-max">
+                  <Text color="text-light-50" variant="text-xs">
+                    Za poslati poruku na Whatsapp, potrebno je postaviti vozača.
+                  </Text>
+                </Box>
+              }
+            >
+              <Box>
+                <TextButton
+                  iconRight="ArrowUpRightIcon"
+                  isDisabled
+                  size="s"
+                  text="Obavijesti vozača"
+                  type="button"
+                  variant="secondary"
+                />
+              </Box>
+            </Tooltip>
+          )}
+          {stop.messageSentAt && (
+            <Text className="absolute top-5 whitespace-nowrap" color="text-color-3" variant="text-xxxs">
+              Poslano {dayjs(stop.messageSentAt).format('DD.MM.YYYY HH:mm')}
             </Text>
           )}
         </FlexLayout>

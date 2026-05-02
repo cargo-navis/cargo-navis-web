@@ -1,10 +1,8 @@
 import { backend } from '@/lib/services/backendService';
 
-import type { PaginatedResponse } from './pagination.d';
 import type {
   AssignShipmentToVehicleParams,
   CreateVehicleStopParams,
-  GetVehicleStopsParams,
   UpdateVehicleStopParams,
   VehicleStop,
   VehicleStopDocument,
@@ -14,7 +12,6 @@ import type {
 export type {
   AssignShipmentToVehicleParams,
   CreateVehicleStopParams,
-  GetVehicleStopsParams,
   UpdateVehicleStopParams,
   VehicleStop,
   VehicleStopAddress,
@@ -28,10 +25,6 @@ export type {
 
 export async function getVehicleStop(id: string) {
   return backend.get<VehicleStop>(`/api/vehicle-stops/${id}`);
-}
-
-export async function getVehicleStops(params: GetVehicleStopsParams) {
-  return backend.get<PaginatedResponse<VehicleStop>>('/api/vehicle-stops', { params });
 }
 
 export async function getVehicleStopsByVehicle(limit?: number) {

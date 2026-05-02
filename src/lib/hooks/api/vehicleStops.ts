@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import type { PaginatedResponse } from '@/lib/api/pagination.d';
 import {
   assignShipmentToVehicle,
   createVehicleStop,
@@ -7,13 +8,12 @@ import {
   deleteVehicleStopFile,
   getVehicleStop,
   getVehicleStopFileUrl,
-  getVehicleStops,
   getVehicleStopsByVehicle,
-  type GetVehicleStopsParams,
   sendVehicleStopMessage,
   updateVehicleStop,
   type UpdateVehicleStopParams,
   uploadVehicleStopFile,
+  type VehicleStop,
   type VehicleStopGroup,
 } from '@/lib/api/vehicleStops';
 
@@ -31,13 +31,6 @@ export function useVehicleStop(id?: string) {
     queryKey: [QUERY_KEY, id],
     queryFn: () => getVehicleStop(id as string),
     enabled: !!id,
-  });
-}
-
-export function useVehicleStops(params: GetVehicleStopsParams) {
-  return useQuery({
-    queryKey: [QUERY_KEY, 'list', params],
-    queryFn: () => getVehicleStops(params),
   });
 }
 
@@ -85,8 +78,15 @@ export function useSendVehicleStopMessage(id: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => sendVehicleStopMessage(id),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
+    onSuccess: (updatedStop) => {
+      // queryClient.setQueryData<VehicleStop>([QUERY_KEY, id], updatedStop);
+
+      queryClient.setQueriesData<VehicleStopGroup[]>({ queryKey: [QUERY_KEY, 'byVehicle'] }, (old) =>
+        old?.map((g) => ({
+          ...g,
+          stops: g.stops.map((s) => (s.id === updatedStop.id ? updatedStop : s)),
+        }))
+      );
     },
   });
 }

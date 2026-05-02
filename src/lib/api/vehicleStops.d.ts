@@ -91,12 +91,6 @@ export interface CreateVehicleStopParams {
 
 export type UpdateVehicleStopParams = Partial<Omit<CreateVehicleStopParams, 'sendMessage'>>;
 
-export interface GetVehicleStopsParams {
-  vehicleId?: string;
-  page: number;
-  size: number;
-}
-
 export interface AssignShipmentToVehicleParams {
   vehicleId: string;
   shipmentId: string;
