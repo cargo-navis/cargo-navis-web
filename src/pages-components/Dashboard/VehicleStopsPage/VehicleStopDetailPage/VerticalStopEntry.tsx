@@ -45,18 +45,18 @@ export const VerticalStopEntry = ({
       completed={completed}
       separatorActive={separatorActive}
       step={step}
-      style={{ paddingLeft: '32px', paddingBottom: '48px' }}
+      style={{ paddingLeft: '32px', paddingBottom: '78px' }}
     >
       <TimelineHeader>
         <TimelineSeparator
           style={{
             left: '7px',
-            top: '16px',
+            top: '68px',
             height: 'calc(100% - 16px)',
             width: '2px',
           }}
         />
-        <TimelineIndicator style={{ top: 0, left: 0 }} />
+        <TimelineIndicator style={{ top: 52, left: 0 }} />
       </TimelineHeader>
       <TimelineDate>
         {date ? (
@@ -136,7 +136,7 @@ export const VerticalStopEntry = ({
         </FlexLayout>
       )}
       {onInsertBefore && (
-        <FlexLayout className="flex-col absolute hidden group-hover/stop-entry:flex justify-center -left-2 top-2 bottom-0">
+        <FlexLayout className="flex-col absolute hidden group-hover/stop-entry:flex justify-center -left-2 bottom-6">
           <FlexLayout
             as="button"
             className="items-center justify-center w-[32px] h-[32px] rounded-circle bg-white dark:bg-black border-2 border-dashed border-teal-500 hover:border-teal-700 text-teal-500 hover:text-teal-700"
