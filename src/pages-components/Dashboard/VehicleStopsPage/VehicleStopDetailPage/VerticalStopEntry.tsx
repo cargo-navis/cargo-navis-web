@@ -12,9 +12,14 @@ import {
   TimelineTitle,
 } from '@/components/reui/timeline';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
+import { FileCard } from '@/lib/components/FileCard';
+import { useDeleteVehicleStopFile, useGetVehicleStopFileUrl } from '@/lib/hooks';
+import { downloadVehicleStopFile } from '@/lib/utils/file';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 
 import { CargoSection } from './CargoSection';
+import { VehicleStopFileUploadButton } from './VehicleStopFileUploadButton';
 
 interface VerticalStopEntryProps {
   stop: VehicleStop;
@@ -35,9 +40,45 @@ export const VerticalStopEntry = ({
   onDelete,
   onInsertBefore,
 }: VerticalStopEntryProps) => {
-  const { address, date, loadingCargos, unloadingCargos } = stop;
+  const { address, date, loadingCargos, unloadingCargos, documents } = stop;
   const hasLoading = loadingCargos.length > 0;
   const hasUnloading = unloadingCargos.length > 0;
+
+  const { mutateAsync: deleteFile, isPending: isDeletingFile } = useDeleteVehicleStopFile(stop.id);
+  const { mutateAsync: getDocumentUrl, isPending: isGettingDocumentUrl } = useGetVehicleStopFileUrl(stop.id);
+  const isFileLoading = isDeletingFile || isGettingDocumentUrl;
+
+  function handleDownloadFile(documentId: string) {
+    try {
+      void downloadVehicleStopFile(stop.id, documentId);
+    } catch (error) {
+      console.error(error);
+      showErrorToast({ title: 'Greška prilikom preuzimanja dokumenta. Pokušajte ponovno.' });
+    }
+  }
+
+  async function handlePreview(documentId: string) {
+    try {
+      const url = await getDocumentUrl({ documentId, disposition: 'inline' });
+      window.open(url, '_blank');
+    } catch (error) {
+      console.error(error);
+      showErrorToast({ title: 'Greška prilikom pregleda dokumenta. Pokušajte ponovno.' });
+    }
+  }
+
+  async function handleDeleteFile(documentId: string, documentName: string) {
+    const answer = confirm(`Jeste li sigurni da želite izbrisati dokument "${documentName}"?`);
+    if (!answer) return;
+
+    try {
+      await deleteFile(documentId);
+      showSuccessToast({ title: `Dokument "${documentName}" izbrisan` });
+    } catch (error) {
+      console.error(error);
+      showErrorToast({ title: 'Greška prilikom brisanja dokumenta. Pokušajte ponovno.' });
+    }
+  }
 
   return (
     <TimelineItem
@@ -135,6 +176,28 @@ export const VerticalStopEntry = ({
           {(!hasLoading || !hasUnloading) && <Box className="flex-1" />}
         </FlexLayout>
       )}
+      <FlexLayout className="flex-col gap-2 mt-3">
+        {documents && documents.length > 0 && (
+          <FlexLayout className="items-center gap-1 text-dark-600 dark:text-light-300">
+            <Icon icon="DocumentTextIcon" size="m" type="solid" />
+            <Text variant="text-xs-medium">Dokumenti ({documents.length})</Text>
+          </FlexLayout>
+        )}
+        <FlexLayout className="flex-wrap gap-3">
+          {documents?.map((document) => (
+            <Box className="max-w-[300px]" key={document.id}>
+              <FileCard
+                {...document}
+                isLoading={isFileLoading}
+                onDelete={(documentId) => handleDeleteFile(documentId, document.name)}
+                onDownload={handleDownloadFile}
+                onPreview={handlePreview}
+              />
+            </Box>
+          ))}
+          <VehicleStopFileUploadButton id={stop.id} />
+        </FlexLayout>
+      </FlexLayout>
       {onInsertBefore && (
         <FlexLayout className="flex-col absolute hidden group-hover/stop-entry:flex justify-center -left-2 bottom-6">
           <FlexLayout
