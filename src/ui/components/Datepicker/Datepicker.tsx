@@ -9,6 +9,7 @@ import { Icon } from '@/ui';
 import { classnames, popoverProps } from './styles';
 
 export interface DatepickerProps {
+  autoFocus?: boolean | undefined;
   value: string | null;
   onChange(date: string | null): void;
   isDisabled?: boolean;
@@ -19,6 +20,7 @@ export interface DatepickerProps {
 }
 
 export const Datepicker: React.FC<DatepickerProps> = ({
+  autoFocus,
   placeholder,
   isDisabled = false,
   isClearable = true,
@@ -32,6 +34,7 @@ export const Datepicker: React.FC<DatepickerProps> = ({
   return (
     <DatesProvider settings={{ locale: 'hr', firstDayOfWeek: 1, weekendDays: [0, 6] }}>
       <DateInput
+        autoFocus={autoFocus}
         classNames={classnames}
         clearable
         dateParser={(dt) => {

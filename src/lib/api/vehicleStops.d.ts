@@ -91,7 +91,14 @@ export interface CreateVehicleStopParams {
 
 export type UpdateVehicleStopParams = Partial<Omit<CreateVehicleStopParams, 'sendMessage'>>;
 
+export interface CargoStopDate {
+  cargoId: string;
+  loadingDate: string;
+  unloadingDate: string;
+}
+
 export interface AssignShipmentToVehicleParams {
   vehicleId: string;
   shipmentId: string;
+  cargoStopDates: CargoStopDate[];
 }

@@ -37,7 +37,15 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
   const { mutateAsync: createShipment } = useCreateShipment();
   const { mutateAsync: updateShipment } = useUpdateShipment();
 
-  const [assignVehicleFor, setAssignVehicleFor] = useState<{ id: string; orderNumber: string } | null>(null);
+  const [assignVehicleFor, setAssignVehicleFor] = useState<{
+    id: string;
+    orderNumber: string;
+    cargoIds: string[];
+    loadingPlaceName?: string;
+    unloadingPlaceName?: string;
+    loadingAddressId?: string;
+    unloadingAddressId?: string;
+  } | null>(null);
 
   const formMethods = useForm<ShipmentFields>({
     defaultValues: getFormDefaultValues(shipment, tenant, isCopy),
@@ -75,7 +83,15 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
 
         const newShipment = await createShipment(payload);
         showSuccessToast({ title: `Nalog "${newShipment.orderNumber}" uspješno kreiran` });
-        setAssignVehicleFor({ id: newShipment.id, orderNumber: newShipment.orderNumber });
+        setAssignVehicleFor({
+          id: newShipment.id,
+          orderNumber: newShipment.orderNumber,
+          cargoIds: newShipment.cargo.map((c) => c.id),
+          loadingPlaceName: newShipment.cargo[0]?.loadingAddress?.placeName ?? undefined,
+          unloadingPlaceName: newShipment.cargo[0]?.unloadingAddress?.placeName ?? undefined,
+          loadingAddressId: newShipment.cargo[0]?.loadingAddress?.id,
+          unloadingAddressId: newShipment.cargo[0]?.unloadingAddress?.id,
+        });
       }
     } catch (error) {
       console.error(error);
@@ -101,9 +117,14 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
     <FormProvider {...formMethods}>
       {assignVehicleFor && (
         <AssignVehicleModal
+          cargoIds={assignVehicleFor.cargoIds}
           isOpen={!!assignVehicleFor}
+          loadingAddressId={assignVehicleFor.loadingAddressId}
+          loadingPlaceName={assignVehicleFor.loadingPlaceName}
           shipmentId={assignVehicleFor.id}
           shipmentOrderNumber={assignVehicleFor.orderNumber}
+          unloadingAddressId={assignVehicleFor.unloadingAddressId}
+          unloadingPlaceName={assignVehicleFor.unloadingPlaceName}
           onAssigned={handleVehicleAssigned}
           onClose={handleAssignDismiss}
         />

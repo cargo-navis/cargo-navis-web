@@ -11,6 +11,7 @@ import type {
 
 export type {
   AssignShipmentToVehicleParams,
+  CargoStopDate,
   CreateVehicleStopParams,
   UpdateVehicleStopParams,
   VehicleStop,

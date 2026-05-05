@@ -17,10 +17,11 @@ import {
 
 const QUERY_KEY = 'vehicleStops';
 
-export function useVehicleStopsByVehicle(limit?: number) {
+export function useVehicleStopsByVehicle(limit?: number, options?: { enabled?: boolean }) {
   return useQuery<VehicleStopGroup[]>({
     queryKey: [QUERY_KEY, 'byVehicle', limit],
     queryFn: () => getVehicleStopsByVehicle(limit),
+    enabled: options?.enabled ?? true,
   });
 }
 

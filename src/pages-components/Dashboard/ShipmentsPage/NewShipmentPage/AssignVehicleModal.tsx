@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { EmployeeName } from '@/components/employees/EmployeeName';
 import {
   Timeline,
+  TimelineContent,
   TimelineDate,
   TimelineHeader,
   TimelineIndicator,
@@ -19,6 +20,7 @@ import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import {
   Box,
   Button,
+  Datepicker,
   Dialog,
   DialogContent,
   DialogHeader,
@@ -34,6 +36,11 @@ interface AssignVehicleModalProps {
   isOpen: boolean;
   shipmentId: string;
   shipmentOrderNumber: string;
+  cargoIds: string[];
+  loadingPlaceName?: string;
+  unloadingPlaceName?: string;
+  loadingAddressId?: string;
+  unloadingAddressId?: string;
   onClose(): void;
   onAssigned(vehicleId: string): void;
 }
@@ -42,15 +49,22 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
   isOpen,
   shipmentId,
   shipmentOrderNumber,
+  cargoIds,
+  loadingPlaceName,
+  unloadingPlaceName,
+  loadingAddressId,
+  unloadingAddressId,
   onClose,
   onAssigned,
 }) => {
-  const { data: vehicleGroups, isLoading: isGroupsLoading } = useVehicleStopsByVehicle(5);
+  const { data: vehicleGroups, isLoading: isGroupsLoading } = useVehicleStopsByVehicle(5, { enabled: isOpen });
   const { data: vehicles, isLoading: isVehiclesLoading } = useVehicles({ enabled: isOpen });
   const { data: employees } = useEmployees({ enabled: isOpen });
   const { mutateAsync: assignShipment, isPending } = useAssignShipmentToVehicle();
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [loadingDate, setLoadingDate] = useState<string | null>(null);
+  const [unloadingDate, setUnloadingDate] = useState<string | null>(null);
 
   const isLoading = isGroupsLoading || isVehiclesLoading;
   const rows = useMemo<
@@ -69,12 +83,11 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
       const vehicle = vehiclesById.get(g.vehicleId);
       if (!vehicle) return [];
 
-      const stops = g.stops.reverse();
-
+      const stops = g.stops;
       const latestStop = stops[stops.length - 1];
       const driverName = latestStop?.driverId ? employeesById.get(latestStop.driverId)?.fullName : undefined;
       const placeNames = stops.map((s) => s.address?.placeName).filter((p): p is string => !!p);
-      return [{ vehicle, stops: stops, latestStop, driverName, placeNames }];
+      return [{ vehicle, stops, latestStop, driverName, placeNames }];
     });
   }, [vehicleGroups, vehicles, employees]);
 
@@ -96,13 +109,21 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
     if (!isOpen) {
       setSelectedVehicleId(null);
       setSearch('');
+      setLoadingDate(null);
+      setUnloadingDate(null);
     }
   }, [isOpen]);
 
+  const isConfirmReady = !!selectedVehicleId && !!loadingDate && !!unloadingDate;
+
   async function handleConfirm() {
-    if (!selectedVehicleId) return;
+    if (!selectedVehicleId || !loadingDate || !unloadingDate) return;
     try {
-      await assignShipment({ vehicleId: selectedVehicleId, shipmentId });
+      await assignShipment({
+        vehicleId: selectedVehicleId,
+        shipmentId,
+        cargoStopDates: cargoIds.map((cargoId) => ({ cargoId, loadingDate, unloadingDate })),
+      });
       showSuccessToast({ title: `Nalog "${shipmentOrderNumber}" dodijeljen vozilu` });
       onAssigned(selectedVehicleId);
     } catch {
@@ -112,7 +133,11 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
 
   return (
     <Dialog open={isOpen}>
-      <DialogContent aria-describedby={undefined} className="max-w-[900px]">
+      <DialogContent
+        aria-describedby={undefined}
+        className="max-w-[1040px]"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <DialogHeader className="flex-col">
           <FlexLayout className="items-center gap-1 text-dark-800 dark:text-light-50">
             <Icon icon="IconTruck" size="l" />
@@ -124,9 +149,34 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
             Odaberi vozilo na koje će se dodijeliti nalog &quot;{shipmentOrderNumber}&quot;.
           </Text>
         </DialogHeader>
+        <FlexLayout className="gap-3 px-1">
+          <Box className="flex-1">
+            <Text className="mb-1 block" color="text-color-3" variant="text-xxs-medium">
+              Datum utovara *
+            </Text>
+            <Datepicker
+              isClearable={false}
+              maxDate={unloadingDate ?? undefined}
+              placeholder="Odaberi datum utovara"
+              value={loadingDate}
+              onChange={setLoadingDate}
+            />
+          </Box>
+          <Box className="flex-1">
+            <Text className="mb-1 block" color="text-color-3" variant="text-xxs-medium">
+              Datum istovara *
+            </Text>
+            <Datepicker
+              isClearable={false}
+              minDate={loadingDate ?? undefined}
+              placeholder="Odaberi datum istovara"
+              value={unloadingDate}
+              onChange={setUnloadingDate}
+            />
+          </Box>
+        </FlexLayout>
         <Box className="px-1">
           <TextInput
-            autoFocus
             iconLeft="IconSearch"
             iconRight={search ? 'IconX' : undefined}
             isDisabled={isLoading}
@@ -136,7 +186,7 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
             onClickIconRight={() => setSearch('')}
           />
         </Box>
-        <Box className="h-[400px] overflow-y-auto">
+        <Box className="h-[540px] overflow-y-auto">
           {isLoading ? (
             <FlexLayout className="flex-col gap-2">
               {Array.from({ length: 6 }).map((_, i) => (
@@ -158,7 +208,13 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
                   isSelected={vehicle.id === selectedVehicleId}
                   key={vehicle.id}
                   latestStop={latestStop}
+                  loadingAddressId={loadingAddressId}
+                  loadingDate={loadingDate}
+                  loadingPlaceName={loadingPlaceName}
                   stops={stops}
+                  unloadingAddressId={unloadingAddressId}
+                  unloadingDate={unloadingDate}
+                  unloadingPlaceName={unloadingPlaceName}
                   vehicle={vehicle}
                   onSelect={() => setSelectedVehicleId(vehicle.id)}
                 />
@@ -172,7 +228,7 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
           </Box>
           <Box className="flex-1">
             <Button
-              isDisabled={!selectedVehicleId}
+              isDisabled={!isConfirmReady}
               isFullWidth
               isLoading={isPending}
               text="Potvrdi"
@@ -185,40 +241,134 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
   );
 };
 
-const CompactStopTimelineEntry = ({ stop, step }: { stop: VehicleStop; step: number }) => (
-  <TimelineItem step={step} style={{ paddingRight: '24px' }}>
-    <TimelineHeader>
-      <TimelineSeparator
-        style={{
-          top: '24px',
-          height: '2px',
-          width: 'calc(100% - 16px)',
-          transform: 'translateX(14px) translateY(-50%)',
-        }}
-      />
-      <TimelineDate style={{ marginBottom: '12px' }}>
-        {stop.date ? dayjs(stop.date).format('DD.MM.YYYY') : '-'}
-      </TimelineDate>
-      <TimelineIndicator className="z-10" style={{ top: '24px', left: 0, transform: 'translateY(-50%)' }} />
-      <TimelineTitle>
-        <Text as="span" color="text-color-1" variant="text-xxs">
-          {stop.address?.placeName ?? '-'}
-        </Text>
-      </TimelineTitle>
-    </TimelineHeader>
-  </TimelineItem>
-);
+interface CompactTimelineEntry {
+  id: string;
+  date: string | null;
+  title: string | null;
+  subtitle?: string | null;
+  previewKind?: 'loading' | 'unloading';
+}
+
+const previewStyleByKind = {
+  loading: {
+    indicator: 'border-orange-500 bg-orange-500/30',
+    text: 'text-orange-500',
+  },
+  unloading: {
+    indicator: 'border-teal-500 bg-teal-500/30',
+    text: 'text-teal-500',
+  },
+} as const;
+
+const CompactStopTimelineEntry = ({ entry, step }: { entry: CompactTimelineEntry; step: number }) => {
+  const previewStyle = entry.previewKind ? previewStyleByKind[entry.previewKind] : null;
+
+  return (
+    <TimelineItem step={step} style={{ paddingRight: '24px' }}>
+      <TimelineHeader>
+        <TimelineSeparator
+          style={{
+            top: '24px',
+            height: '2px',
+            width: 'calc(100% - 16px)',
+            transform: 'translateX(14px) translateY(-50%)',
+          }}
+        />
+        <TimelineDate className={previewStyle?.text} style={{ marginBottom: '16px' }}>
+          {entry.date ? dayjs(entry.date).format('DD.MM.YYYY') : '-'}
+        </TimelineDate>
+        <TimelineIndicator
+          className={`z-10 ${previewStyle?.indicator ?? ''}`}
+          style={{ top: '24px', left: 0, transform: 'translateY(-50%)' }}
+        />
+        <TimelineTitle>
+          <Text
+            as="span"
+            color={previewStyle?.text ?? 'text-color-1'}
+            variant={previewStyle ? 'text-xxs-medium' : 'text-xxs'}
+          >
+            {entry.title ?? '-'}
+          </Text>
+        </TimelineTitle>
+        {entry.subtitle && (
+          <TimelineContent>
+            <Text color="text-color-3" variant="text-xxxs">
+              {entry.subtitle}
+            </Text>
+          </TimelineContent>
+        )}
+      </TimelineHeader>
+    </TimelineItem>
+  );
+};
 
 interface VehicleRowProps {
   vehicle: Vehicle;
   latestStop?: VehicleStop;
   stops: VehicleStop[];
+  loadingDate: string | null;
+  unloadingDate: string | null;
+  loadingPlaceName?: string;
+  unloadingPlaceName?: string;
+  loadingAddressId?: string;
+  unloadingAddressId?: string;
   isSelected: boolean;
   onSelect(): void;
 }
 
-const VehicleRow = ({ vehicle, latestStop, stops, isSelected, onSelect }: VehicleRowProps) => {
-  const recentStops = stops.slice(-3);
+const VehicleRow = ({
+  vehicle,
+  latestStop,
+  stops,
+  loadingDate,
+  unloadingDate,
+  loadingPlaceName,
+  unloadingPlaceName,
+  loadingAddressId,
+  unloadingAddressId,
+  isSelected,
+  onSelect,
+}: VehicleRowProps) => {
+  const recentRealEntries: CompactTimelineEntry[] = stops.slice(-3).map((s) => {
+    const matchesLoading = isSelected && !!loadingDate && s.date === loadingDate && s.address?.id === loadingAddressId;
+    const matchesUnloading =
+      isSelected && !!unloadingDate && s.date === unloadingDate && s.address?.id === unloadingAddressId;
+    const previewKind = matchesLoading ? 'loading' : matchesUnloading ? 'unloading' : undefined;
+    const placeName = s.address?.placeName ?? null;
+    const title = previewKind
+      ? [`[${previewKind === 'loading' ? 'Utovar' : 'Istovar'}]`, placeName].filter(Boolean).join(' ')
+      : placeName;
+    return { id: s.id, date: s.date, title, previewKind };
+  });
+
+  const previewEntries: CompactTimelineEntry[] = [];
+  if (isSelected) {
+    const loadingMerged = recentRealEntries.some((e) => e.previewKind === 'loading');
+    const unloadingMerged = recentRealEntries.some((e) => e.previewKind === 'unloading');
+    if (loadingDate && !loadingMerged) {
+      previewEntries.push({
+        id: 'preview-loading',
+        date: loadingDate,
+        title: ['[Utovar]', loadingPlaceName].filter(Boolean).join(' '),
+        previewKind: 'loading',
+      });
+    }
+    if (unloadingDate && !unloadingMerged) {
+      previewEntries.push({
+        id: 'preview-unloading',
+        date: unloadingDate,
+        title: ['[Istovar]', unloadingPlaceName].filter(Boolean).join(' '),
+        previewKind: 'unloading',
+      });
+    }
+  }
+
+  const recentEntries = [...recentRealEntries, ...previewEntries].sort((a, b) => {
+    if (!a.date && !b.date) return 0;
+    if (!a.date) return 1;
+    if (!b.date) return -1;
+    return a.date.localeCompare(b.date);
+  });
 
   return (
     <FlexLayout
@@ -251,11 +401,11 @@ const VehicleRow = ({ vehicle, latestStop, stops, isSelected, onSelect }: Vehicl
           </>
         )}
       </FlexLayout>
-      {recentStops.length > 0 && (
+      {recentEntries.length > 0 && (
         <Box className="flex-1 min-w-0">
-          <Timeline className="w-full" defaultValue={recentStops.length} orientation="horizontal">
-            {recentStops.map((stop, i) => (
-              <CompactStopTimelineEntry key={stop.id} step={i + 1} stop={stop} />
+          <Timeline className="w-full" defaultValue={recentEntries.length} orientation="horizontal">
+            {recentEntries.map((entry, i) => (
+              <CompactStopTimelineEntry entry={entry} key={entry.id} step={i + 1} />
             ))}
           </Timeline>
         </Box>
