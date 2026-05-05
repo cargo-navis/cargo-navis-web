@@ -1,4 +1,5 @@
 import { InvoiceStatus, LoadStatus } from './shipments';
+import type { VehicleStop } from './vehicleStops.d';
 
 export interface Shipment {
   id: string;
@@ -21,6 +22,7 @@ export interface Shipment {
     mimeType: string;
     status: string;
   }[];
+  vehicleStops?: VehicleStop[];
 }
 
 export type GetShipmentParams = {

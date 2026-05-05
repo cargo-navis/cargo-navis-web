@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -15,9 +16,10 @@ import {
 } from '@/lib/hooks';
 import { downloadShipmentFile } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Divider, FlexLayout, Icon, Text } from '@/ui';
+import { Box, Button, Divider, FlexLayout, Icon, Text, Tooltip } from '@/ui';
 
 import { invoiceStatusConfig } from '../const';
+import { AssignVehicleModal } from '../NewShipmentPage/AssignVehicleModal';
 import { OverdueIndicator } from '../OverdueIndicator';
 import { BasicInfo } from './components/BasicInfo';
 import { CargoItem } from './components/CargoItem';
@@ -49,11 +51,15 @@ export const SingleShipmentPage = () => {
 };
 
 const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
+  const { push } = useRouter();
   const { mutateAsync: updateShipment, isPending } = useUpdateShipment();
   const { mutateAsync: deleteFile, isPending: isDeletingFile } = useDeleteShipmentFile(shipment.id);
   const { mutateAsync: getDocumentUrl, isPending: isGettingDocumentUrl } = useGetShipmentDocumentUrl(shipment.id);
 
   const { data: client } = useClient(shipment.clientId || '');
+
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+  const isAssigned = (shipment.vehicleStops?.length ?? 0) > 0;
 
   const handleInvoiceChange = async (invoiceStatus: InvoiceStatus) => {
     try {
@@ -110,8 +116,44 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
     <FlexLayout className="py-5 flex-col gap-5">
       <FlexLayout className="justify-between">
         <BackButton targetLocation="/dashboard/shipments" />
-        <ShipmentActions id={shipment.id} />
+        <FlexLayout className="items-center gap-3">
+          {isAssigned ? (
+            <Tooltip
+              content={
+                <Box className="px-2">
+                  <Text color="text-light-50" variant="text-xs">
+                    Nalog je već dodijeljen vozilu.
+                  </Text>
+                </Box>
+              }
+            >
+              <Box>
+                <Button iconLeft="IconTruck" isDisabled text="Dodijeli vozilo" variant="secondary" />
+              </Box>
+            </Tooltip>
+          ) : (
+            <Button
+              iconLeft="IconTruck"
+              text="Dodijeli vozilo"
+              variant="secondary"
+              onClick={() => setIsAssignModalOpen(true)}
+            />
+          )}
+          <ShipmentActions id={shipment.id} />
+        </FlexLayout>
       </FlexLayout>
+      {isAssignModalOpen && (
+        <AssignVehicleModal
+          isOpen={isAssignModalOpen}
+          shipmentId={shipment.id}
+          shipmentOrderNumber={shipment.orderNumber}
+          onAssigned={(vehicleId) => {
+            setIsAssignModalOpen(false);
+            void push(`/dashboard/vehicle-stops/${vehicleId}`);
+          }}
+          onClose={() => setIsAssignModalOpen(false)}
+        />
+      )}
       <Box className="max-w-[1400px]">
         <FlexLayout className="relative flex-col gap-5 w-full">
           <FlexLayout className="flex-col gap-4">

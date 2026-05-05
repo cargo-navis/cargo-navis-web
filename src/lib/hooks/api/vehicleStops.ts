@@ -66,8 +66,9 @@ export function useAssignShipmentToVehicle() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: assignShipmentToVehicle,
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
+    onSuccess: (_, { shipmentId }) => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['shipment', shipmentId] });
     },
   });
 }
