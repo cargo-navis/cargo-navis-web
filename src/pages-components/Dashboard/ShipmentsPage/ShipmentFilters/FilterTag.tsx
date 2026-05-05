@@ -1,4 +1,4 @@
-import { Box, Icon2, Text } from '@/ui';
+import { Box, Icon, Text } from '@/ui';
 
 const colorClasses = {
   blue: {
@@ -38,7 +38,7 @@ export const FilterTag = ({ label, value, colorScheme, onRemove }: FilterTagProp
       <Text variant="text-xs">
         <strong>{label}:</strong> {value}
       </Text>
-      <Icon2
+      <Icon
         className={`ml-1 ${colors.hover} rounded-full w-4 h-4 flex items-center justify-center cursor-pointer`}
         icon="IconX"
         onClick={onRemove}

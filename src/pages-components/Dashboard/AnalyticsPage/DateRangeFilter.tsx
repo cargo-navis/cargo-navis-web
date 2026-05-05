@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 
-import { Box, Button, Datepicker, FlexLayout, Icon2, Text } from '@/ui';
+import { Box, Button, Datepicker, FlexLayout, Icon, Text } from '@/ui';
 import { withFieldLabels } from '@/ui/hocs/form';
 
 type DateRangePreset =
@@ -142,7 +142,7 @@ export const DateRangeFilter = ({ value, onChange }: DateRangeFilterProps) => {
           <Text className="flex-1 whitespace-nowrap text-left truncate" color="text-color-1" variant="text-xs-medium">
             {triggerLabel}
           </Text>
-          <Icon2
+          <Icon
             className="text-dark-500 dark:text-light-100"
             icon={isOpen ? 'IconChevronUp' : 'IconChevronDown'}
             size="m"

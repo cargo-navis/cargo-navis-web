@@ -2,7 +2,7 @@ import { Shipment } from '@/lib/api';
 import { useClient } from '@/lib/hooks';
 import { getDateTimeInLocalTimezone } from '@/lib/utils/date';
 import { getShipmentOverdueInfo } from '@/lib/utils/shipments';
-import { Box, FlexLayout, Icon2, Text, Tooltip } from '@/ui';
+import { Box, FlexLayout, Icon, Text, Tooltip } from '@/ui';
 
 type OverdueIndicatorVariant = 'default' | 'compact';
 
@@ -40,7 +40,7 @@ export const OverdueIndicator: React.FC<OverdueIndicatorProps> = ({ shipment, va
       }
     >
       <FlexLayout className="items-center gap-1 cursor-default">
-        <Icon2 color="text-orange-500 dark:text-orange-400" icon="IconAlertTriangle" size="m" />
+        <Icon color="text-orange-500 dark:text-orange-400" icon="IconAlertTriangle" size="m" />
         {variant === 'default' && (
           <Text className="text-orange-500 dark:text-orange-400" variant="text-s-medium">
             Dospjelo

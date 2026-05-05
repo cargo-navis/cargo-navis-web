@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { Box, FlexLayout, Icon2, Text } from '@/ui';
+import { Box, FlexLayout, Icon, Text } from '@/ui';
 
 import type { NavLink } from './data';
 
@@ -23,7 +23,7 @@ export const NavItem = ({ navLink }: { navLink: NavLink }) => {
         key={navLink.name}
       >
         <FlexLayout className="group-focus:translate-x-[4px] group-hover:translate-x-[4px] transition-transform items-center justify-start gap-2">
-          <Icon2 icon={navLink.icon} size="l" />
+          <Icon icon={navLink.icon} size="l" />
           <Text>{navLink.name}</Text>
         </FlexLayout>
       </Link>

@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
 
-import { Box, FlexLayout, Icon2, Text, Tooltip } from '@/ui';
+import { Box, FlexLayout, Icon, Text, Tooltip } from '@/ui';
 
 import { getDataPointDateString } from '../utils/date';
 
@@ -37,7 +37,7 @@ export const FileCard: React.FC<FileCardProps> = ({
       )}
     >
       <FlexLayout className="items-start gap-2 px-3 py-2">
-        <Icon2 className="shrink-0 mt-1" color="text-dark-800 dark:text-light-50" icon="IconFileDescription" size="m" />
+        <Icon className="shrink-0 mt-1" color="text-dark-800 dark:text-light-50" icon="IconFileDescription" size="m" />
         <FlexLayout className="flex-col overflow-hidden">
           <Text
             className="whitespace-nowrap overflow-hidden text-ellipsis"
@@ -74,7 +74,7 @@ export const FileCard: React.FC<FileCardProps> = ({
             isDisabled={isLoading}
             onClick={() => onPreview?.(id)}
           >
-            <Icon2 icon="IconArrowUpRight" size="m" />
+            <Icon icon="IconArrowUpRight" size="m" />
           </FlexLayout>
         </Tooltip>
         <Tooltip
@@ -98,7 +98,7 @@ export const FileCard: React.FC<FileCardProps> = ({
             isDisabled={isLoading}
             onClick={() => onDownload?.(id)}
           >
-            <Icon2 icon="IconCloudDownload" size="m" />
+            <Icon icon="IconCloudDownload" size="m" />
           </FlexLayout>
         </Tooltip>
         <Tooltip
@@ -120,7 +120,7 @@ export const FileCard: React.FC<FileCardProps> = ({
             isDisabled={isLoading}
             onClick={() => onDelete?.(id)}
           >
-            <Icon2 icon="IconTrash" size="m" />
+            <Icon icon="IconTrash" size="m" />
           </FlexLayout>
         </Tooltip>
       </FlexLayout>

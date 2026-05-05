@@ -16,7 +16,7 @@ import { FileCard } from '@/lib/components/FileCard';
 import { useDeleteVehicleStopFile, useGetVehicleStopFileUrl, useSendVehicleStopMessage } from '@/lib/hooks';
 import { downloadVehicleStopFile } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, FlexLayout, Icon2, Text, TextButton, Tooltip } from '@/ui';
+import { Box, FlexLayout, Icon, Text, TextButton, Tooltip } from '@/ui';
 
 import { CargoSection } from './CargoSection';
 import { VehicleStopFileUploadButton } from './VehicleStopFileUploadButton';
@@ -130,7 +130,7 @@ export const VerticalStopEntry = ({
             !stop.driverId && 'text-red-600 dark:text-red-600'
           )}
         >
-          <Icon2 icon="IconSteeringWheel" size="m" type="solid" />
+          <Icon icon="IconSteeringWheel" size="m" type="solid" />
           {stop.driverId ? (
             <EmployeeName id={stop.driverId} variant="text-xs" />
           ) : (
@@ -148,7 +148,7 @@ export const VerticalStopEntry = ({
             !stop.disponentId && 'text-red-600 dark:text-red-600'
           )}
         >
-          <Icon2 icon="IconUser" size="m" />
+          <Icon icon="IconUser" size="m" />
           {stop.disponentId ? (
             <EmployeeName id={stop.disponentId} variant="text-xs" />
           ) : (
@@ -233,7 +233,7 @@ export const VerticalStopEntry = ({
       <FlexLayout className="flex-col gap-2 mt-3">
         {documents && documents.length > 0 && (
           <FlexLayout className="items-center gap-1 text-dark-600 dark:text-light-300">
-            <Icon2 icon="IconFileDescription" size="m" type="solid" />
+            <Icon icon="IconFileDescription" size="m" type="solid" />
             <Text variant="text-xs-medium">Dokumenti ({documents.length})</Text>
           </FlexLayout>
         )}
@@ -260,7 +260,7 @@ export const VerticalStopEntry = ({
             type="button"
             onClick={onInsertBefore}
           >
-            <Icon2 className="text-inherit" icon="IconPlus" size="m" />
+            <Icon className="text-inherit" icon="IconPlus" size="m" />
           </FlexLayout>
         </FlexLayout>
       )}
@@ -268,7 +268,7 @@ export const VerticalStopEntry = ({
         <Box className="absolute top-0 right-0 hidden group-hover/stop-entry:block">
           <FlexLayout className="items-center gap-2">
             {onEdit && (
-              <Icon2
+              <Icon
                 className="cursor-pointer text-dark-600 hover:text-teal-500 dark:text-light-300"
                 icon="IconEdit"
                 size="xl"
@@ -276,7 +276,7 @@ export const VerticalStopEntry = ({
               />
             )}
             {onDelete && (
-              <Icon2
+              <Icon
                 className="cursor-pointer text-dark-600 hover:text-red-500 dark:text-light-300"
                 icon="IconTrash"
                 size="l"

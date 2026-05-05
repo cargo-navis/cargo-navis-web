@@ -1,4 +1,4 @@
-import { FlexLayout, Icon2, Text } from '@/ui';
+import { FlexLayout, Icon, Text } from '@/ui';
 
 interface InfoItemProps {
   label: string;
@@ -16,7 +16,7 @@ export const InfoItem: React.FC<InfoItemProps> = ({ label, value, isAlert }) => 
         <Text className="whitespace-nowrap" color={isAlert ? 'text-red-500' : 'text-color-1'} variant="text-s-medium">
           {value || '—'}
         </Text>
-        {isAlert && <Icon2 className="absolute right-[-32px]" color="text-red-500" icon="IconAlertTriangle" size="l" />}
+        {isAlert && <Icon className="absolute right-[-32px]" color="text-red-500" icon="IconAlertTriangle" size="l" />}
       </FlexLayout>
     </FlexLayout>
   );

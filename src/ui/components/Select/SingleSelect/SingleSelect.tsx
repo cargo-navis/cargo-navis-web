@@ -3,7 +3,7 @@ import Select, { type GroupBase } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 
 import { removeExtraWhitespace } from '@/lib/utils/string';
-import type { Icon2Type } from '@/ui';
+import type { IconType } from '@/ui';
 
 import commonComponents from '../commonComponents';
 import { commonStylesClassNames } from '../commonStyles';
@@ -37,7 +37,7 @@ export interface SingleSelectProps extends SelectProps {
 declare module 'react-select/dist/declarations/src/Select' {
   // eslint-disable-next-line unused-imports/no-unused-vars
   export interface Props<Option, IsMulti extends boolean, Group extends GroupBase<Option>> {
-    iconLeft?: Icon2Type;
+    iconLeft?: IconType;
     isCreatable?: boolean;
     isSortable?: boolean;
   }

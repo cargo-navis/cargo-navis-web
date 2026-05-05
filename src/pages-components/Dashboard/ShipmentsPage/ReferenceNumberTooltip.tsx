@@ -1,4 +1,4 @@
-import { Box, Icon2, Text, Tooltip } from '@/ui';
+import { Box, Icon, Text, Tooltip } from '@/ui';
 
 export const ReferenceNumberTooltip = ({ cargoReference }: { cargoReference: string | undefined }) => {
   if (!cargoReference) return null;
@@ -13,7 +13,7 @@ export const ReferenceNumberTooltip = ({ cargoReference }: { cargoReference: str
         </Box>
       }
     >
-      <Icon2 icon="IconInfoCircle" size="m" />
+      <Icon icon="IconInfoCircle" size="m" />
     </Tooltip>
   );
 };

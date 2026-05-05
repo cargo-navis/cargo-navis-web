@@ -15,7 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
   FlexLayout,
-  Icon2,
+  Icon,
   VerticalDivider,
 } from '@/ui';
 
@@ -76,7 +76,7 @@ export const CargoLoadModal: React.FC<CargoLoadModalProps> = ({ isOpen, onClose,
       >
         <DialogHeader className="flex-row items-center justify-between">
           <DialogTitle className="font-medium">{title}</DialogTitle>
-          <Icon2 icon="IconX" onClick={onClose} />
+          <Icon icon="IconX" onClick={onClose} />
         </DialogHeader>
         <CargoLoadForm
           key={

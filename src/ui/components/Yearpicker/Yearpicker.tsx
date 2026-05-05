@@ -1,7 +1,7 @@
 import { YearPickerInput } from '@mantine/dates';
 
 import { getDateInLocalTimezone } from '@/lib/utils/date';
-import { Icon2 } from '@/ui';
+import { Icon } from '@/ui';
 
 import { classnames } from './styles';
 
@@ -21,8 +21,8 @@ export const Yearpicker: React.FC<YearpickerProps> = ({ isDisabled, isClearable,
       classNames={classnames}
       clearable
       disabled={isDisabled}
-      leftSection={<Icon2 icon="IconCalendarWeek" type="solid" />}
-      rightSection={isClearButtonVisible ? <Icon2 icon="IconX" onClick={() => onChange(null)} /> : null}
+      leftSection={<Icon icon="IconCalendarWeek" type="solid" />}
+      rightSection={isClearButtonVisible ? <Icon icon="IconX" onClick={() => onChange(null)} /> : null}
       value={value ? getDateInLocalTimezone(value.toString()) : null}
       onChange={(date) => {
         const returnValue = date ? date.getFullYear() : null;

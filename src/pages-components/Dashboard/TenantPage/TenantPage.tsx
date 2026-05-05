@@ -7,7 +7,7 @@ import { useCurrentTenant, useDeleteTenantLogo, useUploadTenantLogo } from '@/li
 import { getDataPointDateString } from '@/lib/utils/date';
 import { getFileInput } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, DisplayIf, Divider, FlexLayout, Icon2, LoadingSpinner, Text } from '@/ui';
+import { Box, Button, DisplayIf, Divider, FlexLayout, Icon, LoadingSpinner, Text } from '@/ui';
 
 import { ContentLoader } from './ContentLoader';
 import { TenantActions } from './TenantActions';
@@ -182,7 +182,7 @@ const TenantLogoField: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
           <img alt={tenant.name} className="h-[150px] max-w-full" height="auto" src={displayUrl} width="auto" />
         ) : (
           <FlexLayout className=" bg-black-alpha-25 dark:bg-white-alpha-25 h-[150px] w-[150px] items-center justify-center">
-            <Icon2 color="text-white" icon="IconPhoto" size="xl" />
+            <Icon color="text-white" icon="IconPhoto" size="xl" />
           </FlexLayout>
         )}
         <DisplayIf condition={isLoading}>

@@ -1,4 +1,4 @@
-import { DisplayIf, FlexLayout, Icon2, Text, TextButton } from '@/ui';
+import { DisplayIf, FlexLayout, Icon, Text, TextButton } from '@/ui';
 
 interface FilterHeaderProps {
   isExpanded: boolean;
@@ -18,7 +18,7 @@ export const FilterHeader = ({
   return (
     <FlexLayout className="items-center justify-between p-4 cursor-pointer" onClick={onToggleExpanded}>
       <FlexLayout className="items-center gap-2">
-        <Icon2
+        <Icon
           className={`transform transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`}
           icon="IconChevronRight"
         />

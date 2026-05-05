@@ -2,7 +2,7 @@ import { Checkbox as HeadlessCheckbox } from '@headlessui/react';
 import { Field, Label } from '@headlessui/react';
 import clsx from 'clsx';
 
-import { Icon2, Text } from '@/ui';
+import { Icon, Text } from '@/ui';
 
 export interface CheckboxProps {
   value: boolean;
@@ -27,7 +27,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({ isDisabled, value, label, on
         name={name}
         onChange={onChange}
       >
-        <Icon2
+        <Icon
           className="opacity-0 group-data-[checked]:opacity-100 transition-opacity duration-75"
           color="red"
           icon="IconCheck"

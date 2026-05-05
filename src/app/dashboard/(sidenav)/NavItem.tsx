@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import type { NavLink } from '@/components/layout/DashboardLayout/data';
-import { Box, Icon2, Text } from '@/ui';
+import { Box, Icon, Text } from '@/ui';
 
 export const NavItem = ({ navLink }: { navLink: NavLink }) => {
   const pathname = usePathname();
@@ -23,7 +23,7 @@ export const NavItem = ({ navLink }: { navLink: NavLink }) => {
       key={navLink.name}
     >
       <Box className="group-focus:translate-x-[4px] group-hover:translate-x-[4px] transition-transform flex items-center justify-start gap-2">
-        <Icon2 icon={navLink.icon} size="l" />
+        <Icon icon={navLink.icon} size="l" />
         <Text>{navLink.name}</Text>
       </Box>
     </Link>

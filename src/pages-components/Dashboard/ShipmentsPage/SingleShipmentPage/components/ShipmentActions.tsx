@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useDeleteShipment } from '@/lib/hooks';
 import { getAuthTokens } from '@/lib/utils/session';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Button, FlexLayout, Icon2, Menu } from '@/ui';
+import { Button, FlexLayout, Icon, Menu } from '@/ui';
 import { MenuComponent } from '@/ui/components/Menu/types';
 
 export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
@@ -113,7 +113,7 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
       <Menu
         control={
           <FlexLayout className="items-center hover:bg-dark-200 dark:hover:bg-light-800 p-1 cursor-pointer rounded-s">
-            <Icon2 icon="IconDotsVertical" isDisabled={isDeleting} size="l" />
+            <Icon icon="IconDotsVertical" isDisabled={isDeleting} size="l" />
           </FlexLayout>
         }
         isOpen={isMenuOpen}

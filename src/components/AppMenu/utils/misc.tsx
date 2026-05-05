@@ -4,7 +4,7 @@ import { forwardRef } from 'react';
 import { type Employee, LoadStatus, type Vehicle } from '@/lib/api';
 import { useEmployee } from '@/lib/hooks';
 import { loadStatusConfig } from '@/pages-components/Dashboard/ShipmentsPage/const';
-import { Box, FlexLayout, Icon2, LoadingSpinner, Pill, Text } from '@/ui';
+import { Box, FlexLayout, Icon, LoadingSpinner, Pill, Text } from '@/ui';
 import { MenuComponent } from '@/ui/components/Menu/types';
 
 export function ShipmentStatusPill({ status }: { status: LoadStatus }) {
@@ -27,7 +27,7 @@ export function EmployeeNameById({ id }: { id: string }) {
 export function EmployeeName({ employee }: { employee: Employee }) {
   return (
     <FlexLayout className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 align-bottom">
-      <Icon2 icon="IconUser" />
+      <Icon icon="IconUser" />
       <Text variant="text-s-bold">
         {employee.firstName} {employee.lastName}
       </Text>
@@ -38,7 +38,7 @@ export function EmployeeName({ employee }: { employee: Employee }) {
 export function VehicleRegistration({ vehicle }: { vehicle: Vehicle }) {
   return (
     <FlexLayout className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 align-bottom">
-      <Icon2 icon="IconTruck" />
+      <Icon icon="IconTruck" />
       <Text variant="text-s-bold">{vehicle.registration}</Text>
     </FlexLayout>
   );
@@ -78,7 +78,7 @@ const SeeMoreItem = forwardRef((props, ref) => (
       <Text color="text-color-2" variant="text-s">
         Vidi više
       </Text>
-      <Icon2 icon="IconArrowRight" />
+      <Icon icon="IconArrowRight" />
     </FlexLayout>
   </Link>
 ));

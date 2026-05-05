@@ -1,6 +1,6 @@
 import { getDataPointDateString } from '@/lib/utils/date';
 import { palleteNameMap } from '@/lib/utils/palletes';
-import { Collapsible, DisplayIf, Divider, FlexLayout, Icon2, Text, VerticalDivider } from '@/ui';
+import { Collapsible, DisplayIf, Divider, FlexLayout, Icon, Text, VerticalDivider } from '@/ui';
 
 import { AddressDetailsItem } from './AddressDetailsItem';
 import type { CargoWithMetadata } from './types';
@@ -134,7 +134,7 @@ const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
           >
             Detalji utovara
           </Text>
-          <Icon2 className="text-orange-500 dark:text-orange-400" icon="IconPackageImport" />
+          <Icon className="text-orange-500 dark:text-orange-400" icon="IconPackageImport" />
         </FlexLayout>
         <FlexLayout className="flex-col gap-4 flex-1">
           <FlexLayout className="gap-4 justify-between items-start">
@@ -179,7 +179,7 @@ const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
           >
             Detalji istovara
           </Text>
-          <Icon2 className="text-teal-500 dark:text-teal-400" icon="IconPackageExport" />
+          <Icon className="text-teal-500 dark:text-teal-400" icon="IconPackageExport" />
         </FlexLayout>
         <FlexLayout className="flex-col gap-4 flex-1">
           <FlexLayout className="gap-4 justify-between items-start">

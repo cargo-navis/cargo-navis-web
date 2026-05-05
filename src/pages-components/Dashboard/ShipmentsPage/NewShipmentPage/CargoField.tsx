@@ -5,7 +5,7 @@ import { FormCheckbox, FormNumberInput, FormSingleSelect } from '@/lib/component
 import { FormTextarea } from '@/lib/components/form/FormTextarea';
 import { roundLdmValue } from '@/lib/utils/math';
 import { palleteOptions, PalleteType, palleteValues } from '@/lib/utils/palletes';
-import { Box, Button, Divider, FlexLayout, Icon2, Text, VerticalDivider } from '@/ui';
+import { Box, Button, Divider, FlexLayout, Icon, Text, VerticalDivider } from '@/ui';
 
 import { CargoLoadField, CargoLoadFieldType } from './CargoLoadField';
 
@@ -114,7 +114,7 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
         <Text color="text-color-3" variant="text-s-medium">
           TERET {index + 1}
         </Text>
-        {cargoLength > 1 && <Icon2 icon="IconX" onClick={removeCargo} />}
+        {cargoLength > 1 && <Icon icon="IconX" onClick={removeCargo} />}
       </FlexLayout>
       <FlexLayout className="flex-col gap-4">
         <FlexLayout className="gap-2">

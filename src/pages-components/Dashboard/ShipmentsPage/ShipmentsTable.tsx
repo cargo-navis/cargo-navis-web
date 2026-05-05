@@ -8,7 +8,7 @@ import { InvoiceStatus } from '@/lib/api/shipments';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
-import { Box, DisplayIf, FlexLayout, Icon2, Pill, Table, Text, Tooltip } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
 
 import { AddressItem } from './AddressesList';
 import { invoiceStatusConfig } from './const';
@@ -73,7 +73,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                       }
                     >
                       <Box>
-                        <Icon2 color="text-color-4" icon="IconFileDescription" size="l" type="outline" />
+                        <Icon color="text-color-4" icon="IconFileDescription" size="l" type="outline" />
                       </Box>
                     </Tooltip>
                   </DisplayIf>
@@ -161,7 +161,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                   {groupCargos.map((c, ci) => (
                     <Fragment key={ci}>
                       <Box className="self-center" style={{ gridColumn: 2, gridRow: ci + 1 }}>
-                        <Icon2 color="text-color-4" icon="IconArrowRight" size="s" />
+                        <Icon color="text-color-4" icon="IconArrowRight" size="s" />
                       </Box>
                       <Box className="flex flex-col self-center" style={{ gridColumn: 3, gridRow: ci + 1 }}>
                         <AddressItem

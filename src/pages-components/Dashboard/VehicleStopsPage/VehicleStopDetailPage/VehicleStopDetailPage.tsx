@@ -9,7 +9,7 @@ import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicles } from '@/lib/hooks';
 import { useDeleteVehicleStop, useVehicleStopsByVehicle } from '@/lib/hooks/api/vehicleStops';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, FlexLayout, Icon2, Text } from '@/ui';
+import { Box, FlexLayout, Icon, Text } from '@/ui';
 
 import { VehicleStopModal } from './VehicleStopModal';
 import { VerticalStopEntry } from './VerticalStopEntry';
@@ -100,7 +100,7 @@ export const VehicleStopDetailPage = () => {
             {vehicle.registration}
           </Text>
           <FlexLayout className="items-center gap-1 text-dark-600 dark:text-light-300">
-            <Icon2 icon="IconTruckDelivery" size="l" />
+            <Icon icon="IconTruckDelivery" size="l" />
             <Text variant="text-m">{vehicle.brand}</Text>
           </FlexLayout>
         </Box>
@@ -113,7 +113,7 @@ export const VehicleStopDetailPage = () => {
               onClick={openCreateModal}
             >
               <FlexLayout className="items-center justify-center w-[32px] h-[32px] shrink-0 -ml-2 rounded-circle border-2 border-dashed border-inherit">
-                <Icon2 className="text-inherit" icon="IconPlus" size="m" />
+                <Icon className="text-inherit" icon="IconPlus" size="m" />
               </FlexLayout>
               <Text color="text-inherit" variant="text-s-medium">
                 Dodaj novu stanicu

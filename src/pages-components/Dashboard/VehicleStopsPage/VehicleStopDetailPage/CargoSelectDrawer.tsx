@@ -4,7 +4,7 @@ import { ClientName } from '@/components/clients/ClientName';
 import { Drawer, DrawerContent, DrawerFooter, DrawerHeader } from '@/components/ui/drawer';
 import type { Cargo, Shipment } from '@/lib/api';
 import { useShipmentsData } from '@/lib/hooks';
-import { Box, Button, FlexLayout, Icon2, Skeleton, Text } from '@/ui';
+import { Box, Button, FlexLayout, Icon, Skeleton, Text } from '@/ui';
 
 export type CargoWithClient = Cargo & { clientId?: string };
 
@@ -108,7 +108,7 @@ export const CargoSelectDrawer = ({
                       type="button"
                       onClick={() => toggleShipment(cargos)}
                     >
-                      <Icon2
+                      <Icon
                         className="group-hover/shipment:text-teal-500"
                         color={isAllSelected ? 'text-teal-500' : 'text-color-3'}
                         icon="IconFileDescription"
@@ -199,7 +199,7 @@ const CargoRow = ({ cargo, addressType, isSelected, onToggle }: CargoRowProps) =
       </FlexLayout>
       {isSelected && (
         <Box className="absolute right-0 top-0 bottom-0 rounded-m flex items-center pr-3 pl-4 bg-gradient-to-l from-[#eaf4f5] dark:from-[#1c2627] from-65% to-transparent pointer-events-none">
-          <Icon2 className="text-teal-500" icon="IconCheck" size="m" />
+          <Icon className="text-teal-500" icon="IconCheck" size="m" />
         </Box>
       )}
     </FlexLayout>

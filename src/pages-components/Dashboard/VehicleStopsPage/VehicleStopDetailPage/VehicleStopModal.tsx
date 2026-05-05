@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import type { VehicleStop } from '@/lib/api/vehicleStops';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, FlexLayout, Icon2 } from '@/ui';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, FlexLayout, Icon } from '@/ui';
 
 import { VehicleStopForm } from './VehicleStopForm';
 
@@ -56,10 +56,10 @@ export const VehicleStopModal: React.FC<VehicleStopModalProps> = ({
       >
         <DialogHeader className="flex-row items-center justify-between">
           <FlexLayout className="items-center gap-1">
-            <Icon2 icon="IconCircle" size="m" />
+            <Icon icon="IconCircle" size="m" />
             <DialogTitle className="font-medium">{isEditMode ? 'Uredi stanicu' : 'Nova stanica'}</DialogTitle>
           </FlexLayout>
-          <Icon2 className="cursor-pointer" icon="IconX" onClick={onClose} />
+          <Icon className="cursor-pointer" icon="IconX" onClick={onClose} />
         </DialogHeader>
         {shouldRenderForm && (
           <VehicleStopForm

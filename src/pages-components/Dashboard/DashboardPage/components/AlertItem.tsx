@@ -3,7 +3,7 @@ import type React from 'react';
 
 import { getAlertItemData } from '@/components/AppMenu/utils/alerts';
 import type { Alert } from '@/lib/api';
-import { Box, FlexLayout, Icon2, Text } from '@/ui';
+import { Box, FlexLayout, Icon, Text } from '@/ui';
 
 import { useAlertExpiryDate } from './useAlertExpiryDate';
 
@@ -29,7 +29,7 @@ export const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
       href={targetUrl}
     >
       <FlexLayout className="flex-start gap-3 p-4">
-        <Icon2 className="mt-[1px]" color="text-red-500 dark:text-red-300" icon="IconAlertTriangle" size="l" />
+        <Icon className="mt-[1px]" color="text-red-500 dark:text-red-300" icon="IconAlertTriangle" size="l" />
         <FlexLayout className="flex-col grow gap-1">
           {descriptionNode}
           <Text color="text-color-2" variant="text-s">
@@ -47,7 +47,7 @@ export const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
           group-hover:translate-x-0 group-hover:opacity-100
           transition-transform`}
         >
-          <Icon2 color="text-color-2" icon="IconArrowRight" size="l" />
+          <Icon color="text-color-2" icon="IconArrowRight" size="l" />
         </Box>
       </FlexLayout>
       <hr className="border-dark-300 dark:border-light-600 m-0" />

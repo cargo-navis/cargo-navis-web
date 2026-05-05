@@ -24,7 +24,7 @@ import {
   DialogHeader,
   DialogTitle,
   FlexLayout,
-  Icon2,
+  Icon,
   Skeleton,
   Text,
   TextInput,
@@ -112,7 +112,7 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
       <DialogContent aria-describedby={undefined} className="max-w-[900px]">
         <DialogHeader className="flex-col">
           <FlexLayout className="items-center gap-1 text-dark-800 dark:text-light-50">
-            <Icon2 icon="IconTruck" size="l" />
+            <Icon icon="IconTruck" size="l" />
             <DialogTitle>
               <Text variant="text-m-medium">Dodijeli vozilo</Text>
             </DialogTitle>
@@ -229,7 +229,7 @@ const VehicleRow = ({ vehicle, latestStop, stops, isSelected, onSelect }: Vehicl
       <FlexLayout className="gap-3 items-start">
         <FlexLayout className="flex-col">
           <FlexLayout className="items-center gap-1">
-            <Icon2 color="text-color-1" icon="IconTruck" size="m" />
+            <Icon color="text-color-1" icon="IconTruck" size="m" />
             <Text color="text-color-1" variant="text-s-medium">
               {vehicle.registration}
             </Text>
@@ -242,7 +242,7 @@ const VehicleRow = ({ vehicle, latestStop, stops, isSelected, onSelect }: Vehicl
           <>
             •
             <FlexLayout className="items-center gap-1">
-              <Icon2 color="text-color-1" icon="IconSteeringWheel" size="m" />
+              <Icon color="text-color-1" icon="IconSteeringWheel" size="m" />
               <EmployeeName color="text-color-1" id={latestStop.driverId} variant="text-s-medium" />
             </FlexLayout>
           </>
@@ -259,7 +259,7 @@ const VehicleRow = ({ vehicle, latestStop, stops, isSelected, onSelect }: Vehicl
       )}
       {isSelected && (
         <FlexLayout className="flex-col absolute justify-center top-0 bottom-0 right-4">
-          <Icon2 className="text-teal-500 shrink-0" icon="IconCheck" size="m" />
+          <Icon className="text-teal-500 shrink-0" icon="IconCheck" size="m" />
         </FlexLayout>
       )}
     </FlexLayout>

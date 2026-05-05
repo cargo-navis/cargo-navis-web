@@ -2,7 +2,7 @@ import clsx from 'clsx';
 
 import { bytesToMegabytes, getFileInput } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { DisplayIf, FlexLayout, Icon2, LoadingSpinner, Text } from '@/ui';
+import { DisplayIf, FlexLayout, Icon, LoadingSpinner, Text } from '@/ui';
 
 const FILE_SIZE_LIMIT_IN_MB = 10;
 
@@ -71,7 +71,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({ isLoading, u
           isLoading && 'opacity-40'
         )}
       >
-        <Icon2 icon="IconPlus" size="m" />
+        <Icon icon="IconPlus" size="m" />
         <Text variant="text-xxs-medium">Dodaj dokumente</Text>
       </FlexLayout>
       <DisplayIf condition={isLoading}>

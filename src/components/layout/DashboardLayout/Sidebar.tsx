@@ -5,7 +5,7 @@ import { AppMenu } from '@/components/AppMenu';
 import { PositionEnum } from '@/lib/api/employees.d';
 import { useCurrentTenant, useCurrentUser } from '@/lib/hooks';
 import { clearAuthCookies, clearServiceWorkerOnLogout } from '@/lib/utils/session';
-import { Box, Divider, FlexLayout, Heading, Icon2, LoadingSpinner, Text } from '@/ui';
+import { Box, Divider, FlexLayout, Heading, Icon, LoadingSpinner, Text } from '@/ui';
 
 import { links, NavLink } from './data';
 import { NavItem } from './NavItem';
@@ -67,7 +67,7 @@ export function Sidebar() {
           onClick={handleLogout}
         >
           <FlexLayout className="items-center justify-start gap-2 group-focus:translate-x-[4px] group-hover:translate-x-[4px] transition-transform">
-            <Icon2 icon="IconLogout2" size="l" />
+            <Icon icon="IconLogout2" size="l" />
             <Text>Odjava</Text>
           </FlexLayout>
         </FlexLayout>
@@ -85,7 +85,7 @@ const TenantLink = () => {
         {data ? (
           <>
             <Text variant="text-m-medium">{data.name}</Text>
-            <Icon2 icon="IconSettings" size="m" />
+            <Icon icon="IconSettings" size="m" />
           </>
         ) : (
           <LoadingSpinner />

@@ -4,7 +4,7 @@ import type { ChartData, ChartOptions } from 'chart.js';
 import dayjs from 'dayjs';
 
 import { ShipmentAnalytics, ShipmentPriceAnalytics } from '@/lib/api';
-import { Box, ComboChart, FlexLayout, Icon2, Text } from '@/ui';
+import { Box, ComboChart, FlexLayout, Icon, Text } from '@/ui';
 
 import type { GranularityOption } from './GranularityFilter';
 
@@ -187,7 +187,7 @@ export const TotalAnalyticsSection = ({ countData, priceData, granularity }: Tot
       <FlexLayout className="w-full gap-4">
         <FlexLayout className="flex-col flex-1 p-4 items-baseline justify-between  bg-white dark:bg-white-alpha-10 border border-dark-100 dark:border-light-900 shadow-md rounded-m">
           <FlexLayout className="items-center gap-2 text-dark-600 dark:text-light-300">
-            <Icon2 icon="IconFileDescription" size="l" />
+            <Icon icon="IconFileDescription" size="l" />
             <Text color="text-color-3" variant="text-m">
               Ukupan broj naloga
             </Text>
@@ -198,7 +198,7 @@ export const TotalAnalyticsSection = ({ countData, priceData, granularity }: Tot
         </FlexLayout>
         <FlexLayout className="flex-col flex-1 p-4 items-baseline justify-between  bg-white dark:bg-white-alpha-10 border border-dark-100 dark:border-light-900 shadow-md rounded-m">
           <FlexLayout className="items-center gap-2 text-dark-600 dark:text-light-300">
-            <Icon2 icon="IconChartBar" size="l" />
+            <Icon icon="IconChartBar" size="l" />
             <Text color="text-color-3" variant="text-m">
               Prosječan broj naloga
             </Text>
@@ -212,7 +212,7 @@ export const TotalAnalyticsSection = ({ countData, priceData, granularity }: Tot
         </FlexLayout>
         <FlexLayout className="flex-col flex-1 p-4 items-baseline justify-between  bg-white dark:bg-white-alpha-10 border border-dark-100 dark:border-light-900 shadow-md rounded-m">
           <FlexLayout className="items-center gap-2 text-dark-600 dark:text-light-300">
-            <Icon2 icon="IconCashBanknote" size="l" />
+            <Icon icon="IconCashBanknote" size="l" />
             <Text color="text-color-3" variant="text-m">
               Ukupni prihod
             </Text>
@@ -223,7 +223,7 @@ export const TotalAnalyticsSection = ({ countData, priceData, granularity }: Tot
         </FlexLayout>
         <FlexLayout className="flex-col flex-1 p-4 items-baseline justify-between  bg-white dark:bg-white-alpha-10 border border-dark-100 dark:border-light-900 shadow-md rounded-m">
           <FlexLayout className="items-center gap-2 text-dark-600 dark:text-light-300">
-            <Icon2 icon="IconCashBanknote" size="l" />
+            <Icon icon="IconCashBanknote" size="l" />
             <Text color="text-color-3" variant="text-m">
               Prosječni prihod
             </Text>

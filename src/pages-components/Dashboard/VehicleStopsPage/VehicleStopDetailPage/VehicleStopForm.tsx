@@ -10,7 +10,7 @@ import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { FormDatepicker, FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateVehicleStop, useDispatchers, useDrivers, useTrailers, useUpdateVehicleStop } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, FlexLayout, Icon2, Text, TextButton, VerticalDivider } from '@/ui';
+import { Box, Button, FlexLayout, Icon, Text, TextButton, VerticalDivider } from '@/ui';
 
 import { countryEuropeOptions } from '../../NewEmployeePage/const';
 import { buildAddressKey, formatPostalCodeLabel } from './addressHelpers';
@@ -261,14 +261,14 @@ const SelectedCargoList = ({ cargos, onRemove }: { cargos: Cargo[]; onRemove(id:
           <FlexLayout className="flex-col">
             <ClientName color="text-color-3" id={(cargo as CargoWithClient).clientId} variant="text-xxs" />
             <FlexLayout className="gap-1">
-              <Icon2 className="mt-1" icon="IconPackage" size="s" />
+              <Icon className="mt-1" icon="IconPackage" size="s" />
               <Text color="text-color-1" variant="text-xs-medium">
                 {cargo.description || '-'}
               </Text>
             </FlexLayout>
           </FlexLayout>
           <Box as="button" className="text-color-4 hover:text-color-1" type="button" onClick={() => onRemove(cargo.id)}>
-            <Icon2 icon="IconX" />
+            <Icon icon="IconX" />
           </Box>
         </FlexLayout>
       ))}

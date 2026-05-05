@@ -4,14 +4,14 @@ import Link from 'next/link';
 import type { HTMLAttributeAnchorTarget } from 'react';
 import React from 'react';
 
-import { Box, DisplayIf, FlexLayout, Icon2, Icon2Type, Text } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon, IconType, Text } from '@/ui';
 
 import { Badge } from './Badge';
 
 export interface MenuItemProps {
   text: string;
-  iconLeft?: Icon2Type;
-  iconRight?: Icon2Type;
+  iconLeft?: IconType;
+  iconRight?: IconType;
   badge?: string;
   helper?: string;
   isDisabled?: boolean;
@@ -50,7 +50,7 @@ export const MenuItemContent = React.forwardRef<any, Omit<MenuItemProps, 'onClic
         {...rest}
       >
         <DisplayIf condition={!!iconLeft}>
-          <Box className="mt-1">{!!iconLeft && <Icon2 color={itemColor} icon={iconLeft} size="s" />}</Box>
+          <Box className="mt-1">{!!iconLeft && <Icon color={itemColor} icon={iconLeft} size="s" />}</Box>
         </DisplayIf>
         <FlexLayout className="w-full justify-between items-center">
           <FlexLayout className="pr-[40px] flex-col break-word">
@@ -66,7 +66,7 @@ export const MenuItemContent = React.forwardRef<any, Omit<MenuItemProps, 'onClic
               <DisplayIf condition={!!badge}>
                 <Badge isActive={isActive} text={badge as string} />
               </DisplayIf>
-              {!!iconRight && <Icon2 icon={iconRight} size="s" />}
+              {!!iconRight && <Icon icon={iconRight} size="s" />}
             </FlexLayout>
           </DisplayIf>
         </FlexLayout>

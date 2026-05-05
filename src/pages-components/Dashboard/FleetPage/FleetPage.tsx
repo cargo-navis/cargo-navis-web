@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { useSolos, useTrailers, useTrucks, useVans, useVehicles } from '@/lib/hooks';
-import { Box, Divider, FlexLayout, Heading, Icon2, Text } from '@/ui';
+import { Box, Divider, FlexLayout, Heading, Icon, Text } from '@/ui';
 
 export const FleetPage = () => {
   return (
@@ -64,7 +64,7 @@ export const OverviewItem: React.FC<InfoItemProps> = ({ label, value, href }) =>
   return (
     <Link href={href}>
       <FlexLayout className="group/overview-item relative justify-between items-center uppercase text-color-2 hover:text-teal-500">
-        <Icon2
+        <Icon
           className="absolute opacity-0 left-[-22px] translate-x-[-4px] group-hover/overview-item:opacity-100 group-hover/overview-item:translate-x-0 w-5 transition-transform ease"
           icon="IconChevronRight"
         />

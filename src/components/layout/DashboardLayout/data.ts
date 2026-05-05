@@ -1,10 +1,10 @@
 import { PositionEnum } from '@/lib/api/employees.d';
-import { Icon2Type } from '@/ui';
+import { IconType } from '@/ui';
 
 export interface NavLink {
   name: string;
   href: string;
-  icon: Icon2Type;
+  icon: IconType;
   subItems?: NavLink[];
   allowedPositions?: PositionEnum[];
 }

@@ -99,7 +99,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       {/* Next Button */}
       <Button
-        iconRight="IconChevronsRight"
+        iconRight="IconChevronRight"
         isDisabled={isLastPage || isLoading}
         size="s"
         text="Sljedeća"
