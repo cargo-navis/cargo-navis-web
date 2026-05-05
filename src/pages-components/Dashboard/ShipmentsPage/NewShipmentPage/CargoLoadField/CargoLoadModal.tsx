@@ -7,17 +7,7 @@ import * as Yup from 'yup';
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
 import { FormDatepicker, FormSingleSelect, FormTextarea, FormTextInput } from '@/lib/components/form';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import {
-  Box,
-  Button,
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  FlexLayout,
-  Icon,
-  VerticalDivider,
-} from '@/ui';
+import { Box, Button, Dialog, DialogContent, DialogHeader, DialogTitle, FlexLayout, Icon, VerticalDivider } from '@/ui';
 
 import { cargoLoadUnloadDatesMessage, getAddressSchema } from '../schema';
 import { CargoLoadFieldType, typeLabelsMap } from './CargoLoadField';
