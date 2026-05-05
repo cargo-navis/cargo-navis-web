@@ -33,7 +33,7 @@ export const ShipmentsPage = () => {
             <Heading as="h1" variant="text-xl">
               Nalozi
             </Heading>
-            <Button href="/dashboard/shipments/new" iconLeft="PlusIcon" text="Dodaj Nalog" />
+            <Button href="/dashboard/shipments/new" iconLeft="IconPlus" text="Dodaj Nalog" />
           </FlexLayout>
           <ShipmentFilters />
         </Box>

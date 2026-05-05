@@ -41,7 +41,7 @@ const MainContent = ({ clients }: { clients: Client[] }) => {
           Klijenti
         </Heading>
         <DisplayIf condition={!isEmpty}>
-          <Button href="/dashboard/clients/new" iconLeft="PlusIcon" text="Dodaj Klijenta" />
+          <Button href="/dashboard/clients/new" iconLeft="IconPlus" text="Dodaj Klijenta" />
         </DisplayIf>
       </FlexLayout>
       <Box className="py-5">
@@ -57,8 +57,8 @@ const MainContent = ({ clients }: { clients: Client[] }) => {
             <Box className="max-w-xs mb-4">
               <TextInput
                 autoFocus
-                iconLeft="MagnifyingGlassIcon"
-                iconRight={search ? 'XMarkIcon' : undefined}
+                iconLeft="IconSearch"
+                iconRight={search ? 'IconX' : undefined}
                 placeholder="Pretraži klijente..."
                 value={search}
                 onChange={setSearch}

@@ -50,7 +50,7 @@ const MainContent = ({ solos }: { solos: Vehicle[] }) => {
           </DisplayIf>
         </FlexLayout>
         <DisplayIf condition={!isEmpty}>
-          <Button href="/dashboard/fleet/solo-trucks/new" iconLeft="PlusIcon" text="Dodaj Solo Kamion" />
+          <Button href="/dashboard/fleet/solo-trucks/new" iconLeft="IconPlus" text="Dodaj Solo Kamion" />
         </DisplayIf>
       </Box>
       <Box className="py-5">
@@ -66,8 +66,8 @@ const MainContent = ({ solos }: { solos: Vehicle[] }) => {
             <Box className="max-w-xs mb-4">
               <TextInput
                 autoFocus
-                iconLeft="MagnifyingGlassIcon"
-                iconRight={search ? 'XMarkIcon' : undefined}
+                iconLeft="IconSearch"
+                iconRight={search ? 'IconX' : undefined}
                 placeholder="Pretraži solo kamione..."
                 value={search}
                 onChange={setSearch}

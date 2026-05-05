@@ -42,7 +42,7 @@ const MainContent = ({ employees }: { employees: Employee[] }) => {
           Zaposlenici
         </Heading>
         <DisplayIf condition={!isEmpty}>
-          <Button href="/dashboard/employees/new" iconLeft="PlusIcon" text="Dodaj Zaposlenika" />
+          <Button href="/dashboard/employees/new" iconLeft="IconPlus" text="Dodaj Zaposlenika" />
         </DisplayIf>
       </FlexLayout>
       <Box className="py-5">
@@ -58,8 +58,8 @@ const MainContent = ({ employees }: { employees: Employee[] }) => {
             <Box className="max-w-xs mb-4">
               <TextInput
                 autoFocus
-                iconLeft="MagnifyingGlassIcon"
-                iconRight={search ? 'XMarkIcon' : undefined}
+                iconLeft="IconSearch"
+                iconRight={search ? 'IconX' : undefined}
                 placeholder="Pretraži zaposlenike..."
                 value={search}
                 onChange={setSearch}

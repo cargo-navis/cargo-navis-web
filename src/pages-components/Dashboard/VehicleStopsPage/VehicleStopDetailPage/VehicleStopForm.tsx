@@ -10,7 +10,7 @@ import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { FormDatepicker, FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateVehicleStop, useDispatchers, useDrivers, useTrailers, useUpdateVehicleStop } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, FlexLayout, Icon, Text, TextButton, VerticalDivider } from '@/ui';
+import { Box, Button, FlexLayout, Icon2, Text, TextButton, VerticalDivider } from '@/ui';
 
 import { countryEuropeOptions } from '../../NewEmployeePage/const';
 import { buildAddressKey, formatPostalCodeLabel } from './addressHelpers';
@@ -166,7 +166,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
         )}
         <FlexLayout className="-mt-2">
           <TextButton
-            iconLeft={isCustomAddress ? 'MagnifyingGlassIcon' : undefined}
+            iconLeft={isCustomAddress ? 'IconSearch' : undefined}
             size="s"
             text={isCustomAddress ? 'Pretraži adrese' : 'Prilagođena adresa?'}
             type="button"
@@ -193,7 +193,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
         <FlexLayout className="items-start gap-6 mt-2">
           <FlexLayout className="flex-1 flex-col gap-2">
             <TextButton
-              iconLeft="ArrowRightEndOnRectangleIcon"
+              iconLeft="IconPackageImport"
               text={loadingCargoIds.length > 0 ? `Utovari (${loadingCargoIds.length})` : 'Utovari'}
               type="button"
               variant="secondary"
@@ -207,7 +207,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
           <VerticalDivider />
           <FlexLayout className="flex-1 flex-col gap-2">
             <TextButton
-              iconLeft="ArrowRightStartOnRectangleIcon"
+              iconLeft="IconPackageExport"
               text={unloadingCargoIds.length > 0 ? `Istovari (${unloadingCargoIds.length})` : 'Istovari'}
               type="button"
               variant="secondary"
@@ -261,14 +261,14 @@ const SelectedCargoList = ({ cargos, onRemove }: { cargos: Cargo[]; onRemove(id:
           <FlexLayout className="flex-col">
             <ClientName color="text-color-3" id={(cargo as CargoWithClient).clientId} variant="text-xxs" />
             <FlexLayout className="gap-1">
-              <Icon className="mt-1" icon="CubeIcon" size="s" />
+              <Icon2 className="mt-1" icon="IconPackage" size="s" />
               <Text color="text-color-1" variant="text-xs-medium">
                 {cargo.description || '-'}
               </Text>
             </FlexLayout>
           </FlexLayout>
           <Box as="button" className="text-color-4 hover:text-color-1" type="button" onClick={() => onRemove(cargo.id)}>
-            <Icon icon="XMarkIcon" />
+            <Icon2 icon="IconX" />
           </Box>
         </FlexLayout>
       ))}
@@ -283,7 +283,7 @@ const PostalCodeField = () => {
   return (
     <PostalCodeSelectField
       countryCode={countryCode}
-      iconLeft="MagnifyingGlassIcon"
+      iconLeft="IconSearch"
       isClearable
       isDisabled={!countryCode}
       label="Poštanski broj"

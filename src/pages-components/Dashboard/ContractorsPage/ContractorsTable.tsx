@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import type { Contractor } from '@/lib/api';
 import { copyToClipboard } from '@/lib/utils/clipboard';
 import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, FlexLayout, Icon, Table, Text } from '@/ui';
+import { Box, FlexLayout, Icon2, Table, Text } from '@/ui';
 
 const columnHelper = createColumnHelper<Contractor>();
 
@@ -85,9 +85,9 @@ export function ContractorsTable({ contractors }: { contractors?: Contractor[] }
               onClick={() => copyToClipboard(vatNumber)}
             >
               <Text variant="text-s">{vatNumber || '–'}</Text>
-              <Icon
+              <Icon2
                 className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
-                icon="DocumentDuplicateIcon"
+                icon="IconCopy"
               />
             </FlexLayout>
           );

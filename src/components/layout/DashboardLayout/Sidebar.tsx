@@ -5,7 +5,7 @@ import { AppMenu } from '@/components/AppMenu';
 import { PositionEnum } from '@/lib/api/employees.d';
 import { useCurrentTenant, useCurrentUser } from '@/lib/hooks';
 import { clearAuthCookies, clearServiceWorkerOnLogout } from '@/lib/utils/session';
-import { Box, Divider, FlexLayout, Heading, Icon, LoadingSpinner, Text } from '@/ui';
+import { Box, Divider, FlexLayout, Heading, Icon2, LoadingSpinner, Text } from '@/ui';
 
 import { links, NavLink } from './data';
 import { NavItem } from './NavItem';
@@ -61,13 +61,13 @@ export function Sidebar() {
         ))}
       </FlexLayout>
       <FlexLayout className="flex-col gap-2">
-        <NavItem navLink={{ name: 'Postavke', href: '/dashboard/settings', icon: 'Cog6ToothIcon' }} />
+        <NavItem navLink={{ name: 'Postavke', href: '/dashboard/settings', icon: 'IconSettings' }} />
         <FlexLayout
           className="group cursor-pointer h-[48px] rounded-s p-3 text-sm font-medium hover:bg-light-50 hover:text-teal-900 md:flex-none md:p-2 md:px-3"
           onClick={handleLogout}
         >
           <FlexLayout className="items-center justify-start gap-2 group-focus:translate-x-[4px] group-hover:translate-x-[4px] transition-transform">
-            <Icon icon="ArrowLeftStartOnRectangleIcon" size="l" />
+            <Icon2 icon="IconLogout2" size="l" />
             <Text>Odjava</Text>
           </FlexLayout>
         </FlexLayout>
@@ -85,7 +85,7 @@ const TenantLink = () => {
         {data ? (
           <>
             <Text variant="text-m-medium">{data.name}</Text>
-            <Icon icon="Cog6ToothIcon" size="m" />
+            <Icon2 icon="IconSettings" size="m" />
           </>
         ) : (
           <LoadingSpinner />

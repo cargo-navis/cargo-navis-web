@@ -15,7 +15,7 @@ import {
 } from '@/lib/hooks';
 import { downloadShipmentFile } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Divider, FlexLayout, Icon, Text } from '@/ui';
+import { Box, Divider, FlexLayout, Icon2, Text } from '@/ui';
 
 import { invoiceStatusConfig } from '../const';
 import { OverdueIndicator } from '../OverdueIndicator';
@@ -128,7 +128,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     className="flex items-center gap-1 text-dark-600 dark:text-light-300 hover:text-teal-500 transition-colors"
                     href={`/dashboard/clients/${client?.id}`}
                   >
-                    <Icon icon="BriefcaseIcon" size="m" />
+                    <Icon2 icon="IconBriefcase" size="m" />
                     <Text className="overflow-hidden text-ellipsis" variant="text-m">
                       {client?.name}
                     </Text>

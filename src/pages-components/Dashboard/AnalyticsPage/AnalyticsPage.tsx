@@ -13,7 +13,7 @@ import {
   useVehicle,
   useVehiclesAnalytics,
 } from '@/lib/hooks/api';
-import { FlexLayout, Heading, Icon, Text } from '@/ui';
+import { FlexLayout, Heading, Icon2, Text } from '@/ui';
 
 import { ClientFilter } from './ClientFilter';
 import { ContentLoader } from './ContentLoader';
@@ -106,7 +106,7 @@ export const AnalyticsPage = () => {
             <DateRangeFilterWithLabels
               label={
                 <FlexLayout className="gap-1 items-center justify-between">
-                  <Icon icon="CalendarDateRangeIcon" />
+                  <Icon2 icon="IconCalendarCode" />
                   <Text color="text-color-3" variant="text-xxs-medium">
                     Razdoblje
                   </Text>

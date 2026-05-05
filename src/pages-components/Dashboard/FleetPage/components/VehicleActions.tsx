@@ -27,8 +27,8 @@ export const VehicleActions: React.FC<{ id: string; type: VehicleEnum; name: str
 
   return (
     <FlexLayout className="gap-3">
-      <Button href={`${asPath}/edit`} iconLeft="PencilIcon" isDisabled={isPending} text="Uredi" variant="secondary" />
-      <Button iconLeft="TrashIcon" isDisabled={isPending} text="Izbriši" onClick={handleDelete} />
+      <Button href={`${asPath}/edit`} iconLeft="IconEdit" isDisabled={isPending} text="Uredi" variant="secondary" />
+      <Button iconLeft="IconTrash" isDisabled={isPending} text="Izbriši" onClick={handleDelete} />
     </FlexLayout>
   );
 };

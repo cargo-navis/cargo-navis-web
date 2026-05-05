@@ -7,7 +7,7 @@ import type { Tenant } from '@/lib/api/tenant.d';
 import { FormDatepicker, FormSingleSelect, FormTextarea, FormTextInput } from '@/lib/components/form';
 import { useUpdateTenant } from '@/lib/hooks/api/tenant';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, FlexLayout, Icon, LoadingSpinner, Text, Tooltip } from '@/ui';
+import { Box, Button, FlexLayout, Icon2, LoadingSpinner, Text, Tooltip } from '@/ui';
 
 import { countryEuropeOptions } from '../../NewEmployeePage/const';
 import { tenantSchema } from './schema';
@@ -102,7 +102,7 @@ export const TenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
                 </FlexLayout>
               }
             >
-              <Icon icon="InformationCircleIcon" />
+              <Icon2 icon="IconInfoCircle" />
             </Tooltip>
           </FlexLayout>
           <FormTextInput label="Podnožje naloga" name="shipmentFooter" placeholder="Unesite podnožje naloga..." />
@@ -137,7 +137,7 @@ const AddressFields = () => {
       />
       <PostalCodeSelectField
         countryCode={countryCode}
-        iconLeft="MagnifyingGlassIcon"
+        iconLeft="IconSearch"
         isClearable
         isDisabled={!countryCode}
         label="Poštanski broj"

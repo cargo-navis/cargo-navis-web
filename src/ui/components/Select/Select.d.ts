@@ -1,12 +1,12 @@
 import type { GroupBase, MenuPlacement } from 'react-select';
 
-import type { IconType } from '@/ui';
+import { Icon2Type } from '@/ui';
 
 export type SelectValue = string;
 
 export interface SelectOption {
-  iconLeft?: IconType | (() => JSX.Element);
-  iconRight?: IconType;
+  iconLeft?: Icon2Type | (() => JSX.Element);
+  iconRight?: Icon2Type;
   isDisabled?: boolean;
   helper?: string;
   label: string;
@@ -14,7 +14,7 @@ export interface SelectOption {
 }
 
 export interface SelectProps {
-  iconLeft?: IconType;
+  iconLeft?: Icon2Type;
   isDisabled?: boolean;
   isSearchable?: boolean;
   isClearable?: boolean;

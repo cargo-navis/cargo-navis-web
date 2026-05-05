@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { useDrivers } from '@/lib/hooks/api';
-import { Box, FlexLayout, Icon, SelectOption, Text } from '@/ui';
+import { Box, FlexLayout, Icon2, SelectOption, Text } from '@/ui';
 import { SingleSelectWithLabels } from '@/ui/hocs';
 interface DriverFilterProps {
   isDisabled?: boolean;
@@ -28,7 +28,7 @@ export const DriverFilter = ({ value, onChange, isDisabled }: DriverFilterProps)
         isSearchable
         label={
           <FlexLayout className="gap-1 items-center justify-between">
-            <Icon icon="UserIcon" />
+            <Icon2 icon="IconUser" />
             <Text color="text-color-3" variant="text-xxs-medium">
               Vozač
             </Text>

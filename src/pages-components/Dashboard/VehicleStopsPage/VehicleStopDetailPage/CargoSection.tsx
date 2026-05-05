@@ -3,13 +3,12 @@ import Link from 'next/link';
 import { ClientName } from '@/components/clients/ClientName';
 import type { VehicleStopCargo, VehicleStopCargoShipment } from '@/lib/api/vehicleStops';
 import { palleteNameMap, PalleteType } from '@/lib/utils/palletes';
-import { FlexLayout, Icon, Text } from '@/ui';
-import type { IconType } from '@/ui/components/Icon/Icon';
+import { FlexLayout, Icon2, Icon2Type, Text } from '@/ui';
 
 interface CargoSectionProps {
   cargos: VehicleStopCargo[];
   addressType: 'loading' | 'unloading';
-  icon: IconType;
+  icon: Icon2Type;
   label: string;
   className?: string;
 }
@@ -31,7 +30,7 @@ export const CargoSection = ({ cargos, addressType, icon, label, className }: Ca
   return (
     <FlexLayout className="flex-1 flex-col gap-3">
       <FlexLayout className={`items-center gap-1 ${className ?? ''}`}>
-        <Icon icon={icon} size="m" />
+        <Icon2 icon={icon} size="m" />
         <Text variant="text-xs">
           {label} ({cargos.length})
         </Text>
@@ -91,7 +90,7 @@ const ShipmentHeader = ({ shipment, borderClass, textClass, bgClass, className }
     href={`/dashboard/shipments/${shipment.id}`}
     target="_blank"
   >
-    <Icon color={textClass} icon="DocumentTextIcon" size="s" />
+    <Icon2 color={textClass} icon="IconFileDescription" size="s" />
     <Text color={textClass} variant="text-xxs-medium">
       Nalog {shipment.orderNumber}
     </Text>
@@ -136,7 +135,7 @@ const CargoCard = ({ cargo, addressType }: CargoCardProps) => {
   return (
     <FlexLayout className="flex-col p-2">
       <FlexLayout className="gap-2">
-        <Icon className="mt-[2px]" icon="CubeIcon" size="m" />
+        <Icon2 className="mt-[2px]" icon="IconPackage" size="m" />
         <Text color="text-color-1" variant="text-xs-medium">
           {getCargoLabel(cargo)}
         </Text>

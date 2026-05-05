@@ -6,7 +6,7 @@ import { type Vehicle } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicle } from '@/lib/hooks';
 import { VehicleActions } from '@/pages-components/Dashboard/FleetPage/components/VehicleActions';
-import { Box, DisplayIf, FlexLayout, Icon, Pill, Text } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon2, Pill, Text } from '@/ui';
 
 import { DocumentsSection } from '../../components/DocumentsSection';
 import { GeneralInfo } from '../../components/GeneralInfo';
@@ -31,7 +31,7 @@ const MainContent: React.FC<{ truck: Vehicle }> = ({ truck }) => {
         <FlexLayout className="items-center gap-6">
           <Box className="py-3 pl-3">
             <FlexLayout className="items-center justify-center w-[80px] h-[80px] rounded-circle bg-teal-900">
-              <Icon color="text-white" icon="TruckIcon" size="xl" />
+              <Icon2 color="text-white" icon="IconTruck" size="xl" />
             </FlexLayout>
           </Box>
           <FlexLayout className="flex-col">

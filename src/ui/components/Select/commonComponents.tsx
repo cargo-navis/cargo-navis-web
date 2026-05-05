@@ -15,7 +15,7 @@ import {
   type SelectComponentsConfig,
 } from 'react-select';
 
-import { Box, DisplayIf, Icon, type IconType, type SelectOption, Text } from '@/ui';
+import { Box, DisplayIf, Icon2, type SelectOption, Text } from '@/ui';
 
 const Control = (props: ControlProps<SelectOption, boolean, any>) => {
   const { iconLeft, isDisabled } = props.selectProps as any;
@@ -30,9 +30,9 @@ const Control = (props: ControlProps<SelectOption, boolean, any>) => {
         )}
         isDisabled={isDisabled}
       >
-        <DisplayIf condition={!!iconLeft}>
-          <Icon className="mt-[2px] self-start" color="text-dark-600 dark:text-light-300" icon={iconLeft as IconType} />
-        </DisplayIf>
+        {!!iconLeft && (
+          <Icon2 className="mt-[2px] self-start" color="text-dark-600 dark:text-light-300" icon={iconLeft} />
+        )}
         {props.children}
       </Box>
     </components.Control>
@@ -49,7 +49,7 @@ const DropdownIndicator = (props: DropdownIndicatorProps<SelectOption, boolean, 
   return (
     <Box className="mt-[2px] self-center">
       <components.DropdownIndicator {...props}>
-        <Icon icon={props.selectProps.menuIsOpen ? 'ChevronUpIcon' : 'ChevronDownIcon'} size="m" type="outline" />
+        <Icon2 icon={props.selectProps.menuIsOpen ? 'IconChevronUp' : 'IconChevronDown'} size="m" type="outline" />
       </components.DropdownIndicator>
     </Box>
   );
@@ -59,7 +59,7 @@ const ClearIndicator = (props: ClearIndicatorProps<SelectOption, boolean, any>) 
   return (
     <Box className="mt-[2px] self-center">
       <components.ClearIndicator {...props}>
-        <Icon icon="XMarkIcon" />
+        <Icon2 icon="IconX" />
       </components.ClearIndicator>
     </Box>
   );
@@ -104,9 +104,7 @@ const Option = (props: OptionProps<SelectOption & { __isNew__?: boolean }, boole
             </DisplayIf>
           </Box>
         </Box>
-        <DisplayIf condition={!!iconRight}>
-          <Icon icon={iconRight as IconType} size="s" />
-        </DisplayIf>
+        {!!iconRight && <Icon2 icon={iconRight} size="s" />}
       </Box>
     </components.Option>
   );
@@ -124,7 +122,7 @@ export const OptionLeftSideContent: React.FC<Pick<SelectOption, 'iconLeft'> & { 
     return <Box>{iconLeft()}</Box>;
   }
 
-  return <Icon className="mt-1 self-start" color={color} icon={iconLeft} size="s" />;
+  return <Icon2 className="mt-1 self-start" color={color} icon={iconLeft} size="s" />;
 };
 
 const Placeholder = (props: PlaceholderProps<SelectOption, boolean, any>) => {

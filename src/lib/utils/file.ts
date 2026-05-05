@@ -1,8 +1,8 @@
 import { AxiosError } from 'axios';
 
 import { getShipmentDocumentUrl } from '../api/shipments';
-import { getVehicleStopFileUrl } from '../api/vehicleStops';
 import { getVehicleDocumentUrl } from '../api/vehicles';
+import { getVehicleStopFileUrl } from '../api/vehicleStops';
 import { showErrorToast } from './toast';
 
 export const getFileInput = (

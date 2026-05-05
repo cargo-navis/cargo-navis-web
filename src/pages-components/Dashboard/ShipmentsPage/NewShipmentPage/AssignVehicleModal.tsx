@@ -24,12 +24,11 @@ import {
   DialogHeader,
   DialogTitle,
   FlexLayout,
-  Icon,
+  Icon2,
   Skeleton,
   Text,
   TextInput,
 } from '@/ui';
-
 
 interface AssignVehicleModalProps {
   isOpen: boolean;
@@ -113,7 +112,7 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
       <DialogContent aria-describedby={undefined} className="max-w-[900px]">
         <DialogHeader className="flex-col">
           <FlexLayout className="items-center gap-1 text-dark-800 dark:text-light-50">
-            <Icon icon="TruckIcon" size="l" />
+            <Icon2 icon="IconTruck" size="l" />
             <DialogTitle>
               <Text variant="text-m-medium">Dodijeli vozilo</Text>
             </DialogTitle>
@@ -125,8 +124,8 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
         <Box className="px-1">
           <TextInput
             autoFocus
-            iconLeft="MagnifyingGlassIcon"
-            iconRight={search ? 'XMarkIcon' : undefined}
+            iconLeft="IconSearch"
+            iconRight={search ? 'IconX' : undefined}
             isDisabled={isLoading}
             placeholder="Pretraži po registraciji, marki, vozaču ili mjestu..."
             value={search}
@@ -230,7 +229,7 @@ const VehicleRow = ({ vehicle, latestStop, stops, isSelected, onSelect }: Vehicl
       <FlexLayout className="gap-3 items-start">
         <FlexLayout className="flex-col">
           <FlexLayout className="items-center gap-1">
-            <Icon color="text-color-1" icon="TruckIcon" size="m" />
+            <Icon2 color="text-color-1" icon="IconTruck" size="m" />
             <Text color="text-color-1" variant="text-s-medium">
               {vehicle.registration}
             </Text>
@@ -243,7 +242,7 @@ const VehicleRow = ({ vehicle, latestStop, stops, isSelected, onSelect }: Vehicl
           <>
             •
             <FlexLayout className="items-center gap-1">
-              <Icon color="text-color-1" icon="UserIcon" size="m" />
+              <Icon2 color="text-color-1" icon="IconSteeringWheel" size="m" />
               <EmployeeName color="text-color-1" id={latestStop.driverId} variant="text-s-medium" />
             </FlexLayout>
           </>
@@ -260,7 +259,7 @@ const VehicleRow = ({ vehicle, latestStop, stops, isSelected, onSelect }: Vehicl
       )}
       {isSelected && (
         <FlexLayout className="flex-col absolute justify-center top-0 bottom-0 right-4">
-          <Icon className="text-teal-500 shrink-0" icon="CheckIcon" size="m" />
+          <Icon2 className="text-teal-500 shrink-0" icon="IconCheck" size="m" />
         </FlexLayout>
       )}
     </FlexLayout>

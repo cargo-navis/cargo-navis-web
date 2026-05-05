@@ -50,7 +50,7 @@ const MainContent = ({ vans }: { vans: Vehicle[] }) => {
           </DisplayIf>
         </FlexLayout>
         <DisplayIf condition={!isEmpty}>
-          <Button href="/dashboard/fleet/vans/new" iconLeft="PlusIcon" text="Dodaj Kombi" />
+          <Button href="/dashboard/fleet/vans/new" iconLeft="IconPlus" text="Dodaj Kombi" />
         </DisplayIf>
       </FlexLayout>
       <Box className="py-5">
@@ -66,8 +66,8 @@ const MainContent = ({ vans }: { vans: Vehicle[] }) => {
             <Box className="max-w-xs mb-4">
               <TextInput
                 autoFocus
-                iconLeft="MagnifyingGlassIcon"
-                iconRight={search ? 'XMarkIcon' : undefined}
+                iconLeft="IconSearch"
+                iconRight={search ? 'IconX' : undefined}
                 placeholder="Pretraži kombije..."
                 value={search}
                 onChange={setSearch}

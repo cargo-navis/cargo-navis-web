@@ -1,6 +1,6 @@
 import { LoadingAddress } from '@/lib/api/shipments.d';
 import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, FlexLayout, Icon, IconType, Text, type TextProps, Tooltip } from '@/ui';
+import { Box, FlexLayout, Text, type TextProps, Tooltip } from '@/ui';
 
 function countryCodeToFlag(code: string | null | undefined) {
   if (!code || code.length !== 2) return code ?? '';
@@ -13,17 +13,11 @@ function countryCodeToFlag(code: string | null | undefined) {
 
 interface AddressItemProps {
   address: LoadingAddress | null | undefined;
-  icon?: IconType;
   textColor?: TextProps['color'];
   textVariant?: TextProps['variant'];
 }
 
-export const AddressItem = ({
-  address,
-  icon,
-  textColor = 'text-color-3',
-  textVariant = 'text-xs',
-}: AddressItemProps) => {
+export const AddressItem = ({ address, textColor = 'text-color-3', textVariant = 'text-xs' }: AddressItemProps) => {
   if (!address)
     return (
       <Text color={textColor} variant={textVariant}>
@@ -51,7 +45,6 @@ export const AddressItem = ({
     >
       <FlexLayout className="flex-col min-w-0">
         <FlexLayout className="items-center gap-1 min-w-0">
-          {icon && <Icon color={textColor} icon={icon} size="s" />}
           <Text
             className="block min-w-0 flex-1 whitespace-nowrap overflow-hidden text-ellipsis"
             color={textColor}

@@ -1,7 +1,7 @@
 import * as RadixCollapsible from '@radix-ui/react-collapsible';
 import { useState } from 'react';
 
-import { FlexLayout, Icon, Text } from '@/ui';
+import { FlexLayout, Icon2, Text } from '@/ui';
 
 export const Collapsible: React.FC<{ label: string; description: string | undefined }> = ({ label, description }) => {
   const [isOpen, setIsOpen] = useState(true);
@@ -14,7 +14,7 @@ export const Collapsible: React.FC<{ label: string; description: string | undefi
         <RadixCollapsible.Trigger>
           <FlexLayout className="text-dark-600 dark:text-light-300 justify-start items-center gap-2">
             <Text variant="text-xs-medium">{label}</Text>
-            <Icon icon={isOpen ? 'MinusIcon' : 'PlusIcon'} size="s" />
+            <Icon2 icon={isOpen ? 'IconMinus' : 'IconPlus'} size="s" />
           </FlexLayout>
         </RadixCollapsible.Trigger>
         <RadixCollapsible.Content asChild>

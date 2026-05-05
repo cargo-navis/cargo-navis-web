@@ -4,7 +4,7 @@ import { ClientName } from '@/components/clients/ClientName';
 import { Drawer, DrawerContent, DrawerFooter, DrawerHeader } from '@/components/ui/drawer';
 import type { Cargo, Shipment } from '@/lib/api';
 import { useShipmentsData } from '@/lib/hooks';
-import { Box, Button, FlexLayout, Icon, Skeleton, Text } from '@/ui';
+import { Box, Button, FlexLayout, Icon2, Skeleton, Text } from '@/ui';
 
 export type CargoWithClient = Cargo & { clientId?: string };
 
@@ -77,9 +77,7 @@ export const CargoSelectDrawer = ({
             {title}
           </Text>
           <Text color="text-color-4" variant="text-xs">
-            {selectedIds.size > 0
-              ? `Nalozi: ${selectedShipmentCount} · Tereti: ${selectedIds.size}`
-              : 'Odaberi terete'}
+            {selectedIds.size > 0 ? `Nalozi: ${selectedShipmentCount} · Tereti: ${selectedIds.size}` : 'Odaberi terete'}
           </Text>
         </DrawerHeader>
         <Box className="flex-1 overflow-y-auto px-4">
@@ -110,10 +108,10 @@ export const CargoSelectDrawer = ({
                       type="button"
                       onClick={() => toggleShipment(cargos)}
                     >
-                      <Icon
+                      <Icon2
                         className="group-hover/shipment:text-teal-500"
                         color={isAllSelected ? 'text-teal-500' : 'text-color-3'}
-                        icon="DocumentTextIcon"
+                        icon="IconFileDescription"
                         size="s"
                       />
                       <Text
@@ -125,11 +123,7 @@ export const CargoSelectDrawer = ({
                       </Text>
                       {shipment.clientId && (
                         <>
-                          <Text
-                            className="group-hover/shipment:text-teal-500"
-                            color="text-color-4"
-                            variant="text-xxs"
-                          >
+                          <Text className="group-hover/shipment:text-teal-500" color="text-color-4" variant="text-xxs">
                             ·
                           </Text>
                           <ClientName
@@ -205,7 +199,7 @@ const CargoRow = ({ cargo, addressType, isSelected, onToggle }: CargoRowProps) =
       </FlexLayout>
       {isSelected && (
         <Box className="absolute right-0 top-0 bottom-0 rounded-m flex items-center pr-3 pl-4 bg-gradient-to-l from-[#eaf4f5] dark:from-[#1c2627] from-65% to-transparent pointer-events-none">
-          <Icon className="text-teal-500" icon="CheckIcon" size="m" />
+          <Icon2 className="text-teal-500" icon="IconCheck" size="m" />
         </Box>
       )}
     </FlexLayout>

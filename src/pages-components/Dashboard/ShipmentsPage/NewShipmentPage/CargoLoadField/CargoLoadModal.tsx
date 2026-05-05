@@ -7,7 +7,17 @@ import * as Yup from 'yup';
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
 import { FormDatepicker, FormSingleSelect, FormTextarea, FormTextInput } from '@/lib/components/form';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, Button, Dialog, DialogContent, DialogHeader, DialogTitle, FlexLayout, Icon, VerticalDivider } from '@/ui';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  FlexLayout,
+  Icon2,
+  VerticalDivider,
+} from '@/ui';
 
 import { cargoLoadUnloadDatesMessage, getAddressSchema } from '../schema';
 import { CargoLoadFieldType, typeLabelsMap } from './CargoLoadField';
@@ -66,7 +76,7 @@ export const CargoLoadModal: React.FC<CargoLoadModalProps> = ({ isOpen, onClose,
       >
         <DialogHeader className="flex-row items-center justify-between">
           <DialogTitle className="font-medium">{title}</DialogTitle>
-          <Icon icon="XMarkIcon" onClick={onClose} />
+          <Icon2 icon="IconX" onClick={onClose} />
         </DialogHeader>
         <CargoLoadForm
           key={
@@ -162,7 +172,7 @@ const PostalCodeField = () => {
     <Box className="flex-1">
       <PostalCodeSelectField
         countryCode={loadingCountryCode}
-        iconLeft="MagnifyingGlassIcon"
+        iconLeft="IconSearch"
         isClearable
         isDisabled={!loadingCountryCode}
         label="Poštanski broj"

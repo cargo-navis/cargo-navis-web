@@ -10,7 +10,7 @@ import {
   TimelineTitle,
 } from '@/components/reui/timeline';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
-import { Box, FlexLayout, Icon, Text } from '@/ui';
+import { Box, FlexLayout, Icon2, Text } from '@/ui';
 import { Tooltip } from '@/ui/components/Tooltip/Tooltip';
 
 interface StopTimelineItemProps {
@@ -83,12 +83,8 @@ export const StopTimelineEntry = ({ stop, step }: StopTimelineItemProps) => {
         <TimelineTitle>
           <Text as="span" className="inline-flex items-center gap-1" color="text-color-1" variant="text-s-medium">
             {address?.placeName ?? '-'}
-            {hasLoading && (
-              <Icon className="text-dark-500 dark:text-light-300" icon="ArrowRightEndOnRectangleIcon" size="s" />
-            )}
-            {hasUnloading && (
-              <Icon className="text-dark-500 dark:text-light-300" icon="ArrowRightStartOnRectangleIcon" size="s" />
-            )}
+            {hasLoading && <Icon2 className="text-orange-500 dark:text-orange-400" icon="IconPackageImport" size="s" />}
+            {hasUnloading && <Icon2 className="text-teal-500 dark:text-teal-400" icon="IconPackageExport" size="s" />}
           </Text>
         </TimelineTitle>
         <Tooltip content={<StopTooltipContent stop={stop} />} isPortal>

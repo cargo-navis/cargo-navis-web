@@ -2,7 +2,7 @@ import Link from 'next/link';
 import React from 'react';
 
 import type { Notification } from '@/lib/api';
-import { FlexLayout, Icon } from '@/ui';
+import { FlexLayout, Icon2 } from '@/ui';
 
 import { getNotificationItemData } from './utils/notifications';
 
@@ -21,7 +21,7 @@ export const NotificationMenuItem = React.forwardRef<any, NotificationMenuItemPr
           ref={ref}
           {...rest}
         >
-          <Icon className="mt-[2px]" color="text-blue-500 dark:text-blue-300" icon="InformationCircleIcon" />
+          <Icon2 className="mt-[2px]" color="text-blue-500 dark:text-blue-300" icon="IconInfoCircle" />
           {descriptionNode}
         </FlexLayout>
       </Link>

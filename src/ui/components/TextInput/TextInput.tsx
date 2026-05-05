@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import type { InputHTMLAttributes } from 'react';
 
-import { Box, Icon, type IconType } from '@/ui';
+import { Box, Icon2, Icon2Type } from '@/ui';
 
 type DefaultProps = Pick<
   InputHTMLAttributes<HTMLInputElement>,
@@ -21,8 +21,8 @@ type DefaultProps = Pick<
 
 export interface TextInputProps extends DefaultProps {
   value: string;
-  iconLeft?: IconType;
-  iconRight?: IconType;
+  iconLeft?: Icon2Type;
+  iconRight?: Icon2Type;
   isDisabled?: boolean;
   type?: 'text' | 'email' | 'password' | 'tel' | 'number' | 'url';
   onChange(value: string): void;
@@ -54,7 +54,7 @@ export const TextInput: React.FC<TextInputProps> = ({
     >
       {iconLeft && (
         <Box className="absolute z-20 left-3 top-3">
-          <Icon color="text-dark-600 dark:text-light-300" icon={iconLeft} {...rest} />
+          <Icon2 color="text-dark-600 dark:text-light-300" icon={iconLeft} {...rest} />
         </Box>
       )}
       <Box
@@ -72,7 +72,7 @@ export const TextInput: React.FC<TextInputProps> = ({
       />
       {iconRight && (
         <Box className="absolute z-20 right-3 top-3">
-          <Icon color="text-dark-600 dark:text-light-300" icon={iconRight} type="solid" onClick={onClickIconRight} />
+          <Icon2 color="text-dark-600 dark:text-light-300" icon={iconRight} onClick={onClickIconRight} />
         </Box>
       )}
     </Box>

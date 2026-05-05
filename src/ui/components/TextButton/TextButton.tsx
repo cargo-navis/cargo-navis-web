@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React, { memo } from 'react';
 
-import { type BoxProps, DisplayIf, FlexLayout, Icon, type IconType, Text } from '@/ui';
+import { type BoxProps, DisplayIf, FlexLayout, Icon2, Icon2Type, Text } from '@/ui';
 
 import { type Size, sizesMap, type Variant, variantsMap, variantStyles } from './const';
 
@@ -9,8 +9,8 @@ type DefaultProps = Pick<BoxProps, 'htmlFor' | 'onClick' | 'href' | 'target' | '
 
 interface TextButtonProps extends DefaultProps {
   as?: 'button' | 'a';
-  iconLeft?: IconType;
-  iconRight?: IconType;
+  iconLeft?: Icon2Type;
+  iconRight?: Icon2Type;
   variant?: Variant;
   size?: Size;
   text: string;
@@ -33,15 +33,11 @@ export const TextButton = memo(
           tabIndex={isDisabled ? -1 : 0}
           {...rest}
         >
-          <DisplayIf condition={!!iconLeft}>
-            <Icon icon={iconLeft as IconType} size={iconSize} />
-          </DisplayIf>
+          {!!iconLeft && <Icon2 icon={iconLeft} size={iconSize} />}
           <DisplayIf condition={!!text}>
             <Text variant={textVariant}>{text}</Text>
           </DisplayIf>
-          <DisplayIf condition={!!iconRight}>
-            <Icon icon={iconRight as IconType} size={iconSize} />
-          </DisplayIf>
+          {!!iconRight && <Icon2 icon={iconRight} size={iconSize} />}
         </FlexLayout>
       );
     }

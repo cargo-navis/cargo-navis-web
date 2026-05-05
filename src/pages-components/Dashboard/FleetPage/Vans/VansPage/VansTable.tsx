@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 
 import { VehicleAlertTooltip } from '@/components/alerts/VehicleAlertTooltip';
 import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles';
-import { Box, DisplayIf, FlexLayout, Icon, Table, Text, Tooltip } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon2, Table, Text, Tooltip } from '@/ui';
 
 const columnHelper = createColumnHelper<Vehicle>();
 
@@ -41,7 +41,7 @@ export const VansTable = ({ vans }: { vans: Vehicle[] }) => {
                         }
                       >
                         <Box>
-                          <Icon color="text-color-4" icon="DocumentTextIcon" size="l" type="outline" />
+                          <Icon2 color="text-color-4" icon="IconFileDescription" size="l" type="outline" />
                         </Box>
                       </Tooltip>
                     </DisplayIf>
@@ -109,9 +109,9 @@ export const VansTable = ({ vans }: { vans: Vehicle[] }) => {
           if (ramp === undefined) return '–';
 
           return ramp ? (
-            <Icon className="text-green-600" icon="CheckCircleIcon" size="l" />
+            <Icon2 className="text-green-600" icon="IconCircleCheck" size="l" />
           ) : (
-            <Icon className="text-red-500" icon="XCircleIcon" size="l" />
+            <Icon2 className="text-red-500" icon="IconCircleX" size="l" />
           );
         },
       }),

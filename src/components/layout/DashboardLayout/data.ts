@@ -1,56 +1,56 @@
 import { PositionEnum } from '@/lib/api/employees.d';
-import type { IconType } from '@/ui/components/Icon';
+import { Icon2Type } from '@/ui';
 
 export interface NavLink {
   name: string;
   href: string;
-  icon: IconType;
+  icon: Icon2Type;
   subItems?: NavLink[];
   allowedPositions?: PositionEnum[];
 }
 
 export const links: NavLink[] = [
-  { name: 'Početna', href: '/dashboard', icon: 'HomeIcon' },
+  { name: 'Početna', href: '/dashboard', icon: 'IconHome' },
   // { name: 'Trucks Capacity', href: '/dashboard/capacity', icon: 'TruckIcon' }, // TODO
   // { name: 'Warehouse', href: '/dashboard/warehouses', icon: 'HomeModernIcon' }, // TODO
   // { name: 'Loading Planer', href: '/loading-planer', icon: HomeIcon }, // TODO
   {
     name: 'Nalozi',
     href: '/dashboard/shipments/',
-    icon: 'DocumentTextIcon',
-    subItems: [{ name: 'Novi Nalog', href: '/dashboard/shipments/new', icon: 'PlusIcon' }],
+    icon: 'IconFileDescription',
+    subItems: [{ name: 'Novi Nalog', href: '/dashboard/shipments/new', icon: 'IconPlus' }],
   },
   {
     name: 'Prijevozi',
     href: '/dashboard/vehicle-stops',
-    icon: 'StopCircleIcon',
+    icon: 'IconTruckDelivery',
   },
   {
     name: 'Flota',
     href: '/dashboard/fleet/overview',
-    icon: 'TruckIcon',
+    icon: 'IconTruck',
     subItems: [
-      { name: 'Tegljači', href: '/dashboard/fleet/trucks', icon: 'ChevronRightIcon' },
-      { name: 'Poluprikolice', href: '/dashboard/fleet/trailers', icon: 'ChevronRightIcon' },
-      { name: 'Solo Kamioni', href: '/dashboard/fleet/solo-trucks', icon: 'ChevronRightIcon' },
-      { name: 'Kombiji', href: '/dashboard/fleet/vans', icon: 'ChevronRightIcon' },
+      { name: 'Tegljači', href: '/dashboard/fleet/trucks', icon: 'IconChevronRight' },
+      { name: 'Poluprikolice', href: '/dashboard/fleet/trailers', icon: 'IconChevronRight' },
+      { name: 'Solo Kamioni', href: '/dashboard/fleet/solo-trucks', icon: 'IconChevronRight' },
+      { name: 'Kombiji', href: '/dashboard/fleet/vans', icon: 'IconChevronRight' },
     ],
   },
   {
     name: 'Klijenti',
     href: '/dashboard/clients',
-    icon: 'BriefcaseIcon',
+    icon: 'IconBriefcase',
   },
   {
     name: 'Kontraktori',
     href: '/dashboard/contractors',
-    icon: 'ClipboardDocumentListIcon',
+    icon: 'IconLicense',
   },
   // { name: 'Assign Trucks', href: '/dashboard/assign-trucks', icon: 'SquaresPlusIcon' }, // TODO
-  { name: 'Zaposlenici', href: '/dashboard/employees', icon: 'UserGroupIcon' },
+  { name: 'Zaposlenici', href: '/dashboard/employees', icon: 'IconUsers' },
   {
     name: 'Analitika',
     href: '/dashboard/analytics',
-    icon: 'ChartBarIcon',
+    icon: 'IconChartBar',
   },
 ];

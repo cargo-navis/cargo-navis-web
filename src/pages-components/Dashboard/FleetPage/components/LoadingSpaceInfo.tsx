@@ -4,7 +4,7 @@ import { useAlertByVehicleType } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { ruleToPropertyMap } from '@/pages-components/Dashboard/DashboardPage/components/utils';
 import { equipmentNameMap, loadTypeOptions } from '@/pages-components/Dashboard/FleetPage/NewVehicleForm/const';
-import { Box, Divider, FlexLayout, Icon, Text } from '@/ui';
+import { Box, Divider, FlexLayout, Icon2, Text } from '@/ui';
 
 function roundIfDecimal(n: number) {
   return Number.isInteger(n) ? n : Number(n.toFixed(2));
@@ -60,9 +60,9 @@ export const LoadingSpaceInfo: React.FC<LoadingSpaceInfoProps> = ({ vehicle }) =
           Rampa
         </Text>
         {ramp ? (
-          <Icon className="text-green-600" icon="CheckCircleIcon" size="l" />
+          <Icon2 className="text-green-600" icon="IconCircleCheck" size="l" />
         ) : (
-          <Icon className="text-red-500" icon="XCircleIcon" size="l" />
+          <Icon2 className="text-red-500" icon="IconCircleX" size="l" />
         )}
       </FlexLayout>
       <Divider />

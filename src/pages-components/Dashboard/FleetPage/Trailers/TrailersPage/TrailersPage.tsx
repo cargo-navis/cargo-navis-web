@@ -50,7 +50,7 @@ const MainContent = ({ trailers }: { trailers: Vehicle[] }) => {
           </DisplayIf>
         </FlexLayout>
         <DisplayIf condition={!isEmpty}>
-          <Button href="/dashboard/fleet/trailers/new" iconLeft="PlusIcon" text="Dodaj Poluprikolicu" />
+          <Button href="/dashboard/fleet/trailers/new" iconLeft="IconPlus" text="Dodaj Poluprikolicu" />
         </DisplayIf>
       </FlexLayout>
       <Box className="py-5">
@@ -66,8 +66,8 @@ const MainContent = ({ trailers }: { trailers: Vehicle[] }) => {
             <Box className="max-w-xs mb-4">
               <TextInput
                 autoFocus
-                iconLeft="MagnifyingGlassIcon"
-                iconRight={search ? 'XMarkIcon' : undefined}
+                iconLeft="IconSearch"
+                iconRight={search ? 'IconX' : undefined}
                 placeholder="Pretraži poluprikolice..."
                 value={search}
                 onChange={setSearch}

@@ -83,7 +83,7 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargoIndex, carg
     <>
       {!initialValues.address?.streetName ? (
         <FlexLayout className="min-w-0 flex-1 flex-col justify-center gap-4">
-          <TextButton iconLeft="PlusIcon" text={addLabel} type="button" variant="primary" onClick={openModal} />
+          <TextButton iconLeft="IconPlus" text={addLabel} type="button" variant="primary" onClick={openModal} />
           <DisplayIf condition={hasCargoLoads}>
             <Divider text="Ili" />
             <LoadSelect onChange={onChange} />
@@ -100,14 +100,14 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargoIndex, carg
               {title}
             </Text>
             <TextButton
-              iconLeft="PencilSquareIcon"
+              iconLeft="IconEdit"
               size="s"
               text="Uredi"
               type="button"
               variant="secondary"
               onClick={openModal}
             />
-            <TextButton iconLeft="XMarkIcon" size="s" text="Ukloni" type="button" variant="danger" onClick={onRemove} />
+            <TextButton iconLeft="IconX" size="s" text="Ukloni" type="button" variant="danger" onClick={onRemove} />
           </FlexLayout>
           <FlexLayout className="flex-col gap-4 flex-1">
             <FlexLayout className="justify-between gap-4">

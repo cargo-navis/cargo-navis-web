@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React from 'react';
 
-import { FlexLayout, Icon } from '@/ui';
+import { FlexLayout, Icon2 } from '@/ui';
 
 interface AppMenuButtonProps {
   shouldDisplayIndicator: boolean;
@@ -21,9 +21,9 @@ export const AppMenuButton = React.forwardRef<any, AppMenuButtonProps>(({ should
       )}
       ref={ref}
     >
-      <Icon
+      <Icon2
         className="transition-transform group-hover:scale-110 group-focus:scale-110 duration-100 z-1"
-        icon="BellIcon"
+        icon="IconBell"
         size="l"
       />
     </FlexLayout>

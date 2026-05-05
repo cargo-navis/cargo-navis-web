@@ -46,8 +46,8 @@ export const VehicleStopsPage = () => {
       <Box className="mt-4 max-w-sm">
         <TextInput
           autoFocus
-          iconLeft="MagnifyingGlassIcon"
-          iconRight={search ? 'XMarkIcon' : undefined}
+          iconLeft="IconSearch"
+          iconRight={search ? 'IconX' : undefined}
           placeholder="Pretraži po registraciji ili marki..."
           value={search}
           onChange={setSearch}

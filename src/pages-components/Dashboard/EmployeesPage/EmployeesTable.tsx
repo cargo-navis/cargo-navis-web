@@ -7,7 +7,7 @@ import { AlertsTooltip } from '@/components/alerts/AlertsTooltip';
 import { type Employee, MessageChannelEnum, PositionEnum } from '@/lib/api/employees.d';
 import { useEmployeeAlerts } from '@/lib/hooks';
 import { copyToClipboard } from '@/lib/utils/clipboard';
-import { Box, DisplayIf, FlexLayout, Icon, Table, Text } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon2, Table, Text } from '@/ui';
 
 import { CategoryLabel } from './CategoryLabel';
 import { OccupationPill } from './OccupationPill';
@@ -60,7 +60,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
                     </Text>
                     {employeeAlerts && (
                       <AlertsTooltip alerts={employeeAlerts}>
-                        <Icon color="text-red-500" icon="ExclamationTriangleIcon" size="l" />
+                        <Icon2 color="text-red-500" icon="IconAlertTriangle" size="l" />
                       </AlertsTooltip>
                     )}
                   </FlexLayout>
@@ -88,9 +88,9 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
               onClick={() => copyToClipboard(governmentId)}
             >
               <Text variant="text-s">{governmentId || '–'}</Text>
-              <Icon
+              <Icon2
                 className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
-                icon="DocumentDuplicateIcon"
+                icon="IconCopy"
               />
             </FlexLayout>
           );
@@ -113,14 +113,14 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
                 <Text color="text-color-2" variant="text-s-medium">
                   {phoneNumber}
                 </Text>
-                <Icon
+                <Icon2
                   className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
-                  icon="DocumentDuplicateIcon"
+                  icon="IconCopy"
                 />
               </FlexLayout>
               <DisplayIf condition={messageChannel === MessageChannelEnum.WHATSAPP}>
                 <FlexLayout className="gap-1 items-center">
-                  <Icon color="text-green-500" icon="CheckCircleIcon" size="s" type="solid" />
+                  <Icon2 color="text-green-500" icon="IconBrandWhatsapp" size="s" type="solid" />
                   <Text color="text-color-3" variant="text-xxxs">
                     WhatsApp spojen
                   </Text>
@@ -157,9 +157,9 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           if (!positions.includes(PositionEnum.Driver)) return '–';
 
           return props.getValue() ? (
-            <Icon className="text-green-600" icon="CheckCircleIcon" size="l" />
+            <Icon2 className="text-green-600" icon="IconCircleCheck" size="l" />
           ) : (
-            <Icon className="text-red-500" icon="XCircleIcon" size="l" />
+            <Icon2 className="text-red-500" icon="IconX" size="l" />
           );
         },
         header: 'ADR',

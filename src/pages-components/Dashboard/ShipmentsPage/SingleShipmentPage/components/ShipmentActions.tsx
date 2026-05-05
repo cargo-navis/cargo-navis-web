@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useDeleteShipment } from '@/lib/hooks';
 import { getAuthTokens } from '@/lib/utils/session';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Button, FlexLayout, Icon, Menu } from '@/ui';
+import { Button, FlexLayout, Icon2, Menu } from '@/ui';
 import { MenuComponent } from '@/ui/components/Menu/types';
 
 export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
@@ -79,14 +79,14 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
   const menuItems: MenuComponent[] = [
     {
       type: 'item' as const,
-      iconLeft: 'PencilIcon',
+      iconLeft: 'IconEdit',
       text: 'Uredi',
       isDisabled: isDeleting,
       href: `/dashboard/shipments/${id}/edit`,
     },
     {
       type: 'item' as const,
-      iconLeft: 'TrashIcon',
+      iconLeft: 'IconTrash',
       text: 'Izbriši',
       isDisabled: isDeleting,
       onClick: handleDelete,
@@ -96,14 +96,14 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
   return (
     <FlexLayout className="items-center gap-3">
       <Button
-        iconLeft="ClipboardDocumentIcon"
+        iconLeft="IconCopy"
         isDisabled={isDeleting}
         text="Kopiraj nalog"
         variant="secondary"
         onClick={handleCopyShipment}
       />
       <Button
-        iconLeft="ArrowDownTrayIcon"
+        iconLeft="IconCloudDownload"
         isDisabled={isDeleting}
         isLoading={isDownloadingPdf}
         text="Preuzmi PDF"
@@ -113,7 +113,7 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
       <Menu
         control={
           <FlexLayout className="items-center hover:bg-dark-200 dark:hover:bg-light-800 p-1 cursor-pointer rounded-s">
-            <Icon icon="EllipsisVerticalIcon" isDisabled={isDeleting} size="l" />
+            <Icon2 icon="IconDotsVertical" isDisabled={isDeleting} size="l" />
           </FlexLayout>
         }
         isOpen={isMenuOpen}

@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import type React from 'react';
 
-import { DisplayIf, Icon, type IconType, LoadingSpinner, Text } from '@/ui';
+import { DisplayIf, Icon2, Icon2Type, LoadingSpinner, Text } from '@/ui';
 
 import { Box, type BoxProps } from '../Box';
 import { type Size, sizesMap, type Variant, variantsMap, variantStyles } from './const';
@@ -14,8 +14,8 @@ export interface ButtonProps extends DefaultProps {
   as?: 'button' | 'a';
   isLoading?: boolean;
   isFullWidth?: boolean;
-  iconLeft?: IconType;
-  iconRight?: IconType;
+  iconLeft?: Icon2Type;
+  iconRight?: Icon2Type;
   size?: Size;
   variant?: Variant;
   text?: string;
@@ -59,18 +59,14 @@ export const Button: React.FC<ButtonProps> = ({
         </Box>
       </DisplayIf>
       <Box className={clsx('flex items-center justify-center gap-2', isLoading && 'invisible')}>
-        <DisplayIf condition={!!iconLeft}>
-          <Icon icon={iconLeft as IconType} size={iconSize} />
-        </DisplayIf>
+        {!!iconLeft && <Icon2 icon={iconLeft} size={iconSize} />}
         <DisplayIf condition={!!text}>
           {/* Secondary button is our only ui/Button with border, so we need to reduce line height in favor of that. */}
           <Text className={variant === 'secondary' ? 'leading-[inherit]' : undefined} variant={textVariant}>
             {text}
           </Text>
         </DisplayIf>
-        <DisplayIf condition={!!iconRight}>
-          <Icon icon={iconRight as IconType} size={iconSize} />
-        </DisplayIf>
+        {!!iconRight && <Icon2 icon={iconRight} size={iconSize} />}
       </Box>
     </Box>
   );

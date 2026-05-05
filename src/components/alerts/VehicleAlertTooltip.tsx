@@ -2,7 +2,7 @@ import groupBy from 'lodash/groupBy';
 
 import type { VehicleEnum } from '@/lib/api';
 import { useAlertByVehicleType } from '@/lib/hooks';
-import { Icon } from '@/ui';
+import { Icon2 } from '@/ui';
 
 import { AlertsTooltip } from './AlertsTooltip';
 
@@ -23,7 +23,7 @@ export const VehicleAlertTooltip: React.FC<VehicleAlertTooltip> = ({ id, type })
 
   return (
     <AlertsTooltip alerts={vehicleAlerts}>
-      <Icon color="text-red-500" icon="ExclamationTriangleIcon" size="l" />
+      <Icon2 color="text-red-500" icon="IconAlertTriangle" size="l" />
     </AlertsTooltip>
   );
 };

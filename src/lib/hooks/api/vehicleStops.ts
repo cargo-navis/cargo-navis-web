@@ -1,6 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import type { PaginatedResponse } from '@/lib/api/pagination.d';
 import {
   assignShipmentToVehicle,
   createVehicleStop,
@@ -13,7 +12,6 @@ import {
   updateVehicleStop,
   type UpdateVehicleStopParams,
   uploadVehicleStopFile,
-  type VehicleStop,
   type VehicleStopGroup,
 } from '@/lib/api/vehicleStops';
 

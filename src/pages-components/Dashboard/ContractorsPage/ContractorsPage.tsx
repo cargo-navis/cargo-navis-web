@@ -41,7 +41,7 @@ const MainContent = ({ contractors }: { contractors: Contractor[] }) => {
           Kontraktori
         </Heading>
         <DisplayIf condition={!isEmpty}>
-          <Button href="/dashboard/contractors/new" iconLeft="PlusIcon" text="Dodaj Kontraktora" />
+          <Button href="/dashboard/contractors/new" iconLeft="IconPlus" text="Dodaj Kontraktora" />
         </DisplayIf>
       </FlexLayout>
       <Box className="py-5">
@@ -57,8 +57,8 @@ const MainContent = ({ contractors }: { contractors: Contractor[] }) => {
             <Box className="max-w-xs mb-4">
               <TextInput
                 autoFocus
-                iconLeft="MagnifyingGlassIcon"
-                iconRight={search ? 'XMarkIcon' : undefined}
+                iconLeft="IconSearch"
+                iconRight={search ? 'IconX' : undefined}
                 placeholder="Pretraži kontraktore..."
                 value={search}
                 onChange={setSearch}

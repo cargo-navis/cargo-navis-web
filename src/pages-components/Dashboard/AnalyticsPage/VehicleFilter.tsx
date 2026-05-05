@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { useVehicles } from '@/lib/hooks/api';
-import { Box, FlexLayout, Icon, SelectOption, Text } from '@/ui';
+import { Box, FlexLayout, Icon2, SelectOption, Text } from '@/ui';
 import { SingleSelectWithLabels } from '@/ui/hocs';
 
 interface VehicleFilterProps {
@@ -29,7 +29,7 @@ export const VehicleFilter = ({ value, onChange, isDisabled }: VehicleFilterProp
         isSearchable
         label={
           <FlexLayout className="gap-1 items-center justify-between">
-            <Icon icon="TruckIcon" />
+            <Icon2 icon="IconTruck" />
             <Text color="text-color-3" variant="text-xxs-medium">
               Vozilo
             </Text>

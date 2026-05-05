@@ -5,7 +5,7 @@ import { Timeline } from '@/components/reui/timeline';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import type { Vehicle } from '@/lib/api';
 import type { VehicleStopGroup } from '@/lib/api/vehicleStops';
-import { FlexLayout, Icon, Text } from '@/ui';
+import { FlexLayout, Icon2, Text } from '@/ui';
 
 import { StopTimelineEntry } from './StopItem';
 
@@ -28,7 +28,7 @@ export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
               </Text>
             </FlexLayout>
             <FlexLayout className="items-center gap-1 text-dark-600 dark:text-light-300">
-              <Icon icon="TruckIcon" size="m" />
+              <Icon2 icon="IconTruckDelivery" size="m" />
               <Text variant="text-s">{vehicle.brand}</Text>
             </FlexLayout>
           </FlexLayout>

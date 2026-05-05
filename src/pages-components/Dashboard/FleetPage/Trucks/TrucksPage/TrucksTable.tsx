@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { VehicleAlertTooltip } from '@/components/alerts/VehicleAlertTooltip';
 import { type Vehicle, VehicleEnum } from '@/lib/api/vehicles';
 import { getDataPointDateString } from '@/lib/utils/date';
-import { Box, DisplayIf, FlexLayout, Icon, Table, Text, Tooltip } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon2, Table, Text, Tooltip } from '@/ui';
 
 const columnHelper = createColumnHelper<Vehicle>();
 
@@ -42,7 +42,7 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
                         }
                       >
                         <Box>
-                          <Icon color="text-color-4" icon="DocumentTextIcon" size="l" type="outline" />
+                          <Icon2 color="text-color-4" icon="IconFileDescription" size="l" type="outline" />
                         </Box>
                       </Tooltip>
                     </DisplayIf>

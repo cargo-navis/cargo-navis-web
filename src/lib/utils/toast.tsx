@@ -1,8 +1,7 @@
 import { addToast } from '@heroui/react';
 import React from 'react';
 
-import { Icon } from '@/ui';
-import { FlexLayout } from '@/ui';
+import { FlexLayout, Icon2 } from '@/ui';
 
 interface ToastProps {
   title: string;
@@ -22,10 +21,10 @@ export const showSuccessToast = ({ title, description }: ToastProps) => {
       closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
     },
     radius: 'sm',
-    icon: <Icon color="text-white" icon="InformationCircleIcon" size="xl" />,
+    icon: <Icon2 color="text-white" icon="IconInfoCircle" size="xl" />,
     closeIcon: (
       <FlexLayout className="bg-teal-700 p-1 items-center justify-center">
-        <Icon color="text-white" icon="XMarkIcon" size="l" />
+        <Icon2 color="text-white" icon="IconX" size="l" />
       </FlexLayout>
     ),
   });
@@ -44,10 +43,10 @@ export const showErrorToast = ({ title, description }: ToastProps) => {
     },
     timeout: 2500,
     radius: 'sm',
-    icon: <Icon color="text-white" icon="ExclamationTriangleIcon" size="xl" />,
+    icon: <Icon2 color="text-white" icon="IconAlertTriangle" size="xl" />,
     closeIcon: (
       <FlexLayout className="bg-red-600 dark:bg-red-700 p-1 items-center justify-center">
-        <Icon color="text-white" icon="XMarkIcon" size="l" />
+        <Icon2 color="text-white" icon="IconX" size="l" />
       </FlexLayout>
     ),
   });

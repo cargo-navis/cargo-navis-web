@@ -7,7 +7,7 @@ import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useEmployee } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { DriverInfo } from '@/pages-components/Dashboard/SingleEmployeePage/DriverInfo';
-import { Box, DisplayIf, FlexLayout, Icon, Text } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon2, Text } from '@/ui';
 
 import { OccupationPill } from '../EmployeesPage/OccupationPill';
 import { ContactInfo } from './ContactInfo';
@@ -57,7 +57,7 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
                   <ContactInfo contact={employee.phoneNumber} contactType="phone" />
                   <DisplayIf condition={employee.messageChannel === MessageChannelEnum.WHATSAPP}>
                     <FlexLayout className="gap-1 items-center">
-                      <Icon color="text-green-500" icon="CheckCircleIcon" type="solid" />
+                      <Icon2 color="text-green-500" icon="IconCircleCheck" type="solid" />
                       <Text color="text-color-3" variant="text-xxs">
                         WhatsApp spojen
                       </Text>

@@ -3,7 +3,7 @@
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 
-import { FlexLayout, Icon, Text } from '@/ui';
+import { FlexLayout, Icon2, Text } from '@/ui';
 
 const canGoBackInHistory = (): boolean => {
   return typeof window !== 'undefined' && 'navigation' in window && !!(window as any).navigation?.canGoBack;
@@ -20,7 +20,7 @@ export function BackButton({ targetLocation }: { targetLocation: string }) {
       )}
       onClick={() => (canGoBackInHistory() ? back() : push(targetLocation))}
     >
-      <Icon icon="ArrowUturnLeftIcon" />
+      <Icon2 icon="IconArrowBackUp" />
       <Text variant="text-s-medium">Natrag</Text>
     </FlexLayout>
   );
