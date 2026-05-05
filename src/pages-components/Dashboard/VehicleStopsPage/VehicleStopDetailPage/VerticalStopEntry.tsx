@@ -16,7 +16,7 @@ import { FileCard } from '@/lib/components/FileCard';
 import { useDeleteVehicleStopFile, useGetVehicleStopFileUrl, useSendVehicleStopMessage } from '@/lib/hooks';
 import { downloadVehicleStopFile } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, FlexLayout, Icon, Text, TextButton, Tooltip } from '@/ui';
+import { Box, FlexLayout, Icon, Text, TextButton } from '@/ui';
 
 import { CargoSection } from './CargoSection';
 import { VehicleStopFileUploadButton } from './VehicleStopFileUploadButton';
@@ -158,7 +158,7 @@ export const VerticalStopEntry = ({
           )}
         </FlexLayout>
         <FlexLayout className="flex-col ml-10 relative">
-          {stop.driverId ? (
+          {!!stop.driverId && (
             <TextButton
               iconLeft="IconBrandWhatsapp"
               isDisabled={isSendingMessage}
@@ -168,27 +168,6 @@ export const VerticalStopEntry = ({
               variant="secondary"
               onClick={handleSendMessage}
             />
-          ) : (
-            <Tooltip
-              content={
-                <Box className="px-2 w-max">
-                  <Text color="text-light-50" variant="text-xs">
-                    Za poslati poruku na Whatsapp, potrebno je postaviti vozača.
-                  </Text>
-                </Box>
-              }
-            >
-              <Box>
-                <TextButton
-                  iconLeft="IconBrandWhatsapp"
-                  isDisabled
-                  size="s"
-                  text="Obavijesti vozača"
-                  type="button"
-                  variant="secondary"
-                />
-              </Box>
-            </Tooltip>
           )}
           {stop.messageSentAt && (
             <Text className="absolute top-5 whitespace-nowrap" color="text-color-3" variant="text-xxxs">

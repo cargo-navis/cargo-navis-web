@@ -29,7 +29,7 @@ export const VehicleStopDetailPage = () => {
   const [editingStop, setEditingStop] = useState<VehicleStop | undefined>(undefined);
   const [previousStop, setPreviousStop] = useState<VehicleStop | undefined>(undefined);
 
-  const stops = group?.stops ?? [];
+  const stops = group?.stops.reverse() ?? [];
 
   const isLoading = isLoadingStops || isLoadingVehicles;
 

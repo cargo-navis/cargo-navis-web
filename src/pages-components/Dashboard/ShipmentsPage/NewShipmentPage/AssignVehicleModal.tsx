@@ -68,10 +68,13 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
     return vehicleGroups.flatMap((g) => {
       const vehicle = vehiclesById.get(g.vehicleId);
       if (!vehicle) return [];
-      const latestStop = g.stops[g.stops.length - 1];
+
+      const stops = g.stops.reverse();
+
+      const latestStop = stops[stops.length - 1];
       const driverName = latestStop?.driverId ? employeesById.get(latestStop.driverId)?.fullName : undefined;
-      const placeNames = g.stops.map((s) => s.address?.placeName).filter((p): p is string => !!p);
-      return [{ vehicle, stops: g.stops, latestStop, driverName, placeNames }];
+      const placeNames = stops.map((s) => s.address?.placeName).filter((p): p is string => !!p);
+      return [{ vehicle, stops: stops, latestStop, driverName, placeNames }];
     });
   }, [vehicleGroups, vehicles, employees]);
 
