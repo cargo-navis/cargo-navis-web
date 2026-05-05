@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { Fragment, useMemo } from 'react';
 
+import { EmployeeName } from '@/components/employees/EmployeeName';
 import { type Shipment } from '@/lib/api';
 import { InvoiceStatus } from '@/lib/api/shipments';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
@@ -119,7 +120,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       columnHelper.display({
         id: 'route',
         enableSorting: false,
-        size: 360,
+        size: 380,
         header: 'Utovar / Istovar',
         cell: (props) => {
           const { cargo } = props.row.original;
@@ -141,7 +142,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
             <FlexLayout className="flex-col gap-3 py-2 pr-6">
               {Array.from(loadingGroups.values()).map((groupCargos, gi) => (
                 <Box
-                  className="grid grid-cols-[240px_auto_240px] gap-x-2 gap-y-2"
+                  className="grid grid-cols-[1fr_auto_1fr] gap-x-3 gap-y-2"
                   key={gi}
                   style={{ gridTemplateRows: `repeat(${groupCargos.length}, auto)` }}
                 >
@@ -185,7 +186,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         id: 'ldm',
         enableSorting: false,
         header: 'LDM / Težina',
-        size: 140,
+        size: 110,
         cell: (props) => {
           const { cargo } = props.row.original;
 
@@ -205,8 +206,69 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         },
       }),
       columnHelper.display({
+        id: 'vehicleDriver',
+        size: 200,
+        enableSorting: false,
+        header: 'Vozilo / Vozač',
+        cell: (props) => {
+          const { vehicleStops } = props.row.original;
+          const latestStop = vehicleStops?.[vehicleStops.length - 1];
+          const vehicle = latestStop ? vehicles.find((v) => v.id === latestStop.vehicleId) : undefined;
+          const driver = latestStop?.driverId ? employees.find((e) => e.id === latestStop.driverId) : undefined;
+
+          if (!vehicle && !driver) {
+            return (
+              <FlexLayout className="items-center py-2">
+                <Text color="text-color-3" variant="text-s">
+                  —
+                </Text>
+              </FlexLayout>
+            );
+          }
+
+          return (
+            <FlexLayout className="flex-col py-2 gap-1">
+              {vehicle && (
+                <FlexLayout className="items-start gap-1">
+                  <Icon className="mt-1" color="text-color-2" icon="IconTruck" size="s" />
+                  <FlexLayout className="flex-col">
+                    <Text
+                      className="whitespace-nowrap overflow-hidden text-ellipsis"
+                      color="text-color-2"
+                      variant="text-xxs-medium"
+                    >
+                      {vehicle.registration}
+                    </Text>
+                    {vehicle.brand && (
+                      <Text
+                        className="whitespace-nowrap overflow-hidden text-ellipsis"
+                        color="text-color-3"
+                        variant="text-xxs"
+                      >
+                        {vehicle.brand}
+                      </Text>
+                    )}
+                  </FlexLayout>
+                </FlexLayout>
+              )}
+              {driver && (
+                <FlexLayout className="items-start gap-1">
+                  <Icon className="mt-1" color="text-color-2" icon="IconSteeringWheel" size="s" />
+                  <EmployeeName
+                    className="whitespace-nowrap overflow-hidden text-ellipsis"
+                    color="text-color-2"
+                    id={driver.id}
+                    variant="text-xxs"
+                  />
+                </FlexLayout>
+              )}
+            </FlexLayout>
+          );
+        },
+      }),
+      columnHelper.display({
         id: 'palleteNo',
-        size: 100,
+        size: 110,
         enableSorting: false,
         header: 'Broj paleta',
         cell: (props) => {
