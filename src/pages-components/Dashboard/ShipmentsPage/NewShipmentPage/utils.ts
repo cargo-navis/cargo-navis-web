@@ -69,8 +69,12 @@ const mapCargoItems = async (cargoItems?: any[], isEdit = false): Promise<Cargo[
       const hasKolete = cargoType === 'nonstandard' && palleteAmount && palleteAmount > 0;
 
       // Fetch postal code data for addresses
-      const loadingPostalCode = c.loadingAddress?.id ? await fetchPostalCodeData(c.loadingAddress.id) : {};
-      const unloadingPostalCode = c.unloadingAddress?.id ? await fetchPostalCodeData(c.unloadingAddress.id) : {};
+      const loadingPostalCode = c.loadingAddress?.postalCodeId
+        ? await fetchPostalCodeData(c.loadingAddress.postalCodeId)
+        : {};
+      const unloadingPostalCode = c.unloadingAddress?.postalCodeId
+        ? await fetchPostalCodeData(c.unloadingAddress.postalCodeId)
+        : {};
 
       return {
         ...(isEdit ? { id: c.id } : {}),
