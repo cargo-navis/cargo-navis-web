@@ -127,13 +127,13 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
 
           const uniquePairs = new Map<string, (typeof cargo)[number]>();
           cargo.forEach((c) => {
-            const key = `${c.loadingAddress?.id ?? ''}|${c.unloadingAddress?.id ?? ''}`;
+            const key = `${c.loadingAddress?.postalCodeId ?? ''}|${c.unloadingAddress?.postalCodeId ?? ''}`;
             if (!uniquePairs.has(key)) uniquePairs.set(key, c);
           });
 
           const loadingGroups = new Map<string, (typeof cargo)[number][]>();
           uniquePairs.forEach((c) => {
-            const key = c.loadingAddress?.id ?? '';
+            const key = c.loadingAddress?.postalCodeId ?? '';
             if (!loadingGroups.has(key)) loadingGroups.set(key, []);
             loadingGroups.get(key)!.push(c);
           });

@@ -70,7 +70,7 @@ export interface CreateShipmentData extends Omit<Shipment, 'id' | 'cargo'> {
 // TODO - this should be for Create shipment
 export interface LoadingAddress {
   streetName: string;
-  id: string;
+  postalCodeId: string;
   postalCode: string;
   countryCode: string;
   placeName: string;

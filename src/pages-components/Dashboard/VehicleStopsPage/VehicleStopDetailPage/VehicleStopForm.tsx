@@ -82,7 +82,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
       return resetAddressAndCargos();
     }
 
-    const addressKey = buildAddressKey(picked.shipmentId, picked.address.id);
+    const addressKey = buildAddressKey(picked.shipmentId, picked.address.postalCodeId);
     setSelectedAddressKey(addressKey);
 
     const streetName = picked.address.streetName ?? '';
@@ -91,7 +91,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
     const countryCode = picked.address.countryCode ?? '';
     setFieldValue('address.countryCode', countryCode);
 
-    const postalCode = { value: picked.address.id, label: formatPostalCodeLabel(picked.address) };
+    const postalCode = { value: picked.address.postalCodeId, label: formatPostalCodeLabel(picked.address) };
     setFieldValue('address.addressPostalCode', postalCode);
 
     setCargos('loading', picked.loadingCargos);

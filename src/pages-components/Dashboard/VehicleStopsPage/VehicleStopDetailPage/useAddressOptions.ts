@@ -23,7 +23,7 @@ export function useAddressOptions(stop?: VehicleStop) {
       s.cargo.forEach((c) => {
         [c.loadingAddress, c.unloadingAddress].forEach((a) => {
           if (!a) return;
-          const key = buildAddressKey(s.id, a.id);
+          const key = buildAddressKey(s.id, a.postalCodeId);
           if (!seen.has(key)) seen.set(key, { value: key, label: formatAddressLabel(a), helper });
         });
       });

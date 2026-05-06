@@ -13,7 +13,7 @@ import {
   TimelineSeparator,
   TimelineTitle,
 } from '@/components/reui/timeline';
-import type { Cargo, Vehicle } from '@/lib/api';
+import type { Cargo, LoadingAddress, Vehicle } from '@/lib/api';
 import type { CreateVehicleStopParams, VehicleStop } from '@/lib/api/vehicleStops';
 import { useCreateVehicleStops, useEmployees, useVehicles, useVehicleStopsByVehicle } from '@/lib/hooks';
 import { getCargoLabel } from '@/lib/utils/cargo';
@@ -54,37 +54,26 @@ interface PreviewStop {
 
 function buildPreviewStops(cargos: Cargo[]): PreviewStop[] {
   const map = new Map<string, PreviewStop>();
+
+  function add(address: LoadingAddress | undefined, cargoId: string, kind: 'loading' | 'unloading') {
+    if (!address) return;
+    const { postalCodeId, streetName, placeName } = address;
+    const key = `${postalCodeId}|${streetName}`;
+    const stop = map.get(key) ?? {
+      key,
+      postalCodeId,
+      streetName,
+      placeName,
+      loadingCargoIds: [],
+      unloadingCargoIds: [],
+    };
+    stop[kind === 'loading' ? 'loadingCargoIds' : 'unloadingCargoIds'].push(cargoId);
+    map.set(key, stop);
+  }
+
   for (const cargo of cargos) {
-    if (cargo.loadingAddress) {
-      const { id, streetName, placeName } = cargo.loadingAddress;
-      const key = `${id}|${streetName}`;
-      const existing = map.get(key);
-      if (existing) existing.loadingCargoIds.push(cargo.id);
-      else
-        map.set(key, {
-          key,
-          postalCodeId: id,
-          streetName,
-          placeName,
-          loadingCargoIds: [cargo.id],
-          unloadingCargoIds: [],
-        });
-    }
-    if (cargo.unloadingAddress) {
-      const { id, streetName, placeName } = cargo.unloadingAddress;
-      const key = `${id}|${streetName}`;
-      const existing = map.get(key);
-      if (existing) existing.unloadingCargoIds.push(cargo.id);
-      else
-        map.set(key, {
-          key,
-          postalCodeId: id,
-          streetName,
-          placeName,
-          loadingCargoIds: [],
-          unloadingCargoIds: [cargo.id],
-        });
-    }
+    add(cargo.loadingAddress, cargo.id, 'loading');
+    add(cargo.unloadingAddress, cargo.id, 'unloading');
   }
   return Array.from(map.values());
 }

@@ -37,16 +37,16 @@ export const AddressSearchSelect = ({
     if (!shipment) return onChange(null);
 
     const cargo = shipment.cargo.find(
-      (c) => c.loadingAddress?.id === addressId || c.unloadingAddress?.id === addressId
+      (c) => c.loadingAddress?.postalCodeId === addressId || c.unloadingAddress?.postalCodeId === addressId
     );
-    const address = cargo?.loadingAddress?.id === addressId ? cargo?.loadingAddress : cargo?.unloadingAddress;
+    const address = cargo?.loadingAddress?.postalCodeId === addressId ? cargo?.loadingAddress : cargo?.unloadingAddress;
     if (!address) return onChange(null);
 
     onChange({
       shipmentId,
       address,
-      loadingCargos: shipment.cargo.filter((c) => c.loadingAddress?.id === addressId),
-      unloadingCargos: shipment.cargo.filter((c) => c.unloadingAddress?.id === addressId),
+      loadingCargos: shipment.cargo.filter((c) => c.loadingAddress?.postalCodeId === addressId),
+      unloadingCargos: shipment.cargo.filter((c) => c.unloadingAddress?.postalCodeId === addressId),
     });
   }
 
