@@ -1,7 +1,6 @@
 import { backend } from '@/lib/services/backendService';
 
 import type {
-  AssignShipmentToVehicleParams,
   CreateVehicleStopParams,
   UpdateVehicleStopParams,
   VehicleStop,
@@ -10,8 +9,6 @@ import type {
 } from './vehicleStops.d';
 
 export type {
-  AssignShipmentToVehicleParams,
-  CargoStopDate,
   CreateVehicleStopParams,
   UpdateVehicleStopParams,
   VehicleStop,
@@ -34,8 +31,8 @@ export async function getVehicleStopsByVehicle(limit?: number) {
   });
 }
 
-export async function createVehicleStop(data: CreateVehicleStopParams) {
-  return backend.post<VehicleStop>('/api/vehicle-stops', data);
+export async function createVehicleStops(data: CreateVehicleStopParams[]) {
+  return backend.post<VehicleStop[]>('/api/vehicle-stops', data);
 }
 
 export async function updateVehicleStop(id: string, data: UpdateVehicleStopParams) {
@@ -44,10 +41,6 @@ export async function updateVehicleStop(id: string, data: UpdateVehicleStopParam
 
 export async function deleteVehicleStop(id: string) {
   return backend.delete<void>(`/api/vehicle-stops/${id}`);
-}
-
-export async function assignShipmentToVehicle(data: AssignShipmentToVehicleParams) {
-  return backend.post<void>('/api/vehicle-stops/assign-shipment', data);
 }
 
 export async function sendVehicleStopMessage(id: string) {

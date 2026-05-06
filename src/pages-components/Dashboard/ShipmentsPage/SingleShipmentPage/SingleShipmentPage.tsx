@@ -144,14 +144,10 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
       </FlexLayout>
       {isAssignModalOpen && (
         <AssignVehicleModal
-          cargoIds={shipment.cargo.map((c) => c.id)}
+          cargos={shipment.cargo}
+          clientId={shipment.clientId}
           isOpen={isAssignModalOpen}
-          loadingAddressId={shipment.cargo[0]?.loadingAddress?.id}
-          loadingPlaceName={shipment.cargo[0]?.loadingAddress?.placeName ?? undefined}
-          shipmentId={shipment.id}
           shipmentOrderNumber={shipment.orderNumber}
-          unloadingAddressId={shipment.cargo[0]?.unloadingAddress?.id}
-          unloadingPlaceName={shipment.cargo[0]?.unloadingAddress?.placeName ?? undefined}
           onAssigned={(vehicleId) => {
             setIsAssignModalOpen(false);
             void push(`/dashboard/vehicle-stops/${vehicleId}`);

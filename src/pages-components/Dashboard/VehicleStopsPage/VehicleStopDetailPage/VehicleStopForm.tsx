@@ -8,7 +8,7 @@ import type { Cargo, Vehicle } from '@/lib/api';
 import type { Employee } from '@/lib/api/employees.d';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { FormDatepicker, FormSingleSelect, FormTextInput } from '@/lib/components/form';
-import { useCreateVehicleStop, useDispatchers, useDrivers, useTrailers, useUpdateVehicleStop } from '@/lib/hooks';
+import { useCreateVehicleStops, useDispatchers, useDrivers, useTrailers, useUpdateVehicleStop } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout, Icon, Text, TextButton, VerticalDivider } from '@/ui';
 
@@ -39,7 +39,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
   const { data: dispatchers = [] } = useDispatchers();
   const { trailers = [] } = useTrailers();
 
-  const { mutateAsync: createStop, isPending: isCreating } = useCreateVehicleStop();
+  const { mutateAsync: createStop, isPending: isCreating } = useCreateVehicleStops();
   const { mutateAsync: updateStop, isPending: isUpdating } = useUpdateVehicleStop();
 
   const formMethods = useForm<VehicleStopFormValues>({
@@ -131,7 +131,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
         await updateStop({ id: stop.id, data: payload });
         showSuccessToast({ title: 'Stanica ažurirana' });
       } else {
-        await createStop({ vehicleId, previousStopId: previousStop?.id ?? null, ...payload });
+        await createStop([{ vehicleId, previousStopId: previousStop?.id ?? null, ...payload }]);
         showSuccessToast({ title: 'Stanica kreirana' });
       }
       onSuccess();

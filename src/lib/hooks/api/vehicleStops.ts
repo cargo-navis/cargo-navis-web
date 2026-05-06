@@ -1,8 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
-  assignShipmentToVehicle,
-  createVehicleStop,
+  createVehicleStops,
   deleteVehicleStop,
   deleteVehicleStopFile,
   getVehicleStop,
@@ -33,12 +32,14 @@ export function useVehicleStop(id?: string) {
   });
 }
 
-export function useCreateVehicleStop() {
+export function useCreateVehicleStops() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: createVehicleStop,
+    mutationFn: createVehicleStops,
     onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['shipment'], type: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['shipments'], type: 'all' });
     },
   });
 }
@@ -59,17 +60,6 @@ export function useDeleteVehicleStop() {
     mutationFn: (id: string) => deleteVehicleStop(id),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
-    },
-  });
-}
-
-export function useAssignShipmentToVehicle() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: assignShipmentToVehicle,
-    onSuccess: (_, { shipmentId }) => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['shipment', shipmentId] });
     },
   });
 }

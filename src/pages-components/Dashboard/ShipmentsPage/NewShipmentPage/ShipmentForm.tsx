@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import { type Shipment } from '@/lib/api';
+import { type Cargo, type Shipment } from '@/lib/api';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { FormTextInput } from '@/lib/components/form';
 import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
@@ -38,13 +38,9 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
   const { mutateAsync: updateShipment } = useUpdateShipment();
 
   const [assignVehicleFor, setAssignVehicleFor] = useState<{
-    id: string;
     orderNumber: string;
-    cargoIds: string[];
-    loadingPlaceName?: string;
-    unloadingPlaceName?: string;
-    loadingAddressId?: string;
-    unloadingAddressId?: string;
+    clientId?: string | null;
+    cargos: Cargo[];
   } | null>(null);
 
   const formMethods = useForm<ShipmentFields>({
@@ -84,13 +80,9 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
         const newShipment = await createShipment(payload);
         showSuccessToast({ title: `Nalog "${newShipment.orderNumber}" uspješno kreiran` });
         setAssignVehicleFor({
-          id: newShipment.id,
           orderNumber: newShipment.orderNumber,
-          cargoIds: newShipment.cargo.map((c) => c.id),
-          loadingPlaceName: newShipment.cargo[0]?.loadingAddress?.placeName ?? undefined,
-          unloadingPlaceName: newShipment.cargo[0]?.unloadingAddress?.placeName ?? undefined,
-          loadingAddressId: newShipment.cargo[0]?.loadingAddress?.id,
-          unloadingAddressId: newShipment.cargo[0]?.unloadingAddress?.id,
+          clientId: newShipment.clientId,
+          cargos: newShipment.cargo,
         });
       }
     } catch (error) {
@@ -117,14 +109,10 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
     <FormProvider {...formMethods}>
       {assignVehicleFor && (
         <AssignVehicleModal
-          cargoIds={assignVehicleFor.cargoIds}
+          cargos={assignVehicleFor.cargos}
+          clientId={assignVehicleFor.clientId}
           isOpen={!!assignVehicleFor}
-          loadingAddressId={assignVehicleFor.loadingAddressId}
-          loadingPlaceName={assignVehicleFor.loadingPlaceName}
-          shipmentId={assignVehicleFor.id}
           shipmentOrderNumber={assignVehicleFor.orderNumber}
-          unloadingAddressId={assignVehicleFor.unloadingAddressId}
-          unloadingPlaceName={assignVehicleFor.unloadingPlaceName}
           onAssigned={handleVehicleAssigned}
           onClose={handleAssignDismiss}
         />

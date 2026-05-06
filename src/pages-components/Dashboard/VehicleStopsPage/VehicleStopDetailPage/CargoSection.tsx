@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 import { ClientName } from '@/components/clients/ClientName';
 import type { VehicleStopCargo, VehicleStopCargoShipment } from '@/lib/api/vehicleStops';
-import { palleteNameMap, PalleteType } from '@/lib/utils/palletes';
+import { getCargoLabel } from '@/lib/utils/cargo';
 import { FlexLayout, Icon, IconType, Text } from '@/ui';
 
 interface CargoSectionProps {
@@ -108,24 +108,6 @@ const ShipmentHeader = ({ shipment, borderClass, textClass, bgClass, className }
 interface CargoCardProps {
   cargo: VehicleStopCargo;
   addressType: 'loading' | 'unloading';
-}
-
-function getCargoLabel(cargo: VehicleStopCargo) {
-  if (cargo.description) return cargo.description;
-
-  const { type, palleteAmount, palleteType, length, width, height } = cargo.metadata;
-
-  if (type === 'standard' && palleteAmount) {
-    const palleteName = palleteNameMap[palleteType as PalleteType];
-    return palleteName ? `${palleteAmount} x ${palleteName}` : `${palleteAmount} paleta`;
-  }
-
-  if (type === 'nonstandard') {
-    const dimensions = [length, width, height].filter((d) => d != null);
-    if (dimensions.length > 0) return `${dimensions.map((d) => `${d}m`).join(' x ')}`;
-  }
-
-  return '-';
 }
 
 const CargoCard = ({ cargo, addressType }: CargoCardProps) => {

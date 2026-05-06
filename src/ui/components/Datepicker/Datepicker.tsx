@@ -42,7 +42,7 @@ export const Datepicker: React.FC<DatepickerProps> = ({
         }}
         disabled={isDisabled}
         highlightToday
-        leftSection={<Icon icon="IconCalendar" type="solid" />}
+        leftSection={<Icon icon="IconCalendarWeek" type="solid" />}
         maxDate={maxDate ? getDateInLocalTimezone(maxDate) : undefined}
         minDate={minDate ? getDateInLocalTimezone(minDate) : undefined}
         placeholder={placeholder}
