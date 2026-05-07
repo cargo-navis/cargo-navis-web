@@ -122,14 +122,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
           <FlexLayout className="flex-row gap-7">
             <FlexLayout className="w-[500px] flex-col gap-4">
               <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
-                <FlexLayout className="gap-4">
-                  <Box className="flex-1">
-                    <FormTextInput label="Referentni broj" name="cargoReference" placeholder="1234" />
-                  </Box>
-                  <Box className="flex-1">
-                    <FormTextInput label="Vanjska referenca narudžbe" name="externalOrderReference" />
-                  </Box>
-                </FlexLayout>
+                <FormTextInput label="Vanjska referenca narudžbe" name="externalOrderReference" />
                 <FlexLayout className="gap-4">
                   <Box className="flex-1">
                     <ClientField />

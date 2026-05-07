@@ -46,28 +46,16 @@ export const BasicInfo = ({ shipment }: { shipment: Shipment }) => {
           </Link>
         </FlexLayout>
       </Box>
-      <FlexLayout className="flex-col gap-4">
-        <Box className="flex-1">
-          <FlexLayout className="flex-col">
-            <Text color="text-color-3" variant="text-xs-medium">
-              Referentni broj
-            </Text>
-            <Text color="text-color-1" variant="text-m-medium">
-              {shipment.cargoReference || '—'}
-            </Text>
-          </FlexLayout>
-        </Box>
-        <Box className="flex-1">
-          <FlexLayout className="flex-col">
-            <Text color="text-color-3" variant="text-xs-medium">
-              Vanjska referenca narudžbe
-            </Text>
-            <Text color="text-color-1" variant="text-m-medium">
-              {shipment.externalOrderReference || '—'}
-            </Text>
-          </FlexLayout>
-        </Box>
-      </FlexLayout>
+      <Box className="flex-1">
+        <FlexLayout className="flex-col">
+          <Text color="text-color-3" variant="text-xs-medium">
+            Vanjska referenca narudžbe
+          </Text>
+          <Text color="text-color-1" variant="text-m-medium">
+            {shipment.externalOrderReference || '—'}
+          </Text>
+        </FlexLayout>
+      </Box>
     </FlexLayout>
   );
 };

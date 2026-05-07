@@ -1,5 +1,4 @@
 export interface ShipmentFields {
-  cargoReference?: string;
   externalOrderReference?: string;
   clientId: string;
   transportContractorId: string;

@@ -35,7 +35,6 @@ export const defaultCargo: Cargo = {
 };
 
 export const formDefaultValues: ShipmentFields = {
-  cargoReference: '',
   externalOrderReference: '',
   transportContractorId: '',
   clientId: '',
@@ -128,7 +127,6 @@ const getCopyShipmentFormValues = async (shipment: Shipment) => {
   const cargo = await mapCargoItems(shipment.cargo);
 
   return {
-    cargoReference: shipment.cargoReference || '',
     externalOrderReference: shipment.externalOrderReference || '',
     transportContractorId: shipment.transportContractorId || '',
     clientId: shipment.clientId || '',
@@ -142,7 +140,6 @@ const getEditShipmentFormValues = async (shipment: Shipment) => {
   const cargo = await mapCargoItems(shipment.cargo, true);
 
   return {
-    cargoReference: shipment.cargoReference || '',
     externalOrderReference: shipment.externalOrderReference || '',
     transportContractorId: shipment.transportContractorId || '',
     clientId: shipment.clientId || '',
@@ -171,12 +168,11 @@ export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Ten
 
 // Function to transform form data into the format defined in types.ts
 export const transformFormDataToPayload = (formData: ShipmentFields): Omit<CreateShipmentData, 'id'> => {
-  const { cargoReference, externalOrderReference, clientId, transportContractorId, price, cargo } = formData;
+  const { externalOrderReference, clientId, transportContractorId, price, cargo } = formData;
 
   const payload: Partial<Omit<CreateShipmentData, 'id'>> = {};
 
   // Only add shipment-level fields that are present in formData
-  if ('cargoReference' in formData) payload.cargoReference = cargoReference || '';
   if ('externalOrderReference' in formData) payload.externalOrderReference = externalOrderReference || '';
   if ('clientId' in formData) payload.clientId = clientId;
   if ('transportContractorId' in formData) payload.transportContractorId = transportContractorId;

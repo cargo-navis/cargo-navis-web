@@ -3,7 +3,6 @@ import type { VehicleStop } from './vehicleStops.d';
 
 export interface Shipment {
   id: string;
-  cargoReference: string;
   externalOrderReference?: string;
   orderNumber: string;
   createdById: string;

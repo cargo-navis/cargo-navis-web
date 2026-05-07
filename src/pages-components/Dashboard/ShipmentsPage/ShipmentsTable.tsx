@@ -15,7 +15,6 @@ import { AddressItem } from './AddressesList';
 import { invoiceStatusConfig } from './const';
 import { SortFieldEnum, useShipmentsSortLocalStorage } from './hooks';
 import { OverdueIndicator } from './OverdueIndicator';
-import { ReferenceNumberTooltip } from './ReferenceNumberTooltip';
 
 const columnHelper = createColumnHelper<Shipment>();
 
@@ -35,7 +34,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         enableSorting: false,
         cell: (props) => {
           const shipment = props.row.original;
-          const { clientId, documents, isInvoiceOverdue, orderNumber, cargoReference } = shipment;
+          const { clientId, documents, isInvoiceOverdue, orderNumber } = shipment;
           const client = clients.find((c) => c.id === clientId);
 
           const hasDocuments = !!documents?.length;
@@ -84,7 +83,6 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                 <Text className="overflow-hidden text-ellipsis" variant="text-xs">
                   {orderNumber}
                 </Text>
-                <ReferenceNumberTooltip cargoReference={cargoReference} />
               </FlexLayout>
             </FlexLayout>
           );

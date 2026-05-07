@@ -81,7 +81,6 @@ const cargoSchema = Yup.object().shape({
 });
 
 export const shipmentSchema = Yup.object().shape({
-  cargoReference: Yup.string().optional(),
   externalOrderReference: Yup.string().optional(),
   clientId: Yup.string().required('Klijent je obavezan'),
   price: Yup.number()
