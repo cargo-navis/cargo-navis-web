@@ -27,6 +27,7 @@ import { ContentLoader } from './components/ContentLoader';
 import { InvoiceItem } from './components/InvoiceItem';
 import { ShipmentActions } from './components/ShipmentActions';
 import { ShipmentFileUploadButton } from './components/ShipmentFileUploadButton';
+import { EmptyShipmentVehicleStops } from './components/EmptyShipmentVehicleStops';
 import { ShipmentVehicleStops } from './components/ShipmentVehicleStops';
 import type { CargoWithMetadata } from './components/types';
 
@@ -205,13 +206,13 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
           <FlexLayout className="flex-row gap-5">
             <FlexLayout className="w-[380px] flex-col gap-4">
               <BasicInfo shipment={shipment} />
-              {isAssigned && shipment.vehicleStops && (
-                <>
-                  <Box className="py-4">
-                    <Divider />
-                  </Box>
-                  <ShipmentVehicleStops stops={shipment.vehicleStops} />
-                </>
+              <Box className="py-4">
+                <Divider />
+              </Box>
+              {isAssigned && shipment.vehicleStops ? (
+                <ShipmentVehicleStops stops={shipment.vehicleStops} />
+              ) : (
+                <EmptyShipmentVehicleStops onAssignClick={() => setIsAssignModalOpen(true)} />
               )}
             </FlexLayout>
             <FlexLayout as="section" className="flex-1 flex-col gap-4 min-w-0">

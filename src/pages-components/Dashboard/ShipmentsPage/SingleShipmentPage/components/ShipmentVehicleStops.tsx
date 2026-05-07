@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import Link from 'next/link';
 
+import { EmployeeName } from '@/components/employees/EmployeeName';
 import {
   Timeline,
   TimelineContent,
@@ -12,6 +13,7 @@ import {
   TimelineTitle,
 } from '@/components/reui/timeline';
 import type { VehicleStop, VehicleStopCargo } from '@/lib/api/vehicleStops';
+import { useVehicles } from '@/lib/hooks';
 import { getCargoLabel } from '@/lib/utils/cargo';
 import { Box, FlexLayout, Icon, Text, Tooltip } from '@/ui';
 
@@ -24,24 +26,50 @@ export const ShipmentVehicleStops = ({ stops }: ShipmentVehicleStopsProps) => {
 
   const vehicleId = stops[0].vehicleId;
   const orderedStops = [...stops].reverse();
+  const latestStop = orderedStops[0];
+  const { data: vehicles } = useVehicles();
+  const vehicle = vehicles?.find((v) => v.id === vehicleId);
 
   return (
     <FlexLayout className="flex-col gap-3">
-      <FlexLayout className="items-center justify-between">
-        <Text color="text-color-2" variant="text-s-medium">
-          Tijek prijevoza
-        </Text>
-        <Link
-          className="flex items-center gap-1 text-teal-500 hover:text-teal-700 transition-colors"
-          href={`/dashboard/vehicle-stops/${vehicleId}`}
-        >
-          <Text as="span" color="text-inherit" variant="text-xxs-medium">
-            Otvori detalje
+      <FlexLayout className="flex-col gap-1">
+        <FlexLayout className="items-center justify-between gap-2">
+          <Text color="text-color-2" variant="text-s-medium">
+            Tijek prijevoza
           </Text>
-          <Icon icon="IconArrowRight" size="s" />
-        </Link>
+          <Link
+            className="flex items-center gap-1 text-teal-500 hover:text-teal-700 transition-colors shrink-0"
+            href={`/dashboard/vehicle-stops/${vehicleId}`}
+          >
+            <Text as="span" color="text-inherit" variant="text-xxs-medium">
+              Otvori detalje
+            </Text>
+            <Icon icon="IconArrowRight" size="s" />
+          </Link>
+        </FlexLayout>
+        <FlexLayout className="items-center gap-2 text-dark-600 dark:text-light-300">
+          {vehicle?.registration && (
+            <FlexLayout className="items-center gap-1">
+              <Icon icon="IconTruck" size="s" />
+              <Text as="span" color="text-inherit" variant="text-xxs">
+                {vehicle.registration}
+              </Text>
+            </FlexLayout>
+          )}
+          {latestStop?.driverId && (
+            <>
+              <Text as="span" color="text-inherit" variant="text-xxs">
+                •
+              </Text>
+              <FlexLayout className="items-center gap-1">
+                <Icon icon="IconSteeringWheel" size="s" />
+                <EmployeeName color="text-inherit" id={latestStop.driverId} variant="text-xxs" />
+              </FlexLayout>
+            </>
+          )}
+        </FlexLayout>
       </FlexLayout>
-      <Timeline className="w-full" defaultValue={orderedStops.length} orientation="vertical">
+      <Timeline className="w-full pt-5" defaultValue={orderedStops.length} orientation="vertical">
         {orderedStops.map((stop, i) => (
           <SidebarStopEntry key={stop.id} step={i + 1} stop={stop} />
         ))}
@@ -57,8 +85,8 @@ const SidebarStopEntry = ({ stop, step }: { stop: VehicleStop; step: number }) =
   const hasTooltip = hasLoading || hasUnloading;
 
   const rowContent = (
-    <Box className="flex flex-col gap-0.5">
-      <TimelineDate style={{ marginBottom: 2 }}>
+    <FlexLayout className="flex-col gap-0.5 relative -top-4">
+      <TimelineDate>
         {date ? (
           dayjs(date).format('DD.MM.YYYY')
         ) : (
@@ -88,11 +116,11 @@ const SidebarStopEntry = ({ stop, step }: { stop: VehicleStop; step: number }) =
           </Text>
         </TimelineContent>
       )}
-    </Box>
+    </FlexLayout>
   );
 
   return (
-    <TimelineItem completed separatorActive step={step} style={{ paddingLeft: '24px', paddingBottom: '20px' }}>
+    <TimelineItem completed separatorActive step={step} style={{ paddingLeft: '24px', paddingBottom: '24px' }}>
       <TimelineHeader>
         <TimelineSeparator
           style={{
@@ -127,10 +155,10 @@ const StopCargoTooltip = ({
 }) => (
   <FlexLayout className="flex-col gap-2 p-2 text-light-50">
     {loadingCargos.length > 0 && (
-      <CargoListSection color="text-orange-300" icon="IconPackageImport" label="Utovar" cargos={loadingCargos} />
+      <CargoListSection cargos={loadingCargos} color="text-orange-300" icon="IconPackageImport" label="Utovar" />
     )}
     {unloadingCargos.length > 0 && (
-      <CargoListSection color="text-teal-300" icon="IconPackageExport" label="Istovar" cargos={unloadingCargos} />
+      <CargoListSection cargos={unloadingCargos} color="text-teal-300" icon="IconPackageExport" label="Istovar" />
     )}
   </FlexLayout>
 );
