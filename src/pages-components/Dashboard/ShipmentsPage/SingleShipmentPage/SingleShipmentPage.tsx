@@ -24,10 +24,10 @@ import { OverdueIndicator } from '../OverdueIndicator';
 import { BasicInfo } from './components/BasicInfo';
 import { CargoItem } from './components/CargoItem';
 import { ContentLoader } from './components/ContentLoader';
+import { EmptyShipmentVehicleStops } from './components/EmptyShipmentVehicleStops';
 import { InvoiceItem } from './components/InvoiceItem';
 import { ShipmentActions } from './components/ShipmentActions';
 import { ShipmentFileUploadButton } from './components/ShipmentFileUploadButton';
-import { EmptyShipmentVehicleStops } from './components/EmptyShipmentVehicleStops';
 import { ShipmentVehicleStops } from './components/ShipmentVehicleStops';
 import type { CargoWithMetadata } from './components/types';
 
