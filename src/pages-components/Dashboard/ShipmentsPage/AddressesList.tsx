@@ -1,6 +1,6 @@
 import { LoadingAddress } from '@/lib/api/shipments.d';
 import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, FlexLayout, Text, type TextProps, Tooltip } from '@/ui';
+import { Box, Text, Tooltip } from '@/ui';
 
 function countryCodeToFlag(code: string | null | undefined) {
   if (!code || code.length !== 2) return code ?? '';
@@ -13,17 +13,17 @@ function countryCodeToFlag(code: string | null | undefined) {
 
 interface AddressItemProps {
   address: LoadingAddress | null | undefined;
-  textColor?: TextProps['color'];
-  textVariant?: TextProps['variant'];
 }
 
-export const AddressItem = ({ address, textColor = 'text-color-3', textVariant = 'text-xs' }: AddressItemProps) => {
+export const AddressItem = ({ address }: AddressItemProps) => {
   if (!address)
     return (
-      <Text color={textColor} variant={textVariant}>
+      <Text color="text-color-2" variant="text-xs-medium">
         —
       </Text>
     );
+
+  const prefix = [countryCodeToFlag(address.countryCode), address.postalCode].filter(Boolean).join(' ');
 
   return (
     <Tooltip
@@ -43,20 +43,19 @@ export const AddressItem = ({ address, textColor = 'text-color-3', textVariant =
         </Box>
       }
     >
-      <FlexLayout className="flex-col min-w-0">
-        <FlexLayout className="items-center gap-1 min-w-0">
-          <Text
-            className="block min-w-0 flex-1 whitespace-nowrap overflow-hidden text-ellipsis"
-            color={textColor}
-            variant={textVariant}
-          >
+      <Box className="min-w-0 max-w-full overflow-hidden">
+        <Text className="block truncate" title={`${prefix} ${address.placeName ?? ''}`}>
+          <Text as="span" color="text-color-2" variant="text-s">
+            {countryCodeToFlag(address.countryCode)}
+          </Text>{' '}
+          <Text as="span" color="text-color-2" variant="text-xs-medium">
+            {address.postalCode}
+          </Text>{' '}
+          <Text as="span" color="text-color-2" variant="text-xs">
             {address.placeName}
           </Text>
-        </FlexLayout>
-        <Text color="text-color-3" variant="text-xs">
-          {[address.postalCode, countryCodeToFlag(address.countryCode)].filter(Boolean).join(' ')}
         </Text>
-      </FlexLayout>
+      </Box>
     </Tooltip>
   );
 };

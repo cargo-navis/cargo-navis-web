@@ -31,6 +31,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
     return [
       columnHelper.display({
         header: 'Nalog',
+        meta: { width: '18%' },
         enableSorting: false,
         cell: (props) => {
           const shipment = props.row.original;
@@ -51,7 +52,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
             <FlexLayout
               className={clsx(
                 textColor,
-                'flex-col pr-4 py-5 max-w-[20vw] whitespace-nowrap group-hover/row:text-teal-500'
+                'flex-col pr-4 py-4 max-w-[16vw] whitespace-nowrap group-hover/row:text-teal-500'
               )}
             >
               <FlexLayout className="gap-4 items-center">
@@ -107,7 +108,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (info) => {
           const value = info.getValue() + '€';
           return (
-            <FlexLayout className="items-center py-2">
+            <FlexLayout className="items-center py-2 pr-4">
               <Text className="text-green-500 dark:text-green-400" variant="text-m-medium">
                 {value}
               </Text>
@@ -118,7 +119,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       columnHelper.display({
         id: 'route',
         enableSorting: false,
-        size: 380,
+        meta: { width: 'auto' },
         header: 'Utovar / Istovar',
         cell: (props) => {
           const { cargo } = props.row.original;
@@ -140,19 +141,15 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
             <FlexLayout className="flex-col gap-3 py-2 pr-6">
               {Array.from(loadingGroups.values()).map((groupCargos, gi) => (
                 <Box
-                  className="grid grid-cols-[1fr_auto_1fr] gap-x-3 gap-y-2"
+                  className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-x-3 gap-y-2"
                   key={gi}
                   style={{ gridTemplateRows: `repeat(${groupCargos.length}, auto)` }}
                 >
                   <Box
-                    className="self-center flex flex-col"
+                    className="self-center flex flex-col min-w-0"
                     style={{ gridColumn: 1, gridRow: `1 / span ${groupCargos.length}` }}
                   >
-                    <AddressItem
-                      address={groupCargos[0].loadingAddress}
-                      textColor="text-color-2"
-                      textVariant="text-xs-medium"
-                    />
+                    <AddressItem address={groupCargos[0].loadingAddress} />
                     <Text color="text-color-4" variant="text-xxs">
                       {getDataPointDateString(groupCargos[0].loadingReadyDate)}
                     </Text>
@@ -162,12 +159,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                       <Box className="self-center" style={{ gridColumn: 2, gridRow: ci + 1 }}>
                         <Icon color="text-color-4" icon="IconArrowRight" size="s" />
                       </Box>
-                      <Box className="flex flex-col self-center" style={{ gridColumn: 3, gridRow: ci + 1 }}>
-                        <AddressItem
-                          address={c.unloadingAddress}
-                          textColor="text-color-2"
-                          textVariant="text-xs-medium"
-                        />
+                      <Box className="flex flex-col self-center min-w-0" style={{ gridColumn: 3, gridRow: ci + 1 }}>
+                        <AddressItem address={c.unloadingAddress} />
                         <Text color="text-color-4" variant="text-xxs">
                           {getDataPointDateString(c.unloadingDueDate)}
                         </Text>
@@ -192,7 +185,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const weightTotal = cargo.reduce((acc, c) => (acc += c.weight), 0);
 
           return (
-            <FlexLayout className="flex-col py-2">
+            <FlexLayout className="flex-col py-2 pr-4">
               <Text color="text-color-2" variant="text-s-medium">
                 {roundLdmValue(ldmTotal) || '—'}
               </Text>
@@ -205,7 +198,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       }),
       columnHelper.display({
         id: 'vehicleDriver',
-        size: 200,
+        meta: { width: '14%' },
         enableSorting: false,
         header: 'Vozilo / Vozač',
         cell: (props) => {
@@ -225,35 +218,25 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           }
 
           return (
-            <FlexLayout className="flex-col py-2 gap-1">
+            <FlexLayout className="flex-col py-2 pr-4 min-w-0">
               {vehicle && (
-                <FlexLayout className="items-start gap-1">
-                  <Icon className="mt-1" color="text-color-2" icon="IconTruck" size="s" />
-                  <FlexLayout className="flex-col">
-                    <Text
-                      className="whitespace-nowrap overflow-hidden text-ellipsis"
-                      color="text-color-2"
-                      variant="text-xxs-medium"
-                    >
-                      {vehicle.registration}
-                    </Text>
-                    {vehicle.brand && (
-                      <Text
-                        className="whitespace-nowrap overflow-hidden text-ellipsis"
-                        color="text-color-3"
-                        variant="text-xxs"
-                      >
-                        {vehicle.brand}
-                      </Text>
-                    )}
-                  </FlexLayout>
+                <FlexLayout className="items-start gap-1 min-w-0">
+                  <Icon className="mt-1 shrink-0" color="text-color-2" icon="IconTruck" size="s" />
+                  <Text
+                    className="block min-w-0 flex-1 truncate"
+                    color="text-color-2"
+                    title={`${vehicle.registration}${vehicle.brand ? ` (${vehicle.brand})` : ''}`}
+                    variant="text-xs"
+                  >
+                    {vehicle.registration} {!!vehicle?.brand && `(${vehicle.brand})`}
+                  </Text>
                 </FlexLayout>
               )}
               {driver && (
-                <FlexLayout className="items-start gap-1">
-                  <Icon className="mt-1" color="text-color-2" icon="IconSteeringWheel" size="s" />
+                <FlexLayout className="items-start gap-1 min-w-0">
+                  <Icon className="mt-1 shrink-0" color="text-color-2" icon="IconSteeringWheel" size="s" />
                   <EmployeeName
-                    className="whitespace-nowrap overflow-hidden text-ellipsis"
+                    className="block min-w-0 flex-1 truncate"
                     color="text-color-2"
                     id={driver.id}
                     variant="text-xxs"
@@ -266,9 +249,9 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       }),
       columnHelper.display({
         id: 'palleteNo',
-        size: 110,
+        size: 80,
         enableSorting: false,
-        header: 'Broj paleta',
+        header: 'Palete',
         cell: (props) => {
           const { cargo } = props.row.original;
           const hasNonstandardCargo = cargo.some((c) => c.metadata?.type === 'nonstandard');
@@ -290,14 +273,15 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       }),
       columnHelper.display({
         id: 'status',
+        enableSorting: false,
+        meta: { width: '124px' },
         header: () => (
-          <FlexLayout className="grow items-center justify-end px-3">
+          <FlexLayout className="grow items-center justify-end pr-3">
             <Text className="whitespace-nowrap" variant="text-s-medium">
               Status Fakture
             </Text>
           </FlexLayout>
         ),
-        enableSorting: false,
         cell: (info) => {
           const shipment = info.row.original;
           const invoiceConfig = invoiceStatusConfig[shipment.invoiceStatus];
