@@ -27,6 +27,7 @@ import { ContentLoader } from './components/ContentLoader';
 import { InvoiceItem } from './components/InvoiceItem';
 import { ShipmentActions } from './components/ShipmentActions';
 import { ShipmentFileUploadButton } from './components/ShipmentFileUploadButton';
+import { ShipmentVehicleStops } from './components/ShipmentVehicleStops';
 import type { CargoWithMetadata } from './components/types';
 
 export const SingleShipmentPage = () => {
@@ -204,9 +205,14 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
           <FlexLayout className="flex-row gap-5">
             <FlexLayout className="w-[380px] flex-col gap-4">
               <BasicInfo shipment={shipment} />
-              <Box className="py-4">
-                <Divider />
-              </Box>
+              {isAssigned && shipment.vehicleStops && (
+                <>
+                  <Box className="py-4">
+                    <Divider />
+                  </Box>
+                  <ShipmentVehicleStops stops={shipment.vehicleStops} />
+                </>
+              )}
             </FlexLayout>
             <FlexLayout as="section" className="flex-1 flex-col gap-4 min-w-0">
               <Text color="text-color-2" variant="text-l-medium">
