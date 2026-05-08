@@ -38,6 +38,7 @@ export const formDefaultValues: ShipmentFields = {
   externalOrderReference: '',
   transportContractorId: '',
   clientId: '',
+  isAgency: false,
   cargo: [defaultCargo],
 };
 
@@ -167,8 +168,11 @@ export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Ten
 };
 
 // Function to transform form data into the format defined in types.ts
-export const transformFormDataToPayload = (formData: ShipmentFields): Omit<CreateShipmentData, 'id'> => {
-  const { externalOrderReference, clientId, transportContractorId, price, cargo } = formData;
+export const transformFormDataToPayload = (
+  formData: ShipmentFields,
+  context?: { tenantId?: string }
+): Omit<CreateShipmentData, 'id'> => {
+  const { externalOrderReference, clientId, transportContractorId, price, isAgency, agencyPrice, cargo } = formData;
 
   const payload: Partial<Omit<CreateShipmentData, 'id'>> = {};
 
@@ -250,6 +254,22 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
 
       return result;
     });
+  }
+
+  // Agency-shipment splitting: parent stays for the original client with the
+  // tenant as its transporter; the actual contractor is moved into a child
+  // shipment that the tenant "buys" at the agency price.
+  if (isAgency && context?.tenantId && transportContractorId) {
+    const originalContractorId = transportContractorId;
+    const parentPayload = payload as Omit<CreateShipmentData, 'id'>;
+    const childPayload: Omit<CreateShipmentData, 'id'> = {
+      ...parentPayload,
+      clientId: context.tenantId,
+      transportContractorId: originalContractorId,
+      price: agencyPrice ?? 0,
+    };
+    parentPayload.transportContractorId = context.tenantId;
+    parentPayload.children = [childPayload];
   }
 
   return payload as Omit<CreateShipmentData, 'id'>;

@@ -93,6 +93,18 @@ export const shipmentSchema = Yup.object().shape({
       return decimalPlaces <= 2;
     }),
   transportContractorId: Yup.string().required('Prijevoznik je obavezan'),
+  isAgency: Yup.boolean().optional(),
+  agencyPrice: Yup.number()
+    .transform((value, original) => (original === '' || original === null ? undefined : value))
+    .when('isAgency', {
+      is: true,
+      then: () =>
+        Yup.number()
+          .typeError('Cijena agencijskog prijevoza mora biti broj')
+          .required('Cijena agencijskog prijevoza je obavezna')
+          .positive('Cijena mora biti pozitivan broj'),
+      otherwise: () => Yup.number().optional().nullable().strip(),
+    }),
   cargo: Yup.array().of(cargoSchema).required('Potreban je najmanje jedan teret'),
 });
 

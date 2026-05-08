@@ -1,14 +1,14 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
 
 import { type Cargo, type Shipment } from '@/lib/api';
 import type { Tenant } from '@/lib/api/tenant.d';
-import { FormTextInput } from '@/lib/components/form';
+import { FormNumberInput, FormSwitch, FormTextInput } from '@/lib/components/form';
 import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, FlexLayout, LoadingSpinner } from '@/ui';
+import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
 import { AssignVehicleModal } from './AssignVehicleModal';
 import { CargoFieldList } from './CargoFieldList';
@@ -75,7 +75,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
         showSuccessToast({ title: `Nalog "${shipment.orderNumber}" uspješno ažuriran` });
         void back();
       } else {
-        const payload = transformFormDataToPayload(data);
+        const payload = transformFormDataToPayload(data, { tenantId: tenant.id });
 
         const newShipment = await createShipment(payload);
         showSuccessToast({ title: `Nalog "${newShipment.orderNumber}" uspješno kreiran` });
@@ -131,7 +131,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
                     <PriceField />
                   </Box>
                 </FlexLayout>
-                <ContractorField name="transportContractorId" tenant={tenant} />
+                <AgencyShipmentFields tenant={tenant} />
               </FlexLayout>
             </FlexLayout>
             <CargoFieldList />
@@ -149,5 +149,50 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
         </FlexLayout>
       </Box>
     </FormProvider>
+  );
+};
+
+const AgencyShipmentFields: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
+  const { setValue, getValues } = useFormContext<ShipmentFields>();
+  const isAgency = useWatch<ShipmentFields>({ name: 'isAgency' });
+  const price = useWatch<ShipmentFields>({ name: 'price' });
+  const agencyPrice = useWatch<ShipmentFields>({ name: 'agencyPrice' });
+
+  useEffect(() => {
+    if (!isAgency) return;
+    if (getValues('transportContractorId') === tenant.id) {
+      setValue('transportContractorId', '', { shouldDirty: true, shouldValidate: true });
+    }
+  }, [isAgency, tenant.id, getValues, setValue]);
+
+  const ruc = (Number(price) || 0) - (Number(agencyPrice) || 0);
+
+  return (
+    <>
+      <ContractorField excludeTenant={!!isAgency} name="transportContractorId" tenant={tenant} />
+      <FormSwitch label="Agencijski nalog" name="isAgency" />
+      {isAgency && (
+        <FlexLayout className="gap-4 items-end">
+          <Box className="flex-1">
+            <FormNumberInput
+              iconLeft="IconCurrencyEuro"
+              inputMode="decimal"
+              label="Cijena agencijskog prijevoza"
+              name="agencyPrice"
+              placeholder="XXX"
+              rules={{ required: true }}
+            />
+          </Box>
+          <FlexLayout className="flex-col flex-1 justify-between items-end">
+            <Text color="text-color-3" variant="text-xxs-medium">
+              RUC (Razlika u cijeni)
+            </Text>
+            <Text color={ruc >= 0 ? 'text-green-500' : 'text-red-500'} variant="text-xl-medium">
+              {ruc.toFixed(2)} €
+            </Text>
+          </FlexLayout>
+        </FlexLayout>
+      )}
+    </>
   );
 };
