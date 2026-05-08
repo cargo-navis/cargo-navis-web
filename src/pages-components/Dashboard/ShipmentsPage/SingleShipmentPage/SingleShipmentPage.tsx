@@ -23,12 +23,12 @@ import { Box, Button, Divider, FlexLayout, Icon, Pill, Text, Tooltip } from '@/u
 import { invoiceStatusConfig } from '../const';
 import { AssignVehicleModal } from '../NewShipmentPage/AssignVehicleModal';
 import { OverdueIndicator } from '../OverdueIndicator';
-import { ShipmentLeftPanel } from './components/ShipmentLeftPanel';
 import { CargoItem } from './components/CargoItem';
 import { ContentLoader } from './components/ContentLoader';
 import { InvoiceItem } from './components/InvoiceItem';
 import { ShipmentActions } from './components/ShipmentActions';
 import { ShipmentFileUploadButton } from './components/ShipmentFileUploadButton';
+import { ShipmentLeftPanel } from './components/ShipmentLeftPanel';
 import type { CargoWithMetadata } from './components/types';
 
 export const SingleShipmentPage = () => {
@@ -64,9 +64,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
   const isAssigned = (shipment.vehicleStops?.length ?? 0) > 0;
   const isAgency = (shipment.children?.length ?? 0) > 0;
 
-  const transporterId = isAgency
-    ? shipment.children?.[0]?.transportContractorId
-    : shipment.transportContractorId;
+  const transporterId = isAgency ? shipment.children?.[0]?.transportContractorId : shipment.transportContractorId;
   const { data: contractor } = useContractor(transporterId || '');
   const transporter = contractor ?? (transporterId === tenant?.id ? tenant : undefined);
   const transporterHref = contractor ? `/dashboard/contractors/${contractor.id}` : '/dashboard/tenant';
