@@ -22,6 +22,7 @@ export interface Shipment {
     status: string;
   }[];
   vehicleStops?: VehicleStop[];
+  children?: Shipment[];
 }
 
 export type GetShipmentParams = {

@@ -34,6 +34,18 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         meta: { width: '18%' },
         enableSorting: false,
         cell: (props) => {
+          if (props.row.depth > 0) {
+            const child = props.row.original;
+            const contractor = contractors.find((c) => c.id === child.transportContractorId);
+            return (
+              <FlexLayout className="items-center gap-2 py-2 text-dark-600 dark:text-light-300">
+                <Icon className="shrink-0" color="text-color-2" icon="IconTruck" size="m" />
+                <Text className="overflow-hidden text-ellipsis" color="text-color-2" variant="text-m-medium">
+                  {contractor?.name ?? '—'}
+                </Text>
+              </FlexLayout>
+            );
+          }
           const shipment = props.row.original;
           const { clientId, documents, isInvoiceOverdue, orderNumber } = shipment;
           const client = clients.find((c) => c.id === clientId);
@@ -80,10 +92,11 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                   </DisplayIf>
                 </FlexLayout>
               </FlexLayout>
-              <FlexLayout className={clsx(subtextColor, 'items-center gap-1 group-hover/row:text-inherit')}>
+              <FlexLayout className={clsx(subtextColor, 'items-center gap-2 group-hover/row:text-inherit')}>
                 <Text className="overflow-hidden text-ellipsis" variant="text-xs">
                   {orderNumber}
                 </Text>
+                {(shipment.children?.length ?? 0) > 0 && <Pill size="s" text="Agencijski nalog" variant="warning" />}
               </FlexLayout>
             </FlexLayout>
           );
@@ -106,11 +119,27 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         ),
         enableSorting: false,
         cell: (info) => {
-          const value = info.getValue() + '€';
+          const isSubRow = info.row.depth > 0;
+          const price = info.getValue();
+          if (isSubRow) {
+            const parentPrice = (info.row.original as Shipment & { _parentPrice?: number })._parentPrice ?? 0;
+            const ruc = parentPrice - (price || 0);
+            const rucClass = ruc >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400';
+            return (
+              <FlexLayout className="flex-col py-2 pr-4">
+                <Text className="text-red-500 dark:text-red-400" variant="text-m-medium">
+                  {`-${price}€`}
+                </Text>
+                <Text className={rucClass} variant="text-m-medium">
+                  RUC: {ruc}€
+                </Text>
+              </FlexLayout>
+            );
+          }
           return (
             <FlexLayout className="items-center py-2 pr-4">
               <Text className="text-green-500 dark:text-green-400" variant="text-m-medium">
-                {value}
+                {`${price}€`}
               </Text>
             </FlexLayout>
           );
@@ -122,6 +151,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         meta: { width: 'auto' },
         header: 'Utovar / Istovar',
         cell: (props) => {
+          if (props.row.depth > 0) return null;
           const { cargo } = props.row.original;
 
           const uniquePairs = new Map<string, (typeof cargo)[number]>();
@@ -179,6 +209,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: 'LDM / Težina',
         size: 110,
         cell: (props) => {
+          if (props.row.depth > 0) return null;
           const { cargo } = props.row.original;
 
           const ldmTotal = cargo.reduce((acc, c) => (acc += c.ldm || 0), 0);
@@ -202,6 +233,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         enableSorting: false,
         header: 'Vozilo / Vozač',
         cell: (props) => {
+          if (props.row.depth > 0) return null;
           const { vehicleStops } = props.row.original;
           const latestStop = vehicleStops?.[vehicleStops.length - 1];
           const vehicle = latestStop ? vehicles.find((v) => v.id === latestStop.vehicleId) : undefined;
@@ -253,6 +285,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         enableSorting: false,
         header: 'Palete',
         cell: (props) => {
+          if (props.row.depth > 0) return null;
           const { cargo } = props.row.original;
           const hasNonstandardCargo = cargo.some((c) => c.metadata?.type === 'nonstandard');
 
@@ -283,6 +316,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           </FlexLayout>
         ),
         cell: (info) => {
+          if (info.row.depth > 0) return null;
           const shipment = info.row.original;
           const invoiceConfig = invoiceStatusConfig[shipment.invoiceStatus];
 
@@ -296,8 +330,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
     ];
   }, [clients, contractors, employees, tenant, vehicles, router, toggleSort, isFieldSorted, getSortDirection]);
 
-  const handleRowClick = (shipment: Shipment) => {
-    router.push(`/dashboard/shipments/${shipment.id}`);
+  const handleRowClick = (shipment: Shipment & { _parentId?: string }) => {
+    router.push(`/dashboard/shipments/${shipment._parentId ?? shipment.id}`);
   };
 
   // Add isWarning flag to shipments missing vehicleId or driverId
@@ -310,12 +344,28 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         return s.invoiceStatus === InvoiceStatus.Paid; //&& isAllCargoUnloaded;
       }
 
+      const isAgency = (shipment.children?.length ?? 0) > 0;
       return {
         ...shipment,
         isSuccess: isShipmentComplete(shipment),
+        isAgency,
+        children: shipment.children?.map((child) => ({
+          ...child,
+          isAgency: true,
+          _parentId: shipment.id,
+          _parentPrice: shipment.price,
+        })),
       };
     });
   }, [shipments]);
 
-  return <Table areRowsExpanded columns={columns} data={shipmentsWithWarnings} onRowClick={handleRowClick} />;
+  return (
+    <Table
+      areRowsExpanded
+      columns={columns}
+      data={shipmentsWithWarnings}
+      getSubRows={(s) => s.children}
+      onRowClick={handleRowClick}
+    />
+  );
 }

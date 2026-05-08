@@ -74,6 +74,7 @@ export const Table: React.FC<TableProps> = ({ data, columns, onRowClick, getSubR
           // Check if this row has a warning flag
           const hasWarning = !isSubRow && row.original && row.original.isWarning === true;
           const isSuccess = row.original && row.original.isSuccess === true;
+          const isAgency = row.original && row.original.isAgency === true;
 
           return (
             <Box
@@ -81,11 +82,15 @@ export const Table: React.FC<TableProps> = ({ data, columns, onRowClick, getSubR
               className={clsx(
                 'group/row border-b border-b-black-alpha-10 dark:border-b-white-alpha-25 last:border-b-0',
                 onRowClick && 'cursor-pointer',
-                isSubRow
+                isSubRow && !isAgency
                   ? 'bg-dark-200 dark:bg-white-alpha-10 hover:bg-black-alpha-05 dark:hover:bg-white-alpha-10'
                   : 'hover:bg-black-alpha-05 dark:hover:bg-white-alpha-10',
                 isSubRow && 'relative',
                 hasWarning && 'bg-red-50/80 dark:bg-red-800/50 hover:bg-red-100/50 dark:hover:bg-red-800/80',
+                isAgency &&
+                  !isSuccess &&
+                  !hasWarning &&
+                  'bg-yellow-100/80 dark:bg-yellow-900/40 hover:bg-yellow-100/70 dark:hover:bg-yellow-900/60',
                 isSuccess && 'bg-green-100/80 dark:bg-green-800/50 hover:bg-green-100/50 dark:hover:bg-green-800/80'
               )}
               key={row.id}

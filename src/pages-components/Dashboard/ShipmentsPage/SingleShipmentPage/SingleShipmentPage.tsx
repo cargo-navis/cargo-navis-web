@@ -9,6 +9,8 @@ import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { FileCard } from '@/lib/components/FileCard';
 import {
   useClient,
+  useContractor,
+  useCurrentTenant,
   useDeleteShipmentFile,
   useGetShipmentDocumentUrl,
   useShipment,
@@ -16,19 +18,17 @@ import {
 } from '@/lib/hooks';
 import { downloadShipmentFile } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, Divider, FlexLayout, Icon, Text, Tooltip } from '@/ui';
+import { Box, Button, Divider, FlexLayout, Icon, Pill, Text, Tooltip } from '@/ui';
 
 import { invoiceStatusConfig } from '../const';
 import { AssignVehicleModal } from '../NewShipmentPage/AssignVehicleModal';
 import { OverdueIndicator } from '../OverdueIndicator';
-import { BasicInfo } from './components/BasicInfo';
+import { ShipmentLeftPanel } from './components/ShipmentLeftPanel';
 import { CargoItem } from './components/CargoItem';
 import { ContentLoader } from './components/ContentLoader';
-import { EmptyShipmentVehicleStops } from './components/EmptyShipmentVehicleStops';
 import { InvoiceItem } from './components/InvoiceItem';
 import { ShipmentActions } from './components/ShipmentActions';
 import { ShipmentFileUploadButton } from './components/ShipmentFileUploadButton';
-import { ShipmentVehicleStops } from './components/ShipmentVehicleStops';
 import type { CargoWithMetadata } from './components/types';
 
 export const SingleShipmentPage = () => {
@@ -59,9 +59,19 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
   const { mutateAsync: getDocumentUrl, isPending: isGettingDocumentUrl } = useGetShipmentDocumentUrl(shipment.id);
 
   const { data: client } = useClient(shipment.clientId || '');
+  const { data: tenant } = useCurrentTenant();
+
+  const isAssigned = (shipment.vehicleStops?.length ?? 0) > 0;
+  const isAgency = (shipment.children?.length ?? 0) > 0;
+
+  const transporterId = isAgency
+    ? shipment.children?.[0]?.transportContractorId
+    : shipment.transportContractorId;
+  const { data: contractor } = useContractor(transporterId || '');
+  const transporter = contractor ?? (transporterId === tenant?.id ? tenant : undefined);
+  const transporterHref = contractor ? `/dashboard/contractors/${contractor.id}` : '/dashboard/tenant';
 
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
-  const isAssigned = (shipment.vehicleStops?.length ?? 0) > 0;
 
   const handleInvoiceChange = async (invoiceStatus: InvoiceStatus) => {
     try {
@@ -119,32 +129,33 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
       <FlexLayout className="justify-between">
         <BackButton targetLocation="/dashboard/shipments" />
         <FlexLayout className="items-center gap-3">
-          {isAssigned ? (
-            <Tooltip
-              content={
-                <Box className="px-2">
-                  <Text color="text-light-50" variant="text-xs">
-                    Nalog je već dodijeljen vozilu.
-                  </Text>
+          {!isAgency &&
+            (isAssigned ? (
+              <Tooltip
+                content={
+                  <Box className="px-2">
+                    <Text color="text-light-50" variant="text-xs">
+                      Nalog je već dodijeljen vozilu.
+                    </Text>
+                  </Box>
+                }
+              >
+                <Box>
+                  <Button iconLeft="IconTruck" isDisabled text="Dodijeli vozilo" variant="secondary" />
                 </Box>
-              }
-            >
-              <Box>
-                <Button iconLeft="IconTruck" isDisabled text="Dodijeli vozilo" variant="secondary" />
-              </Box>
-            </Tooltip>
-          ) : (
-            <Button
-              iconLeft="IconTruck"
-              text="Dodijeli vozilo"
-              variant="secondary"
-              onClick={() => setIsAssignModalOpen(true)}
-            />
-          )}
+              </Tooltip>
+            ) : (
+              <Button
+                iconLeft="IconTruck"
+                text="Dodijeli vozilo"
+                variant="secondary"
+                onClick={() => setIsAssignModalOpen(true)}
+              />
+            ))}
           <ShipmentActions id={shipment.id} />
         </FlexLayout>
       </FlexLayout>
-      {isAssignModalOpen && (
+      {!isAgency && isAssignModalOpen && (
         <AssignVehicleModal
           cargos={shipment.cargo}
           clientId={shipment.clientId}
@@ -167,17 +178,30 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     <Text as="h1" color="text-color-1" variant="text-xl-bold">
                       {shipment.orderNumber}
                     </Text>
+                    {isAgency && <Pill size="s" text="Agencijski nalog" variant="warning" />}
                     <OverdueIndicator shipment={shipment} />
                   </FlexLayout>
-                  <Link
-                    className="flex items-center gap-1 text-dark-600 dark:text-light-300 hover:text-teal-500 transition-colors"
-                    href={`/dashboard/clients/${client?.id}`}
-                  >
-                    <Icon icon="IconBriefcase" size="m" />
-                    <Text className="overflow-hidden text-ellipsis" variant="text-m">
-                      {client?.name}
-                    </Text>
-                  </Link>
+                  <FlexLayout className="flex-wrap items-center gap-3 text-dark-600 dark:text-light-300">
+                    <Link
+                      className="flex items-center gap-1 hover:text-teal-500 transition-colors"
+                      href={`/dashboard/clients/${client?.id}`}
+                    >
+                      <Icon icon="IconBriefcase" size="m" />
+                      <Text variant="text-m">{client?.name ?? '—'}</Text>
+                    </Link>
+                    {transporter && (
+                      <>
+                        <Text variant="text-m">•</Text>
+                        <Link
+                          className="flex items-center gap-1 hover:text-teal-500 transition-colors"
+                          href={transporterHref}
+                        >
+                          <Icon icon="IconTruck" size="m" />
+                          <Text variant="text-m">{transporter.name}</Text>
+                        </Link>
+                      </>
+                    )}
+                  </FlexLayout>
                 </FlexLayout>
                 <InvoiceItem
                   invoiceStatus={shipment.invoiceStatus}
@@ -205,15 +229,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
           <Divider />
           <FlexLayout className="flex-row gap-5">
             <FlexLayout className="w-[380px] flex-col gap-4">
-              <BasicInfo shipment={shipment} />
-              <Box className="py-4">
-                <Divider />
-              </Box>
-              {isAssigned && shipment.vehicleStops ? (
-                <ShipmentVehicleStops stops={shipment.vehicleStops} />
-              ) : (
-                <EmptyShipmentVehicleStops onAssignClick={() => setIsAssignModalOpen(true)} />
-              )}
+              <ShipmentLeftPanel shipment={shipment} onAssignClick={() => setIsAssignModalOpen(true)} />
             </FlexLayout>
             <FlexLayout as="section" className="flex-1 flex-col gap-4 min-w-0">
               <Text color="text-color-2" variant="text-l-medium">
