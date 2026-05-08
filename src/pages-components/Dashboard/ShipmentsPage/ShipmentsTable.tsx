@@ -9,7 +9,7 @@ import { InvoiceStatus } from '@/lib/api/shipments';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
-import { Box, DisplayIf, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
+import { Box, DisplayIf, Divider, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
 
 import { AddressItem } from './AddressesList';
 import { invoiceStatusConfig } from './const';
@@ -34,21 +34,13 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         meta: { width: '18%' },
         enableSorting: false,
         cell: (props) => {
-          if (props.row.depth > 0) {
-            const child = props.row.original;
-            const contractor = contractors.find((c) => c.id === child.transportContractorId);
-            return (
-              <FlexLayout className="items-center gap-2 py-2 text-dark-600 dark:text-light-300">
-                <Icon className="shrink-0" color="text-color-2" icon="IconTruck" size="m" />
-                <Text className="overflow-hidden text-ellipsis" color="text-color-2" variant="text-m-medium">
-                  {contractor?.name ?? '—'}
-                </Text>
-              </FlexLayout>
-            );
-          }
           const shipment = props.row.original;
           const { clientId, documents, isInvoiceOverdue, orderNumber } = shipment;
           const client = clients.find((c) => c.id === clientId);
+          const isAgency = (shipment.children?.length ?? 0) > 0;
+          const transporter = isAgency
+            ? contractors.find((c) => c.id === shipment.children?.[0]?.transportContractorId)
+            : undefined;
 
           const hasDocuments = !!documents?.length;
 
@@ -96,8 +88,18 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                 <Text className="overflow-hidden text-ellipsis" variant="text-xs">
                   {orderNumber}
                 </Text>
-                {(shipment.children?.length ?? 0) > 0 && <Pill size="s" text="Agencijski nalog" variant="warning" />}
+                {isAgency && <Pill size="s" text="Agencijski nalog" variant="warning" />}
               </FlexLayout>
+              {isAgency && (
+                <FlexLayout className="flex-col mt-2">
+                  <Text color="text-color-3" variant="text-xxs-medium">
+                    Transporter
+                  </Text>
+                  <Text className="overflow-hidden text-ellipsis" color="text-color-2" variant="text-s-medium">
+                    {transporter?.name ?? '—'}
+                  </Text>
+                </FlexLayout>
+              )}
             </FlexLayout>
           );
         },
@@ -106,7 +108,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         size: 120,
         header: () => (
           <FlexLayout
-            className="items-center gap-1 cursor-pointer select-none hover:text-teal-500"
+            className="w-full justify-center items-center px-4 text-center cursor-pointer select-none hover:text-teal-500"
             onClick={() => toggleSort(SortFieldEnum.Price)}
           >
             <Text className="whitespace-nowrap" variant="text-s-medium">
@@ -119,28 +121,34 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         ),
         enableSorting: false,
         cell: (info) => {
-          const isSubRow = info.row.depth > 0;
           const price = info.getValue();
-          if (isSubRow) {
-            const parentPrice = (info.row.original as Shipment & { _parentPrice?: number })._parentPrice ?? 0;
-            const ruc = parentPrice - (price || 0);
-            const rucClass = ruc >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400';
-            return (
-              <FlexLayout className="flex-col py-2 pr-4">
-                <Text className="text-red-500 dark:text-red-400" variant="text-m-medium">
-                  {`-${price}€`}
-                </Text>
-                <Text className={rucClass} variant="text-m-medium">
-                  RUC: {ruc}€
-                </Text>
-              </FlexLayout>
-            );
-          }
+          const shipment = info.row.original;
+          const childPrice = shipment.children?.[0]?.price;
+          const isAgency = childPrice !== undefined;
+          const ruc = isAgency ? (price || 0) - childPrice : 0;
+          const rucClass = ruc >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400';
+
           return (
-            <FlexLayout className="items-center py-2 pr-4">
+            <FlexLayout className="flex-col items-stretch text-right tabular-nums py-2 pl-4 pr-6">
               <Text className="text-green-500 dark:text-green-400" variant="text-m-medium">
                 {`${price}€`}
               </Text>
+              {isAgency && (
+                <>
+                  <Text className="text-red-500 dark:text-red-400" variant="text-m-medium">
+                    {`-${childPrice}€`}
+                  </Text>
+                  <Box className="my-2 self-stretch">
+                    <Divider />
+                  </Box>
+                  <Text color="text-color-3" variant="text-xxs-medium">
+                    RUC
+                  </Text>
+                  <Text className={rucClass} variant="text-m-medium">
+                    {ruc}€
+                  </Text>
+                </>
+              )}
             </FlexLayout>
           );
         },
@@ -149,9 +157,14 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         id: 'route',
         enableSorting: false,
         meta: { width: 'auto' },
-        header: 'Utovar / Istovar',
+        header: () => (
+          <FlexLayout className="items-center px-4 text-center">
+            <Text className="whitespace-nowrap" variant="text-s-medium">
+              Utovar / Istovar
+            </Text>
+          </FlexLayout>
+        ),
         cell: (props) => {
-          if (props.row.depth > 0) return null;
           const { cargo } = props.row.original;
 
           const uniquePairs = new Map<string, (typeof cargo)[number]>();
@@ -168,7 +181,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           });
 
           return (
-            <FlexLayout className="flex-col gap-3 py-2 pr-6">
+            <FlexLayout className="flex-col gap-3 py-2 px-4">
               {Array.from(loadingGroups.values()).map((groupCargos, gi) => (
                 <Box
                   className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-x-3 gap-y-2"
@@ -209,7 +222,6 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: 'LDM / Težina',
         size: 110,
         cell: (props) => {
-          if (props.row.depth > 0) return null;
           const { cargo } = props.row.original;
 
           const ldmTotal = cargo.reduce((acc, c) => (acc += c.ldm || 0), 0);
@@ -233,7 +245,6 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         enableSorting: false,
         header: 'Vozilo / Vozač',
         cell: (props) => {
-          if (props.row.depth > 0) return null;
           const { vehicleStops } = props.row.original;
           const latestStop = vehicleStops?.[vehicleStops.length - 1];
           const vehicle = latestStop ? vehicles.find((v) => v.id === latestStop.vehicleId) : undefined;
@@ -285,7 +296,6 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         enableSorting: false,
         header: 'Palete',
         cell: (props) => {
-          if (props.row.depth > 0) return null;
           const { cargo } = props.row.original;
           const hasNonstandardCargo = cargo.some((c) => c.metadata?.type === 'nonstandard');
 
@@ -316,7 +326,6 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           </FlexLayout>
         ),
         cell: (info) => {
-          if (info.row.depth > 0) return null;
           const shipment = info.row.original;
           const invoiceConfig = invoiceStatusConfig[shipment.invoiceStatus];
 
@@ -330,8 +339,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
     ];
   }, [clients, contractors, employees, tenant, vehicles, router, toggleSort, isFieldSorted, getSortDirection]);
 
-  const handleRowClick = (shipment: Shipment & { _parentId?: string }) => {
-    router.push(`/dashboard/shipments/${shipment._parentId ?? shipment.id}`);
+  const handleRowClick = (shipment: Shipment) => {
+    router.push(`/dashboard/shipments/${shipment.id}`);
   };
 
   // Add isWarning flag to shipments missing vehicleId or driverId
@@ -344,28 +353,13 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         return s.invoiceStatus === InvoiceStatus.Paid; //&& isAllCargoUnloaded;
       }
 
-      const isAgency = (shipment.children?.length ?? 0) > 0;
       return {
         ...shipment,
         isSuccess: isShipmentComplete(shipment),
-        isAgency,
-        children: shipment.children?.map((child) => ({
-          ...child,
-          isAgency: true,
-          _parentId: shipment.id,
-          _parentPrice: shipment.price,
-        })),
+        isAgency: (shipment.children?.length ?? 0) > 0,
       };
     });
   }, [shipments]);
 
-  return (
-    <Table
-      areRowsExpanded
-      columns={columns}
-      data={shipmentsWithWarnings}
-      getSubRows={(s) => s.children}
-      onRowClick={handleRowClick}
-    />
-  );
+  return <Table areRowsExpanded columns={columns} data={shipmentsWithWarnings} onRowClick={handleRowClick} />;
 }
