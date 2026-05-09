@@ -69,6 +69,7 @@ export interface VehicleStop {
   unloadingCargos: VehicleStopCargo[];
   documents: VehicleStopDocument[];
   messageSentAt: string | null;
+  completedAt?: string;
 }
 
 export interface VehicleStopGroup {

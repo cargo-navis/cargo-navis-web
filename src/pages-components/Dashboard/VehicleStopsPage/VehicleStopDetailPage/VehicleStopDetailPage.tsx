@@ -123,9 +123,7 @@ export const VehicleStopDetailPage = () => {
           <Timeline className="w-full" defaultValue={stops.length} orientation="vertical">
             {stops.map((stop, i) => (
               <VerticalStopEntry
-                completed
                 key={stop.id}
-                separatorActive
                 step={i + 1}
                 stop={stop}
                 // onDelete={handleDelete} TODO - enable once we decide how to handle this on BE

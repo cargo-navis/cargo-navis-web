@@ -15,6 +15,7 @@ import {
 import type { VehicleStop, VehicleStopCargo } from '@/lib/api/vehicleStops';
 import { useVehicles } from '@/lib/hooks';
 import { getCargoLabel } from '@/lib/utils/cargo';
+import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Box, FlexLayout, Icon, Text, Tooltip } from '@/ui';
 
 interface ShipmentVehicleStopsProps {
@@ -80,6 +81,7 @@ export const ShipmentVehicleStops = ({ stops }: ShipmentVehicleStopsProps) => {
       <Timeline className="w-full pt-5" defaultValue={orderedStops.length} orientation="vertical">
         {orderedStops.map((stop, i) => (
           <SidebarStopEntry
+            isCompleted={isStopCompleted(stop)}
             key={stop.id}
             registration={vehicleById.get(stop.vehicleId)?.registration}
             showAssignment={isMixed}
@@ -97,11 +99,13 @@ const SidebarStopEntry = ({
   step,
   showAssignment,
   registration,
+  isCompleted,
 }: {
   stop: VehicleStop;
   step: number;
   showAssignment: boolean;
   registration?: string;
+  isCompleted: boolean;
 }) => {
   const { address, date, loadingCargos, unloadingCargos, driverId } = stop;
   const hasLoading = loadingCargos.length > 0;
@@ -169,17 +173,47 @@ const SidebarStopEntry = ({
   );
 
   return (
-    <TimelineItem completed separatorActive step={step} style={{ paddingLeft: '24px', paddingBottom: '24px' }}>
+    <TimelineItem
+      completed={isCompleted}
+      separatorActive={isCompleted}
+      step={step}
+      style={{ paddingLeft: '24px', paddingBottom: '24px' }}
+    >
       <TimelineHeader>
         <TimelineSeparator
+          className={isCompleted ? undefined : 'bg-transparent'}
           style={{
             left: '5px',
             top: '20px',
             height: 'calc(100% - 12px)',
             width: '2px',
+            ...(isCompleted
+              ? {}
+              : {
+                  backgroundImage:
+                    'repeating-linear-gradient(to bottom, rgb(19 148 159 / 0.3) 0 5px, transparent 5px 9px)',
+                }),
           }}
         />
-        <TimelineIndicator style={{ top: 6, left: 0, width: 12, height: 12 }} />
+        <TimelineIndicator
+          className={isCompleted ? 'flex items-center justify-center bg-teal-500 text-white' : undefined}
+          style={{ top: 6, left: 0, width: 12, height: 12 }}
+        >
+          {isCompleted && (
+            <svg
+              fill="none"
+              height="8"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2.5"
+              viewBox="0 0 12 12"
+              width="8"
+            >
+              <path d="M2.5 6.5l2.5 2.5 4.5-5" />
+            </svg>
+          )}
+        </TimelineIndicator>
       </TimelineHeader>
       {hasTooltip ? (
         <Tooltip

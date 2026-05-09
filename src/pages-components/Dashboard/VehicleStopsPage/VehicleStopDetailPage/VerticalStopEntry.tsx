@@ -16,6 +16,7 @@ import { FileCard } from '@/lib/components/FileCard';
 import { useDeleteVehicleStopFile, useGetVehicleStopFileUrl, useSendVehicleStopMessage } from '@/lib/hooks';
 import { downloadVehicleStopFile } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
+import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Box, FlexLayout, Icon, Text, TextButton } from '@/ui';
 
 import { CargoSection } from './CargoSection';
@@ -24,22 +25,13 @@ import { VehicleStopFileUploadButton } from './VehicleStopFileUploadButton';
 interface VerticalStopEntryProps {
   stop: VehicleStop;
   step: number;
-  completed?: boolean;
-  separatorActive?: boolean;
   onEdit?(stop: VehicleStop): void;
   onDelete?(stop: VehicleStop): void;
   onInsertBefore?(): void;
 }
 
-export const VerticalStopEntry = ({
-  stop,
-  step,
-  completed,
-  separatorActive,
-  onEdit,
-  onDelete,
-  onInsertBefore,
-}: VerticalStopEntryProps) => {
+export const VerticalStopEntry = ({ stop, step, onEdit, onDelete, onInsertBefore }: VerticalStopEntryProps) => {
+  const isCompleted = isStopCompleted(stop);
   const { address, date, loadingCargos, unloadingCargos, documents } = stop;
   const hasLoading = loadingCargos.length > 0;
   const hasUnloading = unloadingCargos.length > 0;
@@ -98,21 +90,46 @@ export const VerticalStopEntry = ({
   return (
     <TimelineItem
       className="group/stop-entry relative"
-      completed={completed}
-      separatorActive={separatorActive}
+      completed={isCompleted}
+      separatorActive={isCompleted}
       step={step}
       style={{ paddingLeft: '32px', paddingBottom: '78px' }}
     >
       <TimelineHeader>
         <TimelineSeparator
+          className={isCompleted ? undefined : 'bg-transparent'}
           style={{
             left: '7px',
             top: '68px',
             height: 'calc(100% - 16px)',
             width: '2px',
+            ...(isCompleted
+              ? {}
+              : {
+                  backgroundImage:
+                    'repeating-linear-gradient(to bottom, rgb(19 148 159 / 0.3) 0 5px, transparent 5px 9px)',
+                }),
           }}
         />
-        <TimelineIndicator style={{ top: 52, left: 0 }} />
+        <TimelineIndicator
+          className={isCompleted ? 'flex items-center justify-center bg-teal-500 text-white' : undefined}
+          style={{ top: 52, left: 0 }}
+        >
+          {isCompleted && (
+            <svg
+              fill="none"
+              height="10"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2.5"
+              viewBox="0 0 12 12"
+              width="10"
+            >
+              <path d="M2.5 6.5l2.5 2.5 4.5-5" />
+            </svg>
+          )}
+        </TimelineIndicator>
       </TimelineHeader>
       <TimelineDate>
         {date ? (
@@ -123,7 +140,7 @@ export const VerticalStopEntry = ({
           </Box>
         )}
       </TimelineDate>
-      <FlexLayout className="items-center gap-1">
+      <FlexLayout className="items-center gap-1 relative">
         <FlexLayout
           className={clsx(
             'items-center gap-1 text-dark-600 dark:text-light-300',
@@ -139,31 +156,31 @@ export const VerticalStopEntry = ({
             </Text>
           )}
         </FlexLayout>
-        <Text color="text-color-3" variant="text-xs">
-          •
-        </Text>
-        <FlexLayout
-          className={clsx(
-            'items-center gap-1 text-dark-600 dark:text-light-300',
-            !stop.disponentId && 'text-red-600 dark:text-red-600'
-          )}
-        >
-          <Icon icon="IconUser" size="m" />
-          {stop.disponentId ? (
-            <EmployeeName id={stop.disponentId} variant="text-xs" />
-          ) : (
-            <Text as="span" variant="text-xs">
-              Disponent nedostaje
-            </Text>
-          )}
-        </FlexLayout>
-        <FlexLayout className="flex-col ml-10 relative">
+        {/*<Text color="text-color-3" variant="text-xs">*/}
+        {/*  •*/}
+        {/*</Text>*/}
+        {/*<FlexLayout*/}
+        {/*  className={clsx(*/}
+        {/*    'items-center gap-1 text-dark-600 dark:text-light-300',*/}
+        {/*    !stop.disponentId && 'text-red-600 dark:text-red-600'*/}
+        {/*  )}*/}
+        {/*>*/}
+        {/*  <Icon icon="IconUser" size="m" />*/}
+        {/*  {stop.disponentId ? (*/}
+        {/*    <EmployeeName id={stop.disponentId} variant="text-xs" />*/}
+        {/*  ) : (*/}
+        {/*    <Text as="span" variant="text-xs">*/}
+        {/*      Disponent nedostaje*/}
+        {/*    </Text>*/}
+        {/*  )}*/}
+        {/*</FlexLayout>*/}
+        <FlexLayout className="flex-col absolute left-[40%] -top-2 items-end">
           {!!stop.driverId && (
             <TextButton
               iconLeft="IconBrandWhatsapp"
               isDisabled={isSendingMessage}
               size="s"
-              text={stop.messageSentAt ? 'Obavijesti vozača ponovno' : 'Obavijesti vozača'}
+              text={stop.messageSentAt ? 'Obavijesti ponovno' : 'Obavijesti vozača'}
               type="button"
               variant="secondary"
               onClick={handleSendMessage}

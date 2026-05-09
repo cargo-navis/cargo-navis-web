@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import dayjs from 'dayjs';
 
 import {
@@ -10,6 +11,7 @@ import {
   TimelineTitle,
 } from '@/components/reui/timeline';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
+import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 import { Tooltip } from '@/ui/components/Tooltip/Tooltip';
 
@@ -59,16 +61,24 @@ export const StopTimelineEntry = ({ stop, step }: StopTimelineItemProps) => {
   const { address, date, loadingCargos, unloadingCargos } = stop;
   const hasLoading = loadingCargos.length > 0;
   const hasUnloading = unloadingCargos.length > 0;
+  const isCompleted = isStopCompleted(stop);
 
   return (
-    <TimelineItem step={step} style={{ paddingRight: '32px' }}>
+    <TimelineItem completed={isCompleted} separatorActive={isCompleted} step={step} style={{ paddingRight: '32px' }}>
       <TimelineHeader>
         <TimelineSeparator
+          className={isCompleted ? undefined : 'bg-transparent'}
           style={{
             top: '28px',
             height: '2px',
             width: 'calc(100% - 20px)',
             transform: 'translateX(18px) translateY(-50%)',
+            ...(isCompleted
+              ? {}
+              : {
+                  backgroundImage:
+                    'repeating-linear-gradient(to right, rgb(19 148 159 / 0.3) 0 5px, transparent 5px 9px)',
+                }),
           }}
         />
         <TimelineDate style={{ marginBottom: '20px' }}>
@@ -89,10 +99,28 @@ export const StopTimelineEntry = ({ stop, step }: StopTimelineItemProps) => {
         </TimelineTitle>
         <Tooltip content={<StopTooltipContent stop={stop} />} isPortal>
           <TimelineIndicator
-            className="z-10 cursor-default"
+            className={clsx(
+              'z-10 cursor-default',
+              isCompleted && 'flex items-center justify-center bg-teal-500 text-white'
+            )}
             style={{ top: '28px', left: 0, transform: 'translateY(-50%)' }}
             onClick={(e) => e.preventDefault()}
-          />
+          >
+            {isCompleted && (
+              <svg
+                fill="none"
+                height="10"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2.5"
+                viewBox="0 0 12 12"
+                width="10"
+              >
+                <path d="M2.5 6.5l2.5 2.5 4.5-5" />
+              </svg>
+            )}
+          </TimelineIndicator>
         </Tooltip>
       </TimelineHeader>
       <TimelineContent>
