@@ -24,11 +24,17 @@ interface ShipmentVehicleStopsProps {
 export const ShipmentVehicleStops = ({ stops }: ShipmentVehicleStopsProps) => {
   if (stops.length === 0) return null;
 
-  const vehicleId = stops[0].vehicleId;
   const orderedStops = [...stops].reverse();
   const latestStop = orderedStops[0];
+  const headerVehicleId = stops[0].vehicleId;
   const { data: vehicles } = useVehicles();
-  const vehicle = vehicles?.find((v) => v.id === vehicleId);
+  const vehicleById = new Map((vehicles ?? []).map((v) => [v.id, v]));
+
+  const uniqueVehicleIds = new Set(stops.map((s) => s.vehicleId));
+  const uniqueDriverIds = new Set(stops.map((s) => s.driverId).filter((id): id is string => Boolean(id)));
+  const isMixed = uniqueVehicleIds.size > 1 || uniqueDriverIds.size > 1;
+
+  const headerVehicle = vehicleById.get(headerVehicleId);
 
   return (
     <FlexLayout className="flex-col gap-3">
@@ -39,7 +45,7 @@ export const ShipmentVehicleStops = ({ stops }: ShipmentVehicleStopsProps) => {
           </Text>
           <Link
             className="flex items-center gap-1 text-teal-500 hover:text-teal-700 transition-colors shrink-0"
-            href={`/dashboard/vehicle-stops/${vehicleId}`}
+            href={`/dashboard/vehicle-stops/${headerVehicleId}`}
           >
             <Text as="span" color="text-inherit" variant="text-xxs-medium">
               Otvori detalje
@@ -47,39 +53,57 @@ export const ShipmentVehicleStops = ({ stops }: ShipmentVehicleStopsProps) => {
             <Icon icon="IconArrowRight" size="s" />
           </Link>
         </FlexLayout>
-        <FlexLayout className="items-center gap-2 text-dark-600 dark:text-light-300">
-          {vehicle?.registration && (
-            <FlexLayout className="items-center gap-1">
-              <Icon icon="IconTruck" size="s" />
-              <Text as="span" color="text-inherit" variant="text-xxs">
-                {vehicle.registration}
-              </Text>
-            </FlexLayout>
-          )}
-          {latestStop?.driverId && (
-            <>
-              <Text as="span" color="text-inherit" variant="text-xxs">
-                •
-              </Text>
+        {!isMixed && (
+          <FlexLayout className="items-center gap-2 text-dark-600 dark:text-light-300">
+            {headerVehicle?.registration && (
               <FlexLayout className="items-center gap-1">
-                <Icon icon="IconSteeringWheel" size="s" />
-                <EmployeeName color="text-inherit" id={latestStop.driverId} variant="text-xxs" />
+                <Icon icon="IconTruck" size="s" />
+                <Text as="span" color="text-inherit" variant="text-xxs">
+                  {headerVehicle.registration}
+                </Text>
               </FlexLayout>
-            </>
-          )}
-        </FlexLayout>
+            )}
+            {latestStop?.driverId && (
+              <>
+                <Text as="span" color="text-inherit" variant="text-xxs">
+                  •
+                </Text>
+                <FlexLayout className="items-center gap-1">
+                  <Icon icon="IconSteeringWheel" size="s" />
+                  <EmployeeName color="text-inherit" id={latestStop.driverId} variant="text-xxs" />
+                </FlexLayout>
+              </>
+            )}
+          </FlexLayout>
+        )}
       </FlexLayout>
       <Timeline className="w-full pt-5" defaultValue={orderedStops.length} orientation="vertical">
         {orderedStops.map((stop, i) => (
-          <SidebarStopEntry key={stop.id} step={i + 1} stop={stop} />
+          <SidebarStopEntry
+            key={stop.id}
+            registration={vehicleById.get(stop.vehicleId)?.registration}
+            showAssignment={isMixed}
+            step={i + 1}
+            stop={stop}
+          />
         ))}
       </Timeline>
     </FlexLayout>
   );
 };
 
-const SidebarStopEntry = ({ stop, step }: { stop: VehicleStop; step: number }) => {
-  const { address, date, loadingCargos, unloadingCargos } = stop;
+const SidebarStopEntry = ({
+  stop,
+  step,
+  showAssignment,
+  registration,
+}: {
+  stop: VehicleStop;
+  step: number;
+  showAssignment: boolean;
+  registration?: string;
+}) => {
+  const { address, date, loadingCargos, unloadingCargos, driverId } = stop;
   const hasLoading = loadingCargos.length > 0;
   const hasUnloading = unloadingCargos.length > 0;
   const hasTooltip = hasLoading || hasUnloading;
@@ -115,6 +139,31 @@ const SidebarStopEntry = ({ stop, step }: { stop: VehicleStop; step: number }) =
             {address.streetName}
           </Text>
         </TimelineContent>
+      )}
+      {showAssignment && (registration || driverId) && (
+        <FlexLayout className="items-center gap-2 mt-1 text-dark-600 dark:text-light-300">
+          {registration && (
+            <FlexLayout className="items-center gap-1">
+              <Icon icon="IconTruck" size="s" />
+              <Text as="span" color="text-inherit" variant="text-xxs">
+                {registration}
+              </Text>
+            </FlexLayout>
+          )}
+          {driverId && (
+            <>
+              {registration && (
+                <Text as="span" color="text-inherit" variant="text-xxs">
+                  •
+                </Text>
+              )}
+              <FlexLayout className="items-center gap-1">
+                <Icon icon="IconSteeringWheel" size="s" />
+                <EmployeeName color="text-inherit" id={driverId} variant="text-xxs" />
+              </FlexLayout>
+            </>
+          )}
+        </FlexLayout>
       )}
     </FlexLayout>
   );
