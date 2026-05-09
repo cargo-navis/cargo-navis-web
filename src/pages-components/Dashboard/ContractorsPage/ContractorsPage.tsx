@@ -2,6 +2,7 @@ import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import type { Contractor } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
@@ -17,7 +18,12 @@ const FUSE_OPTIONS: ConstructorParameters<typeof Fuse<Contractor>>[1] = {
 export const ContractorsPage = () => {
   const { data, isLoading } = useContractors();
 
-  return <DashboardLayout>{isLoading ? <LoadingPage /> : <MainContent contractors={data || []} />}</DashboardLayout>;
+  return (
+    <DashboardLayout>
+      <PageTitle title="Kontraktori" />
+      {isLoading ? <LoadingPage /> : <MainContent contractors={data || []} />}
+    </DashboardLayout>
+  );
 };
 
 const MainContent = ({ contractors }: { contractors: Contractor[] }) => {

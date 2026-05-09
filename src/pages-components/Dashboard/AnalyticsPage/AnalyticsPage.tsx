@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import { ClientAnalyticsItem, DriverAnalyticsItem, VehicleAnalyticsItem } from '@/lib/api';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import {
@@ -97,6 +98,7 @@ export const AnalyticsPage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title="Analitika" />
       <FlexLayout className="flex-col gap-5">
         <FlexLayout className="flex-col gap-4">
           <Heading as="h1" variant="text-xl">

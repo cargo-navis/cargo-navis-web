@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import type { Contractor } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useContractor } from '@/lib/hooks';
@@ -16,6 +17,7 @@ export const EditContractorPage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title={contractor?.name} type="Uredi kontraktora" />
       {isLoading || !contractor || !id ? (
         <LoadingPage />
       ) : (

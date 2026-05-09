@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import type { Vehicle } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicle } from '@/lib/hooks';
@@ -19,7 +20,12 @@ export const SingleSoloTruckPage = () => {
 
   const { data: solo } = useVehicle(soloId as string);
 
-  return <DashboardLayout>{!solo ? <LoadingPage /> : <MainContent solo={solo} />}</DashboardLayout>;
+  return (
+    <DashboardLayout>
+      <PageTitle title={solo?.registration} type="Solo kamion" />
+      {!solo ? <LoadingPage /> : <MainContent solo={solo} />}
+    </DashboardLayout>
+  );
 };
 
 const MainContent: React.FC<{ solo: Vehicle }> = ({ solo }) => {

@@ -2,6 +2,7 @@ import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import type { Client } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
@@ -17,7 +18,12 @@ const FUSE_OPTIONS: ConstructorParameters<typeof Fuse<Client>>[1] = {
 export const ClientsPage = () => {
   const { data, isLoading } = useClients();
 
-  return <DashboardLayout>{isLoading ? <LoadingPage /> : <MainContent clients={data || []} />}</DashboardLayout>;
+  return (
+    <DashboardLayout>
+      <PageTitle title="Klijenti" />
+      {isLoading ? <LoadingPage /> : <MainContent clients={data || []} />}
+    </DashboardLayout>
+  );
 };
 
 const MainContent = ({ clients }: { clients: Client[] }) => {

@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import { InvoiceStatus, Shipment } from '@/lib/api';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { FileCard } from '@/lib/components/FileCard';
@@ -39,6 +40,7 @@ export const SingleShipmentPage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title={shipment?.orderNumber} type="Nalog" />
       {!shipment || isLoading ? (
         <ClientSideOnly>
           <ContentLoader />

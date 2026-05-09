@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Vehicle } from '@/lib/api';
 import { useVehicles } from '@/lib/hooks';
@@ -37,6 +38,7 @@ export const VehicleStopsPage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title="Prijevozi" />
       <Box>
         <Heading as="h1" variant="text-xl">
           Prijevozi

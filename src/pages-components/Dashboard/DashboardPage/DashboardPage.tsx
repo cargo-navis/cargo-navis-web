@@ -1,4 +1,5 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import { useAlerts, useNotifications } from '@/lib/hooks';
 import { Box, DisplayIf, FlexLayout, Heading, Text } from '@/ui';
 
@@ -13,6 +14,7 @@ export const DashboardPage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title="Nadzorna ploča" />
       <Box>
         <Heading as="h1" variant="text-xl">
           Početna

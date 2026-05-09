@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { useCurrentTenant, useDeleteTenantLogo, useUploadTenantLogo } from '@/lib/hooks';
@@ -27,6 +28,7 @@ export const TenantPage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title="Tvrtka" />
       <Box>
         <MainContent tenant={tenant} />
       </Box>

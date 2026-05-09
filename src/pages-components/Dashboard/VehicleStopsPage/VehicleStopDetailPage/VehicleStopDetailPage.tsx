@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import { Timeline } from '@/components/reui/timeline';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { LoadingPage } from '@/lib/components/LoadingPage';
@@ -92,6 +93,7 @@ export const VehicleStopDetailPage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title={vehicle?.registration} type="Prijevoz" />
       <FlexLayout className="py-5 flex-col gap-5">
         <BackButton targetLocation="/dashboard/vehicle-stops" />
 

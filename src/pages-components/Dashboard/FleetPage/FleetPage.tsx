@@ -1,12 +1,14 @@
 import Link from 'next/link';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import { useSolos, useTrailers, useTrucks, useVans, useVehicles } from '@/lib/hooks';
 import { Box, Divider, FlexLayout, Heading, Icon, Text } from '@/ui';
 
 export const FleetPage = () => {
   return (
     <DashboardLayout>
+      <PageTitle title="Vozni park" />
       <Box>
         <Heading as="h1" variant="text-xl">
           Pregled Flote

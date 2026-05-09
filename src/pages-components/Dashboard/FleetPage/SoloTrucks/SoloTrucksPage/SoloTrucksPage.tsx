@@ -2,6 +2,7 @@ import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import type { Vehicle } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
@@ -18,7 +19,12 @@ const FUSE_OPTIONS: ConstructorParameters<typeof Fuse<Vehicle>>[1] = {
 export const SoloTrucksPage = () => {
   const { solos, isLoading } = useSolos();
 
-  return <DashboardLayout>{isLoading ? <LoadingPage /> : <MainContent solos={solos || []} />}</DashboardLayout>;
+  return (
+    <DashboardLayout>
+      <PageTitle title="Solo kamioni" />
+      {isLoading ? <LoadingPage /> : <MainContent solos={solos || []} />}
+    </DashboardLayout>
+  );
 };
 
 const MainContent = ({ solos }: { solos: Vehicle[] }) => {

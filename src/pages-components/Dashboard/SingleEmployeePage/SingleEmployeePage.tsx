@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import { type Employee, MessageChannelEnum, PositionEnum } from '@/lib/api/employees.d';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useEmployee } from '@/lib/hooks';
@@ -21,6 +22,7 @@ export const SingleEmployeePage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title={employee?.fullName} type="Zaposlenik" />
       {!employee || isLoading ? (
         <LoadingPage />
       ) : (

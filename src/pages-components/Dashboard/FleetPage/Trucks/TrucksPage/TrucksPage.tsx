@@ -2,6 +2,7 @@ import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import type { Vehicle } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
@@ -18,7 +19,12 @@ const FUSE_OPTIONS: ConstructorParameters<typeof Fuse<Vehicle>>[1] = {
 export const TrucksPage = () => {
   const { trucks, isLoading } = useTrucks();
 
-  return <DashboardLayout>{isLoading ? <LoadingPage /> : <MainContent trucks={trucks || []} />}</DashboardLayout>;
+  return (
+    <DashboardLayout>
+      <PageTitle title="Kamioni" />
+      {isLoading ? <LoadingPage /> : <MainContent trucks={trucks || []} />}
+    </DashboardLayout>
+  );
 };
 
 const MainContent = ({ trucks }: { trucks: Vehicle[] }) => {

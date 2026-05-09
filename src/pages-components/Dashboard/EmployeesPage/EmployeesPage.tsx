@@ -2,6 +2,7 @@ import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import type { Employee } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
@@ -18,7 +19,12 @@ const FUSE_OPTIONS: ConstructorParameters<typeof Fuse<Employee>>[1] = {
 export const EmployeesPage = () => {
   const { data, isLoading } = useEmployees();
 
-  return <DashboardLayout>{isLoading ? <LoadingPage /> : <MainContent employees={data || []} />}</DashboardLayout>;
+  return (
+    <DashboardLayout>
+      <PageTitle title="Zaposlenici" />
+      {isLoading ? <LoadingPage /> : <MainContent employees={data || []} />}
+    </DashboardLayout>
+  );
 };
 
 const MainContent = ({ employees }: { employees: Employee[] }) => {

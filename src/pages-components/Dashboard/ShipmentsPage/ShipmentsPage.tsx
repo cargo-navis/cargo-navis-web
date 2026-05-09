@@ -1,4 +1,5 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import {
   useClients,
   useContractors,
@@ -28,6 +29,7 @@ export const ShipmentsPage = () => {
   return (
     <ShipmentsFiltersProvider>
       <DashboardLayout>
+        <PageTitle title="Nalozi" />
         <Box>
           <FlexLayout className="items-center justify-between">
             <Heading as="h1" variant="text-xl">

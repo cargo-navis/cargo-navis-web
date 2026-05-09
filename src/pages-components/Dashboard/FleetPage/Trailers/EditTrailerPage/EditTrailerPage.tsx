@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import { type Vehicle, VehicleEnum } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicle } from '@/lib/hooks';
@@ -15,7 +16,12 @@ export const EditTrailerPage = () => {
 
   const { data: trailer } = useVehicle(trailerId as string);
 
-  return <DashboardLayout>{!trailer ? <LoadingPage /> : <MainContent trailer={trailer} />}</DashboardLayout>;
+  return (
+    <DashboardLayout>
+      <PageTitle title={trailer?.registration} type="Uredi prikolicu" />
+      {!trailer ? <LoadingPage /> : <MainContent trailer={trailer} />}
+    </DashboardLayout>
+  );
 };
 
 const MainContent: React.FC<{ trailer: Vehicle }> = ({ trailer }) => {

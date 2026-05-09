@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useCurrentTenant, useShipment } from '@/lib/hooks';
 import { Box, FlexLayout, Heading } from '@/ui';
@@ -26,6 +27,7 @@ export const NewShipmentPage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title="Novi nalog" />
       <Box>
         <FlexLayout className="flex-col gap-[40px]">
           <Heading as="h1" variant="text-xl">
