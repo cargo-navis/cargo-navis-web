@@ -17,7 +17,7 @@ import { useDeleteVehicleStopFile, useGetVehicleStopFileUrl, useSendVehicleStopM
 import { downloadVehicleStopFile } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
-import { Box, FlexLayout, Icon, Text, TextButton } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon, Text, TextButton } from '@/ui';
 
 import { CargoSection } from './CargoSection';
 import { VehicleStopFileUploadButton } from './VehicleStopFileUploadButton';
@@ -174,24 +174,26 @@ export const VerticalStopEntry = ({ stop, step, onEdit, onDelete, onInsertBefore
         {/*    </Text>*/}
         {/*  )}*/}
         {/*</FlexLayout>*/}
-        <FlexLayout className="flex-col absolute left-[40%] -top-2 items-end">
-          {!!stop.driverId && (
-            <TextButton
-              iconLeft="IconBrandWhatsapp"
-              isDisabled={isSendingMessage}
-              size="s"
-              text={stop.messageSentAt ? 'Obavijesti ponovno' : 'Obavijesti vozača'}
-              type="button"
-              variant="secondary"
-              onClick={handleSendMessage}
-            />
-          )}
-          {stop.messageSentAt && (
-            <Text className="absolute top-5 whitespace-nowrap" color="text-color-3" variant="text-xxxs">
-              Poslano {dayjs(stop.messageSentAt).format('DD.MM.YYYY HH:mm')}
-            </Text>
-          )}
-        </FlexLayout>
+        <DisplayIf condition={!stop.completedAt}>
+          <FlexLayout className="flex-col absolute left-[40%] -top-2 items-end">
+            {!!stop.driverId && (
+              <TextButton
+                iconLeft="IconBrandWhatsapp"
+                isDisabled={isSendingMessage}
+                size="s"
+                text={stop.messageSentAt ? 'Obavijesti ponovno' : 'Obavijesti vozača'}
+                type="button"
+                variant="secondary"
+                onClick={handleSendMessage}
+              />
+            )}
+            {stop.messageSentAt && (
+              <Text className="absolute top-5 whitespace-nowrap" color="text-color-3" variant="text-xxxs">
+                Poslano {dayjs(stop.messageSentAt).format('DD.MM.YYYY HH:mm')}
+              </Text>
+            )}
+          </FlexLayout>
+        </DisplayIf>
       </FlexLayout>
       <TimelineTitle>
         <Text as="span" color="text-color-1" variant="text-l-medium">
