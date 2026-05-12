@@ -180,17 +180,19 @@ export const transformFormDataToPayload = (
 
   const payload: Partial<Omit<CreateShipmentData, 'id'>> = {};
 
-  // Only add shipment-level fields that are present in formData
-  if ('externalOrderReference' in formData) payload.externalOrderReference = externalOrderReference || '';
+  // Only add shipment-level fields that are present in formData. We use `??`
+  // rather than `||` for numerics so a legitimate 0 isn't swallowed; the
+  // FieldState-style BE patch treats absent fields as untouched.
+  if ('externalOrderReference' in formData) payload.externalOrderReference = externalOrderReference ?? '';
   if ('clientId' in formData) payload.clientId = clientId;
   if ('transportContractorId' in formData) payload.transportContractorId = transportContractorId;
-  if ('price' in formData) payload.price = price || 0;
+  if ('price' in formData && price !== undefined) payload.price = price;
 
   // Handle cargo with addresses
   if (cargo) {
     payload.cargo = cargo.map((item) => {
       const result: any = {
-        weight: item.weight || 0,
+        weight: item.weight ?? 0,
         ldm: item.ldm,
       };
 

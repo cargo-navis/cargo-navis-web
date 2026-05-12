@@ -62,21 +62,24 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
         const wasAgency = !!childId;
 
         if (wasAgency) {
-          // Parent carries the full form payload (with the tenant as its
-          // transporter); the child gets only its agency-specific overrides
-          // — cargo is intentionally omitted because the child's BE cargo
-          // ids differ from the form's parent-cargo ids.
+          // Patch parent and child via their own endpoints. PATCH is partial
+          // (FieldState semantics) so the child body carries only the two
+          // fields the agency form controls; other child fields stay
+          // untouched.
           const { agencyPrice, transportContractorId, isAgency: _ia, ...rest } = data;
           const parentPayload = transformFormDataToPayload({
             ...rest,
             transportContractorId: tenant.id,
           } as ShipmentFields);
 
-          await updateShipment({
-            id: shipment.id,
-            ...parentPayload,
-            children: [{ id: childId, transportContractorId, price: agencyPrice }],
-          });
+          await Promise.all([
+            updateShipment({ id: shipment.id, ...parentPayload }),
+            updateShipment({
+              id: childId,
+              price: agencyPrice,
+              transportContractorId,
+            }),
+          ]);
         } else {
           const payload = transformFormDataToPayload(data);
           await updateShipment({ id: shipment.id, ...payload });
