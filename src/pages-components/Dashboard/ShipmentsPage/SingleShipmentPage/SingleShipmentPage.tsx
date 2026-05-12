@@ -152,7 +152,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                 onClick={() => setIsAssignModalOpen(true)}
               />
             ))}
-          <ShipmentActions id={shipment.id} />
+          <ShipmentActions shipment={shipment} />
         </FlexLayout>
       </FlexLayout>
       {!isAgency && isAssignModalOpen && (
