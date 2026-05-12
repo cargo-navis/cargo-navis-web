@@ -66,35 +66,6 @@ export function useShipmentsData(args?: Omit<UseShipmentsArgs<Shipment[]>, 'sele
   });
 }
 
-/**
- * Possibly deprecate
- *
- * Convenience hook to get pagination metadata
- * @param args - Arguments for the useShipments hook
- * @returns Pagination metadata
- */
-export function useShipmentsPagination(
-  args?: Omit<
-    UseShipmentsArgs<{
-      currentPage: number;
-      pageSize: number;
-      totalElements: number;
-      totalPages: number;
-    }>,
-    'select'
-  > & { params?: GetShipmentParams }
-) {
-  return useShipments({
-    ...args,
-    select: (data: PaginatedResponse<Shipment>) => ({
-      currentPage: data.currentPage,
-      pageSize: data.pageSize,
-      totalElements: data.totalElements,
-      totalPages: data.totalPages,
-    }),
-  });
-}
-
 export function useShipment(id?: string) {
   return useQuery({
     queryKey: ['shipment', id],
