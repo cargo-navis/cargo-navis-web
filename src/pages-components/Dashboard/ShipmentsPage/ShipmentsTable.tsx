@@ -193,9 +193,11 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                     style={{ gridColumn: 1, gridRow: `1 / span ${groupCargos.length}` }}
                   >
                     <AddressItem address={groupCargos[0].loadingAddress} />
-                    <Text color="text-color-4" variant="text-xxs">
-                      {getDataPointDateString(groupCargos[0].loadingReadyDate)}
-                    </Text>
+                    {groupCargos[0].loadingReadyDate && (
+                      <Text color="text-color-4" variant="text-xxs">
+                        {getDataPointDateString(groupCargos[0].loadingReadyDate)}
+                      </Text>
+                    )}
                   </Box>
                   {groupCargos.map((c, ci) => (
                     <Fragment key={ci}>
@@ -204,9 +206,11 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                       </Box>
                       <Box className="flex flex-col self-center min-w-0" style={{ gridColumn: 3, gridRow: ci + 1 }}>
                         <AddressItem address={c.unloadingAddress} />
-                        <Text color="text-color-4" variant="text-xxs">
-                          {getDataPointDateString(c.unloadingDueDate)}
-                        </Text>
+                        {c.unloadingDueDate && (
+                          <Text color="text-color-4" variant="text-xxs">
+                            {getDataPointDateString(c.unloadingDueDate)}
+                          </Text>
+                        )}
                       </Box>
                     </Fragment>
                   ))}
@@ -245,12 +249,14 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         enableSorting: false,
         header: 'Vozilo / Vozač',
         cell: (props) => {
-          const { vehicleStops } = props.row.original;
+          const shipment = props.row.original;
+          const isAgency = (shipment.children?.length ?? 0) > 0;
+          const { vehicleStops } = shipment;
           const latestStop = vehicleStops?.[vehicleStops.length - 1];
           const vehicle = latestStop ? vehicles.find((v) => v.id === latestStop.vehicleId) : undefined;
           const driver = latestStop?.driverId ? employees.find((e) => e.id === latestStop.driverId) : undefined;
 
-          if (!vehicle && !driver) {
+          if (isAgency && !vehicle && !driver) {
             return (
               <FlexLayout className="items-center py-2">
                 <Text color="text-color-3" variant="text-s">
@@ -260,11 +266,19 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
             );
           }
 
+          const isVehicleMissing = !vehicle;
+          const isDriverMissing = !driver;
+
           return (
             <FlexLayout className="flex-col py-2 pr-4 min-w-0">
-              {vehicle && (
-                <FlexLayout className="items-start gap-1 min-w-0">
-                  <Icon className="mt-1 shrink-0" color="text-color-2" icon="IconTruck" size="s" />
+              <FlexLayout className="items-start gap-1 min-w-0">
+                <Icon
+                  className="mt-1 shrink-0"
+                  color={isVehicleMissing ? 'text-red-500' : 'text-color-2'}
+                  icon="IconTruck"
+                  size="s"
+                />
+                {vehicle ? (
                   <Text
                     className="block min-w-0 flex-1 truncate"
                     color="text-color-2"
@@ -273,19 +287,32 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                   >
                     {vehicle.registration} {!!vehicle?.brand && `(${vehicle.brand})`}
                   </Text>
-                </FlexLayout>
-              )}
-              {driver && (
-                <FlexLayout className="items-start gap-1 min-w-0">
-                  <Icon className="mt-1 shrink-0" color="text-color-2" icon="IconSteeringWheel" size="s" />
+                ) : (
+                  <Text className="block min-w-0 flex-1 truncate" color="text-red-500" variant="text-xs">
+                    Vozilo nedodijeljeno
+                  </Text>
+                )}
+              </FlexLayout>
+              <FlexLayout className="items-start gap-1 min-w-0">
+                <Icon
+                  className="mt-1 shrink-0"
+                  color={isDriverMissing ? 'text-red-500' : 'text-color-2'}
+                  icon="IconSteeringWheel"
+                  size="s"
+                />
+                {driver ? (
                   <EmployeeName
                     className="block min-w-0 flex-1 truncate"
                     color="text-color-2"
                     id={driver.id}
                     variant="text-xxs"
                   />
-                </FlexLayout>
-              )}
+                ) : (
+                  <Text className="block min-w-0 flex-1 truncate" color="text-red-500" variant="text-xxs">
+                    Vozač nedodijeljen
+                  </Text>
+                )}
+              </FlexLayout>
             </FlexLayout>
           );
         },
@@ -343,20 +370,22 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
     router.push(`/dashboard/shipments/${shipment.id}`);
   };
 
-  // Add isWarning flag to shipments missing vehicleId or driverId
   const shipmentsWithWarnings = useMemo(() => {
     if (!shipments) return [];
 
     return shipments.map((shipment) => {
       function isShipmentComplete(s: Shipment) {
-        // const isAllCargoUnloaded = s.cargo.every((c) => c.loadStatus === LoadStatus.Unloaded);
-        return s.invoiceStatus === InvoiceStatus.Paid; //&& isAllCargoUnloaded;
+        return s.invoiceStatus === InvoiceStatus.Paid;
       }
+
+      const isAgency = (shipment.children?.length ?? 0) > 0;
+      const latestStop = shipment.vehicleStops?.[shipment.vehicleStops.length - 1];
+      const isMissingVehicleOrDriver = !latestStop?.vehicleId || !latestStop?.driverId;
 
       return {
         ...shipment,
         isSuccess: isShipmentComplete(shipment),
-        isAgency: (shipment.children?.length ?? 0) > 0,
+        isWarning: !isAgency && isMissingVehicleOrDriver,
       };
     });
   }, [shipments]);
