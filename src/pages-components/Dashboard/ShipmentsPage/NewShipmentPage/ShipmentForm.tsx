@@ -5,7 +5,7 @@ import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form
 
 import { type Cargo, type Shipment } from '@/lib/api';
 import type { Tenant } from '@/lib/api/tenant.d';
-import { FormNumberInput, FormSwitch, FormTextInput } from '@/lib/components/form';
+import { FormNumberInput, FormSwitch, FormTextarea, FormTextInput } from '@/lib/components/form';
 import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
@@ -145,6 +145,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
                   </Box>
                 </FlexLayout>
                 <AgencyShipmentFields tenant={tenant} />
+                <FormTextarea label="Napomena" name="note" />
               </FlexLayout>
             </FlexLayout>
             <CargoFieldList />

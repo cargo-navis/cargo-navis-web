@@ -1,7 +1,7 @@
 import { EmployeeName } from '@/components/employees/EmployeeName';
 import { Shipment } from '@/lib/api';
 import { getDataPointDateString } from '@/lib/utils/date';
-import { Box, Divider, FlexLayout, Text } from '@/ui';
+import { Box, Divider, FlexLayout, Icon, Text } from '@/ui';
 
 import { EmptyShipmentVehicleStops } from './EmptyShipmentVehicleStops';
 import { ShipmentVehicleStops } from './ShipmentVehicleStops';
@@ -93,6 +93,20 @@ export const ShipmentLeftPanel = ({ shipment, onAssignClick }: ShipmentLeftPanel
           )}
         </FlexLayout>
       </Box>
+
+      {shipment.note && (
+        <Box className={cardClass}>
+          <FlexLayout className="flex-col gap-2">
+            <FlexLayout className="items-center gap-2 text-dark-700 dark:text-light-100">
+              <Text variant="text-m-medium">Napomena</Text>
+              <Icon icon="IconInfoCircle" />
+            </FlexLayout>
+            <Text className="whitespace-pre-wrap" color="text-color-1" variant="text-s">
+              {shipment.note}
+            </Text>
+          </FlexLayout>
+        </Box>
+      )}
 
       {!isAgency && (
         <Box className={cardClass}>

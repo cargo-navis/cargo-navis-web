@@ -132,6 +132,7 @@ const getCopyShipmentFormValues = async (shipment: Shipment) => {
     transportContractorId: shipment.transportContractorId || '',
     clientId: shipment.clientId || '',
     price: shipment.price !== undefined && shipment.price !== null ? shipment.price : undefined,
+    note: shipment.note || '',
     cargo,
   };
 };
@@ -147,6 +148,7 @@ const getEditShipmentFormValues = async (shipment: Shipment) => {
     transportContractorId: agencyChild?.transportContractorId || shipment.transportContractorId || '',
     clientId: shipment.clientId || '',
     price: shipment.price !== undefined && shipment.price !== null ? shipment.price : undefined,
+    note: shipment.note || '',
     isAgency,
     agencyPrice: agencyChild?.price !== undefined && agencyChild?.price !== null ? agencyChild.price : undefined,
     cargo,
@@ -176,7 +178,8 @@ export const transformFormDataToPayload = (
   formData: ShipmentFields,
   context?: { tenantId?: string }
 ): Omit<CreateShipmentData, 'id'> => {
-  const { externalOrderReference, clientId, transportContractorId, price, isAgency, agencyPrice, cargo } = formData;
+  const { externalOrderReference, clientId, transportContractorId, price, note, isAgency, agencyPrice, cargo } =
+    formData;
 
   const payload: Partial<Omit<CreateShipmentData, 'id'>> = {};
 
@@ -187,6 +190,7 @@ export const transformFormDataToPayload = (
   if ('clientId' in formData) payload.clientId = clientId;
   if ('transportContractorId' in formData) payload.transportContractorId = transportContractorId;
   if ('price' in formData && price !== undefined) payload.price = price;
+  if ('note' in formData) payload.note = note ?? '';
 
   // Handle cargo with addresses
   if (cargo) {
