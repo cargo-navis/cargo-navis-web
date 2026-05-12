@@ -77,6 +77,13 @@ export interface VehicleStopGroup {
   stops: VehicleStop[];
 }
 
+export type GetVehicleStopsParams = {
+  vehicleId: string;
+  page?: number;
+  size?: number;
+  sort?: string;
+};
+
 export interface CreateVehicleStopParams {
   vehicleId: string;
   previousStopId?: string | null;

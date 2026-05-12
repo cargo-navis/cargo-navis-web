@@ -1,26 +1,40 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { type InfiniteData, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import type { PaginatedResponse } from '@/lib/api/pagination.d';
 import {
   createVehicleStops,
   deleteVehicleStop,
   deleteVehicleStopFile,
   getVehicleStop,
   getVehicleStopFileUrl,
+  getVehicleStops,
   getVehicleStopsByVehicle,
   sendVehicleStopMessage,
   updateVehicleStop,
   type UpdateVehicleStopParams,
   uploadVehicleStopFile,
+  type VehicleStop,
   type VehicleStopGroup,
 } from '@/lib/api/vehicleStops';
 
 const QUERY_KEY = 'vehicleStops';
+const VEHICLE_STOPS_PAGE_SIZE = 5;
 
 export function useVehicleStopsByVehicle(limit?: number, options?: { enabled?: boolean }) {
   return useQuery<VehicleStopGroup[]>({
     queryKey: [QUERY_KEY, 'byVehicle', limit],
     queryFn: () => getVehicleStopsByVehicle(limit),
     enabled: options?.enabled ?? true,
+  });
+}
+
+export function useVehicleStops(vehicleId: string) {
+  return useInfiniteQuery({
+    queryKey: [QUERY_KEY, 'paginated', vehicleId],
+    queryFn: ({ pageParam }) => getVehicleStops({ vehicleId, page: pageParam, size: VEHICLE_STOPS_PAGE_SIZE }),
+    initialPageParam: 1,
+    getNextPageParam: (last) => (last.currentPage < last.totalPages ? last.currentPage + 1 : undefined),
+    enabled: !!vehicleId,
   });
 }
 
@@ -69,13 +83,16 @@ export function useSendVehicleStopMessage(id: string) {
   return useMutation({
     mutationFn: () => sendVehicleStopMessage(id),
     onSuccess: (updatedStop) => {
-      // queryClient.setQueryData<VehicleStop>([QUERY_KEY, id], updatedStop);
-
-      queryClient.setQueriesData<VehicleStopGroup[]>({ queryKey: [QUERY_KEY, 'byVehicle'] }, (old) =>
-        old?.map((g) => ({
-          ...g,
-          stops: g.stops.map((s) => (s.id === updatedStop.id ? updatedStop : s)),
-        }))
+      queryClient.setQueriesData<InfiniteData<PaginatedResponse<VehicleStop>>>(
+        { queryKey: [QUERY_KEY, 'paginated', updatedStop.vehicleId] },
+        (old) =>
+          old && {
+            ...old,
+            pages: old.pages.map((p) => ({
+              ...p,
+              data: p.data.map((s) => (s.id === updatedStop.id ? updatedStop : s)),
+            })),
+          }
       );
     },
   });

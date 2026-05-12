@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -8,9 +8,9 @@ import { Timeline } from '@/components/reui/timeline';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicles } from '@/lib/hooks';
-import { useDeleteVehicleStop, useVehicleStopsByVehicle } from '@/lib/hooks/api/vehicleStops';
+import { useDeleteVehicleStop, useVehicleStops } from '@/lib/hooks/api/vehicleStops';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, FlexLayout, Icon, Text } from '@/ui';
+import { Box, FlexLayout, Icon, LoadingSpinner, Text } from '@/ui';
 
 import { VehicleStopModal } from './VehicleStopModal';
 import { VerticalStopEntry } from './VerticalStopEntry';
@@ -19,18 +19,40 @@ export const VehicleStopDetailPage = () => {
   const { query } = useRouter();
   const vehicleId = query.vehicleId as string;
 
-  const { data: groups, isLoading: isLoadingStops } = useVehicleStopsByVehicle(10);
+  const {
+    data,
+    isPending: isLoadingStops,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useVehicleStops(vehicleId);
   const { data: vehicles, isLoading: isLoadingVehicles } = useVehicles();
   const { mutateAsync: deleteStop } = useDeleteVehicleStop();
 
-  const group = useMemo(() => groups?.find((g) => g.vehicleId === vehicleId), [groups, vehicleId]);
   const vehicle = useMemo(() => vehicles?.find((v) => v.id === vehicleId), [vehicles, vehicleId]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingStop, setEditingStop] = useState<VehicleStop | undefined>(undefined);
   const [previousStop, setPreviousStop] = useState<VehicleStop | undefined>(undefined);
 
-  const stops = group?.stops.reverse() ?? [];
+  const stops = useMemo(() => data?.pages.flatMap((p) => p.data) ?? [], [data]);
+
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !hasNextPage) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && !isFetchingNextPage) {
+          void fetchNextPage();
+        }
+      },
+      { rootMargin: '200px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const isLoading = isLoadingStops || isLoadingVehicles;
 
@@ -78,7 +100,7 @@ export const VehicleStopDetailPage = () => {
     );
   }
 
-  if (!vehicle || !group) {
+  if (!vehicle) {
     return (
       <DashboardLayout>
         <FlexLayout className="py-5 flex-col gap-5">
@@ -134,6 +156,12 @@ export const VehicleStopDetailPage = () => {
               />
             ))}
           </Timeline>
+          <Box ref={sentinelRef} className="h-1" />
+          {isFetchingNextPage && (
+            <FlexLayout className="items-center justify-center py-4">
+              <LoadingSpinner size="m" />
+            </FlexLayout>
+          )}
         </Box>
       </FlexLayout>
       <VehicleStopModal
