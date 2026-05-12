@@ -139,12 +139,16 @@ const getCopyShipmentFormValues = async (shipment: Shipment) => {
 // Create form values for editing an existing shipment
 const getEditShipmentFormValues = async (shipment: Shipment) => {
   const cargo = await mapCargoItems(shipment.cargo, true);
+  const isAgency = (shipment.children?.length ?? 0) > 0;
+  const agencyChild = isAgency ? shipment.children?.[0] : undefined;
 
   return {
     externalOrderReference: shipment.externalOrderReference || '',
-    transportContractorId: shipment.transportContractorId || '',
+    transportContractorId: agencyChild?.transportContractorId || shipment.transportContractorId || '',
     clientId: shipment.clientId || '',
     price: shipment.price !== undefined && shipment.price !== null ? shipment.price : undefined,
+    isAgency,
+    agencyPrice: agencyChild?.price !== undefined && agencyChild?.price !== null ? agencyChild.price : undefined,
     cargo,
   };
 };

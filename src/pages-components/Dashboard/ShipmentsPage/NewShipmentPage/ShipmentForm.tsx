@@ -50,7 +50,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
   });
 
   const { handleSubmit, formState } = formMethods;
-  const { isDirty, isValid, isLoading, isSubmitting, dirtyFields } = formState;
+  const { isDirty, isValid, isLoading, isSubmitting } = formState;
 
   // For a copied shipment, we should only check validity, not dirty state
   const isFormActionable = isCopy ? isValid : isValid && isDirty;
@@ -58,20 +58,30 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
   async function handleFormSubmit(data: ShipmentFields) {
     try {
       if (isEdit && shipment) {
-        // When cargo items are removed, the cargo array should always be included
-        // even if dirtyFields doesn't detect it properly
-        const cargoHasChanged = JSON.stringify(shipment.cargo) !== JSON.stringify(data.cargo);
+        const childId = shipment.children?.[0]?.id;
+        const wasAgency = !!childId;
 
-        const dirtyData = Object.keys(data).reduce((acc, key) => {
-          if (dirtyFields[key] || (key === 'cargo' && cargoHasChanged)) {
-            acc[key] = data[key];
-          }
-          return acc;
-        }, {} as ShipmentFields);
+        if (wasAgency) {
+          // Parent carries the full form payload (with the tenant as its
+          // transporter); the child gets only its agency-specific overrides
+          // — cargo is intentionally omitted because the child's BE cargo
+          // ids differ from the form's parent-cargo ids.
+          const { agencyPrice, transportContractorId, isAgency: _ia, ...rest } = data;
+          const parentPayload = transformFormDataToPayload({
+            ...rest,
+            transportContractorId: tenant.id,
+          } as ShipmentFields);
 
-        const payload = transformFormDataToPayload(dirtyData);
+          await updateShipment({
+            id: shipment.id,
+            ...parentPayload,
+            children: [{ id: childId, transportContractorId, price: agencyPrice }],
+          });
+        } else {
+          const payload = transformFormDataToPayload(data);
+          await updateShipment({ id: shipment.id, ...payload });
+        }
 
-        await updateShipment({ id: shipment.id, ...payload });
         showSuccessToast({ title: `Nalog "${shipment.orderNumber}" uspješno ažuriran` });
         void back();
       } else {
@@ -162,6 +172,9 @@ const AgencyShipmentFields: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
     if (!isAgency) return;
     if (getValues('transportContractorId') === tenant.id) {
       setValue('transportContractorId', '', { shouldDirty: true, shouldValidate: true });
+    }
+    if (getValues('clientId') === tenant.id) {
+      setValue('clientId', '', { shouldDirty: true, shouldValidate: true });
     }
   }, [isAgency, tenant.id, getValues, setValue]);
 
