@@ -6,12 +6,12 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
 import { Timeline } from '@/components/reui/timeline';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
-import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicles } from '@/lib/hooks';
 import { useDeleteVehicleStop, useVehicleStops } from '@/lib/hooks/api/vehicleStops';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, FlexLayout, Icon, LoadingSpinner, Text } from '@/ui';
+import { Box, FlexLayout, Icon, Text } from '@/ui';
 
+import { ContentLoader, StopSkeleton } from './ContentLoader';
 import { VehicleStopModal } from './VehicleStopModal';
 import { VerticalStopEntry } from './VerticalStopEntry';
 
@@ -95,7 +95,7 @@ export const VehicleStopDetailPage = () => {
   if (isLoading) {
     return (
       <DashboardLayout>
-        <LoadingPage />
+        <ContentLoader />
       </DashboardLayout>
     );
   }
@@ -156,12 +156,8 @@ export const VehicleStopDetailPage = () => {
               />
             ))}
           </Timeline>
-          <Box ref={sentinelRef} className="h-1" />
-          {isFetchingNextPage && (
-            <FlexLayout className="items-center justify-center py-4">
-              <LoadingSpinner size="m" />
-            </FlexLayout>
-          )}
+          <Box className="h-1" ref={sentinelRef} />
+          {isFetchingNextPage && <StopSkeleton isLast />}
         </Box>
       </FlexLayout>
       <VehicleStopModal

@@ -18,7 +18,7 @@ import {
 } from '@/lib/api/vehicleStops';
 
 const QUERY_KEY = 'vehicleStops';
-const VEHICLE_STOPS_PAGE_SIZE = 5;
+const VEHICLE_STOPS_PAGE_SIZE = 20;
 
 export function useVehicleStopsByVehicle(limit?: number, options?: { enabled?: boolean }) {
   return useQuery<VehicleStopGroup[]>({
