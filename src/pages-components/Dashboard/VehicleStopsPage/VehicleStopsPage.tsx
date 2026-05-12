@@ -11,7 +11,7 @@ import { Box, FlexLayout, Heading, Text, TextInput } from '@/ui';
 import { VehicleStopCard } from './VehicleStopCard';
 
 export const VehicleStopsPage = () => {
-  const { data: groups, isLoading: isLoadingStops } = useVehicleStopsByVehicle();
+  const { data: groups, isLoading: isLoadingStops } = useVehicleStopsByVehicle(5);
   const { data: vehicles, isLoading: isLoadingVehicles } = useVehicles();
 
   const [search, setSearch] = useState('');
