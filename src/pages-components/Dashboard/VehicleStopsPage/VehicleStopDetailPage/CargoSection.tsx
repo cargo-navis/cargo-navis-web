@@ -88,7 +88,6 @@ const ShipmentHeader = ({ shipment, borderClass, textClass, bgClass, className }
   <Link
     className={`flex items-center gap-1 rounded-xxl border ${borderClass} ${bgClass} px-2 py-0.5 transition-colors ${className ?? ''}`}
     href={`/dashboard/shipments/${shipment.id}`}
-    target="_blank"
   >
     <Icon color={textClass} icon="IconFileDescription" size="s" />
     <Text color={textClass} variant="text-xxs-medium">

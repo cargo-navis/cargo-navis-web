@@ -28,10 +28,13 @@ export async function getVehicleStop(id: string) {
   return backend.get<VehicleStop>(`/api/vehicle-stops/${id}`);
 }
 
-export async function getVehicleStopsByVehicle(limit?: number) {
-  return backend.get<VehicleStopGroup[]>('/api/vehicle-stops/by-vehicle', {
-    params: limit ? { limit } : undefined,
-  });
+export async function getVehicleStopsByVehicle(limitPerVehicle?: number, groupBy = 'vehicle') {
+  const params = {};
+
+  if (limitPerVehicle) params['limitPerVehicle'] = limitPerVehicle;
+  if (groupBy) params['groupBy'] = groupBy;
+
+  return backend.get<VehicleStopGroup[]>('/api/vehicle-stops', { params });
 }
 
 export async function getVehicleStops(params: GetVehicleStopsParams): Promise<PaginatedResponse<VehicleStop>> {
