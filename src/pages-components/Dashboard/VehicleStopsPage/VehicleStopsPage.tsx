@@ -8,6 +8,8 @@ import { useVehicles } from '@/lib/hooks';
 import { useVehicleStopsByVehicle } from '@/lib/hooks/api/vehicleStops';
 import { Box, FlexLayout, Heading, Text, TextInput } from '@/ui';
 
+import { DriverFilter } from '../AnalyticsPage/DriverFilter';
+import { useVehicleStopsFiltersLocalStorage } from './hooks/useVehicleStopsFiltersLocalStorage';
 import { VehicleStopCard } from './VehicleStopCard';
 
 export const VehicleStopsPage = () => {
@@ -15,6 +17,8 @@ export const VehicleStopsPage = () => {
   const { data: vehicles, isLoading: isLoadingVehicles } = useVehicles();
 
   const [search, setSearch] = useState('');
+  const { storage, updateField } = useVehicleStopsFiltersLocalStorage();
+  const driverId = storage.driverId;
 
   const vehicleMap = useMemo(() => {
     if (!vehicles) return new Map<string, Vehicle>();
@@ -23,16 +27,19 @@ export const VehicleStopsPage = () => {
 
   const filteredGroups = useMemo(() => {
     if (!groups) return [];
-    if (!search.trim()) return groups;
 
-    const terms = search.toLowerCase().split(/\s+/);
+    const terms = search.trim() ? search.toLowerCase().split(/\s+/) : [];
+
     return groups.filter((group) => {
+      if (driverId && !group.stops.some((s) => s.driverId === driverId)) return false;
+      if (terms.length === 0) return true;
+
       const vehicle = vehicleMap.get(group.vehicleId);
       if (!vehicle) return false;
       const haystack = `${vehicle.registration} ${vehicle.brand}`.toLowerCase();
       return terms.every((term) => haystack.includes(term));
     });
-  }, [groups, vehicleMap, search]);
+  }, [groups, vehicleMap, search, driverId]);
 
   const isLoading = isLoadingStops || isLoadingVehicles;
 
@@ -45,17 +52,20 @@ export const VehicleStopsPage = () => {
         </Heading>
       </Box>
 
-      <Box className="mt-4 max-w-sm">
-        <TextInput
-          autoFocus
-          iconLeft="IconSearch"
-          iconRight={search ? 'IconX' : undefined}
-          placeholder="Pretraži po registraciji ili marki..."
-          value={search}
-          onChange={setSearch}
-          onClickIconRight={() => setSearch('')}
-        />
-      </Box>
+      <FlexLayout className="mt-4 items-end gap-3">
+        <Box className="max-w-sm flex-1">
+          <TextInput
+            autoFocus
+            iconLeft="IconSearch"
+            iconRight={search ? 'IconX' : undefined}
+            placeholder="Pretraži po registraciji ili marki..."
+            value={search}
+            onChange={setSearch}
+            onClickIconRight={() => setSearch('')}
+          />
+        </Box>
+        <DriverFilter value={driverId} onChange={(v) => updateField('driverId', v)} />
+      </FlexLayout>
 
       {isLoading ? (
         <FlexLayout className="flex-col gap-4 mt-4">
