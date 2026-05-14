@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 
+import { ClientName } from '@/components/clients/ClientName';
 import {
   TimelineContent,
   TimelineDate,
@@ -10,7 +11,7 @@ import {
   TimelineSeparator,
   TimelineTitle,
 } from '@/components/reui/timeline';
-import type { VehicleStop } from '@/lib/api/vehicleStops';
+import type { VehicleStop, VehicleStopCargo, VehicleStopCargoShipment } from '@/lib/api/vehicleStops';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 import { Tooltip } from '@/ui/components/Tooltip/Tooltip';
@@ -20,11 +21,54 @@ interface StopTimelineItemProps {
   step: number;
 }
 
-const StopTooltipContent = ({ stop }: { stop: VehicleStop }) => {
-  const { address, date, loadingCargos, unloadingCargos } = stop;
+type ShipmentKind = 'loading' | 'unloading' | 'both';
+
+interface ShipmentEntry {
+  shipment: VehicleStopCargoShipment;
+  kind: ShipmentKind;
+}
+
+function collectShipments(loadingCargos: VehicleStopCargo[], unloadingCargos: VehicleStopCargo[]): ShipmentEntry[] {
+  const map = new Map<string, ShipmentEntry>();
+  loadingCargos.forEach((c) => map.set(c.shipment.id, { shipment: c.shipment, kind: 'loading' }));
+  unloadingCargos.forEach((c) => {
+    const existing = map.get(c.shipment.id);
+    map.set(c.shipment.id, {
+      shipment: c.shipment,
+      kind: existing ? 'both' : 'unloading',
+    });
+  });
+  return Array.from(map.values());
+}
+
+const ShipmentPill = ({ shipment, kind }: ShipmentEntry) => {
+  const isLoading = kind !== 'unloading';
+  const textClass = isLoading ? 'text-orange-400' : 'text-teal-400';
 
   return (
-    <FlexLayout className="p-2 flex-col text-light-50">
+    <FlexLayout className="items-center gap-1">
+      <Icon color={textClass} icon="IconFileDescription" size="s" />
+      <Text color={textClass} variant="text-xxs-medium">
+        Nalog {shipment.orderNumber}
+      </Text>
+      {shipment.clientId && (
+        <>
+          <Text color={textClass} variant="text-xxs">
+            ·
+          </Text>
+          <ClientName color={textClass} id={shipment.clientId} variant="text-xxs" />
+        </>
+      )}
+    </FlexLayout>
+  );
+};
+
+const StopTooltipContent = ({ stop }: { stop: VehicleStop }) => {
+  const { address, date, loadingCargos, unloadingCargos } = stop;
+  const shipments = collectShipments(loadingCargos, unloadingCargos);
+
+  return (
+    <FlexLayout className="p-2 flex-col gap-1 text-light-50">
       {address && (
         <>
           <Text variant="text-xxs-medium">{address.streetName}</Text>
@@ -44,14 +88,30 @@ const StopTooltipContent = ({ stop }: { stop: VehicleStop }) => {
         </Text>
       )}
       {(loadingCargos.length > 0 || unloadingCargos.length > 0) && (
-        <Text as="span" className="text-orange-400" variant="text-xs">
-          {[
-            loadingCargos.length > 0 && `${loadingCargos.length} utovar`,
-            unloadingCargos.length > 0 && `${unloadingCargos.length} istovar`,
-          ]
-            .filter(Boolean)
-            .join(', ')}
-        </Text>
+        <FlexLayout className="items-center gap-1">
+          {loadingCargos.length > 0 && (
+            <Text as="span" className="text-orange-400" variant="text-xs">
+              {loadingCargos.length} utovar
+            </Text>
+          )}
+          {loadingCargos.length > 0 && unloadingCargos.length > 0 && (
+            <Text as="span" className="text-light-50" variant="text-xs">
+              ,
+            </Text>
+          )}
+          {unloadingCargos.length > 0 && (
+            <Text as="span" className="text-teal-400" variant="text-xs">
+              {unloadingCargos.length} istovar
+            </Text>
+          )}
+        </FlexLayout>
+      )}
+      {shipments.length > 0 && (
+        <FlexLayout className="flex-col items-start gap-1 mt-1">
+          {shipments.map((entry) => (
+            <ShipmentPill key={entry.shipment.id} {...entry} />
+          ))}
+        </FlexLayout>
       )}
     </FlexLayout>
   );
