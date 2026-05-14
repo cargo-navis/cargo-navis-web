@@ -80,17 +80,17 @@ export const AnalyticsPage = () => {
   // Get top 5 drivers and vehicles
   const topDrivers = useMemo(() => {
     if (!driversData) return [];
-    return [...driversData].sort((a, b) => b.shipmentCount - a.shipmentCount).slice(0, TOP_N);
+    return [...driversData].sort((a, b) => b.totalPrice - a.totalPrice).slice(0, TOP_N);
   }, [driversData]);
 
   const topVehicles = useMemo(() => {
     if (!vehiclesData) return [];
-    return [...vehiclesData].sort((a, b) => b.shipmentCount - a.shipmentCount).slice(0, TOP_N);
+    return [...vehiclesData].sort((a, b) => b.totalPrice - a.totalPrice).slice(0, TOP_N);
   }, [vehiclesData]);
 
   const topClients = useMemo(() => {
     if (!clientsData) return [];
-    return [...clientsData].sort((a, b) => b.shipmentCount - a.shipmentCount).slice(0, TOP_N);
+    return [...clientsData].sort((a, b) => b.totalPrice - a.totalPrice).slice(0, TOP_N);
   }, [clientsData]);
 
   const isLoading = isCountLoading || isPriceLoading || isDriversLoading || isVehiclesLoading || isClientsLoading;
