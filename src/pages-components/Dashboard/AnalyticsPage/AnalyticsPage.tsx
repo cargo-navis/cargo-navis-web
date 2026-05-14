@@ -15,6 +15,7 @@ import {
   useVehiclesAnalytics,
 } from '@/lib/hooks/api';
 import { FlexLayout, Heading, Icon, Text } from '@/ui';
+import { Tooltip } from '@/ui/components/Tooltip/Tooltip';
 
 import { ClientFilter } from './ClientFilter';
 import { ContentLoader } from './ContentLoader';
@@ -25,6 +26,30 @@ import { TotalAnalyticsSection } from './TotalAnalyticsSection';
 import { VehicleFilter } from './VehicleFilter';
 
 const TOP_N = 5;
+
+interface ParticipationHeaderProps {
+  basis: string;
+  label: string;
+  tooltip: string;
+}
+
+const ParticipationHeader = ({ basis, label, tooltip }: ParticipationHeaderProps) => (
+  <FlexLayout className={`${basis} items-center justify-end gap-1`}>
+    <Text color="text-color-2" variant="text-s-medium">
+      {label}
+    </Text>
+    <Tooltip
+      content={
+        <Text className="px-1" color="text-light-50" variant="text-xxs">
+          {tooltip}
+        </Text>
+      }
+      isPortal
+    >
+      <Icon className="text-color-2 cursor-help" icon="IconInfoCircle" size="m" />
+    </Tooltip>
+  </FlexLayout>
+);
 
 export const AnalyticsPage = () => {
   const [dateRange, setDateRange] = useState<DateRange>(() => getInitialDateRange('last-6-months'));
@@ -200,12 +225,16 @@ const DriversTable = ({ data }: DriversTableProps) => {
         <Text className="flex-1" color="text-color-2" variant="text-s-medium">
           Vozač
         </Text>
-        <Text className="basis-[140px] text-right" color="text-color-2" variant="text-s-medium">
-          Br. naloga
-        </Text>
-        <Text className="basis-[200px] text-right" color="text-color-2" variant="text-s-medium">
-          Ukupni prihod
-        </Text>
+        <ParticipationHeader
+          basis="basis-[140px]"
+          label="Br. naloga"
+          tooltip="Broj naloga u kojima je vozač sudjelovao."
+        />
+        <ParticipationHeader
+          basis="basis-[200px]"
+          label="Ukupni prihod"
+          tooltip="Ukupni prihod naloga u kojima je vozač sudjelovao."
+        />
       </FlexLayout>
 
       {/* Table Body */}
@@ -262,12 +291,16 @@ const VehiclesTable = ({ data }: VehiclesTableProps) => {
         <Text className="flex-1" color="text-color-2" variant="text-s-medium">
           Vozilo
         </Text>
-        <Text className="basis-[140px] text-right" color="text-color-2" variant="text-s-medium">
-          Br. naloga
-        </Text>
-        <Text className="basis-[200px] text-right" color="text-color-2" variant="text-s-medium">
-          Ukupni prihod
-        </Text>
+        <ParticipationHeader
+          basis="basis-[140px]"
+          label="Br. naloga"
+          tooltip="Broj naloga u kojima je vozilo sudjelovalo."
+        />
+        <ParticipationHeader
+          basis="basis-[200px]"
+          label="Ukupni prihod"
+          tooltip="Ukupni prihod naloga u kojima je vozilo sudjelovalo."
+        />
       </FlexLayout>
 
       {/* Table Body */}
