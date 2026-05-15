@@ -118,12 +118,8 @@ const CargoLoadForm = ({ type, initialValues, cargo, onSubmit }: Omit<CargoLoadM
       >
         <FlexLayout className="gap-4 grow">
           <FlexLayout className="flex-col gap-4 flex-1">
-            <Box className="flex-1">
-              <FormTextInput autoFocus label={companyLabel} name="companyName" />
-            </Box>
-            <Box className="flex-1">
-              <FormDatepicker label={dateLabel} maxDate={maxDateForPicker} minDate={minDateForPicker} name="date" />
-            </Box>
+            <FormTextInput autoFocus label={companyLabel} name="companyName" />
+            <FormDatepicker label={dateLabel} maxDate={maxDateForPicker} minDate={minDateForPicker} name="date" />
           </FlexLayout>
           <VerticalDivider />
           <FlexLayout className="flex-col gap-4 flex-1">
