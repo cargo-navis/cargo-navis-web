@@ -124,7 +124,12 @@ export const StopTimelineEntry = ({ stop, step }: StopTimelineItemProps) => {
   const isCompleted = isStopCompleted(stop);
 
   return (
-    <TimelineItem completed={isCompleted} separatorActive={isCompleted} step={step} style={{ paddingRight: '32px' }}>
+    <TimelineItem
+      completed={isCompleted}
+      separatorActive={isCompleted}
+      step={step}
+      style={{ paddingRight: '32px', isolation: 'isolate' }}
+    >
       <TimelineHeader>
         <TimelineSeparator
           className={isCompleted ? undefined : 'bg-transparent'}
