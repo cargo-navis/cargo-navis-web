@@ -2,11 +2,27 @@ import { InvoiceStatus } from '@/lib/api/shipments';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { useClients, useDispatchers, useDrivers } from '@/lib/hooks';
 import { mapEmployeesToOptions } from '@/lib/utils/employees';
-import { Box, FlexLayout } from '@/ui';
+import { Box, FlexLayout, Icon, Text, Tooltip } from '@/ui';
 import { DatepickerWithLabels, SingleSelectWithLabels } from '@/ui/hocs';
 
 import { activeOptions, invoiceStatusConfig } from '../const';
 import { useShipmentsFiltersContext } from '../providers/ShipmentsFiltersProvider';
+
+const ActiveLabel = () => (
+  <Box as="span" className="inline-flex items-center gap-1">
+    Izvršenost
+    <Tooltip
+      content={
+        <Text className="px-1" color="text-light-50" variant="text-xxs">
+          Nalog se smatra odrađenim kada su završeni svi utovari i istovari.
+        </Text>
+      }
+      isPortal
+    >
+      <Icon color="text-color-3" icon="IconInfoCircle" size="s" />
+    </Tooltip>
+  </Box>
+);
 
 export const FilterFields = () => {
   const {
@@ -102,7 +118,7 @@ export const FilterFields = () => {
               <SingleSelectWithLabels
                 isClearable
                 isPortal
-                label="Izvršenost"
+                label={<ActiveLabel />}
                 options={activeOptions}
                 placeholder="Odaberi..."
                 value={selectedActive}
