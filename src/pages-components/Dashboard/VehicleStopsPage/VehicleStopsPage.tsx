@@ -8,7 +8,7 @@ import { useVehicles } from '@/lib/hooks';
 import { useVehicleStopsByVehicle } from '@/lib/hooks/api/vehicleStops';
 import { Box, FlexLayout, Heading, Text, TextInput } from '@/ui';
 
-import { DriverFilter } from '../AnalyticsPage/DriverFilter';
+import { DispatcherFilter } from './DispatcherFilter';
 import { useVehicleStopsFiltersLocalStorage } from './hooks/useVehicleStopsFiltersLocalStorage';
 import { VehicleStopCard } from './VehicleStopCard';
 
@@ -18,7 +18,7 @@ export const VehicleStopsPage = () => {
 
   const [search, setSearch] = useState('');
   const { storage, updateField } = useVehicleStopsFiltersLocalStorage();
-  const driverId = storage.driverId;
+  const dispatcherId = storage.dispatcherId;
 
   const vehicleMap = useMemo(() => {
     if (!vehicles) return new Map<string, Vehicle>();
@@ -31,7 +31,7 @@ export const VehicleStopsPage = () => {
     const terms = search.trim() ? search.toLowerCase().split(/\s+/) : [];
 
     return groups.filter((group) => {
-      if (driverId && !group.stops.some((s) => s.driverId === driverId)) return false;
+      if (dispatcherId && !group.stops.some((s) => s.disponentId === dispatcherId)) return false;
       if (terms.length === 0) return true;
 
       const vehicle = vehicleMap.get(group.vehicleId);
@@ -39,7 +39,7 @@ export const VehicleStopsPage = () => {
       const haystack = `${vehicle.registration} ${vehicle.brand}`.toLowerCase();
       return terms.every((term) => haystack.includes(term));
     });
-  }, [groups, vehicleMap, search, driverId]);
+  }, [groups, vehicleMap, search, dispatcherId]);
 
   const isLoading = isLoadingStops || isLoadingVehicles;
 
@@ -64,7 +64,7 @@ export const VehicleStopsPage = () => {
             onClickIconRight={() => setSearch('')}
           />
         </Box>
-        <DriverFilter value={driverId} onChange={(v) => updateField('driverId', v)} />
+        <DispatcherFilter value={dispatcherId} onChange={(v) => updateField('dispatcherId', v)} />
       </FlexLayout>
 
       {isLoading ? (

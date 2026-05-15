@@ -12,7 +12,7 @@ const keyName = 'cargo-navis-vehicle-stops-filters';
 const STORAGE_KEY = isProductionEnv ? keyName : `${projectEnv.toLowerCase()}-${keyName}`;
 
 export interface VehicleStopsFiltersStorage {
-  driverId?: string;
+  dispatcherId?: string;
 }
 
 const getDefaultStorage = (): VehicleStopsFiltersStorage => ({});
