@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
 
 import { type Cargo, type Shipment } from '@/lib/api';
@@ -15,7 +15,7 @@ import { CargoFieldList } from './CargoFieldList';
 import { ClientField } from './ClientField';
 import { ContractorField } from './ContractorField';
 import { PriceField } from './PriceField';
-import { shipmentSchema } from './schema';
+import { getShipmentSchema } from './schema';
 import type { ShipmentFields } from './types';
 import { getFormDefaultValues, transformFormDataToPayload } from './utils';
 
@@ -43,9 +43,11 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
     cargos: Cargo[];
   } | null>(null);
 
+  const schema = useMemo(() => getShipmentSchema(tenant.id), [tenant.id]);
+
   const formMethods = useForm<ShipmentFields>({
     defaultValues: getFormDefaultValues(shipment, tenant, isCopy),
-    resolver: yupResolver(shipmentSchema) as any,
+    resolver: yupResolver(schema) as any,
     mode: 'all',
   });
 
@@ -173,12 +175,20 @@ const AgencyShipmentFields: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
   const agencyPrice = useWatch<ShipmentFields>({ name: 'agencyPrice' });
 
   useEffect(() => {
-    if (!isAgency) return;
-    if (getValues('transportContractorId') === tenant.id) {
-      setValue('transportContractorId', '', { shouldDirty: true, shouldValidate: true });
+    if (isAgency) {
+      if (getValues('transportContractorId') === tenant.id) {
+        setValue('transportContractorId', '', { shouldDirty: true, shouldValidate: true });
+      }
+      if (getValues('clientId') === tenant.id) {
+        setValue('clientId', '', { shouldDirty: true, shouldValidate: true });
+      }
+      return;
     }
-    if (getValues('clientId') === tenant.id) {
-      setValue('clientId', '', { shouldDirty: true, shouldValidate: true });
+
+    const contractorId = getValues('transportContractorId');
+    const clientId = getValues('clientId');
+    if (contractorId !== tenant.id && clientId !== tenant.id) {
+      setValue('transportContractorId', tenant.id, { shouldDirty: true, shouldValidate: true });
     }
   }, [isAgency, tenant.id, getValues, setValue]);
 
