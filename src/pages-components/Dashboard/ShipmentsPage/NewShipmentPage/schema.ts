@@ -131,12 +131,21 @@ export function getShipmentSchema(tenantId: string) {
       };
       if (isAgency) return true;
 
-      if (transportContractorId === tenantId || clientId === tenantId) return true;
+      const tenantCount = (transportContractorId === tenantId ? 1 : 0) + (clientId === tenantId ? 1 : 0);
 
-      return this.createError({
-        path: 'transportContractorId',
-        message: 'Vaša tvrtka mora biti odabrana kao klijent ili prijevoznik',
-      });
+      if (tenantCount === 0) {
+        return this.createError({
+          path: 'transportContractorId',
+          message: 'Vaša tvrtka mora biti odabrana kao klijent ili prijevoznik',
+        });
+      }
+      if (tenantCount === 2) {
+        return this.createError({
+          path: 'transportContractorId',
+          message: 'Vaša tvrtka ne može biti istovremeno klijent i prijevoznik',
+        });
+      }
+      return true;
     });
 }
 
