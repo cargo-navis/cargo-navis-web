@@ -2,6 +2,7 @@ import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import type { Contractor } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
@@ -17,7 +18,12 @@ const FUSE_OPTIONS: ConstructorParameters<typeof Fuse<Contractor>>[1] = {
 export const ContractorsPage = () => {
   const { data, isLoading } = useContractors();
 
-  return <DashboardLayout>{isLoading ? <LoadingPage /> : <MainContent contractors={data || []} />}</DashboardLayout>;
+  return (
+    <DashboardLayout>
+      <PageTitle title="Kontraktori" />
+      {isLoading ? <LoadingPage /> : <MainContent contractors={data || []} />}
+    </DashboardLayout>
+  );
 };
 
 const MainContent = ({ contractors }: { contractors: Contractor[] }) => {
@@ -41,7 +47,7 @@ const MainContent = ({ contractors }: { contractors: Contractor[] }) => {
           Kontraktori
         </Heading>
         <DisplayIf condition={!isEmpty}>
-          <Button href="/dashboard/contractors/new" iconLeft="PlusIcon" text="Dodaj Kontraktora" />
+          <Button href="/dashboard/contractors/new" iconLeft="IconPlus" text="Dodaj Kontraktora" />
         </DisplayIf>
       </FlexLayout>
       <Box className="py-5">
@@ -57,8 +63,8 @@ const MainContent = ({ contractors }: { contractors: Contractor[] }) => {
             <Box className="max-w-xs mb-4">
               <TextInput
                 autoFocus
-                iconLeft="MagnifyingGlassIcon"
-                iconRight={search ? 'XMarkIcon' : undefined}
+                iconLeft="IconSearch"
+                iconRight={search ? 'IconX' : undefined}
                 placeholder="Pretraži kontraktore..."
                 value={search}
                 onChange={setSearch}

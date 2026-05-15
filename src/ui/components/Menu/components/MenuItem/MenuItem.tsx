@@ -4,7 +4,7 @@ import Link from 'next/link';
 import type { HTMLAttributeAnchorTarget } from 'react';
 import React from 'react';
 
-import { Box, DisplayIf, FlexLayout, Icon, type IconType, Text } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon, IconType, Text } from '@/ui';
 
 import { Badge } from './Badge';
 
@@ -66,9 +66,7 @@ export const MenuItemContent = React.forwardRef<any, Omit<MenuItemProps, 'onClic
               <DisplayIf condition={!!badge}>
                 <Badge isActive={isActive} text={badge as string} />
               </DisplayIf>
-              <DisplayIf condition={!!iconRight}>
-                <Icon icon={iconRight as IconType} size="s" />
-              </DisplayIf>
+              {!!iconRight && <Icon icon={iconRight} size="s" />}
             </FlexLayout>
           </DisplayIf>
         </FlexLayout>

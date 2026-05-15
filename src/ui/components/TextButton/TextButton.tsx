@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import React, { memo } from 'react';
 
-import { type BoxProps, DisplayIf, FlexLayout, Icon, type IconType, Text } from '@/ui';
+import { type BoxProps, DisplayIf, FlexLayout, Icon, IconType, Text } from '@/ui';
 
 import { type Size, sizesMap, type Variant, variantsMap, variantStyles } from './const';
 
@@ -33,15 +33,11 @@ export const TextButton = memo(
           tabIndex={isDisabled ? -1 : 0}
           {...rest}
         >
-          <DisplayIf condition={!!iconLeft}>
-            <Icon icon={iconLeft as IconType} size={iconSize} />
-          </DisplayIf>
+          {!!iconLeft && <Icon icon={iconLeft} size={iconSize} />}
           <DisplayIf condition={!!text}>
             <Text variant={textVariant}>{text}</Text>
           </DisplayIf>
-          <DisplayIf condition={!!iconRight}>
-            <Icon icon={iconRight as IconType} size={iconSize} />
-          </DisplayIf>
+          {!!iconRight && <Icon icon={iconRight} size={iconSize} />}
         </FlexLayout>
       );
     }

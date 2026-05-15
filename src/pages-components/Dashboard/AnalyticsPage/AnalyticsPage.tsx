@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import { ClientAnalyticsItem, DriverAnalyticsItem, VehicleAnalyticsItem } from '@/lib/api';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import {
@@ -14,6 +15,7 @@ import {
   useVehiclesAnalytics,
 } from '@/lib/hooks/api';
 import { FlexLayout, Heading, Icon, Text } from '@/ui';
+import { Tooltip } from '@/ui/components/Tooltip/Tooltip';
 
 import { ClientFilter } from './ClientFilter';
 import { ContentLoader } from './ContentLoader';
@@ -24,6 +26,30 @@ import { TotalAnalyticsSection } from './TotalAnalyticsSection';
 import { VehicleFilter } from './VehicleFilter';
 
 const TOP_N = 5;
+
+interface ParticipationHeaderProps {
+  basis: string;
+  label: string;
+  tooltip: string;
+}
+
+const ParticipationHeader = ({ basis, label, tooltip }: ParticipationHeaderProps) => (
+  <FlexLayout className={`${basis} items-center justify-end gap-1`}>
+    <Text color="text-color-2" variant="text-s-medium">
+      {label}
+    </Text>
+    <Tooltip
+      content={
+        <Text className="px-1" color="text-light-50" variant="text-xxs">
+          {tooltip}
+        </Text>
+      }
+      isPortal
+    >
+      <Icon className="text-color-2 cursor-help" icon="IconInfoCircle" size="m" />
+    </Tooltip>
+  </FlexLayout>
+);
 
 export const AnalyticsPage = () => {
   const [dateRange, setDateRange] = useState<DateRange>(() => getInitialDateRange('last-6-months'));
@@ -79,17 +105,17 @@ export const AnalyticsPage = () => {
   // Get top 5 drivers and vehicles
   const topDrivers = useMemo(() => {
     if (!driversData) return [];
-    return [...driversData].sort((a, b) => b.shipmentCount - a.shipmentCount).slice(0, TOP_N);
+    return [...driversData].sort((a, b) => b.totalPrice - a.totalPrice).slice(0, TOP_N);
   }, [driversData]);
 
   const topVehicles = useMemo(() => {
     if (!vehiclesData) return [];
-    return [...vehiclesData].sort((a, b) => b.shipmentCount - a.shipmentCount).slice(0, TOP_N);
+    return [...vehiclesData].sort((a, b) => b.totalPrice - a.totalPrice).slice(0, TOP_N);
   }, [vehiclesData]);
 
   const topClients = useMemo(() => {
     if (!clientsData) return [];
-    return [...clientsData].sort((a, b) => b.shipmentCount - a.shipmentCount).slice(0, TOP_N);
+    return [...clientsData].sort((a, b) => b.totalPrice - a.totalPrice).slice(0, TOP_N);
   }, [clientsData]);
 
   const isLoading = isCountLoading || isPriceLoading || isDriversLoading || isVehiclesLoading || isClientsLoading;
@@ -97,6 +123,7 @@ export const AnalyticsPage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title="Analitika" />
       <FlexLayout className="flex-col gap-5">
         <FlexLayout className="flex-col gap-4">
           <Heading as="h1" variant="text-xl">
@@ -106,7 +133,7 @@ export const AnalyticsPage = () => {
             <DateRangeFilterWithLabels
               label={
                 <FlexLayout className="gap-1 items-center justify-between">
-                  <Icon icon="CalendarDateRangeIcon" />
+                  <Icon icon="IconCalendarCode" />
                   <Text color="text-color-3" variant="text-xxs-medium">
                     Razdoblje
                   </Text>
@@ -198,12 +225,16 @@ const DriversTable = ({ data }: DriversTableProps) => {
         <Text className="flex-1" color="text-color-2" variant="text-s-medium">
           Vozač
         </Text>
-        <Text className="basis-[140px] text-right" color="text-color-2" variant="text-s-medium">
-          Br. naloga
-        </Text>
-        <Text className="basis-[200px] text-right" color="text-color-2" variant="text-s-medium">
-          Ukupni prihod
-        </Text>
+        <ParticipationHeader
+          basis="basis-[140px]"
+          label="Br. naloga"
+          tooltip="Broj naloga u kojima je vozač sudjelovao."
+        />
+        <ParticipationHeader
+          basis="basis-[200px]"
+          label="Ukupni prihod"
+          tooltip="Ukupni prihod naloga u kojima je vozač sudjelovao."
+        />
       </FlexLayout>
 
       {/* Table Body */}
@@ -260,12 +291,16 @@ const VehiclesTable = ({ data }: VehiclesTableProps) => {
         <Text className="flex-1" color="text-color-2" variant="text-s-medium">
           Vozilo
         </Text>
-        <Text className="basis-[140px] text-right" color="text-color-2" variant="text-s-medium">
-          Br. naloga
-        </Text>
-        <Text className="basis-[200px] text-right" color="text-color-2" variant="text-s-medium">
-          Ukupni prihod
-        </Text>
+        <ParticipationHeader
+          basis="basis-[140px]"
+          label="Br. naloga"
+          tooltip="Broj naloga u kojima je vozilo sudjelovalo."
+        />
+        <ParticipationHeader
+          basis="basis-[200px]"
+          label="Ukupni prihod"
+          tooltip="Ukupni prihod naloga u kojima je vozilo sudjelovalo."
+        />
       </FlexLayout>
 
       {/* Table Body */}

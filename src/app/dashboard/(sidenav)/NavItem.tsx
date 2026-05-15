@@ -5,8 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import type { NavLink } from '@/components/layout/DashboardLayout/data';
-import { Box, Text } from '@/ui';
-import { Icon } from '@/ui/components/Icon';
+import { Box, Icon, Text } from '@/ui';
 
 export const NavItem = ({ navLink }: { navLink: NavLink }) => {
   const pathname = usePathname();

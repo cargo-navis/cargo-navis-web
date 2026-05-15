@@ -40,7 +40,7 @@ export const OverdueIndicator: React.FC<OverdueIndicatorProps> = ({ shipment, va
       }
     >
       <FlexLayout className="items-center gap-1 cursor-default">
-        <Icon color="text-orange-500 dark:text-orange-400" icon="ExclamationTriangleIcon" size="m" />
+        <Icon color="text-orange-500 dark:text-orange-400" icon="IconAlertTriangle" size="m" />
         {variant === 'default' && (
           <Text className="text-orange-500 dark:text-orange-400" variant="text-s-medium">
             Dospjelo

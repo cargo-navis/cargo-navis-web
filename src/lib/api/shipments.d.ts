@@ -1,8 +1,8 @@
 import { InvoiceStatus, LoadStatus } from './shipments';
+import type { VehicleStop } from './vehicleStops.d';
 
 export interface Shipment {
   id: string;
-  cargoReference: string;
   externalOrderReference?: string;
   orderNumber: string;
   createdById: string;
@@ -12,6 +12,7 @@ export interface Shipment {
   isInvoiceOverdue: boolean | null; // todo - [added]
   transportContractorId?: string;
   price: number;
+  note?: string;
   cargo: Cargo[];
   createdAt: string;
   documents?: {
@@ -21,6 +22,8 @@ export interface Shipment {
     mimeType: string;
     status: string;
   }[];
+  vehicleStops?: VehicleStop[];
+  children?: Shipment[];
 }
 
 export type GetShipmentParams = {
@@ -34,6 +37,7 @@ export type GetShipmentParams = {
   loadingDateTo?: string;
   unloadingDateFrom?: string;
   unloadingDateTo?: string;
+  isActive?: boolean;
   // Pagination parameters
   page?: number;
   size?: number;
@@ -62,18 +66,19 @@ export interface CreateShipmentData extends Omit<Shipment, 'id' | 'cargo'> {
     unloadingDueDate?: string;
     unloadingDescription?: string;
   }[];
+  children?: CreateShipmentData[];
 }
 
 // TODO - this should be for Create shipment
 export interface LoadingAddress {
   streetName: string;
-  id: string;
+  postalCodeId: string;
   postalCode: string;
   countryCode: string;
   placeName: string;
 }
 
-interface Cargo {
+export interface Cargo {
   id: string;
   weight: number;
   description: string;

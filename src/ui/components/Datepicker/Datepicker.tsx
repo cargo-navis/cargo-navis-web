@@ -9,6 +9,7 @@ import { Icon } from '@/ui';
 import { classnames, popoverProps } from './styles';
 
 export interface DatepickerProps {
+  autoFocus?: boolean | undefined;
   value: string | null;
   onChange(date: string | null): void;
   isDisabled?: boolean;
@@ -19,6 +20,7 @@ export interface DatepickerProps {
 }
 
 export const Datepicker: React.FC<DatepickerProps> = ({
+  autoFocus,
   placeholder,
   isDisabled = false,
   isClearable = true,
@@ -32,6 +34,7 @@ export const Datepicker: React.FC<DatepickerProps> = ({
   return (
     <DatesProvider settings={{ locale: 'hr', firstDayOfWeek: 1, weekendDays: [0, 6] }}>
       <DateInput
+        autoFocus={autoFocus}
         classNames={classnames}
         clearable
         dateParser={(dt) => {
@@ -39,12 +42,12 @@ export const Datepicker: React.FC<DatepickerProps> = ({
         }}
         disabled={isDisabled}
         highlightToday
-        leftSection={<Icon icon="CalendarIcon" type="solid" />}
+        leftSection={<Icon icon="IconCalendarWeek" type="solid" />}
         maxDate={maxDate ? getDateInLocalTimezone(maxDate) : undefined}
         minDate={minDate ? getDateInLocalTimezone(minDate) : undefined}
         placeholder={placeholder}
         popoverProps={popoverProps}
-        rightSection={isClearButtonVisible ? <Icon icon="XMarkIcon" onClick={() => onChange('')} /> : null}
+        rightSection={isClearButtonVisible ? <Icon icon="IconX" onClick={() => onChange('')} /> : null}
         value={value ? getDateInLocalTimezone(value) : null}
         onChange={(date) => {
           const returnValue = date ? formatDateString(date.toDateString(), DateTimeFormat.IsoShort) : null;

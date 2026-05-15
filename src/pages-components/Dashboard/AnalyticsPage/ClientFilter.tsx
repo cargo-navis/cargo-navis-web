@@ -29,7 +29,7 @@ export const ClientFilter = ({ value, onChange, isDisabled }: ClientFilterProps)
         isSearchable
         label={
           <FlexLayout className="gap-1 items-center justify-between">
-            <Icon icon="BriefcaseIcon" />
+            <Icon icon="IconBriefcase" />
             <Text color="text-color-3" variant="text-xxs-medium">
               Klijent
             </Text>

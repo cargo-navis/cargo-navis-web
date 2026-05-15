@@ -102,7 +102,7 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
             />
             <PostalCodeSelectField
               countryCode={countryCode}
-              iconLeft="MagnifyingGlassIcon"
+              iconLeft="IconSearch"
               isClearable
               isDisabled={!countryCode}
               label="Poštanski broj"

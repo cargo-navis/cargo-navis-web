@@ -21,7 +21,7 @@ export const NotificationMenuItem = React.forwardRef<any, NotificationMenuItemPr
           ref={ref}
           {...rest}
         >
-          <Icon className="mt-[2px]" color="text-blue-500 dark:text-blue-300" icon="InformationCircleIcon" />
+          <Icon className="mt-[2px]" color="text-blue-500 dark:text-blue-300" icon="IconInfoCircle" />
           {descriptionNode}
         </FlexLayout>
       </Link>

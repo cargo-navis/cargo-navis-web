@@ -1,4 +1,4 @@
-import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
+import { InvoiceStatus } from '@/lib/api/shipments';
 import { useShipments } from '@/lib/hooks';
 
 import { usePaginationQueryParamState, useShipmentsSortLocalStorage } from '../hooks';
@@ -9,7 +9,7 @@ export function useShipmentsPageData() {
     selectedClientId,
     selectedDriverId,
     selectedDispatcherId,
-    selectedLoadingStatus,
+    selectedIsActive,
     selectedInvoiceStatus,
     selectedIsInvoiceOverdue,
     loadingDateFrom,
@@ -27,7 +27,7 @@ export function useShipmentsPageData() {
       clientId: selectedClientId ? String(selectedClientId) : undefined,
       driverId: selectedDriverId ? String(selectedDriverId) : undefined,
       dispatcherId: selectedDispatcherId ? String(selectedDispatcherId) : undefined,
-      loadStatus: selectedLoadingStatus ? (selectedLoadingStatus as LoadStatus) : undefined,
+      isActive: selectedIsActive ? selectedIsActive === 'true' : undefined,
       invoiceStatus: selectedInvoiceStatus ? (selectedInvoiceStatus as InvoiceStatus) : undefined,
       isInvoiceOverdue: selectedIsInvoiceOverdue ? String(selectedIsInvoiceOverdue) : undefined,
       loadingDateFrom: loadingDateFrom ? String(loadingDateFrom) : undefined,

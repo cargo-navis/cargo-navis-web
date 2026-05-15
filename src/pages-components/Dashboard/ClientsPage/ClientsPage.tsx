@@ -2,6 +2,7 @@ import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import type { Client } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
@@ -17,7 +18,12 @@ const FUSE_OPTIONS: ConstructorParameters<typeof Fuse<Client>>[1] = {
 export const ClientsPage = () => {
   const { data, isLoading } = useClients();
 
-  return <DashboardLayout>{isLoading ? <LoadingPage /> : <MainContent clients={data || []} />}</DashboardLayout>;
+  return (
+    <DashboardLayout>
+      <PageTitle title="Klijenti" />
+      {isLoading ? <LoadingPage /> : <MainContent clients={data || []} />}
+    </DashboardLayout>
+  );
 };
 
 const MainContent = ({ clients }: { clients: Client[] }) => {
@@ -41,7 +47,7 @@ const MainContent = ({ clients }: { clients: Client[] }) => {
           Klijenti
         </Heading>
         <DisplayIf condition={!isEmpty}>
-          <Button href="/dashboard/clients/new" iconLeft="PlusIcon" text="Dodaj Klijenta" />
+          <Button href="/dashboard/clients/new" iconLeft="IconPlus" text="Dodaj Klijenta" />
         </DisplayIf>
       </FlexLayout>
       <Box className="py-5">
@@ -57,8 +63,8 @@ const MainContent = ({ clients }: { clients: Client[] }) => {
             <Box className="max-w-xs mb-4">
               <TextInput
                 autoFocus
-                iconLeft="MagnifyingGlassIcon"
-                iconRight={search ? 'XMarkIcon' : undefined}
+                iconLeft="IconSearch"
+                iconRight={search ? 'IconX' : undefined}
                 placeholder="Pretraži klijente..."
                 value={search}
                 onChange={setSearch}

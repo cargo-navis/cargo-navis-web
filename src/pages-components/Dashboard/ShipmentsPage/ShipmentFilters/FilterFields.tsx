@@ -1,19 +1,35 @@
-import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
+import { InvoiceStatus } from '@/lib/api/shipments';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { useClients, useDispatchers, useDrivers } from '@/lib/hooks';
 import { mapEmployeesToOptions } from '@/lib/utils/employees';
-import { Box, FlexLayout } from '@/ui';
+import { Box, FlexLayout, Icon, Text, Tooltip } from '@/ui';
 import { DatepickerWithLabels, SingleSelectWithLabels } from '@/ui/hocs';
 
-import { invoiceStatusConfig, loadStatusConfig } from '../const';
+import { activeOptions, invoiceStatusConfig } from '../const';
 import { useShipmentsFiltersContext } from '../providers/ShipmentsFiltersProvider';
+
+const ActiveLabel = () => (
+  <Box as="span" className="inline-flex items-center gap-1">
+    Izvršenost
+    <Tooltip
+      content={
+        <Text className="px-1" color="text-light-50" variant="text-xxs">
+          Nalog se smatra odrađenim kada su završeni svi utovari i istovari.
+        </Text>
+      }
+      isPortal
+    >
+      <Icon color="text-color-3" icon="IconInfoCircle" size="s" />
+    </Tooltip>
+  </Box>
+);
 
 export const FilterFields = () => {
   const {
     selectedClientId,
     selectedDriverId,
     selectedDispatcherId,
-    selectedLoadingStatus,
+    selectedIsActive,
     selectedInvoiceStatus,
     selectedIsInvoiceOverdue,
     loadingDateFrom,
@@ -23,7 +39,7 @@ export const FilterFields = () => {
     onClientChange,
     onDriverChange,
     onDispatcherChange,
-    onLoadingStatusChange,
+    onIsActiveChange,
     onInvoiceStatusChange,
     onIsInvoiceOverdueChange,
     onLoadingDateFromChange,
@@ -43,11 +59,6 @@ export const FilterFields = () => {
 
   const driverOptions = mapEmployeesToOptions(drivers);
   const dispatcherOptions = mapEmployeesToOptions(dispatchers);
-
-  const loadingStatusOptions = Object.values(LoadStatus).map((status) => ({
-    value: status,
-    label: loadStatusConfig[status].label,
-  }));
 
   const invoiceStatusOptions = Object.values(InvoiceStatus).map((status) => ({
     value: status,
@@ -107,12 +118,11 @@ export const FilterFields = () => {
               <SingleSelectWithLabels
                 isClearable
                 isPortal
-                isSearchable
-                label="Status utovara"
-                options={loadingStatusOptions}
-                placeholder="Odaberi status..."
-                value={selectedLoadingStatus}
-                onChange={onLoadingStatusChange}
+                label={<ActiveLabel />}
+                options={activeOptions}
+                placeholder="Odaberi..."
+                value={selectedIsActive}
+                onChange={onIsActiveChange}
               />
             </Box>
 

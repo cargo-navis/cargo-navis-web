@@ -40,7 +40,7 @@ export const FilterTag = ({ label, value, colorScheme, onRemove }: FilterTagProp
       </Text>
       <Icon
         className={`ml-1 ${colors.hover} rounded-full w-4 h-4 flex items-center justify-center cursor-pointer`}
-        icon="XMarkIcon"
+        icon="IconX"
         onClick={onRemove}
       />
     </Box>

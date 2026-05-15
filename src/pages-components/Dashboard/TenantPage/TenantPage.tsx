@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { useCurrentTenant, useDeleteTenantLogo, useUploadTenantLogo } from '@/lib/hooks';
@@ -27,6 +28,7 @@ export const TenantPage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title="Tvrtka" />
       <Box>
         <MainContent tenant={tenant} />
       </Box>
@@ -182,7 +184,7 @@ const TenantLogoField: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
           <img alt={tenant.name} className="h-[150px] max-w-full" height="auto" src={displayUrl} width="auto" />
         ) : (
           <FlexLayout className=" bg-black-alpha-25 dark:bg-white-alpha-25 h-[150px] w-[150px] items-center justify-center">
-            <Icon color="text-white" icon="PhotoIcon" size="xl" />
+            <Icon color="text-white" icon="IconPhoto" size="xl" />
           </FlexLayout>
         )}
         <DisplayIf condition={isLoading}>

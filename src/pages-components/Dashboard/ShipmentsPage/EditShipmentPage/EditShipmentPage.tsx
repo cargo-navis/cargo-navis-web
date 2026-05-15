@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import type { Shipment } from '@/lib/api';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { LoadingPage } from '@/lib/components/LoadingPage';
@@ -20,6 +21,7 @@ export const EditShipmentPage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title={shipment?.orderNumber} type="Uredi nalog" />
       {isLoading || !shipment || !id || !tenant ? (
         <LoadingPage />
       ) : (

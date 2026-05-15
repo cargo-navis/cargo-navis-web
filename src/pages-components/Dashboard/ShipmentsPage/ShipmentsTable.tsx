@@ -1,20 +1,20 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import clsx from 'clsx';
-import uniq from 'lodash/uniq';
 import { useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { Fragment, useMemo } from 'react';
 
+import { EmployeeName } from '@/components/employees/EmployeeName';
 import { type Shipment } from '@/lib/api';
 import { InvoiceStatus } from '@/lib/api/shipments';
 import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
-import { Box, DisplayIf, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
+import { Box, DisplayIf, Divider, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
 
+import { AddressItem } from './AddressesList';
 import { invoiceStatusConfig } from './const';
 import { SortFieldEnum, useShipmentsSortLocalStorage } from './hooks';
 import { OverdueIndicator } from './OverdueIndicator';
-import { ReferenceNumberTooltip } from './ReferenceNumberTooltip';
 
 const columnHelper = createColumnHelper<Shipment>();
 
@@ -31,11 +31,16 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
     return [
       columnHelper.display({
         header: 'Nalog',
+        meta: { width: '18%' },
         enableSorting: false,
         cell: (props) => {
           const shipment = props.row.original;
-          const { clientId, documents, isInvoiceOverdue, orderNumber, cargoReference } = shipment;
+          const { clientId, documents, isInvoiceOverdue, orderNumber } = shipment;
           const client = clients.find((c) => c.id === clientId);
+          const isAgency = (shipment.children?.length ?? 0) > 0;
+          const transporter = isAgency
+            ? contractors.find((c) => c.id === shipment.children?.[0]?.transportContractorId)
+            : undefined;
 
           const hasDocuments = !!documents?.length;
 
@@ -51,7 +56,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
             <FlexLayout
               className={clsx(
                 textColor,
-                'flex-col pr-4 py-5 max-w-[20vw] whitespace-nowrap group-hover/row:text-teal-500'
+                'flex-col pr-4 py-4 max-w-[16vw] whitespace-nowrap group-hover/row:text-teal-500'
               )}
             >
               <FlexLayout className="gap-4 items-center">
@@ -73,26 +78,37 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                       }
                     >
                       <Box>
-                        <Icon color="text-color-4" icon="DocumentTextIcon" size="l" type="outline" />
+                        <Icon color="text-color-4" icon="IconFileDescription" size="l" type="outline" />
                       </Box>
                     </Tooltip>
                   </DisplayIf>
                 </FlexLayout>
               </FlexLayout>
-              <FlexLayout className={clsx(subtextColor, 'items-center gap-1 group-hover/row:text-inherit')}>
+              <FlexLayout className={clsx(subtextColor, 'items-center gap-2 group-hover/row:text-inherit')}>
                 <Text className="overflow-hidden text-ellipsis" variant="text-xs">
                   {orderNumber}
                 </Text>
-                <ReferenceNumberTooltip cargoReference={cargoReference} />
+                {isAgency && <Pill size="s" text="Agencijski nalog" variant="warning" />}
               </FlexLayout>
+              {isAgency && (
+                <FlexLayout className="flex-col mt-2">
+                  <Text color="text-color-3" variant="text-xxs-medium">
+                    Transporter
+                  </Text>
+                  <Text className="overflow-hidden text-ellipsis" color="text-color-2" variant="text-s-medium">
+                    {transporter?.name ?? '—'}
+                  </Text>
+                </FlexLayout>
+              )}
             </FlexLayout>
           );
         },
       }),
       columnHelper.accessor('price', {
+        size: 120,
         header: () => (
           <FlexLayout
-            className="items-center gap-1 cursor-pointer select-none hover:text-teal-500"
+            className="w-full justify-center items-center px-4 text-center cursor-pointer select-none hover:text-teal-500"
             onClick={() => toggleSort(SortFieldEnum.Price)}
           >
             <Text className="whitespace-nowrap" variant="text-s-medium">
@@ -105,87 +121,100 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         ),
         enableSorting: false,
         cell: (info) => {
-          const value = info.getValue() + '€';
+          const price = info.getValue();
+          const shipment = info.row.original;
+          const childPrice = shipment.children?.[0]?.price;
+          const isAgency = childPrice !== undefined;
+          const ruc = isAgency ? (price || 0) - childPrice : 0;
+          const rucClass = ruc >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400';
+
           return (
-            <FlexLayout className="items-center py-2">
+            <FlexLayout className="flex-col items-stretch text-right tabular-nums py-2 pl-4 pr-6">
               <Text className="text-green-500 dark:text-green-400" variant="text-m-medium">
-                {value}
+                {`${price}€`}
               </Text>
+              {isAgency && (
+                <>
+                  <Text className="text-red-500 dark:text-red-400" variant="text-m-medium">
+                    {`-${childPrice}€`}
+                  </Text>
+                  <Box className="my-2 self-stretch">
+                    <Divider />
+                  </Box>
+                  <Text color="text-color-3" variant="text-xxs-medium">
+                    RUC
+                  </Text>
+                  <Text className={rucClass} variant="text-m-medium">
+                    {ruc}€
+                  </Text>
+                </>
+              )}
             </FlexLayout>
           );
         },
       }),
       columnHelper.display({
-        id: 'loadingDates',
+        id: 'route',
+        enableSorting: false,
+        meta: { width: 'auto' },
         header: () => (
-          <FlexLayout
-            className="items-center gap-1 cursor-pointer select-none hover:text-teal-500"
-            onClick={() => toggleSort(SortFieldEnum.LoadingReadyDate)}
-          >
+          <FlexLayout className="items-center px-4 text-center">
             <Text className="whitespace-nowrap" variant="text-s-medium">
-              Utovar spreman
+              Utovar / Istovar
             </Text>
-            <DisplayIf
-              condition={
-                isFieldSorted(SortFieldEnum.LoadingReadyDate) && !!getSortDirection(SortFieldEnum.LoadingReadyDate)
-              }
-            >
-              {getSortDirection(SortFieldEnum.LoadingReadyDate) === 'desc' ? ' ↓' : ' ↑'}
-            </DisplayIf>
           </FlexLayout>
         ),
-        enableSorting: false,
         cell: (props) => {
-          const shipment = props.row.original;
-          const loadingDates = shipment.cargo.map((c) => c.loadingReadyDate);
+          const { cargo } = props.row.original;
 
-          const dates = uniq(loadingDates).sort();
-          const isMultipleDates = dates.length > 1;
+          const uniquePairs = new Map<string, (typeof cargo)[number]>();
+          cargo.forEach((c) => {
+            const key = `${c.loadingAddress?.postalCodeId ?? ''}|${c.unloadingAddress?.postalCodeId ?? ''}`;
+            if (!uniquePairs.has(key)) uniquePairs.set(key, c);
+          });
+
+          const loadingGroups = new Map<string, (typeof cargo)[number][]>();
+          uniquePairs.forEach((c) => {
+            const key = c.loadingAddress?.postalCodeId ?? '';
+            if (!loadingGroups.has(key)) loadingGroups.set(key, []);
+            loadingGroups.get(key)!.push(c);
+          });
 
           return (
-            <FlexLayout as="ul" className={clsx('flex-col gap-1 justify-center py-2', isMultipleDates && 'list-disc')}>
-              {dates.map((date) => (
-                <Text as="li" color="text-color-3" key={date} variant="text-s">
-                  {getDataPointDateString(date)}
-                </Text>
-              ))}
-            </FlexLayout>
-          );
-        },
-      }),
-      columnHelper.display({
-        id: 'unloadingDates',
-        header: () => (
-          <FlexLayout
-            className="items-center gap-1 cursor-pointer select-none hover:text-teal-500"
-            onClick={() => toggleSort(SortFieldEnum.UnloadingDueDate)}
-          >
-            <Text className="whitespace-nowrap" variant="text-s-medium">
-              Rok istovara
-            </Text>
-            <DisplayIf
-              condition={
-                isFieldSorted(SortFieldEnum.UnloadingDueDate) && !!getSortDirection(SortFieldEnum.UnloadingDueDate)
-              }
-            >
-              {getSortDirection(SortFieldEnum.UnloadingDueDate) === 'desc' ? ' ↓' : ' ↑'}
-            </DisplayIf>
-          </FlexLayout>
-        ),
-        enableSorting: false,
-        cell: (props) => {
-          const shipment = props.row.original;
-          const unloadingDates = shipment.cargo.map((c) => c.unloadingDueDate);
-
-          const dates = uniq(unloadingDates).sort();
-          const isMultipleDates = dates.length > 1;
-
-          return (
-            <FlexLayout as="ul" className={clsx('flex-col gap-1 justify-center py-2', isMultipleDates && 'list-disc')}>
-              {dates.map((date) => (
-                <Text as="li" color="text-color-3" key={date} variant="text-s">
-                  {getDataPointDateString(date)}
-                </Text>
+            <FlexLayout className="flex-col gap-3 py-2 px-4">
+              {Array.from(loadingGroups.values()).map((groupCargos, gi) => (
+                <Box
+                  className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] gap-x-3 gap-y-2"
+                  key={gi}
+                  style={{ gridTemplateRows: `repeat(${groupCargos.length}, auto)` }}
+                >
+                  <Box
+                    className="self-center flex flex-col min-w-0"
+                    style={{ gridColumn: 1, gridRow: `1 / span ${groupCargos.length}` }}
+                  >
+                    <AddressItem address={groupCargos[0].loadingAddress} />
+                    {groupCargos[0].loadingReadyDate && (
+                      <Text color="text-color-4" variant="text-xxs">
+                        {getDataPointDateString(groupCargos[0].loadingReadyDate)}
+                      </Text>
+                    )}
+                  </Box>
+                  {groupCargos.map((c, ci) => (
+                    <Fragment key={ci}>
+                      <Box className="self-center" style={{ gridColumn: 2, gridRow: ci + 1 }}>
+                        <Icon color="text-color-4" icon="IconArrowRight" size="s" />
+                      </Box>
+                      <Box className="flex flex-col self-center min-w-0" style={{ gridColumn: 3, gridRow: ci + 1 }}>
+                        <AddressItem address={c.unloadingAddress} />
+                        {c.unloadingDueDate && (
+                          <Text color="text-color-4" variant="text-xxs">
+                            {getDataPointDateString(c.unloadingDueDate)}
+                          </Text>
+                        )}
+                      </Box>
+                    </Fragment>
+                  ))}
+                </Box>
               ))}
             </FlexLayout>
           );
@@ -195,7 +224,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         id: 'ldm',
         enableSorting: false,
         header: 'LDM / Težina',
-        size: 140,
+        size: 110,
         cell: (props) => {
           const { cargo } = props.row.original;
 
@@ -203,7 +232,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const weightTotal = cargo.reduce((acc, c) => (acc += c.weight), 0);
 
           return (
-            <FlexLayout className="flex-col py-2">
+            <FlexLayout className="flex-col py-2 pr-4">
               <Text color="text-color-2" variant="text-s-medium">
                 {roundLdmValue(ldmTotal) || '—'}
               </Text>
@@ -215,10 +244,84 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         },
       }),
       columnHelper.display({
-        id: 'palleteNo',
-        size: 100,
+        id: 'vehicleDriver',
+        meta: { width: '14%' },
         enableSorting: false,
-        header: 'Broj paleta',
+        header: 'Vozilo / Vozač',
+        cell: (props) => {
+          const shipment = props.row.original;
+          const isAgency = (shipment.children?.length ?? 0) > 0;
+          const { vehicleStops } = shipment;
+          const latestStop = vehicleStops?.[vehicleStops.length - 1];
+          const vehicle = latestStop ? vehicles.find((v) => v.id === latestStop.vehicleId) : undefined;
+          const driver = latestStop?.driverId ? employees.find((e) => e.id === latestStop.driverId) : undefined;
+
+          if (isAgency && !vehicle && !driver) {
+            return (
+              <FlexLayout className="items-center py-2">
+                <Text color="text-color-3" variant="text-s">
+                  —
+                </Text>
+              </FlexLayout>
+            );
+          }
+
+          const isVehicleMissing = !vehicle;
+          const isDriverMissing = !driver;
+
+          return (
+            <FlexLayout className="flex-col py-2 pr-4 min-w-0">
+              <FlexLayout className="items-start gap-1 min-w-0">
+                <Icon
+                  className="mt-1 shrink-0"
+                  color={isVehicleMissing ? 'text-red-500' : 'text-color-2'}
+                  icon="IconTruck"
+                  size="s"
+                />
+                {vehicle ? (
+                  <Text
+                    className="block min-w-0 flex-1 truncate"
+                    color="text-color-2"
+                    title={`${vehicle.registration}${vehicle.brand ? ` (${vehicle.brand})` : ''}`}
+                    variant="text-xs"
+                  >
+                    {vehicle.registration} {!!vehicle?.brand && `(${vehicle.brand})`}
+                  </Text>
+                ) : (
+                  <Text className="block min-w-0 flex-1 truncate" color="text-red-500" variant="text-xs">
+                    Vozilo nedodijeljeno
+                  </Text>
+                )}
+              </FlexLayout>
+              <FlexLayout className="items-start gap-1 min-w-0">
+                <Icon
+                  className="mt-1 shrink-0"
+                  color={isDriverMissing ? 'text-red-500' : 'text-color-2'}
+                  icon="IconSteeringWheel"
+                  size="s"
+                />
+                {driver ? (
+                  <EmployeeName
+                    className="block min-w-0 flex-1 truncate"
+                    color="text-color-2"
+                    id={driver.id}
+                    variant="text-xxs"
+                  />
+                ) : (
+                  <Text className="block min-w-0 flex-1 truncate" color="text-red-500" variant="text-xxs">
+                    Vozač nedodijeljen
+                  </Text>
+                )}
+              </FlexLayout>
+            </FlexLayout>
+          );
+        },
+      }),
+      columnHelper.display({
+        id: 'palleteNo',
+        size: 80,
+        enableSorting: false,
+        header: 'Palete',
         cell: (props) => {
           const { cargo } = props.row.original;
           const hasNonstandardCargo = cargo.some((c) => c.metadata?.type === 'nonstandard');
@@ -240,14 +343,15 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
       }),
       columnHelper.display({
         id: 'status',
+        enableSorting: false,
+        meta: { width: '124px' },
         header: () => (
-          <FlexLayout className="grow items-center justify-end px-3">
+          <FlexLayout className="grow items-center justify-end pr-3">
             <Text className="whitespace-nowrap" variant="text-s-medium">
               Status Fakture
             </Text>
           </FlexLayout>
         ),
-        enableSorting: false,
         cell: (info) => {
           const shipment = info.row.original;
           const invoiceConfig = invoiceStatusConfig[shipment.invoiceStatus];
@@ -266,19 +370,22 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
     router.push(`/dashboard/shipments/${shipment.id}`);
   };
 
-  // Add isWarning flag to shipments missing vehicleId or driverId
   const shipmentsWithWarnings = useMemo(() => {
     if (!shipments) return [];
 
     return shipments.map((shipment) => {
       function isShipmentComplete(s: Shipment) {
-        // const isAllCargoUnloaded = s.cargo.every((c) => c.loadStatus === LoadStatus.Unloaded);
-        return s.invoiceStatus === InvoiceStatus.Paid; //&& isAllCargoUnloaded;
+        return s.invoiceStatus === InvoiceStatus.Paid;
       }
+
+      const isAgency = (shipment.children?.length ?? 0) > 0;
+      const latestStop = shipment.vehicleStops?.[shipment.vehicleStops.length - 1];
+      const isMissingVehicleOrDriver = !latestStop?.vehicleId || !latestStop?.driverId;
 
       return {
         ...shipment,
         isSuccess: isShipmentComplete(shipment),
+        isWarning: !isAgency && isMissingVehicleOrDriver,
       };
     });
   }, [shipments]);

@@ -66,7 +66,7 @@ export const CargoLoadModal: React.FC<CargoLoadModalProps> = ({ isOpen, onClose,
       >
         <DialogHeader className="flex-row items-center justify-between">
           <DialogTitle className="font-medium">{title}</DialogTitle>
-          <Icon icon="XMarkIcon" onClick={onClose} />
+          <Icon icon="IconX" onClick={onClose} />
         </DialogHeader>
         <CargoLoadForm
           key={
@@ -118,12 +118,8 @@ const CargoLoadForm = ({ type, initialValues, cargo, onSubmit }: Omit<CargoLoadM
       >
         <FlexLayout className="gap-4 grow">
           <FlexLayout className="flex-col gap-4 flex-1">
-            <Box className="flex-1">
-              <FormTextInput autoFocus label={companyLabel} name="companyName" />
-            </Box>
-            <Box className="flex-1">
-              <FormDatepicker label={dateLabel} maxDate={maxDateForPicker} minDate={minDateForPicker} name="date" />
-            </Box>
+            <FormTextInput autoFocus label={companyLabel} name="companyName" />
+            <FormDatepicker label={dateLabel} maxDate={maxDateForPicker} minDate={minDateForPicker} name="date" />
           </FlexLayout>
           <VerticalDivider />
           <FlexLayout className="flex-col gap-4 flex-1">
@@ -162,7 +158,7 @@ const PostalCodeField = () => {
     <Box className="flex-1">
       <PostalCodeSelectField
         countryCode={loadingCountryCode}
-        iconLeft="MagnifyingGlassIcon"
+        iconLeft="IconSearch"
         isClearable
         isDisabled={!loadingCountryCode}
         label="Poštanski broj"

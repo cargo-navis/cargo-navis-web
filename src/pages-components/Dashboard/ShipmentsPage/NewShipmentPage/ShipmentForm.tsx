@@ -1,19 +1,21 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
-import { FormProvider, useForm } from 'react-hook-form';
+import { useEffect, useMemo, useState } from 'react';
+import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
 
-import { type Shipment } from '@/lib/api';
+import { type Cargo, type Shipment } from '@/lib/api';
 import type { Tenant } from '@/lib/api/tenant.d';
-import { FormTextInput } from '@/lib/components/form';
+import { FormNumberInput, FormSwitch, FormTextarea, FormTextInput } from '@/lib/components/form';
 import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, FlexLayout, LoadingSpinner } from '@/ui';
+import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
+import { AssignVehicleModal } from './AssignVehicleModal';
 import { CargoFieldList } from './CargoFieldList';
 import { ClientField } from './ClientField';
 import { ContractorField } from './ContractorField';
 import { PriceField } from './PriceField';
-import { shipmentSchema } from './schema';
+import { getShipmentSchema } from './schema';
 import type { ShipmentFields } from './types';
 import { getFormDefaultValues, transformFormDataToPayload } from './utils';
 
@@ -35,14 +37,22 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
   const { mutateAsync: createShipment } = useCreateShipment();
   const { mutateAsync: updateShipment } = useUpdateShipment();
 
+  const [assignVehicleFor, setAssignVehicleFor] = useState<{
+    orderNumber: string;
+    clientId?: string | null;
+    cargos: Cargo[];
+  } | null>(null);
+
+  const schema = useMemo(() => getShipmentSchema(tenant.id), [tenant.id]);
+
   const formMethods = useForm<ShipmentFields>({
     defaultValues: getFormDefaultValues(shipment, tenant, isCopy),
-    resolver: yupResolver(shipmentSchema) as any,
+    resolver: yupResolver(schema) as any,
     mode: 'all',
   });
 
   const { handleSubmit, formState } = formMethods;
-  const { isDirty, isValid, isLoading, isSubmitting, dirtyFields } = formState;
+  const { isDirty, isValid, isLoading, isSubmitting } = formState;
 
   // For a copied shipment, we should only check validity, not dirty state
   const isFormActionable = isCopy ? isValid : isValid && isDirty;
@@ -50,28 +60,45 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
   async function handleFormSubmit(data: ShipmentFields) {
     try {
       if (isEdit && shipment) {
-        // When cargo items are removed, the cargo array should always be included
-        // even if dirtyFields doesn't detect it properly
-        const cargoHasChanged = JSON.stringify(shipment.cargo) !== JSON.stringify(data.cargo);
+        const childId = shipment.children?.[0]?.id;
+        const wasAgency = !!childId;
 
-        const dirtyData = Object.keys(data).reduce((acc, key) => {
-          if (dirtyFields[key] || (key === 'cargo' && cargoHasChanged)) {
-            acc[key] = data[key];
-          }
-          return acc;
-        }, {} as ShipmentFields);
+        if (wasAgency) {
+          // Patch parent and child via their own endpoints. PATCH is partial
+          // (FieldState semantics) so the child body carries only the two
+          // fields the agency form controls; other child fields stay
+          // untouched.
+          const { agencyPrice, transportContractorId, isAgency: _ia, ...rest } = data;
+          const parentPayload = transformFormDataToPayload({
+            ...rest,
+            transportContractorId: tenant.id,
+          } as ShipmentFields);
 
-        const payload = transformFormDataToPayload(dirtyData);
+          await Promise.all([
+            updateShipment({ id: shipment.id, ...parentPayload }),
+            updateShipment({
+              id: childId,
+              price: agencyPrice,
+              transportContractorId,
+            }),
+          ]);
+        } else {
+          const payload = transformFormDataToPayload(data);
+          await updateShipment({ id: shipment.id, ...payload });
+        }
 
-        await updateShipment({ id: shipment.id, ...payload });
         showSuccessToast({ title: `Nalog "${shipment.orderNumber}" uspješno ažuriran` });
         void back();
       } else {
-        const payload = transformFormDataToPayload(data);
+        const payload = transformFormDataToPayload(data, { tenantId: tenant.id });
 
         const newShipment = await createShipment(payload);
         showSuccessToast({ title: `Nalog "${newShipment.orderNumber}" uspješno kreiran` });
-        await push('/dashboard/shipments');
+        setAssignVehicleFor({
+          orderNumber: newShipment.orderNumber,
+          clientId: newShipment.clientId,
+          cargos: newShipment.cargo,
+        });
       }
     } catch (error) {
       console.error(error);
@@ -83,21 +110,34 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
     return <LoadingSpinner size="l" />;
   }
 
+  async function handleAssignDismiss() {
+    setAssignVehicleFor(null);
+    await push('/dashboard/shipments');
+  }
+
+  async function handleVehicleAssigned(vehicleId: string) {
+    setAssignVehicleFor(null);
+    await push(`/dashboard/vehicle-stops/${vehicleId}`);
+  }
+
   return (
     <FormProvider {...formMethods}>
+      {assignVehicleFor && (
+        <AssignVehicleModal
+          cargos={assignVehicleFor.cargos}
+          clientId={assignVehicleFor.clientId}
+          isOpen={!!assignVehicleFor}
+          shipmentOrderNumber={assignVehicleFor.orderNumber}
+          onAssigned={handleVehicleAssigned}
+          onClose={handleAssignDismiss}
+        />
+      )}
       <Box as="form" className="max-w-[1400px]" onSubmit={handleSubmit(handleFormSubmit)}>
         <FlexLayout className="relative flex-col gap-7 w-full">
           <FlexLayout className="flex-row gap-7">
             <FlexLayout className="w-[500px] flex-col gap-4">
               <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
-                <FlexLayout className="gap-4">
-                  <Box className="flex-1">
-                    <FormTextInput label="Referentni broj" name="cargoReference" placeholder="1234" />
-                  </Box>
-                  <Box className="flex-1">
-                    <FormTextInput label="Vanjska referenca narudžbe" name="externalOrderReference" />
-                  </Box>
-                </FlexLayout>
+                <FormTextInput label="Vanjska referenca narudžbe" name="externalOrderReference" />
                 <FlexLayout className="gap-4">
                   <Box className="flex-1">
                     <ClientField />
@@ -106,7 +146,8 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
                     <PriceField />
                   </Box>
                 </FlexLayout>
-                <ContractorField name="transportContractorId" tenant={tenant} />
+                <AgencyShipmentFields tenant={tenant} />
+                <FormTextarea label="Napomena" name="note" />
               </FlexLayout>
             </FlexLayout>
             <CargoFieldList />
@@ -124,5 +165,61 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
         </FlexLayout>
       </Box>
     </FormProvider>
+  );
+};
+
+const AgencyShipmentFields: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
+  const { setValue, getValues } = useFormContext<ShipmentFields>();
+  const isAgency = useWatch<ShipmentFields>({ name: 'isAgency' });
+  const price = useWatch<ShipmentFields>({ name: 'price' });
+  const agencyPrice = useWatch<ShipmentFields>({ name: 'agencyPrice' });
+
+  useEffect(() => {
+    if (isAgency) {
+      if (getValues('transportContractorId') === tenant.id) {
+        setValue('transportContractorId', '', { shouldDirty: true, shouldValidate: true });
+      }
+      if (getValues('clientId') === tenant.id) {
+        setValue('clientId', '', { shouldDirty: true, shouldValidate: true });
+      }
+      return;
+    }
+
+    const contractorId = getValues('transportContractorId');
+    const clientId = getValues('clientId');
+    if (contractorId !== tenant.id && clientId !== tenant.id) {
+      setValue('transportContractorId', tenant.id, { shouldDirty: true, shouldValidate: true });
+    }
+  }, [isAgency, tenant.id, getValues, setValue]);
+
+  const ruc = (Number(price) || 0) - (Number(agencyPrice) || 0);
+
+  return (
+    <>
+      <ContractorField excludeTenant={!!isAgency} name="transportContractorId" tenant={tenant} />
+      <FormSwitch label="Agencijski nalog" name="isAgency" />
+      {isAgency && (
+        <FlexLayout className="gap-4 items-end">
+          <Box className="flex-1">
+            <FormNumberInput
+              iconLeft="IconCurrencyEuro"
+              inputMode="decimal"
+              label="Cijena agencijskog prijevoza"
+              name="agencyPrice"
+              placeholder="XXX"
+              rules={{ required: true }}
+            />
+          </Box>
+          <FlexLayout className="flex-col flex-1 justify-between items-end">
+            <Text color="text-color-3" variant="text-xxs-medium">
+              RUC (Razlika u cijeni)
+            </Text>
+            <Text color={ruc >= 0 ? 'text-green-500' : 'text-red-500'} variant="text-xl-medium">
+              {ruc.toFixed(2)} €
+            </Text>
+          </FlexLayout>
+        </FlexLayout>
+      )}
+    </>
   );
 };

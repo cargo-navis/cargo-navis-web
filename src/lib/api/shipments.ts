@@ -1,7 +1,7 @@
 import { backend } from '@/lib/services/backendService';
 
-import type { CreateShipmentData, GetShipmentParams, Shipment } from './';
 import type { PaginatedResponse } from './pagination.d';
+import type { CreateShipmentData, GetShipmentParams, Shipment } from './shipments.d';
 
 export enum LoadStatus {
   NotYetLoaded = 'not_yet_loaded',

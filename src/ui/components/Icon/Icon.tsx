@@ -1,5 +1,4 @@
-import * as outlineIcons from '@heroicons/react/24/outline';
-import * as solidIcons from '@heroicons/react/24/solid';
+import * as icons from '@tabler/icons-react';
 import clsx from 'clsx';
 import { forwardRef } from 'react';
 
@@ -7,27 +6,38 @@ import { Box, type BoxProps } from '@/ui';
 
 import { type IconSize, iconSizesMap } from './const';
 
-export type IconType = keyof typeof outlineIcons & keyof typeof solidIcons;
+type IconKeys = Extract<keyof typeof icons, `Icon${string}`>;
+export type IconType = Exclude<IconKeys, `${string}Filled`>;
 
-enum IconFillType {
+const iconPixelSizes: Record<IconSize, number> = {
+  xs: 12,
+  s: 16,
+  m: 20,
+  l: 24,
+  xl: 28,
+  xxl: 32,
+  xxxl: 36,
+};
+
+enum Icon2FillType {
   Solid = 'solid',
   Outline = 'outline',
 }
 
 type DefaultProps = Pick<BoxProps, 'onClick' | 'onBlur' | 'onKeyDown' | 'className' | 'isDisabled'>;
 
-interface IconProps extends DefaultProps {
+interface Icon2Props extends DefaultProps {
   className?: string;
   icon: IconType;
   size?: IconSize;
   color?: string;
-  type?: `${IconFillType}`;
+  type?: `${Icon2FillType}`;
 }
 
-export const Icon = forwardRef<HTMLDivElement, IconProps>(
+export const Icon = forwardRef<HTMLDivElement, Icon2Props>(
   ({ className, color, icon, size = 'm', type = 'outline', onClick, ...rest }, ref) => {
-    const icons = type === IconFillType.Solid ? solidIcons : outlineIcons;
-    const IconComponent = icons[icon];
+    const filledKey = `${icon}Filled` as IconKeys;
+    const IconComponent = type === Icon2FillType.Solid && icons[filledKey] ? icons[filledKey] : icons[icon];
 
     return (
       <Box
@@ -41,8 +51,10 @@ export const Icon = forwardRef<HTMLDivElement, IconProps>(
         onClick={onClick}
         {...rest}
       >
-        <IconComponent />
+        <IconComponent size={iconPixelSizes[size]} stroke={1.5} />
       </Box>
     );
   }
 );
+
+Icon.displayName = 'Icon';

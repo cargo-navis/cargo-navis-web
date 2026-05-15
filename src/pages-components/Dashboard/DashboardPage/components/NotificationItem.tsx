@@ -22,7 +22,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({ notification
       href={targetUrl}
     >
       <FlexLayout className="flex-start gap-3 p-4">
-        <Icon className="mt-[1px]" color="text-blue-500 dark:text-blue-300" icon="InformationCircleIcon" size="l" />
+        <Icon className="mt-[1px]" color="text-blue-500 dark:text-blue-300" icon="IconInfoCircle" size="l" />
         <FlexLayout className="flex-col grow gap-1">
           {descriptionNode}
           <Text color="text-color-3" variant="text-xxs">
@@ -37,7 +37,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({ notification
             group-hover:translate-x-0 group-hover:opacity-100
             transition-transform`}
         >
-          <Icon color="text-color-2" icon="ArrowRightIcon" size="l" />
+          <Icon color="text-color-2" icon="IconArrowRight" size="l" />
         </Box>
       </FlexLayout>
       <hr className="border-dark-300 dark:border-light-600 m-0" />

@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import { type Employee, MessageChannelEnum, PositionEnum } from '@/lib/api/employees.d';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useEmployee } from '@/lib/hooks';
@@ -21,6 +22,7 @@ export const SingleEmployeePage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title={employee?.fullName} type="Zaposlenik" />
       {!employee || isLoading ? (
         <LoadingPage />
       ) : (
@@ -57,7 +59,7 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
                   <ContactInfo contact={employee.phoneNumber} contactType="phone" />
                   <DisplayIf condition={employee.messageChannel === MessageChannelEnum.WHATSAPP}>
                     <FlexLayout className="gap-1 items-center">
-                      <Icon color="text-green-500" icon="CheckCircleIcon" type="solid" />
+                      <Icon color="text-green-500" icon="IconCircleCheck" type="solid" />
                       <Text color="text-color-3" variant="text-xxs">
                         WhatsApp spojen
                       </Text>

@@ -114,7 +114,7 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
         <Text color="text-color-3" variant="text-s-medium">
           TERET {index + 1}
         </Text>
-        {cargoLength > 1 && <Icon icon="XMarkIcon" onClick={removeCargo} />}
+        {cargoLength > 1 && <Icon icon="IconX" onClick={removeCargo} />}
       </FlexLayout>
       <FlexLayout className="flex-col gap-4">
         <FlexLayout className="gap-2">

@@ -134,7 +134,7 @@ const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
           >
             Detalji utovara
           </Text>
-          <Icon icon="ArrowRightEndOnRectangleIcon" />
+          <Icon className="text-orange-500 dark:text-orange-400" icon="IconPackageImport" />
         </FlexLayout>
         <FlexLayout className="flex-col gap-4 flex-1">
           <FlexLayout className="gap-4 justify-between items-start">
@@ -179,7 +179,7 @@ const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
           >
             Detalji istovara
           </Text>
-          <Icon icon="ArrowRightStartOnRectangleIcon" />
+          <Icon className="text-teal-500 dark:text-teal-400" icon="IconPackageExport" />
         </FlexLayout>
         <FlexLayout className="flex-col gap-4 flex-1">
           <FlexLayout className="gap-4 justify-between items-start">

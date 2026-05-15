@@ -1,12 +1,12 @@
 import { copyToClipboard } from '@/lib/utils/clipboard';
-import { FlexLayout, Icon, type IconType, Text } from '@/ui';
+import { FlexLayout, Icon, IconType, Text } from '@/ui';
 
 const contactIconMap: Record<string, IconType> = {
-  email: 'EnvelopeIcon',
-  phone: 'PhoneIcon',
-  governmentId: 'IdentificationIcon',
-  dateOfBirth: 'CakeIcon',
-  residenceAddress: 'HomeIcon',
+  email: 'IconMail',
+  phone: 'IconPhone',
+  governmentId: 'IconId',
+  dateOfBirth: 'IconBalloon',
+  residenceAddress: 'IconHome',
 };
 
 interface ContactInfoProps {
@@ -26,7 +26,7 @@ export const ContactInfo: React.FC<ContactInfoProps> = ({ contact, contactType }
       <Text variant="text-s">{contact}</Text>
       <Icon
         className="opacity-0 translate-x-[-4px] group-hover:opacity-100 group-hover:translate-x-0 w-5 transition-transform ease"
-        icon="DocumentDuplicateIcon"
+        icon="IconCopy"
       />
     </FlexLayout>
   );

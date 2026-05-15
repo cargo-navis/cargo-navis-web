@@ -19,7 +19,7 @@ export const CargoFieldList = () => {
         <CargoField cargoLength={arr.length} index={index} key={index} />
       ))}
       <Button
-        iconLeft="PlusIcon"
+        iconLeft="IconPlus"
         isFullWidth
         text="Dodaj teret"
         type="button"
