@@ -15,7 +15,7 @@ interface VehicleStopCardProps {
 }
 
 export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
-  const stops = group.stops.slice(-5);
+  const stops = group.stops.slice(-5).reverse();
 
   return (
     <Link className="block" href={`/dashboard/vehicle-stops/${group.vehicleId}`}>

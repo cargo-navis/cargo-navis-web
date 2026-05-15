@@ -31,8 +31,7 @@ export function useVehicleStopsByVehicle(limit?: number, options?: { enabled?: b
 export function useVehicleStops(vehicleId: string) {
   return useInfiniteQuery({
     queryKey: [QUERY_KEY, 'paginated', vehicleId],
-    queryFn: ({ pageParam }) =>
-      getVehicleStops({ vehicleId, page: pageParam, size: VEHICLE_STOPS_PAGE_SIZE, sort: 'desc' }),
+    queryFn: ({ pageParam }) => getVehicleStops({ vehicleId, page: pageParam, size: VEHICLE_STOPS_PAGE_SIZE }),
     initialPageParam: 1,
     getNextPageParam: (last) => (last.currentPage < last.totalPages ? last.currentPage + 1 : undefined),
     enabled: !!vehicleId,
