@@ -29,7 +29,7 @@ export const FilterFields = () => {
     selectedClientId,
     selectedDriverId,
     selectedDispatcherId,
-    selectedActive,
+    selectedIsActive,
     selectedInvoiceStatus,
     selectedIsInvoiceOverdue,
     loadingDateFrom,
@@ -39,7 +39,7 @@ export const FilterFields = () => {
     onClientChange,
     onDriverChange,
     onDispatcherChange,
-    onActiveChange,
+    onIsActiveChange,
     onInvoiceStatusChange,
     onIsInvoiceOverdueChange,
     onLoadingDateFromChange,
@@ -121,8 +121,8 @@ export const FilterFields = () => {
                 label={<ActiveLabel />}
                 options={activeOptions}
                 placeholder="Odaberi..."
-                value={selectedActive}
-                onChange={onActiveChange}
+                value={selectedIsActive}
+                onChange={onIsActiveChange}
               />
             </Box>
 

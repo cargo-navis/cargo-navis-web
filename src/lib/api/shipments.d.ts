@@ -37,7 +37,7 @@ export type GetShipmentParams = {
   loadingDateTo?: string;
   unloadingDateFrom?: string;
   unloadingDateTo?: string;
-  active?: boolean;
+  isActive?: boolean;
   // Pagination parameters
   page?: number;
   size?: number;

@@ -25,7 +25,7 @@ export const CargoSelectDrawer = ({
   onOpenChange,
   onConfirm,
 }: CargoSelectDrawerProps) => {
-  const { data: shipments, isLoading } = useShipmentsData({ params: { active: true }, enabled: isOpen });
+  const { data: shipments, isLoading } = useShipmentsData({ params: { isActive: true }, enabled: isOpen });
 
   const groups = useMemo<{ shipment: Shipment; cargos: CargoWithClient[] }[]>(
     () =>

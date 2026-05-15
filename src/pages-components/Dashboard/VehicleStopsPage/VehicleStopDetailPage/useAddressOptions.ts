@@ -9,7 +9,7 @@ import { buildAddressKey, formatAddressLabel } from './addressHelpers';
 type AddressOption = { value: string; label: string; helper?: string };
 
 export function useAddressOptions(stop?: VehicleStop) {
-  const { data: shipments = [] } = useShipmentsData({ params: { active: true } });
+  const { data: shipments = [] } = useShipmentsData({ params: { isActive: true } });
   const { data: clients = [] } = useClients();
 
   const addressOptions = useMemo<AddressOption[]>(() => {

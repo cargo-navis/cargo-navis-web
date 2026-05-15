@@ -11,7 +11,7 @@ export const FilterTags = () => {
     selectedClientId,
     selectedDriverId,
     selectedDispatcherId,
-    selectedActive,
+    selectedIsActive,
     selectedInvoiceStatus,
     selectedIsInvoiceOverdue,
     loadingDateFrom,
@@ -21,7 +21,7 @@ export const FilterTags = () => {
     onClientChange,
     onDriverChange,
     onDispatcherChange,
-    onActiveChange,
+    onIsActiveChange,
     onInvoiceStatusChange,
     onIsInvoiceOverdueChange,
     onLoadingDateFromChange,
@@ -39,8 +39,8 @@ export const FilterTags = () => {
   const selectedDispatcher = dispatchers.find((dispatcher) => dispatcher.id === selectedDispatcherId);
 
   // Compute labels from values
-  const selectedActiveLabel =
-    selectedActive === 'true' || selectedActive === 'false' ? activeLabels[selectedActive] : null;
+  const selectedIsActiveLabel =
+    selectedIsActive === 'true' || selectedIsActive === 'false' ? activeLabels[selectedIsActive] : null;
   const selectedInvoiceStatusLabel = selectedInvoiceStatus
     ? invoiceStatusConfig[selectedInvoiceStatus as InvoiceStatus]?.label
     : null;
@@ -77,12 +77,12 @@ export const FilterTags = () => {
             onRemove={() => onDispatcherChange('')}
           />
         </DisplayIf>
-        <DisplayIf condition={!!selectedActiveLabel}>
+        <DisplayIf condition={!!selectedIsActiveLabel}>
           <FilterTag
             colorScheme="purple"
             label="Izvršenost"
-            value={selectedActiveLabel || ''}
-            onRemove={() => onActiveChange('')}
+            value={selectedIsActiveLabel || ''}
+            onRemove={() => onIsActiveChange('')}
           />
         </DisplayIf>
         <DisplayIf condition={!!selectedInvoiceStatusLabel}>
