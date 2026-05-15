@@ -41,7 +41,7 @@ export const TrailersTable = ({ trailers }: { trailers: Vehicle[] }) => {
                         }
                       >
                         <Box>
-                          <Icon color="text-color-4" icon="DocumentTextIcon" size="l" type="outline" />
+                          <Icon color="text-color-4" icon="IconFileDescription" size="l" type="outline" />
                         </Box>
                       </Tooltip>
                     </DisplayIf>

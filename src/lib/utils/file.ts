@@ -2,6 +2,7 @@ import { AxiosError } from 'axios';
 
 import { getShipmentDocumentUrl } from '../api/shipments';
 import { getVehicleDocumentUrl } from '../api/vehicles';
+import { getVehicleStopFileUrl } from '../api/vehicleStops';
 import { showErrorToast } from './toast';
 
 export const getFileInput = (
@@ -40,6 +41,18 @@ export async function downloadVehicleFile(id: string, documentId: string) {
 export async function downloadShipmentFile(id: string, documentId: string) {
   try {
     const url = await getShipmentDocumentUrl(id, documentId, 'attachment');
+    handleLocalDownload(url, 'file');
+  } catch (err) {
+    const error = err as AxiosError<any>;
+    const message = error?.response?.data?.message?.[0];
+    showErrorToast({ title: 'Greška prilikom preuzimanja dokumenta', description: message });
+    return;
+  }
+}
+
+export async function downloadVehicleStopFile(id: string, documentId: string) {
+  try {
+    const url = await getVehicleStopFileUrl(id, documentId, 'attachment');
     handleLocalDownload(url, 'file');
   } catch (err) {
     const error = err as AxiosError<any>;

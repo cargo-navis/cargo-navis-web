@@ -22,3 +22,5 @@ export * from './tenant';
 export * from './tenant.d';
 export * from './vehicles';
 export * from './vehicles.d';
+export * from './vehicleStops';
+export * from './vehicleStops.d';

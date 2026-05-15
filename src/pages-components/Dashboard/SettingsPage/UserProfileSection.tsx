@@ -21,13 +21,7 @@ export const UserProfileSection: React.FC<{ user: User }> = ({ user }) => {
         </FlexLayout>
       </FlexLayout>
       <Box>
-        <TextInputWithLabels
-          iconLeft="LockClosedIcon"
-          isDisabled
-          label="Email"
-          value={user.email}
-          onChange={() => null}
-        />
+        <TextInputWithLabels iconLeft="IconLock" isDisabled label="Email" value={user.email} onChange={() => null} />
       </Box>
     </FlexLayout>
   );

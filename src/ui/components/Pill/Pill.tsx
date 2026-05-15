@@ -14,7 +14,7 @@ export const Pill: React.FC<PillProps> = ({ text, size = 'm', variant = 'default
   const { styles, textVariant } = getSizeStyles(size);
 
   return (
-    <Box className={clsx('flex w-max items-center justify-center uppercase', styles, variantsMap[variant])}>
+    <Box className={clsx('flex w-max items-center justify-center uppercase border', styles, variantsMap[variant])}>
       <Text variant={textVariant}>{text}</Text>
     </Box>
   );

@@ -22,7 +22,7 @@ export const FormDatepicker: React.FC<FormDatepickerProps> = ({ name, isDisabled
     <DatepickerWithLabels
       {...rest}
       errorText={error?.message}
-      isDisabled={isSubmitting}
+      isDisabled={isSubmitting || !!isDisabled}
       isRequired={isRequired}
       value={value}
       onChange={onChange}

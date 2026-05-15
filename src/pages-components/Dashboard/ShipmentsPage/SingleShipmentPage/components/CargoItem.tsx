@@ -1,41 +1,17 @@
-import { LoadStatus } from '@/lib/api';
-import { useUpdateCargo } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { palleteNameMap } from '@/lib/utils/palletes';
-import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { loadStatusConfig } from '@/pages-components/Dashboard/ShipmentsPage/const';
 import { Collapsible, DisplayIf, Divider, FlexLayout, Icon, Text, VerticalDivider } from '@/ui';
 
 import { AddressDetailsItem } from './AddressDetailsItem';
-import { LoadStatusProgress } from './LoadStatusProgress';
 import type { CargoWithMetadata } from './types';
 
 interface CargoItemProps {
   cargo: CargoWithMetadata;
   index: number;
-  shipmentId: string;
 }
 
-export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index, shipmentId }) => {
+export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index }) => {
   const isStandardCargo = cargo.metadata?.type === 'standard';
-
-  const { mutateAsync: updateCargo, isPending } = useUpdateCargo(shipmentId);
-
-  const handleLoadStatusChange = async (status: LoadStatus) => {
-    try {
-      await updateCargo({
-        id: cargo.id,
-        loadStatus: status,
-      });
-
-      const statusText = loadStatusConfig[status].label;
-
-      showSuccessToast({ title: 'Status tereta ažuriran:', description: statusText.toUpperCase() });
-    } catch (error) {
-      console.error(error);
-      showErrorToast({ title: 'Greška prilikom ažuriranja statusa utovara. Pokušajte ponovno.' });
-    }
-  };
 
   return (
     <FlexLayout className="flex-col gap-4 p-4 rounded-s bg-black-alpha-05 dark:bg-white-alpha-10">
@@ -48,12 +24,6 @@ export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index, shipmentId }
             {isStandardCargo ? 'Standardni teret' : 'Nestandardni teret'}
           </Text>
         </FlexLayout>
-        <LoadStatusProgress
-          currentStatus={cargo.loadStatus || LoadStatus.NotYetLoaded}
-          isPending={isPending}
-          size="s"
-          onStatusChange={handleLoadStatusChange}
-        />
       </FlexLayout>
       <FlexLayout className="flex-col gap-4">
         {isStandardCargo ? <StandardContent cargo={cargo} /> : <NonstandardContent cargo={cargo} />}
@@ -164,17 +134,16 @@ const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
           >
             Detalji utovara
           </Text>
-          <Icon icon="ArrowRightEndOnRectangleIcon" />
+          <Icon className="text-orange-500 dark:text-orange-400" icon="IconPackageImport" />
         </FlexLayout>
         <FlexLayout className="flex-col gap-4 flex-1">
           <FlexLayout className="gap-4 justify-between items-start">
             <FlexLayout className="flex-col">
               <Text color="text-color-3" variant="text-xs-medium">
-                Datum utovara {cargo.loadingReadyDate ? '(spremno za utovar)' : null}
+                Datum spremnog utovara
               </Text>
               <Text color="text-color-1" variant="text-s">
-                {getDataPointDateString(cargo.loadingDate)}{' '}
-                {cargo.loadingReadyDate ? `(${getDataPointDateString(cargo.loadingReadyDate)})` : null}
+                {getDataPointDateString(cargo.loadingReadyDate)}
               </Text>
             </FlexLayout>
             <DisplayIf condition={!!cargo.loadingReference}>
@@ -210,17 +179,16 @@ const LoadingFields = ({ cargo }: { cargo: CargoWithMetadata }) => {
           >
             Detalji istovara
           </Text>
-          <Icon icon="ArrowRightStartOnRectangleIcon" />
+          <Icon className="text-teal-500 dark:text-teal-400" icon="IconPackageExport" />
         </FlexLayout>
         <FlexLayout className="flex-col gap-4 flex-1">
           <FlexLayout className="gap-4 justify-between items-start">
             <FlexLayout className="flex-col">
               <Text color="text-color-3" variant="text-xs-medium">
-                Datum istovara {cargo.unloadingDueDate ? '(rok za istovar)' : null}
+                Rok za istovar
               </Text>
               <Text color="text-color-1" variant="text-s">
-                {getDataPointDateString(cargo.unloadingDate)}{' '}
-                {cargo.unloadingDueDate ? `(${getDataPointDateString(cargo.unloadingDueDate)})` : null}
+                {getDataPointDateString(cargo.unloadingDueDate)}
               </Text>
             </FlexLayout>
             <DisplayIf condition={!!cargo.unloadingReference}>

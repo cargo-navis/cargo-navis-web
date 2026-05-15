@@ -42,7 +42,7 @@ export const TrucksTable = ({ trucks }: { trucks: Vehicle[] }) => {
                         }
                       >
                         <Box>
-                          <Icon color="text-color-4" icon="DocumentTextIcon" size="l" type="outline" />
+                          <Icon color="text-color-4" icon="IconFileDescription" size="l" type="outline" />
                         </Box>
                       </Tooltip>
                     </DisplayIf>

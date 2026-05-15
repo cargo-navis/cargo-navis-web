@@ -6,7 +6,6 @@ import { PalleteType } from '@/lib/utils/palletes';
 import type { Cargo, CargoType, ShipmentFields } from './types.d';
 
 export const defaultCargo: Cargo = {
-  weight: 0,
   description: '',
   ldm: 0.4,
   metadata: {
@@ -28,22 +27,18 @@ export const defaultCargo: Cargo = {
   loadingCompanyName: '',
   unloadingCompanyName: '',
   loadingReadyDate: '',
-  loadingDate: '',
   loadingDescription: '',
-  unloadingDate: '',
+  loadingReference: '',
   unloadingDueDate: '',
   unloadingDescription: '',
+  unloadingReference: '',
 };
 
 export const formDefaultValues: ShipmentFields = {
-  cargoReference: '',
+  externalOrderReference: '',
   transportContractorId: '',
   clientId: '',
-  isAgencyUse: false,
-  price: 0,
-  driverId: '',
-  vehicleId: '',
-  dispatcherId: '',
+  isAgency: false,
   cargo: [defaultCargo],
 };
 
@@ -74,12 +69,16 @@ const mapCargoItems = async (cargoItems?: any[], isEdit = false): Promise<Cargo[
       const hasKolete = cargoType === 'nonstandard' && palleteAmount && palleteAmount > 0;
 
       // Fetch postal code data for addresses
-      const loadingPostalCode = c.loadingAddress?.id ? await fetchPostalCodeData(c.loadingAddress.id) : {};
-      const unloadingPostalCode = c.unloadingAddress?.id ? await fetchPostalCodeData(c.unloadingAddress.id) : {};
+      const loadingPostalCode = c.loadingAddress?.postalCodeId
+        ? await fetchPostalCodeData(c.loadingAddress.postalCodeId)
+        : {};
+      const unloadingPostalCode = c.unloadingAddress?.postalCodeId
+        ? await fetchPostalCodeData(c.unloadingAddress.postalCodeId)
+        : {};
 
       return {
         ...(isEdit ? { id: c.id } : {}),
-        weight: c.weight || 0,
+        weight: c.weight !== undefined && c.weight !== null ? c.weight : undefined,
         description: c.description || '',
         ldm: c.ldm || 0.4,
         metadata: {
@@ -104,10 +103,8 @@ const mapCargoItems = async (cargoItems?: any[], isEdit = false): Promise<Cargo[
         loadingCompanyName: c.loadingCompanyName || '',
         unloadingCompanyName: c.unloadingCompanyName || '',
         loadingReadyDate: c.loadingReadyDate || '',
-        loadingDate: c.loadingDate || '',
         loadingDescription: c.loadingDescription || '',
         loadingReference: c.loadingReference || '',
-        unloadingDate: c.unloadingDate || '',
         unloadingDueDate: c.unloadingDueDate || '',
         unloadingDescription: c.unloadingDescription || '',
         unloadingReference: c.unloadingReference || '',
@@ -126,29 +123,16 @@ const getNewShipmentFormValues = async (tenant: Tenant, cargo: Cargo[]) => {
   };
 };
 
-// Create form values for a new sub-shipment
-const getNewSubShipmentFormValues = async (tenant: Tenant) => {
-  return {
-    ...formDefaultValues,
-    transportContractorId: tenant.id,
-    clientId: tenant.id,
-    cargo: [{ ...defaultCargo }],
-  };
-};
-
 // Create form values when copying a shipment
 const getCopyShipmentFormValues = async (shipment: Shipment) => {
   const cargo = await mapCargoItems(shipment.cargo);
 
   return {
-    cargoReference: shipment.cargoReference || '',
+    externalOrderReference: shipment.externalOrderReference || '',
     transportContractorId: shipment.transportContractorId || '',
     clientId: shipment.clientId || '',
-    price: shipment.price || 0,
-    driverId: shipment.driverId || '',
-    vehicleId: shipment.vehicleId || '',
-    dispatcherId: shipment.dispatcherId || '',
-    isAgencyUse: shipment.isAgencyUse || false,
+    price: shipment.price !== undefined && shipment.price !== null ? shipment.price : undefined,
+    note: shipment.note || '',
     cargo,
   };
 };
@@ -156,27 +140,23 @@ const getCopyShipmentFormValues = async (shipment: Shipment) => {
 // Create form values for editing an existing shipment
 const getEditShipmentFormValues = async (shipment: Shipment) => {
   const cargo = await mapCargoItems(shipment.cargo, true);
+  const isAgency = (shipment.children?.length ?? 0) > 0;
+  const agencyChild = isAgency ? shipment.children?.[0] : undefined;
 
   return {
-    cargoReference: shipment.cargoReference || '',
-    transportContractorId: shipment.transportContractorId || '',
+    externalOrderReference: shipment.externalOrderReference || '',
+    transportContractorId: agencyChild?.transportContractorId || shipment.transportContractorId || '',
     clientId: shipment.clientId || '',
-    price: shipment.price || 0,
-    driverId: shipment.driverId || '',
-    vehicleId: shipment.vehicleId || '',
-    dispatcherId: shipment.dispatcherId || '',
-    isAgencyUse: shipment.isAgencyUse || false,
+    price: shipment.price !== undefined && shipment.price !== null ? shipment.price : undefined,
+    note: shipment.note || '',
+    isAgency,
+    agencyPrice: agencyChild?.price !== undefined && agencyChild?.price !== null ? agencyChild.price : undefined,
     cargo,
   };
 };
 
 // Main function to get form default values based on context
-export const getFormDefaultValues = (
-  shipment: Shipment | undefined,
-  tenant: Tenant,
-  parentShipmentId?: string,
-  isCopy: boolean = false
-) => {
+export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Tenant, isCopy: boolean = false) => {
   return async () => {
     // Case 1: Copy existing shipment
     if (shipment && isCopy) {
@@ -188,51 +168,35 @@ export const getFormDefaultValues = (
       return getEditShipmentFormValues(shipment);
     }
 
-    // Case 3: Create a sub-shipment
-    if (parentShipmentId) {
-      return getNewSubShipmentFormValues(tenant);
-    }
-
-    // Case 4: Create a brand-new shipment
+    // Case 3: Create a brand-new shipment
     return getNewShipmentFormValues(tenant, [defaultCargo]);
   };
 };
 
 // Function to transform form data into the format defined in types.ts
-export const transformFormDataToPayload = (formData: ShipmentFields): Omit<CreateShipmentData, 'id'> => {
-  const {
-    cargoReference,
-    dispatcherId,
-    driverId,
-    vehicleId,
-    trailerId,
-    clientId,
-    isAgencyUse,
-    transportContractorId,
-    price,
-    cargo,
-    sentToDriver,
-  } = formData;
+export const transformFormDataToPayload = (
+  formData: ShipmentFields,
+  context?: { tenantId?: string }
+): Omit<CreateShipmentData, 'id'> => {
+  const { externalOrderReference, clientId, transportContractorId, price, note, isAgency, agencyPrice, cargo } =
+    formData;
 
   const payload: Partial<Omit<CreateShipmentData, 'id'>> = {};
 
-  // Only add shipment-level fields that are present in formData
-  if ('cargoReference' in formData) payload.cargoReference = cargoReference || '';
-  if ('dispatcherId' in formData) payload.dispatcherId = dispatcherId;
-  if ('driverId' in formData) payload.driverId = driverId;
-  if ('vehicleId' in formData) payload.vehicleId = vehicleId;
-  if ('trailerId' in formData) payload.trailerId = trailerId;
+  // Only add shipment-level fields that are present in formData. We use `??`
+  // rather than `||` for numerics so a legitimate 0 isn't swallowed; the
+  // FieldState-style BE patch treats absent fields as untouched.
+  if ('externalOrderReference' in formData) payload.externalOrderReference = externalOrderReference ?? '';
   if ('clientId' in formData) payload.clientId = clientId;
-  if ('isAgencyUse' in formData) payload.isAgencyUse = isAgencyUse;
   if ('transportContractorId' in formData) payload.transportContractorId = transportContractorId;
-  if ('price' in formData) payload.price = price || 0;
-  if ('sentToDriver' in formData && sentToDriver !== undefined) payload.sentToDriver = sentToDriver;
+  if ('price' in formData && price !== undefined) payload.price = price;
+  if ('note' in formData) payload.note = note ?? '';
 
   // Handle cargo with addresses
   if (cargo) {
     payload.cargo = cargo.map((item) => {
       const result: any = {
-        weight: item.weight || 0,
+        weight: item.weight ?? 0,
         ldm: item.ldm,
       };
 
@@ -268,8 +232,6 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
 
       // Add dates
       if ('loadingReadyDate' in item) result.loadingReadyDate = item.loadingReadyDate || '';
-      if ('loadingDate' in item) result.loadingDate = item.loadingDate || '';
-      if ('unloadingDate' in item) result.unloadingDate = item.unloadingDate || '';
       if ('unloadingDueDate' in item) result.unloadingDueDate = item.unloadingDueDate || '';
 
       // Add descriptions
@@ -302,6 +264,22 @@ export const transformFormDataToPayload = (formData: ShipmentFields): Omit<Creat
 
       return result;
     });
+  }
+
+  // Agency-shipment splitting: parent stays for the original client with the
+  // tenant as its transporter; the actual contractor is moved into a child
+  // shipment that the tenant "buys" at the agency price.
+  if (isAgency && context?.tenantId && transportContractorId) {
+    const originalContractorId = transportContractorId;
+    const parentPayload = payload as Omit<CreateShipmentData, 'id'>;
+    const childPayload: Omit<CreateShipmentData, 'id'> = {
+      ...parentPayload,
+      clientId: context.tenantId,
+      transportContractorId: originalContractorId,
+      price: agencyPrice ?? 0,
+    };
+    parentPayload.transportContractorId = context.tenantId;
+    parentPayload.children = [childPayload];
   }
 
   return payload as Omit<CreateShipmentData, 'id'>;

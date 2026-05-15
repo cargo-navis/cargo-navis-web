@@ -5,10 +5,10 @@ import type { ShipmentFields } from '../types';
 
 export function getOptionLabels(
   address: ShipmentFields['cargo'][0]['loadingAddress'],
-  primaryDate: string,
+  date: string,
   companyName?: string
 ) {
-  const formattedDate = getDataPointDateString(primaryDate);
+  const formattedDate = getDataPointDateString(date);
 
   const labelParts = [formattedDate];
   if (address.postalCodeId?.label) {

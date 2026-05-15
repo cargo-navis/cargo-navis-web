@@ -29,7 +29,7 @@ export const VehicleFilter = ({ value, onChange, isDisabled }: VehicleFilterProp
         isSearchable
         label={
           <FlexLayout className="gap-1 items-center justify-between">
-            <Icon icon="TruckIcon" />
+            <Icon icon="IconTruck" />
             <Text color="text-color-3" variant="text-xxs-medium">
               Vozilo
             </Text>

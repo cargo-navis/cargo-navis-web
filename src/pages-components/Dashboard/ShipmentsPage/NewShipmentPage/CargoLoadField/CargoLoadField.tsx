@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useFormContext } from 'react-hook-form';
 
 import { getDataPointDateString } from '@/lib/utils/date';
 import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
@@ -17,15 +18,13 @@ export const typeLabelsMap = {
   [CargoLoadFieldType.Load]: {
     title: 'Detalji utovara',
     companyLabel: 'Tvrtka utovara',
-    primaryDateLabel: 'Datum utovara',
-    secondaryDateLabel: 'Spremno za utovar',
+    dateLabel: 'Spremno za utovar',
     loadReferenceLabel: 'Referenca utovara',
     addLabel: 'Dodijeli utovar',
     ctaLabel: 'Potvrdi utovar',
     fieldNames: {
       companyName: 'loadingCompanyName',
-      primaryDate: 'loadingDate',
-      secondaryDate: 'loadingReadyDate',
+      date: 'loadingReadyDate',
       description: 'loadingDescription',
       loadReference: 'loadingReference',
       address: 'loadingAddress',
@@ -34,15 +33,13 @@ export const typeLabelsMap = {
   [CargoLoadFieldType.Unload]: {
     title: 'Detalji istovara',
     companyLabel: 'Tvrtka istovara',
-    primaryDateLabel: 'Datum istovara',
-    secondaryDateLabel: 'Krajnji rok za istovar',
+    dateLabel: 'Krajnji rok za istovar',
     loadReferenceLabel: 'Referenca istovara',
     addLabel: 'Dodijeli istovar',
     ctaLabel: 'Potvrdi istovar',
     fieldNames: {
       companyName: 'unloadingCompanyName',
-      primaryDate: 'unloadingDate',
-      secondaryDate: 'unloadingDueDate',
+      date: 'unloadingDueDate',
       loadReference: 'unloadingReference',
       description: 'unloadingDescription',
       address: 'unloadingAddress',
@@ -51,25 +48,30 @@ export const typeLabelsMap = {
 };
 
 interface CargoLoadFieldProps {
+  cargoIndex: number;
   cargo: any;
   type: CargoLoadFieldType;
   onChange(values: any): void;
   onRemove(): void;
 }
 
-export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onChange, onRemove }) => {
+export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargoIndex, cargo, type, onChange, onRemove }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const {
+    formState: { errors },
+  } = useFormContext();
+  const dateFieldKey = typeLabelsMap[type].fieldNames.date as 'loadingReadyDate' | 'unloadingDueDate';
+  const dateError = errors.cargo?.[cargoIndex]?.[dateFieldKey]?.message as string | undefined;
 
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
-  const { title, primaryDateLabel, secondaryDateLabel, loadReferenceLabel, companyLabel, addLabel, fieldNames } =
-    typeLabelsMap[type];
+  const { title, dateLabel, loadReferenceLabel, companyLabel, addLabel, fieldNames } = typeLabelsMap[type];
 
   const initialValues = {
     companyName: cargo[fieldNames.companyName],
-    primaryDate: cargo[fieldNames.primaryDate],
-    secondaryDate: cargo[fieldNames.secondaryDate],
+    date: cargo[fieldNames.date],
     loadReference: cargo[fieldNames.loadReference],
     description: cargo[fieldNames.description],
     address: cargo[fieldNames.address],
@@ -81,7 +83,7 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onC
     <>
       {!initialValues.address?.streetName ? (
         <FlexLayout className="min-w-0 flex-1 flex-col justify-center gap-4">
-          <TextButton iconLeft="PlusIcon" text={addLabel} type="button" variant="primary" onClick={openModal} />
+          <TextButton iconLeft="IconPlus" text={addLabel} type="button" variant="primary" onClick={openModal} />
           <DisplayIf condition={hasCargoLoads}>
             <Divider text="Ili" />
             <LoadSelect onChange={onChange} />
@@ -98,25 +100,29 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onC
               {title}
             </Text>
             <TextButton
-              iconLeft="PencilSquareIcon"
+              iconLeft="IconEdit"
               size="s"
               text="Uredi"
               type="button"
               variant="secondary"
               onClick={openModal}
             />
-            <TextButton iconLeft="XMarkIcon" size="s" text="Ukloni" type="button" variant="danger" onClick={onRemove} />
+            <TextButton iconLeft="IconX" size="s" text="Ukloni" type="button" variant="danger" onClick={onRemove} />
           </FlexLayout>
           <FlexLayout className="flex-col gap-4 flex-1">
             <FlexLayout className="justify-between gap-4">
               <FlexLayout className="flex-col">
                 <Text color="text-color-3" variant="text-xs-medium">
-                  {primaryDateLabel} {initialValues.secondaryDate ? `(${secondaryDateLabel})` : null}
+                  {dateLabel}
                 </Text>
                 <Text color="text-color-1" variant="text-s">
-                  {getDataPointDateString(initialValues.primaryDate)}{' '}
-                  {initialValues.secondaryDate ? `(${getDataPointDateString(initialValues.secondaryDate)})` : null}
+                  {getDataPointDateString(initialValues.date)}
                 </Text>
+                {dateError ? (
+                  <Text className="text-red-600 dark:text-red-500" variant="text-xs-medium">
+                    {dateError}
+                  </Text>
+                ) : null}
               </FlexLayout>
               <DisplayIf condition={!!initialValues.loadReference}>
                 <FlexLayout className="flex-col text-end">
@@ -145,6 +151,7 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargo, type, onC
         </FlexLayout>
       )}
       <CargoLoadModal
+        cargo={cargo}
         initialValues={initialValues}
         isOpen={isModalOpen}
         type={type}

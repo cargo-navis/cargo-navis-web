@@ -5,7 +5,7 @@ import { FormNumberInput } from '@/lib/components/form';
 export const PriceField = () => {
   return (
     <FormNumberInput
-      iconLeft="CurrencyEuroIcon"
+      iconLeft="IconCurrencyEuro"
       inputMode="decimal"
       label="Cijena (Euro)"
       name="price"

@@ -20,7 +20,7 @@ export const AlertMenuItem = React.forwardRef<any, AlertMenuItemProps>(({ alert,
         ref={ref}
         {...rest}
       >
-        <Icon className="mt-1" color="text-red-500 dark:text-red-300" icon="ExclamationTriangleIcon" />
+        <Icon className="mt-1" color="text-red-500 dark:text-red-300" icon="IconAlertTriangle" />
         {descriptionNode}
       </FlexLayout>
     </Link>

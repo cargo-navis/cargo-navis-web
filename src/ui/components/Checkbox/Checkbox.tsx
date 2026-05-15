@@ -30,7 +30,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({ isDisabled, value, label, on
         <Icon
           className="opacity-0 group-data-[checked]:opacity-100 transition-opacity duration-75"
           color="red"
-          icon="CheckIcon"
+          icon="IconCheck"
           size="m"
         />
       </HeadlessCheckbox>

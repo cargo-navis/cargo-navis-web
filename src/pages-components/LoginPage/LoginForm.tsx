@@ -22,7 +22,7 @@ export const LoginForm = () => {
   const formMethods = useForm<FormValues>({
     defaultValues: { email: '', password: '' },
     resolver: yupResolver(loginSchema),
-    mode: 'onBlur',
+    mode: 'onChange',
   });
 
   const { formState, handleSubmit } = formMethods;

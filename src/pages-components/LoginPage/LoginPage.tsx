@@ -1,3 +1,4 @@
+import { PageTitle } from '@/components/PageTitle';
 import { FlexLayout, Heading, Text } from '@/ui';
 
 import { LoginForm } from './LoginForm';
@@ -7,6 +8,7 @@ export const LoginPage = () => {
 
   return (
     <FlexLayout className="h-screen flex-row">
+      <PageTitle title="Prijava" />
       <FlexLayout as="main" className="flex-col flex-grow p-5 md:p-7 justify-center items-center bg-sidebar-gradient">
         <Heading as="h1" className="text-center -mt-10 mb-9" variant="text-xl">
           CargoNavis

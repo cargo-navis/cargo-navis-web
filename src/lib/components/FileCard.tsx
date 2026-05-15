@@ -37,7 +37,7 @@ export const FileCard: React.FC<FileCardProps> = ({
       )}
     >
       <FlexLayout className="items-start gap-2 px-3 py-2">
-        <Icon className="shrink-0 mt-1" color="text-dark-800 dark:text-light-50" icon="DocumentTextIcon" size="m" />
+        <Icon className="shrink-0 mt-1" color="text-dark-800 dark:text-light-50" icon="IconFileDescription" size="m" />
         <FlexLayout className="flex-col overflow-hidden">
           <Text
             className="whitespace-nowrap overflow-hidden text-ellipsis"
@@ -74,7 +74,7 @@ export const FileCard: React.FC<FileCardProps> = ({
             isDisabled={isLoading}
             onClick={() => onPreview?.(id)}
           >
-            <Icon icon="ArrowTopRightOnSquareIcon" size="m" />
+            <Icon icon="IconArrowUpRight" size="m" />
           </FlexLayout>
         </Tooltip>
         <Tooltip
@@ -98,7 +98,7 @@ export const FileCard: React.FC<FileCardProps> = ({
             isDisabled={isLoading}
             onClick={() => onDownload?.(id)}
           >
-            <Icon icon="ArrowDownTrayIcon" size="m" />
+            <Icon icon="IconCloudDownload" size="m" />
           </FlexLayout>
         </Tooltip>
         <Tooltip
@@ -120,7 +120,7 @@ export const FileCard: React.FC<FileCardProps> = ({
             isDisabled={isLoading}
             onClick={() => onDelete?.(id)}
           >
-            <Icon icon="TrashIcon" size="m" />
+            <Icon icon="IconTrash" size="m" />
           </FlexLayout>
         </Tooltip>
       </FlexLayout>

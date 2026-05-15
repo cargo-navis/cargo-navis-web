@@ -1,8 +1,8 @@
 import type { GroupBase, MenuPlacement } from 'react-select';
 
-import type { IconType } from '@/ui';
+import { IconType } from '@/ui';
 
-export type SelectValue = string | number;
+export type SelectValue = string;
 
 export interface SelectOption {
   iconLeft?: IconType | (() => JSX.Element);
@@ -28,4 +28,5 @@ export interface SelectProps {
   isBrand?: boolean;
   onBlur?: () => void;
   onInputChange?: (newValue: string, actionMeta: { action: string }) => void;
+  filterOption?: ((option: { data: SelectOption; label: string; value: string }, inputValue: string) => boolean) | null;
 }

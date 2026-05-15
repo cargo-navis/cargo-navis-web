@@ -16,6 +16,7 @@ const config: Config = {
     './src/ui/**/*.{ts,tsx}',
     './src/lib/**/*.{ts,tsx}',
     './node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}',
+    './node_modules/@heroui/**/node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
     colors,

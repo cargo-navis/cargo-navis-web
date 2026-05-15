@@ -53,7 +53,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     <FlexLayout className="items-center gap-2">
       {/* Previous Button */}
       <Button
-        iconLeft="ChevronLeftIcon"
+        iconLeft="IconChevronLeft"
         isDisabled={isFirstPage || isLoading}
         size="s"
         text="Prethodna"
@@ -99,7 +99,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       {/* Next Button */}
       <Button
-        iconRight="ChevronRightIcon"
+        iconRight="IconChevronRight"
         isDisabled={isLastPage || isLoading}
         size="s"
         text="Sljedeća"

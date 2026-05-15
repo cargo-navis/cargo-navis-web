@@ -10,7 +10,7 @@ export const FormPasswordInput: React.FC<FormPasswordInputProps> = (props) => {
   return (
     <FormTextInput
       {...props}
-      iconRight={isPasswordVisible ? 'EyeSlashIcon' : 'EyeIcon'}
+      iconRight={isPasswordVisible ? 'IconEyeOff' : 'IconEye'}
       type={isPasswordVisible ? 'text' : 'password'}
       onClickIconRight={toggleIsPasswordVisible}
     />

@@ -1,53 +1,61 @@
-import compact from 'lodash/compact';
-import uniqBy from 'lodash/uniqBy';
-
 import { LoadingAddress } from '@/lib/api/shipments.d';
 import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, FlexLayout, Icon, IconType, Text, Tooltip } from '@/ui';
+import { Box, Text, Tooltip } from '@/ui';
 
-const formatAddress = (address: LoadingAddress) => {
-  if (!address) return '—';
-  return `${address.postalCode} ${address.placeName}, ${address.countryCode}`;
-};
+function countryCodeToFlag(code: string | null | undefined) {
+  if (!code || code.length !== 2) return code ?? '';
+  const REGIONAL_INDICATOR_A = 0x1f1e6;
+  const codePoints = Array.from(code.toUpperCase()).map(
+    (c) => REGIONAL_INDICATOR_A + (c.charCodeAt(0) - 'A'.charCodeAt(0))
+  );
+  return String.fromCodePoint(...codePoints);
+}
 
-export const AddressesList = ({ addresses, icon }: { addresses: LoadingAddress[]; icon: IconType }) => {
-  const uniqAddresses = uniqBy(compact(addresses), (a) => `${a.countryCode}-${a.placeName}-${a.streetName}`);
-  // const isMultipleLoadingAddresses = uniqueLoadingAddresses.length > 1;
+interface AddressItemProps {
+  address: LoadingAddress | null | undefined;
+}
 
-  return uniqAddresses.map((address: LoadingAddress) => {
-    if (!address)
-      return (
-        <Text color="text-color-3" variant="text-xs">
-          —
-        </Text>
-      );
-
+export const AddressItem = ({ address }: AddressItemProps) => {
+  if (!address)
     return (
-      <Tooltip
-        content={
-          <Box className="px-1">
-            <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
-              {address.streetName}
-            </Text>
-            <br />
-            <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
-              {address.postalCode}, {address.placeName},
-            </Text>
-            <br />
-            <Text color="text-light-50" variant="text-xs">
-              {getCountryFromCode(address.countryCode)?.name}
-            </Text>
-          </Box>
-        }
-        key={`${address.countryCode}-${address.placeName}-${address.streetName}`}
-      >
-        <FlexLayout className="items-center gap-1">
-          <Icon color="text-color-3" icon={icon} size="s" />
-          <Text className="whitespace-nowrap overflow-hidden text-ellipsis" color="text-color-3" variant="text-xs">
-            {formatAddress(address)}
-          </Text>
-        </FlexLayout>
-      </Tooltip>
+      <Text color="text-color-2" variant="text-xs-medium">
+        —
+      </Text>
     );
-  });
+
+  const prefix = [countryCodeToFlag(address.countryCode), address.postalCode].filter(Boolean).join(' ');
+
+  return (
+    <Tooltip
+      content={
+        <Box className="px-1">
+          <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
+            {address.streetName}
+          </Text>
+          <br />
+          <Text className="whitespace-nowrap" color="text-light-50" variant="text-xs">
+            {address.postalCode}, {address.placeName},
+          </Text>
+          <br />
+          <Text color="text-light-50" variant="text-xs">
+            {getCountryFromCode(address.countryCode)?.name}
+          </Text>
+        </Box>
+      }
+    >
+      <Box className="min-w-0 max-w-full overflow-hidden">
+        <Text className="block truncate" title={`${prefix} ${address.placeName ?? ''}`}>
+          <Text as="span" color="text-color-2" variant="text-s">
+            {countryCodeToFlag(address.countryCode)}
+          </Text>{' '}
+          <Text as="span" color="text-color-2" variant="text-xs-medium">
+            {address.postalCode}
+          </Text>{' '}
+          <Text as="span" color="text-color-2" variant="text-xs">
+            {address.placeName}
+          </Text>
+        </Text>
+      </Box>
+    </Tooltip>
+  );
 };

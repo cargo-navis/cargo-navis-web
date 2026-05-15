@@ -41,7 +41,7 @@ export const SoloTrucksTable = ({ solos }: { solos: Vehicle[] }) => {
                         }
                       >
                         <Box>
-                          <Icon color="text-color-4" icon="DocumentTextIcon" size="l" type="outline" />
+                          <Icon color="text-color-4" icon="IconFileDescription" size="l" type="outline" />
                         </Box>
                       </Tooltip>
                     </DisplayIf>
@@ -101,9 +101,9 @@ export const SoloTrucksTable = ({ solos }: { solos: Vehicle[] }) => {
           if (ramp === undefined) return '–';
 
           return ramp ? (
-            <Icon className="text-green-600" icon="CheckCircleIcon" size="l" />
+            <Icon className="text-green-600" icon="IconCircleCheck" size="l" />
           ) : (
-            <Icon className="text-red-500" icon="XCircleIcon" size="l" />
+            <Icon className="text-red-500" icon="IconCircleX" size="l" />
           );
         },
       }),

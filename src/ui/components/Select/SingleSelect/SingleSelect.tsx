@@ -62,6 +62,7 @@ export const SingleSelect = forwardRef<any, SingleSelectProps>((props, ref) => {
     menuPlacement = 'auto',
     isBrand,
     onInputChange,
+    filterOption,
   } = props;
 
   const instanceId = useId();
@@ -109,6 +110,7 @@ export const SingleSelect = forwardRef<any, SingleSelectProps>((props, ref) => {
         onChange(val);
       }}
       onInputChange={onInputChange}
+      {...(filterOption !== undefined ? { filterOption } : {})}
       {...{ isBrand }}
     />
   );

@@ -29,7 +29,7 @@ export const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
       href={targetUrl}
     >
       <FlexLayout className="flex-start gap-3 p-4">
-        <Icon className="mt-[1px]" color="text-red-500 dark:text-red-300" icon="ExclamationTriangleIcon" size="l" />
+        <Icon className="mt-[1px]" color="text-red-500 dark:text-red-300" icon="IconAlertTriangle" size="l" />
         <FlexLayout className="flex-col grow gap-1">
           {descriptionNode}
           <Text color="text-color-2" variant="text-s">
@@ -47,7 +47,7 @@ export const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
           group-hover:translate-x-0 group-hover:opacity-100
           transition-transform`}
         >
-          <Icon color="text-color-2" icon="ArrowRightIcon" size="l" />
+          <Icon color="text-color-2" icon="IconArrowRight" size="l" />
         </Box>
       </FlexLayout>
       <hr className="border-dark-300 dark:border-light-600 m-0" />

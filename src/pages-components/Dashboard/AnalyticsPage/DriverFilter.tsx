@@ -28,7 +28,7 @@ export const DriverFilter = ({ value, onChange, isDisabled }: DriverFilterProps)
         isSearchable
         label={
           <FlexLayout className="gap-1 items-center justify-between">
-            <Icon icon="UserIcon" />
+            <Icon icon="IconUser" />
             <Text color="text-color-3" variant="text-xxs-medium">
               Vozač
             </Text>

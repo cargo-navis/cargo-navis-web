@@ -20,7 +20,7 @@ export function BackButton({ targetLocation }: { targetLocation: string }) {
       )}
       onClick={() => (canGoBackInHistory() ? back() : push(targetLocation))}
     >
-      <Icon icon="ArrowUturnLeftIcon" />
+      <Icon icon="IconArrowBackUp" />
       <Text variant="text-s-medium">Natrag</Text>
     </FlexLayout>
   );

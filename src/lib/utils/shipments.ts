@@ -19,7 +19,7 @@ export function getShipmentOverdueInfo({
   invoiceStatusUpdatedAt,
   termsOfPayment,
 }: OverdueCheckParams): OverdueInfo {
-  if (invoiceStatus === InvoiceStatus.Paid || !invoiceStatusUpdatedAt || termsOfPayment === null) {
+  if (invoiceStatus === InvoiceStatus.Paid || !invoiceStatusUpdatedAt || !termsOfPayment) {
     return { isOverdue: false, dueDate: null, daysOverdue: 0 };
   }
 

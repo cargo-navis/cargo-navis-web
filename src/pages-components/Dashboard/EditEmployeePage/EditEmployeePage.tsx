@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import type { Employee } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useEmployee } from '@/lib/hooks';
@@ -17,6 +18,7 @@ export const EditEmployeePage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title={employee?.fullName} type="Uredi zaposlenika" />
       {isLoading || !employee || !id ? <LoadingPage /> : <MainContent employee={employee} employeeId={id as string} />}
     </DashboardLayout>
   );

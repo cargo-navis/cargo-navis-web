@@ -23,7 +23,7 @@ export const VehicleAlertTooltip: React.FC<VehicleAlertTooltip> = ({ id, type })
 
   return (
     <AlertsTooltip alerts={vehicleAlerts}>
-      <Icon color="text-red-500" icon="ExclamationTriangleIcon" size="l" />
+      <Icon color="text-red-500" icon="IconAlertTriangle" size="l" />
     </AlertsTooltip>
   );
 };

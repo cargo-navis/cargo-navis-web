@@ -21,8 +21,8 @@ export const Yearpicker: React.FC<YearpickerProps> = ({ isDisabled, isClearable,
       classNames={classnames}
       clearable
       disabled={isDisabled}
-      leftSection={<Icon icon="CalendarIcon" type="solid" />}
-      rightSection={isClearButtonVisible ? <Icon icon="XMarkIcon" onClick={() => onChange(null)} /> : null}
+      leftSection={<Icon icon="IconCalendarWeek" type="solid" />}
+      rightSection={isClearButtonVisible ? <Icon icon="IconX" onClick={() => onChange(null)} /> : null}
       value={value ? getDateInLocalTimezone(value.toString()) : null}
       onChange={(date) => {
         const returnValue = date ? date.getFullYear() : null;

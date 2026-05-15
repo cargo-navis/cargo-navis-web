@@ -11,6 +11,6 @@ export function useHasCargoLoads() {
   }
 
   return cargo.some((item) => {
-    return !!(item.loadingDate || item.unloadingDate);
+    return !!(item.loadingReadyDate || item.unloadingDueDate);
   });
 }
