@@ -14,7 +14,7 @@ export type ShipmentsFiltersContextType = {
   selectedClientId: SelectValue;
   selectedDriverId: SelectValue;
   selectedDispatcherId: SelectValue;
-  selectedLoadingStatus: SelectValue;
+  selectedActive: SelectValue;
   selectedInvoiceStatus: SelectValue;
   selectedIsInvoiceOverdue: SelectValue;
   loadingDateFrom: string;
@@ -24,7 +24,7 @@ export type ShipmentsFiltersContextType = {
   onClientChange(clientId: SelectValue): void;
   onDriverChange(driverId: SelectValue): void;
   onDispatcherChange(dispatcherId: SelectValue): void;
-  onLoadingStatusChange(loadingStatus: SelectValue): void;
+  onActiveChange(active: SelectValue): void;
   onInvoiceStatusChange(invoiceStatus: SelectValue): void;
   onIsInvoiceOverdueChange(isInvoiceOverdue: SelectValue): void;
   onLoadingDateFromChange(date: string): void;
@@ -49,8 +49,8 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
   const { value: selectedDispatcherId, onChange: onDispatcherChange } = useFiltersLocalStorageState({
     paramName: 'dispatcherId',
   });
-  const { value: selectedLoadingStatus, onChange: onLoadingStatusChange } = useFiltersLocalStorageState({
-    paramName: 'loadStatus',
+  const { value: selectedActive, onChange: onActiveChange } = useFiltersLocalStorageState({
+    paramName: 'active',
   });
   const { value: selectedInvoiceStatus, onChange: onInvoiceStatusChange } = useFiltersLocalStorageState({
     paramName: 'invoiceStatus',
@@ -88,7 +88,7 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
     selectedClientId,
     selectedDriverId,
     selectedDispatcherId,
-    selectedLoadingStatus,
+    selectedActive,
     selectedInvoiceStatus,
     selectedIsInvoiceOverdue,
     loadingDateFrom,
@@ -104,7 +104,7 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
         selectedClientId,
         selectedDriverId,
         selectedDispatcherId,
-        selectedLoadingStatus,
+        selectedActive,
         selectedInvoiceStatus,
         selectedIsInvoiceOverdue,
         loadingDateFrom: String(loadingDateFrom || ''),
@@ -114,7 +114,7 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
         onClientChange,
         onDriverChange,
         onDispatcherChange,
-        onLoadingStatusChange,
+        onActiveChange,
         onInvoiceStatusChange,
         onIsInvoiceOverdueChange,
         onLoadingDateFromChange,

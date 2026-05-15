@@ -1,11 +1,11 @@
-import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
+import { InvoiceStatus } from '@/lib/api/shipments';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { useClients, useDispatchers, useDrivers } from '@/lib/hooks';
 import { mapEmployeesToOptions } from '@/lib/utils/employees';
 import { Box, FlexLayout } from '@/ui';
 import { DatepickerWithLabels, SingleSelectWithLabels } from '@/ui/hocs';
 
-import { invoiceStatusConfig, loadStatusConfig } from '../const';
+import { activeOptions, invoiceStatusConfig } from '../const';
 import { useShipmentsFiltersContext } from '../providers/ShipmentsFiltersProvider';
 
 export const FilterFields = () => {
@@ -13,7 +13,7 @@ export const FilterFields = () => {
     selectedClientId,
     selectedDriverId,
     selectedDispatcherId,
-    selectedLoadingStatus,
+    selectedActive,
     selectedInvoiceStatus,
     selectedIsInvoiceOverdue,
     loadingDateFrom,
@@ -23,7 +23,7 @@ export const FilterFields = () => {
     onClientChange,
     onDriverChange,
     onDispatcherChange,
-    onLoadingStatusChange,
+    onActiveChange,
     onInvoiceStatusChange,
     onIsInvoiceOverdueChange,
     onLoadingDateFromChange,
@@ -43,11 +43,6 @@ export const FilterFields = () => {
 
   const driverOptions = mapEmployeesToOptions(drivers);
   const dispatcherOptions = mapEmployeesToOptions(dispatchers);
-
-  const loadingStatusOptions = Object.values(LoadStatus).map((status) => ({
-    value: status,
-    label: loadStatusConfig[status].label,
-  }));
 
   const invoiceStatusOptions = Object.values(InvoiceStatus).map((status) => ({
     value: status,
@@ -107,12 +102,11 @@ export const FilterFields = () => {
               <SingleSelectWithLabels
                 isClearable
                 isPortal
-                isSearchable
-                label="Status utovara"
-                options={loadingStatusOptions}
-                placeholder="Odaberi status..."
-                value={selectedLoadingStatus}
-                onChange={onLoadingStatusChange}
+                label="Izvršenost"
+                options={activeOptions}
+                placeholder="Odaberi..."
+                value={selectedActive}
+                onChange={onActiveChange}
               />
             </Box>
 
