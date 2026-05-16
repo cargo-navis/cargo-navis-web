@@ -1,6 +1,6 @@
 export interface VehicleStopAddress {
-  id: string;
   streetName: string | null;
+  postalCodeId: string;
   postalCode: string;
   countryCode: string | null;
   placeName: string | null;

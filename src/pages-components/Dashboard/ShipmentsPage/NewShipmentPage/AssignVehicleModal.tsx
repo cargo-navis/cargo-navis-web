@@ -429,7 +429,7 @@ const VehicleRow = ({
     for (const p of previewStops) {
       const date = datesByKey[p.key];
       if (!date) continue;
-      const existing = stops.find((s) => s.address?.id === p.postalCodeId && s.date === date);
+      const existing = stops.find((s) => s.address?.postalCodeId === p.postalCodeId && s.date === date);
       if (existing) matchedKeysByExistingStop.set(existing.id, p);
     }
   }

@@ -30,7 +30,7 @@ export function useAddressOptions(stop?: VehicleStop) {
     });
 
     if (stop?.address) {
-      const key = buildAddressKey(stop.id, stop.address.id);
+      const key = buildAddressKey(stop.id, stop.address.postalCodeId);
       if (!seen.has(key)) seen.set(key, { value: key, label: formatAddressLabel(stop.address) });
     }
 

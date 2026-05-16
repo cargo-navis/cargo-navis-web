@@ -73,7 +73,8 @@ export function useDeleteVehicleStop() {
   return useMutation({
     mutationFn: (id: string) => deleteVehicleStop(id),
     onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
+      void queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
+      return queryClient.invalidateQueries({ queryKey: ['shipment'], type: 'all' });
     },
   });
 }

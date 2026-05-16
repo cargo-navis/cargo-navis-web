@@ -53,7 +53,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
   const [loadingDrawerOpen, setLoadingDrawerOpen] = useState(false);
   const [unloadingDrawerOpen, setUnloadingDrawerOpen] = useState(false);
   const [selectedAddressKey, setSelectedAddressKey] = useState<string>(() =>
-    stop?.address ? buildAddressKey(stop.id, stop.address.id) : ''
+    stop?.address ? buildAddressKey(stop.id, stop.address.postalCodeId) : ''
   );
   const [isCustomAddress, setIsCustomAddress] = useState(false);
 
