@@ -38,11 +38,17 @@ export const CargoSelectDrawer = ({
 
   const allCargos = useMemo<CargoWithClient[]>(() => groups.flatMap((g) => g.cargos), [groups]);
 
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set(selected.map((c) => c.id)));
+  const initialIds = useMemo(() => new Set(selected.map((c) => c.id)), [selected]);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set(initialIds));
 
   useEffect(() => {
-    if (isOpen) setSelectedIds(new Set(selected.map((c) => c.id)));
-  }, [isOpen, selected]);
+    if (isOpen) setSelectedIds(new Set(initialIds));
+  }, [isOpen, initialIds]);
+
+  const hasChanges = useMemo(() => {
+    if (selectedIds.size !== initialIds.size) return true;
+    return Array.from(selectedIds).some((id) => !initialIds.has(id));
+  }, [selectedIds, initialIds]);
 
   function toggle(id: string) {
     setSelectedIds((prev) => {
@@ -88,9 +94,11 @@ export const CargoSelectDrawer = ({
               ))}
             </FlexLayout>
           ) : allCargos.length === 0 ? (
-            <Text color="text-color-3" variant="text-s">
-              Nema tereta u aktivnim pošiljkama.
-            </Text>
+            <FlexLayout className="flex-col items-center justify-center h-full">
+              <Text className="text-center" color="text-color-3" variant="text-s">
+                Svi tereti su već dodijeljeni nekom prijevozu.
+              </Text>
+            </FlexLayout>
           ) : (
             <FlexLayout className="flex-col">
               {groups.map(({ shipment, cargos }) => {
@@ -153,7 +161,7 @@ export const CargoSelectDrawer = ({
           )}
         </Box>
         <DrawerFooter>
-          <Button isFullWidth text={`Potvrdi (${selectedIds.size})`} onClick={handleConfirm} />
+          <Button isDisabled={!hasChanges} isFullWidth text={`Potvrdi (${selectedIds.size})`} onClick={handleConfirm} />
         </DrawerFooter>
       </DrawerContent>
     </Drawer>
