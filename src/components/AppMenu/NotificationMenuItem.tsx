@@ -14,18 +14,18 @@ export const NotificationMenuItem = React.forwardRef<any, NotificationMenuItemPr
   ({ notification, ...rest }, ref) => {
     const { targetUrl, descriptionNode } = getNotificationItemData(notification);
 
-    return (
-      <Link href={targetUrl}>
-        <FlexLayout
-          className="gap-2 px-4 py-2 hover:bg-dark-50 hover:dark:bg-light-800 data-[highlighted]:bg-dark-50 data-[highlighted]:dark:bg-light-800 outline-0"
-          ref={ref}
-          {...rest}
-        >
-          <Icon className="mt-[2px]" color="text-blue-500 dark:text-blue-300" icon="IconInfoCircle" />
-          {descriptionNode}
-        </FlexLayout>
-      </Link>
+    const content = (
+      <FlexLayout
+        className="gap-2 px-4 py-2 hover:bg-dark-50 hover:dark:bg-light-800 data-[highlighted]:bg-dark-50 data-[highlighted]:dark:bg-light-800 outline-0"
+        ref={ref}
+        {...rest}
+      >
+        <Icon className="mt-[2px]" color="text-blue-500 dark:text-blue-300" icon="IconInfoCircle" />
+        {descriptionNode}
+      </FlexLayout>
     );
+
+    return targetUrl ? <Link href={targetUrl}>{content}</Link> : content;
   }
 );
 
