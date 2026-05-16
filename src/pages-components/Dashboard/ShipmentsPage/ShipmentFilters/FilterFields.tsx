@@ -82,7 +82,7 @@ export const FilterFields = () => {
                 isSearchable
                 label="Klijent"
                 options={clientOptions}
-                placeholder="Odaberi klijenta..."
+                placeholder="Odaberi..."
                 value={selectedClientId}
                 onChange={onClientChange}
               />
@@ -95,7 +95,7 @@ export const FilterFields = () => {
                 isSearchable
                 label="Vozač"
                 options={driverOptions}
-                placeholder="Odaberi vozača..."
+                placeholder="Odaberi..."
                 value={selectedDriverId}
                 onChange={onDriverChange}
               />
@@ -108,7 +108,7 @@ export const FilterFields = () => {
                 isSearchable
                 label="Disponent"
                 options={dispatcherOptions}
-                placeholder="Odaberi disponenta..."
+                placeholder="Odaberi..."
                 value={selectedDispatcherId}
                 onChange={onDispatcherChange}
               />
@@ -133,7 +133,7 @@ export const FilterFields = () => {
                 isSearchable
                 label="Status fakture"
                 options={invoiceStatusOptions}
-                placeholder="Odaberi status fakture..."
+                placeholder="Odaberi..."
                 value={selectedInvoiceStatus}
                 onChange={onInvoiceStatusChange}
               />
