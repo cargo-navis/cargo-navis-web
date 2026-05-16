@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import Fuse from 'fuse.js';
-import { useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 
 import { ClientName } from '@/components/clients/ClientName';
 import { EmployeeName } from '@/components/employees/EmployeeName';
@@ -211,16 +211,15 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
           </Text>
           <FlexLayout className="flex-col gap-2">
             {previewStops.map((stop, i) => (
-              <>
+              <Fragment key={stop.key}>
                 <PreviewStopCard
                   cargoGroups={buildCargoGroups(stop, cargoById)}
                   date={datesByKey[stop.key] ?? null}
-                  key={stop.key}
                   stop={stop}
                   onDateChange={(date) => setDatesByKey((prev) => ({ ...prev, [stop.key]: date }))}
                 />
                 {i !== previewStops.length - 1 && <Divider />}
-              </>
+              </Fragment>
             ))}
           </FlexLayout>
         </FlexLayout>
