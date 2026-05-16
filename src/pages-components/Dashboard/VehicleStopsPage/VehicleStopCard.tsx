@@ -41,7 +41,7 @@ export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
           ) : (
             <Timeline className="w-full" defaultValue={stops.length} orientation="horizontal">
               {stops.map((stop, i) => (
-                <StopTimelineEntry key={stop.id} step={i + 1} stop={stop} />
+                <StopTimelineEntry key={stop.id} nextStop={stops[i + 1]} step={i + 1} stop={stop} />
               ))}
             </Timeline>
           )}

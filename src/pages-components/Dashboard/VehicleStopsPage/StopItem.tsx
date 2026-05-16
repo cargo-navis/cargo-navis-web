@@ -18,6 +18,7 @@ import { Tooltip } from '@/ui/components/Tooltip/Tooltip';
 
 interface StopTimelineItemProps {
   stop: VehicleStop;
+  nextStop?: VehicleStop;
   step: number;
 }
 
@@ -117,28 +118,29 @@ const StopTooltipContent = ({ stop }: { stop: VehicleStop }) => {
   );
 };
 
-export const StopTimelineEntry = ({ stop, step }: StopTimelineItemProps) => {
+export const StopTimelineEntry = ({ stop, nextStop, step }: StopTimelineItemProps) => {
   const { address, date, loadingCargos, unloadingCargos } = stop;
   const hasLoading = loadingCargos.length > 0;
   const hasUnloading = unloadingCargos.length > 0;
   const isCompleted = isStopCompleted(stop);
+  const isNextCompleted = nextStop ? isStopCompleted(nextStop) : true;
 
   return (
     <TimelineItem
       completed={isCompleted}
-      separatorActive={isCompleted}
+      separatorActive={isNextCompleted}
       step={step}
       style={{ paddingRight: '32px', isolation: 'isolate' }}
     >
       <TimelineHeader>
         <TimelineSeparator
-          className={isCompleted ? undefined : 'bg-transparent'}
+          className={isNextCompleted ? undefined : 'bg-transparent'}
           style={{
             top: '28px',
             height: '2px',
             width: 'calc(100% - 20px)',
             transform: 'translateX(18px) translateY(-50%)',
-            ...(isCompleted
+            ...(isNextCompleted
               ? {}
               : {
                   backgroundImage:
