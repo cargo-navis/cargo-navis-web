@@ -10,16 +10,26 @@ self.addEventListener('install', () => {
 });
 
 self.addEventListener('push', (event) => {
-  console.log('PUSH RECEIVED');
-  console.log(event);
+  let notificationData;
+  try {
+    notificationData = event.data.json();
+  } catch (e) {
+    console.error('[SW] Failed to parse push payload', e);
+    return;
+  }
+  console.log('[SW] PUSH RECEIVED', notificationData);
 
   try {
-    const notificationData = event.data.json();
+    broadcastNotification(notificationData);
+  } catch (e) {
+    console.error('[SW] broadcast failed', e);
+  }
+
+  try {
     const { title, message, targetUrl } = extractNotificationData(notificationData);
     dispatchNotification(title, message, targetUrl);
-    broadcastNotification(notificationData.metadata.shipmentId);
   } catch (error) {
-    console.log('ERROR DISPATCHING NOTIFICATION');
+    console.log('[SW] ERROR DISPATCHING NOTIFICATION');
     console.error(error);
   }
 });
@@ -36,6 +46,9 @@ function extractNotificationData(data) {
     }
     case 'shipment_status_changed': {
       return getShipmentStatusChangedNotifData(data);
+    }
+    case 'vehicle_stop_completed': {
+      return getVehicleStopCompletedNotifData(data);
     }
     default:
       throw new Error('Unsupported notification type');
@@ -55,11 +68,14 @@ function dispatchNotification(title, message, targetUrl) {
   });
 }
 
-function broadcastNotification(shipmentId) {
+function broadcastNotification(notification) {
   const channel = new BroadcastChannel('cargo-navis-notifications');
   channel.postMessage({
     type: 'notification-received',
-    data: { shipmentId },
+    data: {
+      notificationType: notification.type,
+      metadata: notification.metadata,
+    },
     timestamp: Date.now(),
   });
 }
@@ -85,6 +101,20 @@ function getShipmentStatusChangedNotifData(data) {
   const title = `CargoNavis - Nalog ${newShipmentStatus}`;
   const message = `${driverName} je ${statusText} nalog ${orderNumber}`;
   const targetUrl = getShipmentUrl(shipmentId);
+
+  return { title, message, targetUrl };
+}
+
+function getVehicleStopCompletedNotifData(data) {
+  const { driverName, address, shipments = [] } = data.metadata;
+
+  const orderList = shipments.map((s) => s.orderNumber).join(', ');
+  const orderLabel = shipments.length === 1 ? 'nalog' : 'naloge';
+
+  const title = `CargoNavis - Stanica obavljena`;
+  const message = `${driverName} je obavio stanicu (${address})${orderList ? ` za ${orderLabel} ${orderList}` : ''}`;
+  const firstShipmentId = shipments[0]?.shipmentId;
+  const targetUrl = firstShipmentId ? getShipmentUrl(firstShipmentId) : `${ENV_VARS.appUrl}/dashboard`;
 
   return { title, message, targetUrl };
 }

@@ -104,7 +104,7 @@ export const VehicleStopDetailPage = () => {
     return (
       <DashboardLayout>
         <FlexLayout className="py-5 flex-col gap-5">
-          <BackButton targetLocation="/dashboard/vehicle-stops" />
+          <BackButton forceTarget targetLocation="/dashboard/vehicle-stops" />
           <Text color="text-color-3" variant="text-s">
             Vozilo nije pronađeno.
           </Text>
@@ -117,7 +117,7 @@ export const VehicleStopDetailPage = () => {
     <DashboardLayout>
       <PageTitle title={vehicle?.registration} type="Prijevoz" />
       <FlexLayout className="py-5 flex-col gap-5">
-        <BackButton targetLocation="/dashboard/vehicle-stops" />
+        <BackButton forceTarget targetLocation="/dashboard/vehicle-stops" />
 
         <Box>
           <Text as="h1" color="text-color-1" variant="text-xl-medium">

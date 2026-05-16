@@ -4,7 +4,11 @@ import { useEffect } from 'react';
 interface NotificationMessage {
   type: 'notification-received';
   data: {
-    shipmentId: string;
+    notificationType: string;
+    metadata: {
+      vehicleStopId?: string;
+      shipments?: { shipmentId: string; orderNumber: string }[];
+    };
   };
   timestamp: number;
 }
@@ -21,12 +25,34 @@ export function useNotificationUpdates() {
     const channel = new BroadcastChannel('cargo-navis-notifications');
 
     const handleMessage = (event: MessageEvent<NotificationMessage>) => {
-      if (event.data.type === 'notification-received') {
-        console.log('Received notification update from service worker:', event.data);
+      if (event.data.type !== 'notification-received') return;
 
-        queryClient.invalidateQueries({ queryKey: ['notifications'], type: 'all' });
-        queryClient.invalidateQueries({ queryKey: ['shipment', event.data.data.shipmentId], type: 'all' });
-        queryClient.invalidateQueries({ queryKey: ['shipments'], type: 'all' });
+      console.log('[useNotificationUpdates] Received broadcast:', event.data);
+
+      const { notificationType, metadata } = event.data.data;
+
+      queryClient.refetchQueries({ queryKey: ['notifications'], type: 'all' });
+
+      if (notificationType === 'vehicle_stop_completed') {
+        const cache = queryClient.getQueryCache();
+        const vehicleStopsQueries = cache.findAll({ queryKey: ['vehicleStops'] });
+
+        const keysToRevalidate = vehicleStopsQueries.map((q) => q.queryKey);
+        console.log(
+          '[useNotificationUpdates] vehicle_stop_completed - matched vehicleStops queries:',
+          keysToRevalidate
+        );
+
+        vehicleStopsQueries.forEach((q) => {
+          void queryClient.refetchQueries({ queryKey: q.queryKey, exact: true, type: 'all' });
+        });
+
+        metadata.shipments?.forEach((s) => {
+          console.log('[useNotificationUpdates] refetching shipment', s.shipmentId);
+          void queryClient.refetchQueries({ queryKey: ['shipment', s.shipmentId], exact: true, type: 'all' });
+        });
+
+        return;
       }
     };
 
