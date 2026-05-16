@@ -88,6 +88,18 @@ const CargoLoadForm = ({ type, initialValues, cargo, onSubmit }: Omit<CargoLoadM
     type === CargoLoadFieldType.Unload ? cargo?.loadingReadyDate?.trim() || undefined : undefined;
   const maxDateForPicker = type === CargoLoadFieldType.Load ? cargo?.unloadingDueDate?.trim() || undefined : undefined;
 
+  const dateHelperText = (() => {
+    if (maxDateForPicker) {
+      const formatted = dayjs(maxDateForPicker).format('DD.MM.YYYY');
+      return `Mora biti prije datuma istovara (${formatted})`;
+    }
+    if (minDateForPicker) {
+      const formatted = dayjs(minDateForPicker).format('DD.MM.YYYY');
+      return `Mora biti nakon datuma utovara (${formatted})`;
+    }
+    return undefined;
+  })();
+
   const formMethods = useForm({
     defaultValues: initialValues,
     resolver: yupResolver(cargoLoadSchema),
@@ -119,7 +131,13 @@ const CargoLoadForm = ({ type, initialValues, cargo, onSubmit }: Omit<CargoLoadM
         <FlexLayout className="gap-4 grow">
           <FlexLayout className="flex-col gap-4 flex-1">
             <FormTextInput autoFocus label={companyLabel} name="companyName" />
-            <FormDatepicker label={dateLabel} maxDate={maxDateForPicker} minDate={minDateForPicker} name="date" />
+            <FormDatepicker
+              helperText={dateHelperText}
+              label={dateLabel}
+              maxDate={maxDateForPicker}
+              minDate={minDateForPicker}
+              name="date"
+            />
           </FlexLayout>
           <VerticalDivider />
           <FlexLayout className="flex-col gap-4 flex-1">
