@@ -51,9 +51,9 @@ export function useCreateVehicleStops() {
   return useMutation({
     mutationFn: createVehicleStops,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['shipment'], type: 'all' });
-      queryClient.invalidateQueries({ queryKey: ['shipments'], type: 'all' });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['shipment'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['shipments'], refetchType: 'all' });
     },
   });
 }

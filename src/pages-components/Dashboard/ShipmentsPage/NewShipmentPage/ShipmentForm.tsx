@@ -94,6 +94,10 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
 
         const newShipment = await createShipment(payload);
         showSuccessToast({ title: `Nalog "${newShipment.orderNumber}" uspješno kreiran` });
+        if (data.isAgency) {
+          await push('/dashboard/shipments');
+          return;
+        }
         setAssignVehicleFor({
           orderNumber: newShipment.orderNumber,
           clientId: newShipment.clientId,
@@ -116,7 +120,6 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
   }
 
   async function handleVehicleAssigned(vehicleId: string) {
-    setAssignVehicleFor(null);
     await push(`/dashboard/vehicle-stops/${vehicleId}`);
   }
 

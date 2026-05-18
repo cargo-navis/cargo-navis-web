@@ -102,6 +102,9 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
   const [datesByKey, setDatesByKey] = useState<Record<string, string | null>>({});
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  const isBusy = isPending || isNavigating;
 
   const isLoading = isGroupsLoading || isVehiclesLoading;
 
@@ -174,6 +177,7 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
     try {
       await createStops(payloads);
       showSuccessToast({ title: `Nalog "${shipmentOrderNumber}" dodijeljen vozilu` });
+      setIsNavigating(true);
       onAssigned(selectedVehicleId);
     } catch {
       showErrorToast({ title: 'Greška pri dodjeli naloga vozilu' });
@@ -280,13 +284,13 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
         </FlexLayout>
         <FlexLayout className="justify-end gap-3 pt-2">
           <Box className="flex-1">
-            <Button isDisabled={isPending} isFullWidth text="Odustani" variant="secondary" onClick={onClose} />
+            <Button isDisabled={isBusy} isFullWidth text="Odustani" variant="secondary" onClick={onClose} />
           </Box>
           <Box className="flex-1">
             <Button
-              isDisabled={!isConfirmReady}
+              isDisabled={!isConfirmReady || isBusy}
               isFullWidth
-              isLoading={isPending}
+              isLoading={isBusy}
               text="Potvrdi"
               onClick={handleConfirm}
             />
