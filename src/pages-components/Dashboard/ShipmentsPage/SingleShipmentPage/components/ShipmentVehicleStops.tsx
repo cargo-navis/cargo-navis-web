@@ -25,8 +25,7 @@ interface ShipmentVehicleStopsProps {
 export const ShipmentVehicleStops = ({ stops }: ShipmentVehicleStopsProps) => {
   if (stops.length === 0) return null;
 
-  const orderedStops = [...stops].reverse();
-  const latestStop = orderedStops[0];
+  const latestStop = stops[0];
   const headerVehicleId = stops[0].vehicleId;
   const { data: vehicles } = useVehicles();
   const vehicleById = new Map((vehicles ?? []).map((v) => [v.id, v]));
@@ -78,8 +77,8 @@ export const ShipmentVehicleStops = ({ stops }: ShipmentVehicleStopsProps) => {
           </FlexLayout>
         )}
       </FlexLayout>
-      <Timeline className="w-full pt-5" defaultValue={orderedStops.length} orientation="vertical">
-        {orderedStops.map((stop, i) => (
+      <Timeline className="w-full pt-5" defaultValue={stops.length} orientation="vertical">
+        {stops.map((stop, i) => (
           <SidebarStopEntry
             isCompleted={isStopCompleted(stop)}
             key={stop.id}
