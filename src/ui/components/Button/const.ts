@@ -33,7 +33,7 @@ export const variantStyles = {
     normal:
       'bg-white dark:bg-transparent text-dark-800 dark:text-light-50 border border-dark-200 dark:border-light-800 leading-[22px]',
     hover:
-      'hover:bg-black-alpha-05 hover:dark:white-alpha-05 hover:text-dark-800 hover:dark:text-light-50 hover:border-dark-300 hover:dark:border-light-700',
+      'hover:bg-dark-100 dark:hover:bg-light-850 hover:text-dark-800 dark:hover:text-light-50 hover:border-dark-300 dark:hover:border-light-700',
     focus:
       'focus:bg-white focus:dark:bg-black-alpha-05 focus:shadow-[0_0_0_4px] focus:shadow-dark-50 focus:dark:shadow-white-alpha-10',
     active:

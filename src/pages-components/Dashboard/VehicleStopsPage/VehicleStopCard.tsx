@@ -16,7 +16,14 @@ interface VehicleStopCardProps {
 
 export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
   const stops = group.stops.slice(-5).reverse();
-  const driverIds = Array.from(new Set(stops.map((s) => s.driverId).filter(Boolean) as string[]));
+  const driverIds = Array.from(
+    new Set(
+      [...stops]
+        .reverse()
+        .map((s) => s.driverId)
+        .filter(Boolean) as string[]
+    )
+  );
 
   return (
     <Link

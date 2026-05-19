@@ -97,6 +97,13 @@ export function useSendVehicleStopMessage(id: string) {
             })),
           }
       );
+      queryClient.setQueriesData<VehicleStopGroup[]>({ queryKey: [QUERY_KEY, 'byVehicle'] }, (old) =>
+        old?.map((group) =>
+          group.vehicleId === updatedStop.vehicleId
+            ? { ...group, stops: group.stops.map((s) => (s.id === updatedStop.id ? updatedStop : s)) }
+            : group
+        )
+      );
     },
   });
 }

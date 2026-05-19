@@ -12,8 +12,11 @@ import {
   TimelineTitle,
 } from '@/components/reui/timeline';
 import type { VehicleStop, VehicleStopCargo, VehicleStopCargoShipment } from '@/lib/api/vehicleStops';
+import { useSendVehicleStopMessage } from '@/lib/hooks';
+import { useEmployee } from '@/lib/hooks/api/employees';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
-import { Box, FlexLayout, Icon, Text } from '@/ui';
+import { Box, Button, FlexLayout, Icon, Text } from '@/ui';
 import { Tooltip } from '@/ui/components/Tooltip/Tooltip';
 
 interface StopTimelineItemProps {
@@ -60,6 +63,46 @@ const ShipmentPill = ({ shipment, kind }: ShipmentEntry) => {
           <ClientName color={textClass} id={shipment.clientId} variant="text-xxs" />
         </>
       )}
+    </FlexLayout>
+  );
+};
+
+const MessageStatusTooltipContent = ({ stop }: { stop: VehicleStop }) => {
+  const messageSent = !!stop.messageSentAt;
+  const { mutateAsync: sendMessage, isPending } = useSendVehicleStopMessage(stop.id);
+  const { data: driver } = useEmployee(stop.driverId ?? '');
+  const driverName = driver?.fullName ?? '-';
+
+  async function handleClick(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    try {
+      await sendMessage();
+      showSuccessToast({ title: 'Poruka poslana' });
+    } catch (error) {
+      console.error(error);
+      showErrorToast({ title: 'Greška prilikom slanja poruke. Pokušajte ponovno.' });
+    }
+  }
+
+  return (
+    <FlexLayout className="p-2 flex-col gap-2 items-start">
+      <Text color="text-light-50" variant="text-xxs">
+        {messageSent
+          ? `Obavijest poslana: ${dayjs(stop.messageSentAt).format('DD.MM.YYYY, HH:mm')}`
+          : 'Obavijest nije poslana.'}
+      </Text>
+      <Button
+        iconLeft="IconBrandWhatsapp"
+        isFullWidth
+        isLoading={isPending}
+        size="s"
+        text={messageSent ? `Ponovno obavijesti vozača (${driverName})` : `Obavijesti vozača (${driverName})`}
+        type="button"
+        variant="secondary"
+        onClick={handleClick}
+      />
     </FlexLayout>
   );
 };
@@ -124,6 +167,8 @@ export const StopTimelineEntry = ({ stop, nextStop, step }: StopTimelineItemProp
   const hasUnloading = unloadingCargos.length > 0;
   const isCompleted = isStopCompleted(stop);
   const isNextCompleted = nextStop ? isStopCompleted(nextStop) : true;
+  const showMessageIndicator = !isCompleted && !!stop.driverId;
+  const messageSent = !!stop.messageSentAt;
 
   return (
     <TimelineItem
@@ -149,13 +194,26 @@ export const StopTimelineEntry = ({ stop, nextStop, step }: StopTimelineItemProp
           }}
         />
         <TimelineDate style={{ marginBottom: '20px' }}>
-          {date ? (
-            dayjs(date).format('DD.MM.YYYY')
-          ) : (
-            <Box as="span" className="text-red-700 italic">
-              Datum nedostaje
-            </Box>
-          )}
+          <Box as="span" className="inline-flex items-center gap-1">
+            {date ? (
+              dayjs(date).format('DD.MM.YYYY')
+            ) : (
+              <Box as="span" className="text-red-700 italic">
+                Datum nedostaje
+              </Box>
+            )}
+            {showMessageIndicator && (
+              <Tooltip content={<MessageStatusTooltipContent stop={stop} />} interactive isPortal>
+                <Box as="span" className="inline-flex">
+                  <Icon
+                    className={messageSent ? 'text-dark-500 dark:text-light-300' : 'text-red-500 dark:text-red-400'}
+                    icon="IconBrandWhatsapp"
+                    size="s"
+                  />
+                </Box>
+              </Tooltip>
+            )}
+          </Box>
         </TimelineDate>
         <TimelineTitle>
           <Text as="span" className="inline-flex items-center gap-1" color="text-color-1" variant="text-s-medium">
