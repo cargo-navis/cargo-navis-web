@@ -14,6 +14,7 @@ import {
 import type { VehicleStop, VehicleStopCargo, VehicleStopCargoShipment } from '@/lib/api/vehicleStops';
 import { useSendVehicleStopMessage } from '@/lib/hooks';
 import { useEmployee } from '@/lib/hooks/api/employees';
+import { getCargoLabelParts } from '@/lib/utils/cargo';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Box, Button, FlexLayout, Icon, Text } from '@/ui';
@@ -26,47 +27,78 @@ interface StopTimelineItemProps {
   connectsToMore?: boolean;
 }
 
-type ShipmentKind = 'loading' | 'unloading' | 'both';
+type CargoKind = 'loading' | 'unloading';
 
-interface ShipmentEntry {
-  shipment: VehicleStopCargoShipment;
-  kind: ShipmentKind;
+interface CargoEntry {
+  cargo: VehicleStopCargo;
+  kind: CargoKind;
 }
 
-function collectShipments(loadingCargos: VehicleStopCargo[], unloadingCargos: VehicleStopCargo[]): ShipmentEntry[] {
-  const map = new Map<string, ShipmentEntry>();
-  loadingCargos.forEach((c) => map.set(c.shipment.id, { shipment: c.shipment, kind: 'loading' }));
-  unloadingCargos.forEach((c) => {
-    const existing = map.get(c.shipment.id);
-    map.set(c.shipment.id, {
-      shipment: c.shipment,
-      kind: existing ? 'both' : 'unloading',
-    });
-  });
+interface ShipmentSection {
+  shipment: VehicleStopCargoShipment;
+  cargos: CargoEntry[];
+}
+
+function buildShipmentSections(
+  loadingCargos: VehicleStopCargo[],
+  unloadingCargos: VehicleStopCargo[]
+): ShipmentSection[] {
+  const map = new Map<string, ShipmentSection>();
+  const add = (cargo: VehicleStopCargo, kind: CargoKind) => {
+    const section = map.get(cargo.shipment.id) ?? { shipment: cargo.shipment, cargos: [] };
+    section.cargos.push({ cargo, kind });
+    map.set(cargo.shipment.id, section);
+  };
+  loadingCargos.forEach((c) => add(c, 'loading'));
+  unloadingCargos.forEach((c) => add(c, 'unloading'));
   return Array.from(map.values());
 }
 
-const ShipmentPill = ({ shipment, kind }: ShipmentEntry) => {
-  const isLoading = kind !== 'unloading';
-  const textClass = isLoading ? 'text-orange-400' : 'text-teal-400';
+const ShipmentHeader = ({ shipment }: { shipment: VehicleStopCargoShipment }) => (
+  <FlexLayout className="items-center gap-1">
+    <Icon color="text-light-50" icon="IconFileDescription" size="s" />
+    <Text color="text-light-50" variant="text-xxs-medium">
+      Nalog {shipment.orderNumber}
+    </Text>
+    {shipment.clientId && (
+      <>
+        <Text color="text-light-300" variant="text-xxs">
+          ·
+        </Text>
+        <ClientName color="text-light-300" id={shipment.clientId} variant="text-xxs" />
+      </>
+    )}
+  </FlexLayout>
+);
+
+const CargoLine = ({ cargo, kind }: CargoEntry) => {
+  const textClass = kind === 'loading' ? 'text-orange-400' : 'text-teal-400';
+  const icon = kind === 'loading' ? 'IconPackageImport' : 'IconPackageExport';
+  const { primary, secondary } = getCargoLabelParts(cargo);
 
   return (
-    <FlexLayout className="items-center gap-1">
-      <Icon color={textClass} icon="IconFileDescription" size="s" />
+    <FlexLayout className="items-center gap-1 pl-3">
+      <Icon color={textClass} icon={icon} size="s" />
       <Text color={textClass} variant="text-xxs-medium">
-        Nalog {shipment.orderNumber}
+        {primary}
       </Text>
-      {shipment.clientId && (
-        <>
-          <Text color={textClass} variant="text-xxs">
-            ·
-          </Text>
-          <ClientName color={textClass} id={shipment.clientId} variant="text-xxs" />
-        </>
+      {secondary && (
+        <Text color="text-light-300" variant="text-xxs">
+          ({secondary})
+        </Text>
       )}
     </FlexLayout>
   );
 };
+
+const ShipmentSectionDisplay = ({ section }: { section: ShipmentSection }) => (
+  <FlexLayout className="flex-col items-start gap-0.5">
+    <ShipmentHeader shipment={section.shipment} />
+    {section.cargos.map(({ cargo, kind }) => (
+      <CargoLine cargo={cargo} key={`${cargo.id}-${kind}`} kind={kind} />
+    ))}
+  </FlexLayout>
+);
 
 const MessageStatusTooltipContent = ({ stop }: { stop: VehicleStop }) => {
   const messageSent = !!stop.messageSentAt;
@@ -110,7 +142,7 @@ const MessageStatusTooltipContent = ({ stop }: { stop: VehicleStop }) => {
 
 const StopTooltipContent = ({ stop }: { stop: VehicleStop }) => {
   const { address, date, loadingCargos, unloadingCargos } = stop;
-  const shipments = collectShipments(loadingCargos, unloadingCargos);
+  const sections = buildShipmentSections(loadingCargos, unloadingCargos);
 
   return (
     <FlexLayout className="p-2 flex-col gap-1 text-light-50">
@@ -151,10 +183,10 @@ const StopTooltipContent = ({ stop }: { stop: VehicleStop }) => {
           )}
         </FlexLayout>
       )}
-      {shipments.length > 0 && (
-        <FlexLayout className="flex-col items-start gap-1 mt-1">
-          {shipments.map((entry) => (
-            <ShipmentPill key={entry.shipment.id} {...entry} />
+      {sections.length > 0 && (
+        <FlexLayout className="flex-col items-start gap-2 mt-1">
+          {sections.map((section) => (
+            <ShipmentSectionDisplay key={section.shipment.id} section={section} />
           ))}
         </FlexLayout>
       )}
