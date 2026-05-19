@@ -1,9 +1,12 @@
+import { useState } from 'react';
+
 import { EmployeeName } from '@/components/employees/EmployeeName';
 import { Shipment } from '@/lib/api';
 import { getDataPointDateString } from '@/lib/utils/date';
-import { Box, Divider, FlexLayout, Icon, Text } from '@/ui';
+import { Box, Divider, FlexLayout, Icon, Text, TextButton } from '@/ui';
 
 import { EmptyShipmentVehicleStops } from './EmptyShipmentVehicleStops';
+import { ShipmentNoteModal } from './ShipmentNoteModal';
 import { ShipmentVehicleStops } from './ShipmentVehicleStops';
 
 interface ShipmentLeftPanelProps {
@@ -22,6 +25,8 @@ export const ShipmentLeftPanel = ({ shipment, onAssignClick }: ShipmentLeftPanel
   const ruc = transportPrice !== undefined ? shipment.price - transportPrice : undefined;
   const rucClass =
     ruc !== undefined && ruc < 0 ? 'text-red-500 dark:text-red-400' : 'text-green-500 dark:text-green-400';
+
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false);
 
   return (
     <FlexLayout as="section" className="flex-col gap-4">
@@ -94,19 +99,46 @@ export const ShipmentLeftPanel = ({ shipment, onAssignClick }: ShipmentLeftPanel
         </FlexLayout>
       </Box>
 
-      {shipment.note && (
-        <Box className={cardClass}>
-          <FlexLayout className="flex-col gap-2">
+      <Box className={cardClass}>
+        <FlexLayout className="flex-col gap-2">
+          <FlexLayout className="items-center justify-between">
             <FlexLayout className="items-center gap-2 text-dark-700 dark:text-light-100">
               <Text variant="text-m-medium">Napomena</Text>
               <Icon icon="IconInfoCircle" />
             </FlexLayout>
+            {shipment.note && (
+              <TextButton
+                iconRight="IconPencil"
+                size="s"
+                text="Uredi napomenu"
+                variant="secondary"
+                onClick={() => setIsNoteModalOpen(true)}
+              />
+            )}
+          </FlexLayout>
+          {shipment.note ? (
             <Text className="whitespace-pre-wrap" color="text-color-1" variant="text-s">
               {shipment.note}
             </Text>
-          </FlexLayout>
-        </Box>
-      )}
+          ) : (
+            <Box className="relative">
+              <FlexLayout className="flex-col gap-3 py-1 opacity-70">
+                <Box className="rounded-xs bg-dark-200/40 dark:bg-light-800/40 h-[16px] w-[80%]" />
+                <Box className="rounded-xs bg-dark-200/40 dark:bg-light-800/40 h-[16px] w-[60%]" />
+                <Box className="rounded-xs bg-dark-200/40 dark:bg-light-800/40 h-[16px] w-[70%]" />
+              </FlexLayout>
+              <FlexLayout className="absolute inset-0 items-center justify-center">
+                <TextButton
+                  iconLeft="IconPlus"
+                  text="Dodaj napomenu"
+                  variant="secondary"
+                  onClick={() => setIsNoteModalOpen(true)}
+                />
+              </FlexLayout>
+            </Box>
+          )}
+        </FlexLayout>
+      </Box>
 
       {!isAgency && (
         <Box className={cardClass}>
@@ -117,6 +149,13 @@ export const ShipmentLeftPanel = ({ shipment, onAssignClick }: ShipmentLeftPanel
           )}
         </Box>
       )}
+
+      <ShipmentNoteModal
+        initialNote={shipment.note}
+        isOpen={isNoteModalOpen}
+        shipmentId={shipment.id}
+        onClose={() => setIsNoteModalOpen(false)}
+      />
     </FlexLayout>
   );
 };
