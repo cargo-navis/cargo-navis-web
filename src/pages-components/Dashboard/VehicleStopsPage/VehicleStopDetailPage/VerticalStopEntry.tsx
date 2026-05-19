@@ -13,7 +13,13 @@ import {
 } from '@/components/reui/timeline';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { FileCard } from '@/lib/components/FileCard';
-import { useDeleteVehicleStopFile, useGetVehicleStopFileUrl, useSendVehicleStopMessage } from '@/lib/hooks';
+import {
+  useCompleteVehicleStop,
+  useDeleteVehicleStopFile,
+  useGetVehicleStopFileUrl,
+  useSendVehicleStopMessage,
+  useUncompleteVehicleStop,
+} from '@/lib/hooks';
 import { downloadVehicleStopFile } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
@@ -39,7 +45,25 @@ export const VerticalStopEntry = ({ stop, step, onEdit, onDelete, onInsertBefore
   const { mutateAsync: deleteFile, isPending: isDeletingFile } = useDeleteVehicleStopFile(stop.id);
   const { mutateAsync: getDocumentUrl, isPending: isGettingDocumentUrl } = useGetVehicleStopFileUrl(stop.id);
   const { mutateAsync: sendMessage, isPending: isSendingMessage } = useSendVehicleStopMessage(stop.id);
+  const { mutateAsync: completeStop, isPending: isCompleting } = useCompleteVehicleStop(stop.id);
+  const { mutateAsync: uncompleteStop, isPending: isUncompleting } = useUncompleteVehicleStop(stop.id);
+  const isTogglingCompletion = isCompleting || isUncompleting;
   const isFileLoading = isDeletingFile || isGettingDocumentUrl;
+
+  async function handleToggleCompleted() {
+    try {
+      if (isCompleted) {
+        await uncompleteStop();
+        showSuccessToast({ title: 'Stanica označena nedovršenom' });
+      } else {
+        await completeStop();
+        showSuccessToast({ title: 'Stanica označena dovršenom' });
+      }
+    } catch (error) {
+      console.error(error);
+      showErrorToast({ title: 'Greška prilikom promjene statusa stanice. Pokušajte ponovno.' });
+    }
+  }
 
   async function handleSendMessage() {
     if (stop.messageSentAt) {
@@ -156,27 +180,25 @@ export const VerticalStopEntry = ({ stop, step, onEdit, onDelete, onInsertBefore
             </Text>
           )}
         </FlexLayout>
-        {/*<Text color="text-color-3" variant="text-xs">*/}
-        {/*  •*/}
-        {/*</Text>*/}
-        {/*<FlexLayout*/}
-        {/*  className={clsx(*/}
-        {/*    'items-center gap-1 text-dark-600 dark:text-light-300',*/}
-        {/*    !stop.disponentId && 'text-red-600 dark:text-red-600'*/}
-        {/*  )}*/}
-        {/*>*/}
-        {/*  <Icon icon="IconUser" size="m" />*/}
-        {/*  {stop.disponentId ? (*/}
-        {/*    <EmployeeName id={stop.disponentId} variant="text-xs" />*/}
-        {/*  ) : (*/}
-        {/*    <Text as="span" variant="text-xs">*/}
-        {/*      Disponent nedostaje*/}
-        {/*    </Text>*/}
-        {/*  )}*/}
-        {/*</FlexLayout>*/}
-        <DisplayIf condition={!stop.completedAt}>
-          <FlexLayout className="flex-col absolute left-[40%] -top-2 items-end">
-            {!!stop.driverId && (
+        <FlexLayout className="absolute left-[40%] -top-2 items-start gap-3">
+          <FlexLayout className="flex-col items-end">
+            <TextButton
+              iconLeft={isCompleted ? 'IconArrowBackUp' : 'IconCheck'}
+              isDisabled={isTogglingCompletion}
+              size="s"
+              text={isCompleted ? 'Označi nedovršenom' : 'Označi dovršenom'}
+              type="button"
+              variant={isCompleted ? 'primary' : 'secondary'}
+              onClick={handleToggleCompleted}
+            />
+            {stop.completedAt && (
+              <Text className="whitespace-nowrap" color="text-color-3" variant="text-xxxs">
+                Dovršeno {dayjs(stop.completedAt).format('DD.MM.YYYY, HH:mm')}
+              </Text>
+            )}
+          </FlexLayout>
+          <DisplayIf condition={!isCompleted && !!stop.driverId}>
+            <FlexLayout className="flex-col items-end">
               <TextButton
                 iconLeft="IconBrandWhatsapp"
                 isDisabled={isSendingMessage}
@@ -186,14 +208,14 @@ export const VerticalStopEntry = ({ stop, step, onEdit, onDelete, onInsertBefore
                 variant="secondary"
                 onClick={handleSendMessage}
               />
-            )}
-            {stop.messageSentAt && (
-              <Text className="absolute top-5 whitespace-nowrap" color="text-color-3" variant="text-xxxs">
-                Poslano {dayjs(stop.messageSentAt).format('DD.MM.YYYY HH:mm')}
-              </Text>
-            )}
-          </FlexLayout>
-        </DisplayIf>
+              {stop.messageSentAt && (
+                <Text className="whitespace-nowrap" color="text-color-3" variant="text-xxxs">
+                  Poslano {dayjs(stop.messageSentAt).format('DD.MM.YYYY, HH:mm')}
+                </Text>
+              )}
+            </FlexLayout>
+          </DisplayIf>
+        </FlexLayout>
       </FlexLayout>
       <TimelineTitle>
         <Text as="span" color="text-color-1" variant="text-l-medium">

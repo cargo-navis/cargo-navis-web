@@ -61,6 +61,14 @@ export async function sendVehicleStopMessage(id: string) {
   return backend.post<VehicleStop>(`/api/vehicle-stops/${id}/send-message`);
 }
 
+export async function completeVehicleStop(id: string) {
+  return backend.post<VehicleStop>(`/api/vehicle-stops/${id}/complete`);
+}
+
+export async function uncompleteVehicleStop(id: string) {
+  return backend.post<VehicleStop>(`/api/vehicle-stops/${id}/uncomplete`);
+}
+
 export async function uploadVehicleStopFile(id: string, file: File, fileName?: string) {
   const formData = new FormData();
   formData.append('file', file);

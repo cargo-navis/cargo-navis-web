@@ -2,6 +2,7 @@ import { type InfiniteData, useInfiniteQuery, useMutation, useQuery, useQueryCli
 
 import type { PaginatedResponse } from '@/lib/api/pagination.d';
 import {
+  completeVehicleStop,
   createVehicleStops,
   deleteVehicleStop,
   deleteVehicleStopFile,
@@ -10,6 +11,7 @@ import {
   getVehicleStops,
   getVehicleStopsByVehicle,
   sendVehicleStopMessage,
+  uncompleteVehicleStop,
   updateVehicleStop,
   type UpdateVehicleStopParams,
   uploadVehicleStopFile,
@@ -95,6 +97,26 @@ export function useSendVehicleStopMessage(id: string) {
             })),
           }
       );
+    },
+  });
+}
+
+export function useCompleteVehicleStop(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => completeVehicleStop(id),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
+    },
+  });
+}
+
+export function useUncompleteVehicleStop(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => uncompleteVehicleStop(id),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
     },
   });
 }
