@@ -5,7 +5,8 @@ import { EmployeeName } from '@/components/employees/EmployeeName';
 import { Timeline } from '@/components/reui/timeline';
 import type { Vehicle } from '@/lib/api';
 import type { VehicleStopGroup } from '@/lib/api/vehicleStops';
-import { Box, FlexLayout, Icon, Text } from '@/ui';
+import { isStopCompleted } from '@/lib/utils/vehicleStops';
+import { Box, FlexLayout, Icon, Text, Tooltip } from '@/ui';
 
 import { StopTimelineEntry } from './StopItem';
 
@@ -14,12 +15,34 @@ interface VehicleStopCardProps {
   vehicle: Vehicle;
 }
 
+const TIMELINE_SIZE = 5;
+
+function pickTimelineStops(allStops: VehicleStopGroup['stops']) {
+  let lastCompletedIndex = -1;
+  for (let i = 0; i < allStops.length; i++) {
+    if (isStopCompleted(allStops[i])) lastCompletedIndex = i;
+  }
+
+  if (lastCompletedIndex === -1) {
+    return allStops.filter((s) => !isStopCompleted(s)).slice(0, TIMELINE_SIZE);
+  }
+
+  const result = [allStops[lastCompletedIndex]];
+  for (let i = lastCompletedIndex + 1; i < allStops.length && result.length < TIMELINE_SIZE; i++) {
+    if (!isStopCompleted(allStops[i])) result.push(allStops[i]);
+  }
+  for (let i = lastCompletedIndex - 1; i >= 0 && result.length < TIMELINE_SIZE; i--) {
+    result.unshift(allStops[i]);
+  }
+  return result;
+}
+
 export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
-  const stops = group.stops.slice(-5).reverse();
+  const stops = pickTimelineStops(group.stops.toReversed());
   const driverIds = Array.from(
     new Set(
-      [...stops]
-        .reverse()
+      stops
+        .toReversed()
         .map((s) => s.driverId)
         .filter(Boolean) as string[]
     )
@@ -41,10 +64,23 @@ export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
             <Icon icon="IconTruckDelivery" size="m" />
             <Text variant="text-s">{vehicle.brand}</Text>
           </FlexLayout>
-          {driverIds.map((id) => (
+          {driverIds.map((id, index) => (
             <FlexLayout className="items-center gap-1 text-dark-600 dark:text-light-300" key={id}>
               <Icon icon="IconSteeringWheel" size="s" />
               <EmployeeName id={id} variant="text-xs" />
+              {driverIds.length > 1 && index === 0 && (
+                <Tooltip
+                  content={
+                    <FlexLayout className="px-2 flex-col gap-2 items-start">
+                      <Text color="text-light-50" variant="text-xxs">
+                        Trenutni vozač
+                      </Text>
+                    </FlexLayout>
+                  }
+                >
+                  <Box className="px-1">•</Box>
+                </Tooltip>
+              )}
             </FlexLayout>
           ))}
         </FlexLayout>
