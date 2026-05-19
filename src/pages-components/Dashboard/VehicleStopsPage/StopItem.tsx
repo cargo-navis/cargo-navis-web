@@ -23,6 +23,7 @@ interface StopTimelineItemProps {
   stop: VehicleStop;
   nextStop?: VehicleStop;
   step: number;
+  connectsToMore?: boolean;
 }
 
 type ShipmentKind = 'loading' | 'unloading' | 'both';
@@ -161,12 +162,12 @@ const StopTooltipContent = ({ stop }: { stop: VehicleStop }) => {
   );
 };
 
-export const StopTimelineEntry = ({ stop, nextStop, step }: StopTimelineItemProps) => {
+export const StopTimelineEntry = ({ stop, nextStop, step, connectsToMore = false }: StopTimelineItemProps) => {
   const { address, date, loadingCargos, unloadingCargos } = stop;
   const hasLoading = loadingCargos.length > 0;
   const hasUnloading = unloadingCargos.length > 0;
   const isCompleted = isStopCompleted(stop);
-  const isNextCompleted = nextStop ? isStopCompleted(nextStop) : true;
+  const isNextCompleted = nextStop ? isStopCompleted(nextStop) : !connectsToMore;
   const showMessageIndicator = !isCompleted && !!stop.driverId;
   const messageSent = !!stop.messageSentAt;
 
@@ -253,6 +254,34 @@ export const StopTimelineEntry = ({ stop, nextStop, step }: StopTimelineItemProp
           {address?.streetName}
         </Text>
       </TimelineContent>
+    </TimelineItem>
+  );
+};
+
+interface RemainingStopsBadgeProps {
+  count: number;
+  step: number;
+}
+
+export const RemainingStopsBadge = ({ count, step }: RemainingStopsBadgeProps) => {
+  return (
+    <TimelineItem step={step} style={{ flex: 'none', width: '60px', isolation: 'isolate' }}>
+      <TimelineHeader>
+        <Box style={{ height: '20px', marginBottom: '20px' }} />
+        <TimelineIndicator
+          className="z-10 cursor-default flex items-center justify-center bg-teal-50 dark:bg-teal-900/40 border-teal-500/50 text-teal-700 dark:text-teal-200"
+          style={{
+            top: '28px',
+            left: 0,
+            transform: 'translateY(-50%)',
+            width: '32px',
+            height: '32px',
+            borderRadius: '50%',
+          }}
+        >
+          <Text variant="text-xxs-medium">+{count}</Text>
+        </TimelineIndicator>
+      </TimelineHeader>
     </TimelineItem>
   );
 };

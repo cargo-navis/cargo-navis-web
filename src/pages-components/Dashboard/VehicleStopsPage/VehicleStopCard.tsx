@@ -8,7 +8,7 @@ import type { VehicleStopGroup } from '@/lib/api/vehicleStops';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Box, FlexLayout, Icon, Text, Tooltip } from '@/ui';
 
-import { StopTimelineEntry } from './StopItem';
+import { RemainingStopsBadge, StopTimelineEntry } from './StopItem';
 
 interface VehicleStopCardProps {
   group: VehicleStopGroup;
@@ -38,7 +38,12 @@ function pickTimelineStops(allStops: VehicleStopGroup['stops']) {
 }
 
 export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
-  const stops = pickTimelineStops(group.stops.toReversed());
+  const reversedStops = group.stops.toReversed();
+  const stops = pickTimelineStops(reversedStops);
+  const lastShownIndex = stops.length > 0 ? reversedStops.lastIndexOf(stops[stops.length - 1]) : -1;
+  const remainingUncompleted = reversedStops
+    .slice(lastShownIndex + 1)
+    .reduce((n, s) => n + (isStopCompleted(s) ? 0 : 1), 0);
   const driverIds = Array.from(
     new Set(
       stops
@@ -92,8 +97,15 @@ export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
           ) : (
             <Timeline className="w-full" defaultValue={stops.length} orientation="horizontal">
               {stops.map((stop, i) => (
-                <StopTimelineEntry key={stop.id} nextStop={stops[i + 1]} step={i + 1} stop={stop} />
+                <StopTimelineEntry
+                  connectsToMore={i === stops.length - 1 && remainingUncompleted > 0}
+                  key={stop.id}
+                  nextStop={stops[i + 1]}
+                  step={i + 1}
+                  stop={stop}
+                />
               ))}
+              {remainingUncompleted > 0 && <RemainingStopsBadge count={remainingUncompleted} step={stops.length + 1} />}
             </Timeline>
           )}
         </Box>
