@@ -18,6 +18,32 @@ interface CargoSelectDrawerProps {
   onConfirm(cargos: Cargo[]): void;
 }
 
+interface CargoGroup {
+  shipment: Shipment;
+  cargos: CargoWithClient[];
+}
+
+function addressKey(address: { postalCodeId: string; streetName: string | null } | null | undefined): string | null {
+  if (!address) return null;
+  return `${address.postalCodeId}|${address.streetName ?? ''}`;
+}
+
+function buildAvailableGroups(shipments: Shipment[]): CargoGroup[] {
+  return shipments.map((shipment) => buildGroup(shipment)).filter((g) => g.cargos.length > 0);
+}
+
+function buildGroup(shipment: Shipment): CargoGroup {
+  const scheduledAddressKeys = new Set(
+    (shipment.vehicleStops ?? []).map((stop) => addressKey(stop.address)).filter((key): key is string => key !== null)
+  );
+
+  const cargos = shipment.cargo
+    .filter((cargo) => !scheduledAddressKeys.has(addressKey(cargo.unloadingAddress)!))
+    .map((cargo) => ({ ...cargo, clientId: shipment.clientId }));
+
+  return { shipment, cargos };
+}
+
 export const CargoSelectDrawer = ({
   isOpen,
   title,
@@ -28,14 +54,7 @@ export const CargoSelectDrawer = ({
 }: CargoSelectDrawerProps) => {
   const { data: shipments, isLoading } = useShipmentsData({ params: { isActive: true }, enabled: isOpen });
 
-  const groups = useMemo<{ shipment: Shipment; cargos: CargoWithClient[] }[]>(
-    () =>
-      shipments?.map((s) => ({
-        shipment: s,
-        cargos: s.cargo.map((c) => ({ ...c, clientId: s.clientId })),
-      })) ?? [],
-    [shipments]
-  );
+  const groups = useMemo<CargoGroup[]>(() => (shipments ? buildAvailableGroups(shipments) : []), [shipments]);
 
   const allCargos = useMemo<CargoWithClient[]>(() => groups.flatMap((g) => g.cargos), [groups]);
 
