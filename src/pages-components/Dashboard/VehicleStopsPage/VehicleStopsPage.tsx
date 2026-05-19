@@ -80,7 +80,7 @@ export const VehicleStopsPage = () => {
           Nema podataka o stanicama vozila.
         </Text>
       ) : (
-        <FlexLayout className="flex-col gap-4 mt-4">
+        <FlexLayout className="flex-col mt-4 divide-y divide-dark-200/80 dark:divide-light-800 border-y border-dark-100 dark:border-light-800">
           {filteredGroups.map((group) => (
             <VehicleStopCard group={group} key={group.vehicleId} vehicle={vehicleMap.get(group.vehicleId) as Vehicle} />
           ))}
