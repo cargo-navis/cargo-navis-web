@@ -4,6 +4,7 @@ import { ClientName } from '@/components/clients/ClientName';
 import { Drawer, DrawerContent, DrawerFooter, DrawerHeader } from '@/components/ui/drawer';
 import type { Cargo, Shipment } from '@/lib/api';
 import { useShipmentsData } from '@/lib/hooks';
+import { getCargoLabelParts } from '@/lib/utils/cargo';
 import { Box, Button, FlexLayout, Icon, Skeleton, Text } from '@/ui';
 
 export type CargoWithClient = Cargo & { clientId?: string };
@@ -180,6 +181,7 @@ const CargoRow = ({ cargo, addressType, isSelected, onToggle }: CargoRowProps) =
   const addressLine = address
     ? [address.streetName, [address.postalCode, address.placeName].filter(Boolean).join(' ')].filter(Boolean).join(', ')
     : null;
+  const { primary, secondary } = getCargoLabelParts(cargo);
 
   return (
     <FlexLayout
@@ -194,8 +196,13 @@ const CargoRow = ({ cargo, addressType, isSelected, onToggle }: CargoRowProps) =
     >
       <FlexLayout className="flex-col">
         <Text color="text-color-1" variant="text-s-medium">
-          {cargo.description || '-'}
+          {primary}
         </Text>
+        {secondary && (
+          <Text color="text-color-3" variant="text-xxs">
+            {secondary}
+          </Text>
+        )}
         {addressLine && (
           <Text color="text-color-3" variant="text-xxs">
             {addressLine}

@@ -14,22 +14,27 @@ interface CargoLike {
   metadata: CargoLikeMetadata;
 }
 
-export function getCargoLabel(cargo: CargoLike): string {
+export function getCargoLabelParts(cargo: CargoLike): { primary: string; secondary?: string } {
   const { type, palleteAmount, palleteType, length, width, height } = cargo.metadata;
-  const suffix = cargo.description ? ` (${cargo.description})` : '';
+  const secondary = cargo.description || undefined;
 
   if (type === 'standard' && palleteAmount) {
     const palleteName = palleteNameMap[palleteType as PalleteType];
-    const base = palleteName ? `${palleteAmount} x ${palleteName}` : `${palleteAmount} paleta`;
-    return `${base}${suffix}`;
+    const primary = palleteName ? `${palleteAmount} x ${palleteName}` : `${palleteAmount} paleta`;
+    return { primary, secondary };
   }
 
   if (type === 'nonstandard') {
     const dimensions = [length, width, height].filter((d) => d != null);
-    if (dimensions.length > 0) return `${dimensions.map((d) => `${d}m`).join(' x ')}${suffix}`;
+    if (dimensions.length > 0) return { primary: dimensions.map((d) => `${d}m`).join(' x '), secondary };
   }
 
-  if (cargo.description) return cargo.description;
+  if (cargo.description) return { primary: cargo.description };
 
-  return '-';
+  return { primary: '-' };
+}
+
+export function getCargoLabel(cargo: CargoLike): string {
+  const { primary, secondary } = getCargoLabelParts(cargo);
+  return secondary ? `${primary} (${secondary})` : primary;
 }
