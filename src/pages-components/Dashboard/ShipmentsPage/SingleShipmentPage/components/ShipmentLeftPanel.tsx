@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { EmployeeName } from '@/components/employees/EmployeeName';
 import { Shipment } from '@/lib/api';
 import { getDataPointDateString } from '@/lib/utils/date';
-import { Box, Divider, FlexLayout, Icon, Text, TextButton } from '@/ui';
+import { Box, Divider, FlexLayout, Icon, Text, TextButton, Tooltip } from '@/ui';
 
 import { EmptyShipmentVehicleStops } from './EmptyShipmentVehicleStops';
 import { ShipmentNoteModal } from './ShipmentNoteModal';
@@ -104,7 +104,20 @@ export const ShipmentLeftPanel = ({ shipment, onAssignClick }: ShipmentLeftPanel
           <FlexLayout className="items-center justify-between">
             <FlexLayout className="items-center gap-2 text-dark-700 dark:text-light-100">
               <Text variant="text-m-medium">Napomena</Text>
-              <Icon icon="IconInfoCircle" />
+              <Tooltip
+                content={
+                  <Box className="px-2 max-w-[260px]">
+                    <Text as="p" color="text-light-50" variant="text-xs">
+                      Ova napomena je samo za internu upotrebu i ne pojavljuje se u PDF-ovima ni drugim izlaznim
+                      dokumentima.
+                    </Text>
+                  </Box>
+                }
+              >
+                <Box className="cursor-default">
+                  <Icon icon="IconInfoCircle" />
+                </Box>
+              </Tooltip>
             </FlexLayout>
             {shipment.note && (
               <TextButton

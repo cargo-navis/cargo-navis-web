@@ -66,11 +66,14 @@ export const ShipmentNoteModal: React.FC<ShipmentNoteModalProps> = ({ isOpen, sh
       >
         <DialogHeader className="flex-col">
           <FlexLayout className="items-center gap-2 text-dark-800 dark:text-light-50">
-            <Icon icon="IconInfoCircle" size="m" />
             <DialogTitle>
               <Text variant="text-m-medium">Napomena</Text>
             </DialogTitle>
+            <Icon icon="IconInfoCircle" size="m" />
           </FlexLayout>
+          <Text color="text-color-3" variant="text-xs">
+            Interna napomena — nije vidljiva na izlaznim dokumentima.
+          </Text>
         </DialogHeader>
         <FormProvider {...formMethods}>
           <FlexLayout as="form" className="flex-col gap-4" onSubmit={handleSubmit(handleFormSubmit)}>
