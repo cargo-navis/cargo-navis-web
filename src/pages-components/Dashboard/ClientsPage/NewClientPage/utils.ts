@@ -8,7 +8,7 @@ export const getFormDefaultValues = (client: Client | undefined) => {
   if (!client) return formDefaultValues;
 
   return async () => {
-    const postalCodeData = await getPostalCode(client.address.id);
+    const postalCodeData = await getPostalCode(client.address.postalCodeId);
 
     return {
       ...client,
