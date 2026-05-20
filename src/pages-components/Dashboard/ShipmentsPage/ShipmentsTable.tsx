@@ -165,7 +165,14 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           </FlexLayout>
         ),
         cell: (props) => {
-          const { cargo } = props.row.original;
+          const { cargo, vehicleStops } = props.row.original;
+
+          const loadingCompletion = new Map<string, string | undefined>();
+          const unloadingCompletion = new Map<string, string | undefined>();
+          vehicleStops?.forEach((stop) => {
+            stop.loadingCargos?.forEach((c) => loadingCompletion.set(c.id, stop.completedAt));
+            stop.unloadingCargos?.forEach((c) => unloadingCompletion.set(c.id, stop.completedAt));
+          });
 
           const uniquePairs = new Map<string, (typeof cargo)[number]>();
           cargo.forEach((c) => {
@@ -192,7 +199,11 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                     className="self-center flex flex-col min-w-0"
                     style={{ gridColumn: 1, gridRow: `1 / span ${groupCargos.length}` }}
                   >
-                    <AddressItem address={groupCargos[0].loadingAddress} />
+                    <AddressItem
+                      address={groupCargos[0].loadingAddress}
+                      completedAt={loadingCompletion.get(groupCargos[0].id)}
+                      showCompletionStatus
+                    />
                     {groupCargos[0].loadingReadyDate && (
                       <Text color="text-color-4" variant="text-xxs">
                         {getDataPointDateString(groupCargos[0].loadingReadyDate)}
@@ -205,7 +216,11 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                         <Icon color="text-color-4" icon="IconArrowRight" size="s" />
                       </Box>
                       <Box className="flex flex-col self-center min-w-0" style={{ gridColumn: 3, gridRow: ci + 1 }}>
-                        <AddressItem address={c.unloadingAddress} />
+                        <AddressItem
+                          address={c.unloadingAddress}
+                          completedAt={unloadingCompletion.get(c.id)}
+                          showCompletionStatus
+                        />
                         {c.unloadingDueDate && (
                           <Text color="text-color-4" variant="text-xxs">
                             {getDataPointDateString(c.unloadingDueDate)}
