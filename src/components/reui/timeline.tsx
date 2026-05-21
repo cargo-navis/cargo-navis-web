@@ -153,25 +153,29 @@ interface TimelineItemProps extends HTMLAttributes<HTMLDivElement> {
   separatorActive?: boolean;
 }
 
-function TimelineItem({ step, completed, separatorActive, className, ...props }: TimelineItemProps) {
-  const { activeStep } = useTimeline();
-  const isCompleted = completed ?? step <= activeStep;
-  const isNextCompleted = separatorActive ?? step < activeStep;
+const TimelineItem = forwardRef<HTMLDivElement, TimelineItemProps>(
+  ({ step, completed, separatorActive, className, style, ...props }, ref) => {
+    const { activeStep } = useTimeline();
+    const isCompleted = completed ?? step <= activeStep;
+    const isNextCompleted = separatorActive ?? step < activeStep;
 
-  return (
-    <FlexLayout
-      className={cn(
-        'group/timeline-item relative flex-1 flex-col group-data-[orientation=vertical]/timeline:not-last:pb-6',
-        className
-      )}
-      data-completed={isCompleted || undefined}
-      data-separator-active={isNextCompleted || undefined}
-      data-slot="timeline-item"
-      style={{ gap: '2px' }}
-      {...props}
-    />
-  );
-}
+    return (
+      <FlexLayout
+        className={cn(
+          'group/timeline-item relative flex-1 flex-col group-data-[orientation=vertical]/timeline:not-last:pb-6',
+          className
+        )}
+        data-completed={isCompleted || undefined}
+        data-separator-active={isNextCompleted || undefined}
+        data-slot="timeline-item"
+        ref={ref}
+        style={{ gap: '2px', ...style }}
+        {...props}
+      />
+    );
+  }
+);
+TimelineItem.displayName = 'TimelineItem';
 
 // TimelineSeparator
 function TimelineSeparator({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
