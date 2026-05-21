@@ -1,3 +1,5 @@
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 
@@ -31,16 +33,30 @@ import { VehicleStopFileUploadButton } from './VehicleStopFileUploadButton';
 interface VerticalStopEntryProps {
   stop: VehicleStop;
   step: number;
+  isDragOverlay?: boolean;
   onEdit?(stop: VehicleStop): void;
   onDelete?(stop: VehicleStop): void;
   onInsertBefore?(): void;
 }
 
-export const VerticalStopEntry = ({ stop, step, onEdit, onDelete, onInsertBefore }: VerticalStopEntryProps) => {
+export const VerticalStopEntry = ({
+  stop,
+  step,
+  isDragOverlay,
+  onEdit,
+  onDelete,
+  onInsertBefore,
+}: VerticalStopEntryProps) => {
   const isCompleted = isStopCompleted(stop);
   const { address, date, loadingCargos, unloadingCargos, documents } = stop;
   const hasLoading = loadingCargos.length > 0;
   const hasUnloading = unloadingCargos.length > 0;
+  const isDraggable = !date && !isCompleted;
+
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+    id: stop.id,
+    disabled: !isDraggable || isDragOverlay,
+  });
 
   const { mutateAsync: deleteFile, isPending: isDeletingFile } = useDeleteVehicleStopFile(stop.id);
   const { mutateAsync: getDocumentUrl, isPending: isGettingDocumentUrl } = useGetVehicleStopFileUrl(stop.id);
@@ -113,11 +129,17 @@ export const VerticalStopEntry = ({ stop, step, onEdit, onDelete, onInsertBefore
 
   return (
     <TimelineItem
-      className="group/stop-entry relative"
+      className={clsx('group/stop-entry relative', isDragging && 'opacity-40')}
       completed={isCompleted}
+      ref={setNodeRef}
       separatorActive={isCompleted}
       step={step}
-      style={{ paddingLeft: '32px', paddingBottom: '78px' }}
+      style={{
+        paddingLeft: '32px',
+        paddingBottom: '78px',
+        transform: CSS.Transform.toString(transform),
+        transition,
+      }}
     >
       <TimelineHeader>
         <TimelineSeparator
@@ -272,6 +294,15 @@ export const VerticalStopEntry = ({ stop, step, onEdit, onDelete, onInsertBefore
           <VehicleStopFileUploadButton id={stop.id} />
         </FlexLayout>
       </FlexLayout>
+      {isDraggable && !isDragOverlay && (
+        <Box
+          className="absolute -left-1 top-7 hidden group-hover/stop-entry:block cursor-grab active:cursor-grabbing touch-none"
+          {...attributes}
+          {...listeners}
+        >
+          <Icon className="text-dark-400 hover:text-teal-500 dark:text-light-300" icon="IconGripVertical" size="l" />
+        </Box>
+      )}
       {onInsertBefore && (
         <FlexLayout className="flex-col absolute hidden group-hover/stop-entry:flex justify-center -left-2 bottom-6">
           <FlexLayout

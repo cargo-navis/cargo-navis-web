@@ -10,6 +10,7 @@ import {
   getVehicleStopFileUrl,
   getVehicleStops,
   getVehicleStopsByVehicle,
+  rearrangeVehicleStop,
   sendVehicleStopMessage,
   uncompleteVehicleStop,
   updateVehicleStop,
@@ -66,6 +67,58 @@ export function useUpdateVehicleStop() {
     mutationFn: ({ id, data }: { id: string; data: UpdateVehicleStopParams }) => updateVehicleStop(id, data),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
+    },
+  });
+}
+
+export function useRearrangeVehicleStop(vehicleId: string) {
+  const queryClient = useQueryClient();
+  const queryKey = [QUERY_KEY, 'paginated', vehicleId];
+
+  return useMutation({
+    mutationFn: ({ stopId, previousStopId }: { stopId: string; previousStopId: string | null }) =>
+      rearrangeVehicleStop(stopId, { previousStopId }),
+    onMutate: ({ stopId, previousStopId }) => {
+      const snapshot = queryClient.getQueriesData<InfiniteData<PaginatedResponse<VehicleStop>>>({ queryKey });
+
+      queryClient.setQueriesData<InfiniteData<PaginatedResponse<VehicleStop>>>({ queryKey }, (old) => {
+        if (!old) return old;
+        const flat = old.pages.flatMap((p) => p.data);
+        const moved = flat.find((s) => s.id === stopId);
+        if (!moved) return old;
+        const updated = { ...moved, previousStopId };
+        const without = flat.filter((s) => s.id !== stopId);
+        const anchorIndex = previousStopId ? without.findIndex((s) => s.id === previousStopId) : -1;
+        const insertAt = previousStopId ? (anchorIndex === -1 ? without.length : anchorIndex) : without.length;
+        const reordered = [...without.slice(0, insertAt), updated, ...without.slice(insertAt)];
+
+        let cursor = 0;
+        const pages = old.pages.map((p) => {
+          const next = reordered.slice(cursor, cursor + p.data.length);
+          cursor += p.data.length;
+          return { ...p, data: next };
+        });
+        return { ...old, pages };
+      });
+
+      void queryClient.cancelQueries({ queryKey });
+      return { snapshot };
+    },
+    onError: (_err, _vars, context) => {
+      context?.snapshot.forEach(([key, data]) => queryClient.setQueryData(key, data));
+    },
+    onSuccess: (updatedStop) => {
+      queryClient.setQueriesData<InfiniteData<PaginatedResponse<VehicleStop>>>(
+        { queryKey },
+        (old) =>
+          old && {
+            ...old,
+            pages: old.pages.map((p) => ({
+              ...p,
+              data: p.data.map((s) => (s.id === updatedStop.id ? updatedStop : s)),
+            })),
+          }
+      );
     },
   });
 }

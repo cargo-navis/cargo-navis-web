@@ -53,6 +53,10 @@ export async function updateVehicleStop(id: string, data: UpdateVehicleStopParam
   return backend.patch<VehicleStop>(`/api/vehicle-stops/${id}`, data);
 }
 
+export async function rearrangeVehicleStop(id: string, data: { previousStopId: string | null }) {
+  return backend.patch<VehicleStop>(`/api/vehicle-stops/${id}/rearrange`, data);
+}
+
 export async function deleteVehicleStop(id: string) {
   return backend.delete<void>(`/api/vehicle-stops/${id}`);
 }
