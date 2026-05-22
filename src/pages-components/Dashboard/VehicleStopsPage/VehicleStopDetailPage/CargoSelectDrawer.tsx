@@ -1,11 +1,12 @@
+import Fuse from 'fuse.js';
 import { useEffect, useMemo, useState } from 'react';
 
 import { ClientName } from '@/components/clients/ClientName';
 import { Drawer, DrawerContent, DrawerFooter, DrawerHeader } from '@/components/ui/drawer';
 import type { Cargo, Shipment } from '@/lib/api';
-import { useShipmentsData } from '@/lib/hooks';
+import { useClients, useShipmentsData } from '@/lib/hooks';
 import { getCargoLabelParts } from '@/lib/utils/cargo';
-import { Box, Button, FlexLayout, Icon, Skeleton, Text } from '@/ui';
+import { Box, Button, FlexLayout, Icon, Skeleton, Text, TextInput } from '@/ui';
 
 export type CargoWithClient = Cargo & { clientId?: string };
 
@@ -53,8 +54,50 @@ export const CargoSelectDrawer = ({
   onConfirm,
 }: CargoSelectDrawerProps) => {
   const { data: shipments, isLoading } = useShipmentsData({ params: { isActive: true }, enabled: isOpen });
+  const { data: clients } = useClients({ enabled: isOpen });
+
+  const clientNameById = useMemo(() => {
+    const map = new Map<string, string>();
+    clients?.forEach((c) => map.set(c.id.toString(), c.name));
+    return map;
+  }, [clients]);
 
   const groups = useMemo<CargoGroup[]>(() => (shipments ? buildAvailableGroups(shipments) : []), [shipments]);
+
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    if (isOpen) setSearch('');
+  }, [isOpen]);
+
+  const fuse = useMemo(
+    () =>
+      new Fuse(groups, {
+        threshold: 0.35,
+        ignoreLocation: true,
+        keys: [
+          { name: 'orderNumber', getFn: (g) => g.shipment.orderNumber ?? '' },
+          { name: 'clientName', getFn: (g) => clientNameById.get(g.shipment.clientId ?? '') ?? '' },
+          {
+            name: 'addresses',
+            getFn: (g) =>
+              g.cargos.flatMap((c) => {
+                const a = addressType === 'loading' ? c.loadingAddress : c.unloadingAddress;
+                if (!a) return [];
+                return [a.streetName, a.placeName, a.postalCode].filter((v): v is string => !!v);
+              }),
+          },
+          { name: 'descriptions', getFn: (g) => g.cargos.map((c) => c.description ?? '').filter(Boolean) },
+        ],
+      }),
+    [groups, clientNameById, addressType]
+  );
+
+  const filteredGroups = useMemo<CargoGroup[]>(() => {
+    const query = search.trim();
+    if (!query) return groups;
+    return fuse.search(query).map((r) => r.item);
+  }, [fuse, groups, search]);
 
   const allCargos = useMemo<CargoWithClient[]>(() => groups.flatMap((g) => g.cargos), [groups]);
 
@@ -106,6 +149,18 @@ export const CargoSelectDrawer = ({
             {selectedIds.size > 0 ? `Nalozi: ${selectedShipmentCount} · Tereti: ${selectedIds.size}` : 'Odaberi terete'}
           </Text>
         </DrawerHeader>
+        {allCargos.length > 0 && (
+          <Box className="px-4 pb-2">
+            <TextInput
+              iconLeft="IconSearch"
+              iconRight={search ? 'IconX' : undefined}
+              placeholder="Nalogu / klijent / adresa / opis"
+              value={search}
+              onChange={setSearch}
+              onClickIconRight={() => setSearch('')}
+            />
+          </Box>
+        )}
         <Box className="flex-1 overflow-y-auto px-4">
           {isLoading ? (
             <FlexLayout className="flex-col gap-4">
@@ -119,9 +174,15 @@ export const CargoSelectDrawer = ({
                 Svi tereti su već dodijeljeni nekom prijevozu.
               </Text>
             </FlexLayout>
+          ) : filteredGroups.length === 0 ? (
+            <FlexLayout className="flex-col items-center justify-center h-full">
+              <Text className="text-center" color="text-color-3" variant="text-s">
+                Nema rezultata za "{search}".
+              </Text>
+            </FlexLayout>
           ) : (
             <FlexLayout className="flex-col">
-              {groups.map(({ shipment, cargos }) => {
+              {filteredGroups.map(({ shipment, cargos }) => {
                 const isAllSelected = cargos.length > 0 && cargos.every((c) => selectedIds.has(c.id));
                 return (
                   <FlexLayout
@@ -137,13 +198,13 @@ export const CargoSelectDrawer = ({
                       onClick={() => toggleShipment(cargos)}
                     >
                       <Icon
-                        className="group-hover/shipment:text-teal-500"
+                        className="group-hover/shipment:text-teal-500 shrink-0"
                         color={isAllSelected ? 'text-teal-500' : 'text-color-3'}
                         icon="IconFileDescription"
                         size="s"
                       />
                       <Text
-                        className="group-hover/shipment:text-teal-500"
+                        className="group-hover/shipment:text-teal-500 shrink-0"
                         color={isAllSelected ? 'text-teal-500' : 'text-color-2'}
                         variant="text-xs-medium"
                       >
@@ -155,7 +216,7 @@ export const CargoSelectDrawer = ({
                             ·
                           </Text>
                           <ClientName
-                            className="group-hover/shipment:text-teal-500"
+                            className="group-hover/shipment:text-teal-500 truncate"
                             color={isAllSelected ? 'text-teal-500' : 'text-color-3'}
                             id={shipment.clientId}
                             variant="text-xxs"
