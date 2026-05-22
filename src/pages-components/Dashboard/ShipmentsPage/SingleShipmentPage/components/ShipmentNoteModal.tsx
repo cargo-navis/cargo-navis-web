@@ -9,9 +9,13 @@ import { useUpdateShipment } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, Dialog, DialogContent, DialogHeader, DialogTitle, FlexLayout, Icon, Text } from '@/ui';
 
+export type ShipmentNoteType = 'internal' | 'external';
+
 interface ShipmentNoteModalProps {
   isOpen: boolean;
   shipmentId: string;
+  childShipmentId?: string;
+  noteType: ShipmentNoteType;
   initialNote?: string | null;
   onClose(): void;
 }
@@ -26,7 +30,30 @@ const noteSchema = object({
   note: string().trim().max(NOTE_MAX_LENGTH, `Maksimalno ${NOTE_MAX_LENGTH} znakova`).defined(),
 });
 
-export const ShipmentNoteModal: React.FC<ShipmentNoteModalProps> = ({ isOpen, shipmentId, initialNote, onClose }) => {
+const noteCopy: Record<
+  ShipmentNoteType,
+  { title: string; helper: string; payloadField: 'internalNote' | 'externalNote' }
+> = {
+  internal: {
+    title: 'Interna napomena',
+    helper: 'Interna napomena — nije vidljiva na izlaznim dokumentima.',
+    payloadField: 'internalNote',
+  },
+  external: {
+    title: 'Vanjska napomena',
+    helper: 'Vanjska napomena — vidljiva u PDF-ovima i drugim izlaznim dokumentima.',
+    payloadField: 'externalNote',
+  },
+};
+
+export const ShipmentNoteModal: React.FC<ShipmentNoteModalProps> = ({
+  isOpen,
+  shipmentId,
+  childShipmentId,
+  noteType,
+  initialNote,
+  onClose,
+}) => {
   const queryClient = useQueryClient();
   const { mutateAsync: updateShipment } = useUpdateShipment();
 
@@ -39,6 +66,7 @@ export const ShipmentNoteModal: React.FC<ShipmentNoteModalProps> = ({ isOpen, sh
   const { handleSubmit, formState, reset, watch } = formMethods;
   const { isDirty, isValid, isSubmitting } = formState;
   const currentLength = watch('note')?.length ?? 0;
+  const { title, helper, payloadField } = noteCopy[noteType];
 
   useEffect(() => {
     if (isOpen) reset({ note: initialNote ?? '' });
@@ -46,9 +74,13 @@ export const ShipmentNoteModal: React.FC<ShipmentNoteModalProps> = ({ isOpen, sh
 
   async function handleFormSubmit(values: NoteFormValues) {
     try {
-      await updateShipment({ id: shipmentId, note: values.note.trim() || null });
+      const noteValue = values.note.trim() || null;
+      await Promise.all([
+        updateShipment({ id: shipmentId, [payloadField]: noteValue }),
+        ...(childShipmentId ? [updateShipment({ id: childShipmentId, [payloadField]: noteValue })] : []),
+      ]);
       await queryClient.invalidateQueries({ queryKey: ['shipment', shipmentId] });
-      showSuccessToast({ title: 'Napomena spremljena' });
+      showSuccessToast({ title: 'Napomena spremljena.' });
       onClose();
     } catch (error) {
       console.error(error);
@@ -67,12 +99,12 @@ export const ShipmentNoteModal: React.FC<ShipmentNoteModalProps> = ({ isOpen, sh
         <DialogHeader className="flex-col">
           <FlexLayout className="items-center gap-2 text-dark-800 dark:text-light-50">
             <DialogTitle>
-              <Text variant="text-m-medium">Napomena</Text>
+              <Text variant="text-m-medium">{title}</Text>
             </DialogTitle>
             <Icon icon="IconInfoCircle" size="m" />
           </FlexLayout>
           <Text color="text-color-3" variant="text-xs">
-            Interna napomena — nije vidljiva na izlaznim dokumentima.
+            {helper}
           </Text>
         </DialogHeader>
         <FormProvider {...formMethods}>

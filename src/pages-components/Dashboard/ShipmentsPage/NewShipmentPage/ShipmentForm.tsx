@@ -8,7 +8,7 @@ import type { Tenant } from '@/lib/api/tenant.d';
 import { FormNumberInput, FormSwitch, FormTextarea, FormTextInput } from '@/lib/components/form';
 import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
+import { Box, Button, FlexLayout, Icon, LoadingSpinner, Text, Tooltip } from '@/ui';
 
 import { AssignVehicleModal } from './AssignVehicleModal';
 import { CargoFieldList } from './CargoFieldList';
@@ -18,6 +18,24 @@ import { PriceField } from './PriceField';
 import { getShipmentSchema } from './schema';
 import type { ShipmentFields } from './types';
 import { getFormDefaultValues, transformFormDataToPayload } from './utils';
+
+const NoteLabel: React.FC<{ text: string; tooltip: string }> = ({ text, tooltip }) => (
+  <Box as="span" className="inline-flex items-center gap-1">
+    {text}
+    <Tooltip
+      content={
+        <Box className="px-2 max-w-[260px]">
+          <Text as="p" color="text-light-50" variant="text-xxs">
+            {tooltip}
+          </Text>
+        </Box>
+      }
+      isPortal
+    >
+      <Icon color="text-color-3" icon="IconInfoCircle" size="s" />
+    </Tooltip>
+  </Box>
+);
 
 interface ShipmentFormProps {
   shipment?: Shipment;
@@ -80,6 +98,8 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
               id: childId,
               price: agencyPrice,
               transportContractorId,
+              internalNote: rest.internalNote ?? '',
+              externalNote: rest.externalNote ?? '',
             }),
           ]);
         } else {
@@ -150,7 +170,24 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
                   </Box>
                 </FlexLayout>
                 <AgencyShipmentFields tenant={tenant} />
-                <FormTextarea label="Napomena" name="note" />
+                <FormTextarea
+                  label={
+                    <NoteLabel
+                      text="Interna napomena"
+                      tooltip="Napomena samo za internu upotrebu. Ne pojavljuje se u PDF-ovima ni drugim izlaznim dokumentima."
+                    />
+                  }
+                  name="internalNote"
+                />
+                <FormTextarea
+                  label={
+                    <NoteLabel
+                      text="Vanjska napomena"
+                      tooltip="Napomena vidljiva u PDF-ovima i drugim izlaznim dokumentima koji se šalju vanjskim primateljima."
+                    />
+                  }
+                  name="externalNote"
+                />
               </FlexLayout>
             </FlexLayout>
             <CargoFieldList />

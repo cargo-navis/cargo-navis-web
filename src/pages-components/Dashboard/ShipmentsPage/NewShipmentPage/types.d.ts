@@ -3,7 +3,8 @@ export interface ShipmentFields {
   clientId: string;
   transportContractorId: string;
   price?: number;
-  note?: string;
+  internalNote?: string;
+  externalNote?: string;
   isAgency?: boolean;
   agencyPrice?: number;
   cargo: Cargo[];

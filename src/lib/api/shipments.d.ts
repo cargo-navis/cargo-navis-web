@@ -12,7 +12,8 @@ export interface Shipment {
   isInvoiceOverdue: boolean | null; // todo - [added]
   transportContractorId?: string;
   price: number;
-  note?: string;
+  internalNote?: string;
+  externalNote?: string;
   cargo: Cargo[];
   createdAt: string;
   documents?: {
