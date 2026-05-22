@@ -51,7 +51,7 @@ export const VerticalStopEntry = ({
   const { address, date, loadingCargos, unloadingCargos, documents } = stop;
   const hasLoading = loadingCargos.length > 0;
   const hasUnloading = unloadingCargos.length > 0;
-  const isDraggable = !date && !isCompleted;
+  const isDraggable = !isCompleted;
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: stop.id,

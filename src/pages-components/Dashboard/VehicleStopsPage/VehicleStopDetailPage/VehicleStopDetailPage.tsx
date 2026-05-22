@@ -15,6 +15,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
+import type { AxiosError } from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -85,7 +86,18 @@ export const VehicleStopDetailPage = () => {
       { stopId: active.id as string, previousStopId },
       {
         onSuccess: () => showSuccessToast({ title: 'Stanica premještena.' }),
-        onError: () => showErrorToast({ title: 'Greška prilikom premještanja stanice. Pokušajte ponovno.' }),
+        onError: (error) => {
+          const code = (error as AxiosError<{ errorCode?: string }>)?.response?.data?.errorCode;
+          if (code === 'INVALID_STOP_POSITION') {
+            showErrorToast({
+              title: 'Premještanje nije dozvoljeno',
+              description: 'Preslagivanje je dozvoljeno samo unutar istog datuma ili među stanicama bez datuma.',
+              timeout: 6000,
+            });
+            return;
+          }
+          showErrorToast({ title: 'Greška prilikom premještanja stanice. Pokušajte ponovno.' });
+        },
       }
     );
   }

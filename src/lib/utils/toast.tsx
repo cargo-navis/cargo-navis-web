@@ -6,13 +6,14 @@ import { FlexLayout, Icon } from '@/ui';
 interface ToastProps {
   title: string;
   description?: string;
+  timeout?: number;
 }
 
-export const showSuccessToast = ({ title, description }: ToastProps) => {
+export const showSuccessToast = ({ title, description, timeout = 2500 }: ToastProps) => {
   addToast({
     title,
     description,
-    timeout: 2500,
+    timeout,
     classNames: {
       base: 'bg-teal-700 text-white border border-teal-600',
       content: 'text-white',
@@ -30,7 +31,7 @@ export const showSuccessToast = ({ title, description }: ToastProps) => {
   });
 };
 
-export const showErrorToast = ({ title, description }: ToastProps) => {
+export const showErrorToast = ({ title, description, timeout = 2500 }: ToastProps) => {
   addToast({
     title,
     description,
@@ -41,7 +42,7 @@ export const showErrorToast = ({ title, description }: ToastProps) => {
       title: 'text-white',
       closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
     },
-    timeout: 2500,
+    timeout,
     radius: 'sm',
     icon: <Icon color="text-white" icon="IconAlertTriangle" size="xl" />,
     closeIcon: (
