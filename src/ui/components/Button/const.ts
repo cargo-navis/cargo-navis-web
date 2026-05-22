@@ -43,6 +43,14 @@ export const variantStyles = {
     disabledAnchor:
       'bg-white dark:bg-transparent text-dark-800 dark:text-light-800 border-dark-200 dark:border-light-800 opacity-40 dark:opacity-50',
   },
+  danger: {
+    normal: 'bg-red-500 dark:bg-red-600 text-white dark:text-dark-75',
+    hover: 'hover:enabled:bg-red-600 hover:enabled:dark:bg-red-500',
+    focus: 'focus:shadow-[0_0_0_4px] focus:shadow-red-500 focus:dark:shadow-red-700',
+    active: 'active:enabled:bg-red-700 active:enabled:dark:bg-red-500',
+    disabled: 'disabled:opacity-25',
+    disabledAnchor: 'opacity-25',
+  },
 };
 
 export const variantsMap = mapValues(variantStyles, (o) => Object.values(omit(o, 'disabledAnchor')).join(' '));

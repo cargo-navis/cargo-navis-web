@@ -9,15 +9,15 @@ export const EmployeeActions: React.FC<{ id: string; name: string }> = ({ id, na
   const { mutateAsync, isPending } = useDeleteEmployee(id);
 
   async function handleDelete() {
-    const answer = confirm(`Jeste li sigurni da želite izbrisati ovog zaposlenika "${name}"?`);
+    const answer = confirm(`Jeste li sigurni da želite deaktivirati ovog zaposlenika "${name}"?`);
     if (!answer) return;
 
     try {
       await mutateAsync();
-      showSuccessToast({ title: `Zaposlenik "${name}" izbrisan` });
+      showSuccessToast({ title: `Zaposlenik "${name}" deaktiviran.` });
       void back();
     } catch {
-      showErrorToast({ title: 'Greška s brisanjem zaposlenika' });
+      showErrorToast({ title: 'Greška s deaktiviranjem zaposlenika.' });
     }
   }
 
@@ -30,7 +30,7 @@ export const EmployeeActions: React.FC<{ id: string; name: string }> = ({ id, na
         text="Uredi"
         variant="secondary"
       />
-      <Button iconLeft="IconTrash" isLoading={isPending} text="Izbriši" onClick={handleDelete} />
+      <Button iconLeft="IconTrash" isLoading={isPending} text="Deaktiviraj" variant="danger" onClick={handleDelete} />
     </FlexLayout>
   );
 };
