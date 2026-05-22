@@ -119,6 +119,21 @@ export function useRearrangeVehicleStop(vehicleId: string) {
             })),
           }
       );
+      queryClient.setQueriesData<VehicleStopGroup[]>({ queryKey: [QUERY_KEY, 'byVehicle'] }, (old) =>
+        old?.map((group) => {
+          if (group.vehicleId !== vehicleId) return group;
+          const without = group.stops.filter((s) => s.id !== updatedStop.id);
+          const anchorIndex = updatedStop.previousStopId
+            ? without.findIndex((s) => s.id === updatedStop.previousStopId)
+            : -1;
+          const insertAt = updatedStop.previousStopId
+            ? anchorIndex === -1
+              ? without.length
+              : anchorIndex
+            : without.length;
+          return { ...group, stops: [...without.slice(0, insertAt), updatedStop, ...without.slice(insertAt)] };
+        })
+      );
     },
   });
 }
