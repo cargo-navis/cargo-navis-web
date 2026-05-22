@@ -6,7 +6,7 @@ import { Fragment, useMemo } from 'react';
 import { EmployeeName } from '@/components/employees/EmployeeName';
 import { type Shipment } from '@/lib/api';
 import { InvoiceStatus } from '@/lib/api/shipments';
-import { useClients, useContractors, useCurrentTenant, useEmployees, useVehicles } from '@/lib/hooks';
+import { useClients, useContractors, useCurrentTenant, useVehicles } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { roundLdmValue } from '@/lib/utils/math';
 import { Box, DisplayIf, Divider, FlexLayout, Icon, Pill, Table, Text, Tooltip } from '@/ui';
@@ -24,7 +24,6 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
   const { data: contractors = [] } = useContractors();
   const { data: tenant } = useCurrentTenant();
   const { data: vehicles = [] } = useVehicles();
-  const { data: employees = [] } = useEmployees();
   const { toggleSort, isFieldSorted, getSortDirection } = useShipmentsSortLocalStorage();
 
   const columns = useMemo(() => {
@@ -269,9 +268,9 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const { vehicleStops } = shipment;
           const latestStop = vehicleStops?.[vehicleStops.length - 1];
           const vehicle = latestStop ? vehicles.find((v) => v.id === latestStop.vehicleId) : undefined;
-          const driver = latestStop?.driverId ? employees.find((e) => e.id === latestStop.driverId) : undefined;
+          const driverId = latestStop?.driverId;
 
-          if (isAgency && !vehicle && !driver) {
+          if (isAgency && !vehicle && !driverId) {
             return (
               <FlexLayout className="items-center py-2">
                 <Text color="text-color-3" variant="text-s">
@@ -282,7 +281,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           }
 
           const isVehicleMissing = !vehicle;
-          const isDriverMissing = !driver;
+          const isDriverMissing = !driverId;
 
           return (
             <FlexLayout className="flex-col py-2 pr-4 min-w-0">
@@ -315,11 +314,11 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                   icon="IconSteeringWheel"
                   size="s"
                 />
-                {driver ? (
+                {driverId ? (
                   <EmployeeName
                     className="block min-w-0 flex-1 truncate"
                     color="text-color-2"
-                    id={driver.id}
+                    id={driverId}
                     variant="text-xxs"
                   />
                 ) : (
@@ -379,7 +378,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         },
       }),
     ];
-  }, [clients, contractors, employees, tenant, vehicles, router, toggleSort, isFieldSorted, getSortDirection]);
+  }, [clients, contractors, tenant, vehicles, router, toggleSort, isFieldSorted, getSortDirection]);
 
   const handleRowClick = (shipment: Shipment) => {
     router.push(`/dashboard/shipments/${shipment.id}`);
