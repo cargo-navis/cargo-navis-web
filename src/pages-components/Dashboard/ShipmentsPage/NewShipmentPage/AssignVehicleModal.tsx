@@ -18,6 +18,7 @@ import type { CreateVehicleStopParams, VehicleStop } from '@/lib/api/vehicleStop
 import { useCreateVehicleStops, useEmployees, useVehicles, useVehicleStopsByVehicle } from '@/lib/hooks';
 import { getCargoLabel } from '@/lib/utils/cargo';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
+import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import {
   Box,
   Button,
@@ -357,6 +358,7 @@ interface CompactTimelineEntry {
   date: string | null;
   title: string | null;
   previewKind?: 'loading' | 'unloading' | 'both';
+  isCompleted?: boolean;
 }
 
 const previewStyleByKind = {
@@ -374,27 +376,69 @@ const previewStyleByKind = {
   },
 } as const;
 
-const CompactStopTimelineEntry = ({ entry, step }: { entry: CompactTimelineEntry; step: number }) => {
+const CompactStopTimelineEntry = ({
+  entry,
+  step,
+  nextIsCompleted,
+}: {
+  entry: CompactTimelineEntry;
+  step: number;
+  nextIsCompleted?: boolean;
+}) => {
   const previewStyle = entry.previewKind ? previewStyleByKind[entry.previewKind] : null;
+  const isCompleted = !!entry.isCompleted;
+  // The separator drawn by this item runs right toward the next item. Dash it
+  // whenever the next entry is anything other than completed — i.e., real
+  // uncompleted stops AND preview entries (whose isCompleted is undefined).
+  const isSeparatorDashed = !nextIsCompleted;
 
   return (
-    <TimelineItem step={step} style={{ paddingRight: '24px' }}>
+    <TimelineItem
+      completed={isCompleted}
+      separatorActive={!isSeparatorDashed}
+      step={step}
+      style={{ paddingRight: '24px' }}
+    >
       <TimelineHeader>
         <TimelineSeparator
+          className={isSeparatorDashed ? 'bg-transparent' : undefined}
           style={{
             top: '24px',
             height: '2px',
             width: 'calc(100% - 16px)',
             transform: 'translateX(14px) translateY(-50%)',
+            ...(isSeparatorDashed
+              ? {
+                  backgroundImage:
+                    'repeating-linear-gradient(to right, rgb(19 148 159 / 0.3) 0 5px, transparent 5px 9px)',
+                }
+              : {}),
           }}
         />
         <TimelineDate className={previewStyle?.text} style={{ marginBottom: '16px' }}>
           {entry.date ? dayjs(entry.date).format('DD.MM.YYYY') : '-'}
         </TimelineDate>
         <TimelineIndicator
-          className={`z-10 ${previewStyle?.indicator ?? ''}`}
+          className={`z-10 ${
+            isCompleted ? 'flex items-center justify-center bg-teal-500 text-white' : (previewStyle?.indicator ?? '')
+          }`}
           style={{ top: '24px', left: 0, transform: 'translateY(-50%)' }}
-        />
+        >
+          {isCompleted && (
+            <svg
+              fill="none"
+              height="10"
+              stroke="currentColor"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2.5"
+              viewBox="0 0 12 12"
+              width="10"
+            >
+              <path d="M2.5 6.5l2.5 2.5 4.5-5" />
+            </svg>
+          )}
+        </TimelineIndicator>
         <TimelineTitle>
           <Text
             as="span"
@@ -443,7 +487,7 @@ const VehicleRow = ({
     const previewKind = matchedPreview ? getPreviewKind(matchedPreview) : undefined;
     const placeName = s.address?.placeName ?? null;
     const title = previewKind ? [`[${labelForKind(previewKind)}]`, placeName].filter(Boolean).join(' ') : placeName;
-    return { id: s.id, date: s.date, title, previewKind };
+    return { id: s.id, date: s.date, title, previewKind, isCompleted: isStopCompleted(s) };
   });
 
   const previewEntries: CompactTimelineEntry[] = [];
@@ -505,7 +549,12 @@ const VehicleRow = ({
         <Box className="flex-1 min-w-0">
           <Timeline className="w-full" defaultValue={recentEntries.length} orientation="horizontal">
             {recentEntries.map((entry, i) => (
-              <CompactStopTimelineEntry entry={entry} key={entry.id} step={i + 1} />
+              <CompactStopTimelineEntry
+                entry={entry}
+                key={entry.id}
+                nextIsCompleted={recentEntries[i + 1]?.isCompleted}
+                step={i + 1}
+              />
             ))}
           </Timeline>
         </Box>

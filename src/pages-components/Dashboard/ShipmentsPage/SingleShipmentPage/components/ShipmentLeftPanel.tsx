@@ -162,13 +162,7 @@ const NoteCard: React.FC<NoteCardProps> = ({ title, tooltip, note, onEdit }) => 
           </Tooltip>
         </FlexLayout>
         {note && (
-          <TextButton
-            iconRight="IconPencil"
-            size="s"
-            text="Uredi napomenu"
-            variant="secondary"
-            onClick={onEdit}
-          />
+          <TextButton iconRight="IconPencil" size="s" text="Uredi napomenu" variant="secondary" onClick={onEdit} />
         )}
       </FlexLayout>
       {note ? (
