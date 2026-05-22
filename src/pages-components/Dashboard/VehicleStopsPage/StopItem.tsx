@@ -293,26 +293,38 @@ export const StopTimelineEntry = ({ stop, nextStop, step, connectsToMore = false
 interface RemainingStopsBadgeProps {
   count: number;
   step: number;
+  tooltipContent?: React.ReactElement;
 }
 
-export const RemainingStopsBadge = ({ count, step }: RemainingStopsBadgeProps) => {
+export const RemainingStopsBadge = ({ count, step, tooltipContent }: RemainingStopsBadgeProps) => {
+  const indicator: React.ReactElement = (
+    <TimelineIndicator
+      className="z-10 cursor-default flex items-center justify-center bg-teal-50 dark:bg-teal-900/40 border-teal-500/50 text-teal-700 dark:text-teal-200"
+      style={{
+        top: '28px',
+        left: 0,
+        transform: 'translateY(-50%)',
+        width: '32px',
+        height: '32px',
+        borderRadius: '50%',
+      }}
+      onClick={(e) => e.preventDefault()}
+    >
+      <Text variant="text-xxs-medium">+{count}</Text>
+    </TimelineIndicator>
+  );
+
   return (
     <TimelineItem step={step} style={{ flex: 'none', width: '60px', isolation: 'isolate' }}>
       <TimelineHeader>
         <Box style={{ height: '20px', marginBottom: '20px' }} />
-        <TimelineIndicator
-          className="z-10 cursor-default flex items-center justify-center bg-teal-50 dark:bg-teal-900/40 border-teal-500/50 text-teal-700 dark:text-teal-200"
-          style={{
-            top: '28px',
-            left: 0,
-            transform: 'translateY(-50%)',
-            width: '32px',
-            height: '32px',
-            borderRadius: '50%',
-          }}
-        >
-          <Text variant="text-xxs-medium">+{count}</Text>
-        </TimelineIndicator>
+        {tooltipContent ? (
+          <Tooltip content={tooltipContent} isPortal>
+            {indicator}
+          </Tooltip>
+        ) : (
+          indicator
+        )}
       </TimelineHeader>
     </TimelineItem>
   );

@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import dayjs from 'dayjs';
 import Fuse from 'fuse.js';
 import { Fragment, useEffect, useMemo, useState } from 'react';
@@ -6,6 +7,7 @@ import { ClientName } from '@/components/clients/ClientName';
 import { EmployeeName } from '@/components/employees/EmployeeName';
 import {
   Timeline,
+  TimelineContent,
   TimelineDate,
   TimelineHeader,
   TimelineIndicator,
@@ -16,7 +18,7 @@ import {
 import type { Cargo, LoadingAddress, Vehicle } from '@/lib/api';
 import type { CreateVehicleStopParams, VehicleStop } from '@/lib/api/vehicleStops';
 import { useCreateVehicleStops, useEmployees, useVehicles, useVehicleStopsByVehicle } from '@/lib/hooks';
-import { getCargoLabel } from '@/lib/utils/cargo';
+import { getCargoLabel, getCargoLabelParts } from '@/lib/utils/cargo';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import {
@@ -33,7 +35,10 @@ import {
   Skeleton,
   Text,
   TextInput,
+  Tooltip,
 } from '@/ui';
+
+import { RemainingStopsBadge, StopTimelineEntry } from '../../VehicleStopsPage/StopItem';
 
 interface AssignVehicleModalProps {
   isOpen: boolean;
@@ -125,8 +130,9 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
       const vehicle = vehiclesById.get(g.vehicleId);
       if (!vehicle) return [];
 
+      // API returns stops newest-first, so the latest stop sits at index 0.
       const stops = g.stops;
-      const latestStop = stops[stops.length - 1];
+      const latestStop = stops[0];
       const driverName = latestStop?.driverId ? employeesById.get(latestStop.driverId)?.fullName : undefined;
       const placeNames = stops.map((s) => s.address?.placeName).filter((p): p is string => !!p);
       return [{ vehicle, stops, latestStop, driverName, placeNames }];
@@ -269,6 +275,7 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
               <FlexLayout className="flex-col gap-2">
                 {filteredRows.map(({ vehicle, latestStop, stops }) => (
                   <VehicleRow
+                    cargoById={cargoById}
                     datesByKey={datesByKey}
                     isSelected={vehicle.id === selectedVehicleId}
                     key={vehicle.id}
@@ -353,103 +360,250 @@ const CargoList = ({ label, color, cargos }: { label: string; color: string; car
   </FlexLayout>
 );
 
-interface CompactTimelineEntry {
-  id: string;
-  date: string | null;
-  title: string | null;
-  previewKind?: 'loading' | 'unloading' | 'both';
-  isCompleted?: boolean;
-}
+const TIMELINE_SIZE = 5;
 
 const previewStyleByKind = {
   loading: {
     indicator: 'border-orange-500 bg-orange-500/30',
     text: 'text-orange-500',
+    iconColor: 'text-orange-400',
   },
   unloading: {
     indicator: 'border-teal-500 bg-teal-500/30',
     text: 'text-teal-500',
+    iconColor: 'text-teal-400',
   },
   both: {
     indicator: 'border-purple-500 bg-purple-500/30',
     text: 'text-purple-500',
+    iconColor: 'text-purple-400',
   },
 } as const;
 
-const CompactStopTimelineEntry = ({
-  entry,
-  step,
-  nextIsCompleted,
+function getPreviewKind(p: PreviewStop): 'loading' | 'unloading' | 'both' {
+  const hasLoading = p.loadingCargoIds.length > 0;
+  const hasUnloading = p.unloadingCargoIds.length > 0;
+  if (hasLoading && hasUnloading) return 'both';
+  if (hasLoading) return 'loading';
+  return 'unloading';
+}
+
+type TimelineRow =
+  | { kind: 'real'; stop: VehicleStop }
+  | { kind: 'preview'; preview: PreviewStop; date: string }
+  | { kind: 'gap'; stops: VehicleStop[] };
+
+function buildVehicleTimelineLayout({
+  realStops,
+  previewStops,
+  datesByKey,
 }: {
-  entry: CompactTimelineEntry;
+  realStops: VehicleStop[];
+  previewStops: PreviewStop[];
+  datesByKey: Record<string, string | null>;
+}): TimelineRow[] {
+  const datedPreviews = previewStops
+    .map((p) => ({ p, date: datesByKey[p.key] || null }))
+    .filter((x): x is { p: PreviewStop; date: string } => !!x.date)
+    .sort((a, b) => a.date.localeCompare(b.date));
+
+  // realStops arrives newest-first from the API. Reverse to oldest-first so
+  // that a stable sort by date keeps the newest at the END of sortedReal;
+  // slice(-budget) then picks the newest stops, including the correct
+  // tiebreaker when several stops share the same date.
+  const sortedReal = realStops.toReversed().sort((a, b) => {
+    if (!a.date && !b.date) return 0;
+    if (!a.date) return 1;
+    if (!b.date) return -1;
+    return a.date.localeCompare(b.date);
+  });
+
+  // Previews are mandatory; budget the rest of the timeline slots for real stops.
+  const budget = Math.max(0, TIMELINE_SIZE - datedPreviews.length);
+  const visibleReal = new Set(sortedReal.slice(-budget));
+
+  type Merged =
+    | { kind: 'real'; stop: VehicleStop; date: string | null }
+    | { kind: 'preview'; preview: PreviewStop; date: string };
+
+  const merged: Merged[] = [
+    ...sortedReal.map<Merged>((s) => ({ kind: 'real', stop: s, date: s.date ?? null })),
+    ...datedPreviews.map<Merged>(({ p, date }) => ({ kind: 'preview', preview: p, date })),
+  ].sort((a, b) => (a.date ?? '￿').localeCompare(b.date ?? '￿'));
+
+  // Walk the merged list, collapsing runs of hidden real stops into gap entries.
+  const rows: TimelineRow[] = [];
+  let pendingGap: VehicleStop[] = [];
+  const flushGap = () => {
+    if (pendingGap.length > 0) {
+      rows.push({ kind: 'gap', stops: pendingGap });
+      pendingGap = [];
+    }
+  };
+
+  for (const item of merged) {
+    if (item.kind === 'real') {
+      if (visibleReal.has(item.stop)) {
+        flushGap();
+        rows.push({ kind: 'real', stop: item.stop });
+      } else if (rows.length > 0) {
+        // Only buffer a gap once we've emitted something; leading hidden stops
+        // are dropped silently (matches VehicleStopCard's behavior of biasing
+        // toward recent activity without a leading "+X").
+        pendingGap.push(item.stop);
+      }
+    } else {
+      flushGap();
+      rows.push({ kind: 'preview', preview: item.preview, date: item.date });
+    }
+  }
+  flushGap();
+
+  return rows;
+}
+
+const PreviewTooltipContent: React.FC<{
+  preview: PreviewStop;
+  date: string;
+  cargoGroups: { loading: Cargo[]; unloading: Cargo[] };
+}> = ({ preview, date, cargoGroups }) => {
+  const { loading, unloading } = cargoGroups;
+  return (
+    <FlexLayout className="p-2 flex-col gap-1 text-light-50">
+      <Text variant="text-xxs-medium">{preview.streetName}</Text>
+      <Text variant="text-s">{preview.placeName}</Text>
+      <Text color="text-color-4" variant="text-xxs">
+        {dayjs(date).format('DD.MM.YYYY')}
+      </Text>
+      <Text className="italic" color="text-light-300" variant="text-xxs">
+        Bit će dodano
+      </Text>
+      {(loading.length > 0 || unloading.length > 0) && (
+        <FlexLayout className="items-center gap-1 mt-1">
+          {loading.length > 0 && (
+            <Text as="span" className="text-orange-400" variant="text-xs">
+              {loading.length} utovar
+            </Text>
+          )}
+          {loading.length > 0 && unloading.length > 0 && (
+            <Text as="span" className="text-light-50" variant="text-xs">
+              ,
+            </Text>
+          )}
+          {unloading.length > 0 && (
+            <Text as="span" className="text-teal-400" variant="text-xs">
+              {unloading.length} istovar
+            </Text>
+          )}
+        </FlexLayout>
+      )}
+      {[
+        ...loading.map((c) => ({ c, kind: 'loading' as const })),
+        ...unloading.map((c) => ({ c, kind: 'unloading' as const })),
+      ].map(({ c, kind }) => {
+        const { primary, secondary } = getCargoLabelParts(c);
+        const color = kind === 'loading' ? 'text-orange-400' : 'text-teal-400';
+        const icon = kind === 'loading' ? 'IconPackageImport' : 'IconPackageExport';
+        return (
+          <FlexLayout className="items-center gap-1 pl-1" key={`${c.id}-${kind}`}>
+            <Icon className={color} icon={icon} size="s" />
+            <Text className={color} variant="text-xxs-medium">
+              {primary}
+            </Text>
+            {secondary && (
+              <Text color="text-light-300" variant="text-xxs">
+                ({secondary})
+              </Text>
+            )}
+          </FlexLayout>
+        );
+      })}
+    </FlexLayout>
+  );
+};
+
+const PreviewStopTimelineEntry: React.FC<{
+  preview: PreviewStop;
+  date: string;
+  cargoGroups: { loading: Cargo[]; unloading: Cargo[] };
   step: number;
-  nextIsCompleted?: boolean;
-}) => {
-  const previewStyle = entry.previewKind ? previewStyleByKind[entry.previewKind] : null;
-  const isCompleted = !!entry.isCompleted;
-  // The separator drawn by this item runs right toward the next item. Dash it
-  // whenever the next entry is anything other than completed — i.e., real
-  // uncompleted stops AND preview entries (whose isCompleted is undefined).
-  const isSeparatorDashed = !nextIsCompleted;
+  isNextCompleted: boolean;
+}> = ({ preview, date, cargoGroups, step, isNextCompleted }) => {
+  const hasLoading = cargoGroups.loading.length > 0;
+  const hasUnloading = cargoGroups.unloading.length > 0;
+  const kind = getPreviewKind(preview);
+  const style = previewStyleByKind[kind];
 
   return (
-    <TimelineItem
-      completed={isCompleted}
-      separatorActive={!isSeparatorDashed}
-      step={step}
-      style={{ paddingRight: '24px' }}
-    >
+    <TimelineItem separatorActive={isNextCompleted} step={step} style={{ paddingRight: '32px', isolation: 'isolate' }}>
       <TimelineHeader>
         <TimelineSeparator
-          className={isSeparatorDashed ? 'bg-transparent' : undefined}
+          className={isNextCompleted ? undefined : 'bg-transparent'}
           style={{
-            top: '24px',
+            top: '28px',
             height: '2px',
-            width: 'calc(100% - 16px)',
-            transform: 'translateX(14px) translateY(-50%)',
-            ...(isSeparatorDashed
-              ? {
+            width: 'calc(100% - 20px)',
+            transform: 'translateX(18px) translateY(-50%)',
+            ...(isNextCompleted
+              ? {}
+              : {
                   backgroundImage:
                     'repeating-linear-gradient(to right, rgb(19 148 159 / 0.3) 0 5px, transparent 5px 9px)',
-                }
-              : {}),
+                }),
           }}
         />
-        <TimelineDate className={previewStyle?.text} style={{ marginBottom: '16px' }}>
-          {entry.date ? dayjs(entry.date).format('DD.MM.YYYY') : '-'}
+        <TimelineDate className={style.text} style={{ marginBottom: '20px' }}>
+          {dayjs(date).format('DD.MM.YYYY')}
         </TimelineDate>
-        <TimelineIndicator
-          className={`z-10 ${
-            isCompleted ? 'flex items-center justify-center bg-teal-500 text-white' : (previewStyle?.indicator ?? '')
-          }`}
-          style={{ top: '24px', left: 0, transform: 'translateY(-50%)' }}
-        >
-          {isCompleted && (
-            <svg
-              fill="none"
-              height="10"
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2.5"
-              viewBox="0 0 12 12"
-              width="10"
-            >
-              <path d="M2.5 6.5l2.5 2.5 4.5-5" />
-            </svg>
-          )}
-        </TimelineIndicator>
         <TimelineTitle>
-          <Text
-            as="span"
-            color={previewStyle?.text ?? 'text-color-1'}
-            variant={previewStyle ? 'text-xxs-medium' : 'text-xxs'}
-          >
-            {entry.title ?? '-'}
+          <Text as="span" className="inline-flex items-center gap-1" color={style.text} variant="text-s-medium">
+            {preview.placeName || '-'}
+            {hasLoading && <Icon className="text-orange-500 dark:text-orange-400" icon="IconPackageImport" size="s" />}
+            {hasUnloading && <Icon className="text-teal-500 dark:text-teal-400" icon="IconPackageExport" size="s" />}
           </Text>
         </TimelineTitle>
+        <Tooltip content={<PreviewTooltipContent cargoGroups={cargoGroups} date={date} preview={preview} />} isPortal>
+          <TimelineIndicator
+            className={clsx('z-10 cursor-default', style.indicator)}
+            style={{ top: '28px', left: 0, transform: 'translateY(-50%)' }}
+            onClick={(e) => e.preventDefault()}
+          />
+        </Tooltip>
       </TimelineHeader>
+      <TimelineContent>
+        <Text color="text-color-3" variant="text-xxxs">
+          {preview.streetName}
+        </Text>
+      </TimelineContent>
     </TimelineItem>
+  );
+};
+
+const GapTooltipContent: React.FC<{ stops: VehicleStop[] }> = ({ stops }) => {
+  // List hidden stops newest-first, matching the API's natural order.
+  const ordered = [...stops].sort((a, b) => {
+    if (!a.date && !b.date) return 0;
+    if (!a.date) return 1;
+    if (!b.date) return -1;
+    return b.date.localeCompare(a.date);
+  });
+  return (
+    <FlexLayout className="p-2 flex-col gap-2 text-light-50">
+      <Text variant="text-xxs-medium">Skrivene stanice</Text>
+      {ordered.map((s) => (
+        <FlexLayout className="items-baseline gap-2" key={s.id}>
+          <Text color="text-color-4" variant="text-xxs">
+            {s.date ? dayjs(s.date).format('DD.MM.YYYY') : '—'}
+          </Text>
+          <Text variant="text-xs">{s.address?.placeName ?? '-'}</Text>
+          {s.address?.streetName && (
+            <Text color="text-light-300" variant="text-xxs">
+              {s.address.streetName}
+            </Text>
+          )}
+        </FlexLayout>
+      ))}
+    </FlexLayout>
   );
 };
 
@@ -458,6 +612,7 @@ interface VehicleRowProps {
   latestStop?: VehicleStop;
   stops: VehicleStop[];
   previewStops: PreviewStop[];
+  cargoById: Map<string, Cargo>;
   datesByKey: Record<string, string | null>;
   isSelected: boolean;
   onSelect(): void;
@@ -468,50 +623,15 @@ const VehicleRow = ({
   latestStop,
   stops,
   previewStops,
+  cargoById,
   datesByKey,
   isSelected,
   onSelect,
 }: VehicleRowProps) => {
-  const matchedKeysByExistingStop = new Map<string, PreviewStop>();
-  if (isSelected) {
-    for (const p of previewStops) {
-      const date = datesByKey[p.key];
-      if (!date) continue;
-      const existing = stops.find((s) => s.address?.postalCodeId === p.postalCodeId && s.date === date);
-      if (existing) matchedKeysByExistingStop.set(existing.id, p);
-    }
-  }
-
-  const recentRealEntries: CompactTimelineEntry[] = stops.slice(-3).map((s) => {
-    const matchedPreview = matchedKeysByExistingStop.get(s.id);
-    const previewKind = matchedPreview ? getPreviewKind(matchedPreview) : undefined;
-    const placeName = s.address?.placeName ?? null;
-    const title = previewKind ? [`[${labelForKind(previewKind)}]`, placeName].filter(Boolean).join(' ') : placeName;
-    return { id: s.id, date: s.date, title, previewKind, isCompleted: isStopCompleted(s) };
-  });
-
-  const previewEntries: CompactTimelineEntry[] = [];
-  if (isSelected) {
-    const mergedKeys = new Set(Array.from(matchedKeysByExistingStop.values()).map((p) => p.key));
-    for (const p of previewStops) {
-      if (mergedKeys.has(p.key)) continue;
-      const date = datesByKey[p.key];
-      if (!date) continue;
-      const kind = getPreviewKind(p);
-      previewEntries.push({
-        id: `preview-${p.key}`,
-        date,
-        title: [`[${labelForKind(kind)}]`, p.placeName].filter(Boolean).join(' '),
-        previewKind: kind,
-      });
-    }
-  }
-
-  const recentEntries = [...recentRealEntries, ...previewEntries].sort((a, b) => {
-    if (!a.date && !b.date) return 0;
-    if (!a.date) return 1;
-    if (!b.date) return -1;
-    return a.date.localeCompare(b.date);
+  const rows = buildVehicleTimelineLayout({
+    realStops: stops,
+    previewStops: isSelected ? previewStops : [],
+    datesByKey,
   });
 
   return (
@@ -545,17 +665,48 @@ const VehicleRow = ({
           </>
         )}
       </FlexLayout>
-      {recentEntries.length > 0 && (
+      {rows.length > 0 && (
         <Box className="flex-1 min-w-0">
-          <Timeline className="w-full" defaultValue={recentEntries.length} orientation="horizontal">
-            {recentEntries.map((entry, i) => (
-              <CompactStopTimelineEntry
-                entry={entry}
-                key={entry.id}
-                nextIsCompleted={recentEntries[i + 1]?.isCompleted}
-                step={i + 1}
-              />
-            ))}
+          <Timeline className="w-full" defaultValue={rows.length} orientation="horizontal">
+            {rows.map((row, i) => {
+              const next = rows[i + 1];
+              const step = i + 1;
+              if (row.kind === 'real') {
+                const nextStop = next?.kind === 'real' ? next.stop : undefined;
+                const connectsToMore = !!next && next.kind !== 'real';
+                return (
+                  <StopTimelineEntry
+                    connectsToMore={connectsToMore}
+                    key={row.stop.id}
+                    nextStop={nextStop}
+                    step={step}
+                    stop={row.stop}
+                  />
+                );
+              }
+              if (row.kind === 'preview') {
+                const cargoGroups = buildCargoGroups(row.preview, cargoById);
+                const isNextCompleted = next?.kind === 'real' ? isStopCompleted(next.stop) : false;
+                return (
+                  <PreviewStopTimelineEntry
+                    cargoGroups={cargoGroups}
+                    date={row.date}
+                    isNextCompleted={isNextCompleted}
+                    key={`preview-${row.preview.key}`}
+                    preview={row.preview}
+                    step={step}
+                  />
+                );
+              }
+              return (
+                <RemainingStopsBadge
+                  count={row.stops.length}
+                  key={`gap-${i}`}
+                  step={step}
+                  tooltipContent={<GapTooltipContent stops={row.stops} />}
+                />
+              );
+            })}
           </Timeline>
         </Box>
       )}
@@ -567,17 +718,3 @@ const VehicleRow = ({
     </FlexLayout>
   );
 };
-
-function getPreviewKind(p: PreviewStop): 'loading' | 'unloading' | 'both' {
-  const hasLoading = p.loadingCargoIds.length > 0;
-  const hasUnloading = p.unloadingCargoIds.length > 0;
-  if (hasLoading && hasUnloading) return 'both';
-  if (hasLoading) return 'loading';
-  return 'unloading';
-}
-
-function labelForKind(kind: 'loading' | 'unloading' | 'both'): string {
-  if (kind === 'loading') return 'Utovar';
-  if (kind === 'unloading') return 'Istovar';
-  return 'Utovar/Istovar';
-}
