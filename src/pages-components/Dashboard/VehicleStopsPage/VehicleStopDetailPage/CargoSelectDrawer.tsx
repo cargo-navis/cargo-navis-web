@@ -29,17 +29,20 @@ function addressKey(address: { postalCodeId: string; streetName: string | null }
   return `${address.postalCodeId}|${address.streetName ?? ''}`;
 }
 
-function buildAvailableGroups(shipments: Shipment[]): CargoGroup[] {
-  return shipments.map((shipment) => buildGroup(shipment)).filter((g) => g.cargos.length > 0);
+function buildAvailableGroups(shipments: Shipment[], addressType: 'loading' | 'unloading'): CargoGroup[] {
+  return shipments.map((shipment) => buildGroup(shipment, addressType)).filter((g) => g.cargos.length > 0);
 }
 
-function buildGroup(shipment: Shipment): CargoGroup {
+function buildGroup(shipment: Shipment, addressType: 'loading' | 'unloading'): CargoGroup {
   const scheduledAddressKeys = new Set(
     (shipment.vehicleStops ?? []).map((stop) => addressKey(stop.address)).filter((key): key is string => key !== null)
   );
 
   const cargos = shipment.cargo
-    .filter((cargo) => !scheduledAddressKeys.has(addressKey(cargo.unloadingAddress)!))
+    .filter((cargo) => {
+      const address = addressType === 'loading' ? cargo.loadingAddress : cargo.unloadingAddress;
+      return !scheduledAddressKeys.has(addressKey(address)!);
+    })
     .map((cargo) => ({ ...cargo, clientId: shipment.clientId }));
 
   return { shipment, cargos };
@@ -62,7 +65,10 @@ export const CargoSelectDrawer = ({
     return map;
   }, [clients]);
 
-  const groups = useMemo<CargoGroup[]>(() => (shipments ? buildAvailableGroups(shipments) : []), [shipments]);
+  const groups = useMemo<CargoGroup[]>(
+    () => (shipments ? buildAvailableGroups(shipments, addressType) : []),
+    [shipments, addressType]
+  );
 
   const [search, setSearch] = useState('');
 
