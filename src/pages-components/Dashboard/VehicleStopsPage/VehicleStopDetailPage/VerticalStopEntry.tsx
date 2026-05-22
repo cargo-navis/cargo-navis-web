@@ -135,7 +135,7 @@ export const VerticalStopEntry = ({
       separatorActive={isCompleted}
       step={step}
       style={{
-        paddingLeft: '32px',
+        paddingLeft: '64px',
         paddingBottom: '78px',
         transform: CSS.Transform.toString(transform),
         transition,
@@ -145,7 +145,7 @@ export const VerticalStopEntry = ({
         <TimelineSeparator
           className={isCompleted ? undefined : 'bg-transparent'}
           style={{
-            left: '7px',
+            left: '40px',
             top: '68px',
             height: 'calc(100% - 16px)',
             width: '2px',
@@ -159,7 +159,7 @@ export const VerticalStopEntry = ({
         />
         <TimelineIndicator
           className={isCompleted ? 'flex items-center justify-center bg-teal-500 text-white' : undefined}
-          style={{ top: 52, left: 0 }}
+          style={{ top: 52, left: 33 }}
         >
           {isCompleted && (
             <svg
@@ -296,7 +296,7 @@ export const VerticalStopEntry = ({
       </FlexLayout>
       {isDraggable && !isDragOverlay && (
         <Box
-          className="absolute -left-1 top-7 hidden group-hover/stop-entry:block cursor-grab active:cursor-grabbing touch-none"
+          className="absolute left-0 top-7 hidden group-hover/stop-entry:block cursor-grab active:cursor-grabbing touch-none"
           {...attributes}
           {...listeners}
         >
@@ -304,7 +304,7 @@ export const VerticalStopEntry = ({
         </Box>
       )}
       {onInsertBefore && (
-        <FlexLayout className="flex-col absolute hidden group-hover/stop-entry:flex justify-center -left-2 bottom-6">
+        <FlexLayout className="flex-col absolute hidden group-hover/stop-entry:flex justify-center left-5 bottom-6">
           <FlexLayout
             as="button"
             className="items-center justify-center w-[32px] h-[32px] rounded-circle bg-white dark:bg-black border-2 border-dashed border-teal-500 hover:border-teal-700 text-teal-500 hover:text-teal-700"

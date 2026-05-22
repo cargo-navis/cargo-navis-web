@@ -186,8 +186,8 @@ export const VehicleStopDetailPage = () => {
           </FlexLayout>
         </Box>
 
-        <Box className="max-w-[1200px]">
-          <Box className="relative">
+        <Box className="max-w-[1200px] -ml-6">
+          <Box className="relative ml-6">
             <FlexLayout
               as="button"
               className="items-center gap-4 mb-6 text-teal-500 hover:text-teal-700 border-teal-500 hover:border-teal-700"
