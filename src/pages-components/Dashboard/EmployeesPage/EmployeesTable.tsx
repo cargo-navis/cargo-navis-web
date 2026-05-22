@@ -7,7 +7,7 @@ import { AlertsTooltip } from '@/components/alerts/AlertsTooltip';
 import { type Employee, MessageChannelEnum, PositionEnum } from '@/lib/api/employees.d';
 import { useEmployeeAlerts } from '@/lib/hooks';
 import { copyToClipboard } from '@/lib/utils/clipboard';
-import { Box, DisplayIf, FlexLayout, Icon, Table, Text } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon, Pill, Table, Text } from '@/ui';
 
 import { CategoryLabel } from './CategoryLabel';
 import { OccupationPill } from './OccupationPill';
@@ -46,7 +46,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
         enableSorting: false,
         cell: (props) => {
           const name = props.getValue();
-          const { positions, id } = props.row.original;
+          const { positions, id, deleted } = props.row.original;
 
           const employeeAlerts = groupedAlerts[id];
 
@@ -68,6 +68,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
                     {positions.map((p) => (
                       <OccupationPill key={p} occupation={p} size="s" text={p} />
                     ))}
+                    {deleted && <Pill size="s" text="Deaktiviran" />}
                   </FlexLayout>
                 </FlexLayout>
               </Box>
@@ -167,5 +168,15 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
     ];
   }, [groupedAlerts]);
 
-  return <Table columns={columns} data={employees || []} />;
+  return (
+    <Table
+      columns={columns}
+      data={employees || []}
+      getRowClassName={(row) =>
+        row.original.deleted
+          ? 'bg-dark-300 dark:bg-white-alpha-25 hover:bg-dark-400 dark:hover:bg-white-alpha-50'
+          : undefined
+      }
+    />
+  );
 }

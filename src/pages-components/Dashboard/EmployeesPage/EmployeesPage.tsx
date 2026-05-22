@@ -17,7 +17,7 @@ const FUSE_OPTIONS: ConstructorParameters<typeof Fuse<Employee>>[1] = {
 };
 
 export const EmployeesPage = () => {
-  const { data, isLoading } = useEmployees();
+  const { data, isLoading } = useEmployees({ includeDeleted: true });
 
   return (
     <DashboardLayout>

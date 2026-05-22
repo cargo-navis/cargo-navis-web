@@ -39,6 +39,7 @@ export interface Employee {
   driverTachographCardId?: string;
   driverTachographCardExpiryDate?: string;
   messageChannel?: MessageChannelEnum | null;
+  deleted: boolean;
 }
 
 export enum GenderEnum {

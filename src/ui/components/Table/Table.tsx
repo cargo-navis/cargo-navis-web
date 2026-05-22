@@ -18,9 +18,17 @@ interface TableProps {
   onRowClick?: (row: any) => void;
   getSubRows?: (row: any) => any[];
   areRowsExpanded?: boolean;
+  getRowClassName?: (row: any) => string | undefined;
 }
 
-export const Table: React.FC<TableProps> = ({ data, columns, onRowClick, getSubRows, areRowsExpanded }) => {
+export const Table: React.FC<TableProps> = ({
+  data,
+  columns,
+  onRowClick,
+  getSubRows,
+  areRowsExpanded,
+  getRowClassName,
+}) => {
   const [sorting, setSorting] = useState([]);
 
   const table = useReactTable({
@@ -85,7 +93,8 @@ export const Table: React.FC<TableProps> = ({ data, columns, onRowClick, getSubR
                   : 'hover:bg-black-alpha-05 dark:hover:bg-white-alpha-10',
                 isSubRow && 'relative',
                 hasWarning && 'bg-red-50/80 dark:bg-red-800/50 hover:bg-red-100/50 dark:hover:bg-red-800/80',
-                isSuccess && 'bg-green-100/80 dark:bg-green-800/50 hover:bg-green-100/50 dark:hover:bg-green-800/80'
+                isSuccess && 'bg-green-100/80 dark:bg-green-800/50 hover:bg-green-100/50 dark:hover:bg-green-800/80',
+                getRowClassName?.(row)
               )}
               key={row.id}
               onClick={() => onRowClick?.(row.original)}
