@@ -52,6 +52,7 @@ export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
         .filter(Boolean) as string[]
     )
   );
+  const currentDriverId = group.stops.find((s) => s.driverId)?.driverId;
 
   return (
     <Link
@@ -69,11 +70,11 @@ export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
             <Icon icon="IconTruckDelivery" size="m" />
             <Text variant="text-s">{vehicle.brand}</Text>
           </FlexLayout>
-          {driverIds.map((id, index) => (
+          {driverIds.map((id) => (
             <FlexLayout className="items-center gap-1 text-dark-600 dark:text-light-300" key={id}>
               <Icon icon="IconSteeringWheel" size="s" />
               <EmployeeName id={id} variant="text-xs" />
-              {driverIds.length > 1 && index === 0 && (
+              {driverIds.length > 1 && id === currentDriverId && (
                 <Tooltip
                   content={
                     <FlexLayout className="px-2 flex-col gap-2 items-start">
