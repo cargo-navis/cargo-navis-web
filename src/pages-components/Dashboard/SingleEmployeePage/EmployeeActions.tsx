@@ -9,7 +9,7 @@ export const EmployeeActions: React.FC<{ id: string; name: string }> = ({ id, na
   const { mutateAsync, isPending } = useDeleteEmployee(id);
 
   async function handleDelete() {
-    const answer = confirm(`Jeste li sigurni da želite deaktivirati ovog zaposlenika "${name}"?`);
+    const answer = confirm(`Jeste li sigurni da želite deaktivirati zaposlenika "${name}"?`);
     if (!answer) return;
 
     try {

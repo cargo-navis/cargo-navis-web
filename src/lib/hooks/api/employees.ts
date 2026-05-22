@@ -46,6 +46,7 @@ export function useEmployees<TData = Employee[]>(args?: UseEmployeesArgs<TData>)
 export function useEmployee(id: string) {
   return useEmployees({
     enabled: !!id,
+    includeDeleted: true,
     select: (employees) => {
       return employees.find((e) => e.id.toString() === id);
     },
