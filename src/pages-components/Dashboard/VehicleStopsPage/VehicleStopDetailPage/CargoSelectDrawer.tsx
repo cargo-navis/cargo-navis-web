@@ -4,7 +4,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { ClientName } from '@/components/clients/ClientName';
 import { Drawer, DrawerContent, DrawerFooter, DrawerHeader } from '@/components/ui/drawer';
 import type { Cargo, Shipment } from '@/lib/api';
-import { LoadStatus } from '@/lib/api';
 import { useClients, useShipmentsData } from '@/lib/hooks';
 import { getCargoLabelParts } from '@/lib/utils/cargo';
 import { Box, Button, FlexLayout, Icon, Skeleton, Text, TextInput } from '@/ui';
@@ -25,24 +24,12 @@ interface CargoGroup {
   cargos: CargoWithClient[];
 }
 
-function buildAvailableGroups(
-  shipments: Shipment[],
-  addressType: 'loading' | 'unloading',
-  pinnedIds: Set<string>
-): CargoGroup[] {
-  return shipments.map((shipment) => buildGroup(shipment, addressType, pinnedIds)).filter((g) => g.cargos.length > 0);
+function buildAvailableGroups(shipments: Shipment[]): CargoGroup[] {
+  return shipments.map(buildGroup).filter((g) => g.cargos.length > 0);
 }
 
-function buildGroup(shipment: Shipment, addressType: 'loading' | 'unloading', pinnedIds: Set<string>): CargoGroup {
-  const cargos = shipment.cargo
-    .filter((cargo) => {
-      if (pinnedIds.has(cargo.id)) return true;
-      return addressType === 'loading'
-        ? cargo.loadStatus !== LoadStatus.Loaded
-        : cargo.loadStatus === LoadStatus.Loaded;
-    })
-    .map((cargo) => ({ ...cargo, clientId: shipment.clientId }));
-
+function buildGroup(shipment: Shipment): CargoGroup {
+  const cargos = shipment.cargo.map((cargo) => ({ ...cargo, clientId: shipment.clientId }));
   return { shipment, cargos };
 }
 
@@ -65,10 +52,7 @@ export const CargoSelectDrawer = ({
 
   const initialIds = useMemo(() => new Set(selected.map((c) => c.id)), [selected]);
 
-  const groups = useMemo<CargoGroup[]>(
-    () => (shipments ? buildAvailableGroups(shipments, addressType, initialIds) : []),
-    [shipments, addressType, initialIds]
-  );
+  const groups = useMemo<CargoGroup[]>(() => (shipments ? buildAvailableGroups(shipments) : []), [shipments]);
 
   const [search, setSearch] = useState('');
 
