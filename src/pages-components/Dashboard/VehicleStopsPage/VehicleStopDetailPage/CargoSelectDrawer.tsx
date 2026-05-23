@@ -3,8 +3,8 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { ClientName } from '@/components/clients/ClientName';
 import { Drawer, DrawerContent, DrawerFooter, DrawerHeader } from '@/components/ui/drawer';
-import { LoadStatus } from '@/lib/api';
 import type { Cargo, Shipment } from '@/lib/api';
+import { LoadStatus } from '@/lib/api';
 import { useClients, useShipmentsData } from '@/lib/hooks';
 import { getCargoLabelParts } from '@/lib/utils/cargo';
 import { Box, Button, FlexLayout, Icon, Skeleton, Text, TextInput } from '@/ui';
@@ -37,7 +37,9 @@ function buildGroup(shipment: Shipment, addressType: 'loading' | 'unloading', pi
   const cargos = shipment.cargo
     .filter((cargo) => {
       if (pinnedIds.has(cargo.id)) return true;
-      return addressType === 'loading' ? cargo.loadStatus !== LoadStatus.Loaded : cargo.loadStatus === LoadStatus.Loaded;
+      return addressType === 'loading'
+        ? cargo.loadStatus !== LoadStatus.Loaded
+        : cargo.loadStatus === LoadStatus.Loaded;
     })
     .map((cargo) => ({ ...cargo, clientId: shipment.clientId }));
 
