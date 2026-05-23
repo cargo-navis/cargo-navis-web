@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { ClientName } from '@/components/clients/ClientName';
 import { Drawer, DrawerContent, DrawerFooter, DrawerHeader } from '@/components/ui/drawer';
+import { LoadStatus } from '@/lib/api';
 import type { Cargo, Shipment } from '@/lib/api';
 import { useClients, useShipmentsData } from '@/lib/hooks';
 import { getCargoLabelParts } from '@/lib/utils/cargo';
@@ -24,24 +25,19 @@ interface CargoGroup {
   cargos: CargoWithClient[];
 }
 
-function addressKey(address: { postalCodeId: string; streetName: string | null } | null | undefined): string | null {
-  if (!address) return null;
-  return `${address.postalCodeId}|${address.streetName ?? ''}`;
+function buildAvailableGroups(
+  shipments: Shipment[],
+  addressType: 'loading' | 'unloading',
+  pinnedIds: Set<string>
+): CargoGroup[] {
+  return shipments.map((shipment) => buildGroup(shipment, addressType, pinnedIds)).filter((g) => g.cargos.length > 0);
 }
 
-function buildAvailableGroups(shipments: Shipment[], addressType: 'loading' | 'unloading'): CargoGroup[] {
-  return shipments.map((shipment) => buildGroup(shipment, addressType)).filter((g) => g.cargos.length > 0);
-}
-
-function buildGroup(shipment: Shipment, addressType: 'loading' | 'unloading'): CargoGroup {
-  const scheduledAddressKeys = new Set(
-    (shipment.vehicleStops ?? []).map((stop) => addressKey(stop.address)).filter((key): key is string => key !== null)
-  );
-
+function buildGroup(shipment: Shipment, addressType: 'loading' | 'unloading', pinnedIds: Set<string>): CargoGroup {
   const cargos = shipment.cargo
     .filter((cargo) => {
-      const address = addressType === 'loading' ? cargo.loadingAddress : cargo.unloadingAddress;
-      return !scheduledAddressKeys.has(addressKey(address)!);
+      if (pinnedIds.has(cargo.id)) return true;
+      return addressType === 'loading' ? cargo.loadStatus !== LoadStatus.Loaded : cargo.loadStatus === LoadStatus.Loaded;
     })
     .map((cargo) => ({ ...cargo, clientId: shipment.clientId }));
 
@@ -65,9 +61,11 @@ export const CargoSelectDrawer = ({
     return map;
   }, [clients]);
 
+  const initialIds = useMemo(() => new Set(selected.map((c) => c.id)), [selected]);
+
   const groups = useMemo<CargoGroup[]>(
-    () => (shipments ? buildAvailableGroups(shipments, addressType) : []),
-    [shipments, addressType]
+    () => (shipments ? buildAvailableGroups(shipments, addressType, initialIds) : []),
+    [shipments, addressType, initialIds]
   );
 
   const [search, setSearch] = useState('');
@@ -107,7 +105,6 @@ export const CargoSelectDrawer = ({
 
   const allCargos = useMemo<CargoWithClient[]>(() => groups.flatMap((g) => g.cargos), [groups]);
 
-  const initialIds = useMemo(() => new Set(selected.map((c) => c.id)), [selected]);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set(initialIds));
 
   useEffect(() => {
