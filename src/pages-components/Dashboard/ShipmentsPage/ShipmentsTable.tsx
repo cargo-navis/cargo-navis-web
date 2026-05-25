@@ -34,7 +34,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         enableSorting: false,
         cell: (props) => {
           const shipment = props.row.original;
-          const { clientId, documents, isInvoiceOverdue, orderNumber } = shipment;
+          const { clientId, documents, isInvoiceOverdue, orderNumber, internalNote, externalNote } = shipment;
+          const hasNotes = !!(internalNote || externalNote);
           const client = clients.find((c) => c.id === clientId);
           const isAgency = (shipment.children?.length ?? 0) > 0;
           const transporter = isAgency
@@ -87,6 +88,38 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                 <Text className="overflow-hidden text-ellipsis" variant="text-xs">
                   {orderNumber}
                 </Text>
+                <DisplayIf condition={hasNotes}>
+                  <Tooltip
+                    content={
+                      <FlexLayout className="flex-col gap-2 px-1 max-w-[280px]">
+                        {internalNote && (
+                          <FlexLayout className="flex-col gap-0.5">
+                            <Text color="text-light-300" variant="text-xxs">
+                              Interna napomena
+                            </Text>
+                            <Text color="text-light-50" variant="text-xs">
+                              {internalNote}
+                            </Text>
+                          </FlexLayout>
+                        )}
+                        {externalNote && (
+                          <FlexLayout className="flex-col gap-0.5">
+                            <Text color="text-light-300" variant="text-xxs">
+                              Eksterna napomena
+                            </Text>
+                            <Text color="text-light-50" variant="text-xs">
+                              {externalNote}
+                            </Text>
+                          </FlexLayout>
+                        )}
+                      </FlexLayout>
+                    }
+                  >
+                    <Box className="shrink-0 leading-none">
+                      <Icon icon="IconInfoCircle" size="m" />
+                    </Box>
+                  </Tooltip>
+                </DisplayIf>
                 {isAgency && <Pill size="s" text="Agencijski nalog" variant="warning" />}
               </FlexLayout>
               {isAgency && (
