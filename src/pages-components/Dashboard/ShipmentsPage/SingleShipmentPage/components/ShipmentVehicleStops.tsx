@@ -43,15 +43,7 @@ export const ShipmentVehicleStops = ({ stops }: ShipmentVehicleStopsProps) => {
           <Text color="text-color-2" variant="text-s-medium">
             Tijek prijevoza
           </Text>
-          <Link
-            className="flex items-center gap-1 text-teal-500 hover:text-teal-700 transition-colors shrink-0"
-            href={`/dashboard/vehicle-stops/${headerVehicleId}`}
-          >
-            <Text as="span" color="text-inherit" variant="text-xxs-medium">
-              Otvori detalje
-            </Text>
-            <Icon icon="IconArrowRight" size="s" />
-          </Link>
+          {!isMixed && <OpenDetailsLink vehicleId={headerVehicleId} />}
         </FlexLayout>
         {!isMixed && (
           <FlexLayout className="items-center gap-2 text-dark-600 dark:text-light-300">
@@ -93,6 +85,18 @@ export const ShipmentVehicleStops = ({ stops }: ShipmentVehicleStopsProps) => {
   );
 };
 
+const OpenDetailsLink = ({ vehicleId }: { vehicleId: string }) => (
+  <Link
+    className="flex items-center gap-1 text-teal-500 hover:text-teal-700 transition-colors shrink-0"
+    href={`/dashboard/vehicle-stops/${vehicleId}`}
+  >
+    <Text as="span" color="text-inherit" variant="text-xxs-medium">
+      Otvori detalje
+    </Text>
+    <Icon icon="IconArrowRight" size="s" />
+  </Link>
+);
+
 const SidebarStopEntry = ({
   stop,
   step,
@@ -109,7 +113,6 @@ const SidebarStopEntry = ({
   const { address, date, loadingCargos, unloadingCargos, driverId } = stop;
   const hasLoading = loadingCargos.length > 0;
   const hasUnloading = unloadingCargos.length > 0;
-  const hasTooltip = hasLoading || hasUnloading;
 
   const rowContent = (
     <FlexLayout className="flex-col gap-0.5 relative -top-4">
@@ -122,15 +125,17 @@ const SidebarStopEntry = ({
           </Box>
         )}
       </TimelineDate>
-      <TimelineTitle>
-        <FlexLayout className="items-center gap-1">
-          <Text as="span" color="text-color-1" variant="text-xs-medium">
-            {address?.placeName ?? '-'}
-          </Text>
-          {hasLoading && <Icon className="text-orange-500 dark:text-orange-400" icon="IconPackageImport" size="s" />}
-          {hasUnloading && <Icon className="text-teal-500 dark:text-teal-400" icon="IconPackageExport" size="s" />}
-        </FlexLayout>
-      </TimelineTitle>
+      <Tooltip content={<StopCargoTooltip loadingCargos={loadingCargos} unloadingCargos={unloadingCargos} />} isPortal>
+        <TimelineTitle>
+          <FlexLayout className="items-center gap-1">
+            <Text as="span" color="text-color-1" variant="text-xs-medium">
+              {address?.placeName ?? '-'}
+            </Text>
+            {hasLoading && <Icon className="text-orange-500 dark:text-orange-400" icon="IconPackageImport" size="s" />}
+            {hasUnloading && <Icon className="text-teal-500 dark:text-teal-400" icon="IconPackageExport" size="s" />}
+          </FlexLayout>
+        </TimelineTitle>
+      </Tooltip>
       {address?.postalCode && (
         <Text color="text-color-3" variant="text-xxs">
           {address.postalCode}
@@ -144,28 +149,31 @@ const SidebarStopEntry = ({
         </TimelineContent>
       )}
       {showAssignment && (registration || driverId) && (
-        <FlexLayout className="items-center gap-2 mt-1 text-dark-600 dark:text-light-300">
-          {registration && (
-            <FlexLayout className="items-center gap-1">
-              <Icon icon="IconTruck" size="s" />
-              <Text as="span" color="text-inherit" variant="text-xxs">
-                {registration}
-              </Text>
-            </FlexLayout>
-          )}
-          {driverId && (
-            <>
-              {registration && (
-                <Text as="span" color="text-inherit" variant="text-xxs">
-                  •
-                </Text>
-              )}
+        <FlexLayout className="flex-col gap-1 mt-1">
+          <FlexLayout className="items-center gap-2 text-dark-600 dark:text-light-300">
+            {registration && (
               <FlexLayout className="items-center gap-1">
-                <Icon icon="IconSteeringWheel" size="s" />
-                <EmployeeName color="text-inherit" id={driverId} variant="text-xxs" />
+                <Icon icon="IconTruck" size="s" />
+                <Text as="span" color="text-inherit" variant="text-xxs">
+                  {registration}
+                </Text>
               </FlexLayout>
-            </>
-          )}
+            )}
+            {driverId && (
+              <>
+                {registration && (
+                  <Text as="span" color="text-inherit" variant="text-xxs">
+                    •
+                  </Text>
+                )}
+                <FlexLayout className="items-center gap-1">
+                  <Icon icon="IconSteeringWheel" size="s" />
+                  <EmployeeName color="text-inherit" id={driverId} variant="text-xxs" />
+                </FlexLayout>
+              </>
+            )}
+          </FlexLayout>
+          <OpenDetailsLink vehicleId={stop.vehicleId} />
         </FlexLayout>
       )}
     </FlexLayout>
@@ -214,16 +222,7 @@ const SidebarStopEntry = ({
           )}
         </TimelineIndicator>
       </TimelineHeader>
-      {hasTooltip ? (
-        <Tooltip
-          content={<StopCargoTooltip loadingCargos={loadingCargos} unloadingCargos={unloadingCargos} />}
-          isPortal
-        >
-          {rowContent}
-        </Tooltip>
-      ) : (
-        rowContent
-      )}
+      {rowContent}
     </TimelineItem>
   );
 };
@@ -234,16 +233,28 @@ const StopCargoTooltip = ({
 }: {
   loadingCargos: VehicleStopCargo[];
   unloadingCargos: VehicleStopCargo[];
-}) => (
-  <FlexLayout className="flex-col gap-2 p-2 text-light-50">
-    {loadingCargos.length > 0 && (
-      <CargoListSection cargos={loadingCargos} color="text-orange-300" icon="IconPackageImport" label="Utovar" />
-    )}
-    {unloadingCargos.length > 0 && (
-      <CargoListSection cargos={unloadingCargos} color="text-teal-300" icon="IconPackageExport" label="Istovar" />
-    )}
-  </FlexLayout>
-);
+}) => {
+  if (loadingCargos.length === 0 && unloadingCargos.length === 0) {
+    return (
+      <FlexLayout className="justify-center px-2 py-1">
+        <Text color="text-light-50" variant="text-xxs">
+          Nema utovara ni istovara na ovoj stanici.
+        </Text>
+      </FlexLayout>
+    );
+  }
+
+  return (
+    <FlexLayout className="flex-col gap-2 p-2 text-light-50">
+      {loadingCargos.length > 0 && (
+        <CargoListSection cargos={loadingCargos} color="text-orange-300" icon="IconPackageImport" label="Utovar" />
+      )}
+      {unloadingCargos.length > 0 && (
+        <CargoListSection cargos={unloadingCargos} color="text-teal-300" icon="IconPackageExport" label="Istovar" />
+      )}
+    </FlexLayout>
+  );
+};
 
 const CargoListSection = ({
   color,
