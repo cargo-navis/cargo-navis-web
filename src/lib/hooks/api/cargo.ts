@@ -7,6 +7,7 @@ export function useAvailableCargos(vehicleStopId: string | undefined, enabled = 
     queryKey: ['available-cargos', vehicleStopId ?? null],
     queryFn: () => getAvailableCargos(vehicleStopId),
     enabled,
+    staleTime: 0, // refetch each time the drawer reopens, ignoring the global 30s default
   });
 }
 

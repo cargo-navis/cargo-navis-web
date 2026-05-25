@@ -47,7 +47,7 @@ export const CargoSelectDrawer = ({
   onOpenChange,
   onConfirm,
 }: CargoSelectDrawerProps) => {
-  const { data, isLoading } = useAvailableCargos(vehicleStopId, isOpen);
+  const { data, isFetching } = useAvailableCargos(vehicleStopId, isOpen);
   const { data: clients } = useClients({ enabled: isOpen });
 
   const clientNameById = useMemo(() => {
@@ -160,7 +160,7 @@ export const CargoSelectDrawer = ({
           </Box>
         )}
         <Box className="flex-1 overflow-y-auto px-4">
-          {isLoading ? (
+          {isFetching ? (
             <FlexLayout className="flex-col gap-4">
               {Array.from({ length: 6 }).map((_, i) => (
                 <Skeleton borderRadius="m" height={64} key={i} width="100%" />
