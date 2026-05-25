@@ -3,8 +3,9 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { ClientName } from '@/components/clients/ClientName';
 import { Drawer, DrawerContent, DrawerFooter, DrawerHeader } from '@/components/ui/drawer';
-import type { Cargo, Shipment } from '@/lib/api';
-import { useClients, useShipmentsData } from '@/lib/hooks';
+import type { AvailableCargo, Cargo } from '@/lib/api';
+import type { VehicleStopCargoShipment } from '@/lib/api/vehicleStops';
+import { useAvailableCargos, useClients } from '@/lib/hooks';
 import { getCargoLabelParts } from '@/lib/utils/cargo';
 import { Box, Button, FlexLayout, Icon, Skeleton, Text, TextInput } from '@/ui';
 
@@ -14,34 +15,39 @@ interface CargoSelectDrawerProps {
   isOpen: boolean;
   title: string;
   addressType: 'loading' | 'unloading';
+  vehicleStopId?: string;
   selected: Cargo[];
   onOpenChange(isOpen: boolean): void;
   onConfirm(cargos: Cargo[]): void;
 }
 
 interface CargoGroup {
-  shipment: Shipment;
-  cargos: CargoWithClient[];
+  key: string;
+  shipment?: VehicleStopCargoShipment;
+  cargos: AvailableCargo[];
 }
 
-function buildAvailableGroups(shipments: Shipment[]): CargoGroup[] {
-  return shipments.map(buildGroup).filter((g) => g.cargos.length > 0);
-}
-
-function buildGroup(shipment: Shipment): CargoGroup {
-  const cargos = shipment.cargo.map((cargo) => ({ ...cargo, clientId: shipment.clientId }));
-  return { shipment, cargos };
+function buildGroups(cargos: AvailableCargo[]): CargoGroup[] {
+  const map = new Map<string, CargoGroup>();
+  cargos.forEach((cargo) => {
+    const key = cargo.shipment?.id ?? 'ungrouped';
+    const group = map.get(key) ?? { key, shipment: cargo.shipment, cargos: [] };
+    group.cargos.push(cargo);
+    map.set(key, group);
+  });
+  return Array.from(map.values());
 }
 
 export const CargoSelectDrawer = ({
   isOpen,
   title,
   addressType,
+  vehicleStopId,
   selected,
   onOpenChange,
   onConfirm,
 }: CargoSelectDrawerProps) => {
-  const { data: shipments, isLoading } = useShipmentsData({ params: { isActive: true }, enabled: isOpen });
+  const { data, isLoading } = useAvailableCargos(vehicleStopId, isOpen);
   const { data: clients } = useClients({ enabled: isOpen });
 
   const clientNameById = useMemo(() => {
@@ -52,7 +58,10 @@ export const CargoSelectDrawer = ({
 
   const initialIds = useMemo(() => new Set(selected.map((c) => c.id)), [selected]);
 
-  const groups = useMemo<CargoGroup[]>(() => (shipments ? buildAvailableGroups(shipments) : []), [shipments]);
+  const groups = useMemo<CargoGroup[]>(() => {
+    const cargos = (addressType === 'loading' ? data?.loadingCargos : data?.unloadingCargos) ?? [];
+    return buildGroups(cargos);
+  }, [data, addressType]);
 
   const [search, setSearch] = useState('');
 
@@ -66,8 +75,8 @@ export const CargoSelectDrawer = ({
         threshold: 0.35,
         ignoreLocation: true,
         keys: [
-          { name: 'orderNumber', getFn: (g) => g.shipment.orderNumber ?? '' },
-          { name: 'clientName', getFn: (g) => clientNameById.get(g.shipment.clientId ?? '') ?? '' },
+          { name: 'orderNumber', getFn: (g) => g.shipment?.orderNumber ?? '' },
+          { name: 'clientName', getFn: (g) => clientNameById.get(g.shipment?.clientId ?? '') ?? '' },
           {
             name: 'addresses',
             getFn: (g) =>
@@ -89,7 +98,7 @@ export const CargoSelectDrawer = ({
     return fuse.search(query).map((r) => r.item);
   }, [fuse, groups, search]);
 
-  const allCargos = useMemo<CargoWithClient[]>(() => groups.flatMap((g) => g.cargos), [groups]);
+  const allCargos = useMemo<AvailableCargo[]>(() => groups.flatMap((g) => g.cargos), [groups]);
 
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set(initialIds));
 
@@ -111,7 +120,7 @@ export const CargoSelectDrawer = ({
     });
   }
 
-  function toggleShipment(cargos: CargoWithClient[]) {
+  function toggleShipment(cargos: AvailableCargo[]) {
     setSelectedIds((prev) => {
       const next = new Set(prev);
       const allSelected = cargos.every((c) => next.has(c.id));
@@ -171,48 +180,54 @@ export const CargoSelectDrawer = ({
             </FlexLayout>
           ) : (
             <FlexLayout className="flex-col">
-              {filteredGroups.map(({ shipment, cargos }) => {
+              {filteredGroups.map(({ key, shipment, cargos }) => {
                 const isAllSelected = cargos.length > 0 && cargos.every((c) => selectedIds.has(c.id));
                 return (
                   <FlexLayout
                     className={`flex-col gap-2 -mx-4 border-t px-4 py-3 ${
                       isAllSelected ? 'border-teal-500 bg-teal-500/10' : 'border-dark-100 dark:border-light-800'
                     }`}
-                    key={shipment.id}
+                    key={key}
                   >
-                    <FlexLayout
-                      as="button"
-                      className="group/shipment items-center gap-1 text-left"
-                      type="button"
-                      onClick={() => toggleShipment(cargos)}
-                    >
-                      <Icon
-                        className="group-hover/shipment:text-teal-500 shrink-0"
-                        color={isAllSelected ? 'text-teal-500' : 'text-color-3'}
-                        icon="IconFileDescription"
-                        size="s"
-                      />
-                      <Text
-                        className="group-hover/shipment:text-teal-500 shrink-0"
-                        color={isAllSelected ? 'text-teal-500' : 'text-color-2'}
-                        variant="text-xs-medium"
+                    {shipment && (
+                      <FlexLayout
+                        as="button"
+                        className="group/shipment items-center gap-1 text-left"
+                        type="button"
+                        onClick={() => toggleShipment(cargos)}
                       >
-                        Nalog {shipment.orderNumber}
-                      </Text>
-                      {shipment.clientId && (
-                        <>
-                          <Text className="group-hover/shipment:text-teal-500" color="text-color-4" variant="text-xxs">
-                            ·
-                          </Text>
-                          <ClientName
-                            className="group-hover/shipment:text-teal-500 truncate"
-                            color={isAllSelected ? 'text-teal-500' : 'text-color-3'}
-                            id={shipment.clientId}
-                            variant="text-xxs"
-                          />
-                        </>
-                      )}
-                    </FlexLayout>
+                        <Icon
+                          className="group-hover/shipment:text-teal-500 shrink-0"
+                          color={isAllSelected ? 'text-teal-500' : 'text-color-3'}
+                          icon="IconFileDescription"
+                          size="s"
+                        />
+                        <Text
+                          className="group-hover/shipment:text-teal-500 shrink-0"
+                          color={isAllSelected ? 'text-teal-500' : 'text-color-2'}
+                          variant="text-xs-medium"
+                        >
+                          Nalog {shipment.orderNumber}
+                        </Text>
+                        {shipment.clientId && (
+                          <>
+                            <Text
+                              className="group-hover/shipment:text-teal-500"
+                              color="text-color-4"
+                              variant="text-xxs"
+                            >
+                              ·
+                            </Text>
+                            <ClientName
+                              className="group-hover/shipment:text-teal-500 truncate"
+                              color={isAllSelected ? 'text-teal-500' : 'text-color-3'}
+                              id={shipment.clientId}
+                              variant="text-xxs"
+                            />
+                          </>
+                        )}
+                      </FlexLayout>
+                    )}
                     <FlexLayout className="flex-col gap-2">
                       {cargos.map((cargo) => (
                         <CargoRow

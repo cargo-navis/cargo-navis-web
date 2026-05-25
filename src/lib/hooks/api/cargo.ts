@@ -1,6 +1,14 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { Shipment, updateCargo } from '@/lib/api';
+import { getAvailableCargos, Shipment, updateCargo } from '@/lib/api';
+
+export function useAvailableCargos(vehicleStopId: string | undefined, enabled = true) {
+  return useQuery({
+    queryKey: ['available-cargos', vehicleStopId ?? null],
+    queryFn: () => getAvailableCargos(vehicleStopId),
+    enabled,
+  });
+}
 
 export function useUpdateCargo(shipmentId: string) {
   const queryClient = useQueryClient();

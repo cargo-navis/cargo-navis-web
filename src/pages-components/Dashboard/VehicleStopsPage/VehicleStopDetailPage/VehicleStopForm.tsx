@@ -57,7 +57,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
   );
   const [isCustomAddress, setIsCustomAddress] = useState(false);
 
-  const { loadingCargos, unloadingCargos, setCargos } = useCargoSelection(setValue);
+  const { loadingCargos, unloadingCargos, setCargos } = useCargoSelection(setValue, stop);
 
   const loadingCargoIds = watch('loadingCargoIds');
   const unloadingCargoIds = watch('unloadingCargoIds');
@@ -233,6 +233,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
         isOpen={loadingDrawerOpen}
         selected={loadingCargos}
         title="Utovari"
+        vehicleStopId={stop?.id}
         onConfirm={handleLoadingCargosChange}
         onOpenChange={setLoadingDrawerOpen}
       />
@@ -241,6 +242,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
         isOpen={unloadingDrawerOpen}
         selected={unloadingCargos}
         title="Istovari"
+        vehicleStopId={stop?.id}
         onConfirm={handleUnloadingCargosChange}
         onOpenChange={setUnloadingDrawerOpen}
       />

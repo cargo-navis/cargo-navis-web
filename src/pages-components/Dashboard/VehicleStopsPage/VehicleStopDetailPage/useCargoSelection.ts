@@ -2,12 +2,18 @@ import { useState } from 'react';
 import type { UseFormSetValue } from 'react-hook-form';
 
 import type { Cargo } from '@/lib/api';
+import type { VehicleStop, VehicleStopCargo } from '@/lib/api/vehicleStops';
 
 import type { VehicleStopFormValues } from './schema';
 
-export function useCargoSelection(setValue: UseFormSetValue<VehicleStopFormValues>) {
-  const [loadingCargos, setLoadingCargos] = useState<Cargo[]>([]);
-  const [unloadingCargos, setUnloadingCargos] = useState<Cargo[]>([]);
+// Stop cargos carry their shipment nested; flatten clientId so chips/labels match the Cargo shape.
+function mapStopCargos(cargos?: VehicleStopCargo[]): Cargo[] {
+  return (cargos ?? []).map((c) => ({ ...(c as unknown as Cargo), clientId: c.shipment?.clientId }));
+}
+
+export function useCargoSelection(setValue: UseFormSetValue<VehicleStopFormValues>, stop?: VehicleStop) {
+  const [loadingCargos, setLoadingCargos] = useState<Cargo[]>(() => mapStopCargos(stop?.loadingCargos));
+  const [unloadingCargos, setUnloadingCargos] = useState<Cargo[]>(() => mapStopCargos(stop?.unloadingCargos));
 
   function setCargos(side: 'loading' | 'unloading', cargos: Cargo[]) {
     (side === 'loading' ? setLoadingCargos : setUnloadingCargos)(cargos);

@@ -1,5 +1,5 @@
 import { InvoiceStatus, LoadStatus } from './shipments';
-import type { VehicleStop } from './vehicleStops.d';
+import type { VehicleStop, VehicleStopCargoShipment } from './vehicleStops.d';
 
 export interface Shipment {
   id: string;
@@ -96,6 +96,15 @@ export interface Cargo {
   unloadingReference?: string;
   unloadingDescription?: string;
   loadStatus?: LoadStatus;
+}
+
+export interface AvailableCargo extends Cargo {
+  shipment?: VehicleStopCargoShipment;
+}
+
+export interface AvailableCargosResponse {
+  loadingCargos: AvailableCargo[];
+  unloadingCargos: AvailableCargo[];
 }
 
 export interface Metadata {
