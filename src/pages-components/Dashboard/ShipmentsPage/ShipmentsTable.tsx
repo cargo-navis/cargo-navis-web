@@ -59,6 +59,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                 'flex-col pr-4 py-4 max-w-[16vw] whitespace-nowrap group-hover/row:text-teal-500'
               )}
             >
+              {isAgency && <Pill size="s" text="Agencijski nalog" variant="warning" />}
               <FlexLayout className="gap-4 items-center">
                 <Text className="overflow-hidden text-ellipsis" variant="text-m-bold">
                   {client ? client.name : '—'}
@@ -94,8 +95,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                       <FlexLayout className="flex-col gap-2 px-1 max-w-[280px]">
                         {internalNote && (
                           <FlexLayout className="flex-col gap-0.5">
-                            <Text color="text-light-300" variant="text-xxs">
-                              Interna napomena
+                            <Text color="text-light-300" variant="text-xxxs-medium">
+                              INTERNA NAPOMENA
                             </Text>
                             <Text color="text-light-50" variant="text-xs">
                               {internalNote}
@@ -104,8 +105,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                         )}
                         {externalNote && (
                           <FlexLayout className="flex-col gap-0.5">
-                            <Text color="text-light-300" variant="text-xxs">
-                              Eksterna napomena
+                            <Text color="text-light-300" variant="text-xxxs-medium">
+                              EKSTERNA NAPOMENA
                             </Text>
                             <Text color="text-light-50" variant="text-xs">
                               {externalNote}
@@ -120,7 +121,6 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                     </Box>
                   </Tooltip>
                 </DisplayIf>
-                {isAgency && <Pill size="s" text="Agencijski nalog" variant="warning" />}
               </FlexLayout>
               {isAgency && (
                 <FlexLayout className="flex-col mt-2">
