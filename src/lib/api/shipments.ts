@@ -1,7 +1,7 @@
 import { backend } from '@/lib/services/backendService';
 
-import type { CreateShipmentData, GetShipmentParams, Shipment } from './';
 import type { PaginatedResponse } from './pagination.d';
+import type { CreateShipmentData, GetShipmentParams, Shipment } from './shipments.d';
 
 export enum LoadStatus {
   NotYetLoaded = 'not_yet_loaded',
@@ -40,9 +40,9 @@ export async function deleteShipment(id: string) {
   return backend.delete<void>(`/api/shipments/${id}`);
 }
 
-export async function sendShipmentToDriver(id: string, driverId: string, sentToDriver: boolean) {
-  return updateShipment(id, { driverId, sentToDriver });
-}
+// export async function sendShipmentToDriver(id: string, driverId: string, sentToDriver: boolean) {
+// return updateShipment(id, { driverId, sentToDriver });
+// }
 
 export async function uploadShipmentFile(id: string, file: File, fileName: string) {
   const formData = new FormData();

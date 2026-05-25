@@ -20,13 +20,13 @@ export const FilterHeader = ({
       <FlexLayout className="items-center gap-2">
         <Icon
           className={`transform transition-transform duration-200 ${isExpanded ? 'rotate-90' : ''}`}
-          icon="ChevronRightIcon"
+          icon="IconChevronRight"
         />
         <Text variant="text-s-medium">Filteri {hasActiveFilters && `(${activeFiltersCount} aktivni)`}</Text>
       </FlexLayout>
       <DisplayIf condition={hasActiveFilters}>
         <TextButton
-          iconLeft="TrashIcon"
+          iconLeft="IconTrash"
           text="Očisti filtere"
           variant="secondary"
           onClick={(e) => {

@@ -1,25 +1,21 @@
 import { InvoiceStatus, LoadStatus } from './shipments';
+import type { VehicleStop, VehicleStopCargoShipment } from './vehicleStops.d';
 
 export interface Shipment {
   id: string;
-  cargoReference: string;
+  externalOrderReference?: string;
   orderNumber: string;
-  dispatcherId?: string;
-  driverId?: string | null;
-  vehicleId?: string | null;
-  trailerId?: string | null;
+  createdById: string;
   clientId?: string;
-  isAgencyUse?: boolean;
   invoiceStatus: InvoiceStatus;
   invoiceStatusUpdatedAt: string | null;
+  isInvoiceOverdue: boolean | null; // todo - [added]
   transportContractorId?: string;
   price: number;
+  internalNote?: string;
+  externalNote?: string;
   cargo: Cargo[];
-  parentShipmentId?: string;
-  subshipments?: Shipment[];
   createdAt: string;
-  childShipments?: Shipment[];
-  sentToDriver?: boolean;
   documents?: {
     id: string;
     createdAt: string;
@@ -27,6 +23,8 @@ export interface Shipment {
     mimeType: string;
     status: string;
   }[];
+  vehicleStops?: VehicleStop[];
+  children?: Shipment[];
 }
 
 export type GetShipmentParams = {
@@ -40,6 +38,7 @@ export type GetShipmentParams = {
   loadingDateTo?: string;
   unloadingDateFrom?: string;
   unloadingDateTo?: string;
+  isActive?: boolean;
   // Pagination parameters
   page?: number;
   size?: number;
@@ -59,29 +58,28 @@ export interface CreateShipmentData extends Omit<Shipment, 'id' | 'cargo'> {
     };
     loadingCompanyName?: string;
     loadingReadyDate?: string;
-    loadingDate: string;
     loadingDescription?: string;
     unloadingAddress: {
       streetName: string;
       postalCodeId: string;
     };
     unloadingCompanyName?: string;
-    unloadingDate: string;
     unloadingDueDate?: string;
     unloadingDescription?: string;
   }[];
+  children?: CreateShipmentData[];
 }
 
 // TODO - this should be for Create shipment
 export interface LoadingAddress {
   streetName: string;
-  id: string;
+  postalCodeId: string;
   postalCode: string;
   countryCode: string;
   placeName: string;
 }
 
-interface Cargo {
+export interface Cargo {
   id: string;
   weight: number;
   description: string;
@@ -90,16 +88,23 @@ interface Cargo {
   loadingAddress: LoadingAddress;
   loadingCompanyName?: string;
   loadingReadyDate?: string;
-  loadingDate: string;
   loadingReference?: string;
   loadingDescription?: string;
   unloadingAddress: LoadingAddress;
   unloadingCompanyName?: string;
-  unloadingDate: string;
   unloadingDueDate?: string;
   unloadingReference?: string;
   unloadingDescription?: string;
   loadStatus?: LoadStatus;
+}
+
+export interface AvailableCargo extends Cargo {
+  shipment?: VehicleStopCargoShipment;
+}
+
+export interface AvailableCargosResponse {
+  loadingCargos: AvailableCargo[];
+  unloadingCargos: AvailableCargo[];
 }
 
 export interface Metadata {

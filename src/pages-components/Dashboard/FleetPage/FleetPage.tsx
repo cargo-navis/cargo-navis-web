@@ -1,12 +1,14 @@
 import Link from 'next/link';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import { useSolos, useTrailers, useTrucks, useVans, useVehicles } from '@/lib/hooks';
 import { Box, Divider, FlexLayout, Heading, Icon, Text } from '@/ui';
 
 export const FleetPage = () => {
   return (
     <DashboardLayout>
+      <PageTitle title="Vozni park" />
       <Box>
         <Heading as="h1" variant="text-xl">
           Pregled Flote
@@ -66,7 +68,7 @@ export const OverviewItem: React.FC<InfoItemProps> = ({ label, value, href }) =>
       <FlexLayout className="group/overview-item relative justify-between items-center uppercase text-color-2 hover:text-teal-500">
         <Icon
           className="absolute opacity-0 left-[-22px] translate-x-[-4px] group-hover/overview-item:opacity-100 group-hover/overview-item:translate-x-0 w-5 transition-transform ease"
-          icon="ChevronRightIcon"
+          icon="IconChevronRight"
         />
         <Text variant="text-s-medium">{label}:</Text>
         <Text variant="text-m-medium">{value}</Text>

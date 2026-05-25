@@ -51,8 +51,7 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
       {
         ...cargo,
         loadingCompanyName: values.companyName,
-        loadingDate: values.primaryDate,
-        loadingReadyDate: values.secondaryDate,
+        loadingReadyDate: values.date,
         loadingDescription: values.description,
         loadingReference: values.loadReference,
         loadingAddress: values.address,
@@ -67,8 +66,7 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
       {
         ...cargo,
         unloadingCompanyName: values.companyName,
-        unloadingDate: values.primaryDate,
-        unloadingDueDate: values.secondaryDate,
+        unloadingDueDate: values.date,
         unloadingDescription: values.description,
         unloadingReference: values.loadReference,
         unloadingAddress: values.address,
@@ -83,9 +81,9 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
       {
         ...cargo,
         loadingCompanyName: '',
-        loadingDate: '',
         loadingReadyDate: '',
         loadingDescription: '',
+        loadingReference: '',
         loadingAddress: {},
       },
       { shouldDirty: true, shouldTouch: true, shouldValidate: true }
@@ -98,9 +96,9 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
       {
         ...cargo,
         unloadingCompanyName: '',
-        unloadingDate: '',
-        unloadingReadyDate: '',
+        unloadingDueDate: '',
         unloadingDescription: '',
+        unloadingReference: '',
         unloadingAddress: {},
       },
       { shouldDirty: true, shouldTouch: true, shouldValidate: true }
@@ -116,7 +114,7 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
         <Text color="text-color-3" variant="text-s-medium">
           TERET {index + 1}
         </Text>
-        {cargoLength > 1 && <Icon icon="XMarkIcon" onClick={removeCargo} />}
+        {cargoLength > 1 && <Icon icon="IconX" onClick={removeCargo} />}
       </FlexLayout>
       <FlexLayout className="flex-col gap-4">
         <FlexLayout className="gap-2">
@@ -144,10 +142,17 @@ export const CargoField = ({ index, cargoLength }: CargoFieldProps) => {
       </FlexLayout>
       <Divider />
       <FlexLayout className="gap-4">
-        <CargoLoadField cargo={cargo} type={CargoLoadFieldType.Load} onChange={setLoadData} onRemove={removeLoadData} />
+        <CargoLoadField
+          cargo={cargo}
+          cargoIndex={index}
+          type={CargoLoadFieldType.Load}
+          onChange={setLoadData}
+          onRemove={removeLoadData}
+        />
         <VerticalDivider />
         <CargoLoadField
           cargo={cargo}
+          cargoIndex={index}
           type={CargoLoadFieldType.Unload}
           onChange={setUnloadData}
           onRemove={removeUnloadData}
@@ -194,7 +199,13 @@ const StandardCargo: React.FC<{ index: number }> = ({ index }) => {
         </Box>
       </FlexLayout>
       <Box className="flex-1">
-        <FormNumberInput label="Težina (kg)" name={`cargo.${index}.weight`} rules={{ required: true }} />
+        <FormNumberInput
+          inputMode="decimal"
+          label="Težina (kg)"
+          name={`cargo.${index}.weight`}
+          placeholder="XXX"
+          rules={{ required: true }}
+        />
       </Box>
     </FlexLayout>
   );
@@ -255,7 +266,13 @@ const NonStandardCargo: React.FC<{ index: number }> = ({ index }) => {
         </FlexLayout>
       </FlexLayout>
       <Box className="flex-1">
-        <FormNumberInput label="Težina (kg)" name={`cargo.${index}.weight`} rules={{ required: true }} />
+        <FormNumberInput
+          inputMode="decimal"
+          label="Težina (kg)"
+          name={`cargo.${index}.weight`}
+          placeholder="XXX"
+          rules={{ required: true }}
+        />
       </Box>
       <FlexLayout className="gap-4 items-center h-[96px] -my-4">
         <FormCheckbox label="Kolete" name={hasKoleteFieldName} />

@@ -2,8 +2,7 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { Box, FlexLayout, Text } from '@/ui';
-import { Icon } from '@/ui/components/Icon';
+import { Box, FlexLayout, Icon, Text } from '@/ui';
 
 import type { NavLink } from './data';
 

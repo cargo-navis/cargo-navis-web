@@ -2,6 +2,7 @@ import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import type { Vehicle } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
@@ -18,7 +19,12 @@ const FUSE_OPTIONS: ConstructorParameters<typeof Fuse<Vehicle>>[1] = {
 export const TrucksPage = () => {
   const { trucks, isLoading } = useTrucks();
 
-  return <DashboardLayout>{isLoading ? <LoadingPage /> : <MainContent trucks={trucks || []} />}</DashboardLayout>;
+  return (
+    <DashboardLayout>
+      <PageTitle title="Kamioni" />
+      {isLoading ? <LoadingPage /> : <MainContent trucks={trucks || []} />}
+    </DashboardLayout>
+  );
 };
 
 const MainContent = ({ trucks }: { trucks: Vehicle[] }) => {
@@ -50,7 +56,7 @@ const MainContent = ({ trucks }: { trucks: Vehicle[] }) => {
           </DisplayIf>
         </FlexLayout>
         <DisplayIf condition={!isEmpty}>
-          <Button href="/dashboard/fleet/trucks/new" iconLeft="PlusIcon" text="Dodaj Tegljač" />
+          <Button href="/dashboard/fleet/trucks/new" iconLeft="IconPlus" text="Dodaj Tegljač" />
         </DisplayIf>
       </FlexLayout>
       <Box className="py-5">
@@ -66,8 +72,8 @@ const MainContent = ({ trucks }: { trucks: Vehicle[] }) => {
             <Box className="max-w-xs mb-4">
               <TextInput
                 autoFocus
-                iconLeft="MagnifyingGlassIcon"
-                iconRight={search ? 'XMarkIcon' : undefined}
+                iconLeft="IconSearch"
+                iconRight={search ? 'IconX' : undefined}
                 placeholder="Pretraži tegljače..."
                 value={search}
                 onChange={setSearch}

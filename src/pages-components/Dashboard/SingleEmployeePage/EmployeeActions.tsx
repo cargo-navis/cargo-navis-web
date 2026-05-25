@@ -9,15 +9,15 @@ export const EmployeeActions: React.FC<{ id: string; name: string }> = ({ id, na
   const { mutateAsync, isPending } = useDeleteEmployee(id);
 
   async function handleDelete() {
-    const answer = confirm(`Jeste li sigurni da želite izbrisati ovog zaposlenika "${name}"?`);
+    const answer = confirm(`Jeste li sigurni da želite deaktivirati zaposlenika "${name}"?`);
     if (!answer) return;
 
     try {
       await mutateAsync();
-      showSuccessToast({ title: `Zaposlenik "${name}" izbrisan` });
+      showSuccessToast({ title: `Zaposlenik "${name}" deaktiviran.` });
       void back();
     } catch {
-      showErrorToast({ title: 'Greška s brisanjem zaposlenika' });
+      showErrorToast({ title: 'Greška s deaktiviranjem zaposlenika.' });
     }
   }
 
@@ -25,12 +25,12 @@ export const EmployeeActions: React.FC<{ id: string; name: string }> = ({ id, na
     <FlexLayout className="gap-3">
       <Button
         href={`/dashboard/employees/${id}/edit`}
-        iconLeft="PencilIcon"
+        iconLeft="IconEdit"
         isDisabled={isPending}
         text="Uredi"
         variant="secondary"
       />
-      <Button iconLeft="TrashIcon" isLoading={isPending} text="Izbriši" onClick={handleDelete} />
+      <Button iconLeft="IconTrash" isLoading={isPending} text="Deaktiviraj" variant="danger" onClick={handleDelete} />
     </FlexLayout>
   );
 };

@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import * as Yup from 'yup';
 
 import { PalleteType } from '@/lib/utils/palletes';
@@ -34,9 +35,15 @@ const cargoMetadataSchema = Yup.object().shape({
   }),
 });
 
+/** Shared with CargoLoadModal date validation */
+export const cargoLoadUnloadDatesMessage = 'Krajnji rok za istovar mora biti na ili nakon datuma spremnosti za utovar.';
+
 const cargoSchema = Yup.object().shape({
   id: Yup.string().optional(),
-  weight: Yup.number().typeError('Težina je obavezna').positive('Mora biti pozitivan broj').required(),
+  weight: Yup.number()
+    .typeError('Težina mora biti broj')
+    .required('Težina je obavezna')
+    .positive('Težina mora biti pozitivan broj'),
   description: Yup.string().optional(),
   ldm: Yup.number()
     .transform((value, original) => (original === '' ? undefined : value))
@@ -44,40 +51,103 @@ const cargoSchema = Yup.object().shape({
     .optional(),
   loadingAddress: getAddressSchema({ message: 'Adresa utovara je obavezna' }),
   loadingCompanyName: Yup.string().optional(),
-  loadingDate: getRequiredDateSchema({ message: 'Datum utovara je obavezan' }),
-  loadingReadyDate: Yup.string().optional(),
+  loadingReadyDate: Yup.string()
+    .optional()
+    .test('not-after-unload', cargoLoadUnloadDatesMessage, function (loadVal) {
+      const unloadRaw = (this.parent as { unloadingDueDate?: string })?.unloadingDueDate?.trim();
+      if (!String(loadVal ?? '').trim() || !unloadRaw) return true;
+      const load = dayjs(loadVal);
+      const unload = dayjs(unloadRaw);
+      if (!load.isValid() || !unload.isValid()) return true;
+      return !load.isAfter(unload, 'day');
+    }),
   loadingReference: Yup.string().optional(),
   loadingDescription: Yup.string().optional(),
   unloadingAddress: getAddressSchema({ message: 'Adresa istovara je obavezna' }),
   unloadingCompanyName: Yup.string().optional(),
-  unloadingDate: getRequiredDateSchema({ message: 'Datum istovara je obavezan' }),
-  unloadingDueDate: Yup.string().optional(),
+  unloadingDueDate: Yup.string()
+    .optional()
+    .test('not-before-load', cargoLoadUnloadDatesMessage, function (unloadVal) {
+      const loadRaw = (this.parent as { loadingReadyDate?: string })?.loadingReadyDate?.trim();
+      if (!String(unloadVal ?? '').trim() || !loadRaw) return true;
+      const load = dayjs(loadRaw);
+      const unload = dayjs(unloadVal);
+      if (!load.isValid() || !unload.isValid()) return true;
+      return !unload.isBefore(load, 'day');
+    }),
   unloadingReference: Yup.string().optional(),
   unloadingDescription: Yup.string().optional(),
   metadata: cargoMetadataSchema.required('Podaci tereta su obavezni'),
 });
 
-export const shipmentSchema = Yup.object().shape({
-  cargoReference: Yup.string().optional(),
-  dispatcherId: Yup.string().required('Disponent je obavezan'),
-  clientId: Yup.string().required('Klijent je obavezan'),
-  isAgencyUse: Yup.boolean().optional(),
-  price: Yup.number()
-    .typeError('Cijena mora biti pozitivan broj')
-    .min(0, 'Cijena mora biti najmanje 0')
-    .positive('Mora biti pozitivan broj')
-    .test('max-decimals', 'Cijena može imati maksimalno 2 decimale', (value) => {
-      if (value === undefined || value === null) return true;
-      const decimalPlaces = (value.toString().split('.')[1] || '').length;
-      return decimalPlaces <= 2;
+export function getShipmentSchema(tenantId: string) {
+  return Yup.object()
+    .shape({
+      externalOrderReference: Yup.string().optional(),
+      clientId: Yup.string()
+        .required('Klijent je obavezan')
+        .test('not-tenant-when-agency', 'Vaša tvrtka ne može biti klijent kod agencijskog naloga', function (value) {
+          const { isAgency } = this.parent as { isAgency?: boolean };
+          return !(isAgency && value === tenantId);
+        }),
+      price: Yup.number()
+        .typeError('Cijena mora biti broj')
+        .required('Cijena je obavezna')
+        .positive('Cijena mora biti pozitivan broj')
+        .test('max-decimals', 'Cijena može imati maksimalno 2 decimale', (value) => {
+          if (value === undefined || value === null) return true;
+          const decimalPlaces = (value.toString().split('.')[1] || '').length;
+          return decimalPlaces <= 2;
+        }),
+      transportContractorId: Yup.string()
+        .required('Prijevoznik je obavezan')
+        .test(
+          'not-tenant-when-agency',
+          'Vaša tvrtka ne može biti prijevoznik kod agencijskog naloga',
+          function (value) {
+            const { isAgency } = this.parent as { isAgency?: boolean };
+            return !(isAgency && value === tenantId);
+          }
+        ),
+      isAgency: Yup.boolean().optional(),
+      agencyPrice: Yup.number()
+        .transform((value, original) => (original === '' || original === null ? undefined : value))
+        .when('isAgency', {
+          is: true,
+          then: () =>
+            Yup.number()
+              .typeError('Cijena agencijskog prijevoza mora biti broj')
+              .required('Cijena agencijskog prijevoza je obavezna')
+              .positive('Cijena mora biti pozitivan broj'),
+          otherwise: () => Yup.number().optional().nullable().strip(),
+        }),
+      cargo: Yup.array().of(cargoSchema).required('Potreban je najmanje jedan teret'),
     })
-    .optional(),
-  transportContractorId: Yup.string().required('Prijevoznik je obavezan'),
-  driverId: Yup.string().optional().nullable(),
-  vehicleId: Yup.string().optional().nullable(),
-  trailerId: Yup.string().optional().nullable(),
-  cargo: Yup.array().of(cargoSchema).required('Potreban je najmanje jedan teret'),
-});
+    .test('tenant-participation', '', function (values) {
+      const { isAgency, transportContractorId, clientId } = values as {
+        isAgency?: boolean;
+        transportContractorId?: string;
+        clientId?: string;
+      };
+      if (isAgency) return true;
+
+      const tenantCount = (transportContractorId === tenantId ? 1 : 0) + (clientId === tenantId ? 1 : 0);
+
+      if (tenantCount === 0) {
+        return this.createError({
+          path: 'transportContractorId',
+          message: 'Vaša tvrtka mora biti odabrana kao klijent ili prijevoznik',
+        });
+      }
+      if (tenantCount === 2) {
+        return this.createError({
+          path: 'transportContractorId',
+          message: 'Vaša tvrtka ne može biti istovremeno klijent i prijevoznik',
+        });
+      }
+      return true;
+    });
+}
 
 function getSingleDimensionSchema() {
   return Yup.number()
@@ -91,12 +161,6 @@ function getSingleDimensionSchema() {
           .optional(),
       otherwise: () => Yup.number().strip(),
     });
-}
-
-export function getRequiredDateSchema({ message }: { message: string }) {
-  return Yup.string()
-    .required(message)
-    .test('not-empty', message, (value) => value !== undefined && value !== null && value.trim() !== '');
 }
 
 export function getAddressSchema({ message }: { message: string }) {

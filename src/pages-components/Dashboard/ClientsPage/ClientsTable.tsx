@@ -87,7 +87,7 @@ export function ClientsTable({ clients }: { clients?: Client[] }) {
               <Text variant="text-s">{vatNumber || '–'}</Text>
               <Icon
                 className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
-                icon="DocumentDuplicateIcon"
+                icon="IconCopy"
               />
             </FlexLayout>
           );

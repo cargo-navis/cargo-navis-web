@@ -60,9 +60,9 @@ export const LoadingSpaceInfo: React.FC<LoadingSpaceInfoProps> = ({ vehicle }) =
           Rampa
         </Text>
         {ramp ? (
-          <Icon className="text-green-600" icon="CheckCircleIcon" size="l" />
+          <Icon className="text-green-600" icon="IconCircleCheck" size="l" />
         ) : (
-          <Icon className="text-red-500" icon="XCircleIcon" size="l" />
+          <Icon className="text-red-500" icon="IconCircleX" size="l" />
         )}
       </FlexLayout>
       <Divider />

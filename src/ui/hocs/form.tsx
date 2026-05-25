@@ -34,6 +34,11 @@ export const withFieldLabels = <T,>(WrappedComponent: React.FC<T>) => {
           </FlexLayout>
         </DisplayIf>
         <WrappedComponent {...(rest as any)} ref={ref} />
+        {!!helperText && (
+          <Text color="text-color-3" variant="text-xxxs">
+            {helperText}
+          </Text>
+        )}
       </FlexLayout>
     );
   });

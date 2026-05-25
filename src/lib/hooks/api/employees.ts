@@ -7,6 +7,7 @@ import { decorateFullName } from '@/lib/utils/employees';
 interface UseEmployeesArgs<T> {
   select?: (data: Employee[]) => T;
   enabled?: boolean;
+  includeDeleted?: boolean;
 }
 
 const positionHierarchy = {
@@ -18,6 +19,7 @@ const positionHierarchy = {
 
 function sortEmployees(employees: Employee[]) {
   return employees.sort((a, b) => {
+    if (a.deleted !== b.deleted) return a.deleted ? 1 : -1;
     const aOrder = positionHierarchy[a.positions[0]] || 999;
     const bOrder = positionHierarchy[b.positions[0]] || 999;
     return aOrder - bOrder;
@@ -25,20 +27,26 @@ function sortEmployees(employees: Employee[]) {
 }
 
 export function useEmployees<TData = Employee[]>(args?: UseEmployeesArgs<TData>) {
+  const { includeDeleted, select: userSelect, ...rest } = args ?? {};
+
   return useQuery<Employee[], unknown, TData>({
     queryKey: ['employees'],
     queryFn: async () => {
       const employees = await getEmployees();
       return employees.map(decorateFullName);
     },
-    ...args,
-    select: args?.select || (sortEmployees as any),
+    ...rest,
+    select: (employees) => {
+      const filtered = includeDeleted ? employees : employees.filter((e) => !e.deleted);
+      return userSelect ? userSelect(filtered) : (sortEmployees(filtered) as unknown as TData);
+    },
   });
 }
 
 export function useEmployee(id: string) {
   return useEmployees({
     enabled: !!id,
+    includeDeleted: true,
     select: (employees) => {
       return employees.find((e) => e.id.toString() === id);
     },

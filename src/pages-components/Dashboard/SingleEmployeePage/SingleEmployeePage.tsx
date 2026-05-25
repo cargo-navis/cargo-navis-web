@@ -2,12 +2,13 @@ import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import { type Employee, MessageChannelEnum, PositionEnum } from '@/lib/api/employees.d';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useEmployee } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { DriverInfo } from '@/pages-components/Dashboard/SingleEmployeePage/DriverInfo';
-import { Box, DisplayIf, FlexLayout, Icon, Text } from '@/ui';
+import { Box, DisplayIf, FlexLayout, Icon, Pill, Text } from '@/ui';
 
 import { OccupationPill } from '../EmployeesPage/OccupationPill';
 import { ContactInfo } from './ContactInfo';
@@ -21,6 +22,7 @@ export const SingleEmployeePage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title={employee?.fullName} type="Zaposlenik" />
       {!employee || isLoading ? (
         <LoadingPage />
       ) : (
@@ -46,6 +48,7 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
                 {employee.positions.map((p) => (
                   <OccupationPill key={p} occupation={p} text={p} />
                 ))}
+                {employee.deleted && <Pill text="Deaktiviran" />}
               </FlexLayout>
             </FlexLayout>
             <FlexLayout className="gap-8">
@@ -57,7 +60,7 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
                   <ContactInfo contact={employee.phoneNumber} contactType="phone" />
                   <DisplayIf condition={employee.messageChannel === MessageChannelEnum.WHATSAPP}>
                     <FlexLayout className="gap-1 items-center">
-                      <Icon color="text-green-500" icon="CheckCircleIcon" type="solid" />
+                      <Icon color="text-green-500" icon="IconCircleCheck" type="solid" />
                       <Text color="text-color-3" variant="text-xxs">
                         WhatsApp spojen
                       </Text>
@@ -75,7 +78,7 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
             </FlexLayout>
           </FlexLayout>
         </FlexLayout>
-        <EmployeeActions id={employee.id} name={employee.fullName} />
+        {!employee.deleted && <EmployeeActions id={employee.id} name={employee.fullName} />}
       </FlexLayout>
       <FlexLayout className="ml-4 gap-8">
         <DisplayIf condition={employee.positions.includes(PositionEnum.Driver)}>

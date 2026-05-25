@@ -71,7 +71,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({ isLoading, u
           isLoading && 'opacity-40'
         )}
       >
-        <Icon icon="PlusIcon" size="m" />
+        <Icon icon="IconPlus" size="m" />
         <Text variant="text-xxs-medium">Dodaj dokumente</Text>
       </FlexLayout>
       <DisplayIf condition={isLoading}>

@@ -1,33 +1,31 @@
 export interface ShipmentFields {
-  cargoReference?: string;
-  dispatcherId: string;
+  externalOrderReference?: string;
   clientId: string;
-  isAgencyUse?: boolean;
   transportContractorId: string;
-  driverId?: string | null;
-  vehicleId?: string | null;
-  trailerId?: string | null;
   price?: number;
+  internalNote?: string;
+  externalNote?: string;
+  isAgency?: boolean;
+  agencyPrice?: number;
   cargo: Cargo[];
-  sentToDriver?: boolean;
 }
 
 export interface Cargo {
   id?: string;
-  weight: number;
+  weight?: number;
   description?: string;
   ldm: number;
   metadata: CargoMetadata;
   loadingAddress: Address;
   loadingCompanyName?: string;
   loadingReadyDate?: string;
-  loadingDate: string;
   loadingDescription?: string;
+  loadingReference?: string;
   unloadingAddress: Address;
   unloadingCompanyName?: string;
-  unloadingDate: string;
   unloadingDueDate?: string;
   unloadingDescription?: string;
+  unloadingReference?: string;
 }
 
 export type CargoType = 'standard' | 'nonstandard';

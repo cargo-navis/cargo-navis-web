@@ -102,7 +102,7 @@ export const TenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
                 </FlexLayout>
               }
             >
-              <Icon icon="InformationCircleIcon" />
+              <Icon icon="IconInfoCircle" />
             </Tooltip>
           </FlexLayout>
           <FormTextInput label="Podnožje naloga" name="shipmentFooter" placeholder="Unesite podnožje naloga..." />
@@ -137,7 +137,7 @@ const AddressFields = () => {
       />
       <PostalCodeSelectField
         countryCode={countryCode}
-        iconLeft="MagnifyingGlassIcon"
+        iconLeft="IconSearch"
         isClearable
         isDisabled={!countryCode}
         label="Poštanski broj"

@@ -61,13 +61,13 @@ export function Sidebar() {
         ))}
       </FlexLayout>
       <FlexLayout className="flex-col gap-2">
-        <NavItem navLink={{ name: 'Postavke', href: '/dashboard/settings', icon: 'Cog6ToothIcon' }} />
+        <NavItem navLink={{ name: 'Postavke', href: '/dashboard/settings', icon: 'IconSettings' }} />
         <FlexLayout
           className="group cursor-pointer h-[48px] rounded-s p-3 text-sm font-medium hover:bg-light-50 hover:text-teal-900 md:flex-none md:p-2 md:px-3"
           onClick={handleLogout}
         >
           <FlexLayout className="items-center justify-start gap-2 group-focus:translate-x-[4px] group-hover:translate-x-[4px] transition-transform">
-            <Icon icon="ArrowLeftStartOnRectangleIcon" size="l" />
+            <Icon icon="IconLogout2" size="l" />
             <Text>Odjava</Text>
           </FlexLayout>
         </FlexLayout>
@@ -85,7 +85,7 @@ const TenantLink = () => {
         {data ? (
           <>
             <Text variant="text-m-medium">{data.name}</Text>
-            <Icon icon="Cog6ToothIcon" size="m" />
+            <Icon icon="IconSettings" size="m" />
           </>
         ) : (
           <LoadingSpinner />

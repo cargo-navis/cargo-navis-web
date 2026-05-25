@@ -1,4 +1,5 @@
-import { forwardRef } from 'react';
+import Link from 'next/link';
+import { forwardRef, Fragment } from 'react';
 
 import { LoadStatus, type Notification, NotificationType } from '@/lib/api';
 import { Text } from '@/ui';
@@ -41,6 +42,30 @@ export function getNotificationItemData(notification: Notification) {
       descriptionNode = (
         <Text color="text-color-2" variant="text-s">
           <EmployeeNameById id={driverId} /> je primio obavijest o nalogu <strong>{orderNumber}</strong>.
+        </Text>
+      );
+      break;
+    }
+    case NotificationType.VEHICLE_STOP_COMPLETED: {
+      const { driverId, address, shipments = [] } = metadata;
+
+      targetUrl = '';
+      descriptionNode = (
+        <Text color="text-color-2" variant="text-s">
+          <EmployeeNameById id={driverId} /> je obavio stanicu na adresi <strong>{address}</strong> za{' '}
+          {shipments.length === 1 ? 'nalog' : 'naloge'}{' '}
+          {shipments.map((s, i) => (
+            <Fragment key={s.shipmentId}>
+              {i > 0 && (i === shipments.length - 1 ? ' i ' : ', ')}
+              <Link
+                className="font-medium hover:underline text-teal-600 dark:text-teal-400"
+                href={`/dashboard/shipments/${s.shipmentId}`}
+              >
+                <Text variant="text-s-bold">{s.orderNumber}</Text>
+              </Link>
+            </Fragment>
+          ))}
+          .
         </Text>
       );
       break;

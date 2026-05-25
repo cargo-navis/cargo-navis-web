@@ -102,7 +102,7 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
             />
             <PostalCodeSelectField
               countryCode={countryCode}
-              iconLeft="MagnifyingGlassIcon"
+              iconLeft="IconSearch"
               isClearable
               isDisabled={!countryCode}
               label="Poštanski broj"

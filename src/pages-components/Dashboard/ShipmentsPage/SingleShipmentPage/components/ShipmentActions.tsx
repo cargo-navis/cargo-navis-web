@@ -1,18 +1,39 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
-import { useDeleteShipment } from '@/lib/hooks';
+import type { Shipment } from '@/lib/api';
+import { useClient, useContractors, useDeleteShipment } from '@/lib/hooks';
 import { getAuthTokens } from '@/lib/utils/session';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Button, FlexLayout, Icon, Menu } from '@/ui';
+import { Box, Button, FlexLayout, Icon, Menu } from '@/ui';
 import { MenuComponent } from '@/ui/components/Menu/types';
 
-export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
+const toSnakeCase = (input: string) =>
+  input
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+
+const buildPdfFilename = (orderNumber: string, name?: string, fallbackId?: string) => {
+  const slug = name ? toSnakeCase(name) : '';
+  if (!slug) return `shipment-${fallbackId}.pdf`;
+  return `${orderNumber}-${slug}-nalog.pdf`;
+};
+
+export const ShipmentActions: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
+  const { id } = shipment;
   const { back, push } = useRouter();
   const { mutateAsync: deleteShipment, isPending: isDeleting } = useDeleteShipment(id);
+  const { data: client } = useClient(shipment.clientId || '');
+  const { data: contractors = [] } = useContractors();
 
   const [isDownloadingPdf, setIsDownloadingPdf] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isPdfMenuOpen, setIsPdfMenuOpen] = useState(false);
+
+  const isAgency = (shipment.children?.length ?? 0) > 0;
 
   async function handleDelete() {
     const answer = confirm('Jeste li sigurni da želite izbrisati ovaj nalog?');
@@ -31,11 +52,7 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
     void push(`/dashboard/shipments/new?copyFromId=${id}`);
   }
 
-  function handleCopyToSubshipment() {
-    void push(`/dashboard/shipments/new?copyFromId=${id}&parentShipmentId=${id}`);
-  }
-
-  async function handleDownloadPdf() {
+  async function handleDownloadPdf(shipmentId: string, orderNumber: string, recipientName?: string) {
     setIsDownloadingPdf(true);
     try {
       const { accessToken } = getAuthTokens();
@@ -44,8 +61,7 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
         throw new Error('Error with authentication');
       }
 
-      // Use fetch with authorization header
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/shipments/${id}/generate-pdf`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/shipments/${shipmentId}/generate-pdf`, {
         method: 'GET',
         headers: {
           Accept: 'application/pdf',
@@ -57,19 +73,16 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
 
-      // Get the blob directly from the fetch response
       const blob = await response.blob();
 
-      // Create a download link
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
-      a.download = `shipment-${id}.pdf`;
+      a.download = buildPdfFilename(orderNumber, recipientName, shipmentId);
       document.body.appendChild(a);
       a.click();
 
-      // Clean up
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
     } catch (error) {
@@ -80,33 +93,41 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
     }
   }
 
+  const pdfMenuItems: MenuComponent[] = isAgency
+    ? [
+        {
+          type: 'item' as const,
+          iconLeft: 'IconCloudDownload',
+          text: 'Nalog za klijenta',
+          helper: client?.name,
+          isDisabled: isDeleting || isDownloadingPdf,
+          onClick: () => handleDownloadPdf(id, shipment.orderNumber, client?.name),
+        },
+        ...(shipment.children ?? []).map((child) => {
+          const transporter = contractors.find((c) => c.id === child.transportContractorId);
+          return {
+            type: 'item' as const,
+            iconLeft: 'IconCloudDownload' as const,
+            text: 'Nalog za prijevoznika',
+            helper: transporter?.name,
+            isDisabled: isDeleting || isDownloadingPdf,
+            onClick: () => handleDownloadPdf(child.id, child.orderNumber, transporter?.name),
+          };
+        }),
+      ]
+    : [];
+
   const menuItems: MenuComponent[] = [
+    // {
+    //   type: 'item' as const,
+    //   iconLeft: 'IconEdit',
+    //   text: 'Uredi',
+    //   isDisabled: isDeleting,
+    //   href: `/dashboard/shipments/${id}/edit`,
+    // },
     {
       type: 'item' as const,
-      iconLeft: 'PlusIcon',
-      text: 'Dodaj podnalog',
-      href: `/dashboard/shipments/new?parentShipmentId=${id}`,
-    },
-    {
-      type: 'item' as const,
-      iconLeft: 'ClipboardDocumentIcon',
-      text: 'Kopiraj u podnalog',
-      isDisabled: isDeleting,
-      onClick: handleCopyToSubshipment,
-    },
-    {
-      type: 'divider' as const,
-    },
-    {
-      type: 'item' as const,
-      iconLeft: 'PencilIcon',
-      text: 'Uredi',
-      isDisabled: isDeleting,
-      href: `/dashboard/shipments/${id}/edit`,
-    },
-    {
-      type: 'item' as const,
-      iconLeft: 'TrashIcon',
+      iconLeft: 'IconTrash',
       text: 'Izbriši',
       isDisabled: isDeleting,
       onClick: handleDelete,
@@ -116,24 +137,47 @@ export const ShipmentActions: React.FC<{ id: string }> = ({ id }) => {
   return (
     <FlexLayout className="items-center gap-3">
       <Button
-        iconLeft="ClipboardDocumentIcon"
+        iconLeft="IconCopy"
         isDisabled={isDeleting}
         text="Kopiraj nalog"
         variant="secondary"
         onClick={handleCopyShipment}
       />
-      <Button
-        iconLeft="ArrowDownTrayIcon"
-        isDisabled={isDeleting}
-        isLoading={isDownloadingPdf}
-        text="Preuzmi PDF"
-        variant="secondary"
-        onClick={handleDownloadPdf}
-      />
+      {isAgency ? (
+        <Menu
+          control={
+            <Box>
+              <Button
+                iconLeft="IconCloudDownload"
+                iconRight="IconChevronDown"
+                isDisabled={isDeleting}
+                isLoading={isDownloadingPdf}
+                text="Preuzmi PDF"
+                variant="secondary"
+              />
+            </Box>
+          }
+          isOpen={isPdfMenuOpen}
+          items={pdfMenuItems}
+          minWidth="240px"
+          position="bottom-end"
+          onClose={() => setIsPdfMenuOpen(false)}
+          onOpen={() => setIsPdfMenuOpen(true)}
+        />
+      ) : (
+        <Button
+          iconLeft="IconCloudDownload"
+          isDisabled={isDeleting}
+          isLoading={isDownloadingPdf}
+          text="Preuzmi PDF"
+          variant="secondary"
+          onClick={() => handleDownloadPdf(id, shipment.orderNumber, client?.name)}
+        />
+      )}
       <Menu
         control={
           <FlexLayout className="items-center hover:bg-dark-200 dark:hover:bg-light-800 p-1 cursor-pointer rounded-s">
-            <Icon icon="EllipsisVerticalIcon" isDisabled={isDeleting} size="l" />
+            <Icon icon="IconDotsVertical" isDisabled={isDeleting} size="l" />
           </FlexLayout>
         }
         isOpen={isMenuOpen}

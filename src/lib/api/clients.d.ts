@@ -9,7 +9,7 @@ export interface Client {
 
 interface ClientAddress {
   streetName: string;
-  id: string;
+  postalCodeId: string;
   postalCode: string;
   placeName: string;
   countryCode: string;

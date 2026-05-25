@@ -1,4 +1,5 @@
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { useCurrentUser } from '@/lib/hooks';
 import { FlexLayout, Heading } from '@/ui';
@@ -22,6 +23,7 @@ export const SettingsPage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title="Postavke" />
       <FlexLayout className="flex-col gap-8">
         <FlexLayout className=" flex-col gap-[40px]">
           <Heading as="h1" variant="text-xl">

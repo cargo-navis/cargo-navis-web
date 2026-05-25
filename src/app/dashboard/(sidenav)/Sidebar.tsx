@@ -18,7 +18,7 @@ export function Sidebar() {
       </FlexLayout>
       <FlexLayout className="group cursor-pointer h-[48px] rounded-s p-3 text-sm font-medium hover:bg-light-50 hover:text-teal-900 md:flex-none md:p-2 md:px-3">
         <FlexLayout className="items-center justify-start gap-2 group-focus:translate-x-[4px] group-hover:translate-x-[4px] transition-transform">
-          <Icon icon="ArrowLeftStartOnRectangleIcon" size="l" />
+          <Icon icon="IconLogout2" size="l" />
           <Text>Sign Out</Text>
         </FlexLayout>
       </FlexLayout>

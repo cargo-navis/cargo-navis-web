@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import { type Vehicle } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useVehicle } from '@/lib/hooks';
@@ -18,7 +19,12 @@ export const SingleTruckPage = () => {
 
   const { data: truck } = useVehicle(truckId as string);
 
-  return <DashboardLayout>{!truck ? <LoadingPage /> : <MainContent truck={truck} />}</DashboardLayout>;
+  return (
+    <DashboardLayout>
+      <PageTitle title={truck?.registration} type="Kamion" />
+      {!truck ? <LoadingPage /> : <MainContent truck={truck} />}
+    </DashboardLayout>
+  );
 };
 
 const MainContent: React.FC<{ truck: Vehicle }> = ({ truck }) => {
@@ -31,7 +37,7 @@ const MainContent: React.FC<{ truck: Vehicle }> = ({ truck }) => {
         <FlexLayout className="items-center gap-6">
           <Box className="py-3 pl-3">
             <FlexLayout className="items-center justify-center w-[80px] h-[80px] rounded-circle bg-teal-900">
-              <Icon color="text-white" icon="TruckIcon" size="xl" />
+              <Icon color="text-white" icon="IconTruck" size="xl" />
             </FlexLayout>
           </Box>
           <FlexLayout className="flex-col">

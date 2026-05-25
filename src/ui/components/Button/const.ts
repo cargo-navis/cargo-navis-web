@@ -33,7 +33,7 @@ export const variantStyles = {
     normal:
       'bg-white dark:bg-transparent text-dark-800 dark:text-light-50 border border-dark-200 dark:border-light-800 leading-[22px]',
     hover:
-      'hover:bg-black-alpha-05 hover:dark:white-alpha-05 hover:text-dark-800 hover:dark:text-light-50 hover:border-dark-300 hover:dark:border-light-700',
+      'hover:bg-dark-100 dark:hover:bg-light-850 hover:text-dark-800 dark:hover:text-light-50 hover:border-dark-300 dark:hover:border-light-700',
     focus:
       'focus:bg-white focus:dark:bg-black-alpha-05 focus:shadow-[0_0_0_4px] focus:shadow-dark-50 focus:dark:shadow-white-alpha-10',
     active:
@@ -42,6 +42,14 @@ export const variantStyles = {
       'disabled:bg-white disabled:dark:bg-transparent disabled:text-dark-800 disabled:dark:text-light-800 disabled:border-dark-200 disabled:dark:border-light-800 disabled:opacity-40 disabled:dark:opacity-50',
     disabledAnchor:
       'bg-white dark:bg-transparent text-dark-800 dark:text-light-800 border-dark-200 dark:border-light-800 opacity-40 dark:opacity-50',
+  },
+  danger: {
+    normal: 'bg-red-500 dark:bg-red-600 text-white dark:text-dark-75',
+    hover: 'hover:enabled:bg-red-600 hover:enabled:dark:bg-red-500',
+    focus: 'focus:shadow-[0_0_0_4px] focus:shadow-red-500 focus:dark:shadow-red-700',
+    active: 'active:enabled:bg-red-700 active:enabled:dark:bg-red-500',
+    disabled: 'disabled:opacity-25',
+    disabledAnchor: 'opacity-25',
   },
 };
 

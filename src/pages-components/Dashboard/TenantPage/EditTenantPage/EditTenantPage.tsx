@@ -1,5 +1,6 @@
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { useCurrentTenant } from '@/lib/hooks';
@@ -23,6 +24,7 @@ export const EditTenantPage = () => {
 
   return (
     <DashboardLayout>
+      <PageTitle title="Uredi tvrtku" />
       <MainContent tenant={tenant} />
     </DashboardLayout>
   );

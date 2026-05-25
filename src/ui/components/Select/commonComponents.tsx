@@ -15,7 +15,7 @@ import {
   type SelectComponentsConfig,
 } from 'react-select';
 
-import { Box, DisplayIf, Icon, type IconType, type SelectOption, Text } from '@/ui';
+import { Box, DisplayIf, Icon, type SelectOption, Text } from '@/ui';
 
 const Control = (props: ControlProps<SelectOption, boolean, any>) => {
   const { iconLeft, isDisabled } = props.selectProps as any;
@@ -30,9 +30,9 @@ const Control = (props: ControlProps<SelectOption, boolean, any>) => {
         )}
         isDisabled={isDisabled}
       >
-        <DisplayIf condition={!!iconLeft}>
-          <Icon className="mt-[2px] self-start" color="text-dark-600 dark:text-light-300" icon={iconLeft as IconType} />
-        </DisplayIf>
+        {!!iconLeft && (
+          <Icon className="mt-[2px] self-start" color="text-dark-600 dark:text-light-300" icon={iconLeft} />
+        )}
         {props.children}
       </Box>
     </components.Control>
@@ -49,7 +49,7 @@ const DropdownIndicator = (props: DropdownIndicatorProps<SelectOption, boolean, 
   return (
     <Box className="mt-[2px] self-center">
       <components.DropdownIndicator {...props}>
-        <Icon icon={props.selectProps.menuIsOpen ? 'ChevronUpIcon' : 'ChevronDownIcon'} size="m" type="outline" />
+        <Icon icon={props.selectProps.menuIsOpen ? 'IconChevronUp' : 'IconChevronDown'} size="m" type="outline" />
       </components.DropdownIndicator>
     </Box>
   );
@@ -59,7 +59,7 @@ const ClearIndicator = (props: ClearIndicatorProps<SelectOption, boolean, any>) 
   return (
     <Box className="mt-[2px] self-center">
       <components.ClearIndicator {...props}>
-        <Icon icon="XMarkIcon" />
+        <Icon icon="IconX" />
       </components.ClearIndicator>
     </Box>
   );
@@ -104,9 +104,7 @@ const Option = (props: OptionProps<SelectOption & { __isNew__?: boolean }, boole
             </DisplayIf>
           </Box>
         </Box>
-        <DisplayIf condition={!!iconRight}>
-          <Icon icon={iconRight as IconType} size="s" />
-        </DisplayIf>
+        {!!iconRight && <Icon icon={iconRight} size="s" />}
       </Box>
     </components.Option>
   );

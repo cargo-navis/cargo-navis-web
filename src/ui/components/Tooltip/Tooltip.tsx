@@ -4,6 +4,7 @@ import {
   flip,
   FloatingPortal,
   offset as offsetPlugin,
+  safePolygon,
   shift,
   useFloating,
   useFocus,
@@ -28,9 +29,16 @@ export interface TooltipProps {
   content: React.ReactElement;
   offset?: number;
   isPortal?: boolean;
+  interactive?: boolean;
 }
 
-export const Tooltip: React.FC<TooltipProps> = ({ children, content, offset = 10, isPortal = false }) => {
+export const Tooltip: React.FC<TooltipProps> = ({
+  children,
+  content,
+  offset = 10,
+  isPortal = false,
+  interactive = false,
+}) => {
   const arrowRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -51,7 +59,7 @@ export const Tooltip: React.FC<TooltipProps> = ({ children, content, offset = 10
   });
 
   const { getReferenceProps, getFloatingProps } = useInteractions([
-    useHover(context, {}),
+    useHover(context, interactive ? { handleClose: safePolygon() } : {}),
     useFocus(context, {}),
     useRole(context, { role: 'tooltip' }),
   ]);

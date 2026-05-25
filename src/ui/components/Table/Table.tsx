@@ -18,9 +18,17 @@ interface TableProps {
   onRowClick?: (row: any) => void;
   getSubRows?: (row: any) => any[];
   areRowsExpanded?: boolean;
+  getRowClassName?: (row: any) => string | undefined;
 }
 
-export const Table: React.FC<TableProps> = ({ data, columns, onRowClick, getSubRows, areRowsExpanded }) => {
+export const Table: React.FC<TableProps> = ({
+  data,
+  columns,
+  onRowClick,
+  getSubRows,
+  areRowsExpanded,
+  getRowClassName,
+}) => {
   const [sorting, setSorting] = useState([]);
 
   const table = useReactTable({
@@ -36,29 +44,33 @@ export const Table: React.FC<TableProps> = ({ data, columns, onRowClick, getSubR
   });
 
   return (
-    <Box as="table" className="border-collapse w-full">
+    <Box as="table" className="border-collapse w-full table-fixed">
       <Box as="thead" className="bg-dark-200 dark:bg-light-900 sticky top-[-0px] z-10">
         {table.getHeaderGroups().map((headerGroup) => (
           <Box as="tr" key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th
-                className={clsx(
-                  'text-start py-[20px]',
-                  header.column.getCanSort() && 'cursor-pointer select-none hover:text-teal-500'
-                )}
-                key={header.id}
-                style={{ width: `${header.getSize()}px` }}
-                onClick={header.column.getToggleSortingHandler()}
-              >
-                <FlexLayout className="items-center gap-1">
-                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
-                  {{
-                    asc: ' ↑',
-                    desc: ' ↓',
-                  }[header.column.getIsSorted() as string] ?? null}
-                </FlexLayout>
-              </th>
-            ))}
+            {headerGroup.headers.map((header) => {
+              const meta = header.column.columnDef.meta as { fill?: boolean; width?: string } | undefined;
+              const width = meta?.width ?? (meta?.fill ? 'auto' : `${header.getSize()}px`);
+              return (
+                <th
+                  className={clsx(
+                    'text-start py-[20px]',
+                    header.column.getCanSort() && 'cursor-pointer select-none hover:text-teal-500'
+                  )}
+                  key={header.id}
+                  style={{ width }}
+                  onClick={header.column.getToggleSortingHandler()}
+                >
+                  <FlexLayout className="items-center gap-1">
+                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                    {{
+                      asc: ' ↑',
+                      desc: ' ↓',
+                    }[header.column.getIsSorted() as string] ?? null}
+                  </FlexLayout>
+                </th>
+              );
+            })}
           </Box>
         ))}
       </Box>
@@ -67,7 +79,6 @@ export const Table: React.FC<TableProps> = ({ data, columns, onRowClick, getSubR
           const isSubRow = row.depth > 0;
           const isLast = !table.getRowModel().rows[index + 1] || table.getRowModel().rows[index + 1].depth < row.depth;
 
-          // Check if this row has a warning flag
           const hasWarning = !isSubRow && row.original && row.original.isWarning === true;
           const isSuccess = row.original && row.original.isSuccess === true;
 
@@ -82,7 +93,8 @@ export const Table: React.FC<TableProps> = ({ data, columns, onRowClick, getSubR
                   : 'hover:bg-black-alpha-05 dark:hover:bg-white-alpha-10',
                 isSubRow && 'relative',
                 hasWarning && 'bg-red-50/80 dark:bg-red-800/50 hover:bg-red-100/50 dark:hover:bg-red-800/80',
-                isSuccess && 'bg-green-100/80 dark:bg-green-800/50 hover:bg-green-100/50 dark:hover:bg-green-800/80'
+                isSuccess && 'bg-green-100/80 dark:bg-green-800/50 hover:bg-green-100/50 dark:hover:bg-green-800/80',
+                getRowClassName?.(row)
               )}
               key={row.id}
               onClick={() => onRowClick?.(row.original)}

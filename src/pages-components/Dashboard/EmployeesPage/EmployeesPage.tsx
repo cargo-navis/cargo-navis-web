@@ -2,6 +2,7 @@ import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { PageTitle } from '@/components/PageTitle';
 import type { Employee } from '@/lib/api';
 import { EmptyTableState } from '@/lib/components/EmptyTableState';
 import { LoadingPage } from '@/lib/components/LoadingPage';
@@ -16,9 +17,14 @@ const FUSE_OPTIONS: ConstructorParameters<typeof Fuse<Employee>>[1] = {
 };
 
 export const EmployeesPage = () => {
-  const { data, isLoading } = useEmployees();
+  const { data, isLoading } = useEmployees({ includeDeleted: true });
 
-  return <DashboardLayout>{isLoading ? <LoadingPage /> : <MainContent employees={data || []} />}</DashboardLayout>;
+  return (
+    <DashboardLayout>
+      <PageTitle title="Zaposlenici" />
+      {isLoading ? <LoadingPage /> : <MainContent employees={data || []} />}
+    </DashboardLayout>
+  );
 };
 
 const MainContent = ({ employees }: { employees: Employee[] }) => {
@@ -42,7 +48,7 @@ const MainContent = ({ employees }: { employees: Employee[] }) => {
           Zaposlenici
         </Heading>
         <DisplayIf condition={!isEmpty}>
-          <Button href="/dashboard/employees/new" iconLeft="PlusIcon" text="Dodaj Zaposlenika" />
+          <Button href="/dashboard/employees/new" iconLeft="IconPlus" text="Dodaj Zaposlenika" />
         </DisplayIf>
       </FlexLayout>
       <Box className="py-5">
@@ -58,8 +64,8 @@ const MainContent = ({ employees }: { employees: Employee[] }) => {
             <Box className="max-w-xs mb-4">
               <TextInput
                 autoFocus
-                iconLeft="MagnifyingGlassIcon"
-                iconRight={search ? 'XMarkIcon' : undefined}
+                iconLeft="IconSearch"
+                iconRight={search ? 'IconX' : undefined}
                 placeholder="Pretraži zaposlenike..."
                 value={search}
                 onChange={setSearch}

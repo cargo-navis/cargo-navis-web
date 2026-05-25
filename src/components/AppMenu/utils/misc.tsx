@@ -27,7 +27,7 @@ export function EmployeeNameById({ id }: { id: string }) {
 export function EmployeeName({ employee }: { employee: Employee }) {
   return (
     <FlexLayout className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 align-bottom">
-      <Icon icon="UserIcon" />
+      <Icon icon="IconUser" />
       <Text variant="text-s-bold">
         {employee.firstName} {employee.lastName}
       </Text>
@@ -38,7 +38,7 @@ export function EmployeeName({ employee }: { employee: Employee }) {
 export function VehicleRegistration({ vehicle }: { vehicle: Vehicle }) {
   return (
     <FlexLayout className="inline-flex items-center gap-1 text-teal-600 dark:text-teal-400 align-bottom">
-      <Icon icon="TruckIcon" />
+      <Icon icon="IconTruck" />
       <Text variant="text-s-bold">{vehicle.registration}</Text>
     </FlexLayout>
   );
@@ -78,7 +78,7 @@ const SeeMoreItem = forwardRef((props, ref) => (
       <Text color="text-color-2" variant="text-s">
         Vidi više
       </Text>
-      <Icon icon="ArrowRightIcon" />
+      <Icon icon="IconArrowRight" />
     </FlexLayout>
   </Link>
 ));

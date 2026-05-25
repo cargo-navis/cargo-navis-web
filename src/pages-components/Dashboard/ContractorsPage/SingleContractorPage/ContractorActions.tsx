@@ -25,12 +25,12 @@ export const ContractorActions: React.FC<{ id: string; name: string }> = ({ id, 
     <FlexLayout className="gap-3">
       <Button
         href={`/dashboard/contractors/${id}/edit`}
-        iconLeft="PencilIcon"
+        iconLeft="IconEdit"
         isDisabled={isPending}
         text="Uredi"
         variant="secondary"
       />
-      <Button iconLeft="TrashIcon" isLoading={isPending} text="Izbriši" onClick={handleDelete} />
+      <Button iconLeft="IconTrash" isLoading={isPending} text="Izbriši" onClick={handleDelete} />
     </FlexLayout>
   );
 };

@@ -9,7 +9,6 @@ import {
   GetShipmentParams,
   getShipments,
   PaginatedResponse,
-  sendShipmentToDriver,
   Shipment,
   updateShipment,
   uploadShipmentFile,
@@ -67,35 +66,6 @@ export function useShipmentsData(args?: Omit<UseShipmentsArgs<Shipment[]>, 'sele
   });
 }
 
-/**
- * Possibly deprecate
- *
- * Convenience hook to get pagination metadata
- * @param args - Arguments for the useShipments hook
- * @returns Pagination metadata
- */
-export function useShipmentsPagination(
-  args?: Omit<
-    UseShipmentsArgs<{
-      currentPage: number;
-      pageSize: number;
-      totalElements: number;
-      totalPages: number;
-    }>,
-    'select'
-  > & { params?: GetShipmentParams }
-) {
-  return useShipments({
-    ...args,
-    select: (data: PaginatedResponse<Shipment>) => ({
-      currentPage: data.currentPage,
-      pageSize: data.pageSize,
-      totalElements: data.totalElements,
-      totalPages: data.totalPages,
-    }),
-  });
-}
-
 export function useShipment(id?: string) {
   return useQuery({
     queryKey: ['shipment', id],
@@ -111,12 +81,30 @@ export function useGetShipmentDocumentUrl(shipmentId?: string) {
   });
 }
 
+function getShipmentsListPage(key: readonly unknown[]): number {
+  for (const part of key) {
+    if (part && typeof part === 'object' && 'pagination' in part) {
+      return (part as { pagination?: { page?: number } }).pagination?.page ?? 1;
+    }
+  }
+  return 1;
+}
+
 export function useCreateShipment() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createShipment,
     onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: ['shipments'], type: 'all' });
+      // The new shipment lands on page 1; any cached later page is now
+      // shifted by one row, so drop them rather than serve stale order.
+      queryClient.removeQueries({
+        queryKey: ['shipments'],
+        predicate: (q) => getShipmentsListPage(q.queryKey) > 1,
+      });
+      return queryClient.invalidateQueries({
+        queryKey: ['shipments'],
+        predicate: (q) => getShipmentsListPage(q.queryKey) === 1,
+      });
     },
   });
 }
@@ -139,9 +127,24 @@ export function useUpdateShipment() {
 
       return { prevShipment };
     },
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['shipment', variables.id] });
-      queryClient.invalidateQueries({ queryKey: ['shipments'] });
+    onSuccess: (updated, variables) => {
+      // The update response doesn't include vehicleStops, so we preserve
+      // them from whatever we already had cached.
+      queryClient.setQueryData<Shipment>(['shipment', variables.id], (prev) => ({
+        ...prev,
+        ...updated,
+        vehicleStops: prev?.vehicleStops ?? updated.vehicleStops,
+      }));
+
+      queryClient.setQueriesData<PaginatedResponse<Shipment>>({ queryKey: ['shipments'] }, (data) => {
+        if (!data?.data?.some((s) => s.id === variables.id)) return data;
+        return {
+          ...data,
+          data: data.data.map((s) =>
+            s.id === variables.id ? { ...s, ...updated, vehicleStops: s.vehicleStops ?? updated.vehicleStops } : s
+          ),
+        };
+      });
     },
     onError: (_, data, context) => {
       if (!context) return;
@@ -158,8 +161,14 @@ export function useDeleteShipment(id: string) {
   return useMutation({
     mutationFn: () => deleteShipment(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['shipments'] });
-      queryClient.invalidateQueries({ queryKey: ['shipment', id] });
+      queryClient.removeQueries({ queryKey: ['shipment', id] });
+
+      queryClient.setQueriesData<PaginatedResponse<Shipment>>({ queryKey: ['shipments'] }, (data) => {
+        if (!data) return data;
+        const filtered = data.data.filter((s) => s.id !== id);
+        if (filtered.length === data.data.length) return data;
+        return { ...data, data: filtered, totalElements: Math.max(0, data.totalElements - 1) };
+      });
     },
   });
 }
@@ -168,8 +177,8 @@ export function useSendShipmentToDriver(id: string) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (data: { driverId: string; sentToDriver: boolean }) =>
-      sendShipmentToDriver(id, data.driverId, data.sentToDriver),
+    mutationFn: (data: { driverId: string; sentToDriver: boolean }) => Promise.resolve(data),
+    // sendShipmentToDriver(id, data.driverId, data.sentToDriver),
     onSuccess: async () => {
       queryClient.invalidateQueries({ queryKey: ['shipments'] });
       await queryClient.invalidateQueries({ queryKey: ['shipment', id] });

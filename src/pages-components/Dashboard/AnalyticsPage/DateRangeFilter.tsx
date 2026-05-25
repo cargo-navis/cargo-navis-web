@@ -144,7 +144,7 @@ export const DateRangeFilter = ({ value, onChange }: DateRangeFilterProps) => {
           </Text>
           <Icon
             className="text-dark-500 dark:text-light-100"
-            icon={isOpen ? 'ChevronUpIcon' : 'ChevronDownIcon'}
+            icon={isOpen ? 'IconChevronUp' : 'IconChevronDown'}
             size="m"
             type="outline"
           />

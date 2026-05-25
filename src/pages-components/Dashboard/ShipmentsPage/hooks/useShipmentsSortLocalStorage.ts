@@ -4,8 +4,8 @@ import { useCallback, useMemo } from 'react';
 import { useShipmentsFiltersLocalStorage } from './useShipmentsFiltersLocalStorage';
 
 export enum SortFieldEnum {
-  LoadingDate = 'loadingDate',
-  UnloadingDate = 'unloadingDate',
+  LoadingReadyDate = 'loadingReadyDate',
+  UnloadingDueDate = 'unloadingDueDate',
   Price = 'price',
 }
 

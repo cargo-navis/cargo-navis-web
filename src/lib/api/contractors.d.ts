@@ -9,10 +9,10 @@ export interface Contractor {
 
 interface ContractorAddress {
   streetName: string;
-  id: string;
+  postalCodeId: string;
   postalCode: string;
-  countryCode: string;
   placeName: string;
+  countryCode: string;
 }
 
 export type CreateContractorParams = {
