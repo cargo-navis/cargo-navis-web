@@ -118,13 +118,13 @@ export const ShipmentActions: React.FC<{ shipment: Shipment }> = ({ shipment }) 
     : [];
 
   const menuItems: MenuComponent[] = [
-    // {
-    //   type: 'item' as const,
-    //   iconLeft: 'IconEdit',
-    //   text: 'Uredi',
-    //   isDisabled: isDeleting,
-    //   href: `/dashboard/shipments/${id}/edit`,
-    // },
+    {
+      type: 'item' as const,
+      iconLeft: 'IconEdit',
+      text: 'Uredi',
+      isDisabled: isDeleting,
+      href: `/dashboard/shipments/${id}/edit`,
+    },
     {
       type: 'item' as const,
       iconLeft: 'IconTrash',
