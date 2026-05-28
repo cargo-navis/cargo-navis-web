@@ -1,15 +1,13 @@
+import Flag from 'react-flagpack';
+
 import { LoadingAddress } from '@/lib/api/shipments.d';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Box, FlexLayout, Pill, Text, Tooltip } from '@/ui';
 
-function countryCodeToFlag(code: string | null | undefined) {
-  if (!code || code.length !== 2) return code ?? '';
-  const REGIONAL_INDICATOR_A = 0x1f1e6;
-  const codePoints = Array.from(code.toUpperCase()).map(
-    (c) => REGIONAL_INDICATOR_A + (c.charCodeAt(0) - 'A'.charCodeAt(0))
-  );
-  return String.fromCodePoint(...codePoints);
+function normalizeFlagCode(code: string | null | undefined): string | null {
+  if (!code || code.length !== 2) return null;
+  return code.toUpperCase();
 }
 
 interface AddressItemProps {
@@ -29,7 +27,9 @@ export const AddressItem = ({ address, completedAt, showCompletionStatus = false
 
   const isCompleted = !!completedAt;
   const textColor = isCompleted ? 'text-green-500 dark:text-green-400' : 'text-color-2';
-  const prefix = [countryCodeToFlag(address.countryCode), address.postalCode].filter(Boolean).join(' ');
+
+  const flagCode = normalizeFlagCode(address.countryCode);
+  const titlePrefix = [address.countryCode, address.postalCode].filter(Boolean).join(' ');
 
   const verb = type === 'unloading' ? 'istovaren' : 'utovaren';
   const completionText = isCompleted
@@ -56,17 +56,19 @@ export const AddressItem = ({ address, completedAt, showCompletionStatus = false
       }
     >
       <Box className="min-w-0 max-w-full overflow-hidden">
-        <Text className="block truncate" title={`${prefix} ${address.placeName ?? ''}`}>
-          <Text as="span" color={textColor} variant="text-s">
-            {countryCodeToFlag(address.countryCode)}
-          </Text>{' '}
+        <FlexLayout className="items-center gap-1 truncate" title={`${titlePrefix} ${address.placeName ?? ''}`.trim()}>
+          {flagCode && (
+            <Box className="shrink-0 leading-none">
+              <Flag code={flagCode as never} hasBorder={false} size="m" />
+            </Box>
+          )}
           <Text as="span" color={textColor} variant="text-xs-medium">
             {address.postalCode}
-          </Text>{' '}
-          <Text as="span" color={textColor} variant="text-xs">
+          </Text>
+          <Text as="span" className="truncate" color={textColor} variant="text-xs">
             {address.placeName}
           </Text>
-        </Text>
+        </FlexLayout>
       </Box>
     </Tooltip>
   );

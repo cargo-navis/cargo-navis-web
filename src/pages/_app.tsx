@@ -1,4 +1,5 @@
 import '@mantine/core/styles.css';
+import 'react-flagpack/dist/style.css';
 import '../styles/globals.css';
 
 import { HeroUIProvider, ToastProvider } from '@heroui/react';
