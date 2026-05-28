@@ -201,9 +201,21 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
 
           const loadingCompletion = new Map<string, string | undefined>();
           const unloadingCompletion = new Map<string, string | undefined>();
+
+          const loadingStopDateByPostal = new Map<string, string | undefined>();
+          const unloadingStopDateByPostal = new Map<string, string | undefined>();
+
           vehicleStops?.forEach((stop) => {
+            const stopDate = stop.date ?? undefined;
+            const postalCodeId = stop.address?.postalCodeId;
+
             stop.loadingCargos?.forEach((c) => loadingCompletion.set(c.id, stop.completedAt));
             stop.unloadingCargos?.forEach((c) => unloadingCompletion.set(c.id, stop.completedAt));
+
+            if (postalCodeId) {
+              if ((stop.loadingCargos?.length ?? 0) > 0) loadingStopDateByPostal.set(postalCodeId, stopDate);
+              if ((stop.unloadingCargos?.length ?? 0) > 0) unloadingStopDateByPostal.set(postalCodeId, stopDate);
+            }
           });
 
           const uniquePairs = new Map<string, (typeof cargo)[number]>();
@@ -236,9 +248,11 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                       completedAt={loadingCompletion.get(groupCargos[0].id)}
                       showCompletionStatus
                     />
-                    {groupCargos[0].loadingReadyDate && (
+                    {loadingStopDateByPostal.get(groupCargos[0].loadingAddress?.postalCodeId ?? '') && (
                       <Text color="text-color-4" variant="text-xxs">
-                        {getDataPointDateString(groupCargos[0].loadingReadyDate)}
+                        {getDataPointDateString(
+                          loadingStopDateByPostal.get(groupCargos[0].loadingAddress?.postalCodeId ?? '')!
+                        )}
                       </Text>
                     )}
                   </Box>
@@ -253,9 +267,11 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                           completedAt={unloadingCompletion.get(c.id)}
                           showCompletionStatus
                         />
-                        {c.unloadingDueDate && (
+                        {unloadingStopDateByPostal.get(c.unloadingAddress?.postalCodeId ?? '') && (
                           <Text color="text-color-4" variant="text-xxs">
-                            {getDataPointDateString(c.unloadingDueDate)}
+                            {getDataPointDateString(
+                              unloadingStopDateByPostal.get(c.unloadingAddress?.postalCodeId ?? '')!
+                            )}
                           </Text>
                         )}
                       </Box>
