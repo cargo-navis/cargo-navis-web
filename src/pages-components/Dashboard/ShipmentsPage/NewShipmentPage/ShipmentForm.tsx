@@ -56,6 +56,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
   const { mutateAsync: updateShipment } = useUpdateShipment();
 
   const [assignVehicleFor, setAssignVehicleFor] = useState<{
+    id: string;
     orderNumber: string;
     clientId?: string | null;
     cargos: Cargo[];
@@ -119,6 +120,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
           return;
         }
         setAssignVehicleFor({
+          id: newShipment.id,
           orderNumber: newShipment.orderNumber,
           clientId: newShipment.clientId,
           cargos: newShipment.cargo,
@@ -150,6 +152,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
           cargos={assignVehicleFor.cargos}
           clientId={assignVehicleFor.clientId}
           isOpen={!!assignVehicleFor}
+          shipmentId={assignVehicleFor.id}
           shipmentOrderNumber={assignVehicleFor.orderNumber}
           onAssigned={handleVehicleAssigned}
           onClose={handleAssignDismiss}

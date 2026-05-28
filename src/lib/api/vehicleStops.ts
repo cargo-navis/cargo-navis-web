@@ -49,6 +49,10 @@ export async function createVehicleStops(data: CreateVehicleStopParams[]) {
   return backend.post<VehicleStop[]>('/api/vehicle-stops', data);
 }
 
+export async function assignShipmentToVehicle(data: { shipmentId: string; vehicleId: string }) {
+  return backend.post<VehicleStop[]>('/api/vehicle-stops/assign-shipment', data);
+}
+
 export async function updateVehicleStop(id: string, data: UpdateVehicleStopParams) {
   return backend.patch<VehicleStop>(`/api/vehicle-stops/${id}`, data);
 }

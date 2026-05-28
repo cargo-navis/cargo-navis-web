@@ -16,8 +16,8 @@ import {
   TimelineTitle,
 } from '@/components/reui/timeline';
 import type { Cargo, LoadingAddress, Vehicle } from '@/lib/api';
-import type { CreateVehicleStopParams, VehicleStop } from '@/lib/api/vehicleStops';
-import { useCreateVehicleStops, useEmployees, useVehicles, useVehicleStopsByVehicle } from '@/lib/hooks';
+import type { VehicleStop } from '@/lib/api/vehicleStops';
+import { useAssignShipmentToVehicle, useEmployees, useVehicles, useVehicleStopsByVehicle } from '@/lib/hooks';
 import { getCargoLabel, getCargoLabelParts } from '@/lib/utils/cargo';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
@@ -42,6 +42,7 @@ import { RemainingStopsBadge, StopTimelineEntry } from '../../VehicleStopsPage/S
 
 interface AssignVehicleModalProps {
   isOpen: boolean;
+  shipmentId: string;
   shipmentOrderNumber: string;
   clientId?: string | null;
   cargos: Cargo[];
@@ -91,6 +92,7 @@ function buildCargoGroups(stop: PreviewStop, cargoById: Map<string, Cargo>): { l
 
 export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
   isOpen,
+  shipmentId,
   shipmentOrderNumber,
   clientId,
   cargos,
@@ -100,7 +102,7 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
   const { data: vehicleGroups, isLoading: isGroupsLoading } = useVehicleStopsByVehicle(5, { enabled: isOpen });
   const { data: vehicles, isLoading: isVehiclesLoading } = useVehicles({ enabled: isOpen });
   const { data: employees } = useEmployees({ enabled: isOpen });
-  const { mutateAsync: createStops, isPending } = useCreateVehicleStops();
+  const { mutateAsync: assignShipment, isPending } = useAssignShipmentToVehicle();
 
   const previewStops = useMemo(() => buildPreviewStops(cargos), [cargos]);
   const cargoById = useMemo(() => new Map(cargos.map((c) => [c.id, c])), [cargos]);
@@ -166,23 +168,9 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
 
   async function handleConfirm() {
     if (!selectedVehicleId || !allDatesPicked) return;
-    const selectedRow = rows.find((r) => r.vehicle.id === selectedVehicleId);
-    const driverId = selectedRow?.latestStop?.driverId ?? null;
-    const disponentId = selectedRow?.latestStop?.disponentId ?? null;
-    const trailerId = selectedRow?.latestStop?.trailerId ?? null;
-    const payloads: CreateVehicleStopParams[] = previewStops.map((p) => ({
-      vehicleId: selectedVehicleId,
-      driverId,
-      disponentId,
-      trailerId,
-      date: datesByKey[p.key],
-      address: { streetName: p.streetName, postalCodeId: p.postalCodeId },
-      loadingCargoIds: p.loadingCargoIds,
-      unloadingCargoIds: p.unloadingCargoIds,
-    }));
 
     try {
-      await createStops(payloads);
+      await assignShipment({ shipmentId, vehicleId: selectedVehicleId });
       showSuccessToast({ title: `Nalog "${shipmentOrderNumber}" dodijeljen vozilu` });
       setIsNavigating(true);
       onAssigned(selectedVehicleId);
