@@ -199,22 +199,26 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (props) => {
           const { cargo, vehicleStops } = props.row.original;
 
-          const loadingCompletion = new Map<string, string | undefined>();
-          const unloadingCompletion = new Map<string, string | undefined>();
+          type Stop = NonNullable<typeof vehicleStops>[number];
+          const loadingStopByPostal = new Map<string, Stop>();
+          const unloadingStopByPostal = new Map<string, Stop>();
 
-          const loadingStopDateByPostal = new Map<string, string | undefined>();
-          const unloadingStopDateByPostal = new Map<string, string | undefined>();
+          const isLater = (candidate: Stop, existing?: Stop) => {
+            if (!existing) return true;
+            if (!candidate.date) return false;
+            if (!existing.date) return true;
+            return candidate.date > existing.date;
+          };
 
           vehicleStops?.forEach((stop) => {
-            const stopDate = stop.date ?? undefined;
             const postalCodeId = stop.address?.postalCodeId;
+            if (!postalCodeId) return;
 
-            stop.loadingCargos?.forEach((c) => loadingCompletion.set(c.id, stop.completedAt));
-            stop.unloadingCargos?.forEach((c) => unloadingCompletion.set(c.id, stop.completedAt));
-
-            if (postalCodeId) {
-              if ((stop.loadingCargos?.length ?? 0) > 0) loadingStopDateByPostal.set(postalCodeId, stopDate);
-              if ((stop.unloadingCargos?.length ?? 0) > 0) unloadingStopDateByPostal.set(postalCodeId, stopDate);
+            if ((stop.loadingCargos?.length ?? 0) > 0 && isLater(stop, loadingStopByPostal.get(postalCodeId))) {
+              loadingStopByPostal.set(postalCodeId, stop);
+            }
+            if ((stop.unloadingCargos?.length ?? 0) > 0 && isLater(stop, unloadingStopByPostal.get(postalCodeId))) {
+              unloadingStopByPostal.set(postalCodeId, stop);
             }
           });
 
@@ -243,18 +247,24 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                     className="self-center flex flex-col min-w-0"
                     style={{ gridColumn: 1, gridRow: `1 / span ${groupCargos.length}` }}
                   >
-                    <AddressItem
-                      address={groupCargos[0].loadingAddress}
-                      completedAt={loadingCompletion.get(groupCargos[0].id)}
-                      showCompletionStatus
-                    />
-                    {loadingStopDateByPostal.get(groupCargos[0].loadingAddress?.postalCodeId ?? '') && (
-                      <Text color="text-color-4" variant="text-xxs">
-                        {getDataPointDateString(
-                          loadingStopDateByPostal.get(groupCargos[0].loadingAddress?.postalCodeId ?? '')!
-                        )}
-                      </Text>
-                    )}
+                    {(() => {
+                      const loadingStop = loadingStopByPostal.get(groupCargos[0].loadingAddress?.postalCodeId ?? '');
+                      return (
+                        <>
+                          <AddressItem
+                            address={groupCargos[0].loadingAddress}
+                            completedAt={loadingStop?.completedAt}
+                            showCompletionStatus
+                            type="loading"
+                          />
+                          {loadingStop?.date && (
+                            <Text color="text-color-4" variant="text-xxs">
+                              {getDataPointDateString(loadingStop.date)}
+                            </Text>
+                          )}
+                        </>
+                      );
+                    })()}
                   </Box>
                   {groupCargos.map((c, ci) => (
                     <Fragment key={ci}>
@@ -262,18 +272,24 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                         <Icon color="text-color-4" icon="IconArrowRight" size="s" />
                       </Box>
                       <Box className="flex flex-col self-center min-w-0" style={{ gridColumn: 3, gridRow: ci + 1 }}>
-                        <AddressItem
-                          address={c.unloadingAddress}
-                          completedAt={unloadingCompletion.get(c.id)}
-                          showCompletionStatus
-                        />
-                        {unloadingStopDateByPostal.get(c.unloadingAddress?.postalCodeId ?? '') && (
-                          <Text color="text-color-4" variant="text-xxs">
-                            {getDataPointDateString(
-                              unloadingStopDateByPostal.get(c.unloadingAddress?.postalCodeId ?? '')!
-                            )}
-                          </Text>
-                        )}
+                        {(() => {
+                          const unloadingStop = unloadingStopByPostal.get(c.unloadingAddress?.postalCodeId ?? '');
+                          return (
+                            <>
+                              <AddressItem
+                                address={c.unloadingAddress}
+                                completedAt={unloadingStop?.completedAt}
+                                showCompletionStatus
+                                type="unloading"
+                              />
+                              {unloadingStop?.date && (
+                                <Text color="text-color-4" variant="text-xxs">
+                                  {getDataPointDateString(unloadingStop.date)}
+                                </Text>
+                              )}
+                            </>
+                          );
+                        })()}
                       </Box>
                     </Fragment>
                   ))}

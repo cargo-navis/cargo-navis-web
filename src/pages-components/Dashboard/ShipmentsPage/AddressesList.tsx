@@ -16,9 +16,10 @@ interface AddressItemProps {
   address: LoadingAddress | null | undefined;
   completedAt?: string | null;
   showCompletionStatus?: boolean;
+  type?: 'loading' | 'unloading';
 }
 
-export const AddressItem = ({ address, completedAt, showCompletionStatus = false }: AddressItemProps) => {
+export const AddressItem = ({ address, completedAt, showCompletionStatus = false, type }: AddressItemProps) => {
   if (!address)
     return (
       <Text color="text-color-2" variant="text-xs-medium">
@@ -30,7 +31,10 @@ export const AddressItem = ({ address, completedAt, showCompletionStatus = false
   const textColor = isCompleted ? 'text-green-500 dark:text-green-400' : 'text-color-2';
   const prefix = [countryCodeToFlag(address.countryCode), address.postalCode].filter(Boolean).join(' ');
 
-  const completionText = isCompleted ? `Odrađeno: ${getDataPointDateString(completedAt)}` : 'Nije odrađeno';
+  const verb = type === 'unloading' ? 'istovaren' : 'utovaren';
+  const completionText = isCompleted
+    ? `Teret ${verb}: ${getDataPointDateString(completedAt)}`
+    : `Teret još nije ${verb}`;
 
   return (
     <Tooltip
