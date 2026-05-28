@@ -14,14 +14,17 @@ export const ShipmentsTableLoader: React.FC = () => {
       <FlexLayout className="flex-col w-full min-w-0">
         <FlexLayout className="justify-between items-center">
           <FlexLayout className="flex-col gap-3">
-            <Skeleton borderRadius="m" height={44} width={200} />
-            <Skeleton borderRadius="m" height={24} width={240} />
+            <Skeleton borderRadius="m" height={44} width={340} /> {/* Sort selector */}
+            <Skeleton borderRadius="m" height={24} width={240} /> {/* Pagination info */}
           </FlexLayout>
-          <FlexLayout className="flex gap-2">
-            <Skeleton borderRadius="m" height={32} width={132} />
-            <Skeleton borderRadius="m" height={32} width={32} />
-            <Skeleton borderRadius="m" height={32} width={32} />
-            <Skeleton borderRadius="m" height={32} width={132} />
+          <FlexLayout className="flex-col gap-3 items-end">
+            <Skeleton borderRadius="m" height={44} width={200} /> {/* Page size selector */}
+            <FlexLayout className="flex gap-2">
+              <Skeleton borderRadius="m" height={32} width={132} />
+              <Skeleton borderRadius="m" height={32} width={32} />
+              <Skeleton borderRadius="m" height={32} width={32} />
+              <Skeleton borderRadius="m" height={32} width={132} />
+            </FlexLayout>
           </FlexLayout>
         </FlexLayout>
         {/* Table Header Skeleton */}

@@ -98,7 +98,7 @@ const Option = (props: OptionProps<SelectOption & { __isNew__?: boolean }, boole
               </Box>
             </DisplayIf>
             <DisplayIf condition={!!helper}>
-              <Text color={isSelected ? 'text-teal-500 dark:text-teal-400' : 'text-color-3'} variant="text-xxxs">
+              <Text color={isSelected ? 'white' : 'text-color-3'} variant="text-xxxs">
                 {helper}
               </Text>
             </DisplayIf>

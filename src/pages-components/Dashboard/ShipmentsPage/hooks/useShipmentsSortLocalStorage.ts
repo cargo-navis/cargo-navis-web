@@ -6,6 +6,8 @@ import { useShipmentsFiltersLocalStorage } from './useShipmentsFiltersLocalStora
 export enum SortFieldEnum {
   LoadingReadyDate = 'loadingReadyDate',
   UnloadingDueDate = 'unloadingDueDate',
+  LoadingStopDate = 'loadingStopDate',
+  UnloadingStopDate = 'unloadingStopDate',
   Price = 'price',
 }
 
@@ -16,6 +18,8 @@ interface SortState {
   getSortDirection(field: SortFieldEnum): 'asc' | 'desc' | null;
   isFieldSorted(field: SortFieldEnum): boolean;
   toggleSort(field: SortFieldEnum): void;
+  setSort(field: SortFieldEnum, direction: 'asc' | 'desc'): void;
+  clearSort(): void;
 }
 
 // Parse sort parameter: format is "field,direction" (e.g., "loadingDate,desc", "price,asc")
@@ -104,6 +108,19 @@ export const useShipmentsSortLocalStorage = (): SortState => {
     [currentField, currentDirection, updateField, paginationReset]
   );
 
+  const setSort = useCallback(
+    (field: SortFieldEnum, direction: 'asc' | 'desc') => {
+      updateField('sort', `${field},${direction}`);
+      void paginationReset();
+    },
+    [updateField, paginationReset]
+  );
+
+  const clearSort = useCallback(() => {
+    updateField('sort', undefined);
+    void paginationReset();
+  }, [updateField, paginationReset]);
+
   return {
     sort: sortParam && currentField ? sortParam : null,
     isRouterReady: isReady, // Keep API compatibility, but use isReady from localStorage hook
@@ -111,5 +128,7 @@ export const useShipmentsSortLocalStorage = (): SortState => {
     getSortDirection,
     isFieldSorted,
     toggleSort,
+    setSort,
+    clearSort,
   };
 };
