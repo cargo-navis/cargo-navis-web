@@ -59,13 +59,17 @@ interface PreviewStop {
   unloadingCargoIds: string[];
 }
 
+function stopKey(address: Pick<LoadingAddress, 'postalCodeId' | 'streetName'>) {
+  return `${address.postalCodeId}|${address.streetName}`;
+}
+
 function buildPreviewStops(cargos: Cargo[]): PreviewStop[] {
   const map = new Map<string, PreviewStop>();
 
   function add(address: LoadingAddress | undefined, cargoId: string, kind: 'loading' | 'unloading') {
     if (!address) return;
     const { postalCodeId, streetName, placeName } = address;
-    const key = `${postalCodeId}|${streetName}`;
+    const key = stopKey(address);
     const stop = map.get(key) ?? {
       key,
       postalCodeId,
@@ -88,6 +92,14 @@ function buildPreviewStops(cargos: Cargo[]): PreviewStop[] {
     const bLoading = b.loadingCargoIds.length > 0 ? 0 : 1;
     return aLoading - bLoading;
   });
+}
+
+function buildCargoStopDates(cargos: Cargo[], datesByKey: Record<string, string | null>) {
+  return cargos.map((cargo) => ({
+    cargoId: cargo.id,
+    loadingDate: cargo.loadingAddress ? (datesByKey[stopKey(cargo.loadingAddress)] ?? null) : null,
+    unloadingDate: cargo.unloadingAddress ? (datesByKey[stopKey(cargo.unloadingAddress)] ?? null) : null,
+  }));
 }
 
 function buildCargoGroups(stop: PreviewStop, cargoById: Map<string, Cargo>): { loading: Cargo[]; unloading: Cargo[] } {
@@ -175,7 +187,11 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
     if (!selectedVehicleId || !allDatesPicked) return;
 
     try {
-      await assignShipment({ shipmentId, vehicleId: selectedVehicleId });
+      await assignShipment({
+        shipmentId,
+        vehicleId: selectedVehicleId,
+        cargoStopDates: buildCargoStopDates(cargos, datesByKey),
+      });
       showSuccessToast({ title: `Nalog "${shipmentOrderNumber}" dodijeljen vozilu` });
       setIsNavigating(true);
       onAssigned(selectedVehicleId);
