@@ -82,7 +82,12 @@ function buildPreviewStops(cargos: Cargo[]): PreviewStop[] {
     add(cargo.loadingAddress, cargo.id, 'loading');
     add(cargo.unloadingAddress, cargo.id, 'unloading');
   }
-  return Array.from(map.values());
+  // Loading stops first, unloading-only stops second.
+  return Array.from(map.values()).sort((a, b) => {
+    const aLoading = a.loadingCargoIds.length > 0 ? 0 : 1;
+    const bLoading = b.loadingCargoIds.length > 0 ? 0 : 1;
+    return aLoading - bLoading;
+  });
 }
 
 function buildCargoGroups(stop: PreviewStop, cargoById: Map<string, Cargo>): { loading: Cargo[]; unloading: Cargo[] } {
