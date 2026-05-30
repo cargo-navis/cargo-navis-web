@@ -160,6 +160,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
           cargos={shipment.cargo}
           clientId={shipment.clientId}
           isOpen={isAssignModalOpen}
+          shipmentId={shipment.id}
           shipmentOrderNumber={shipment.orderNumber}
           onAssigned={(vehicleId) => {
             setIsAssignModalOpen(false);

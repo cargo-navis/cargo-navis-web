@@ -81,10 +81,12 @@ const TenantLink = () => {
 
   return (
     <Link href="/dashboard/tenant">
-      <FlexLayout className="items-center justify-center gap-3 bg-teal-600 dark:bg-teal-900 text-light-50 dark:text-light-100 py-1 -mx-4 min-h-[40px] text-center opacity-75 hover:opacity-100 transition-opacity">
+      <FlexLayout className="items-center justify-center gap-3 bg-teal-600 dark:bg-teal-900 text-light-50 dark:text-light-100 px-4 py-1 -mx-4 min-h-[40px] text-center opacity-75 hover:opacity-100 transition-opacity">
         {data ? (
           <>
-            <Text variant="text-m-medium">{data.name}</Text>
+            <Text className="truncate" title={data.name} variant="text-m-medium">
+              {data.name}
+            </Text>
             <Icon icon="IconSettings" size="m" />
           </>
         ) : (

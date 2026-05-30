@@ -127,24 +127,14 @@ export function useUpdateShipment() {
 
       return { prevShipment };
     },
-    onSuccess: (updated, variables) => {
-      // The update response doesn't include vehicleStops, so we preserve
-      // them from whatever we already had cached.
-      queryClient.setQueryData<Shipment>(['shipment', variables.id], (prev) => ({
-        ...prev,
-        ...updated,
-        vehicleStops: prev?.vehicleStops ?? updated.vehicleStops,
-      }));
+    onSuccess: (_, variables) => {
+      // Cargo address edits can rewrite vehicle stops on the backend, so
+      // refetch the shipment (its vehicleStops field), the shipments list,
+      // and any standalone vehicle-stop views.
+      void queryClient.removeQueries({ queryKey: ['shipments'] });
 
-      queryClient.setQueriesData<PaginatedResponse<Shipment>>({ queryKey: ['shipments'] }, (data) => {
-        if (!data?.data?.some((s) => s.id === variables.id)) return data;
-        return {
-          ...data,
-          data: data.data.map((s) =>
-            s.id === variables.id ? { ...s, ...updated, vehicleStops: s.vehicleStops ?? updated.vehicleStops } : s
-          ),
-        };
-      });
+      void queryClient.invalidateQueries({ queryKey: ['vehicleStops'], refetchType: 'all' });
+      return queryClient.invalidateQueries({ queryKey: ['shipment', variables.id] });
     },
     onError: (_, data, context) => {
       if (!context) return;

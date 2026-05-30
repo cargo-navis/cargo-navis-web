@@ -2,6 +2,7 @@ import { type InfiniteData, useInfiniteQuery, useMutation, useQuery, useQueryCli
 
 import type { PaginatedResponse } from '@/lib/api/pagination.d';
 import {
+  assignShipmentToVehicle,
   completeVehicleStop,
   createVehicleStops,
   deleteVehicleStop,
@@ -53,6 +54,18 @@ export function useCreateVehicleStops() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createVehicleStops,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEY], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['shipment'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['shipments'], refetchType: 'all' });
+    },
+  });
+}
+
+export function useAssignShipmentToVehicle() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: assignShipmentToVehicle,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEY], refetchType: 'all' });
       queryClient.invalidateQueries({ queryKey: ['shipment'], refetchType: 'all' });

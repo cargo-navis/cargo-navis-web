@@ -1,5 +1,7 @@
 import { FlexLayout, PageSizeSelector, Pagination, PaginationInfo } from '@/ui';
 
+import { ShipmentsSortSelector } from '../ShipmentsSortSelector';
+
 interface PaginationInfoProps {
   currentPage: number;
   pageSize: number;
@@ -25,7 +27,7 @@ export const TopPaginationControls = ({
   return (
     <FlexLayout className="items-center justify-between mb-4 gap-4">
       <FlexLayout className="flex-col gap-3">
-        <PageSizeSelector isLoading={isLoading} pageSize={pageSize} onPageSizeChange={setPageSize} />
+        <ShipmentsSortSelector isLoading={isLoading} />
         <PaginationInfo
           className="text-dark-600 dark:text-light-400"
           currentPage={paginationInfo.currentPage}
@@ -33,7 +35,8 @@ export const TopPaginationControls = ({
           totalElements={paginationInfo.totalElements}
         />
       </FlexLayout>
-      <FlexLayout className="items-center gap-4">
+      <FlexLayout className="flex-col gap-3 items-end">
+        <PageSizeSelector isLoading={isLoading} pageSize={pageSize} onPageSizeChange={setPageSize} />
         <Pagination
           currentPage={paginationInfo.currentPage}
           isLoading={isLoading}

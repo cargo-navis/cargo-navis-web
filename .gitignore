@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Ignore generated service worker
 /public/cargo-navis_push-service-worker.js
+
+# Flag sprites copied by react-flagpack postinstall / prepare-flags script
+/public/flags/
