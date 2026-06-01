@@ -37,6 +37,7 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
     nationalCompanyRegisterId,
     addressPostalCode,
     termsOfPayment,
+    email,
   }: any) {
     const payload = {
       name,
@@ -45,6 +46,7 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
       nationalCompanyRegisterId,
       termsOfPayment,
       addressPostalCodeId: addressPostalCode.value,
+      email: email || undefined,
     };
 
     payload['termsOfPayment'] = payload['termsOfPayment'] || 0;
@@ -88,6 +90,7 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
             </Box>
           </FlexLayout>
           <FormNumberInput label="Valuta plaćanja" name="termsOfPayment" rules={{ required: true }} />
+          <FormTextInput label="Email" name="email" />
           <FlexLayout className="flex-1 flex-col gap-2">
             <Text color="text-color-3" variant="text-xxs-medium">
               Adresa sjedišta

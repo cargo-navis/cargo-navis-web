@@ -6,8 +6,9 @@ import { PageTitle } from '@/components/PageTitle';
 import type { Client } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useClient } from '@/lib/hooks';
+import { copyToClipboard } from '@/lib/utils/clipboard';
 import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, Divider, FlexLayout, Text } from '@/ui';
+import { Box, Divider, FlexLayout, Icon, Text } from '@/ui';
 
 import { ClientActions } from './ClientActions';
 
@@ -68,6 +69,26 @@ const MainContent: React.FC<{ client: Client }> = ({ client }) => {
                   Nacionalni identifikacijski broj: <strong>{client.nationalCompanyRegisterId}</strong>
                 </Text>
               </FlexLayout>
+              {client.email ? (
+                <FlexLayout
+                  className="group/email items-center gap-2 cursor-pointer text-color-2 hover:text-color-1 transition-colors ease"
+                  onClick={() => copyToClipboard(client.email!)}
+                >
+                  <Text variant="text-m">
+                    Email: <strong>{client.email}</strong>
+                  </Text>
+                  <Icon
+                    className="opacity-0 translate-x-[-4px] group-hover/email:opacity-100 group-hover/email:translate-x-0 w-5 transition-transform ease"
+                    icon="IconCopy"
+                  />
+                </FlexLayout>
+              ) : (
+                <FlexLayout className="flex-col">
+                  <Text color="text-color-2" variant="text-m">
+                    Email: <strong>—</strong>
+                  </Text>
+                </FlexLayout>
+              )}
             </FlexLayout>
           </FlexLayout>
         </FlexLayout>
