@@ -21,7 +21,7 @@ export function ContractorsTable({ contractors }: { contractors?: Contractor[] }
 
           return (
             <Link href={`/dashboard/contractors/${id}`}>
-              <Box className="py-3 pl-3">
+              <Box className="py-3 pl-3 pr-6">
                 <FlexLayout className="items-center justify-center w-[50px] h-[50px] rounded-circle bg-teal-900">
                   <Text className="text-light-50 group-hover/cell:text-teal-600 uppercase" variant="text-s-medium">
                     {initials}
@@ -41,7 +41,7 @@ export function ContractorsTable({ contractors }: { contractors?: Contractor[] }
 
           return (
             <Link href={`/dashboard/contractors/${id}`}>
-              <Box className="py-3">
+              <Box className="py-3 pr-6">
                 <FlexLayout className="flex-col gap-1">
                   <FlexLayout className="gap-3 items-center">
                     <Text className="group-hover/cell:text-teal-600" color="text-color-1" variant="text-m-bold">
@@ -63,7 +63,7 @@ export function ContractorsTable({ contractors }: { contractors?: Contractor[] }
           const country = getCountryFromCode(address.countryCode);
 
           return (
-            <FlexLayout className="items-center gap-2 cursor-pointer text-color-3">
+            <FlexLayout className="items-center gap-2 cursor-pointer text-color-3 pr-6">
               <FlexLayout className="flex-col">
                 <Text variant="text-s">{address.streetName || '–'}</Text>
                 <Text variant="text-s">{`${address.placeName}, ${address.postalCode}, ${country.name}`}</Text>
@@ -81,7 +81,7 @@ export function ContractorsTable({ contractors }: { contractors?: Contractor[] }
 
           return (
             <FlexLayout
-              className="items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease"
+              className="items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease pr-6"
               onClick={() => copyToClipboard(vatNumber)}
             >
               <Text variant="text-s">{vatNumber || '–'}</Text>
@@ -89,6 +89,29 @@ export function ContractorsTable({ contractors }: { contractors?: Contractor[] }
                 className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
                 icon="IconCopy"
               />
+            </FlexLayout>
+          );
+        },
+      }),
+      columnHelper.display({
+        id: 'email',
+        header: 'Email',
+        size: 250,
+        cell: (props) => {
+          const { email } = props.row.original;
+
+          return (
+            <FlexLayout
+              className="items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease pr-6"
+              onClick={() => email && copyToClipboard(email)}
+            >
+              <Text variant="text-s">{email || '–'}</Text>
+              {email && (
+                <Icon
+                  className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
+                  icon="IconCopy"
+                />
+              )}
             </FlexLayout>
           );
         },
