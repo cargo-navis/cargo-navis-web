@@ -32,20 +32,20 @@ export const FilterFields = () => {
     selectedIsActive,
     selectedInvoiceStatus,
     selectedIsInvoiceOverdue,
-    loadingDateFrom,
-    loadingDateTo,
-    unloadingDateFrom,
-    unloadingDateTo,
+    loadingReadyDateFrom,
+    loadingReadyDateTo,
+    unloadingDueDateFrom,
+    unloadingDueDateTo,
     onClientChange,
     onDriverChange,
     onDispatcherChange,
     onIsActiveChange,
     onInvoiceStatusChange,
     onIsInvoiceOverdueChange,
-    onLoadingDateFromChange,
-    onLoadingDateToChange,
-    onUnloadingDateFromChange,
-    onUnloadingDateToChange,
+    onLoadingReadyDateFromChange,
+    onLoadingReadyDateToChange,
+    onUnloadingDueDateFromChange,
+    onUnloadingDueDateToChange,
   } = useShipmentsFiltersContext();
 
   const { data: clients = [] } = useClients();
@@ -156,36 +156,36 @@ export const FilterFields = () => {
             <Box className="flex-1">
               <DatepickerWithLabels
                 isClearable
-                label="Datum utovara - od"
-                value={loadingDateFrom}
-                onChange={onLoadingDateFromChange}
+                label="Spremno za utovar - od"
+                value={loadingReadyDateFrom}
+                onChange={onLoadingReadyDateFromChange}
               />
             </Box>
 
             <Box className="flex-1">
               <DatepickerWithLabels
                 isClearable
-                label="Datum utovara - do"
-                value={loadingDateTo}
-                onChange={onLoadingDateToChange}
+                label="Spremno za utovar - do"
+                value={loadingReadyDateTo}
+                onChange={onLoadingReadyDateToChange}
               />
             </Box>
 
             <Box className="flex-1">
               <DatepickerWithLabels
                 isClearable
-                label="Datum istovara - od"
-                value={unloadingDateFrom}
-                onChange={onUnloadingDateFromChange}
+                label="Rok istovara - od"
+                value={unloadingDueDateFrom}
+                onChange={onUnloadingDueDateFromChange}
               />
             </Box>
 
             <Box className="flex-1">
               <DatepickerWithLabels
                 isClearable
-                label="Datum istovara - do"
-                value={unloadingDateTo}
-                onChange={onUnloadingDateToChange}
+                label="Rok istovara - do"
+                value={unloadingDueDateTo}
+                onChange={onUnloadingDueDateToChange}
               />
             </Box>
           </FlexLayout>

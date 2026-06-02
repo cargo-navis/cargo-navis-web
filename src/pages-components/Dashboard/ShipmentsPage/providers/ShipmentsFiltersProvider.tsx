@@ -17,20 +17,20 @@ export type ShipmentsFiltersContextType = {
   selectedIsActive: SelectValue;
   selectedInvoiceStatus: SelectValue;
   selectedIsInvoiceOverdue: SelectValue;
-  loadingDateFrom: string;
-  loadingDateTo: string;
-  unloadingDateFrom: string;
-  unloadingDateTo: string;
+  loadingReadyDateFrom: string;
+  loadingReadyDateTo: string;
+  unloadingDueDateFrom: string;
+  unloadingDueDateTo: string;
   onClientChange(clientId: SelectValue): void;
   onDriverChange(driverId: SelectValue): void;
   onDispatcherChange(dispatcherId: SelectValue): void;
   onIsActiveChange(isActive: SelectValue): void;
   onInvoiceStatusChange(invoiceStatus: SelectValue): void;
   onIsInvoiceOverdueChange(isInvoiceOverdue: SelectValue): void;
-  onLoadingDateFromChange(date: string): void;
-  onLoadingDateToChange(date: string): void;
-  onUnloadingDateFromChange(date: string): void;
-  onUnloadingDateToChange(date: string): void;
+  onLoadingReadyDateFromChange(date: string): void;
+  onLoadingReadyDateToChange(date: string): void;
+  onUnloadingDueDateFromChange(date: string): void;
+  onUnloadingDueDateToChange(date: string): void;
   onClearAll(): void;
 };
 
@@ -58,17 +58,17 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
   const { value: selectedIsInvoiceOverdue, onChange: onIsInvoiceOverdueChange } = useFiltersLocalStorageState({
     paramName: 'isInvoiceOverdue',
   });
-  const { value: loadingDateFrom, onChange: onLoadingDateFromChange } = useFiltersLocalStorageState({
-    paramName: 'loadingDateFrom',
+  const { value: loadingReadyDateFrom, onChange: onLoadingReadyDateFromChange } = useFiltersLocalStorageState({
+    paramName: 'loadingReadyDateFrom',
   });
-  const { value: loadingDateTo, onChange: onLoadingDateToChange } = useFiltersLocalStorageState({
-    paramName: 'loadingDateTo',
+  const { value: loadingReadyDateTo, onChange: onLoadingReadyDateToChange } = useFiltersLocalStorageState({
+    paramName: 'loadingReadyDateTo',
   });
-  const { value: unloadingDateFrom, onChange: onUnloadingDateFromChange } = useFiltersLocalStorageState({
-    paramName: 'unloadingDateFrom',
+  const { value: unloadingDueDateFrom, onChange: onUnloadingDueDateFromChange } = useFiltersLocalStorageState({
+    paramName: 'unloadingDueDateFrom',
   });
-  const { value: unloadingDateTo, onChange: onUnloadingDateToChange } = useFiltersLocalStorageState({
-    paramName: 'unloadingDateTo',
+  const { value: unloadingDueDateTo, onChange: onUnloadingDueDateToChange } = useFiltersLocalStorageState({
+    paramName: 'unloadingDueDateTo',
   });
 
   const onClearAll = useCallback(async () => {
@@ -91,10 +91,10 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
     selectedIsActive,
     selectedInvoiceStatus,
     selectedIsInvoiceOverdue,
-    loadingDateFrom,
-    loadingDateTo,
-    unloadingDateFrom,
-    unloadingDateTo,
+    loadingReadyDateFrom,
+    loadingReadyDateTo,
+    unloadingDueDateFrom,
+    unloadingDueDateTo,
   ].filter(Boolean).length;
 
   return (
@@ -107,20 +107,20 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
         selectedIsActive,
         selectedInvoiceStatus,
         selectedIsInvoiceOverdue,
-        loadingDateFrom: String(loadingDateFrom || ''),
-        loadingDateTo: String(loadingDateTo || ''),
-        unloadingDateFrom: String(unloadingDateFrom || ''),
-        unloadingDateTo: String(unloadingDateTo || ''),
+        loadingReadyDateFrom: String(loadingReadyDateFrom || ''),
+        loadingReadyDateTo: String(loadingReadyDateTo || ''),
+        unloadingDueDateFrom: String(unloadingDueDateFrom || ''),
+        unloadingDueDateTo: String(unloadingDueDateTo || ''),
         onClientChange,
         onDriverChange,
         onDispatcherChange,
         onIsActiveChange,
         onInvoiceStatusChange,
         onIsInvoiceOverdueChange,
-        onLoadingDateFromChange,
-        onLoadingDateToChange,
-        onUnloadingDateFromChange,
-        onUnloadingDateToChange,
+        onLoadingReadyDateFromChange,
+        onLoadingReadyDateToChange,
+        onUnloadingDueDateFromChange,
+        onUnloadingDueDateToChange,
         onClearAll,
       }}
     >
