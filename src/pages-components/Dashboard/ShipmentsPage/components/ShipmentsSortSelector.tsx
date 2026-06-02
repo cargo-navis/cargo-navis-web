@@ -4,26 +4,26 @@ import { SortFieldEnum, useShipmentsSortLocalStorage } from '../hooks';
 
 const SORT_OPTIONS: SelectOption[] = [
   {
-    value: `${SortFieldEnum.LoadingStopDate},desc`,
-    label: 'Datum utovara ↓',
+    value: `${SortFieldEnum.LoadingReadyDate},desc`,
+    label: 'Spremno za utovar ↓',
     iconLeft: 'IconPackageImport',
     helper: 'Najnoviji prvi',
   },
   {
-    value: `${SortFieldEnum.LoadingStopDate},asc`,
-    label: 'Datum utovara ↑',
+    value: `${SortFieldEnum.LoadingReadyDate},asc`,
+    label: 'Spremno za utovar ↑',
     iconLeft: 'IconPackageImport',
     helper: 'Najstariji prvi',
   },
   {
-    value: `${SortFieldEnum.UnloadingStopDate},desc`,
-    label: 'Datum istovara ↓',
+    value: `${SortFieldEnum.UnloadingDueDate},desc`,
+    label: 'Rok istovara ↓',
     iconLeft: 'IconPackageExport',
     helper: 'Najnoviji prvi',
   },
   {
-    value: `${SortFieldEnum.UnloadingStopDate},asc`,
-    label: 'Datum istovara ↑',
+    value: `${SortFieldEnum.UnloadingDueDate},asc`,
+    label: 'Rok istovara ↑',
     iconLeft: 'IconPackageExport',
     helper: 'Najstariji prvi',
   },
