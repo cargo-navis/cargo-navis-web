@@ -4,4 +4,5 @@ export const formDefaultValues = {
   nationalCompanyRegisterId: '',
   addressName: '',
   addressPostalCode: undefined,
+  email: '',
 };

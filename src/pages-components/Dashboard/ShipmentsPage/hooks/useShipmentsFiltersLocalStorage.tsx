@@ -20,10 +20,10 @@ export interface ShipmentsFiltersStorage {
   isActive?: string;
   invoiceStatus?: string;
   isInvoiceOverdue?: string;
-  loadingDateFrom?: string;
-  loadingDateTo?: string;
-  unloadingDateFrom?: string;
-  unloadingDateTo?: string;
+  loadingReadyDateFrom?: string;
+  loadingReadyDateTo?: string;
+  unloadingDueDateFrom?: string;
+  unloadingDueDateTo?: string;
   sort?: string; // format: "field,direction" e.g. "loadingDate,desc"
   pageSize?: string;
 }

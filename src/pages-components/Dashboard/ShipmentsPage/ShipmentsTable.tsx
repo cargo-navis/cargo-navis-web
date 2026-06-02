@@ -190,9 +190,12 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         enableSorting: false,
         meta: { width: 'auto' },
         header: () => (
-          <FlexLayout className="items-center px-4 text-center">
+          <FlexLayout className="flex-col px-4">
             <Text className="whitespace-nowrap" variant="text-s-medium">
               Utovar / Istovar
+            </Text>
+            <Text className="whitespace-nowrap" color="text-color-3" variant="text-xxs">
+              Spremno za utovar / Rok istovara
             </Text>
           </FlexLayout>
         ),
@@ -257,11 +260,11 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                             showCompletionStatus
                             type="loading"
                           />
-                          {loadingStop?.date && (
-                            <Text color="text-color-4" variant="text-xxs">
-                              {getDataPointDateString(loadingStop.date)}
-                            </Text>
-                          )}
+                          <Text color="text-color-4" variant="text-xxs">
+                            {groupCargos[0].loadingReadyDate
+                              ? getDataPointDateString(groupCargos[0].loadingReadyDate)
+                              : '—'}
+                          </Text>
                         </>
                       );
                     })()}
@@ -282,11 +285,9 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                                 showCompletionStatus
                                 type="unloading"
                               />
-                              {unloadingStop?.date && (
-                                <Text color="text-color-4" variant="text-xxs">
-                                  {getDataPointDateString(unloadingStop.date)}
-                                </Text>
-                              )}
+                              <Text color="text-color-4" variant="text-xxs">
+                                {c.unloadingDueDate ? getDataPointDateString(c.unloadingDueDate) : '—'}
+                              </Text>
                             </>
                           );
                         })()}

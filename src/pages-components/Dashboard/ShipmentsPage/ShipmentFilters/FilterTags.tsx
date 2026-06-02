@@ -14,20 +14,20 @@ export const FilterTags = () => {
     selectedIsActive,
     selectedInvoiceStatus,
     selectedIsInvoiceOverdue,
-    loadingDateFrom,
-    loadingDateTo,
-    unloadingDateFrom,
-    unloadingDateTo,
+    loadingReadyDateFrom,
+    loadingReadyDateTo,
+    unloadingDueDateFrom,
+    unloadingDueDateTo,
     onClientChange,
     onDriverChange,
     onDispatcherChange,
     onIsActiveChange,
     onInvoiceStatusChange,
     onIsInvoiceOverdueChange,
-    onLoadingDateFromChange,
-    onLoadingDateToChange,
-    onUnloadingDateFromChange,
-    onUnloadingDateToChange,
+    onLoadingReadyDateFromChange,
+    onLoadingReadyDateToChange,
+    onUnloadingDueDateFromChange,
+    onUnloadingDueDateToChange,
   } = useShipmentsFiltersContext();
 
   const { data: clients = [] } = useClients();
@@ -101,36 +101,36 @@ export const FilterTags = () => {
             onRemove={() => onIsInvoiceOverdueChange('')}
           />
         </DisplayIf>
-        {loadingDateFrom && (
+        {loadingReadyDateFrom && (
           <FilterTag
             colorScheme="blue"
-            label="Datum utovara od"
-            value={loadingDateFrom}
-            onRemove={() => onLoadingDateFromChange('')}
+            label="Spremno za utovar od"
+            value={loadingReadyDateFrom}
+            onRemove={() => onLoadingReadyDateFromChange('')}
           />
         )}
-        {loadingDateTo && (
+        {loadingReadyDateTo && (
           <FilterTag
             colorScheme="blue"
-            label="Datum utovara do"
-            value={loadingDateTo}
-            onRemove={() => onLoadingDateToChange('')}
+            label="Spremno za utovar do"
+            value={loadingReadyDateTo}
+            onRemove={() => onLoadingReadyDateToChange('')}
           />
         )}
-        {unloadingDateFrom && (
+        {unloadingDueDateFrom && (
           <FilterTag
             colorScheme="green"
-            label="Datum istovara od"
-            value={unloadingDateFrom}
-            onRemove={() => onUnloadingDateFromChange('')}
+            label="Rok istovara od"
+            value={unloadingDueDateFrom}
+            onRemove={() => onUnloadingDueDateFromChange('')}
           />
         )}
-        {unloadingDateTo && (
+        {unloadingDueDateTo && (
           <FilterTag
             colorScheme="green"
-            label="Datum istovara do"
-            value={unloadingDateTo}
-            onRemove={() => onUnloadingDateToChange('')}
+            label="Rok istovara do"
+            value={unloadingDueDateTo}
+            onRemove={() => onUnloadingDueDateToChange('')}
           />
         )}
       </FlexLayout>

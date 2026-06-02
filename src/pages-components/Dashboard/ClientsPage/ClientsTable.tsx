@@ -93,6 +93,29 @@ export function ClientsTable({ clients }: { clients?: Client[] }) {
           );
         },
       }),
+      columnHelper.display({
+        id: 'email',
+        header: 'Email',
+        size: 250,
+        cell: (props) => {
+          const { email } = props.row.original;
+
+          return (
+            <FlexLayout
+              className="items-center gap-2 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease"
+              onClick={() => email && copyToClipboard(email)}
+            >
+              <Text variant="text-s">{email || '–'}</Text>
+              {email && (
+                <Icon
+                  className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
+                  icon="IconCopy"
+                />
+              )}
+            </FlexLayout>
+          );
+        },
+      }),
     ];
   }, []);
 

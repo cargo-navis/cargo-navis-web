@@ -34,10 +34,10 @@ export type GetShipmentParams = {
   loadStatus?: LoadStatus;
   invoiceStatus?: InvoiceStatus;
   isInvoiceOverdue?: string;
-  loadingDateFrom?: string;
-  loadingDateTo?: string;
-  unloadingDateFrom?: string;
-  unloadingDateTo?: string;
+  loadingReadyDateFrom?: string;
+  loadingReadyDateTo?: string;
+  unloadingDueDateFrom?: string;
+  unloadingDueDateTo?: string;
   isActive?: boolean;
   // Pagination parameters
   page?: number;

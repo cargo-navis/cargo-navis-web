@@ -5,6 +5,7 @@ export interface Contractor {
   vatNumber: string;
   nationalCompanyRegisterId: string;
   termsOfPayment: string;
+  email?: string;
 }
 
 interface ContractorAddress {
@@ -22,6 +23,7 @@ export type CreateContractorParams = {
   vatNumber: string;
   nationalCompanyRegisterId: string;
   termsOfPayment: string;
+  email?: string;
 };
 
 export type UpdateContractorParams = Partial<CreateContractorParams>;

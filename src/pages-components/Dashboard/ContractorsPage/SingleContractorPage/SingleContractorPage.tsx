@@ -6,8 +6,9 @@ import { PageTitle } from '@/components/PageTitle';
 import type { Contractor } from '@/lib/api';
 import { LoadingPage } from '@/lib/components/LoadingPage';
 import { useContractor } from '@/lib/hooks';
+import { copyToClipboard } from '@/lib/utils/clipboard';
 import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, DisplayIf, Divider, FlexLayout, Text } from '@/ui';
+import { Box, DisplayIf, Divider, FlexLayout, Icon, Text } from '@/ui';
 
 import { ContractorActions } from './ContractorActions';
 
@@ -70,6 +71,26 @@ const MainContent: React.FC<{ contractor: Contractor }> = ({ contractor }) => {
                   Nacionalni identifikacijski broj: <strong>{contractor.nationalCompanyRegisterId}</strong>
                 </Text>
               </FlexLayout>
+              {contractor.email ? (
+                <FlexLayout
+                  className="group/email items-center gap-2 cursor-pointer text-color-2 hover:text-color-1 transition-colors ease"
+                  onClick={() => copyToClipboard(contractor.email!)}
+                >
+                  <Text variant="text-m">
+                    Email: <strong>{contractor.email}</strong>
+                  </Text>
+                  <Icon
+                    className="opacity-0 translate-x-[-4px] group-hover/email:opacity-100 group-hover/email:translate-x-0 w-5 transition-transform ease"
+                    icon="IconCopy"
+                  />
+                </FlexLayout>
+              ) : (
+                <FlexLayout className="flex-col">
+                  <Text color="text-color-2" variant="text-m">
+                    Email: <strong>—</strong>
+                  </Text>
+                </FlexLayout>
+              )}
             </FlexLayout>
           </FlexLayout>
         </FlexLayout>
