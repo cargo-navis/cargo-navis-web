@@ -17,7 +17,7 @@ export interface ShipmentsFiltersStorage {
   clientId?: string;
   driverId?: string;
   dispatcherId?: string;
-  isActive?: string;
+  loadStatus?: string;
   invoiceStatus?: string;
   isInvoiceOverdue?: string;
   loadingReadyDateFrom?: string;

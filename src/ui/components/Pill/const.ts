@@ -1,5 +1,7 @@
 import type { TextVariant } from '@/ui/theme/fontSizes';
 
+import type { IconSize } from '../Icon/const';
+
 export const variantsMap = {
   default: 'bg-dark-50 dark:bg-light-800 border-light-200/80 dark:border-dark-50/50 text-dark-800 dark:text-light-100',
   success:
@@ -20,11 +22,13 @@ export const getSizeStyles = (size: PillSize) => {
       return {
         styles: 'px-2 py-[2px] rounded-l',
         textVariant: 'text-xxxs-medium' as TextVariant,
+        iconSize: 's' as IconSize,
       };
     case 'm':
       return {
         styles: 'px-2 py-1 rounded-xl',
         textVariant: 'text-xs-medium' as TextVariant,
+        iconSize: 'm' as IconSize,
       };
   }
 };
