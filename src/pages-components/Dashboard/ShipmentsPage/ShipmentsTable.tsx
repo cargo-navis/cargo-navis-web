@@ -200,30 +200,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           </FlexLayout>
         ),
         cell: (props) => {
-          const { cargo, vehicleStops } = props.row.original;
-
-          type Stop = NonNullable<typeof vehicleStops>[number];
-          const loadingStopByPostal = new Map<string, Stop>();
-          const unloadingStopByPostal = new Map<string, Stop>();
-
-          const isLater = (candidate: Stop, existing?: Stop) => {
-            if (!existing) return true;
-            if (!candidate.date) return false;
-            if (!existing.date) return true;
-            return candidate.date > existing.date;
-          };
-
-          vehicleStops?.forEach((stop) => {
-            const postalCodeId = stop.address?.postalCodeId;
-            if (!postalCodeId) return;
-
-            if ((stop.loadingCargos?.length ?? 0) > 0 && isLater(stop, loadingStopByPostal.get(postalCodeId))) {
-              loadingStopByPostal.set(postalCodeId, stop);
-            }
-            if ((stop.unloadingCargos?.length ?? 0) > 0 && isLater(stop, unloadingStopByPostal.get(postalCodeId))) {
-              unloadingStopByPostal.set(postalCodeId, stop);
-            }
-          });
+          const { cargo } = props.row.original;
 
           const uniquePairs = new Map<string, (typeof cargo)[number]>();
           cargo.forEach((c) => {
@@ -247,50 +224,27 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                   style={{ gridTemplateRows: `repeat(${groupCargos.length}, auto)` }}
                 >
                   <Box
-                    className="self-center flex flex-col min-w-0"
+                    className="self-center flex flex-col gap-1 min-w-0"
                     style={{ gridColumn: 1, gridRow: `1 / span ${groupCargos.length}` }}
                   >
-                    {(() => {
-                      const loadingStop = loadingStopByPostal.get(groupCargos[0].loadingAddress?.postalCodeId ?? '');
-                      return (
-                        <>
-                          <AddressItem
-                            address={groupCargos[0].loadingAddress}
-                            completedAt={loadingStop?.completedAt}
-                            showCompletionStatus
-                            type="loading"
-                          />
-                          <Text color="text-color-4" variant="text-xxs">
-                            {groupCargos[0].loadingReadyDate
-                              ? getDataPointDateString(groupCargos[0].loadingReadyDate)
-                              : '—'}
-                          </Text>
-                        </>
-                      );
-                    })()}
+                    <AddressItem address={groupCargos[0].loadingAddress} loadStatus={groupCargos[0].loadStatus} />
+                    <Text color="text-color-4" variant="text-xxs">
+                      {groupCargos[0].loadingReadyDate ? getDataPointDateString(groupCargos[0].loadingReadyDate) : '—'}
+                    </Text>
                   </Box>
                   {groupCargos.map((c, ci) => (
                     <Fragment key={ci}>
                       <Box className="self-center" style={{ gridColumn: 2, gridRow: ci + 1 }}>
                         <Icon color="text-color-4" icon="IconArrowRight" size="s" />
                       </Box>
-                      <Box className="flex flex-col self-center min-w-0" style={{ gridColumn: 3, gridRow: ci + 1 }}>
-                        {(() => {
-                          const unloadingStop = unloadingStopByPostal.get(c.unloadingAddress?.postalCodeId ?? '');
-                          return (
-                            <>
-                              <AddressItem
-                                address={c.unloadingAddress}
-                                completedAt={unloadingStop?.completedAt}
-                                showCompletionStatus
-                                type="unloading"
-                              />
-                              <Text color="text-color-4" variant="text-xxs">
-                                {c.unloadingDueDate ? getDataPointDateString(c.unloadingDueDate) : '—'}
-                              </Text>
-                            </>
-                          );
-                        })()}
+                      <Box
+                        className="flex flex-col gap-1 self-center min-w-0"
+                        style={{ gridColumn: 3, gridRow: ci + 1 }}
+                      >
+                        <AddressItem address={c.unloadingAddress} />
+                        <Text color="text-color-4" variant="text-xxs">
+                          {c.unloadingDueDate ? getDataPointDateString(c.unloadingDueDate) : '—'}
+                        </Text>
                       </Box>
                     </Fragment>
                   ))}
