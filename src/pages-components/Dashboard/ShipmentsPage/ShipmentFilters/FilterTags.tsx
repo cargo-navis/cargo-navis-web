@@ -1,8 +1,8 @@
-import { InvoiceStatus } from '@/lib/api/shipments';
+import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
 import { useClients, useDispatchers, useDrivers } from '@/lib/hooks';
 import { Box, DisplayIf, FlexLayout } from '@/ui';
 
-import { activeLabels, invoiceStatusConfig } from '../const';
+import { invoiceStatusConfig, loadStatusConfig } from '../const';
 import { useShipmentsFiltersContext } from '../providers/ShipmentsFiltersProvider';
 import { FilterTag } from './FilterTag';
 
@@ -11,7 +11,7 @@ export const FilterTags = () => {
     selectedClientId,
     selectedDriverId,
     selectedDispatcherId,
-    selectedIsActive,
+    selectedLoadStatus,
     selectedInvoiceStatus,
     selectedIsInvoiceOverdue,
     loadingReadyDateFrom,
@@ -21,7 +21,7 @@ export const FilterTags = () => {
     onClientChange,
     onDriverChange,
     onDispatcherChange,
-    onIsActiveChange,
+    onLoadStatusChange,
     onInvoiceStatusChange,
     onIsInvoiceOverdueChange,
     onLoadingReadyDateFromChange,
@@ -39,8 +39,7 @@ export const FilterTags = () => {
   const selectedDispatcher = dispatchers.find((dispatcher) => dispatcher.id === selectedDispatcherId);
 
   // Compute labels from values
-  const selectedIsActiveLabel =
-    selectedIsActive === 'true' || selectedIsActive === 'false' ? activeLabels[selectedIsActive] : null;
+  const selectedLoadStatusLabel = selectedLoadStatus ? loadStatusConfig[selectedLoadStatus as LoadStatus]?.label : null;
   const selectedInvoiceStatusLabel = selectedInvoiceStatus
     ? invoiceStatusConfig[selectedInvoiceStatus as InvoiceStatus]?.label
     : null;
@@ -77,12 +76,12 @@ export const FilterTags = () => {
             onRemove={() => onDispatcherChange('')}
           />
         </DisplayIf>
-        <DisplayIf condition={!!selectedIsActiveLabel}>
+        <DisplayIf condition={!!selectedLoadStatusLabel}>
           <FilterTag
             colorScheme="purple"
-            label="Izvršenost"
-            value={selectedIsActiveLabel || ''}
-            onRemove={() => onIsActiveChange('')}
+            label="Status utovara"
+            value={selectedLoadStatusLabel || ''}
+            onRemove={() => onLoadStatusChange('')}
           />
         </DisplayIf>
         <DisplayIf condition={!!selectedInvoiceStatusLabel}>

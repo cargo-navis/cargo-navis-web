@@ -15,16 +15,6 @@ export const loadStatusConfig = {
   },
 } as const;
 
-export const activeOptions = [
-  { value: 'false', label: 'Odrađeni' },
-  { value: 'true', label: 'U obradi' },
-];
-
-export const activeLabels: Record<'true' | 'false', string> = {
-  true: 'U obradi',
-  false: 'Odrađeni',
-};
-
 export const invoiceStatusConfig = {
   [InvoiceStatus.NotSent]: {
     label: 'Nefakturiran',
