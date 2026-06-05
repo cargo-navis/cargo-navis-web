@@ -177,7 +177,7 @@ const SidebarStopEntry = ({
           <OpenDetailsLink vehicleId={stop.vehicleId} />
         </FlexLayout>
       )}
-      <FlexLayout className="flex-col items-start mt-2">
+      <FlexLayout className="flex-col items-center mt-3 pt-2 border-t border-dark-100 dark:border-light-800">
         <ToggleStopCompletionButton stop={stop} />
       </FlexLayout>
     </FlexLayout>
