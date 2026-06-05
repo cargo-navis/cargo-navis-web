@@ -123,7 +123,7 @@ export const VerticalStopEntry = ({
           className={isCompleted ? undefined : 'bg-transparent'}
           style={{
             left: '40px',
-            top: '68px',
+            top: '74px',
             height: 'calc(100% - 16px)',
             width: '2px',
             ...(isCompleted
@@ -136,7 +136,7 @@ export const VerticalStopEntry = ({
         />
         <TimelineIndicator
           className={isCompleted ? 'flex items-center justify-center bg-teal-500 text-white' : undefined}
-          style={{ top: 52, left: 33 }}
+          style={{ top: 58, left: 33 }}
         >
           {isCompleted && (
             <svg
@@ -260,7 +260,7 @@ export const VerticalStopEntry = ({
       </FlexLayout>
       {isDraggable && !isDragOverlay && (
         <Box
-          className="absolute left-0 top-7 hidden group-hover/stop-entry:block cursor-grab active:cursor-grabbing touch-none"
+          className="absolute left-0 top-[54px] hidden group-hover/stop-entry:block cursor-grab active:cursor-grabbing touch-none"
           {...attributes}
           {...listeners}
         >
