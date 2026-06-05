@@ -117,6 +117,9 @@ const SidebarStopEntry = ({
 
   const rowContent = (
     <FlexLayout className="flex-col gap-0.5 relative -top-4">
+      <Box className="absolute top-0 right-0">
+        <ToggleStopCompletionButton iconOnly stop={stop} />
+      </Box>
       <TimelineDate>
         {date ? (
           dayjs(date).format('DD.MM.YYYY')
@@ -177,9 +180,6 @@ const SidebarStopEntry = ({
           <OpenDetailsLink vehicleId={stop.vehicleId} />
         </FlexLayout>
       )}
-      <FlexLayout className="flex-col items-center mt-3 pt-2 border-t border-dark-100 dark:border-light-800">
-        <ToggleStopCompletionButton stop={stop} />
-      </FlexLayout>
     </FlexLayout>
   );
 
