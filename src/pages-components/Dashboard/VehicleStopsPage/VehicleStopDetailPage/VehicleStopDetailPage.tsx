@@ -27,6 +27,7 @@ import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { useVehicles } from '@/lib/hooks';
 import { useDeleteVehicleStop, useRearrangeVehicleStop, useVehicleStops } from '@/lib/hooks/api/vehicleStops';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
+import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 
 import { ContentLoader, StopSkeleton } from './ContentLoader';
@@ -56,6 +57,13 @@ export const VehicleStopDetailPage = () => {
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
 
   const stops = useMemo(() => data?.pages.flatMap((p) => p.data) ?? [], [data]);
+  const lastCompletedStopIndex = useMemo(() => {
+    for (let i = 0; i < stops.length; i++) {
+      if (isStopCompleted(stops[i])) return i;
+    }
+    return -1;
+  }, [stops]);
+
   const activeDragStop = useMemo(
     () => (activeDragId ? stops.find((s) => s.id === activeDragId) : undefined),
     [activeDragId, stops]
@@ -224,6 +232,7 @@ export const VehicleStopDetailPage = () => {
               <SortableContext items={stops.map((s) => s.id)} strategy={verticalListSortingStrategy}>
                 {stops.map((stop, i) => (
                   <VerticalStopEntry
+                    isLastCompleted={i === lastCompletedStopIndex}
                     key={stop.id}
                     step={i + 1}
                     stop={stop}
