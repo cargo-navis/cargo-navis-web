@@ -219,15 +219,20 @@ function applyStopUpdateToCache(queryClient: ReturnType<typeof useQueryClient>, 
       : old
   );
 
-  queryClient.setQueriesData<PaginatedResponse<Shipment>>({ queryKey: ['shipments'] }, (old) =>
-    old && {
-      ...old,
-      data: old.data.map((shipment) =>
-        shipment.vehicleStops
-          ? { ...shipment, vehicleStops: shipment.vehicleStops.map((s) => (s.id === updatedStop.id ? updatedStop : s)) }
-          : shipment
-      ),
-    }
+  queryClient.setQueriesData<PaginatedResponse<Shipment>>(
+    { queryKey: ['shipments'] },
+    (old) =>
+      old && {
+        ...old,
+        data: old.data.map((shipment) =>
+          shipment.vehicleStops
+            ? {
+                ...shipment,
+                vehicleStops: shipment.vehicleStops.map((s) => (s.id === updatedStop.id ? updatedStop : s)),
+              }
+            : shipment
+        ),
+      }
   );
 }
 
