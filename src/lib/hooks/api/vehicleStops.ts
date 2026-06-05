@@ -1,5 +1,6 @@
 import { type InfiniteData, useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import type { Shipment } from '@/lib/api';
 import type { PaginatedResponse } from '@/lib/api/pagination.d';
 import {
   assignShipmentToVehicle,
@@ -189,13 +190,52 @@ export function useSendVehicleStopMessage(id: string) {
   });
 }
 
+function applyStopUpdateToCache(queryClient: ReturnType<typeof useQueryClient>, updatedStop: VehicleStop) {
+  queryClient.setQueriesData<InfiniteData<PaginatedResponse<VehicleStop>>>(
+    { queryKey: [QUERY_KEY, 'paginated', updatedStop.vehicleId] },
+    (old) =>
+      old && {
+        ...old,
+        pages: old.pages.map((p) => ({
+          ...p,
+          data: p.data.map((s) => (s.id === updatedStop.id ? updatedStop : s)),
+        })),
+      }
+  );
+
+  queryClient.setQueriesData<VehicleStopGroup[]>({ queryKey: [QUERY_KEY, 'byVehicle'] }, (old) =>
+    old?.map((group) =>
+      group.vehicleId === updatedStop.vehicleId
+        ? { ...group, stops: group.stops.map((s) => (s.id === updatedStop.id ? updatedStop : s)) }
+        : group
+    )
+  );
+
+  queryClient.setQueriesData<VehicleStop>({ queryKey: [QUERY_KEY, updatedStop.id], exact: true }, updatedStop);
+
+  queryClient.setQueriesData<Shipment>({ queryKey: ['shipment'] }, (old) =>
+    old?.vehicleStops
+      ? { ...old, vehicleStops: old.vehicleStops.map((s) => (s.id === updatedStop.id ? updatedStop : s)) }
+      : old
+  );
+
+  queryClient.setQueriesData<PaginatedResponse<Shipment>>({ queryKey: ['shipments'] }, (old) =>
+    old && {
+      ...old,
+      data: old.data.map((shipment) =>
+        shipment.vehicleStops
+          ? { ...shipment, vehicleStops: shipment.vehicleStops.map((s) => (s.id === updatedStop.id ? updatedStop : s)) }
+          : shipment
+      ),
+    }
+  );
+}
+
 export function useCompleteVehicleStop(id: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => completeVehicleStop(id),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
-    },
+    onSuccess: (updatedStop) => applyStopUpdateToCache(queryClient, updatedStop),
   });
 }
 
@@ -203,9 +243,7 @@ export function useUncompleteVehicleStop(id: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: () => uncompleteVehicleStop(id),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
-    },
+    onSuccess: (updatedStop) => applyStopUpdateToCache(queryClient, updatedStop),
   });
 }
 

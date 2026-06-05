@@ -13,15 +13,10 @@ import {
   TimelineSeparator,
   TimelineTitle,
 } from '@/components/reui/timeline';
+import { ToggleStopCompletionButton } from '@/components/vehicleStops/ToggleStopCompletionButton';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { FileCard } from '@/lib/components/FileCard';
-import {
-  useCompleteVehicleStop,
-  useDeleteVehicleStopFile,
-  useGetVehicleStopFileUrl,
-  useSendVehicleStopMessage,
-  useUncompleteVehicleStop,
-} from '@/lib/hooks';
+import { useDeleteVehicleStopFile, useGetVehicleStopFileUrl, useSendVehicleStopMessage } from '@/lib/hooks';
 import { downloadVehicleStopFile } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
@@ -61,25 +56,7 @@ export const VerticalStopEntry = ({
   const { mutateAsync: deleteFile, isPending: isDeletingFile } = useDeleteVehicleStopFile(stop.id);
   const { mutateAsync: getDocumentUrl, isPending: isGettingDocumentUrl } = useGetVehicleStopFileUrl(stop.id);
   const { mutateAsync: sendMessage, isPending: isSendingMessage } = useSendVehicleStopMessage(stop.id);
-  const { mutateAsync: completeStop, isPending: isCompleting } = useCompleteVehicleStop(stop.id);
-  const { mutateAsync: uncompleteStop, isPending: isUncompleting } = useUncompleteVehicleStop(stop.id);
-  const isTogglingCompletion = isCompleting || isUncompleting;
   const isFileLoading = isDeletingFile || isGettingDocumentUrl;
-
-  async function handleToggleCompleted() {
-    try {
-      if (isCompleted) {
-        await uncompleteStop();
-        showSuccessToast({ title: 'Stanica označena nedovršenom' });
-      } else {
-        await completeStop();
-        showSuccessToast({ title: 'Stanica označena dovršenom' });
-      }
-    } catch (error) {
-      console.error(error);
-      showErrorToast({ title: 'Greška prilikom promjene statusa stanice. Pokušajte ponovno.' });
-    }
-  }
 
   async function handleSendMessage() {
     if (stop.messageSentAt) {
@@ -204,20 +181,7 @@ export const VerticalStopEntry = ({
         </FlexLayout>
         <FlexLayout className="absolute left-[40%] -top-2 items-start gap-3">
           <FlexLayout className="flex-col items-end">
-            <TextButton
-              iconLeft={isCompleted ? 'IconArrowBackUp' : 'IconCheck'}
-              isDisabled={isTogglingCompletion}
-              size="s"
-              text={isCompleted ? 'Označi nedovršenom' : 'Označi dovršenom'}
-              type="button"
-              variant={isCompleted ? 'primary' : 'secondary'}
-              onClick={handleToggleCompleted}
-            />
-            {stop.completedAt && (
-              <Text className="whitespace-nowrap" color="text-color-3" variant="text-xxxs">
-                Dovršeno {dayjs(stop.completedAt).format('DD.MM.YYYY, HH:mm')}
-              </Text>
-            )}
+            <ToggleStopCompletionButton stop={stop} />
           </FlexLayout>
           <DisplayIf condition={!isCompleted && !!stop.driverId}>
             <FlexLayout className="flex-col items-end">
