@@ -290,13 +290,51 @@ export const StopTimelineEntry = ({ stop, nextStop, step, connectsToMore = false
   );
 };
 
+const RemainingStopsTooltipContent = ({ stops }: { stops: VehicleStop[] }) => {
+  const ordered = [...stops].sort((a, b) => {
+    if (!a.date && !b.date) return 0;
+    if (!a.date) return 1;
+    if (!b.date) return -1;
+    return b.date.localeCompare(a.date);
+  });
+  return (
+    <FlexLayout className="p-2 flex-col gap-5 items-start">
+      {ordered.map((s) => {
+        const hasLoading = s.loadingCargos.length > 0;
+        const hasUnloading = s.unloadingCargos.length > 0;
+        return (
+          <FlexLayout className="flex-col items-start" key={s.id}>
+            <Text className="leading-4" color="text-color-4" variant="text-xxs">
+              {s.date ? dayjs(s.date).format('DD.MM.YYYY') : '—'}
+            </Text>
+            <FlexLayout className="items-center gap-1">
+              <Text color="text-light-50" variant="text-xxs-medium">
+                {s.address?.placeName ?? '-'}
+              </Text>
+              {hasLoading && <Icon className="text-orange-400" icon="IconPackageImport" size="s" />}
+              {hasUnloading && <Icon className="text-teal-400" icon="IconPackageExport" size="s" />}
+            </FlexLayout>
+            {s.address && (
+              <Text className="leading-3" color="text-light-300" variant="text-xxs">
+                {s.address.streetName}, {s.address.postalCode}
+              </Text>
+            )}
+          </FlexLayout>
+        );
+      })}
+    </FlexLayout>
+  );
+};
+
 interface RemainingStopsBadgeProps {
   count: number;
   step: number;
-  tooltipContent?: React.ReactElement;
+  stops?: VehicleStop[];
 }
 
-export const RemainingStopsBadge = ({ count, step, tooltipContent }: RemainingStopsBadgeProps) => {
+export const RemainingStopsBadge = ({ count, step, stops }: RemainingStopsBadgeProps) => {
+  const tooltipContent = stops && stops.length > 0 ? <RemainingStopsTooltipContent stops={stops} /> : undefined;
+
   const indicator: React.ReactElement = (
     <TimelineIndicator
       className="z-10 cursor-default flex items-center justify-center bg-teal-50 dark:bg-teal-900/40 border-teal-500/50 text-teal-700 dark:text-teal-200"
