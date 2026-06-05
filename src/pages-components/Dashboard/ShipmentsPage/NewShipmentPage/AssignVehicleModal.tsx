@@ -588,34 +588,6 @@ const PreviewStopTimelineEntry: React.FC<{
   );
 };
 
-const GapTooltipContent: React.FC<{ stops: VehicleStop[] }> = ({ stops }) => {
-  // List hidden stops newest-first, matching the API's natural order.
-  const ordered = [...stops].sort((a, b) => {
-    if (!a.date && !b.date) return 0;
-    if (!a.date) return 1;
-    if (!b.date) return -1;
-    return b.date.localeCompare(a.date);
-  });
-  return (
-    <FlexLayout className="p-2 flex-col gap-2 text-light-50">
-      <Text variant="text-xxs-medium">Skrivene stanice</Text>
-      {ordered.map((s) => (
-        <FlexLayout className="items-baseline gap-2" key={s.id}>
-          <Text color="text-color-4" variant="text-xxs">
-            {s.date ? dayjs(s.date).format('DD.MM.YYYY') : '—'}
-          </Text>
-          <Text variant="text-xs">{s.address?.placeName ?? '-'}</Text>
-          {s.address?.streetName && (
-            <Text color="text-light-300" variant="text-xxs">
-              {s.address.streetName}
-            </Text>
-          )}
-        </FlexLayout>
-      ))}
-    </FlexLayout>
-  );
-};
-
 interface VehicleRowProps {
   vehicle: Vehicle;
   latestStop?: VehicleStop;
@@ -707,12 +679,14 @@ const VehicleRow = ({
                   />
                 );
               }
+              const isNextCompleted = next ? (next.kind === 'real' ? isStopCompleted(next.stop) : false) : undefined;
               return (
                 <RemainingStopsBadge
                   count={row.stops.length}
+                  isNextCompleted={isNextCompleted}
                   key={`gap-${i}`}
                   step={step}
-                  tooltipContent={<GapTooltipContent stops={row.stops} />}
+                  stops={row.stops}
                 />
               );
             })}

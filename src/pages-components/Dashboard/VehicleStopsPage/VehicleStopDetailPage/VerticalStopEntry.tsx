@@ -13,15 +13,10 @@ import {
   TimelineSeparator,
   TimelineTitle,
 } from '@/components/reui/timeline';
+import { ToggleStopCompletionButton } from '@/components/vehicleStops/ToggleStopCompletionButton';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { FileCard } from '@/lib/components/FileCard';
-import {
-  useCompleteVehicleStop,
-  useDeleteVehicleStopFile,
-  useGetVehicleStopFileUrl,
-  useSendVehicleStopMessage,
-  useUncompleteVehicleStop,
-} from '@/lib/hooks';
+import { useDeleteVehicleStopFile, useGetVehicleStopFileUrl, useSendVehicleStopMessage } from '@/lib/hooks';
 import { downloadVehicleStopFile } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
@@ -61,25 +56,7 @@ export const VerticalStopEntry = ({
   const { mutateAsync: deleteFile, isPending: isDeletingFile } = useDeleteVehicleStopFile(stop.id);
   const { mutateAsync: getDocumentUrl, isPending: isGettingDocumentUrl } = useGetVehicleStopFileUrl(stop.id);
   const { mutateAsync: sendMessage, isPending: isSendingMessage } = useSendVehicleStopMessage(stop.id);
-  const { mutateAsync: completeStop, isPending: isCompleting } = useCompleteVehicleStop(stop.id);
-  const { mutateAsync: uncompleteStop, isPending: isUncompleting } = useUncompleteVehicleStop(stop.id);
-  const isTogglingCompletion = isCompleting || isUncompleting;
   const isFileLoading = isDeletingFile || isGettingDocumentUrl;
-
-  async function handleToggleCompleted() {
-    try {
-      if (isCompleted) {
-        await uncompleteStop();
-        showSuccessToast({ title: 'Stanica označena nedovršenom' });
-      } else {
-        await completeStop();
-        showSuccessToast({ title: 'Stanica označena dovršenom' });
-      }
-    } catch (error) {
-      console.error(error);
-      showErrorToast({ title: 'Greška prilikom promjene statusa stanice. Pokušajte ponovno.' });
-    }
-  }
 
   async function handleSendMessage() {
     if (stop.messageSentAt) {
@@ -146,7 +123,7 @@ export const VerticalStopEntry = ({
           className={isCompleted ? undefined : 'bg-transparent'}
           style={{
             left: '40px',
-            top: '68px',
+            top: '74px',
             height: 'calc(100% - 16px)',
             width: '2px',
             ...(isCompleted
@@ -159,7 +136,7 @@ export const VerticalStopEntry = ({
         />
         <TimelineIndicator
           className={isCompleted ? 'flex items-center justify-center bg-teal-500 text-white' : undefined}
-          style={{ top: 52, left: 33 }}
+          style={{ top: 58, left: 33 }}
         >
           {isCompleted && (
             <svg
@@ -204,20 +181,7 @@ export const VerticalStopEntry = ({
         </FlexLayout>
         <FlexLayout className="absolute left-[40%] -top-2 items-start gap-3">
           <FlexLayout className="flex-col items-end">
-            <TextButton
-              iconLeft={isCompleted ? 'IconArrowBackUp' : 'IconCheck'}
-              isDisabled={isTogglingCompletion}
-              size="s"
-              text={isCompleted ? 'Označi nedovršenom' : 'Označi dovršenom'}
-              type="button"
-              variant={isCompleted ? 'primary' : 'secondary'}
-              onClick={handleToggleCompleted}
-            />
-            {stop.completedAt && (
-              <Text className="whitespace-nowrap" color="text-color-3" variant="text-xxxs">
-                Dovršeno {dayjs(stop.completedAt).format('DD.MM.YYYY, HH:mm')}
-              </Text>
-            )}
+            <ToggleStopCompletionButton stop={stop} />
           </FlexLayout>
           <DisplayIf condition={!isCompleted && !!stop.driverId}>
             <FlexLayout className="flex-col items-end">
@@ -296,7 +260,7 @@ export const VerticalStopEntry = ({
       </FlexLayout>
       {isDraggable && !isDragOverlay && (
         <Box
-          className="absolute left-0 top-7 hidden group-hover/stop-entry:block cursor-grab active:cursor-grabbing touch-none"
+          className="absolute left-0 top-[54px] hidden group-hover/stop-entry:block cursor-grab active:cursor-grabbing touch-none"
           {...attributes}
           {...listeners}
         >

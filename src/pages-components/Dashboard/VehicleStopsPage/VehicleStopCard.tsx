@@ -41,9 +41,8 @@ export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
   const reversedStops = group.stops.toReversed();
   const stops = pickTimelineStops(reversedStops);
   const lastShownIndex = stops.length > 0 ? reversedStops.lastIndexOf(stops[stops.length - 1]) : -1;
-  const remainingUncompleted = reversedStops
-    .slice(lastShownIndex + 1)
-    .reduce((n, s) => n + (isStopCompleted(s) ? 0 : 1), 0);
+  const remainingStops = reversedStops.slice(lastShownIndex + 1).filter((s) => !isStopCompleted(s));
+  const remainingUncompleted = remainingStops.length;
   const driverIds = Array.from(
     new Set(
       stops
@@ -106,7 +105,9 @@ export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
                   stop={stop}
                 />
               ))}
-              {remainingUncompleted > 0 && <RemainingStopsBadge count={remainingUncompleted} step={stops.length + 1} />}
+              {remainingUncompleted > 0 && (
+                <RemainingStopsBadge count={remainingUncompleted} step={stops.length + 1} stops={remainingStops} />
+              )}
             </Timeline>
           )}
         </Box>

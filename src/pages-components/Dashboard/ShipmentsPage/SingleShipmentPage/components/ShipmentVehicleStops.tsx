@@ -12,6 +12,7 @@ import {
   TimelineSeparator,
   TimelineTitle,
 } from '@/components/reui/timeline';
+import { ToggleStopCompletionButton } from '@/components/vehicleStops/ToggleStopCompletionButton';
 import type { VehicleStop, VehicleStopCargo } from '@/lib/api/vehicleStops';
 import { useVehicles } from '@/lib/hooks';
 import { getCargoLabel } from '@/lib/utils/cargo';
@@ -116,6 +117,9 @@ const SidebarStopEntry = ({
 
   const rowContent = (
     <FlexLayout className="flex-col gap-0.5 relative -top-4">
+      <Box className="absolute top-0 right-0">
+        <ToggleStopCompletionButton iconOnly stop={stop} />
+      </Box>
       <TimelineDate>
         {date ? (
           dayjs(date).format('DD.MM.YYYY')
