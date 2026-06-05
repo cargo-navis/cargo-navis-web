@@ -34,7 +34,6 @@ interface VerticalStopEntryProps {
   stop: VehicleStop;
   step: number;
   isDragOverlay?: boolean;
-  isLastCompleted?: boolean;
   onEdit?(stop: VehicleStop): void;
   onDelete?(stop: VehicleStop): void;
   onInsertBefore?(): void;
@@ -44,14 +43,11 @@ export const VerticalStopEntry = ({
   stop,
   step,
   isDragOverlay,
-  isLastCompleted,
   onEdit,
   onDelete,
   onInsertBefore,
 }: VerticalStopEntryProps) => {
   const isCompleted = isStopCompleted(stop);
-  const canToggleCompletion = !isCompleted || isLastCompleted;
-
   const { address, date, loadingCargos, unloadingCargos, documents } = stop;
   const hasLoading = loadingCargos.length > 0;
   const hasUnloading = unloadingCargos.length > 0;
@@ -208,17 +204,15 @@ export const VerticalStopEntry = ({
         </FlexLayout>
         <FlexLayout className="absolute left-[40%] -top-2 items-start gap-3">
           <FlexLayout className="flex-col items-end">
-            {canToggleCompletion && (
-              <TextButton
-                iconLeft={isCompleted ? 'IconArrowBackUp' : 'IconCheck'}
-                isDisabled={isTogglingCompletion}
-                size="s"
-                text={isCompleted ? 'Označi nedovršenom' : 'Označi dovršenom'}
-                type="button"
-                variant={isCompleted ? 'primary' : 'secondary'}
-                onClick={handleToggleCompleted}
-              />
-            )}
+            <TextButton
+              iconLeft={isCompleted ? 'IconArrowBackUp' : 'IconCheck'}
+              isDisabled={isTogglingCompletion}
+              size="s"
+              text={isCompleted ? 'Označi nedovršenom' : 'Označi dovršenom'}
+              type="button"
+              variant={isCompleted ? 'primary' : 'secondary'}
+              onClick={handleToggleCompleted}
+            />
             {stop.completedAt && (
               <Text className="whitespace-nowrap" color="text-color-3" variant="text-xxxs">
                 Dovršeno {dayjs(stop.completedAt).format('DD.MM.YYYY, HH:mm')}
