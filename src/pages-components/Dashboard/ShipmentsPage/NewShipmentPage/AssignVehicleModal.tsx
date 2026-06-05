@@ -679,7 +679,16 @@ const VehicleRow = ({
                   />
                 );
               }
-              return <RemainingStopsBadge count={row.stops.length} key={`gap-${i}`} step={step} stops={row.stops} />;
+              const isNextCompleted = next ? (next.kind === 'real' ? isStopCompleted(next.stop) : false) : undefined;
+              return (
+                <RemainingStopsBadge
+                  count={row.stops.length}
+                  isNextCompleted={isNextCompleted}
+                  key={`gap-${i}`}
+                  step={step}
+                  stops={row.stops}
+                />
+              );
             })}
           </Timeline>
         </Box>

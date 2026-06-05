@@ -330,10 +330,12 @@ interface RemainingStopsBadgeProps {
   count: number;
   step: number;
   stops?: VehicleStop[];
+  isNextCompleted?: boolean;
 }
 
-export const RemainingStopsBadge = ({ count, step, stops }: RemainingStopsBadgeProps) => {
+export const RemainingStopsBadge = ({ count, step, stops, isNextCompleted }: RemainingStopsBadgeProps) => {
   const tooltipContent = stops && stops.length > 0 ? <RemainingStopsTooltipContent stops={stops} /> : undefined;
+  const showSeparator = isNextCompleted !== undefined;
 
   const indicator: React.ReactElement = (
     <TimelineIndicator
@@ -353,8 +355,29 @@ export const RemainingStopsBadge = ({ count, step, stops }: RemainingStopsBadgeP
   );
 
   return (
-    <TimelineItem step={step} style={{ flex: 'none', width: '60px', isolation: 'isolate' }}>
+    <TimelineItem
+      separatorActive={isNextCompleted}
+      step={step}
+      style={{ flex: 'none', width: '60px', isolation: 'isolate' }}
+    >
       <TimelineHeader>
+        {showSeparator && (
+          <TimelineSeparator
+            className={isNextCompleted ? undefined : 'bg-transparent'}
+            style={{
+              top: '28px',
+              height: '2px',
+              width: 'calc(100% - 40px)',
+              transform: 'translateX(38px) translateY(-50%)',
+              ...(isNextCompleted
+                ? {}
+                : {
+                    backgroundImage:
+                      'repeating-linear-gradient(to right, rgb(19 148 159 / 0.3) 0 5px, transparent 5px 9px)',
+                  }),
+            }}
+          />
+        )}
         <Box style={{ height: '20px', marginBottom: '20px' }} />
         {tooltipContent ? (
           <Tooltip content={tooltipContent} isPortal>
