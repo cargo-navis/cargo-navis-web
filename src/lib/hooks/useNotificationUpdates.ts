@@ -8,6 +8,8 @@ interface NotificationMessage {
     metadata: {
       vehicleStopId?: string;
       shipments?: { shipmentId: string; orderNumber: string }[];
+      draftId?: string;
+      fileName?: string;
     };
   };
   timestamp: number;
@@ -52,6 +54,14 @@ export function useNotificationUpdates() {
           void queryClient.refetchQueries({ queryKey: ['shipment', s.shipmentId], exact: true, type: 'all' });
         });
 
+        return;
+      }
+
+      if (notificationType === 'shipment_draft_updated') {
+        void queryClient.invalidateQueries({ queryKey: ['shipment-drafts'] });
+        if (metadata.draftId) {
+          void queryClient.invalidateQueries({ queryKey: ['shipment-draft', metadata.draftId] });
+        }
         return;
       }
     };
