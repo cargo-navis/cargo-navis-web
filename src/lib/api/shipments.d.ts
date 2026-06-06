@@ -68,6 +68,7 @@ export interface CreateShipmentData extends Omit<Shipment, 'id' | 'cargo'> {
     unloadingDescription?: string;
   }[];
   children?: CreateShipmentData[];
+  draftId?: string;
 }
 
 // TODO - this should be for Create shipment
