@@ -6,6 +6,7 @@ import {
   useCurrentTenant,
   useEmployees,
   useScrollRestoration,
+  useShipmentDrafts,
   useVehicles,
 } from '@/lib/hooks';
 import { useHasMounted } from '@/lib/hooks/dom';
@@ -17,14 +18,23 @@ import {
   ShipmentsTableLoader,
   TopPaginationControls,
 } from './components';
-import { usePaginationQueryParamState, useShipmentsPageData } from './hooks';
+import { DraftsTab } from './DraftsTab';
+import { usePaginationQueryParamState, useShipmentsPageData, useShipmentsPageTab } from './hooks';
 import { ShipmentsFiltersProvider } from './providers/ShipmentsFiltersProvider';
 import { ShipmentFilters } from './ShipmentFilters';
+import { ShipmentsDropZone } from './ShipmentsDropZone';
+import { ShipmentsPageTabs } from './ShipmentsPageTabs';
 import { ShipmentsTable } from './ShipmentsTable';
 
 export const ShipmentsPage = () => {
   const isMounted = useHasMounted();
+  const { tab, setTab } = useShipmentsPageTab();
+  const { data: drafts = [] } = useShipmentDrafts();
+
   if (!isMounted) return null;
+
+  const readyDraftsCount = drafts.filter((d) => d.status === 'EXTRACTED').length;
+  const isShipmentsTab = tab === 'shipments';
 
   return (
     <ShipmentsFiltersProvider>
@@ -35,12 +45,14 @@ export const ShipmentsPage = () => {
             <Heading as="h1" variant="text-xl">
               Nalozi
             </Heading>
-            <Button href="/dashboard/shipments/new" iconLeft="IconPlus" text="Dodaj Nalog" />
+            {isShipmentsTab && <Button href="/dashboard/shipments/new" iconLeft="IconPlus" text="Dodaj Nalog" />}
           </FlexLayout>
-          <ShipmentFilters />
+          <ShipmentsPageTabs readyDraftsCount={readyDraftsCount} setTab={setTab} tab={tab} />
+          {isShipmentsTab && <ShipmentFilters />}
         </Box>
-        <ShipmentPageContent />
+        {isShipmentsTab ? <ShipmentPageContent /> : <DraftsTab />}
       </DashboardLayout>
+      <ShipmentsDropZone onFilesAccepted={() => setTab('drafts')} />
     </ShipmentsFiltersProvider>
   );
 };
