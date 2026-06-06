@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
 
-import { type Cargo, type Shipment } from '@/lib/api';
+import { type Cargo, type Shipment, type ShipmentDraft } from '@/lib/api';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { FormNumberInput, FormSwitch, FormTextarea, FormTextInput } from '@/lib/components/form';
 import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
@@ -41,14 +41,18 @@ interface ShipmentFormProps {
   shipment?: Shipment;
   tenant: Tenant;
   copyFromId?: string;
+  draft?: ShipmentDraft;
+  draftId?: string;
 }
 
-export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, copyFromId }) => {
+export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, copyFromId, draft, draftId }) => {
   const { push, back } = useRouter();
   const isShipmentPresent = !!shipment;
   const isCopy = !!copyFromId;
+  const isFromDraft = !!draft;
 
-  // When copying, we use the shipment data but treat it as a new form (not an edit)
+  // Copying or coming from a draft both behave as "new" (no edit endpoints),
+  // just with prefilled values.
   const formMode = isShipmentPresent && !isCopy ? 'edit' : 'new';
   const isEdit = formMode === 'edit';
 
@@ -65,7 +69,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
   const schema = useMemo(() => getShipmentSchema(tenant.id), [tenant.id]);
 
   const formMethods = useForm<ShipmentFields>({
-    defaultValues: getFormDefaultValues(shipment, tenant, isCopy),
+    defaultValues: getFormDefaultValues(shipment, tenant, isCopy, draft),
     resolver: yupResolver(schema) as any,
     mode: 'all',
   });
@@ -73,8 +77,10 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
   const { handleSubmit, formState } = formMethods;
   const { isDirty, isValid, isLoading, isSubmitting } = formState;
 
-  // For a copied shipment, we should only check validity, not dirty state
-  const isFormActionable = isCopy ? isValid : isValid && isDirty;
+  // For prefilled-new shipments (copy or draft), only check validity — the
+  // form is pre-populated and not necessarily "dirty" against its defaults.
+  const isPrefilledNew = isCopy || isFromDraft;
+  const isFormActionable = isPrefilledNew ? isValid : isValid && isDirty;
 
   async function handleFormSubmit(data: ShipmentFields) {
     try {
@@ -111,7 +117,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
         showSuccessToast({ title: `Nalog "${shipment.orderNumber}" uspješno ažuriran` });
         void back();
       } else {
-        const payload = transformFormDataToPayload(data, { tenantId: tenant.id });
+        const payload = transformFormDataToPayload(data, { tenantId: tenant.id, draftId });
 
         const newShipment = await createShipment(payload);
         showSuccessToast({ title: `Nalog "${newShipment.orderNumber}" uspješno kreiran` });

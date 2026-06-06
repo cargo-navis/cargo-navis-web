@@ -4,7 +4,7 @@ export type ShipmentDraftStatus = 'PENDING_EXTRACTION' | 'PROCESSING' | 'EXTRACT
 
 export type ShipmentDraftSource = 'EMAIL' | 'MANUAL_UPLOAD';
 
-export type AiExtractedShipmentData = Shipment;
+export type AiExtractedShipmentData = Partial<Shipment>;
 
 export interface ShipmentDraft {
   id: string;
