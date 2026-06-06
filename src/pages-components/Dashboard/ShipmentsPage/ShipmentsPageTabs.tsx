@@ -40,13 +40,15 @@ export const ShipmentsPageTabs: React.FC<ShipmentsPageTabsProps> = ({ tab, setTa
             onClick={() => setTab(t.key)}
           >
             <FlexLayout className="items-center gap-2">
-              <Text variant={isActive ? 'text-s-medium' : 'text-s'}>{t.label}</Text>
+              <Text color="text-color-2" variant={isActive ? 'text-s-medium' : 'text-s'}>
+                {t.label}
+              </Text>
               {!!t.badge && (
-                <Box className="min-w-[20px] h-[20px] px-1.5 rounded-full bg-teal-500 text-white flex items-center justify-center">
-                  <Text color="text-white" variant="text-xxs-medium">
+                <FlexLayout className="w-[24px] h-[24px] rounded-m bg-teal-500 items-center justify-center">
+                  <Text className="font-mono" color="text-white" variant="text-xxs-medium">
                     {t.badge}
                   </Text>
-                </Box>
+                </FlexLayout>
               )}
             </FlexLayout>
           </Box>

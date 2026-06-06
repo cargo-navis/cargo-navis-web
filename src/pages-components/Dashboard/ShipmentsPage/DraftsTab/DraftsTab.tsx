@@ -2,18 +2,13 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 
-import type { ShipmentDraft, ShipmentDraftSource, ShipmentDraftStatus } from '@/lib/api';
+import type { ShipmentDraft, ShipmentDraftStatus } from '@/lib/api';
 import { useDeleteShipmentDraft, useShipmentDrafts } from '@/lib/hooks';
 import { getDateTimeInLocalTimezone } from '@/lib/utils/date';
 import { Box, Button, FlexLayout, Icon, LoadingSpinner, Pill, Table, Text, Tooltip } from '@/ui';
 import type { PillVariant } from '@/ui/components/Pill/const';
 
 const columnHelper = createColumnHelper<ShipmentDraft>();
-
-const sourceLabels: Record<ShipmentDraftSource, string> = {
-  EMAIL: 'Email',
-  MANUAL_UPLOAD: 'Upload',
-};
 
 const statusConfig: Record<ShipmentDraftStatus, { variant: PillVariant; label: string }> = {
   PENDING_EXTRACTION: { variant: 'info', label: 'Čeka obradu' },
@@ -38,15 +33,10 @@ export const DraftsTab = () => {
         cell: (props) => (
           <FlexLayout className="items-center gap-2 py-3">
             <Icon color="text-color-3" icon="IconFileDescription" size="m" />
-            <Text variant="text-s-medium">{props.row.original.fileName}</Text>
+            <Text color="text-color-1" variant="text-s-medium">
+              {props.row.original.fileName}
+            </Text>
           </FlexLayout>
-        ),
-      }),
-      columnHelper.display({
-        header: 'Izvor',
-        meta: { width: '120px' },
-        cell: (props) => (
-          <Text variant="text-s">{sourceLabels[props.row.original.source] ?? props.row.original.source}</Text>
         ),
       }),
       columnHelper.display({
@@ -80,7 +70,11 @@ export const DraftsTab = () => {
       columnHelper.display({
         header: 'Kreirano',
         meta: { width: '180px' },
-        cell: (props) => <Text variant="text-s">{getDateTimeInLocalTimezone(props.row.original.createdAt)}</Text>,
+        cell: (props) => (
+          <Text color="text-color-3" variant="text-s">
+            {getDateTimeInLocalTimezone(props.row.original.createdAt)}
+          </Text>
+        ),
       }),
       columnHelper.display({
         id: 'actions',
@@ -104,14 +98,7 @@ export const DraftsTab = () => {
           return (
             <FlexLayout className="items-center justify-end gap-2 pr-2">
               {isReady && <Button iconLeft="IconArrowRight" size="s" text="Kreiraj nalog" onClick={handleOpen} />}
-              <Box
-                as="button"
-                className="p-2 rounded hover:bg-black-alpha-05 dark:hover:bg-white-alpha-10"
-                type="button"
-                onClick={handleDelete}
-              >
-                <Icon color="text-color-3" icon="IconTrash" size="m" />
-              </Box>
+              <Button iconLeft="IconTrash" size="s" text="Izbriši" variant="danger" onClick={handleDelete} />
             </FlexLayout>
           );
         },
@@ -135,7 +122,7 @@ export const DraftsTab = () => {
           📥 Nema nacrta
         </Text>
         <Text color="text-color-3" variant="text-s">
-          Povucite PDF ili sliku bilo gdje na stranicu za upload novog nacrta.
+          Povucite PDF bilo gdje na stranicu za upload novog nacrta.
         </Text>
       </FlexLayout>
     );

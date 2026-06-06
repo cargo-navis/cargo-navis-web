@@ -4,7 +4,7 @@ import { useCreateShipmentDraft } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 
-const ACCEPTED_MIME_TYPES = ['application/pdf', 'image/png', 'image/jpeg', 'image/heic'];
+const ACCEPTED_MIME_TYPES = ['application/pdf'];
 
 interface ShipmentsDropZoneProps {
   onFilesAccepted?: () => void;
@@ -51,7 +51,7 @@ export const ShipmentsDropZone: React.FC<ShipmentsDropZoneProps> = ({ onFilesAcc
 
       if (rejectedCount > 0) {
         showErrorToast({
-          title: `${rejectedCount} ${rejectedCount === 1 ? 'datoteka nije podržana' : 'datoteke nisu podržane'}. Dozvoljeni su PDF i slike.`,
+          title: `${rejectedCount} ${rejectedCount === 1 ? 'datoteka nije podržana' : 'datoteke nisu podržane'}. Dozvoljen je samo PDF.`,
         });
       }
 
@@ -97,7 +97,7 @@ export const ShipmentsDropZone: React.FC<ShipmentsDropZoneProps> = ({ onFilesAcc
         <Icon color="text-teal-500" icon="IconUpload" size="xxl" />
         <Text variant="text-l-medium">Otpustite za upload</Text>
         <Text color="text-color-3" variant="text-xs">
-          PDF ili slika
+          Samo PDF
         </Text>
       </FlexLayout>
     </Box>
