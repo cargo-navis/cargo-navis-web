@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import type { ShipmentDraft, ShipmentDraftStatus } from '@/lib/api';
 import { useDeleteShipmentDraft, useShipmentDrafts } from '@/lib/hooks';
 import { getDateTimeInLocalTimezone } from '@/lib/utils/date';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout, Icon, LoadingSpinner, Pill, Table, Text, Tooltip } from '@/ui';
 import type { PillVariant } from '@/ui/components/Pill/const';
 
@@ -21,7 +22,7 @@ const statusConfig: Record<ShipmentDraftStatus, { variant: PillVariant; label: s
 export const DraftsTab = () => {
   const router = useRouter();
   const { data: drafts = [], isLoading } = useShipmentDrafts();
-  const { mutate: deleteDraft } = useDeleteShipmentDraft();
+  const { mutateAsync: deleteDraft } = useDeleteShipmentDraft();
 
   const sortedDrafts = useMemo(() => [...drafts].sort((a, b) => b.createdAt.localeCompare(a.createdAt)), [drafts]);
 
@@ -84,11 +85,17 @@ export const DraftsTab = () => {
           const draft = props.row.original;
           const isReady = draft.status === 'EXTRACTED';
 
-          function handleDelete(event: React.MouseEvent) {
+          async function handleDelete(event: React.MouseEvent) {
             event.stopPropagation();
             const ok = confirm('Jeste li sigurni da želite izbrisati ovaj nacrt?');
             if (!ok) return;
-            deleteDraft(draft.id);
+
+            try {
+              await deleteDraft(draft.id);
+              showSuccessToast({ title: 'Nacrt izbrisan' });
+            } catch {
+              showErrorToast({ title: 'Greška s brisanjem nacrta' });
+            }
           }
 
           function handleOpen() {
