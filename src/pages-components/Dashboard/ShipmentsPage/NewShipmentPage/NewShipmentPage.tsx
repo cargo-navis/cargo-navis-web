@@ -61,7 +61,7 @@ export const NewShipmentPage = () => {
   if (copyFromShipment) {
     pageTitle = `Kopija naloga ${copyFromShipment.orderNumber}`;
   } else if (draft) {
-    pageTitle = `Novi nalog iz nacrta: ${draft.fileName}`;
+    pageTitle = 'Novi nalog iz nacrta';
   }
 
   const backTarget = draft ? '/dashboard/shipments?tab=drafts' : '/dashboard/shipments';
@@ -70,10 +70,15 @@ export const NewShipmentPage = () => {
     <DashboardLayout>
       <PageTitle title="Novi nalog" />
       <Box>
-        <FlexLayout className="flex-col gap-[40px]">
+        <FlexLayout className="flex-col gap-2">
           <Heading as="h1" variant="text-xl">
             {pageTitle}
           </Heading>
+          {draft && (
+            <Text color="text-color-3" variant="text-m">
+              {draft.fileName}
+            </Text>
+          )}
         </FlexLayout>
         <FlexLayout className="py-5 flex-col gap-[40px]">
           <BackButton targetLocation={backTarget} />
