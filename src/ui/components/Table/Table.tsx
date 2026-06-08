@@ -82,6 +82,8 @@ export const Table: React.FC<TableProps> = ({
           const hasWarning = !isSubRow && row.original && row.original.isWarning === true;
           const isSuccess = row.original && row.original.isSuccess === true;
 
+          const onClickProp = onRowClick ? { onClick: () => onRowClick?.(row.original) } : {};
+
           return (
             <Box
               as="tr"
@@ -97,7 +99,7 @@ export const Table: React.FC<TableProps> = ({
                 getRowClassName?.(row)
               )}
               key={row.id}
-              onClick={() => onRowClick?.(row.original)}
+              {...onClickProp}
             >
               {row.getVisibleCells().map((cell, cellIndex) => (
                 <Box

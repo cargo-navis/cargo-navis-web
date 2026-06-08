@@ -1,6 +1,6 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { useRouter } from 'next/router';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 
 import type { ShipmentDraft, ShipmentDraftStatus } from '@/lib/api';
 import { useDeleteShipmentDraft, useShipmentDrafts } from '@/lib/hooks';
@@ -24,7 +24,16 @@ export const DraftsTab = () => {
   const { data: drafts = [], isLoading } = useShipmentDrafts();
   const { mutateAsync: deleteDraft } = useDeleteShipmentDraft();
 
+  const highlightedDraftId = typeof router.query.highlight === 'string' ? router.query.highlight : undefined;
+  const containerRef = useRef<HTMLDivElement>(null);
+
   const sortedDrafts = useMemo(() => [...drafts].sort((a, b) => b.createdAt.localeCompare(a.createdAt)), [drafts]);
+
+  useEffect(() => {
+    if (!highlightedDraftId || sortedDrafts.length === 0 || !containerRef.current) return;
+    const row = containerRef.current.querySelector<HTMLElement>(`.draft-row-${CSS.escape(highlightedDraftId)}`);
+    row?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [highlightedDraftId, sortedDrafts]);
 
   const columns = useMemo(
     () => [
@@ -136,8 +145,20 @@ export const DraftsTab = () => {
   }
 
   return (
-    <Box className="py-5">
-      <Table columns={columns} data={sortedDrafts} />
+    <Box className="py-5" ref={containerRef}>
+      <Table
+        columns={columns}
+        data={sortedDrafts}
+        getRowClassName={(row) => {
+          const draftId = row.original?.id;
+          if (!draftId) return undefined;
+          const classes = [`draft-row-${draftId}`];
+          if (draftId === highlightedDraftId) {
+            classes.push('row-highlight-fade');
+          }
+          return classes.join(' ');
+        }}
+      />
     </Box>
   );
 };
