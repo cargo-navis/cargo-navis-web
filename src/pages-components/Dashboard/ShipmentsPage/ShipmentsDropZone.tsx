@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { useCreateShipmentDraft } from '@/lib/hooks';
-import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 
-const ACCEPTED_MIME_TYPES = ['application/pdf'];
+import { useUploadDraftFiles } from './hooks';
 
 interface ShipmentsDropZoneProps {
   onFilesAccepted?: () => void;
@@ -15,7 +13,7 @@ function isFileDrag(event: DragEvent) {
 }
 
 export const ShipmentsDropZone: React.FC<ShipmentsDropZoneProps> = ({ onFilesAccepted }) => {
-  const { mutateAsync: createDraft } = useCreateShipmentDraft();
+  const uploadFiles = useUploadDraftFiles(onFilesAccepted);
   const dragCounter = useRef(0);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -46,34 +44,7 @@ export const ShipmentsDropZone: React.FC<ShipmentsDropZoneProps> = ({ onFilesAcc
       setIsDragging(false);
 
       const files = Array.from(event.dataTransfer?.files ?? []);
-      const accepted = files.filter((file) => ACCEPTED_MIME_TYPES.includes(file.type));
-      const rejectedCount = files.length - accepted.length;
-
-      if (rejectedCount > 0) {
-        showErrorToast({
-          title: `${rejectedCount} ${rejectedCount === 1 ? 'datoteka nije podržana' : 'datoteke nisu podržane'}. Dozvoljen je samo PDF.`,
-        });
-      }
-
-      if (accepted.length === 0) return;
-
-      onFilesAccepted?.();
-
-      const results = await Promise.allSettled(accepted.map((file) => createDraft({ file, fileName: file.name })));
-
-      const succeeded = results.filter((r) => r.status === 'fulfilled').length;
-      const failed = results.length - succeeded;
-
-      if (succeeded > 0) {
-        showSuccessToast({
-          title: `${succeeded} ${succeeded === 1 ? 'nacrt učitan' : 'nacrta učitano'}. Obrada je u tijeku.`,
-        });
-      }
-      if (failed > 0) {
-        showErrorToast({
-          title: `${failed} ${failed === 1 ? 'datoteku nije moguće učitati' : 'datoteke nije moguće učitati'}.`,
-        });
-      }
+      await uploadFiles(files);
     }
 
     window.addEventListener('dragenter', handleDragEnter);
@@ -87,7 +58,7 @@ export const ShipmentsDropZone: React.FC<ShipmentsDropZoneProps> = ({ onFilesAcc
       window.removeEventListener('dragleave', handleDragLeave);
       window.removeEventListener('drop', handleDrop);
     };
-  }, [createDraft, onFilesAccepted]);
+  }, [uploadFiles]);
 
   if (!isDragging) return null;
 
