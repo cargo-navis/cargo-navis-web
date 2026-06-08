@@ -46,6 +46,21 @@ export function getNotificationItemData(notification: Notification) {
       );
       break;
     }
+    case NotificationType.SHIPMENT_DRAFT_UPDATED: {
+      const { draftId, fileName } = metadata;
+
+      targetUrl = `/dashboard/shipments?tab=drafts${draftId ? `&highlight=${draftId}` : ''}`;
+      descriptionNode = (
+        <Text color="text-color-2" variant="text-s">
+          Nacrt{' '}
+          <Link className="font-medium hover:underline text-teal-600 dark:text-teal-400" href={targetUrl}>
+            <Text variant="text-s-bold">{fileName}</Text>
+          </Link>{' '}
+          je ažuriran.
+        </Text>
+      );
+      break;
+    }
     case NotificationType.VEHICLE_STOP_COMPLETED: {
       const { driverId, address, shipments = [] } = metadata;
 
