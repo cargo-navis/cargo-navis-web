@@ -2,7 +2,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useRef } from 'react';
 
-import type { ShipmentDraft, ShipmentDraftStatus } from '@/lib/api';
+import { getShipmentDraftDocumentUrl, ShipmentDraft, type ShipmentDraftStatus } from '@/lib/api';
 import { useDeleteShipmentDraft, useShipmentDrafts } from '@/lib/hooks';
 import { getDateTimeInLocalTimezone } from '@/lib/utils/date';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
@@ -41,8 +41,8 @@ export const DraftsTab = () => {
         header: 'Datoteka',
         meta: { fill: true },
         cell: (props) => (
-          <FlexLayout className="items-center gap-2 py-3">
-            <Icon color="text-color-3" icon="IconFileDescription" size="m" />
+          <FlexLayout className="items-start gap-2 py-3">
+            <Icon className="mt-[2px]" color="text-color-3" icon="IconFileDescription" size="m" />
             <Text color="text-color-1" variant="text-s-medium">
               {props.row.original.fileName}
             </Text>
@@ -89,10 +89,11 @@ export const DraftsTab = () => {
       columnHelper.display({
         id: 'actions',
         header: '',
-        meta: { width: '220px' },
+        meta: { width: '420px' },
         cell: (props) => {
           const draft = props.row.original;
           const isReady = draft.status === 'EXTRACTED';
+          const documentId = draft.document?.id ?? null;
 
           async function handleDelete(event: React.MouseEvent) {
             event.stopPropagation();
@@ -111,8 +112,28 @@ export const DraftsTab = () => {
             void router.push(`/dashboard/shipments/new?draftId=${draft.id}`);
           }
 
+          async function handleOpenDocument() {
+            if (!documentId) return;
+            try {
+              const url = await getShipmentDraftDocumentUrl(draft.id, documentId, 'inline');
+              window.open(url, '_blank');
+            } catch (error) {
+              console.error(error);
+              showErrorToast({ title: 'Greška prilikom pregleda dokumenta. Pokušajte ponovno.' });
+            }
+          }
+
           return (
             <FlexLayout className="items-center justify-end gap-2 pr-2">
+              {documentId && (
+                <Button
+                  iconLeft="IconArrowUpRight"
+                  size="s"
+                  text="Otvori dokument"
+                  variant="secondary"
+                  onClick={handleOpenDocument}
+                />
+              )}
               {isReady && <Button iconLeft="IconArrowRight" size="s" text="Kreiraj nalog" onClick={handleOpen} />}
               <Button iconLeft="IconTrash" size="s" text="Izbriši" variant="danger" onClick={handleDelete} />
             </FlexLayout>

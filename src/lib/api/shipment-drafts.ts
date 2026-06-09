@@ -23,3 +23,11 @@ export async function createShipmentDraft({ file, fileName }: CreateShipmentDraf
 export async function deleteShipmentDraft(id: string) {
   return backend.delete<void>(`/api/shipment-drafts/${id}`);
 }
+
+export async function getShipmentDraftDocumentUrl(
+  draftId: string,
+  documentId: string,
+  disposition: 'inline' | 'attachment' = 'attachment'
+) {
+  return backend.get<string>(`/api/shipment-drafts/${draftId}/files/${documentId}`, { params: { disposition } });
+}

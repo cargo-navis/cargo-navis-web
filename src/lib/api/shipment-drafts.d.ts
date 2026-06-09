@@ -6,6 +6,15 @@ export type ShipmentDraftSource = 'EMAIL' | 'MANUAL_UPLOAD';
 
 export type AiExtractedShipmentData = Partial<Shipment>;
 
+export interface ShipmentDraftDocument {
+  id: string;
+  createdAt: string;
+  name: string;
+  mimeType: string;
+  status: string;
+  publicUrl: string | null;
+}
+
 export interface ShipmentDraft {
   id: string;
   fileName: string;
@@ -17,6 +26,7 @@ export interface ShipmentDraft {
   errorMessage: string | null;
   createdAt: string;
   updatedAt: string;
+  document: ShipmentDraftDocument | null;
 }
 
 export interface CreateShipmentDraftParams {
