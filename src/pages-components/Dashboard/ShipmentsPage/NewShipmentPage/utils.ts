@@ -144,7 +144,10 @@ const getDraftShipmentFormValues = async (draft: ShipmentDraft, tenant: Tenant) 
 
 // Create form values when copying a shipment
 const getCopyShipmentFormValues = async (shipment: Shipment) => {
-  const cargo = await mapCargoItems(shipment.cargo);
+  const mappedCargo = await mapCargoItems(shipment.cargo);
+  // Dates are specific to the original shipment, so don't carry them over to
+  // the copy — the user fills in fresh loading/unloading dates.
+  const cargo = mappedCargo.map((item) => ({ ...item, loadingReadyDate: '', unloadingDueDate: '' }));
 
   return {
     externalOrderReference: shipment.externalOrderReference || '',
