@@ -12,7 +12,7 @@ import type { PillVariant } from '@/ui/components/Pill/const';
 const columnHelper = createColumnHelper<ShipmentDraft>();
 
 const statusConfig: Record<ShipmentDraftStatus, { variant: PillVariant; label: string }> = {
-  PENDING_EXTRACTION: { variant: 'info', label: 'Čeka obradu' },
+  PENDING_EXTRACTION: { variant: 'info', label: 'Obrada u tijeku' },
   PROCESSING: { variant: 'info', label: 'Obrada u tijeku' },
   EXTRACTED: { variant: 'success', label: 'Spremno' },
   CONFIRMED: { variant: 'default', label: 'Potvrđeno' },
@@ -97,14 +97,14 @@ export const DraftsTab = () => {
 
           async function handleDelete(event: React.MouseEvent) {
             event.stopPropagation();
-            const ok = confirm('Jeste li sigurni da želite izbrisati ovaj nacrt?');
+            const ok = confirm('Jeste li sigurni da želite izbrisati ovaj nalog u pripremi?');
             if (!ok) return;
 
             try {
               await deleteDraft(draft.id);
-              showSuccessToast({ title: 'Nacrt izbrisan' });
+              showSuccessToast({ title: 'Nalog u pripremi izbrisan' });
             } catch {
-              showErrorToast({ title: 'Greška s brisanjem nacrta' });
+              showErrorToast({ title: 'Greška s brisanjem naloga u pripremi' });
             }
           }
 
@@ -156,10 +156,10 @@ export const DraftsTab = () => {
     return (
       <FlexLayout className="flex-col gap-2 items-center justify-center my-10">
         <Text color="text-color-2" variant="text-l-medium">
-          📥 Nema nacrta
+          📥 Nema naloga u pripremi
         </Text>
         <Text color="text-color-3" variant="text-s">
-          Povucite PDF bilo gdje na stranicu za upload novog nacrta.
+          Povucite PDF bilo gdje na stranicu za upload novog naloga.
         </Text>
       </FlexLayout>
     );

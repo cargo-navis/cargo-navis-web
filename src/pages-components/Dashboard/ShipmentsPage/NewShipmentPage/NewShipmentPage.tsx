@@ -10,10 +10,10 @@ import { Box, FlexLayout, Heading, Text } from '@/ui';
 import { ShipmentForm } from './ShipmentForm';
 
 const draftNotReadyMessages: Record<string, string> = {
-  PENDING_EXTRACTION: 'Nacrt još čeka obradu. Pokušajte ponovno za nekoliko trenutaka.',
-  PROCESSING: 'AI obrada nacrta je u tijeku. Pokušajte ponovno za nekoliko trenutaka.',
-  CONFIRMED: 'Ovaj nacrt je već potvrđen i pretvoren u nalog.',
-  FAILED: 'Obrada nacrta nije uspjela.',
+  PENDING_EXTRACTION: 'Nalog još čeka obradu. Pokušajte ponovno za nekoliko trenutaka.',
+  PROCESSING: 'AI obrada naloga je u tijeku. Pokušajte ponovno za nekoliko trenutaka.',
+  CONFIRMED: 'Ovaj nalog je već potvrđen.',
+  FAILED: 'Obrada naloga nije uspjela.',
 };
 
 export const NewShipmentPage = () => {
@@ -30,15 +30,15 @@ export const NewShipmentPage = () => {
   if (isLoading || !tenant) return <LoadingPage />;
 
   if (draft && draft.status !== 'EXTRACTED') {
-    const message = draftNotReadyMessages[draft.status] ?? 'Nacrt nije spreman za pretvaranje u nalog.';
+    const message = draftNotReadyMessages[draft.status] ?? 'Nalog još nije spreman.';
 
     return (
       <DashboardLayout>
-        <PageTitle title="Nacrt nije spreman" />
+        <PageTitle title="Nalog nije spreman" />
         <Box>
           <FlexLayout className="flex-col gap-[40px]">
             <Heading as="h1" variant="text-xl">
-              Nacrt nije spreman
+              Nalog nije spreman
             </Heading>
           </FlexLayout>
           <FlexLayout className="py-5 flex-col gap-4">
@@ -61,7 +61,7 @@ export const NewShipmentPage = () => {
   if (copyFromShipment) {
     pageTitle = `Kopija naloga ${copyFromShipment.orderNumber}`;
   } else if (draft) {
-    pageTitle = 'Novi nalog iz nacrta';
+    pageTitle = 'Novi nalog iz pripreme';
   }
 
   const backTarget = draft ? '/dashboard/shipments?tab=drafts' : '/dashboard/shipments';

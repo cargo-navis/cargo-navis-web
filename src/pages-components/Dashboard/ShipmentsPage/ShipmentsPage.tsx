@@ -73,7 +73,7 @@ export const ShipmentsPage = () => {
               />
               <Button
                 iconLeft="IconUpload"
-                text="Učitaj nacrt"
+                text="Učitaj nalog"
                 variant="secondary"
                 onClick={() => fileInputRef.current?.click()}
               />

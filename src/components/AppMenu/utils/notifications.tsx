@@ -52,7 +52,7 @@ export function getNotificationItemData(notification: Notification) {
       targetUrl = `/dashboard/shipments?tab=drafts${draftId ? `&highlight=${draftId}` : ''}`;
       descriptionNode = (
         <Text color="text-color-2" variant="text-s">
-          Nacrt{' '}
+          Nalog u pripremi{' '}
           <Link className="font-medium hover:underline text-teal-600 dark:text-teal-400" href={targetUrl}>
             <Text variant="text-s-bold">{fileName}</Text>
           </Link>{' '}

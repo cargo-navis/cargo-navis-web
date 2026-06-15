@@ -32,7 +32,7 @@ export function useUploadDraftFiles(onFilesAccepted?: () => void) {
 
       if (succeeded > 0) {
         showSuccessToast({
-          title: `${succeeded} ${succeeded === 1 ? 'nacrt učitan' : 'nacrta učitano'}. Obrada je u tijeku.`,
+          title: `${succeeded} ${succeeded === 1 ? 'nalog učitan' : 'naloga učitano'}. Obrada je u tijeku.`,
         });
       }
       if (failed > 0) {

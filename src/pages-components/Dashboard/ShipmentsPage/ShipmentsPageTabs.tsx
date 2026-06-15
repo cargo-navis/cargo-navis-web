@@ -19,7 +19,7 @@ interface TabConfig {
 export const ShipmentsPageTabs: React.FC<ShipmentsPageTabsProps> = ({ tab, setTab, readyDraftsCount }) => {
   const tabs: TabConfig[] = [
     { key: 'shipments', label: 'Nalozi' },
-    { key: 'drafts', label: 'Nacrti', badge: readyDraftsCount || undefined },
+    { key: 'drafts', label: 'Nalozi u pripremi', badge: readyDraftsCount || undefined },
   ];
 
   return (
