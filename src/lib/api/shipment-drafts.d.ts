@@ -4,7 +4,10 @@ export type ShipmentDraftStatus = 'PENDING_EXTRACTION' | 'PROCESSING' | 'EXTRACT
 
 export type ShipmentDraftSource = 'EMAIL' | 'MANUAL_UPLOAD';
 
-export type AiExtractedShipmentData = Partial<Shipment>;
+export type AiExtractedShipmentData = Partial<Shipment> & {
+  /** Raw text extracted from the uploaded document by the AI pipeline. */
+  extractedText?: string;
+};
 
 export interface ShipmentDraftDocument {
   id: string;

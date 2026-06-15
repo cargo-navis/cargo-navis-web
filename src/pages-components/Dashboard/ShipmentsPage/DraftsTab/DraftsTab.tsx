@@ -1,6 +1,6 @@
 import { createColumnHelper } from '@tanstack/react-table';
 import { useRouter } from 'next/router';
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { getShipmentDraftDocumentUrl, ShipmentDraft, type ShipmentDraftStatus } from '@/lib/api';
 import { useDeleteShipmentDraft, useShipmentDrafts } from '@/lib/hooks';
@@ -8,6 +8,8 @@ import { getDateTimeInLocalTimezone } from '@/lib/utils/date';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout, Icon, LoadingSpinner, Pill, Table, Text, Tooltip } from '@/ui';
 import type { PillVariant } from '@/ui/components/Pill/const';
+
+import { ExtractedTextModal } from './ExtractedTextModal';
 
 const columnHelper = createColumnHelper<ShipmentDraft>();
 
@@ -26,6 +28,7 @@ export const DraftsTab = () => {
 
   const highlightedDraftId = typeof router.query.highlight === 'string' ? router.query.highlight : undefined;
   const containerRef = useRef<HTMLDivElement>(null);
+  const [textDraft, setTextDraft] = useState<ShipmentDraft | null>(null);
 
   const sortedDrafts = useMemo(() => [...drafts].sort((a, b) => b.createdAt.localeCompare(a.createdAt)), [drafts]);
 
@@ -41,9 +44,14 @@ export const DraftsTab = () => {
         header: 'Datoteka',
         meta: { fill: true },
         cell: (props) => (
-          <FlexLayout className="items-start gap-2 py-3">
+          <FlexLayout
+            as="button"
+            className="items-start gap-2 py-3 text-left group"
+            type="button"
+            onClick={() => setTextDraft(props.row.original)}
+          >
             <Icon className="mt-[2px]" color="text-color-3" icon="IconFileDescription" size="m" />
-            <Text color="text-color-1" variant="text-s-medium">
+            <Text className="group-hover:underline" color="text-color-1" variant="text-s-medium">
               {props.row.original.fileName}
             </Text>
           </FlexLayout>
@@ -141,7 +149,7 @@ export const DraftsTab = () => {
         },
       }),
     ],
-    [deleteDraft, router]
+    [deleteDraft, router, setTextDraft]
   );
 
   if (isLoading) {
@@ -180,6 +188,7 @@ export const DraftsTab = () => {
           return classes.join(' ');
         }}
       />
+      <ExtractedTextModal draft={textDraft} onClose={() => setTextDraft(null)} />
     </Box>
   );
 };
