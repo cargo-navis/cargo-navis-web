@@ -1,3 +1,4 @@
+import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -5,6 +6,7 @@ import { PageTitle } from '@/components/PageTitle';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { Vehicle } from '@/lib/api';
 import { useVehicles } from '@/lib/hooks';
+import { useEmployees } from '@/lib/hooks/api';
 import { useVehicleStopsByVehicle } from '@/lib/hooks/api/vehicleStops';
 import { Box, FlexLayout, Heading, Text, TextInput } from '@/ui';
 
@@ -15,6 +17,7 @@ import { VehicleStopCard } from './VehicleStopCard';
 export const VehicleStopsPage = () => {
   const { data: groups, isLoading: isLoadingStops } = useVehicleStopsByVehicle(5);
   const { data: vehicles, isLoading: isLoadingVehicles } = useVehicles();
+  const { data: employees, isLoading: isLoadingEmployees } = useEmployees();
 
   const [search, setSearch] = useState('');
   const { storage, updateField } = useVehicleStopsFiltersLocalStorage();
@@ -25,23 +28,53 @@ export const VehicleStopsPage = () => {
     return new Map(vehicles.map((v) => [v.id, v]));
   }, [vehicles]);
 
+  const employeeNameById = useMemo(() => {
+    const map = new Map<string, string>();
+    employees?.forEach((e) => map.set(e.id.toString(), e.fullName));
+    return map;
+  }, [employees]);
+
+  const searchRecords = useMemo(() => {
+    if (!groups) return [];
+    return groups.map((group) => {
+      const driverNames = Array.from(
+        new Set(
+          group.stops
+            .map((s) => (s.driverId ? employeeNameById.get(s.driverId) : undefined))
+            .filter(Boolean) as string[]
+        )
+      );
+      return {
+        group,
+        drivers: driverNames.join(' '),
+        registration: vehicleMap.get(group.vehicleId)?.registration ?? '',
+      };
+    });
+  }, [groups, vehicleMap, employeeNameById]);
+
+  const fuse = useMemo(
+    () => new Fuse(searchRecords, { keys: ['drivers', 'registration'], threshold: 0.35, ignoreLocation: true }),
+    [searchRecords]
+  );
+
   const filteredGroups = useMemo(() => {
     if (!groups) return [];
 
-    const terms = search.trim() ? search.toLowerCase().split(/\s+/) : [];
+    const dispatcherFiltered = dispatcherId
+      ? groups.filter((group) => group.stops.some((s) => s.disponentId === dispatcherId))
+      : groups;
 
-    return groups.filter((group) => {
-      if (dispatcherId && !group.stops.some((s) => s.disponentId === dispatcherId)) return false;
-      if (terms.length === 0) return true;
+    const term = search.trim();
+    if (!term) return dispatcherFiltered;
 
-      const vehicle = vehicleMap.get(group.vehicleId);
-      if (!vehicle) return false;
-      const haystack = `${vehicle.registration} ${vehicle.brand}`.toLowerCase();
-      return terms.every((term) => haystack.includes(term));
-    });
-  }, [groups, vehicleMap, search, dispatcherId]);
+    const allowed = new Set(dispatcherFiltered.map((g) => g.vehicleId));
+    return fuse
+      .search(term)
+      .map((r) => r.item.group)
+      .filter((g) => allowed.has(g.vehicleId));
+  }, [groups, dispatcherId, search, fuse]);
 
-  const isLoading = isLoadingStops || isLoadingVehicles;
+  const isLoading = isLoadingStops || isLoadingVehicles || isLoadingEmployees;
 
   return (
     <DashboardLayout>
@@ -58,7 +91,7 @@ export const VehicleStopsPage = () => {
             autoFocus
             iconLeft="IconSearch"
             iconRight={search ? 'IconX' : undefined}
-            placeholder="Pretraži po registraciji ili marki..."
+            placeholder="Pretraži po vozaču ili registraciji..."
             value={search}
             onChange={setSearch}
             onClickIconRight={() => setSearch('')}
