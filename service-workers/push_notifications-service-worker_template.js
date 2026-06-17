@@ -117,8 +117,10 @@ function getShipmentStatusChangedNotifData(data) {
 function getShipmentDraftUpdatedNotifData(data) {
   const { draftId, fileName } = data.metadata;
 
-  const title = `CargoNavis - Nacrt obrađen`;
-  const message = fileName ? `Nacrt ${fileName} je spreman za pregled` : 'Nacrt je spreman za pregled';
+  const title = `CargoNavis - Nalog obrađen`;
+  const message = fileName
+    ? `Obrađeni nalog "${fileName}" je spreman za pregled`
+    : 'Obrađeni nalog je spreman za pregled';
   const targetUrl = getShipmentDraftsUrl(draftId);
 
   return { title, message, targetUrl };
