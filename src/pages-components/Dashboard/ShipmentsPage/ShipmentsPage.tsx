@@ -1,3 +1,5 @@
+import { useRef } from 'react';
+
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
 import {
@@ -6,6 +8,7 @@ import {
   useCurrentTenant,
   useEmployees,
   useScrollRestoration,
+  useShipmentDrafts,
   useVehicles,
 } from '@/lib/hooks';
 import { useHasMounted } from '@/lib/hooks/dom';
@@ -17,14 +20,38 @@ import {
   ShipmentsTableLoader,
   TopPaginationControls,
 } from './components';
-import { usePaginationQueryParamState, useShipmentsPageData } from './hooks';
+import { DraftsTab } from './DraftsTab';
+import {
+  ACCEPTED_DRAFT_FILE_TYPES,
+  usePaginationQueryParamState,
+  useShipmentsPageData,
+  useShipmentsPageTab,
+  useUploadDraftFiles,
+} from './hooks';
 import { ShipmentsFiltersProvider } from './providers/ShipmentsFiltersProvider';
 import { ShipmentFilters } from './ShipmentFilters';
+import { ShipmentsDropZone } from './ShipmentsDropZone';
+import { ShipmentsPageTabs } from './ShipmentsPageTabs';
 import { ShipmentsTable } from './ShipmentsTable';
 
 export const ShipmentsPage = () => {
   const isMounted = useHasMounted();
+  const { tab, setTab } = useShipmentsPageTab();
+  const { data: drafts = [] } = useShipmentDrafts();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const uploadFiles = useUploadDraftFiles(() => setTab('drafts'));
+
   if (!isMounted) return null;
+
+  const readyDraftsCount = drafts.filter((d) => d.status === 'EXTRACTED').length;
+  const isShipmentsTab = tab === 'shipments';
+
+  async function handleFilesSelected(event: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(event.target.files ?? []);
+    event.target.value = '';
+    if (files.length === 0) return;
+    await uploadFiles(files);
+  }
 
   return (
     <ShipmentsFiltersProvider>
@@ -35,12 +62,30 @@ export const ShipmentsPage = () => {
             <Heading as="h1" variant="text-xl">
               Nalozi
             </Heading>
-            <Button href="/dashboard/shipments/new" iconLeft="IconPlus" text="Dodaj Nalog" />
+            <FlexLayout className="items-center gap-2">
+              <input
+                accept={ACCEPTED_DRAFT_FILE_TYPES.join(',')}
+                className="hidden"
+                multiple
+                ref={fileInputRef}
+                type="file"
+                onChange={handleFilesSelected}
+              />
+              <Button
+                iconLeft="IconUpload"
+                text="Učitaj nalog"
+                variant="secondary"
+                onClick={() => fileInputRef.current?.click()}
+              />
+              <Button href="/dashboard/shipments/new" iconLeft="IconPlus" text="Dodaj Nalog" />
+            </FlexLayout>
           </FlexLayout>
-          <ShipmentFilters />
+          <ShipmentsPageTabs readyDraftsCount={readyDraftsCount} setTab={setTab} tab={tab} />
+          {isShipmentsTab && <ShipmentFilters />}
         </Box>
-        <ShipmentPageContent />
+        {isShipmentsTab ? <ShipmentPageContent /> : <DraftsTab />}
       </DashboardLayout>
+      <ShipmentsDropZone onFilesAccepted={() => setTab('drafts')} />
     </ShipmentsFiltersProvider>
   );
 };

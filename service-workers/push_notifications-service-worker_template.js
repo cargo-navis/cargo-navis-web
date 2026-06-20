@@ -50,6 +50,9 @@ function extractNotificationData(data) {
     case 'vehicle_stop_completed': {
       return getVehicleStopCompletedNotifData(data);
     }
+    case 'shipment_draft_updated': {
+      return getShipmentDraftUpdatedNotifData(data);
+    }
     default:
       throw new Error('Unsupported notification type');
   }
@@ -58,6 +61,12 @@ function extractNotificationData(data) {
 function getShipmentUrl(shipmentId) {
   const appUrl = ENV_VARS.appUrl;
   return `${appUrl}/dashboard/shipments/${shipmentId}`;
+}
+
+function getShipmentDraftsUrl(draftId) {
+  const appUrl = ENV_VARS.appUrl;
+  const highlight = draftId ? `&highlight=${draftId}` : '';
+  return `${appUrl}/dashboard/shipments?tab=drafts${highlight}`;
 }
 
 function dispatchNotification(title, message, targetUrl) {
@@ -101,6 +110,18 @@ function getShipmentStatusChangedNotifData(data) {
   const title = `CargoNavis - Nalog ${newShipmentStatus}`;
   const message = `${driverName} je ${statusText} nalog ${orderNumber}`;
   const targetUrl = getShipmentUrl(shipmentId);
+
+  return { title, message, targetUrl };
+}
+
+function getShipmentDraftUpdatedNotifData(data) {
+  const { draftId, fileName } = data.metadata;
+
+  const title = `CargoNavis - Nalog obrađen`;
+  const message = fileName
+    ? `Obrađeni nalog "${fileName}" je spreman za pregled`
+    : 'Obrađeni nalog je spreman za pregled';
+  const targetUrl = getShipmentDraftsUrl(draftId);
 
   return { title, message, targetUrl };
 }

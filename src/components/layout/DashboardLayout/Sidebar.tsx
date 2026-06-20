@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { AppMenu } from '@/components/AppMenu';
 import { PositionEnum } from '@/lib/api/employees.d';
 import { useCurrentTenant, useCurrentUser } from '@/lib/hooks';
-import { clearAuthCookies, clearServiceWorkerOnLogout } from '@/lib/utils/session';
+import { clearAuthCookies, clearServiceWorkerOnLogout, unsubscribePushOnLogout } from '@/lib/utils/session';
 import { Box, Divider, FlexLayout, Heading, Icon, LoadingSpinner, Text } from '@/ui';
 
 import { links, NavLink } from './data';
@@ -34,7 +34,7 @@ export function Sidebar() {
     const answer = confirm('Želite se odjaviti?');
     if (!answer) return;
 
-    // Clear service worker and push subscriptions
+    await unsubscribePushOnLogout();
     await clearServiceWorkerOnLogout();
 
     clearAuthCookies();

@@ -11,9 +11,11 @@ export function usePushNotificationSubscription() {
       if ('serviceWorker' in navigator && 'PushManager' in window) {
         try {
           // Register service worker
-          const serviceWorkerRegistration = await navigator.serviceWorker.register(
-            '/cargo-navis_push-service-worker.js'
-          );
+          await navigator.serviceWorker.register('/cargo-navis_push-service-worker.js');
+
+          // pushManager.subscribe() requires an *active* service worker —
+          // register() resolves before activation, so wait for ready.
+          const activeRegistration = await navigator.serviceWorker.ready;
 
           // Request notification permission
           const permission = await Notification.requestPermission();
@@ -30,10 +32,16 @@ export function usePushNotificationSubscription() {
           }
 
           // Subscribe to push notifications
-          const subscription = await serviceWorkerRegistration.pushManager.subscribe({
+          const subscription = await activeRegistration.pushManager.subscribe({
             userVisibleOnly: true,
             applicationServerKey: publicVapidKey,
           });
+
+          // pushManager.subscribe() is idempotent in the browser, but the
+          // backend POST is not — skip it when this endpoint is already
+          // registered for the current user.
+          const alreadyRegistered = pushSubscriptions?.some((s) => s.endpoint === subscription.endpoint);
+          if (alreadyRegistered) return;
 
           await createPushSubscription(subscription);
           console.info('Push subscription created');

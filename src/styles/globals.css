@@ -68,4 +68,30 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+
+  .row-highlight-fade {
+    animation: row-highlight-fade 2s ease-out forwards;
+  }
+
+  html.dark .row-highlight-fade {
+    animation: row-highlight-fade-dark 2s ease-out forwards;
+  }
+}
+
+@keyframes row-highlight-fade {
+  0% {
+    background-color: #fff6b3;
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+@keyframes row-highlight-fade-dark {
+  0% {
+    background-color: rgba(69, 59, 8, 0.45);
+  }
+  100% {
+    background-color: transparent;
+  }
 }

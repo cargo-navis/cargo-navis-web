@@ -1,4 +1,4 @@
-import { type CreateShipmentData, type Shipment } from '@/lib/api';
+import { type CreateShipmentData, type Shipment, type ShipmentDraft } from '@/lib/api';
 import { getPostalCode } from '@/lib/api/postalCodes';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { PalleteType } from '@/lib/utils/palletes';
@@ -123,9 +123,31 @@ const getNewShipmentFormValues = async (tenant: Tenant, cargo: Cargo[]) => {
   };
 };
 
+// Create form values when prefilling from an AI-extracted draft. The
+// extracted payload is Partial<Shipment>, so every read is defensive and
+// missing fields fall back to the new-shipment defaults.
+const getDraftShipmentFormValues = async (draft: ShipmentDraft, tenant: Tenant) => {
+  const ai = draft.aiExtractedData ?? {};
+  const cargo = await mapCargoItems(ai.cargo);
+
+  return {
+    externalOrderReference: ai.externalOrderReference || '',
+    transportContractorId: ai.transportContractorId || tenant.id,
+    clientId: ai.clientId || '',
+    price: ai.price !== undefined && ai.price !== null ? ai.price : undefined,
+    internalNote: ai.internalNote || '',
+    externalNote: ai.externalNote || '',
+    isAgency: false,
+    cargo,
+  };
+};
+
 // Create form values when copying a shipment
 const getCopyShipmentFormValues = async (shipment: Shipment) => {
-  const cargo = await mapCargoItems(shipment.cargo);
+  const mappedCargo = await mapCargoItems(shipment.cargo);
+  // Dates are specific to the original shipment, so don't carry them over to
+  // the copy — the user fills in fresh loading/unloading dates.
+  const cargo = mappedCargo.map((item) => ({ ...item, loadingReadyDate: '', unloadingDueDate: '' }));
 
   return {
     externalOrderReference: shipment.externalOrderReference || '',
@@ -158,19 +180,29 @@ const getEditShipmentFormValues = async (shipment: Shipment) => {
 };
 
 // Main function to get form default values based on context
-export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Tenant, isCopy: boolean = false) => {
+export const getFormDefaultValues = (
+  shipment: Shipment | undefined,
+  tenant: Tenant,
+  isCopy: boolean = false,
+  draft?: ShipmentDraft
+) => {
   return async () => {
-    // Case 1: Copy existing shipment
+    // Case 1: Prefill from an AI-extracted draft
+    if (draft) {
+      return getDraftShipmentFormValues(draft, tenant);
+    }
+
+    // Case 2: Copy existing shipment
     if (shipment && isCopy) {
       return getCopyShipmentFormValues(shipment);
     }
 
-    // Case 2: Edit existing shipment
+    // Case 3: Edit existing shipment
     if (shipment && !isCopy) {
       return getEditShipmentFormValues(shipment);
     }
 
-    // Case 3: Create a brand-new shipment
+    // Case 4: Create a brand-new shipment
     return getNewShipmentFormValues(tenant, [defaultCargo]);
   };
 };
@@ -178,7 +210,7 @@ export const getFormDefaultValues = (shipment: Shipment | undefined, tenant: Ten
 // Function to transform form data into the format defined in types.ts
 export const transformFormDataToPayload = (
   formData: ShipmentFields,
-  context?: { tenantId?: string }
+  context?: { tenantId?: string; draftId?: string }
 ): Omit<CreateShipmentData, 'id'> => {
   const {
     externalOrderReference,
@@ -292,6 +324,13 @@ export const transformFormDataToPayload = (
     };
     parentPayload.transportContractorId = context.tenantId;
     parentPayload.children = [childPayload];
+  }
+
+  // draftId lands on the parent only — the backend links the confirmed
+  // shipment back to its draft. Setting it after the agency split keeps
+  // it off the child payload that would otherwise inherit it via spread.
+  if (context?.draftId) {
+    payload.draftId = context.draftId;
   }
 
   return payload as Omit<CreateShipmentData, 'id'>;

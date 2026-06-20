@@ -16,6 +16,8 @@ export * from './pagination.d';
 export * from './postalCodes';
 export * from './postalCodes.d';
 export * from './push-subscriptions';
+export * from './shipment-drafts';
+export * from './shipment-drafts.d';
 export * from './shipments';
 export * from './shipments.d';
 export * from './tenant';
