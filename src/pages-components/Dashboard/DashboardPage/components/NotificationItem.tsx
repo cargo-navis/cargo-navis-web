@@ -35,7 +35,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({ notification
           </Box>
         )}
       </FlexLayout>
-      <hr className="border-dark-300 dark:border-light-600 m-0" />
+      <hr className="border-dark-200 dark:border-light-800 m-0" />
     </>
   );
 
