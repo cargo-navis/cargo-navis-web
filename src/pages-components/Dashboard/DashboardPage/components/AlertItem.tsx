@@ -50,7 +50,7 @@ export const AlertItem: React.FC<AlertItemProps> = ({ alert }) => {
           <Icon color="text-color-2" icon="IconArrowRight" size="l" />
         </Box>
       </FlexLayout>
-      <hr className="border-dark-300 dark:border-light-600 m-0" />
+      <hr className="border-dark-200 dark:border-light-800 m-0" />
     </Link>
   );
 };

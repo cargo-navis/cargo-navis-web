@@ -88,7 +88,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
         const childId = shipment.children?.[0]?.id;
         const wasAgency = !!childId;
 
-        if (wasAgency) {
+        if (wasAgency && data.isAgency) {
           // Patch parent and child via their own endpoints. PATCH is partial
           // (FieldState semantics) so the child body carries only the two
           // fields the agency form controls; other child fields stay
@@ -109,6 +109,20 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
               externalNote: rest.externalNote ?? '',
             }),
           ]);
+        } else if (wasAgency && !data.isAgency) {
+          // Un-converting an agency shipment back to a plain one. Patch only the
+          // parent with an empty children array; the backend deletes the
+          // orphaned child. The parent already has the tenant as its transporter
+          // (the effect forces it when isAgency is turned off).
+          const payload = transformFormDataToPayload(data);
+          await updateShipment({ id: shipment.id, ...payload, children: [] });
+        } else if (data.isAgency) {
+          // Converting a plain shipment into an agency one: no child exists yet,
+          // so build the parent/child split (parent transporter becomes the
+          // tenant, the real contractor + agency price move into a new child)
+          // just like the create flow does.
+          const payload = transformFormDataToPayload(data, { tenantId: tenant.id });
+          await updateShipment({ id: shipment.id, ...payload });
         } else {
           const payload = transformFormDataToPayload(data);
           await updateShipment({ id: shipment.id, ...payload });
