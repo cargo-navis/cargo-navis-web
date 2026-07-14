@@ -17,11 +17,22 @@ export function ShipmentStatusPill({ status }: { status: LoadStatus }) {
   );
 }
 
-export function EmployeeNameById({ id }: { id: string }) {
-  const { data: employee } = useEmployee(id);
+function getInitials(firstName?: string, lastName?: string) {
+  return `${firstName?.[0] ?? ''}${lastName?.[0] ?? ''}`.toUpperCase();
+}
 
-  if (!employee) return null;
-  return <EmployeeName employee={employee} />;
+export function NotificationAvatar({ driverId }: { driverId?: string }) {
+  const { data: employee } = useEmployee(driverId ?? '');
+
+  return (
+    <FlexLayout className="shrink-0 items-center justify-center size-[36px] rounded-circle bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-300">
+      {driverId && employee ? (
+        <Text variant="text-xs-bold">{getInitials(employee.firstName, employee.lastName)}</Text>
+      ) : (
+        <Icon icon="IconInfoCircle" size="l" />
+      )}
+    </FlexLayout>
+  );
 }
 
 export function EmployeeName({ employee }: { employee: Employee }) {
