@@ -55,7 +55,7 @@ const TodayStopRow = ({ stop, registration }: { stop: VehicleStop; registration?
 
   return (
     <Box
-      className="rounded-m border border-dark-200 dark:border-light-800 p-4 transition-colors hover:bg-dark-50 dark:hover:bg-light-800"
+      className="rounded-m border border-dark-100 dark:border-light-800 p-4 transition-colors hover:bg-dark-50 dark:hover:bg-light-800"
       onClick={() => push(`/dashboard/vehicle-stops/${stop.vehicleId}`)}
     >
       <FlexLayout className="items-center gap-2">
