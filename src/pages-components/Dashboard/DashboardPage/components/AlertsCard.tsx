@@ -7,8 +7,11 @@ import { DashboardCard } from './DashboardCard';
 export const AlertsCard = () => {
   const { data: alerts, isLoading } = useAlerts();
 
+  let title = 'Upozorenja';
+  if (alerts?.length) title += ` (${alerts.length})`;
+
   return (
-    <DashboardCard icon="IconAlertTriangle" title="Upozorenja">
+    <DashboardCard icon="IconAlertTriangle" iconColor="text-red-500 dark:text-red-300" title={title}>
       {isLoading ? (
         <FlexLayout className="h-full items-center justify-center">
           <LoadingSpinner />

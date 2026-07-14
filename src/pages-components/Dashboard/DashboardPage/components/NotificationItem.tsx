@@ -1,5 +1,6 @@
 import Link from 'next/link';
 
+import { NotificationAvatar } from '@/components/AppMenu/utils/misc';
 import { getNotificationItemData } from '@/components/AppMenu/utils/notifications';
 import { Notification } from '@/lib/api';
 import { getDateTimeInLocalTimezone } from '@/lib/utils/date';
@@ -10,12 +11,12 @@ interface NotificationItemProps {
 }
 
 export const NotificationItem: React.FC<NotificationItemProps> = ({ notification }) => {
-  const { targetUrl, descriptionNode } = getNotificationItemData(notification);
+  const { targetUrl, descriptionNode, driverId } = getNotificationItemData(notification);
 
   const content = (
     <>
-      <FlexLayout className="flex-start gap-3 p-4">
-        <Icon className="mt-[1px]" color="text-blue-500 dark:text-blue-300" icon="IconInfoCircle" size="l" />
+      <FlexLayout className="flex-start gap-3 py-4">
+        <NotificationAvatar driverId={driverId} />
         <FlexLayout className="flex-col grow gap-1">
           {descriptionNode}
           <Text color="text-color-3" variant="text-xxs">
@@ -35,7 +36,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({ notification
           </Box>
         )}
       </FlexLayout>
-      <hr className="border-dark-200 dark:border-light-800 m-0" />
+      <hr className="border-dark-100 dark:border-light-800 m-0" />
     </>
   );
 

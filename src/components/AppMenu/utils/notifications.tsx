@@ -1,12 +1,13 @@
 import Link from 'next/link';
 import { forwardRef, Fragment } from 'react';
 
+import { EmployeeName } from '@/components/employees/EmployeeName';
 import { LoadStatus, type Notification, NotificationType } from '@/lib/api';
 import { Text } from '@/ui';
 import { MenuComponent } from '@/ui/components/Menu/types';
 
 import { NotificationMenuItem } from '../NotificationMenuItem';
-import { EmployeeNameById, ShipmentStatusPill } from './misc';
+import { ShipmentStatusPill } from './misc';
 
 export function mapToNotificationMenuItems(notifications: Notification[]): MenuComponent[] {
   return notifications.map((n) => ({
@@ -19,29 +20,33 @@ export function mapToNotificationMenuItems(notifications: Notification[]): MenuC
 export function getNotificationItemData(notification: Notification) {
   let targetUrl: string;
   let descriptionNode: React.ReactNode;
+  let avatarDriverId: string | undefined;
 
   const { type, metadata } = notification;
 
   switch (type) {
     case NotificationType.SHIPMENT_STATUS_CHANGED: {
       const { driverId, shipmentId, newStatus, orderNumber } = metadata;
+      avatarDriverId = driverId;
 
       targetUrl = `/dashboard/shipments/${shipmentId}`;
       descriptionNode = (
         <Text color="text-color-2" variant="text-s">
-          <EmployeeNameById id={driverId} /> je promijenio status naloga <strong>{orderNumber}</strong> u{' '}
-          <ShipmentStatusPill status={newStatus as LoadStatus} />.
+          <EmployeeName id={driverId} variant="text-s-bold" /> je promijenio status naloga{' '}
+          <strong>{orderNumber}</strong> u <ShipmentStatusPill status={newStatus as LoadStatus} />.
         </Text>
       );
       break;
     }
     case NotificationType.SHIPMENT_MESSAGE_ACCEPTED: {
       const { driverId, shipmentId, orderNumber } = metadata;
+      avatarDriverId = driverId;
 
       targetUrl = `/dashboard/shipments/${shipmentId}`;
       descriptionNode = (
         <Text color="text-color-2" variant="text-s">
-          <EmployeeNameById id={driverId} /> je primio obavijest o nalogu <strong>{orderNumber}</strong>.
+          <EmployeeName id={driverId} variant="text-s-bold" /> je primio obavijest o nalogu{' '}
+          <strong>{orderNumber}</strong>.
         </Text>
       );
       break;
@@ -63,11 +68,12 @@ export function getNotificationItemData(notification: Notification) {
     }
     case NotificationType.VEHICLE_STOP_COMPLETED: {
       const { driverId, address, shipments = [] } = metadata;
+      avatarDriverId = driverId;
 
       targetUrl = '';
       descriptionNode = (
         <Text color="text-color-2" variant="text-s">
-          <EmployeeNameById id={driverId} /> je obavio stanicu na adresi <strong>{address}</strong> za{' '}
+          <EmployeeName id={driverId} variant="text-s-bold" /> je obavio stanicu na adresi <strong>{address}</strong> za{' '}
           {shipments.length === 1 ? 'nalog' : 'naloge'}{' '}
           {shipments.map((s, i) => (
             <Fragment key={s.shipmentId}>
@@ -93,5 +99,5 @@ export function getNotificationItemData(notification: Notification) {
     }
   }
 
-  return { targetUrl, descriptionNode };
+  return { targetUrl, descriptionNode, driverId: avatarDriverId };
 }
