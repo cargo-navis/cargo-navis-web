@@ -30,6 +30,7 @@ const chartOptions: ChartOptions<'bar' | 'line'> = {
       beginAtZero: true,
       grid: { drawOnChartArea: false },
       title: { display: true, text: 'Prihod (€)' },
+      ticks: { maxTicksLimit: 5 },
     },
   },
 };
@@ -79,34 +80,7 @@ export const MonthlyShipmentsCard = () => {
   };
 
   return (
-    <DashboardCard
-      headerRight={
-        countData ? (
-          <FlexLayout className="items-center gap-4">
-            <FlexLayout className="items-center gap-1">
-              <Text color="text-color-3" variant="text-xxs">
-                Nalozi:
-              </Text>
-              <Text color="text-color-1" variant="text-xs-medium">
-                {countData.total}
-              </Text>
-            </FlexLayout>
-            {priceData && (
-              <FlexLayout className="items-center gap-1">
-                <Text color="text-color-3" variant="text-xxs">
-                  Prihod:
-                </Text>
-                <Text color="text-color-1" variant="text-xs-medium">
-                  {formatEur(priceData.total)}
-                </Text>
-              </FlexLayout>
-            )}
-          </FlexLayout>
-        ) : undefined
-      }
-      icon="IconChartBar"
-      title={title}
-    >
+    <DashboardCard icon="IconChartBar" iconColor="text-teal-600" title={title}>
       {isLoading ? (
         <FlexLayout className="h-full items-center justify-center">
           <LoadingSpinner />
@@ -118,9 +92,31 @@ export const MonthlyShipmentsCard = () => {
           </Text>
         </FlexLayout>
       ) : (
-        <Box className="h-full">
-          <ComboChart data={chartData} options={chartOptions} />
-        </Box>
+        <FlexLayout className="h-full flex-col gap-3">
+          <FlexLayout className="h-1/4 gap-3 px-4">
+            <FlexLayout className="flex-1 flex-col justify-center rounded-m bg-dark-25 p-4">
+              <Text color="text-color-3" variant="text-xxs-medium">
+                Nalozi
+              </Text>
+              <Text color="text-color-1" variant="text-l-bold">
+                {countData.total}
+              </Text>
+            </FlexLayout>
+            {priceData && (
+              <FlexLayout className="flex-1 flex-col justify-center rounded-m bg-dark-25 p-4">
+                <Text color="text-color-3" variant="text-xxs-medium">
+                  Prihod
+                </Text>
+                <Text color="text-color-1" variant="text-l-bold">
+                  {formatEur(priceData.total)}
+                </Text>
+              </FlexLayout>
+            )}
+          </FlexLayout>
+          <Box className="h-3/4">
+            <ComboChart data={chartData} options={chartOptions} />
+          </Box>
+        </FlexLayout>
       )}
     </DashboardCard>
   );
