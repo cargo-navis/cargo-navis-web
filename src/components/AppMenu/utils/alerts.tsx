@@ -1,5 +1,4 @@
-import type React from 'react';
-import { type ReactNode, forwardRef } from 'react';
+import { forwardRef, type ReactNode } from 'react';
 
 import { type Employee, type Shipment, type Vehicle } from '@/lib/api';
 import { type Alert, AlertType } from '@/lib/api';
