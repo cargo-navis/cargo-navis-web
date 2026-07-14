@@ -5,8 +5,7 @@ import { useRouter } from 'next/router';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { useVehicles, useVehicleStopsByVehicle } from '@/lib/hooks';
 import { getCargoLabel } from '@/lib/utils/cargo';
-import { isStopCompleted } from '@/lib/utils/vehicleStops';
-import { Box, FlexLayout, Icon, LoadingSpinner, Text } from '@/ui';
+import { Box, FlexLayout, Icon, LoadingSpinner, Pill, Text } from '@/ui';
 
 import { DashboardCard } from './DashboardCard';
 
@@ -22,7 +21,7 @@ export const TodayStopsCard = () => {
     .filter((stop) => stop.date && dayjs(stop.date).isSame(dayjs(), 'day'));
 
   return (
-    <DashboardCard icon="IconCalendarEvent" title={`Današnje stanice · ${dayjs().format('D. MMM')}`}>
+    <DashboardCard icon="IconTruckDelivery" iconColor="text-blue-600" title="Današnje stanice">
       {isLoading ? (
         <FlexLayout className="h-full items-center justify-center">
           <LoadingSpinner />
@@ -34,39 +33,21 @@ export const TodayStopsCard = () => {
           </Text>
         </FlexLayout>
       ) : (
-        <FlexLayout className="h-full flex-col overflow-y-auto divide-y divide-dark-200 dark:divide-light-800">
+        <FlexLayout className="h-full flex-col gap-3 overflow-y-auto pr-1">
           {todayStops.map((stop) => (
             <TodayStopRow key={stop.id} registration={registrationById.get(stop.vehicleId)} stop={stop} />
           ))}
+          <Text className="text-center" color="text-color-3" variant="text-xs">
+            Nema drugih stanica danas
+          </Text>
         </FlexLayout>
       )}
     </DashboardCard>
   );
 };
 
-const StopStatusCircle = ({ isCompleted }: { isCompleted: boolean }) =>
-  isCompleted ? (
-    <Box className="flex items-center justify-center w-4 h-4 shrink-0 rounded-circle bg-teal-500 text-white">
-      <svg
-        fill="none"
-        height="10"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2.5"
-        viewBox="0 0 12 12"
-        width="10"
-      >
-        <path d="M2.5 6.5l2.5 2.5 4.5-5" />
-      </svg>
-    </Box>
-  ) : (
-    <Box className="w-4 h-4 shrink-0 rounded-circle border-2 border-dark-300 dark:border-light-600" />
-  );
-
 const TodayStopRow = ({ stop, registration }: { stop: VehicleStop; registration?: string }) => {
   const { push } = useRouter();
-  const isCompleted = isStopCompleted(stop);
   const actions = [
     ...stop.loadingCargos.map((cargo) => ({ kind: 'loading' as const, cargo })),
     ...stop.unloadingCargos.map((cargo) => ({ kind: 'unloading' as const, cargo })),
@@ -74,53 +55,51 @@ const TodayStopRow = ({ stop, registration }: { stop: VehicleStop; registration?
 
   return (
     <Box
-      className="py-3 px-1 transition-colors hover:bg-dark-50 dark:hover:bg-light-800"
+      className="rounded-m border border-dark-200 dark:border-light-800 p-4 transition-colors hover:bg-dark-50 dark:hover:bg-light-800"
       onClick={() => push(`/dashboard/vehicle-stops/${stop.vehicleId}`)}
     >
       <FlexLayout className="items-center gap-2">
-        <StopStatusCircle isCompleted={isCompleted} />
         {registration && (
-          <FlexLayout className="items-center gap-1 text-dark-600 dark:text-light-300">
-            <Icon icon="IconTruck" size="s" />
-            <Text as="span" color="text-inherit" variant="text-xs-medium">
+          <FlexLayout className="items-center gap-1 shrink-0 text-dark-800 dark:text-light-50">
+            <Icon icon="IconTruck" size="l" />
+            <Text as="span" color="text-color-1" variant="text-s-bold">
               {registration}
             </Text>
           </FlexLayout>
         )}
-        <Text as="span" color="text-color-1" variant="text-xs-medium">
+        <Text as="span" color="text-color-3" variant="text-xs">
+          ·
+        </Text>
+        <Text as="span" color="text-color-2" variant="text-s">
           {stop.address?.placeName ?? '-'}
         </Text>
       </FlexLayout>
-      <FlexLayout className="flex-col gap-1 mt-2">
+      <FlexLayout className="flex-col gap-2 mt-2">
         {actions.length === 0 ? (
           <Text color="text-color-3" variant="text-xxs">
             Nema utovara ni istovara
           </Text>
         ) : (
           actions.map(({ kind, cargo }) => (
-            <FlexLayout className="items-center gap-2" key={kind + cargo.id}>
-              <Icon
-                className={kind === 'loading' ? 'text-orange-500' : 'text-teal-500'}
-                icon={kind === 'loading' ? 'IconPackageImport' : 'IconPackageExport'}
-                size="s"
-              />
-              <Text as="span" color="text-color-2" variant="text-xxs-medium">
-                {kind === 'loading' ? 'Utovar' : 'Istovar'}
-              </Text>
-              <Text as="span" color="text-color-3" variant="text-xxs">
-                ·
-              </Text>
-              <Link
-                className="text-teal-500 hover:text-teal-700 hover:underline"
-                href={`/dashboard/shipments/${cargo.shipment.id}`}
-                onClick={(event) => event.stopPropagation()}
-              >
-                <Text as="span" color="text-inherit" variant="text-xxs-medium">
-                  Nalog {cargo.shipment.orderNumber}
-                </Text>
-              </Link>
-              <Text as="span" color="text-color-3" variant="text-xxs">
-                · {getCargoLabel(cargo)}
+            <FlexLayout className="flex-col gap-1" key={kind + cargo.id}>
+              <FlexLayout className="items-center gap-2">
+                <Pill
+                  size="s"
+                  text={kind === 'loading' ? 'Utovar' : 'Istovar'}
+                  variant={kind === 'loading' ? 'info' : 'warning'}
+                />
+                <Link
+                  className="hover:underline"
+                  href={`/dashboard/shipments/${cargo.shipment.id}`}
+                  onClick={(event) => event.stopPropagation()}
+                >
+                  <Text as="span" color="text-color-2" variant="text-xs-medium">
+                    Nalog {cargo.shipment.orderNumber}
+                  </Text>
+                </Link>
+              </FlexLayout>
+              <Text as="span" color="text-color-3" variant="text-xs">
+                {getCargoLabel(cargo)}
               </Text>
             </FlexLayout>
           ))
