@@ -23,7 +23,7 @@ export const AlertsCard = () => {
           </Text>
         </FlexLayout>
       ) : (
-        <FlexLayout className="h-full flex-col overflow-y-auto pr-1">
+        <FlexLayout className="h-full flex-col gap-3 overflow-y-auto pr-1">
           {alerts.map((alert) => (
             <AlertItem alert={alert} key={alert.alertable.id + alert.createdAt} />
           ))}
