@@ -94,7 +94,7 @@ export const MonthlyShipmentsCard = () => {
       ) : (
         <FlexLayout className="h-full flex-col gap-3">
           <FlexLayout className="h-1/4 gap-3 px-4">
-            <FlexLayout className="flex-1 flex-col justify-center rounded-m bg-dark-25 p-4">
+            <FlexLayout className="flex-1 flex-col justify-center rounded-m bg-dark-25 dark:bg-light-850 p-4">
               <Text color="text-color-3" variant="text-xxs-medium">
                 Nalozi
               </Text>
@@ -103,7 +103,7 @@ export const MonthlyShipmentsCard = () => {
               </Text>
             </FlexLayout>
             {priceData && (
-              <FlexLayout className="flex-1 flex-col justify-center rounded-m bg-dark-25 p-4">
+              <FlexLayout className="flex-1 flex-col justify-center rounded-m bg-dark-25 dark:bg-light-850 p-4">
                 <Text color="text-color-3" variant="text-xxs-medium">
                   Prihod
                 </Text>
