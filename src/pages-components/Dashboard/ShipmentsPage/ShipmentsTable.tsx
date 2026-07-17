@@ -69,7 +69,10 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                   <DisplayIf condition={hasDocuments}>
                     <Tooltip
                       content={
-                        <FlexLayout as="ul" className="flex-col gap-1 px-2 list-disc list-inside">
+                        <FlexLayout
+                          as="ul"
+                          className="flex-col gap-1 px-2 list-disc list-inside max-w-[360px] whitespace-break-spaces"
+                        >
                           {documents?.map((document) => (
                             <Text as="li" color="text-light-50" key={document.id} variant="text-xs">
                               {document.name}

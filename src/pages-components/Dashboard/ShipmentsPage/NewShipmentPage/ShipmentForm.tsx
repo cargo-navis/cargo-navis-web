@@ -99,16 +99,14 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
             transportContractorId: tenant.id,
           } as ShipmentFields);
 
-          await Promise.all([
-            updateShipment({ id: shipment.id, ...parentPayload }),
-            updateShipment({
-              id: childId,
-              price: agencyPrice,
-              transportContractorId,
-              internalNote: rest.internalNote ?? '',
-              externalNote: rest.externalNote ?? '',
-            }),
-          ]);
+          await updateShipment({ id: shipment.id, ...parentPayload });
+          await updateShipment({
+            id: childId,
+            price: agencyPrice,
+            transportContractorId,
+            internalNote: rest.internalNote ?? '',
+            externalNote: rest.externalNote ?? '',
+          });
         } else if (wasAgency && !data.isAgency) {
           // Un-converting an agency shipment back to a plain one. Patch only the
           // parent with an empty children array; the backend deletes the
