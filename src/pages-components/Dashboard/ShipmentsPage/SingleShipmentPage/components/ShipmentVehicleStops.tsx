@@ -75,8 +75,6 @@ export const ShipmentVehicleStops = ({ stops }: ShipmentVehicleStopsProps) => {
           <SidebarStopEntry
             isCompleted={isStopCompleted(stop)}
             key={stop.id}
-            nextStop={stops[i - 1]}
-            previousStop={stops[i + 1]}
             registration={vehicleById.get(stop.vehicleId)?.registration}
             showAssignment={isMixed}
             step={i + 1}
@@ -102,16 +100,12 @@ const OpenDetailsLink = ({ vehicleId }: { vehicleId: string }) => (
 
 const SidebarStopEntry = ({
   stop,
-  previousStop,
-  nextStop,
   step,
   showAssignment,
   registration,
   isCompleted,
 }: {
   stop: VehicleStop;
-  previousStop?: VehicleStop;
-  nextStop?: VehicleStop;
   step: number;
   showAssignment: boolean;
   registration?: string;
@@ -124,7 +118,7 @@ const SidebarStopEntry = ({
   const rowContent = (
     <FlexLayout className="flex-col gap-0.5 relative -top-4">
       <Box className="absolute top-0 right-0">
-        <ToggleStopCompletionButton iconOnly nextStop={nextStop} previousStop={previousStop} stop={stop} />
+        <ToggleStopCompletionButton iconOnly stop={stop} />
       </Box>
       <TimelineDate>
         {date ? (

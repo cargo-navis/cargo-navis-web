@@ -17,8 +17,8 @@ export const showSuccessToast = ({ title, description, timeout = 2500 }: ToastPr
     classNames: {
       base: 'bg-teal-700 text-white border border-teal-600 max-w-[560px]',
       content: 'text-white',
-      description: 'text-white',
-      title: 'text-white',
+      description: 'text-white whitespace-normal break-words',
+      title: 'text-white whitespace-normal break-words',
       closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
     },
     radius: 'sm',
@@ -38,8 +38,8 @@ export const showErrorToast = ({ title, description, timeout = 2500 }: ToastProp
     classNames: {
       base: 'bg-red-600 dark:bg-red-700 text-white border border-red-600 max-w-[560px]',
       content: 'text-white',
-      description: 'text-white',
-      title: 'text-white',
+      description: 'text-white whitespace-normal break-words',
+      title: 'text-white whitespace-normal break-words',
       closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
     },
     timeout,

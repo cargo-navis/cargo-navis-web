@@ -225,8 +225,6 @@ export const VehicleStopDetailPage = () => {
                 {stops.map((stop, i) => (
                   <VerticalStopEntry
                     key={stop.id}
-                    nextStop={stops[i - 1]}
-                    previousStop={stops[i + 1]}
                     step={i + 1}
                     stop={stop}
                     onDelete={handleDelete}
@@ -240,15 +238,7 @@ export const VehicleStopDetailPage = () => {
               {activeDragStop ? (
                 <Box className="bg-white dark:bg-black shadow-lg rounded-md opacity-90">
                   <Timeline defaultValue={activeDragStep} orientation="vertical">
-                    <VerticalStopEntry
-                      isDragOverlay
-                      // activeDragStep is the 1-based index, so the earlier
-                      // neighbour is at activeDragStep and the later at -2.
-                      nextStop={stops[activeDragStep - 2]}
-                      previousStop={stops[activeDragStep]}
-                      step={activeDragStep}
-                      stop={activeDragStop}
-                    />
+                    <VerticalStopEntry isDragOverlay step={activeDragStep} stop={activeDragStop} />
                   </Timeline>
                 </Box>
               ) : null}

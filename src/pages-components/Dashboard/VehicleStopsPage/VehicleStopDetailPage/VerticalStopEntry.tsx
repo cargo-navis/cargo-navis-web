@@ -27,8 +27,6 @@ import { VehicleStopFileUploadButton } from './VehicleStopFileUploadButton';
 
 interface VerticalStopEntryProps {
   stop: VehicleStop;
-  previousStop?: VehicleStop;
-  nextStop?: VehicleStop;
   step: number;
   isDragOverlay?: boolean;
   onEdit?(stop: VehicleStop): void;
@@ -38,8 +36,6 @@ interface VerticalStopEntryProps {
 
 export const VerticalStopEntry = ({
   stop,
-  previousStop,
-  nextStop,
   step,
   isDragOverlay,
   onEdit,
@@ -185,7 +181,7 @@ export const VerticalStopEntry = ({
         </FlexLayout>
         <FlexLayout className="absolute left-[40%] -top-2 items-start gap-3">
           <FlexLayout className="flex-col items-end">
-            <ToggleStopCompletionButton nextStop={nextStop} previousStop={previousStop} stop={stop} />
+            <ToggleStopCompletionButton stop={stop} />
           </FlexLayout>
           <DisplayIf condition={!isCompleted && !!stop.driverId}>
             <FlexLayout className="flex-col items-end">
