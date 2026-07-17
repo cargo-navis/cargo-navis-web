@@ -98,7 +98,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                             <Text color="text-light-300" variant="text-xxxs-medium">
                               INTERNA NAPOMENA
                             </Text>
-                            <Text color="text-light-50" variant="text-xs">
+                            <Text className="whitespace-break-spaces" color="text-light-50" variant="text-xs">
                               {internalNote}
                             </Text>
                           </FlexLayout>

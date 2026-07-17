@@ -44,7 +44,7 @@ export const ShipmentsPageTabs: React.FC<ShipmentsPageTabsProps> = ({ tab, setTa
                 {t.label}
               </Text>
               {!!t.badge && (
-                <FlexLayout className="w-[24px] h-[24px] rounded-m bg-teal-500 items-center justify-center">
+                <FlexLayout className="min-w-[24px] h-[24px] px-[6px] rounded-m bg-teal-500 items-center justify-center">
                   <Text className="font-mono" color="text-white" variant="text-xxs-medium">
                     {t.badge}
                   </Text>
