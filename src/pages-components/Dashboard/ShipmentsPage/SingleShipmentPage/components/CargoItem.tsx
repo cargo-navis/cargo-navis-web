@@ -1,17 +1,42 @@
+import { LoadStatus } from '@/lib/api';
+import { useUpdateCargo } from '@/lib/hooks';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { palleteNameMap } from '@/lib/utils/palletes';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
+import { loadStatusConfig } from '@/pages-components/Dashboard/ShipmentsPage/const';
 import { Collapsible, DisplayIf, Divider, FlexLayout, Icon, Text, VerticalDivider } from '@/ui';
 
 import { AddressDetailsItem } from './AddressDetailsItem';
+import { LoadStatusProgress } from './LoadStatusProgress';
 import type { CargoWithMetadata } from './types';
 
 interface CargoItemProps {
   cargo: CargoWithMetadata;
   index: number;
+  shipmentId: string;
+  isAgency: boolean;
 }
 
-export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index }) => {
+export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index, shipmentId, isAgency }) => {
   const isStandardCargo = cargo.metadata?.type === 'standard';
+
+  const { mutateAsync: updateCargo, isPending } = useUpdateCargo(shipmentId);
+
+  const handleLoadStatusChange = async (status: LoadStatus) => {
+    try {
+      await updateCargo({
+        id: cargo.id,
+        loadStatus: status,
+      });
+
+      const statusText = loadStatusConfig[status].label;
+
+      showSuccessToast({ title: 'Status tereta ažuriran:', description: statusText.toUpperCase() });
+    } catch (error) {
+      console.error(error);
+      showErrorToast({ title: 'Greška prilikom ažuriranja statusa utovara. Pokušajte ponovno.' });
+    }
+  };
 
   return (
     <FlexLayout className="flex-col gap-4 p-4 rounded-s bg-black-alpha-05 dark:bg-white-alpha-10">
@@ -24,6 +49,14 @@ export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index }) => {
             {isStandardCargo ? 'Standardni teret' : 'Nestandardni teret'}
           </Text>
         </FlexLayout>
+        {isAgency && (
+          <LoadStatusProgress
+            currentStatus={cargo.loadStatus || LoadStatus.NotYetLoaded}
+            isPending={isPending}
+            size="s"
+            onStatusChange={handleLoadStatusChange}
+          />
+        )}
       </FlexLayout>
       <FlexLayout className="flex-col gap-4">
         {isStandardCargo ? <StandardContent cargo={cargo} /> : <NonstandardContent cargo={cargo} />}

@@ -3,42 +3,26 @@ import dayjs from 'dayjs';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { useCompleteVehicleStop, useUncompleteVehicleStop } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { getStopCompletionEligibility, isStopCompleted } from '@/lib/utils/vehicleStops';
+import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Box, DisplayIf, FlexLayout, Text, TextButton, Tooltip } from '@/ui';
 
 interface ToggleStopCompletionButtonProps {
   stop: VehicleStop;
-  // Route-chronological neighbours (earlier / later). Undefined at the route ends.
-  previousStop?: VehicleStop;
-  nextStop?: VehicleStop;
   iconOnly?: boolean;
 }
 
-export const ToggleStopCompletionButton = ({
-  stop,
-  previousStop,
-  nextStop,
-  iconOnly = false,
-}: ToggleStopCompletionButtonProps) => {
+export const ToggleStopCompletionButton = ({ stop, iconOnly = false }: ToggleStopCompletionButtonProps) => {
   const isCompleted = isStopCompleted(stop);
-  const { canComplete, canUncomplete } = getStopCompletionEligibility(stop, previousStop, nextStop);
 
   const { mutateAsync: completeStop, isPending: isCompleting } = useCompleteVehicleStop(stop.id);
   const { mutateAsync: uncompleteStop, isPending: isUncompleting } = useUncompleteVehicleStop(stop.id);
 
   const isToggling = isCompleting || isUncompleting;
-  const actionAllowed = isCompleted ? canUncomplete : canComplete;
-  const isDisabled = isToggling || !actionAllowed;
+  const isDisabled = isToggling;
 
   const actionLabel = isCompleted ? 'Označi nedovršenom' : 'Označi dovršenom';
-  const disabledReason = actionAllowed
-    ? undefined
-    : isCompleted
-      ? 'Prvo poništite sve stanice nakon ove.'
-      : 'Prvo dovršite prethodne stanice.';
 
   async function handleToggleCompleted() {
-    if (!actionAllowed) return;
     try {
       if (isCompleted) {
         await uncompleteStop();
@@ -49,6 +33,23 @@ export const ToggleStopCompletionButton = ({
       }
     } catch (error) {
       console.error(error);
+      const errorCode = (error as { response?: { data?: { errorCode?: string } } })?.response?.data?.errorCode;
+      if (errorCode === 'CARGO_NOT_YET_LOADED') {
+        showErrorToast({
+          title: 'Nije moguće potvrditi istovar — teret još nije utovaren.',
+          description: 'Molimo prvo potvrdite utovarnu postaju.',
+          timeout: 5000,
+        });
+        return;
+      }
+      if (errorCode === 'CARGO_STATUS_CHANGED_BY_LATER_STOP') {
+        showErrorToast({
+          title: 'Nije moguće poništiti postaju — status tereta je već promijenjen na kasnijoj postaji.',
+          description: 'Molimo prvo poništite kasniju postaju.',
+          timeout: 5000,
+        });
+        return;
+      }
       showErrorToast({ title: 'Greška prilikom promjene statusa stanice. Pokušajte ponovno.' });
     }
   }
@@ -56,7 +57,7 @@ export const ToggleStopCompletionButton = ({
   const tooltipContent = (
     <FlexLayout className="flex-col px-2 py-1">
       <Text className="whitespace-nowrap" color="text-light-50" variant="text-xxs-bold">
-        {disabledReason ?? actionLabel}
+        {actionLabel}
       </Text>
       <DisplayIf condition={!!stop.completedAt}>
         <Text className="whitespace-nowrap" color="text-light-200" variant="text-xxs">
