@@ -18,6 +18,10 @@ export function getDateInLocalTimezone(isoString: string) {
   return dayjs(isoString).toDate();
 }
 
+export function isToday(date?: string) {
+  return !!date && dayjs(date).isSame(dayjs(), 'day');
+}
+
 export function getDataPointDateString(dataPoint: string | undefined) {
   return dataPoint ? formatDateString(dataPoint, 'DD.MM.YYYY') : '—';
 }
