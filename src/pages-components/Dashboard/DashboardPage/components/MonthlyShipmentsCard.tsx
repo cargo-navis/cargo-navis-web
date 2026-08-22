@@ -37,6 +37,18 @@ const chartOptions: ChartOptions<'bar' | 'line'> = {
 
 const formatEur = (value: number) => value.toLocaleString('hr-HR', { style: 'currency', currency: 'EUR' });
 
+// Locale date range: same month -> "18.-24. kolovoz", crossing a month ->
+// "30. srpanj - 3. kolovoz", crossing a year adds the year on both sides.
+const formatDateRange = (start: dayjs.Dayjs, end: dayjs.Dayjs) => {
+  if (!start.isSame(end, 'year')) {
+    return `${start.format('D. MMMM YYYY.')} - ${end.format('D. MMMM YYYY.')}`;
+  }
+  if (!start.isSame(end, 'month')) {
+    return `${start.format('D. MMMM')} - ${end.format('D. MMMM')}`;
+  }
+  return `${start.format('D.')}-${end.format('D. MMMM')}`;
+};
+
 export const MonthlyShipmentsCard = () => {
   const start = dayjs().startOf('week');
   const end = dayjs().endOf('week');
@@ -48,8 +60,7 @@ export const MonthlyShipmentsCard = () => {
   const { data: priceData, isLoading: isPriceLoading } = useShipmentPriceAnalytics(params);
   const isLoading = isCountLoading || isPriceLoading;
 
-  const monthName = start.format('MMMM');
-  const title = `Nalozi · ${monthName.charAt(0).toUpperCase()}${monthName.slice(1)}, ${start.format('D.')}-${end.format('D.')}`;
+  const dateRange = formatDateRange(start, end);
 
   const chartData: ChartData<'bar' | 'line'> = {
     labels: (countData?.periods ?? []).map((period) => dayjs(period.period).format('D.')),
@@ -80,7 +91,16 @@ export const MonthlyShipmentsCard = () => {
   };
 
   return (
-    <DashboardCard icon="IconChartBar" iconColor="text-teal-600" title={title}>
+    <DashboardCard
+      icon="IconChartBar"
+      iconColor="text-teal-600"
+      subtitle={
+        <Text color="text-color-3" variant="text-xxs">
+          {dateRange}
+        </Text>
+      }
+      title="Nalozi"
+    >
       {isLoading ? (
         <FlexLayout className="h-full items-center justify-center">
           <LoadingSpinner />
