@@ -1,125 +1,29 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
-import { ClientAnalyticsItem, DriverAnalyticsItem, VehicleAnalyticsItem } from '@/lib/api';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
-import {
-  useClient,
-  useClientsAnalytics,
-  useDriversAnalytics,
-  useEmployee,
-  useShipmentAnalytics,
-  useShipmentPriceAnalytics,
-  useVehicle,
-  useVehiclesAnalytics,
-} from '@/lib/hooks/api';
-import { FlexLayout, Heading, Icon, Text } from '@/ui';
-import { Tooltip } from '@/ui/components/Tooltip/Tooltip';
+import { FlexLayout, Heading } from '@/ui';
 
-import { ClientFilter } from './ClientFilter';
+import { AnalyticsPageTabs } from './AnalyticsPageTabs';
 import { ContentLoader } from './ContentLoader';
-import { DateRange, DateRangeFilterWithLabels, getInitialDateRange } from './DateRangeFilter';
-import { DriverFilter } from './DriverFilter';
-import { GranularityFilter, GranularityOption } from './GranularityFilter';
-import { TotalAnalyticsSection } from './TotalAnalyticsSection';
-import { VehicleFilter } from './VehicleFilter';
-
-const TOP_N = 5;
-
-interface ParticipationHeaderProps {
-  basis: string;
-  label: string;
-  tooltip: string;
-}
-
-const ParticipationHeader = ({ basis, label, tooltip }: ParticipationHeaderProps) => (
-  <FlexLayout className={`${basis} items-center justify-end gap-1`}>
-    <Text color="text-color-2" variant="text-s-medium">
-      {label}
-    </Text>
-    <Tooltip
-      content={
-        <Text className="px-1" color="text-light-50" variant="text-xxs">
-          {tooltip}
-        </Text>
-      }
-      isPortal
-    >
-      <Icon className="text-color-2 cursor-help" icon="IconInfoCircle" size="m" />
-    </Tooltip>
-  </FlexLayout>
-);
+import { DateRange, getInitialDateRange } from './DateRangeFilter';
+import { GranularityOption } from './GranularityFilter';
+import { useAnalyticsPageTab } from './hooks';
+import { AgencySection, OverviewSection, RegularSection } from './sections';
 
 export const AnalyticsPage = () => {
+  const { isReady, tab, setTab } = useAnalyticsPageTab();
   const [dateRange, setDateRange] = useState<DateRange>(() => getInitialDateRange('last-6-months'));
-  const [selectedGranularity, setSelectedGranularity] = useState<GranularityOption>('month');
-  const [selectedDriverId, setSelectedDriverId] = useState<string | undefined>(undefined);
-  const [selectedVehicleId, setSelectedVehicleId] = useState<string | undefined>(undefined);
-  const [selectedClientId, setSelectedClientId] = useState<string | undefined>(undefined);
+  const [granularity, setGranularity] = useState<GranularityOption>('month');
 
-  const handleDriverChange = (value: string | undefined) => {
-    setSelectedDriverId(value);
-    if (value) {
-      setSelectedVehicleId(undefined);
-    }
+  // Date range and granularity are shared, so switching tabs keeps the period in view.
+  const sharedFilterProps = {
+    dateRange,
+    granularity,
+    onDateRangeChange: setDateRange,
+    onGranularityChange: setGranularity,
   };
-
-  const handleVehicleChange = (value: string | undefined) => {
-    setSelectedVehicleId(value);
-    if (value) {
-      setSelectedDriverId(undefined);
-    }
-  };
-
-  const handleClientChange = (value: string | undefined) => {
-    setSelectedClientId(value);
-    if (value) {
-      setSelectedVehicleId(undefined);
-    }
-  };
-
-  const { from, to } = dateRange;
-
-  const analyticsParams = {
-    from,
-    to,
-    granularity: selectedGranularity,
-    driverId: selectedDriverId,
-    vehicleId: selectedVehicleId,
-    clientId: selectedClientId,
-  };
-
-  const dateRangeParams = {
-    from,
-    to,
-  };
-
-  // Fetch analytics data
-  const { data: countData, isLoading: isCountLoading } = useShipmentAnalytics(analyticsParams);
-  const { data: priceData, isLoading: isPriceLoading } = useShipmentPriceAnalytics(analyticsParams);
-  const { data: driversData, isLoading: isDriversLoading } = useDriversAnalytics(dateRangeParams);
-  const { data: vehiclesData, isLoading: isVehiclesLoading } = useVehiclesAnalytics(dateRangeParams);
-  const { data: clientsData, isLoading: isClientsLoading } = useClientsAnalytics(dateRangeParams);
-
-  // Get top 5 drivers and vehicles
-  const topDrivers = useMemo(() => {
-    if (!driversData) return [];
-    return [...driversData].sort((a, b) => b.totalPrice - a.totalPrice).slice(0, TOP_N);
-  }, [driversData]);
-
-  const topVehicles = useMemo(() => {
-    if (!vehiclesData) return [];
-    return [...vehiclesData].sort((a, b) => b.totalPrice - a.totalPrice).slice(0, TOP_N);
-  }, [vehiclesData]);
-
-  const topClients = useMemo(() => {
-    if (!clientsData) return [];
-    return [...clientsData].sort((a, b) => b.totalPrice - a.totalPrice).slice(0, TOP_N);
-  }, [clientsData]);
-
-  const isLoading = isCountLoading || isPriceLoading || isDriversLoading || isVehiclesLoading || isClientsLoading;
-  const hasAllData = countData && priceData && driversData && vehiclesData;
 
   return (
     <DashboardLayout>
@@ -129,248 +33,17 @@ export const AnalyticsPage = () => {
           <Heading as="h1" variant="text-xl">
             Analitika
           </Heading>
-          <FlexLayout className="gap-3">
-            <DateRangeFilterWithLabels
-              label={
-                <FlexLayout className="gap-1 items-center justify-between">
-                  <Icon icon="IconCalendarCode" />
-                  <Text color="text-color-3" variant="text-xxs-medium">
-                    Razdoblje
-                  </Text>
-                </FlexLayout>
-              }
-              value={dateRange}
-              onChange={setDateRange}
-            />
-            <GranularityFilter value={selectedGranularity} onChange={setSelectedGranularity} />
-            <FlexLayout className="gap-3 items-center">
-              <DriverFilter
-                isDisabled={!!selectedVehicleId || !!selectedClientId}
-                value={selectedDriverId}
-                onChange={handleDriverChange}
-              />
-              <VehicleFilter
-                isDisabled={!!selectedDriverId || !!selectedClientId}
-                value={selectedVehicleId}
-                onChange={handleVehicleChange}
-              />
-              <ClientFilter
-                isDisabled={!!selectedVehicleId || !!selectedDriverId}
-                value={selectedClientId}
-                onChange={handleClientChange}
-              />
-            </FlexLayout>
-          </FlexLayout>
+          {isReady && <AnalyticsPageTabs setTab={setTab} tab={tab} />}
         </FlexLayout>
-        {isLoading || !hasAllData ? (
+        {!isReady && (
           <ClientSideOnly>
             <ContentLoader />
           </ClientSideOnly>
-        ) : (
-          <FlexLayout className="flex-col gap-5">
-            <TotalAnalyticsSection countData={countData} granularity={selectedGranularity} priceData={priceData} />
-            <FlexLayout className="w-full gap-5">
-              <DriversTable data={topDrivers} />
-              <VehiclesTable data={topVehicles} />
-            </FlexLayout>
-            <ClientsTable data={topClients} />
-          </FlexLayout>
         )}
+        {isReady && tab === 'overview' && <OverviewSection {...sharedFilterProps} />}
+        {isReady && tab === 'regular' && <RegularSection {...sharedFilterProps} />}
+        {isReady && tab === 'agency' && <AgencySection {...sharedFilterProps} />}
       </FlexLayout>
     </DashboardLayout>
-  );
-};
-
-interface DriverRowProps {
-  driver: DriverAnalyticsItem;
-  index: number;
-}
-
-const DriverRow = ({ driver, index }: DriverRowProps) => {
-  const { data: employee } = useEmployee(driver.driverId);
-  const displayName = employee?.fullName || `${employee?.firstName} ${employee?.lastName}` || driver.driverId;
-
-  return (
-    <FlexLayout
-      className={`w-full py-3 px-4 border-b border-b-black-alpha-10 dark:border-b-white-alpha-25 last:border-b-0 ${
-        index % 2 === 0 ? 'bg-transparent' : 'bg-black-alpha-05 dark:bg-white-alpha-05'
-      }`}
-    >
-      <Text className="flex-1" color="text-color-1" variant="text-s-medium">
-        {displayName}
-      </Text>
-      <Text className="basis-[140px] text-right" color="text-color-1" variant="text-s">
-        {driver.shipmentCount}
-      </Text>
-      <Text className="basis-[200px] text-right" color="text-color-1" variant="text-s">
-        {driver.totalPrice.toLocaleString('hr-HR', { style: 'currency', currency: 'EUR' })}
-      </Text>
-    </FlexLayout>
-  );
-};
-
-interface DriversTableProps {
-  data: DriverAnalyticsItem[];
-}
-
-const DriversTable = ({ data }: DriversTableProps) => {
-  return (
-    <FlexLayout className="flex-1 flex-col gap-4 p-4 bg-white dark:bg-white-alpha-10 border border-dark-100 dark:border-light-900 shadow-sm rounded-m">
-      <Text color="text-color-1" variant="text-xl-bold">
-        Top {TOP_N} vozača
-      </Text>
-
-      {/* Table Header */}
-      <FlexLayout className="w-full py-3 px-4 bg-dark-200 dark:bg-white-alpha-10 rounded-t-s">
-        <Text className="flex-1" color="text-color-2" variant="text-s-medium">
-          Vozač
-        </Text>
-        <ParticipationHeader
-          basis="basis-[140px]"
-          label="Br. naloga"
-          tooltip="Broj naloga u kojima je vozač sudjelovao."
-        />
-        <ParticipationHeader
-          basis="basis-[200px]"
-          label="Ukupni prihod"
-          tooltip="Ukupni prihod naloga u kojima je vozač sudjelovao."
-        />
-      </FlexLayout>
-
-      {/* Table Body */}
-      <FlexLayout className="flex-col">
-        {data.map((driver, index) => (
-          <DriverRow driver={driver} index={index} key={driver.driverId} />
-        ))}
-      </FlexLayout>
-    </FlexLayout>
-  );
-};
-
-interface VehicleRowProps {
-  vehicle: VehicleAnalyticsItem;
-  index: number;
-}
-
-const VehicleRow = ({ index, vehicle }: VehicleRowProps) => {
-  const { data: vehicleData } = useVehicle(vehicle.vehicleId);
-  const displayName = vehicleData?.registration || vehicle.vehicleId;
-
-  return (
-    <FlexLayout
-      className={`w-full py-3 px-4 border-b border-b-black-alpha-10 dark:border-b-white-alpha-25 last:border-b-0 ${
-        index % 2 === 0 ? 'bg-transparent' : 'bg-black-alpha-05 dark:bg-white-alpha-05'
-      }`}
-    >
-      <Text className="flex-1" color="text-color-1" variant="text-s-medium">
-        {displayName}
-      </Text>
-      <Text className="basis-[140px] text-right" color="text-color-1" variant="text-s">
-        {vehicle.shipmentCount}
-      </Text>
-      <Text className="basis-[200px] text-right" color="text-color-1" variant="text-s">
-        {vehicle.totalPrice.toLocaleString('hr-HR', { style: 'currency', currency: 'EUR' })}
-      </Text>
-    </FlexLayout>
-  );
-};
-
-interface VehiclesTableProps {
-  data: VehicleAnalyticsItem[];
-}
-
-const VehiclesTable = ({ data }: VehiclesTableProps) => {
-  return (
-    <FlexLayout className="flex-1 flex-col gap-4 p-4 bg-white dark:bg-white-alpha-10 border border-dark-100 dark:border-light-900 shadow-md rounded-m">
-      <Text color="text-color-1" variant="text-xl-bold">
-        Top {TOP_N} vozila
-      </Text>
-
-      {/* Table Header */}
-      <FlexLayout className="w-full py-3 px-4 bg-dark-200 dark:bg-white-alpha-10 rounded-t-s">
-        <Text className="flex-1" color="text-color-2" variant="text-s-medium">
-          Vozilo
-        </Text>
-        <ParticipationHeader
-          basis="basis-[140px]"
-          label="Br. naloga"
-          tooltip="Broj naloga u kojima je vozilo sudjelovalo."
-        />
-        <ParticipationHeader
-          basis="basis-[200px]"
-          label="Ukupni prihod"
-          tooltip="Ukupni prihod naloga u kojima je vozilo sudjelovalo."
-        />
-      </FlexLayout>
-
-      {/* Table Body */}
-      <FlexLayout className="flex-col">
-        {data.map((vehicle, index) => (
-          <VehicleRow index={index} key={vehicle.vehicleId} vehicle={vehicle} />
-        ))}
-      </FlexLayout>
-    </FlexLayout>
-  );
-};
-
-interface ClientRowProps {
-  client: ClientAnalyticsItem;
-  index: number;
-}
-
-const ClientRow = ({ client, index }: ClientRowProps) => {
-  const { data: clientData } = useClient(client.clientId);
-  const displayName = clientData?.name || '—';
-
-  return (
-    <FlexLayout
-      className={`w-full py-3 px-4 border-b border-b-black-alpha-10 dark:border-b-white-alpha-25 last:border-b-0 ${
-        index % 2 === 0 ? 'bg-transparent' : 'bg-black-alpha-05 dark:bg-white-alpha-05'
-      }`}
-    >
-      <Text className="flex-1" color="text-color-1" variant="text-s-medium">
-        {displayName}
-      </Text>
-      <Text className="basis-[140px] text-right" color="text-color-1" variant="text-s">
-        {client.shipmentCount}
-      </Text>
-      <Text className="basis-[200px] text-right" color="text-color-1" variant="text-s">
-        {client.totalPrice.toLocaleString('hr-HR', { style: 'currency', currency: 'EUR' })}
-      </Text>
-    </FlexLayout>
-  );
-};
-
-interface ClientsTableProps {
-  data: ClientAnalyticsItem[];
-}
-
-const ClientsTable = ({ data }: ClientsTableProps) => {
-  return (
-    <FlexLayout className="flex-1 flex-col gap-4 p-4 bg-white dark:bg-white-alpha-10 border border-dark-100 dark:border-light-900 shadow-md rounded-m">
-      <Text color="text-color-1" variant="text-xl-bold">
-        Top {TOP_N} klijenata
-      </Text>
-
-      {/* Table Header */}
-      <FlexLayout className="w-full py-3 px-4 bg-dark-200 dark:bg-white-alpha-10 rounded-t-s">
-        <Text className="flex-1" color="text-color-2" variant="text-s-medium">
-          Klijent
-        </Text>
-        <Text className="basis-[140px] text-right" color="text-color-2" variant="text-s-medium">
-          Br. naloga
-        </Text>
-        <Text className="basis-[200px] text-right" color="text-color-2" variant="text-s-medium">
-          Ukupni prihod
-        </Text>
-      </FlexLayout>
-
-      {/* Table Body */}
-      <FlexLayout className="flex-col">
-        {data.map((client, index) => (
-          <ClientRow client={client} index={index} key={client.clientId} />
-        ))}
-      </FlexLayout>
-    </FlexLayout>
   );
 };

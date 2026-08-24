@@ -1,32 +1,44 @@
+export type Granularity = 'day' | 'week' | 'month' | 'year';
+
 export interface ShipmentAnalytics {
-  total: number;
-  granularity: 'day' | 'week' | 'month' | 'year';
-  average: number;
+  totalRegular: number;
+  totalAgency: number;
+  averageRegular: number;
+  averageAgency: number;
+  granularity: Granularity;
   periods: {
     period: string;
-    count: number;
+    countRegular: number;
+    countAgency: number;
   }[];
 }
 
 export interface ShipmentPriceAnalytics {
-  total: number;
-  granularity: 'day' | 'week' | 'month' | 'year';
-  average: number;
+  totalRevenueRegular: number;
+  totalRevenueAgency: number;
+  totalCostAgency: number;
+  averageRevenueRegular: number;
+  averageRevenueAgency: number;
+  averageCostAgency: number;
+  granularity: Granularity;
   periods: {
     period: string;
-    price: number;
+    revenueRegular: number;
+    revenueAgency: number;
+    costAgency: number;
   }[];
 }
 
 export interface GetShipmentAnalyticsParams {
   from?: string;
   to?: string;
-  granularity: 'day' | 'week' | 'month' | 'year';
+  granularity: Granularity;
   driverId?: string;
   vehicleId?: string;
+  clientId?: string;
 }
 
-// Query params for driver/vehicle analytics endpoints
+// Query params for driver/vehicle/client/transport-contractor analytics endpoints
 export interface GetAnalyticsParams {
   from?: string;
   to?: string;
@@ -48,4 +60,13 @@ export interface ClientAnalyticsItem {
   clientId: string;
   shipmentCount: number;
   totalPrice: number;
+}
+
+export interface TransportContractorAnalyticsItem {
+  contractorId: string;
+  shipmentCount: number;
+  totalCost: number;
+  totalRevenue: number;
+  /** Difference between what was charged to the client and what was paid to the contractor. */
+  margin: number;
 }

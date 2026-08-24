@@ -7,6 +7,7 @@ import {
   getShipmentAnalytics,
   GetShipmentAnalyticsParams,
   getShipmentPriceAnalytics,
+  getTransportContractorsAnalytics,
   getVehiclesAnalytics,
 } from '@/lib/api';
 
@@ -42,5 +43,12 @@ export function useClientsAnalytics(params: GetAnalyticsParams) {
   return useQuery({
     queryKey: ['clients-analytics', params],
     queryFn: () => getClientsAnalytics(params),
+  });
+}
+
+export function useTransportContractorsAnalytics(params: GetAnalyticsParams) {
+  return useQuery({
+    queryKey: ['transport-contractors-analytics', params],
+    queryFn: () => getTransportContractorsAnalytics(params),
   });
 }
