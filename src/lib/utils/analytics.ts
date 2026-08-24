@@ -22,3 +22,7 @@ export const getAverageRevenue = (data: ShipmentPriceAnalytics) =>
   data.averageRevenueRegular + data.averageRevenueAgency;
 
 export const formatEur = (value: number) => value.toLocaleString('hr-HR', { style: 'currency', currency: 'EUR' });
+
+/** Margin as a share of revenue, e.g. "17,1 %". Returns undefined when revenue is 0. */
+export const formatMarginShare = (margin: number, revenue: number) =>
+  revenue === 0 ? undefined : `${((margin / revenue) * 100).toLocaleString('hr-HR', { maximumFractionDigits: 1 })} %`;

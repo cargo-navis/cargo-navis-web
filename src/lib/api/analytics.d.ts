@@ -61,3 +61,12 @@ export interface ClientAnalyticsItem {
   shipmentCount: number;
   totalPrice: number;
 }
+
+export interface TransportContractorAnalyticsItem {
+  contractorId: string;
+  shipmentCount: number;
+  totalCost: number;
+  totalRevenue: number;
+  /** Difference between what was charged to the client and what was paid to the contractor. */
+  margin: number;
+}
