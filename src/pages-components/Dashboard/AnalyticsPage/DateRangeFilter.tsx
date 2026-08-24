@@ -81,6 +81,15 @@ const getPresetSubtitle = (preset: DateRangePreset): string => {
 
 export const getInitialDateRange = (preset: DateRangePreset): DateRange => computePresetRange(preset);
 
+/** Derive the active preset from the current value so the label survives remounts (e.g. tab switches). */
+const derivePreset = (value: DateRange): DateRangePreset | 'custom' => {
+  const match = PRESET_OPTIONS.find((option) => {
+    const range = computePresetRange(option.value);
+    return range.from === value.from && range.to === value.to;
+  });
+  return match?.value ?? 'custom';
+};
+
 interface DateRangeFilterProps {
   value: DateRange;
   onChange: (range: DateRange) => void;
@@ -88,13 +97,13 @@ interface DateRangeFilterProps {
 
 export const DateRangeFilter = ({ value, onChange }: DateRangeFilterProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [activePreset, setActivePreset] = useState<DateRangePreset | 'custom'>('last-6-months');
   const [draftFrom, setDraftFrom] = useState<string | null>(value.from ?? null);
   const [draftTo, setDraftTo] = useState<string | null>(value.to ?? null);
 
+  const activePreset = derivePreset(value);
+
   const handlePresetClick = (preset: DateRangePreset) => {
     const range = computePresetRange(preset);
-    setActivePreset(preset);
     setDraftFrom(range.from ?? null);
     setDraftTo(range.to ?? null);
     onChange(range);
@@ -102,7 +111,6 @@ export const DateRangeFilter = ({ value, onChange }: DateRangeFilterProps) => {
   };
 
   const handleApplyCustom = () => {
-    setActivePreset('custom');
     onChange({ from: draftFrom ?? undefined, to: draftTo ?? undefined });
     setIsOpen(false);
   };
