@@ -4,6 +4,13 @@ import type { ChartData, ChartOptions } from 'chart.js';
 import dayjs from 'dayjs';
 
 import { useShipmentAnalytics, useShipmentPriceAnalytics } from '@/lib/hooks';
+import {
+  formatEur,
+  getRevenueForPeriod,
+  getShipmentCountForPeriod,
+  getTotalRevenue,
+  getTotalShipmentCount,
+} from '@/lib/utils/analytics';
 import { Box, ComboChart, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
 import { DashboardCard } from './DashboardCard';
@@ -34,8 +41,6 @@ const chartOptions: ChartOptions<'bar' | 'line'> = {
     },
   },
 };
-
-const formatEur = (value: number) => value.toLocaleString('hr-HR', { style: 'currency', currency: 'EUR' });
 
 // Locale date range: same month -> "18.-24. kolovoz", crossing a month ->
 // "30. srpanj - 3. kolovoz", crossing a year adds the year on both sides.
@@ -68,7 +73,7 @@ export const MonthlyShipmentsCard = () => {
       {
         type: 'bar' as const,
         label: 'Broj naloga',
-        data: (countData?.periods ?? []).map((period) => period.count),
+        data: (countData?.periods ?? []).map(getShipmentCountForPeriod),
         backgroundColor: '#FFDDABad',
         borderColor: '#FFAA4D',
         borderWidth: 1,
@@ -79,7 +84,7 @@ export const MonthlyShipmentsCard = () => {
       {
         type: 'line' as const,
         label: 'Prihod (€)',
-        data: (priceData?.periods ?? []).map((period) => period.price),
+        data: (priceData?.periods ?? []).map(getRevenueForPeriod),
         backgroundColor: '#13949Fad',
         borderColor: '#13949F',
         borderWidth: 2,
@@ -119,7 +124,7 @@ export const MonthlyShipmentsCard = () => {
                 Nalozi
               </Text>
               <Text color="text-color-1" variant="text-l-bold">
-                {countData.total}
+                {getTotalShipmentCount(countData)}
               </Text>
             </FlexLayout>
             {priceData && (
@@ -128,7 +133,7 @@ export const MonthlyShipmentsCard = () => {
                   Prihod
                 </Text>
                 <Text color="text-color-1" variant="text-l-bold">
-                  {formatEur(priceData.total)}
+                  {formatEur(getTotalRevenue(priceData))}
                 </Text>
               </FlexLayout>
             )}

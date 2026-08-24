@@ -4,6 +4,15 @@ import type { ChartData, ChartOptions } from 'chart.js';
 import dayjs from 'dayjs';
 
 import { ShipmentAnalytics, ShipmentPriceAnalytics } from '@/lib/api';
+import {
+  formatEur,
+  getAverageRevenue,
+  getAverageShipmentCount,
+  getRevenueForPeriod,
+  getShipmentCountForPeriod,
+  getTotalRevenue,
+  getTotalShipmentCount,
+} from '@/lib/utils/analytics';
 import { Box, ComboChart, FlexLayout, Icon, Text } from '@/ui';
 
 import type { GranularityOption } from './GranularityFilter';
@@ -160,7 +169,7 @@ export const TotalAnalyticsSection = ({ countData, priceData, granularity }: Tot
       {
         type: 'bar' as const,
         label: 'Broj naloga',
-        data: countData.periods.map((period) => period.count),
+        data: countData.periods.map(getShipmentCountForPeriod),
         backgroundColor: '#FFDDABad',
         borderColor: '#FFAA4D',
         borderWidth: 1,
@@ -170,7 +179,7 @@ export const TotalAnalyticsSection = ({ countData, priceData, granularity }: Tot
       {
         type: 'line' as const,
         label: 'Prihod (€)',
-        data: priceData.periods.map((period) => period.price),
+        data: priceData.periods.map(getRevenueForPeriod),
         backgroundColor: '#13949Fad',
         borderColor: '#13949F',
         borderWidth: 3,
@@ -193,7 +202,7 @@ export const TotalAnalyticsSection = ({ countData, priceData, granularity }: Tot
             </Text>
           </FlexLayout>
           <Text color="text-color-1" variant="text-xl-bold">
-            {countData.total}
+            {getTotalShipmentCount(countData)}
           </Text>
         </FlexLayout>
         <FlexLayout className="flex-col flex-1 p-4 items-baseline justify-between  bg-white dark:bg-white-alpha-10 border border-dark-100 dark:border-light-900 shadow-md rounded-m">
@@ -204,7 +213,7 @@ export const TotalAnalyticsSection = ({ countData, priceData, granularity }: Tot
             </Text>
           </FlexLayout>
           <Text color="text-color-1" variant="text-xl-bold">
-            {countData.average.toFixed(0)}{' '}
+            {getAverageShipmentCount(countData).toFixed(0)}{' '}
             <Text as="small" color="text-color-3" variant="text-m">
               {granularityLabel}
             </Text>
@@ -218,7 +227,7 @@ export const TotalAnalyticsSection = ({ countData, priceData, granularity }: Tot
             </Text>
           </FlexLayout>
           <Text color="text-color-1" variant="text-xl-bold">
-            {priceData.total.toLocaleString('hr-HR', { style: 'currency', currency: 'EUR' })}
+            {formatEur(getTotalRevenue(priceData))}
           </Text>
         </FlexLayout>
         <FlexLayout className="flex-col flex-1 p-4 items-baseline justify-between  bg-white dark:bg-white-alpha-10 border border-dark-100 dark:border-light-900 shadow-md rounded-m">
@@ -229,7 +238,7 @@ export const TotalAnalyticsSection = ({ countData, priceData, granularity }: Tot
             </Text>
           </FlexLayout>
           <Text color="text-color-1" variant="text-xl-bold">
-            {priceData.average.toLocaleString('hr-HR', { style: 'currency', currency: 'EUR' })}{' '}
+            {formatEur(getAverageRevenue(priceData))}{' '}
             <Text as="small" color="text-color-3" variant="text-m">
               {granularityLabel}
             </Text>
