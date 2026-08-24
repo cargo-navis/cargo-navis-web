@@ -4,14 +4,9 @@ import type { ChartData, ChartOptions } from 'chart.js';
 import dayjs from 'dayjs';
 
 import { useShipmentAnalytics, useShipmentPriceAnalytics } from '@/lib/hooks';
-import {
-  formatEur,
-  getRevenueForPeriod,
-  getShipmentCountForPeriod,
-  getTotalRevenue,
-  getTotalShipmentCount,
-} from '@/lib/utils/analytics';
+import { formatEur, getRevenueForPeriod, getTotalRevenue, getTotalShipmentCount } from '@/lib/utils/analytics';
 import { Box, ComboChart, FlexLayout, LoadingSpinner, Text } from '@/ui';
+import { CHART_COLORS } from '@/ui/theme/chartColors';
 
 import { DashboardCard } from './DashboardCard';
 
@@ -23,10 +18,11 @@ const chartOptions: ChartOptions<'bar' | 'line'> = {
   interaction: { mode: 'index', intersect: false },
   plugins: { legend: { position: 'bottom' } },
   scales: {
-    x: { grid: { display: false }, ticks: { maxTicksLimit: 16, autoSkip: true, maxRotation: 0 } },
+    x: { stacked: true, grid: { display: false }, ticks: { maxTicksLimit: 16, autoSkip: true, maxRotation: 0 } },
     y: {
       type: 'linear',
       position: 'left',
+      stacked: true,
       beginAtZero: true,
       title: { display: true, text: 'Broj naloga' },
       ticks: { precision: 0 },
@@ -72,12 +68,23 @@ export const MonthlyShipmentsCard = () => {
     datasets: [
       {
         type: 'bar' as const,
-        label: 'Broj naloga',
-        data: (countData?.periods ?? []).map(getShipmentCountForPeriod),
-        backgroundColor: '#FFDDABad',
-        borderColor: '#FFAA4D',
+        label: 'Vlastiti nalozi',
+        data: (countData?.periods ?? []).map((period) => period.countRegular),
+        backgroundColor: CHART_COLORS.countRegular.fill,
+        borderColor: CHART_COLORS.countRegular.border,
         borderWidth: 1,
-        borderRadius: 4,
+        stack: 'count',
+        yAxisID: 'y',
+        order: 1,
+      },
+      {
+        type: 'bar' as const,
+        label: 'Agencijski nalozi',
+        data: (countData?.periods ?? []).map((period) => period.countAgency),
+        backgroundColor: CHART_COLORS.countAgency.fill,
+        borderColor: CHART_COLORS.countAgency.border,
+        borderWidth: 1,
+        stack: 'count',
         yAxisID: 'y',
         order: 1,
       },
@@ -85,8 +92,8 @@ export const MonthlyShipmentsCard = () => {
         type: 'line' as const,
         label: 'Prihod (€)',
         data: (priceData?.periods ?? []).map(getRevenueForPeriod),
-        backgroundColor: '#13949Fad',
-        borderColor: '#13949F',
+        backgroundColor: `${CHART_COLORS.revenue}ad`,
+        borderColor: CHART_COLORS.revenue,
         borderWidth: 2,
         tension: 0.2,
         yAxisID: 'y1',
