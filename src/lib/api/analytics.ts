@@ -6,6 +6,7 @@ import {
   GetShipmentAnalyticsParams,
   ShipmentAnalytics,
   ShipmentPriceAnalytics,
+  TransportContractorAnalyticsItem,
   VehicleAnalyticsItem,
 } from './analytics.d';
 
@@ -27,4 +28,8 @@ export function getVehiclesAnalytics(params: GetAnalyticsParams) {
 
 export function getClientsAnalytics(params: GetAnalyticsParams) {
   return backend.get<ClientAnalyticsItem[]>('/api/analytics/clients', { params });
+}
+
+export function getTransportContractorsAnalytics(params: GetAnalyticsParams) {
+  return backend.get<TransportContractorAnalyticsItem[]>('/api/analytics/transport-contractors', { params });
 }

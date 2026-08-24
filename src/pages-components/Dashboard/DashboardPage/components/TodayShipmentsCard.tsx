@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 
 import type { Cargo, Shipment } from '@/lib/api/shipments.d';
-import { useContractors, useShipmentsData } from '@/lib/hooks';
+import { useClients, useContractors, useEmployees, useShipmentsData } from '@/lib/hooks';
 import { getCargoLabel } from '@/lib/utils/cargo';
 import { isToday } from '@/lib/utils/date';
 import { Box, FlexLayout, Icon, LoadingSpinner, Pill, Text, Tooltip } from '@/ui';
@@ -32,7 +32,13 @@ export const TodayShipmentsCard = () => {
   const isLoading = isLoadingLoad || isLoadingUnload;
 
   const { data: contractors = [] } = useContractors();
+  const { data: clients = [] } = useClients();
+  const { data: employees = [] } = useEmployees();
+
+  // One list query each, looked up per row, instead of a query per row.
   const contractorNameById = new Map(contractors.map((contractor) => [contractor.id, contractor.name]));
+  const clientNameById = new Map(clients.map((client) => [client.id, client.name]));
+  const dispatcherNameById = new Map(employees.map((employee) => [employee.id, employee.fullName]));
 
   const byId = new Map<string, Shipment>();
   for (const shipment of [...(loadingToday ?? []), ...(unloadingToday ?? [])]) {
@@ -65,6 +71,8 @@ export const TodayShipmentsCard = () => {
         <FlexLayout className="h-full flex-col gap-3 overflow-y-auto pr-1">
           {todayShipments.map((shipment) => (
             <TodayShipmentRow
+              clientName={clientNameById.get(shipment.clientId ?? '')}
+              dispatcherName={dispatcherNameById.get(shipment.createdById ?? '')}
               key={shipment.id}
               shipment={shipment}
               transporterName={contractorNameById.get(shipment.children?.[0]?.transportContractorId ?? '')}
@@ -115,7 +123,14 @@ const ShipmentNotes = ({ internalNote, externalNote }: { internalNote?: string; 
 
 type CargoAction = { kind: 'loading' | 'unloading'; cargo: Cargo };
 
-const TodayShipmentRow = ({ shipment, transporterName }: { shipment: Shipment; transporterName?: string }) => {
+interface TodayShipmentRowProps {
+  shipment: Shipment;
+  transporterName?: string;
+  clientName?: string;
+  dispatcherName?: string;
+}
+
+const TodayShipmentRow = ({ shipment, transporterName, clientName, dispatcherName }: TodayShipmentRowProps) => {
   const { push } = useRouter();
 
   // Agency shipment is stored as a parent with an outbound child; the parent is
@@ -149,6 +164,9 @@ const TodayShipmentRow = ({ shipment, transporterName }: { shipment: Shipment; t
         </Text>
         <ShipmentNotes externalNote={shipment.externalNote} internalNote={shipment.internalNote} />
       </FlexLayout>
+      <Text className="block truncate mt-0.5" color="text-color-3" variant="text-xxs">
+        {[clientName ?? '—', dispatcherName].filter(Boolean).join(' · ')}
+      </Text>
       <FlexLayout className="flex-col gap-2 mt-2">
         {actions.length === 0 ? (
           <Text color="text-color-3" variant="text-xxs">
