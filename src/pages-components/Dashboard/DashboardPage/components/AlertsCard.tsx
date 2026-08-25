@@ -11,7 +11,12 @@ export const AlertsCard = () => {
   if (alerts?.length) title += ` (${alerts.length})`;
 
   return (
-    <DashboardCard icon="IconAlertTriangle" iconColor="text-red-500 dark:text-red-300" title={title}>
+    <DashboardCard
+      gradient="from-white dark:from-transparent from-65% to-red-500/20"
+      icon="IconAlertTriangle"
+      iconColor="text-red-500 dark:text-red-300"
+      title={title}
+    >
       {isLoading ? (
         <FlexLayout className="h-full items-center justify-center">
           <LoadingSpinner />

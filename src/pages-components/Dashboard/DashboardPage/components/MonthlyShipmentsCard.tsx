@@ -104,6 +104,7 @@ export const MonthlyShipmentsCard = () => {
 
   return (
     <DashboardCard
+      gradient="from-white dark:from-transparent from-65% to-teal-600/20"
       icon="IconChartBar"
       iconColor="text-teal-600"
       subtitle={
