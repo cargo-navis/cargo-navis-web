@@ -8,6 +8,7 @@ interface DashboardCardProps {
   subtitle?: ReactNode;
   icon?: IconType;
   iconColor?: string;
+  gradient?: string;
   headerRight?: ReactNode;
   children: ReactNode;
   className?: string;
@@ -20,13 +21,16 @@ export const DashboardCard = ({
   subtitle,
   icon,
   iconColor,
+  gradient,
   headerRight,
   children,
   className,
 }: DashboardCardProps) => (
   <Box
     className={cn(
-      'flex flex-col h-[440px] rounded-m border border-dark-200 dark:border-light-800 bg-white dark:bg-white-alpha-10 shadow-sm',
+      'flex flex-col h-[440px] rounded-m bg-white dark:bg-white-alpha-10 shadow-md',
+      gradient && 'bg-gradient-to-tr',
+      gradient,
       className
     )}
   >
@@ -34,7 +38,7 @@ export const DashboardCard = ({
       <FlexLayout className="gap-2 text-dark-600 dark:text-light-300">
         {icon && <Icon className="mt-1" color={iconColor} icon={icon} size="l" />}
         <FlexLayout className="flex-col">
-          <Text color="text-color-1" variant="text-m-medium">
+          <Text color={iconColor ?? 'text-color-1'} variant="text-m-medium">
             {title}
           </Text>
           {subtitle}

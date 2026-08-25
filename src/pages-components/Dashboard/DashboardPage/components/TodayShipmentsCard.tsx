@@ -48,6 +48,7 @@ export const TodayShipmentsCard = () => {
 
   return (
     <DashboardCard
+      gradient="from-white dark:from-transparent from-65% to-blue-600/20"
       icon="IconFileDescription"
       iconColor="text-blue-600"
       subtitle={
@@ -55,7 +56,7 @@ export const TodayShipmentsCard = () => {
           {formattedDate}
         </Text>
       }
-      title="Današnji nalozi"
+      title={`Današnji nalozi ${todayShipments?.length ? `(${todayShipments.length})` : ''}`}
     >
       {isLoading ? (
         <FlexLayout className="h-full items-center justify-center">
