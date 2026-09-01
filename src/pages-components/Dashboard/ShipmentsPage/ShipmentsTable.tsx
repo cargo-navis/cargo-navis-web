@@ -37,10 +37,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const { clientId, documents, isInvoiceOverdue, orderNumber, internalNote, externalNote } = shipment;
           const hasNotes = !!(internalNote || externalNote);
           const client = clients.find((c) => c.id === clientId);
-          const isAgency = (shipment.children?.length ?? 0) > 0;
-          const transporter = isAgency
-            ? contractors.find((c) => c.id === shipment.children?.[0]?.transportContractorId)
-            : undefined;
+          const { isAgency } = shipment;
+          const transporter = isAgency ? contractors.find((c) => c.id === shipment.transportContractorId) : undefined;
 
           const hasDocuments = !!documents?.length;
 
@@ -158,9 +156,8 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         cell: (info) => {
           const price = info.getValue();
           const shipment = info.row.original;
-          const childPrice = shipment.children?.[0]?.price;
-          const isAgency = childPrice !== undefined;
-          const ruc = isAgency ? (price || 0) - childPrice : 0;
+          const { isAgency, contractorPrice } = shipment;
+          const ruc = isAgency ? (price || 0) - (contractorPrice ?? 0) : 0;
           const rucClass = ruc >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400';
 
           return (
@@ -171,7 +168,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
               {isAgency && (
                 <>
                   <Text className="text-red-500 dark:text-red-400" variant="text-m-medium">
-                    {`-${childPrice}€`}
+                    {`-${contractorPrice ?? 0}€`}
                   </Text>
                   <Box className="my-2 self-stretch">
                     <Divider />
@@ -287,8 +284,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         header: 'Vozilo / Vozač',
         cell: (props) => {
           const shipment = props.row.original;
-          const isAgency = (shipment.children?.length ?? 0) > 0;
-          const { vehicleStops } = shipment;
+          const { isAgency, vehicleStops } = shipment;
           const latestStop = vehicleStops?.[vehicleStops.length - 1];
           const vehicle = latestStop ? vehicles.find((v) => v.id === latestStop.vehicleId) : undefined;
           const driverId = latestStop?.driverId;
@@ -415,7 +411,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
         return s.invoiceStatus === InvoiceStatus.Paid;
       }
 
-      const isAgency = (shipment.children?.length ?? 0) > 0;
+      const { isAgency } = shipment;
       const latestStop = shipment.vehicleStops?.[shipment.vehicleStops.length - 1];
       const isMissingVehicleOrDriver = !latestStop?.vehicleId || !latestStop?.driverId;
 

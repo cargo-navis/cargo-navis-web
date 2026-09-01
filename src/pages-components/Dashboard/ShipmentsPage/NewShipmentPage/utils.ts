@@ -1,4 +1,4 @@
-import { type CreateShipmentData, type Shipment, type ShipmentDraft } from '@/lib/api';
+import { type CreateAgencyShipmentData, type CreateShipmentData, type Shipment, type ShipmentDraft } from '@/lib/api';
 import { getPostalCode } from '@/lib/api/postalCodes';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { PalleteType } from '@/lib/utils/palletes';
@@ -163,18 +163,18 @@ const getCopyShipmentFormValues = async (shipment: Shipment) => {
 // Create form values for editing an existing shipment
 const getEditShipmentFormValues = async (shipment: Shipment) => {
   const cargo = await mapCargoItems(shipment.cargo, true);
-  const isAgency = (shipment.children?.length ?? 0) > 0;
-  const agencyChild = isAgency ? shipment.children?.[0] : undefined;
+  const { isAgency } = shipment;
 
   return {
     externalOrderReference: shipment.externalOrderReference || '',
-    transportContractorId: agencyChild?.transportContractorId || shipment.transportContractorId || '',
+    // Already the external carrier on an agency shipment.
+    transportContractorId: shipment.transportContractorId || '',
     clientId: shipment.clientId || '',
     price: shipment.price !== undefined && shipment.price !== null ? shipment.price : undefined,
     internalNote: shipment.internalNote || '',
     externalNote: shipment.externalNote || '',
     isAgency,
-    agencyPrice: agencyChild?.price !== undefined && agencyChild?.price !== null ? agencyChild.price : undefined,
+    agencyPrice: shipment.contractorPrice ?? undefined,
     cargo,
   };
 };
@@ -210,19 +210,10 @@ export const getFormDefaultValues = (
 // Function to transform form data into the format defined in types.ts
 export const transformFormDataToPayload = (
   formData: ShipmentFields,
-  context?: { tenantId?: string; draftId?: string }
+  context?: { draftId?: string }
 ): Omit<CreateShipmentData, 'id'> => {
-  const {
-    externalOrderReference,
-    clientId,
-    transportContractorId,
-    price,
-    internalNote,
-    externalNote,
-    isAgency,
-    agencyPrice,
-    cargo,
-  } = formData;
+  const { externalOrderReference, clientId, transportContractorId, price, internalNote, externalNote, cargo } =
+    formData;
 
   const payload: Partial<Omit<CreateShipmentData, 'id'>> = {};
 
@@ -310,22 +301,6 @@ export const transformFormDataToPayload = (
     });
   }
 
-  // Agency-shipment splitting: parent stays for the original client with the
-  // tenant as its transporter; the actual contractor is moved into a child
-  // shipment that the tenant "buys" at the agency price.
-  if (isAgency && context?.tenantId && transportContractorId) {
-    const originalContractorId = transportContractorId;
-    const parentPayload = payload as Omit<CreateShipmentData, 'id'>;
-    const childPayload: Omit<CreateShipmentData, 'id'> = {
-      ...parentPayload,
-      clientId: context.tenantId,
-      transportContractorId: originalContractorId,
-      price: agencyPrice ?? 0,
-    };
-    parentPayload.transportContractorId = context.tenantId;
-    parentPayload.children = [childPayload];
-  }
-
   // draftId lands on the parent only — the backend links the confirmed
   // shipment back to its draft. Setting it after the agency split keeps
   // it off the child payload that would otherwise inherit it via spread.
@@ -334,4 +309,22 @@ export const transformFormDataToPayload = (
   }
 
   return payload as Omit<CreateShipmentData, 'id'>;
+};
+
+// The agency endpoints take a single flat payload: unprefixed fields describe
+// the incoming order from the client, `contractor*` ones the outgoing order to
+// the carrier. `transportContractorId` is that carrier — no parent/child
+// splitting happens on the client anymore.
+export const transformFormDataToAgencyPayload = (
+  formData: ShipmentFields,
+  context?: { draftId?: string }
+): CreateAgencyShipmentData => {
+  const { clientId, transportContractorId, agencyPrice } = formData;
+
+  return {
+    ...transformFormDataToPayload(formData, context),
+    clientId,
+    transportContractorId,
+    contractorPrice: agencyPrice,
+  } as CreateAgencyShipmentData;
 };

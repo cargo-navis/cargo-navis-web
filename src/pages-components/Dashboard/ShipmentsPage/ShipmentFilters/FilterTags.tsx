@@ -14,6 +14,7 @@ export const FilterTags = () => {
     selectedLoadStatus,
     selectedInvoiceStatus,
     selectedIsInvoiceOverdue,
+    selectedIsAgency,
     loadingReadyDateFrom,
     loadingReadyDateTo,
     unloadingDueDateFrom,
@@ -24,6 +25,7 @@ export const FilterTags = () => {
     onLoadStatusChange,
     onInvoiceStatusChange,
     onIsInvoiceOverdueChange,
+    onIsAgencyChange,
     onLoadingReadyDateFromChange,
     onLoadingReadyDateToChange,
     onUnloadingDueDateFromChange,
@@ -47,6 +49,11 @@ export const FilterTags = () => {
     ? selectedIsInvoiceOverdue === 'true'
       ? 'Da'
       : 'Ne'
+    : null;
+  const selectedIsAgencyLabel = selectedIsAgency
+    ? selectedIsAgency === 'true'
+      ? 'Agencijski nalog'
+      : 'Regularni nalog'
     : null;
 
   return (
@@ -98,6 +105,14 @@ export const FilterTags = () => {
             label="Valuta istekla"
             value={selectedIsInvoiceOverdueLabel || ''}
             onRemove={() => onIsInvoiceOverdueChange('')}
+          />
+        </DisplayIf>
+        <DisplayIf condition={!!selectedIsAgencyLabel}>
+          <FilterTag
+            colorScheme="orange"
+            label="Tip naloga"
+            value={selectedIsAgencyLabel || ''}
+            onRemove={() => onIsAgencyChange('')}
           />
         </DisplayIf>
         {loadingReadyDateFrom && (

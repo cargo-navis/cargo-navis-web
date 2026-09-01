@@ -76,7 +76,7 @@ export const TodayShipmentsCard = () => {
               dispatcherName={dispatcherNameById.get(shipment.createdById ?? '')}
               key={shipment.id}
               shipment={shipment}
-              transporterName={contractorNameById.get(shipment.children?.[0]?.transportContractorId ?? '')}
+              transporterName={contractorNameById.get(shipment.transportContractorId ?? '')}
             />
           ))}
         </FlexLayout>
@@ -134,9 +134,9 @@ interface TodayShipmentRowProps {
 const TodayShipmentRow = ({ shipment, transporterName, clientName, dispatcherName }: TodayShipmentRowProps) => {
   const { push } = useRouter();
 
-  // Agency shipment is stored as a parent with an outbound child; the parent is
-  // the single order we surface, flagged with a pill.
-  const isAgency = (shipment.children?.length ?? 0) > 0;
+  // Only the incoming (parent) order is ever listed; the outgoing one it was
+  // forwarded to lives behind the contractor fields. Flagged with a pill.
+  const { isAgency } = shipment;
 
   const actions: CargoAction[] = (shipment.cargo ?? []).flatMap((cargo) => {
     const cargoActions: CargoAction[] = [];
