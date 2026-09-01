@@ -17,6 +17,7 @@ export type ShipmentsFiltersContextType = {
   selectedLoadStatus: SelectValue;
   selectedInvoiceStatus: SelectValue;
   selectedIsInvoiceOverdue: SelectValue;
+  selectedIsAgency: SelectValue;
   loadingReadyDateFrom: string;
   loadingReadyDateTo: string;
   unloadingDueDateFrom: string;
@@ -27,6 +28,7 @@ export type ShipmentsFiltersContextType = {
   onLoadStatusChange(loadStatus: SelectValue): void;
   onInvoiceStatusChange(invoiceStatus: SelectValue): void;
   onIsInvoiceOverdueChange(isInvoiceOverdue: SelectValue): void;
+  onIsAgencyChange(isAgency: SelectValue): void;
   onLoadingReadyDateFromChange(date: string): void;
   onLoadingReadyDateToChange(date: string): void;
   onUnloadingDueDateFromChange(date: string): void;
@@ -57,6 +59,9 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
   });
   const { value: selectedIsInvoiceOverdue, onChange: onIsInvoiceOverdueChange } = useFiltersLocalStorageState({
     paramName: 'isInvoiceOverdue',
+  });
+  const { value: selectedIsAgency, onChange: onIsAgencyChange } = useFiltersLocalStorageState({
+    paramName: 'isAgency',
   });
   const { value: loadingReadyDateFrom, onChange: onLoadingReadyDateFromChange } = useFiltersLocalStorageState({
     paramName: 'loadingReadyDateFrom',
@@ -91,6 +96,7 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
     selectedLoadStatus,
     selectedInvoiceStatus,
     selectedIsInvoiceOverdue,
+    selectedIsAgency,
     loadingReadyDateFrom,
     loadingReadyDateTo,
     unloadingDueDateFrom,
@@ -107,6 +113,7 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
         selectedLoadStatus,
         selectedInvoiceStatus,
         selectedIsInvoiceOverdue,
+        selectedIsAgency,
         loadingReadyDateFrom: String(loadingReadyDateFrom || ''),
         loadingReadyDateTo: String(loadingReadyDateTo || ''),
         unloadingDueDateFrom: String(unloadingDueDateFrom || ''),
@@ -117,6 +124,7 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
         onLoadStatusChange,
         onInvoiceStatusChange,
         onIsInvoiceOverdueChange,
+        onIsAgencyChange,
         onLoadingReadyDateFromChange,
         onLoadingReadyDateToChange,
         onUnloadingDueDateFromChange,

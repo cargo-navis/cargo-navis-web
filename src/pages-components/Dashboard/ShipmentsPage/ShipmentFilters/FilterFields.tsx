@@ -16,6 +16,7 @@ export const FilterFields = () => {
     selectedLoadStatus,
     selectedInvoiceStatus,
     selectedIsInvoiceOverdue,
+    selectedIsAgency,
     loadingReadyDateFrom,
     loadingReadyDateTo,
     unloadingDueDateFrom,
@@ -26,6 +27,7 @@ export const FilterFields = () => {
     onLoadStatusChange,
     onInvoiceStatusChange,
     onIsInvoiceOverdueChange,
+    onIsAgencyChange,
     onLoadingReadyDateFromChange,
     onLoadingReadyDateToChange,
     onUnloadingDueDateFromChange,
@@ -57,6 +59,11 @@ export const FilterFields = () => {
   const isInvoiceOverdueOptions = [
     { value: 'true', label: 'Da' },
     { value: 'false', label: 'Ne' },
+  ];
+
+  const isAgencyOptions = [
+    { value: 'true', label: 'Agencijski nalog' },
+    { value: 'false', label: 'Regularni nalog' },
   ];
 
   return (
@@ -137,6 +144,18 @@ export const FilterFields = () => {
                 placeholder="Odaberi..."
                 value={selectedIsInvoiceOverdue}
                 onChange={onIsInvoiceOverdueChange}
+              />
+            </Box>
+
+            <Box className="flex-1">
+              <SingleSelectWithLabels
+                isClearable
+                isPortal
+                label="Tip naloga"
+                options={isAgencyOptions}
+                placeholder="Odaberi..."
+                value={selectedIsAgency}
+                onChange={onIsAgencyChange}
               />
             </Box>
           </FlexLayout>

@@ -12,6 +12,7 @@ export function useShipmentsPageData() {
     selectedLoadStatus,
     selectedInvoiceStatus,
     selectedIsInvoiceOverdue,
+    selectedIsAgency,
     loadingReadyDateFrom,
     loadingReadyDateTo,
     unloadingDueDateFrom,
@@ -30,6 +31,8 @@ export function useShipmentsPageData() {
       loadStatus: selectedLoadStatus ? (selectedLoadStatus as LoadStatus) : undefined,
       invoiceStatus: selectedInvoiceStatus ? (selectedInvoiceStatus as InvoiceStatus) : undefined,
       isInvoiceOverdue: selectedIsInvoiceOverdue ? String(selectedIsInvoiceOverdue) : undefined,
+      // Left out entirely when unset, which is what returns both types.
+      isAgency: selectedIsAgency ? selectedIsAgency === 'true' : undefined,
       loadingReadyDateFrom: loadingReadyDateFrom ? String(loadingReadyDateFrom) : undefined,
       loadingReadyDateTo: loadingReadyDateTo ? String(loadingReadyDateTo) : undefined,
       unloadingDueDateFrom: unloadingDueDateFrom ? String(unloadingDueDateFrom) : undefined,
