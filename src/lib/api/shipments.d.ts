@@ -43,7 +43,6 @@ export interface Shipment extends AgencyShipmentFields {
     status: string;
   }[];
   vehicleStops?: VehicleStop[];
-  children?: Shipment[];
 }
 
 export type GetShipmentParams = {
@@ -101,7 +100,6 @@ export interface ShipmentCargoData {
 
 export interface CreateShipmentData extends Omit<Shipment, 'id' | 'cargo' | keyof AgencyShipmentFields> {
   cargo: ShipmentCargoData[];
-  children?: CreateShipmentData[];
   draftId?: string;
 }
 
