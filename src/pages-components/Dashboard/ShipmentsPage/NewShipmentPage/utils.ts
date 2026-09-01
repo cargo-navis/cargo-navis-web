@@ -315,11 +315,14 @@ export const transformFormDataToPayload = (
 // the incoming order from the client, `contractor*` ones the outgoing order to
 // the carrier. `transportContractorId` is that carrier — no parent/child
 // splitting happens on the client anymore.
-export const transformFormDataToAgencyPayload = (formData: ShipmentFields): CreateAgencyShipmentData => {
+export const transformFormDataToAgencyPayload = (
+  formData: ShipmentFields,
+  context?: { draftId?: string }
+): CreateAgencyShipmentData => {
   const { clientId, transportContractorId, agencyPrice } = formData;
 
   return {
-    ...transformFormDataToPayload(formData),
+    ...transformFormDataToPayload(formData, context),
     clientId,
     transportContractorId,
     contractorPrice: agencyPrice,

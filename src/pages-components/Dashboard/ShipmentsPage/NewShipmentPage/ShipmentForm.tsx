@@ -111,7 +111,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
           await convertToAgency({
             id: shipment.id,
             transportContractorId: data.transportContractorId,
-            contractorPrice: data.agencyPrice,
+            contractorPrice: data.agencyPrice ?? 0,
           });
           await updateAgencyShipment({ id: shipment.id, ...transformFormDataToAgencyPayload(data) });
         } else {
@@ -122,7 +122,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
         void back();
       } else {
         const newShipment = data.isAgency
-          ? await createAgencyShipment(transformFormDataToAgencyPayload(data))
+          ? await createAgencyShipment(transformFormDataToAgencyPayload(data, { draftId }))
           : await createShipment(transformFormDataToPayload(data, { draftId }));
         showSuccessToast({ title: `Nalog "${newShipment.orderNumber}" uspješno kreiran` });
         if (data.isAgency) {

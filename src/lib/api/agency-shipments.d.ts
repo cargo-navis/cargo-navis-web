@@ -8,9 +8,9 @@ import type { ShipmentCargoData } from './shipments.d';
  * order the tenant passes on to the external carrier.
  */
 export interface CreateAgencyShipmentData {
-  externalOrderReference?: string;
+  externalOrderReference: string;
   clientId: string;
-  price?: number;
+  price: number;
   internalNote?: string;
   externalNote?: string;
   /** Invoice towards the client (parent). */
@@ -23,8 +23,10 @@ export interface CreateAgencyShipmentData {
   cargo: ShipmentCargoData[];
   /** External carrier the order is forwarded to. */
   transportContractorId: string;
-  contractorPrice?: number;
+  contractorPrice: number;
   contractorExternalOrderReference?: string;
+  /** Links the shipment back to the AI-extracted draft it was confirmed from. */
+  draftId?: string;
 }
 
 /** Partial update — send only the fields that change. */
@@ -36,6 +38,6 @@ export type UpdateAgencyShipmentData = Partial<CreateAgencyShipmentData> & {
 /** Body for turning an existing regular shipment into an agency one. */
 export interface ConvertToAgencyData {
   transportContractorId: string;
-  contractorPrice?: number;
+  contractorPrice: number;
   contractorExternalOrderReference?: string;
 }
