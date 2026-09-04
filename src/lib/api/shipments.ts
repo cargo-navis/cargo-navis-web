@@ -15,6 +15,15 @@ export enum InvoiceStatus {
   Paid = 'paid',
 }
 
+/**
+ * Regular and agency shipments share the file endpoints, and an agency
+ * shipment is only reachable under its own resource — so anything addressed by
+ * shipment id has to know which of the two it is talking to.
+ */
+export function getShipmentBasePath(isAgency?: boolean) {
+  return isAgency ? '/api/agency-shipments' : '/api/shipments';
+}
+
 export async function createShipment(data: CreateShipmentData) {
   return backend.post<Shipment>('/api/shipments', data);
 }
@@ -44,22 +53,25 @@ export async function deleteShipment(id: string) {
 // return updateShipment(id, { driverId, sentToDriver });
 // }
 
-export async function uploadShipmentFile(id: string, file: File, fileName: string) {
+export async function uploadShipmentFile(id: string, file: File, fileName: string, isAgency?: boolean) {
   const formData = new FormData();
   formData.append('file', file);
   formData.append('fileName', fileName);
 
-  return backend.post<Shipment>(`/api/shipments/${id}/files`, formData);
+  return backend.post<Shipment>(`${getShipmentBasePath(isAgency)}/${id}/files`, formData);
 }
 
 export async function getShipmentDocumentUrl(
   shipmentId: string,
   documentId: string,
-  disposition: 'inline' | 'attachment' = 'attachment'
+  disposition: 'inline' | 'attachment' = 'attachment',
+  isAgency?: boolean
 ) {
-  return backend.get<string>(`/api/shipments/${shipmentId}/files/${documentId}`, { params: { disposition } });
+  return backend.get<string>(`${getShipmentBasePath(isAgency)}/${shipmentId}/files/${documentId}`, {
+    params: { disposition },
+  });
 }
 
-export async function deleteShipmentFile(shipmentId: string, documentId: string) {
-  return backend.delete<void>(`/api/shipments/${shipmentId}/files/${documentId}`);
+export async function deleteShipmentFile(shipmentId: string, documentId: string, isAgency?: boolean) {
+  return backend.delete<void>(`${getShipmentBasePath(isAgency)}/${shipmentId}/files/${documentId}`);
 }

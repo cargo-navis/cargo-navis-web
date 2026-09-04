@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 import type { Shipment } from '@/lib/api';
-import { useClient, useContractors, useDeleteShipment } from '@/lib/hooks';
+import { useClient, useContractors, useDeleteAgencyShipment, useDeleteShipment } from '@/lib/hooks';
 import { getAuthTokens } from '@/lib/utils/session';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout, Icon, Menu } from '@/ui';
@@ -23,9 +23,14 @@ const buildPdfFilename = (orderNumber: string, name?: string, fallbackId?: strin
 };
 
 export const ShipmentActions: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
-  const { id } = shipment;
+  const { id, isAgency } = shipment;
   const { back, push } = useRouter();
-  const { mutateAsync: deleteShipment, isPending: isDeleting } = useDeleteShipment(id);
+  // Deleting an agency shipment has to go through its own resource so the
+  // outgoing order is removed along with it.
+  const { mutateAsync: deleteRegularShipment, isPending: isDeletingRegular } = useDeleteShipment(id);
+  const { mutateAsync: deleteAgencyShipment, isPending: isDeletingAgency } = useDeleteAgencyShipment(id);
+  const deleteShipment = isAgency ? deleteAgencyShipment : deleteRegularShipment;
+  const isDeleting = isAgency ? isDeletingAgency : isDeletingRegular;
   const { data: client } = useClient(shipment.clientId || '');
   const { data: contractors = [] } = useContractors();
 
@@ -33,7 +38,7 @@ export const ShipmentActions: React.FC<{ shipment: Shipment }> = ({ shipment }) 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPdfMenuOpen, setIsPdfMenuOpen] = useState(false);
 
-  const isAgency = (shipment.children?.length ?? 0) > 0;
+  const carrier = contractors.find((c) => c.id === shipment.transportContractorId);
 
   async function handleDelete() {
     const answer = confirm('Jeste li sigurni da želite izbrisati ovaj nalog?');
@@ -103,17 +108,21 @@ export const ShipmentActions: React.FC<{ shipment: Shipment }> = ({ shipment }) 
           isDisabled: isDeleting || isDownloadingPdf,
           onClick: () => handleDownloadPdf(id, shipment.orderNumber, client?.name),
         },
-        ...(shipment.children ?? []).map((child) => {
-          const transporter = contractors.find((c) => c.id === child.transportContractorId);
-          return {
-            type: 'item' as const,
-            iconLeft: 'IconCloudDownload' as const,
-            text: 'Nalog za prijevoznika',
-            helper: transporter?.name,
-            isDisabled: isDeleting || isDownloadingPdf,
-            onClick: () => handleDownloadPdf(child.id, child.orderNumber, transporter?.name),
-          };
-        }),
+        // The PDF for the carrier is generated from the outgoing (child) order,
+        // which is the one id the UI takes from the shipment rather than routes to.
+        ...(shipment.childId
+          ? [
+              {
+                type: 'item' as const,
+                iconLeft: 'IconCloudDownload' as const,
+                text: 'Nalog za prijevoznika',
+                helper: carrier?.name,
+                isDisabled: isDeleting || isDownloadingPdf,
+                onClick: () =>
+                  handleDownloadPdf(shipment.childId as string, shipment.contractorOrderNumber ?? '', carrier?.name),
+              },
+            ]
+          : []),
       ]
     : [];
 

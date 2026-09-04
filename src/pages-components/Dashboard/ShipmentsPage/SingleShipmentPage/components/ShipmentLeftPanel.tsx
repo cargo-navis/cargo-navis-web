@@ -17,11 +17,10 @@ interface ShipmentLeftPanelProps {
 const cardClass = 'rounded-m border border-dark-200 dark:border-light-800 p-4';
 
 export const ShipmentLeftPanel = ({ shipment, onAssignClick }: ShipmentLeftPanelProps) => {
-  const isAgency = (shipment.children?.length ?? 0) > 0;
+  const { isAgency } = shipment;
   const isAssigned = (shipment.vehicleStops?.length ?? 0) > 0;
 
-  const child = shipment.children?.[0];
-  const transportPrice = child?.price;
+  const transportPrice = shipment.contractorPrice ?? undefined;
   const ruc = transportPrice !== undefined ? shipment.price - transportPrice : undefined;
   const rucClass =
     ruc !== undefined && ruc < 0 ? 'text-red-500 dark:text-red-400' : 'text-green-500 dark:text-green-400';
@@ -123,8 +122,8 @@ export const ShipmentLeftPanel = ({ shipment, onAssignClick }: ShipmentLeftPanel
       )}
 
       <ShipmentNoteModal
-        childShipmentId={child?.id}
         initialNote={editingNoteType === 'external' ? shipment.externalNote : shipment.internalNote}
+        isAgency={isAgency}
         isOpen={editingNoteType !== null}
         noteType={editingNoteType ?? 'internal'}
         shipmentId={shipment.id}

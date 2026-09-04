@@ -4,6 +4,7 @@ import {
   createShipment,
   deleteShipment,
   deleteShipmentFile,
+  getAgencyShipment,
   getShipment,
   getShipmentDocumentUrl,
   GetShipmentParams,
@@ -66,22 +67,24 @@ export function useShipmentsData(args?: Omit<UseShipmentsArgs<Shipment[]>, 'sele
   });
 }
 
-export function useShipment(id?: string) {
+export function useShipment(id?: string, options?: { isAgency?: boolean }) {
+  const isAgency = options?.isAgency;
+
   return useQuery({
     queryKey: ['shipment', id],
-    queryFn: async () => getShipment(id as string),
+    queryFn: async () => (isAgency ? getAgencyShipment(id as string) : getShipment(id as string)),
     enabled: !!id,
   });
 }
 
-export function useGetShipmentDocumentUrl(shipmentId?: string) {
+export function useGetShipmentDocumentUrl(shipmentId?: string, isAgency?: boolean) {
   return useMutation({
     mutationFn: async (params: { documentId: string; disposition: 'inline' | 'attachment' }) =>
-      getShipmentDocumentUrl(shipmentId as string, params.documentId, params.disposition),
+      getShipmentDocumentUrl(shipmentId as string, params.documentId, params.disposition, isAgency),
   });
 }
 
-function getShipmentsListPage(key: readonly unknown[]): number {
+export function getShipmentsListPage(key: readonly unknown[]): number {
   for (const part of key) {
     if (part && typeof part === 'object' && 'pagination' in part) {
       return (part as { pagination?: { page?: number } }).pagination?.page ?? 1;
@@ -176,22 +179,23 @@ export function useSendShipmentToDriver(id: string) {
   });
 }
 
-export function useUploadShipmentFile(id: string) {
+export function useUploadShipmentFile(id: string, isAgency?: boolean) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (params: { file: File; fileName: string }) => uploadShipmentFile(id, params.file, params.fileName),
+    mutationFn: (params: { file: File; fileName: string }) =>
+      uploadShipmentFile(id, params.file, params.fileName, isAgency),
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: ['shipment', id] });
     },
   });
 }
 
-export function useDeleteShipmentFile(shipmentId: string) {
+export function useDeleteShipmentFile(shipmentId: string, isAgency?: boolean) {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (documentId: string) => deleteShipmentFile(shipmentId, documentId),
+    mutationFn: (documentId: string) => deleteShipmentFile(shipmentId, documentId, isAgency),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: ['shipment', shipmentId] });
     },

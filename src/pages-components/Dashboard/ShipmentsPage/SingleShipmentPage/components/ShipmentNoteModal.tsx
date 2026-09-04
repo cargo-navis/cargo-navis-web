@@ -5,7 +5,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { object, string } from 'yup';
 
 import { FormTextarea } from '@/lib/components/form';
-import { useUpdateShipment } from '@/lib/hooks';
+import { useUpdateAgencyShipment, useUpdateShipment } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, Dialog, DialogContent, DialogHeader, DialogTitle, FlexLayout, Icon, Text } from '@/ui';
 
@@ -14,7 +14,7 @@ export type ShipmentNoteType = 'internal' | 'external';
 interface ShipmentNoteModalProps {
   isOpen: boolean;
   shipmentId: string;
-  childShipmentId?: string;
+  isAgency?: boolean;
   noteType: ShipmentNoteType;
   initialNote?: string | null;
   onClose(): void;
@@ -49,13 +49,14 @@ const noteCopy: Record<
 export const ShipmentNoteModal: React.FC<ShipmentNoteModalProps> = ({
   isOpen,
   shipmentId,
-  childShipmentId,
+  isAgency,
   noteType,
   initialNote,
   onClose,
 }) => {
   const queryClient = useQueryClient();
   const { mutateAsync: updateShipment } = useUpdateShipment();
+  const { mutateAsync: updateAgencyShipment } = useUpdateAgencyShipment();
 
   const formMethods = useForm<NoteFormValues>({
     defaultValues: { note: initialNote ?? '' },
@@ -75,10 +76,14 @@ export const ShipmentNoteModal: React.FC<ShipmentNoteModalProps> = ({
   async function handleFormSubmit(values: NoteFormValues) {
     try {
       const noteValue = values.note.trim() || null;
-      await Promise.all([
-        updateShipment({ id: shipmentId, [payloadField]: noteValue }),
-        ...(childShipmentId ? [updateShipment({ id: childShipmentId, [payloadField]: noteValue })] : []),
-      ]);
+
+      // An agency shipment is patched through its own resource, which carries
+      // the note over to the outgoing order for us.
+      if (isAgency) {
+        await updateAgencyShipment({ id: shipmentId, [payloadField]: noteValue });
+      } else {
+        await updateShipment({ id: shipmentId, [payloadField]: noteValue });
+      }
       await queryClient.invalidateQueries({ queryKey: ['shipment', shipmentId] });
       showSuccessToast({ title: 'Napomena spremljena.' });
       onClose();

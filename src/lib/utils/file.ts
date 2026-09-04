@@ -38,9 +38,9 @@ export async function downloadVehicleFile(id: string, documentId: string) {
   }
 }
 
-export async function downloadShipmentFile(id: string, documentId: string) {
+export async function downloadShipmentFile(id: string, documentId: string, isAgency?: boolean) {
   try {
-    const url = await getShipmentDocumentUrl(id, documentId, 'attachment');
+    const url = await getShipmentDocumentUrl(id, documentId, 'attachment', isAgency);
     handleLocalDownload(url, 'file');
   } catch (err) {
     const error = err as AxiosError<any>;

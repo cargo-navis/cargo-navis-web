@@ -15,6 +15,7 @@ import {
   useDeleteShipmentFile,
   useGetShipmentDocumentUrl,
   useShipment,
+  useUpdateAgencyShipment,
   useUpdateShipment,
 } from '@/lib/hooks';
 import { downloadShipmentFile } from '@/lib/utils/file';
@@ -56,17 +57,26 @@ export const SingleShipmentPage = () => {
 
 const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
   const { push } = useRouter();
-  const { mutateAsync: updateShipment, isPending } = useUpdateShipment();
-  const { mutateAsync: deleteFile, isPending: isDeletingFile } = useDeleteShipmentFile(shipment.id);
-  const { mutateAsync: getDocumentUrl, isPending: isGettingDocumentUrl } = useGetShipmentDocumentUrl(shipment.id);
+  const { isAgency } = shipment;
+
+  const { mutateAsync: updateShipment, isPending: isUpdatingShipment } = useUpdateShipment();
+  const { mutateAsync: updateAgencyShipment, isPending: isUpdatingAgencyShipment } = useUpdateAgencyShipment();
+  const { mutateAsync: deleteFile, isPending: isDeletingFile } = useDeleteShipmentFile(shipment.id, isAgency);
+  const { mutateAsync: getDocumentUrl, isPending: isGettingDocumentUrl } = useGetShipmentDocumentUrl(
+    shipment.id,
+    isAgency
+  );
+
+  const isPending = isUpdatingShipment || isUpdatingAgencyShipment;
 
   const { data: client } = useClient(shipment.clientId || '');
   const { data: tenant } = useCurrentTenant();
 
   const isAssigned = (shipment.vehicleStops?.length ?? 0) > 0;
-  const isAgency = (shipment.children?.length ?? 0) > 0;
 
-  const transporterId = isAgency ? shipment.children?.[0]?.transportContractorId : shipment.transportContractorId;
+  // For an agency shipment this is already the external carrier the order was
+  // forwarded to, not the tenant.
+  const transporterId = shipment.transportContractorId;
   const { data: contractor } = useContractor(transporterId || '');
   const transporter = contractor ?? (transporterId === tenant?.id ? tenant : undefined);
   const transporterHref = contractor ? `/dashboard/contractors/${contractor.id}` : '/dashboard/tenant';
@@ -75,10 +85,11 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
 
   const handleInvoiceChange = async (invoiceStatus: InvoiceStatus) => {
     try {
-      await updateShipment({
-        id: shipment.id,
-        invoiceStatus,
-      });
+      if (isAgency) {
+        await updateAgencyShipment({ id: shipment.id, invoiceStatus });
+      } else {
+        await updateShipment({ id: shipment.id, invoiceStatus });
+      }
 
       const invoiceStatusText = invoiceStatusConfig[invoiceStatus].label.toUpperCase();
       showSuccessToast({
@@ -92,7 +103,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
 
   function handleDownloadFile(documentId: string) {
     try {
-      downloadShipmentFile(shipment.id, documentId);
+      downloadShipmentFile(shipment.id, documentId, isAgency);
     } catch (error) {
       console.error(error);
       showErrorToast({ title: 'Greška prilikom preuzimanja dokumenta. Pokušajte ponovno.' });
@@ -223,7 +234,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                     />
                   </Box>
                 ))}
-                <ShipmentFileUploadButton id={shipment.id} />
+                <ShipmentFileUploadButton id={shipment.id} isAgency={isAgency} />
               </FlexLayout>
             </FlexLayout>
           </FlexLayout>

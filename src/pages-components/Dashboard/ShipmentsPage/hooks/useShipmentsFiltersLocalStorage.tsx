@@ -20,6 +20,7 @@ export interface ShipmentsFiltersStorage {
   loadStatus?: string;
   invoiceStatus?: string;
   isInvoiceOverdue?: string;
+  isAgency?: string;
   loadingReadyDateFrom?: string;
   loadingReadyDateTo?: string;
   unloadingDueDateFrom?: string;

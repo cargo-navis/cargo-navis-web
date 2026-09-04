@@ -6,7 +6,14 @@ import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form
 import { type Cargo, type Shipment, type ShipmentDraft } from '@/lib/api';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { FormNumberInput, FormSwitch, FormTextarea, FormTextInput } from '@/lib/components/form';
-import { useCreateShipment, useUpdateShipment } from '@/lib/hooks';
+import {
+  useConvertShipmentToAgency,
+  useConvertShipmentToRegular,
+  useCreateAgencyShipment,
+  useCreateShipment,
+  useUpdateAgencyShipment,
+  useUpdateShipment,
+} from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout, Icon, LoadingSpinner, Text, Tooltip } from '@/ui';
 
@@ -17,7 +24,7 @@ import { ContractorField } from './ContractorField';
 import { PriceField } from './PriceField';
 import { getShipmentSchema } from './schema';
 import type { ShipmentFields } from './types';
-import { getFormDefaultValues, transformFormDataToPayload } from './utils';
+import { getFormDefaultValues, transformFormDataToAgencyPayload, transformFormDataToPayload } from './utils';
 
 const NoteLabel: React.FC<{ text: string; tooltip: string }> = ({ text, tooltip }) => (
   <Box as="span" className="inline-flex items-center gap-1">
@@ -58,6 +65,10 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
 
   const { mutateAsync: createShipment } = useCreateShipment();
   const { mutateAsync: updateShipment } = useUpdateShipment();
+  const { mutateAsync: createAgencyShipment } = useCreateAgencyShipment();
+  const { mutateAsync: updateAgencyShipment } = useUpdateAgencyShipment();
+  const { mutateAsync: convertToAgency } = useConvertShipmentToAgency();
+  const { mutateAsync: convertToRegular } = useConvertShipmentToRegular();
 
   const [assignVehicleFor, setAssignVehicleFor] = useState<{
     id: string;
@@ -85,53 +96,34 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
   async function handleFormSubmit(data: ShipmentFields) {
     try {
       if (isEdit && shipment) {
-        const childId = shipment.children?.[0]?.id;
-        const wasAgency = !!childId;
+        const { isAgency: wasAgency } = shipment;
 
         if (wasAgency && data.isAgency) {
-          // Patch parent and child via their own endpoints. PATCH is partial
-          // (FieldState semantics) so the child body carries only the two
-          // fields the agency form controls; other child fields stay
-          // untouched.
-          const { agencyPrice, transportContractorId, isAgency: _ia, ...rest } = data;
-          const parentPayload = transformFormDataToPayload({
-            ...rest,
-            transportContractorId: tenant.id,
-          } as ShipmentFields);
-
-          await updateShipment({ id: shipment.id, ...parentPayload });
-          await updateShipment({
-            id: childId,
-            price: agencyPrice,
-            transportContractorId,
-            internalNote: rest.internalNote ?? '',
-            externalNote: rest.externalNote ?? '',
-          });
+          await updateAgencyShipment({ id: shipment.id, ...transformFormDataToAgencyPayload(data) });
         } else if (wasAgency && !data.isAgency) {
-          // Un-converting an agency shipment back to a plain one. Patch only the
-          // parent with an empty children array; the backend deletes the
-          // orphaned child. The parent already has the tenant as its transporter
-          // (the effect forces it when isAgency is turned off).
-          const payload = transformFormDataToPayload(data);
-          await updateShipment({ id: shipment.id, ...payload, children: [] });
+          // Conversion drops the outgoing order and keeps the cargo on the
+          // remaining one, which is then patched as a plain shipment.
+          await convertToRegular({ id: shipment.id });
+          await updateShipment({ id: shipment.id, ...transformFormDataToPayload(data) });
         } else if (data.isAgency) {
-          // Converting a plain shipment into an agency one: no child exists yet,
-          // so build the parent/child split (parent transporter becomes the
-          // tenant, the real contractor + agency price move into a new child)
-          // just like the create flow does.
-          const payload = transformFormDataToPayload(data, { tenantId: tenant.id });
-          await updateShipment({ id: shipment.id, ...payload });
+          // Conversion only creates the outgoing order for the carrier, so the
+          // rest of the edit still goes through a patch afterwards.
+          await convertToAgency({
+            id: shipment.id,
+            transportContractorId: data.transportContractorId,
+            contractorPrice: data.agencyPrice ?? 0,
+          });
+          await updateAgencyShipment({ id: shipment.id, ...transformFormDataToAgencyPayload(data) });
         } else {
-          const payload = transformFormDataToPayload(data);
-          await updateShipment({ id: shipment.id, ...payload });
+          await updateShipment({ id: shipment.id, ...transformFormDataToPayload(data) });
         }
 
         showSuccessToast({ title: `Nalog "${shipment.orderNumber}" uspješno ažuriran` });
         void back();
       } else {
-        const payload = transformFormDataToPayload(data, { tenantId: tenant.id, draftId });
-
-        const newShipment = await createShipment(payload);
+        const newShipment = data.isAgency
+          ? await createAgencyShipment(transformFormDataToAgencyPayload(data, { draftId }))
+          : await createShipment(transformFormDataToPayload(data, { draftId }));
         showSuccessToast({ title: `Nalog "${newShipment.orderNumber}" uspješno kreiran` });
         if (data.isAgency) {
           await push('/dashboard/shipments');
