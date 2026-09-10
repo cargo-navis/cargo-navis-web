@@ -2,9 +2,10 @@ import clsx from 'clsx';
 
 import { Box } from '@/ui';
 
-type CountryFlagSize = 's' | 'm' | 'l';
+type CountryFlagSize = 'xs' | 's' | 'm' | 'l';
 
 const sizesMap: Record<CountryFlagSize, { fontSize: string; radius: string }> = {
+  xs: { fontSize: 'text-[16px]', radius: 'rounded-xs' },
   s: { fontSize: 'text-[20px]', radius: 'rounded-xs' },
   m: { fontSize: 'text-[28px]', radius: 'rounded-s' },
   l: { fontSize: 'text-[40px]', radius: 'rounded-m' },
