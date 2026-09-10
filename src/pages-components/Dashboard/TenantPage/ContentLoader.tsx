@@ -39,7 +39,7 @@ export const ContentLoader = () => {
                   <Divider />
                 </Box>
 
-                {/* VAT section */}
+                {/* Tax id section */}
                 <FlexLayout className="gap-4">
                   <Box className="flex-1">
                     <FlexLayout className="flex-col gap-2">

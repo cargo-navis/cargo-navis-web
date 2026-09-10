@@ -28,7 +28,7 @@ export const TenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
 
   async function handleFormSubmit({
     name,
-    vatNumber,
+    taxId,
     communityLicenseId,
     cargoInsuranceExpiryDate,
     address,
@@ -37,7 +37,7 @@ export const TenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
   }: TenantFormData) {
     const payload = {
       name,
-      vatNumber,
+      taxId,
       communityLicenseId,
       cargoInsuranceExpiryDate,
       shipmentFooter,
@@ -69,7 +69,7 @@ export const TenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
             Podaci tvrtke
           </Text>
           <FormTextInput label="Ime" name="name" rules={{ required: true }} />
-          <FormTextInput label="VAT" name="vatNumber" rules={{ required: true }} />
+          <FormTextInput label="Porezni broj" name="taxId" rules={{ required: true }} />
           <FormTextInput label="Broj licence" name="communityLicenseId" />
           <FormDatepicker label="Datum isteka osiguranja" name="cargoInsuranceExpiryDate" />
           <AddressFields />

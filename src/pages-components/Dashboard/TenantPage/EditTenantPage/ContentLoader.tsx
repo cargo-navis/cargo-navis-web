@@ -22,7 +22,7 @@ export const ContentLoader = () => {
               <Skeleton borderRadius="s" height={40} width="100%" />
             </FlexLayout>
 
-            {/* VAT field */}
+            {/* Tax id field */}
             <FlexLayout className="flex-col gap-2">
               <Skeleton borderRadius="xs" height={16} width={48} />
               <Skeleton borderRadius="s" height={40} width="100%" />

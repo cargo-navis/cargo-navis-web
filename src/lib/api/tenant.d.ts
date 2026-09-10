@@ -1,7 +1,7 @@
 export interface Tenant {
   id: string;
   name: string;
-  vatNumber: string;
+  taxId: string;
   communityLicenseId: string;
   cargoInsuranceExpiryDate: string;
   shipmentFooter?: string;

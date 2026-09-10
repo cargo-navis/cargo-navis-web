@@ -79,7 +79,7 @@ const MainContent: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
 
               <FlexLayout className="gap-4">
                 <Box className="flex-1">
-                  <DataItem label="VAT" value={tenant.vatNumber || '–'} />
+                  <DataItem label="Porezni broj" value={tenant.taxId || '–'} />
                 </Box>
               </FlexLayout>
 
