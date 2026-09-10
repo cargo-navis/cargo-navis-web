@@ -61,7 +61,7 @@ const MainContent: React.FC<{ client: Client }> = ({ client }) => {
               </FlexLayout>
               <FlexLayout className="flex-col">
                 <Text color="text-color-2" variant="text-m">
-                  VAT: <strong>{client.vatNumber}</strong>
+                  Porezni broj: <strong>{client.taxId}</strong>
                 </Text>
               </FlexLayout>
               <FlexLayout className="flex-col">

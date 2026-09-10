@@ -76,18 +76,18 @@ export function ClientsTable({ clients }: { clients?: Client[] }) {
         },
       }),
       columnHelper.display({
-        id: 'varNumber',
-        header: 'VAT',
+        id: 'taxId',
+        header: 'Porezni broj',
         size: 220,
         cell: (props) => {
-          const { vatNumber } = props.row.original;
+          const { taxId } = props.row.original;
 
           return (
             <FlexLayout
               className="items-center gap-2 py-3 pr-6 cursor-pointer text-color-3 hover:text-color-1 transition-colors ease"
-              onClick={() => copyToClipboard(vatNumber)}
+              onClick={() => copyToClipboard(taxId)}
             >
-              <Text variant="text-s">{vatNumber || '–'}</Text>
+              <Text variant="text-s">{taxId || '–'}</Text>
               <Icon
                 className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
                 icon="IconCopy"

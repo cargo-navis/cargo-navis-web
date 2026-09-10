@@ -1,6 +1,6 @@
 export const formDefaultValues = {
   name: '',
-  vatNumber: '',
+  taxId: '',
   nationalCompanyRegisterId: '',
   addressName: '',
   addressPostalCode: undefined,

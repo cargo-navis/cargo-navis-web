@@ -2,7 +2,7 @@ export interface Client {
   id: string;
   name: string;
   address: ClientAddress;
-  vatNumber: string;
+  taxId: string;
   nationalCompanyRegisterId: string;
   termsOfPayment: string;
   email?: string;
@@ -20,7 +20,7 @@ export type CreateClientParams = {
   name: string;
   addressName: string;
   addressPostalCodeId: string;
-  vatNumber: string;
+  taxId: string;
   nationalCompanyRegisterId: string;
   termsOfPayment: string;
   email?: string;
