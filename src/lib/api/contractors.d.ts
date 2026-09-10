@@ -2,7 +2,7 @@ export interface Contractor {
   id: string;
   name: string;
   address: ContractorAddress;
-  vatNumber: string;
+  taxId: string;
   nationalCompanyRegisterId: string;
   termsOfPayment: string;
   email?: string;
@@ -20,7 +20,7 @@ export type CreateContractorParams = {
   name: string;
   addressName: string;
   addressPostalCodeId: string;
-  vatNumber: string;
+  taxId: string;
   nationalCompanyRegisterId: string;
   termsOfPayment: string;
   email?: string;

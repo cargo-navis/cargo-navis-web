@@ -2,7 +2,7 @@ import * as yup from 'yup';
 
 export const contractorSchema = yup.object().shape({
   name: yup.string().required('Ime je obavezno'),
-  vatNumber: yup.string().required('VAT je obavezan'),
+  taxId: yup.string().required('Porezni broj je obavezan'),
   nationalCompanyRegisterId: yup.string().required('OIB je obavezan'),
   addressName: yup.string().required('Adresa je obavezna'),
   countryCode: yup.string().required('Država je obavezna'),
