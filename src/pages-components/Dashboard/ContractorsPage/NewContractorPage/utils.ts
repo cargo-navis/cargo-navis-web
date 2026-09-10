@@ -12,6 +12,7 @@ export const getFormDefaultValues = (contractor: Contractor | undefined) => {
 
     return {
       ...contractor,
+      email: contractor.email ?? '',
       addressName: contractor.address?.streetName,
       countryCode: contractor.address?.countryCode,
       addressPostalCode: {
