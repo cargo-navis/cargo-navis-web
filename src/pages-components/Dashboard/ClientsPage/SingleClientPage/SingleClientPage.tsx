@@ -64,11 +64,6 @@ const MainContent: React.FC<{ client: Client }> = ({ client }) => {
                   Porezni broj: <strong>{client.taxId}</strong>
                 </Text>
               </FlexLayout>
-              <FlexLayout className="flex-col">
-                <Text color="text-color-2" variant="text-m">
-                  Nacionalni identifikacijski broj: <strong>{client.nationalCompanyRegisterId}</strong>
-                </Text>
-              </FlexLayout>
               {client.email ? (
                 <FlexLayout
                   className="group/email items-center gap-2 cursor-pointer text-color-2 hover:text-color-1 transition-colors ease"

@@ -7,7 +7,7 @@ import type { Tenant } from '@/lib/api/tenant.d';
 import { FormDatepicker, FormSingleSelect, FormTextarea, FormTextInput } from '@/lib/components/form';
 import { useUpdateTenant } from '@/lib/hooks/api/tenant';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, FlexLayout, Icon, LoadingSpinner, Text, Tooltip } from '@/ui';
+import { Button, FlexLayout, Icon, LoadingSpinner, Text, Tooltip } from '@/ui';
 
 import { countryEuropeOptions } from '../../NewEmployeePage/const';
 import { tenantSchema } from './schema';
@@ -29,7 +29,6 @@ export const TenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
   async function handleFormSubmit({
     name,
     vatNumber,
-    nationalCompanyRegisterId,
     communityLicenseId,
     cargoInsuranceExpiryDate,
     address,
@@ -39,7 +38,6 @@ export const TenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
     const payload = {
       name,
       vatNumber,
-      nationalCompanyRegisterId,
       communityLicenseId,
       cargoInsuranceExpiryDate,
       shipmentFooter,
@@ -71,14 +69,7 @@ export const TenantForm: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
             Podaci tvrtke
           </Text>
           <FormTextInput label="Ime" name="name" rules={{ required: true }} />
-          <FlexLayout className="gap-2">
-            <Box className="flex-1">
-              <FormTextInput label="VAT" name="vatNumber" rules={{ required: true }} />
-            </Box>
-            <Box className="flex-1">
-              <FormTextInput label="OIB" name="nationalCompanyRegisterId" rules={{ required: true }} />
-            </Box>
-          </FlexLayout>
+          <FormTextInput label="VAT" name="vatNumber" rules={{ required: true }} />
           <FormTextInput label="Broj licence" name="communityLicenseId" />
           <FormDatepicker label="Datum isteka osiguranja" name="cargoInsuranceExpiryDate" />
           <AddressFields />

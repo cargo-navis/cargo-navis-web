@@ -5,7 +5,6 @@ import { fetchPostalCodeData } from '../../ShipmentsPage/NewShipmentPage/utils';
 export interface TenantFormData {
   name: string;
   vatNumber: string;
-  nationalCompanyRegisterId: string;
   communityLicenseId?: string;
   cargoInsuranceExpiryDate?: string;
   shipmentFooter?: string;
@@ -27,7 +26,6 @@ export const getFormDefaultValues = (tenant: Tenant) => {
     return {
       name: tenant?.name || '',
       vatNumber: tenant?.vatNumber || '',
-      nationalCompanyRegisterId: tenant?.nationalCompanyRegisterId || '',
       communityLicenseId: tenant?.communityLicenseId || '',
       cargoInsuranceExpiryDate: tenant?.cargoInsuranceExpiryDate || '',
       address: {

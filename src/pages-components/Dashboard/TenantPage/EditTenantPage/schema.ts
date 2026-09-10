@@ -3,7 +3,6 @@ import * as yup from 'yup';
 export const tenantSchema = yup.object().shape({
   name: yup.string().required('Ime je obavezno'),
   vatNumber: yup.string().required('VAT je obavezan'),
-  nationalCompanyRegisterId: yup.string().required('OIB je obavezan'),
   communityLicenseId: yup.string(),
   cargoInsuranceExpiryDate: yup.string(),
   address: yup.object().shape({

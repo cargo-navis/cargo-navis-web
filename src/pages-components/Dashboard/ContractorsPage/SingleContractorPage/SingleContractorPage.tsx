@@ -66,11 +66,6 @@ const MainContent: React.FC<{ contractor: Contractor }> = ({ contractor }) => {
                   Porezni broj: <strong>{contractor.taxId}</strong>
                 </Text>
               </FlexLayout>
-              <FlexLayout className="flex-col">
-                <Text color="text-color-2" variant="text-m">
-                  Nacionalni identifikacijski broj: <strong>{contractor.nationalCompanyRegisterId}</strong>
-                </Text>
-              </FlexLayout>
               {contractor.email ? (
                 <FlexLayout
                   className="group/email items-center gap-2 cursor-pointer text-color-2 hover:text-color-1 transition-colors ease"

@@ -3,7 +3,6 @@ export interface Contractor {
   name: string;
   address: ContractorAddress;
   taxId: string;
-  nationalCompanyRegisterId: string;
   termsOfPayment: string;
   email?: string;
 }
@@ -21,7 +20,6 @@ export type CreateContractorParams = {
   addressName: string;
   addressPostalCodeId: string;
   taxId: string;
-  nationalCompanyRegisterId: string;
   termsOfPayment: string;
   email?: string;
 };
