@@ -54,11 +54,12 @@ export const NewContractorForm: React.FC<NewContractorFormProps> = ({ contractor
       if (isEdit) {
         await updateContractor(payload);
         showSuccessToast({ title: `Kontraktor "${name}" uspješno ažuriran` });
+        await replace(`/dashboard/contractors/${contractor.id}`);
       } else {
         await createContractor(payload);
         showSuccessToast({ title: `Kontraktor "${name}" uspješno kreiran` });
+        await replace('/dashboard/contractors');
       }
-      await replace('/dashboard/contractors');
     } catch {
       showErrorToast({ title: 'Dogodila se greška s unosom kontraktora. Pokušajte ponovno.' });
     }

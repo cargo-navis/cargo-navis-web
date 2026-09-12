@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 import { COUNTRY_CODES } from './countries.const';
 
 // VIES uses EL for Greece instead of the ISO country code used across the app
@@ -53,16 +51,8 @@ export function normalizeTaxNumber(value: string, countryCode: string) {
   return prefix && cleaned.startsWith(prefix) ? cleaned.slice(prefix.length) : cleaned;
 }
 
-export function isValidTaxNumber(value: string, countryCode: string) {
-  return normalizeTaxNumber(value, countryCode).length >= MIN_TAX_NUMBER_LENGTH;
-}
-
 export function buildTaxId(value: string, countryCode: string) {
   const number = normalizeTaxNumber(value, countryCode);
 
   return number ? `${toViesCountryCode(countryCode)}${number}` : '';
-}
-
-export function isCompanyNotFoundError(error: unknown) {
-  return axios.isAxiosError(error) && error.response?.status === 404;
 }

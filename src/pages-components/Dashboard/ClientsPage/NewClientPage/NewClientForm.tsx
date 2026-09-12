@@ -53,11 +53,12 @@ export const NewClientForm: React.FC<NewClientFormProps> = ({ client, initialVal
       if (isEdit) {
         await updateClient(payload);
         showSuccessToast({ title: `Klijent "${name}" uspješno ažuriran` });
+        await replace(`/dashboard/clients/${client.id}`);
       } else {
         await createClient(payload);
         showSuccessToast({ title: `Klijent "${name}" uspješno kreiran` });
+        await replace('/dashboard/clients');
       }
-      await replace('/dashboard/clients');
     } catch {
       showErrorToast({ title: 'Dogodila se greška s unosom klijenta. Pokušajte ponovno.' });
     }
