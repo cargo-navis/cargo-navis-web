@@ -4,25 +4,32 @@ import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
+import type { CompanyFormInitialValues } from '@/components/vies';
 import type { Client } from '@/lib/api';
 import { FormNumberInput, FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateClient, useUpdateClient } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
+import { Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
 import { ClientFormData, clientSchema } from './schema';
-import { getFormDefaultValues } from './utils';
+import { getFormDefaultValues, getInitialFormDefaultValues } from './utils';
 
-export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
-  const { back } = useRouter();
+interface NewClientFormProps {
+  client?: Client;
+  /** Prefill for a new client, e.g. the company the VIES lookup returned. Ignored when editing. */
+  initialValues?: CompanyFormInitialValues;
+}
+
+export const NewClientForm: React.FC<NewClientFormProps> = ({ client, initialValues }) => {
+  const { replace } = useRouter();
   const isEdit = !!client;
 
   const { mutateAsync: createClient } = useCreateClient();
   const { mutateAsync: updateClient } = useUpdateClient(client?.id as string);
 
   const formMethods = useForm<ClientFormData>({
-    defaultValues: getFormDefaultValues(client),
+    defaultValues: initialValues && !client ? getInitialFormDefaultValues(initialValues) : getFormDefaultValues(client),
     resolver: yupResolver(clientSchema),
     mode: 'all',
   });
@@ -30,20 +37,11 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
   const { handleSubmit, formState, watch, resetField } = formMethods;
   const { isDirty, isValid, isLoading } = formState;
 
-  async function handleFormSubmit({
-    name,
-    addressName,
-    vatNumber,
-    nationalCompanyRegisterId,
-    addressPostalCode,
-    termsOfPayment,
-    email,
-  }: any) {
+  async function handleFormSubmit({ name, addressName, taxId, addressPostalCode, termsOfPayment, email }: any) {
     const payload = {
       name,
       addressName,
-      vatNumber,
-      nationalCompanyRegisterId,
+      taxId,
       termsOfPayment,
       addressPostalCodeId: addressPostalCode.value,
       email: email || undefined,
@@ -55,11 +53,11 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
       if (isEdit) {
         await updateClient(payload);
         showSuccessToast({ title: `Klijent "${name}" uspješno ažuriran` });
-        void back();
+        await replace(`/dashboard/clients/${client.id}`);
       } else {
         await createClient(payload);
         showSuccessToast({ title: `Klijent "${name}" uspješno kreiran` });
-        void back();
+        await replace('/dashboard/clients');
       }
     } catch {
       showErrorToast({ title: 'Dogodila se greška s unosom klijenta. Pokušajte ponovno.' });
@@ -81,14 +79,7 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
       <FlexLayout as="form" className="gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
         <FlexLayout className="flex-col gap-4 w-[640px]">
           <FormTextInput label="Ime" name="name" rules={{ required: true }} />
-          <FlexLayout className="gap-2">
-            <Box className="flex-1">
-              <FormTextInput label="VAT" name="vatNumber" rules={{ required: true }} />
-            </Box>
-            <Box className="flex-1">
-              <FormTextInput label="OIB" name="nationalCompanyRegisterId" rules={{ required: true }} />
-            </Box>
-          </FlexLayout>
+          <FormTextInput label="Porezni broj" name="taxId" rules={{ required: true }} />
           <FormNumberInput label="Valuta plaćanja (u danima)" name="termsOfPayment" />
           <FormTextInput label="Email" name="email" />
           <FlexLayout className="flex-1 flex-col gap-2">

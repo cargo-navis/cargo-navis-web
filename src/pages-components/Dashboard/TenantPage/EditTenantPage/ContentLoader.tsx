@@ -22,20 +22,10 @@ export const ContentLoader = () => {
               <Skeleton borderRadius="s" height={40} width="100%" />
             </FlexLayout>
 
-            {/* VAT and OIB fields */}
-            <FlexLayout className="gap-2">
-              <Box className="flex-1">
-                <FlexLayout className="flex-col gap-2">
-                  <Skeleton borderRadius="xs" height={16} width={48} />
-                  <Skeleton borderRadius="s" height={40} width="100%" />
-                </FlexLayout>
-              </Box>
-              <Box className="flex-1">
-                <FlexLayout className="flex-col gap-2">
-                  <Skeleton borderRadius="xs" height={16} width={48} />
-                  <Skeleton borderRadius="s" height={40} width="100%" />
-                </FlexLayout>
-              </Box>
+            {/* Tax id field */}
+            <FlexLayout className="flex-col gap-2">
+              <Skeleton borderRadius="xs" height={16} width={48} />
+              <Skeleton borderRadius="s" height={40} width="100%" />
             </FlexLayout>
 
             {/* License number field */}

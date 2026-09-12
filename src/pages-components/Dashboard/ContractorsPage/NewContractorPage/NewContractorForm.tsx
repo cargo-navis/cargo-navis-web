@@ -4,25 +4,33 @@ import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
+import type { CompanyFormInitialValues } from '@/components/vies';
 import type { Contractor } from '@/lib/api';
 import { FormNumberInput, FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateContractor, useUpdateContractor } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
+import { Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
 import { ContractorFormData, contractorSchema } from './schema';
-import { getFormDefaultValues } from './utils';
+import { getFormDefaultValues, getInitialFormDefaultValues } from './utils';
 
-export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contractor }) => {
-  const { back } = useRouter();
+interface NewContractorFormProps {
+  contractor?: Contractor;
+  /** Prefill for a new contractor, e.g. the company the VIES lookup returned. Ignored when editing. */
+  initialValues?: CompanyFormInitialValues;
+}
+
+export const NewContractorForm: React.FC<NewContractorFormProps> = ({ contractor, initialValues }) => {
+  const { replace } = useRouter();
   const isEdit = !!contractor;
 
   const { mutateAsync: createContractor } = useCreateContractor();
   const { mutateAsync: updateContractor } = useUpdateContractor(contractor?.id as string);
 
   const formMethods = useForm<ContractorFormData>({
-    defaultValues: getFormDefaultValues(contractor),
+    defaultValues:
+      initialValues && !contractor ? getInitialFormDefaultValues(initialValues) : getFormDefaultValues(contractor),
     mode: 'all',
     resolver: yupResolver(contractorSchema),
   });
@@ -30,20 +38,11 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
   const { handleSubmit, formState, watch, resetField } = formMethods;
   const { isDirty, isValid, isLoading } = formState;
 
-  async function handleFormSubmit({
-    name,
-    addressName,
-    vatNumber,
-    nationalCompanyRegisterId,
-    addressPostalCode,
-    termsOfPayment,
-    email,
-  }: any) {
+  async function handleFormSubmit({ name, addressName, taxId, addressPostalCode, termsOfPayment, email }: any) {
     const payload = {
       name,
       addressName,
-      vatNumber,
-      nationalCompanyRegisterId,
+      taxId,
       termsOfPayment,
       addressPostalCodeId: addressPostalCode.value,
       email: email || undefined,
@@ -55,11 +54,11 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
       if (isEdit) {
         await updateContractor(payload);
         showSuccessToast({ title: `Kontraktor "${name}" uspješno ažuriran` });
-        void back();
+        await replace(`/dashboard/contractors/${contractor.id}`);
       } else {
         await createContractor(payload);
         showSuccessToast({ title: `Kontraktor "${name}" uspješno kreiran` });
-        void back();
+        await replace('/dashboard/contractors');
       }
     } catch {
       showErrorToast({ title: 'Dogodila se greška s unosom kontraktora. Pokušajte ponovno.' });
@@ -81,14 +80,7 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
       <FlexLayout as="form" className="gap-[40px]" onSubmit={handleSubmit(handleFormSubmit)}>
         <FlexLayout className="flex-col gap-4 w-[640px]">
           <FormTextInput label="Ime" name="name" rules={{ required: true }} />
-          <FlexLayout className="gap-2">
-            <Box className="flex-1">
-              <FormTextInput label="VAT" name="vatNumber" rules={{ required: true }} />
-            </Box>
-            <Box className="flex-1">
-              <FormTextInput label="OIB" name="nationalCompanyRegisterId" rules={{ required: true }} />
-            </Box>
-          </FlexLayout>
+          <FormTextInput label="Porezni broj" name="taxId" rules={{ required: true }} />
           <FormNumberInput label="Valuta plaćanja" name="termsOfPayment" rules={{ required: true }} />
           <FormTextInput label="Email" name="email" />
           <FlexLayout className="flex-1 flex-col gap-2">

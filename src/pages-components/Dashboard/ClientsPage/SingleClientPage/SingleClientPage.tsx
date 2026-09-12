@@ -61,12 +61,7 @@ const MainContent: React.FC<{ client: Client }> = ({ client }) => {
               </FlexLayout>
               <FlexLayout className="flex-col">
                 <Text color="text-color-2" variant="text-m">
-                  VAT: <strong>{client.vatNumber}</strong>
-                </Text>
-              </FlexLayout>
-              <FlexLayout className="flex-col">
-                <Text color="text-color-2" variant="text-m">
-                  Nacionalni identifikacijski broj: <strong>{client.nationalCompanyRegisterId}</strong>
+                  Porezni broj: <strong>{client.taxId}</strong>
                 </Text>
               </FlexLayout>
               {client.email ? (
