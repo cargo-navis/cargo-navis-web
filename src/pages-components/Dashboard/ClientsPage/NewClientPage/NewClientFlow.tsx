@@ -21,11 +21,13 @@ const ViesInfoTooltipContent: React.FC = () => {
   );
 };
 
+type FormSource = 'manual' | 'vies' | 'vies-without-details';
+
 interface OpenForm {
   /** Remounts the form, so a new lookup replaces whatever was in it. */
   key: string;
   initialValues: ClientFormInitialValues;
-  isFromVies: boolean;
+  source: FormSource;
 }
 
 export const NewClientFlow: React.FC = () => {
@@ -52,21 +54,24 @@ export const NewClientFlow: React.FC = () => {
   useEffect(() => {
     if (!viesCompany) return;
 
+    const { taxId, name, address } = viesCompany;
+
     setOpenForm({
-      key: viesCompany.taxId,
-      isFromVies: true,
+      key: taxId,
+      // Every field is guarded on its own, VIES may return any subset of them
+      source: !name && !address ? 'vies-without-details' : 'vies',
       initialValues: {
-        name: viesCompany.name,
-        taxId: viesCompany.taxId,
-        addressName: viesCompany.address.streetName,
+        name: name ?? undefined,
+        taxId,
+        addressName: address?.streetName,
         // Falls back to the searched country when VIES has no postal code for the address
         countryCode: confirmedLookup?.countryCode,
-        postalCode: viesCompany.address.postalCodeId
+        postalCode: address?.postalCodeId
           ? {
-              id: viesCompany.address.postalCodeId,
-              postalCode: viesCompany.address.postalCode,
-              placeName: viesCompany.address.placeName,
-              countryCode: viesCompany.address.countryCode,
+              id: address.postalCodeId,
+              postalCode: address.postalCode,
+              placeName: address.placeName,
+              countryCode: address.countryCode,
             }
           : undefined,
       },
@@ -78,7 +83,7 @@ export const NewClientFlow: React.FC = () => {
 
     setOpenForm({
       key: `manual-${taxId}`,
-      isFromVies: false,
+      source: 'manual',
       initialValues: { taxId, countryCode },
     });
   }
@@ -126,9 +131,15 @@ export const NewClientFlow: React.FC = () => {
       {!!openForm && (
         <FlexLayout className="flex-col gap-4">
           <Divider />
-          {openForm.isFromVies && (
+          {openForm.source === 'vies' && (
             <Text color="text-color-3" variant="text-xs">
               Podaci dohvaćeni iz VIES-a za {openForm.initialValues.taxId}
+            </Text>
+          )}
+          {openForm.source === 'vies-without-details' && (
+            <Text color="text-color-3" variant="text-xs">
+              VIES je potvrdio porezni broj {openForm.initialValues.taxId}, ali ne otkriva podatke o tvrtki. Unesi ih
+              ručno.
             </Text>
           )}
           <NewClientForm initialValues={openForm.initialValues} key={openForm.key} />

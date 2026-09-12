@@ -9,8 +9,9 @@ export interface ViesCompanyAddress {
 
 export interface ViesCompany {
   taxId: string;
-  name: string;
-  address: ViesCompanyAddress;
+  /** Some member states, Germany and Spain among them, confirm the id but withhold the details. */
+  name: string | null;
+  address: ViesCompanyAddress | null;
 }
 
 export interface ViesLookupParams {
