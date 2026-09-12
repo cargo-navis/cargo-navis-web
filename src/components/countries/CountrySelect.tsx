@@ -46,7 +46,7 @@ function filterOption(option: { data: SelectOption; label: string; value: string
   );
 }
 
-export const CountrySelect: React.FC<CountrySelectProps> = ({ groups, optionLabel = 'name', ...rest }) => {
+export const CountrySelect: React.FC<CountrySelectProps> = ({ label, groups, optionLabel = 'name', ...rest }) => {
   const options = useMemo(() => {
     const mapCountries = (countries: Country[]) => countries.map((country) => toOption(country, optionLabel));
 
@@ -66,7 +66,7 @@ export const CountrySelect: React.FC<CountrySelectProps> = ({ groups, optionLabe
     <SingleSelectWithLabels
       filterOption={filterOption}
       isSearchable
-      label="Država"
+      label={label}
       placeholder="Odaberi državu"
       {...rest}
       options={options}

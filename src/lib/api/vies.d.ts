@@ -1,5 +1,10 @@
 export interface ViesCompanyAddress {
+  countryCode: string;
+  placeName: string;
+  postalCode: string;
+  postalCodeId: string;
   raw: string;
+  streetName: string;
 }
 
 export interface ViesCompany {

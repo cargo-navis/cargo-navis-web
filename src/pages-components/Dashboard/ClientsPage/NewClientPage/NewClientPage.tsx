@@ -3,7 +3,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
 import { Box, FlexLayout, Heading } from '@/ui';
 
-import { NewClientForm } from './NewClientForm';
+import { NewClientFlow } from './NewClientFlow';
 
 export const NewClientPage = () => {
   return (
@@ -17,7 +17,7 @@ export const NewClientPage = () => {
         </FlexLayout>
         <FlexLayout className="py-5 flex-col gap-[40px]">
           <BackButton targetLocation="/dashboard/clients" />
-          <NewClientForm />
+          <NewClientFlow />
         </FlexLayout>
       </Box>
     </DashboardLayout>

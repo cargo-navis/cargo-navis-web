@@ -12,17 +12,23 @@ import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePa
 import { Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
 import { ClientFormData, clientSchema } from './schema';
-import { getFormDefaultValues } from './utils';
+import { type ClientFormInitialValues, getFormDefaultValues, getInitialFormDefaultValues } from './utils';
 
-export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
-  const { back } = useRouter();
+interface NewClientFormProps {
+  client?: Client;
+  /** Prefill for a new client, e.g. the company the VIES lookup returned. Ignored when editing. */
+  initialValues?: ClientFormInitialValues;
+}
+
+export const NewClientForm: React.FC<NewClientFormProps> = ({ client, initialValues }) => {
+  const { replace } = useRouter();
   const isEdit = !!client;
 
   const { mutateAsync: createClient } = useCreateClient();
   const { mutateAsync: updateClient } = useUpdateClient(client?.id as string);
 
   const formMethods = useForm<ClientFormData>({
-    defaultValues: getFormDefaultValues(client),
+    defaultValues: initialValues && !client ? getInitialFormDefaultValues(initialValues) : getFormDefaultValues(client),
     resolver: yupResolver(clientSchema),
     mode: 'all',
   });
@@ -46,12 +52,11 @@ export const NewClientForm: React.FC<{ client?: Client }> = ({ client }) => {
       if (isEdit) {
         await updateClient(payload);
         showSuccessToast({ title: `Klijent "${name}" uspješno ažuriran` });
-        void back();
       } else {
         await createClient(payload);
         showSuccessToast({ title: `Klijent "${name}" uspješno kreiran` });
-        void back();
       }
+      await replace('/dashboard/clients');
     } catch {
       showErrorToast({ title: 'Dogodila se greška s unosom klijenta. Pokušajte ponovno.' });
     }
