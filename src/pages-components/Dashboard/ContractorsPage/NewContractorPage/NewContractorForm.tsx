@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
+import type { CompanyFormInitialValues } from '@/components/vies';
 import type { Contractor } from '@/lib/api';
 import { FormNumberInput, FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateContractor, useUpdateContractor } from '@/lib/hooks';
@@ -12,17 +13,24 @@ import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePa
 import { Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
 import { ContractorFormData, contractorSchema } from './schema';
-import { getFormDefaultValues } from './utils';
+import { getFormDefaultValues, getInitialFormDefaultValues } from './utils';
 
-export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contractor }) => {
-  const { back } = useRouter();
+interface NewContractorFormProps {
+  contractor?: Contractor;
+  /** Prefill for a new contractor, e.g. the company the VIES lookup returned. Ignored when editing. */
+  initialValues?: CompanyFormInitialValues;
+}
+
+export const NewContractorForm: React.FC<NewContractorFormProps> = ({ contractor, initialValues }) => {
+  const { replace } = useRouter();
   const isEdit = !!contractor;
 
   const { mutateAsync: createContractor } = useCreateContractor();
   const { mutateAsync: updateContractor } = useUpdateContractor(contractor?.id as string);
 
   const formMethods = useForm<ContractorFormData>({
-    defaultValues: getFormDefaultValues(contractor),
+    defaultValues:
+      initialValues && !contractor ? getInitialFormDefaultValues(initialValues) : getFormDefaultValues(contractor),
     mode: 'all',
     resolver: yupResolver(contractorSchema),
   });
@@ -46,12 +54,11 @@ export const NewContractorForm: React.FC<{ contractor?: Contractor }> = ({ contr
       if (isEdit) {
         await updateContractor(payload);
         showSuccessToast({ title: `Kontraktor "${name}" uspješno ažuriran` });
-        void back();
       } else {
         await createContractor(payload);
         showSuccessToast({ title: `Kontraktor "${name}" uspješno kreiran` });
-        void back();
       }
+      await replace('/dashboard/contractors');
     } catch {
       showErrorToast({ title: 'Dogodila se greška s unosom kontraktora. Pokušajte ponovno.' });
     }

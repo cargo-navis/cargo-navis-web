@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { PostalCodeSelectField } from '@/components/postalCodes/PostalCodeSelectField';
+import type { CompanyFormInitialValues } from '@/components/vies';
 import type { Client } from '@/lib/api';
 import { FormNumberInput, FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateClient, useUpdateClient } from '@/lib/hooks';
@@ -12,12 +13,12 @@ import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePa
 import { Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
 import { ClientFormData, clientSchema } from './schema';
-import { type ClientFormInitialValues, getFormDefaultValues, getInitialFormDefaultValues } from './utils';
+import { getFormDefaultValues, getInitialFormDefaultValues } from './utils';
 
 interface NewClientFormProps {
   client?: Client;
   /** Prefill for a new client, e.g. the company the VIES lookup returned. Ignored when editing. */
-  initialValues?: ClientFormInitialValues;
+  initialValues?: CompanyFormInitialValues;
 }
 
 export const NewClientForm: React.FC<NewClientFormProps> = ({ client, initialValues }) => {

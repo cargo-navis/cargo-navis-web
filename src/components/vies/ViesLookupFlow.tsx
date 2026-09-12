@@ -4,8 +4,7 @@ import { useViesLookup } from '@/lib/hooks';
 import { buildTaxId, MIN_TAX_NUMBER_LENGTH, parseTaxId } from '@/lib/utils/vies';
 import { Box, Divider, FlexLayout, Icon, Text, TextButton, Tooltip } from '@/ui';
 
-import { NewClientForm } from './NewClientForm';
-import type { ClientFormInitialValues } from './utils';
+import type { CompanyFormInitialValues } from './types';
 import { ViesSearchRow } from './ViesSearchRow';
 
 const VIES_INFO_URL = 'https://europa.eu/youreurope/business/finance-and-tax/vat/check-vat-number-vies/index_hr.htm';
@@ -26,11 +25,18 @@ type FormSource = 'manual' | 'vies' | 'vies-without-details';
 interface OpenForm {
   /** Remounts the form, so a new lookup replaces whatever was in it. */
   key: string;
-  initialValues: ClientFormInitialValues;
+  initialValues: CompanyFormInitialValues;
   source: FormSource;
 }
 
-export const NewClientFlow: React.FC = () => {
+interface ViesLookupFlowProps {
+  searchTitle: string;
+  manualButtonText: string;
+  /** The create form for the entity, rendered once there is something to start from. */
+  renderForm: (initialValues: CompanyFormInitialValues) => React.ReactNode;
+}
+
+export const ViesLookupFlow: React.FC<ViesLookupFlowProps> = ({ searchTitle, manualButtonText, renderForm }) => {
   const [taxIdInput, setTaxIdInput] = useState('');
   // Set on confirm, so the lookup only runs when the user asks for it
   const [confirmedLookup, setConfirmedLookup] = useState<{ countryCode: string; taxNumber: string } | null>(null);
@@ -92,7 +98,7 @@ export const NewClientFlow: React.FC = () => {
     <FlexLayout className="flex-col gap-6">
       <FlexLayout className="flex-col gap-4 w-[640px]">
         <FlexLayout className="items-center gap-1 text-dark-600 dark:text-light-300">
-          <Text variant="text-xs-medium">Pretraži klijenta u VIES tražilici</Text>
+          <Text variant="text-xs-medium">{searchTitle}</Text>
           <Tooltip content={<ViesInfoTooltipContent />} interactive isPortal>
             <Box as="span" className="inline-flex cursor-default">
               <Icon icon="IconInfoHexagon" size="m" />
@@ -120,7 +126,7 @@ export const NewClientFlow: React.FC = () => {
           <TextButton
             iconLeft="IconPlus"
             size="s"
-            text="Dodaj klijenta ručno"
+            text={manualButtonText}
             type="button"
             variant="secondary"
             onClick={handleAddManually}
@@ -142,7 +148,7 @@ export const NewClientFlow: React.FC = () => {
               ručno.
             </Text>
           )}
-          <NewClientForm initialValues={openForm.initialValues} key={openForm.key} />
+          <Box key={openForm.key}>{renderForm(openForm.initialValues)}</Box>
         </FlexLayout>
       )}
     </FlexLayout>
