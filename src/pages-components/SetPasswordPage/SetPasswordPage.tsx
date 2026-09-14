@@ -1,8 +1,9 @@
 import { useRouter } from 'next/router';
 
 import { PageTitle } from '@/components/PageTitle';
-import { FlexLayout, Heading, Text } from '@/ui';
+import { FlexLayout, Heading, Skeleton, Text } from '@/ui';
 
+import { ContentLoader } from './ContentLoader';
 import { InvalidLinkAlert } from './InvalidLinkAlert';
 import { SetPasswordForm } from './SetPasswordForm';
 
@@ -24,19 +25,24 @@ export const SetPasswordPage = () => {
             <Text as="h2" color="text-color-1" variant="text-xl-medium">
               Postavljanje lozinke
             </Text>
-            <Text color="text-color-2" variant="text-xs">
-              {email ? (
-                <>
-                  Postavite lozinku za račun:{' '}
-                  <Text color="text-color-1" variant="text-xs-medium">
-                    {email}
-                  </Text>
-                </>
-              ) : (
-                'Postavite lozinku za svoj račun'
-              )}
-            </Text>
+            {!isReady ? (
+              <Skeleton borderRadius="xs" height={16} width={260} />
+            ) : (
+              <Text color="text-color-2" variant="text-xs">
+                {email ? (
+                  <>
+                    Postavite lozinku za račun:{' '}
+                    <Text color="text-color-1" variant="text-xs-medium">
+                      {email}
+                    </Text>
+                  </>
+                ) : (
+                  'Postavite lozinku za svoj račun'
+                )}
+              </Text>
+            )}
           </FlexLayout>
+          {!isReady && <ContentLoader />}
           {isReady && (token ? <SetPasswordForm token={token} /> : <InvalidLinkAlert />)}
         </FlexLayout>
       </FlexLayout>
