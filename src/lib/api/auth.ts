@@ -14,3 +14,12 @@ export async function login(values: LoginArgs) {
   );
   return response.data;
 }
+
+export interface AcceptInviteArgs {
+  token: string;
+  newPassword: string;
+}
+
+export async function acceptInvite(values: AcceptInviteArgs) {
+  await axios.post<void>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/accept-invite`, values);
+}
