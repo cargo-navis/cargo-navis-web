@@ -21,5 +21,5 @@ export interface AcceptInviteArgs {
 }
 
 export async function acceptInvite(values: AcceptInviteArgs) {
-  await axios.post<void>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/auth/accept-invite`, values);
+  await axios.post<void>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/accept-invite`, values);
 }
