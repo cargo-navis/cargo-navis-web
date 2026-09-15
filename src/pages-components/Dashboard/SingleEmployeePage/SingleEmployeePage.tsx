@@ -13,6 +13,7 @@ import { Box, DisplayIf, FlexLayout, Icon, Pill, Text } from '@/ui';
 import { OccupationPill } from '../EmployeesPage/OccupationPill';
 import { ContactInfo } from './ContactInfo';
 import { EmployeeActions } from './EmployeeActions';
+import { ResendInviteButton } from './ResendInviteButton';
 
 export const SingleEmployeePage = () => {
   const { query } = useRouter();
@@ -69,7 +70,12 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
                 </FlexLayout>
               </DisplayIf>
               <DisplayIf condition={!!employee.email}>
-                <ContactInfo contact={employee.email} contactType="email" />
+                <FlexLayout className="flex-col gap-1">
+                  <ContactInfo contact={employee.email} contactType="email" />
+                  <DisplayIf condition={!employee.hasSetPassword && !employee.deleted}>
+                    <ResendInviteButton email={employee.email} id={employee.id} />
+                  </DisplayIf>
+                </FlexLayout>
               </DisplayIf>
             </FlexLayout>
             <FlexLayout className="gap-8">

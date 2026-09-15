@@ -22,3 +22,7 @@ export async function updateEmployee(id: string, data: UpdateEmployeeParams) {
 export async function deleteEmployee(id: string) {
   return backend.delete(`/api/employees/${id}`);
 }
+
+export async function resendEmployeeInvite(id: string) {
+  return backend.post<void>(`/api/employees/${id}/resend-invite`);
+}

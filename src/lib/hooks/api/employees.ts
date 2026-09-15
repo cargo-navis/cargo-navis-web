@@ -1,6 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { createEmployee, deleteEmployee, getEmployees, PositionEnum, updateEmployee } from '@/lib/api';
+import {
+  createEmployee,
+  deleteEmployee,
+  getEmployees,
+  PositionEnum,
+  resendEmployeeInvite,
+  updateEmployee,
+} from '@/lib/api';
 import type { Employee, UpdateEmployeeParams } from '@/lib/api/employees.d';
 import { decorateFullName } from '@/lib/utils/employees';
 
@@ -106,5 +113,11 @@ export function useDeleteEmployee(id: string) {
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: ['employees'], type: 'all' });
     },
+  });
+}
+
+export function useResendEmployeeInvite(id: string) {
+  return useMutation({
+    mutationFn: () => resendEmployeeInvite(id),
   });
 }
