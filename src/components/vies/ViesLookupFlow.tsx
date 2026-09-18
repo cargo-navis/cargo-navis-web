@@ -29,18 +29,26 @@ interface OpenForm {
   source: FormSource;
 }
 
+const INITIAL_EMPTY_FORM: OpenForm = { key: 'initial', source: 'manual', initialValues: {} };
+
 interface ViesLookupFlowProps {
   searchTitle: string;
-  manualButtonText: string;
+  manualButtonText?: string;
   /** The create form for the entity, rendered once there is something to start from. */
   renderForm: (initialValues: CompanyFormInitialValues) => React.ReactNode;
+  isFormOpenInitially?: boolean;
 }
 
-export const ViesLookupFlow: React.FC<ViesLookupFlowProps> = ({ searchTitle, manualButtonText, renderForm }) => {
+export const ViesLookupFlow: React.FC<ViesLookupFlowProps> = ({
+  searchTitle,
+  manualButtonText,
+  renderForm,
+  isFormOpenInitially = false,
+}) => {
   const [taxIdInput, setTaxIdInput] = useState('');
   // Set on confirm, so the lookup only runs when the user asks for it
   const [confirmedLookup, setConfirmedLookup] = useState<{ countryCode: string; taxNumber: string } | null>(null);
-  const [openForm, setOpenForm] = useState<OpenForm | null>(null);
+  const [openForm, setOpenForm] = useState<OpenForm | null>(isFormOpenInitially ? INITIAL_EMPTY_FORM : null);
 
   // The country comes from the prefix alone, an id without one cannot be searched
   const { countryCode, number: taxNumber } = parseTaxId(taxIdInput);
@@ -114,23 +122,28 @@ export const ViesLookupFlow: React.FC<ViesLookupFlowProps> = ({ searchTitle, man
           onSearch={() => setConfirmedLookup({ countryCode, taxNumber })}
         />
         <FlexLayout className="flex-col">
-          {isLookupFailed ? (
+          {isLookupFailed && (
             <Text color="text-red-600 dark:text-red-500" variant="text-xs">
               Tvrtka nije pronađena u VIES-u. Podatke možeš unijeti ručno.
             </Text>
-          ) : (
-            <Text color="text-color-3" variant="text-xs">
-              Nemaš VAT (porezni broj) u EU?
-            </Text>
           )}
-          <TextButton
-            iconLeft="IconPlus"
-            size="s"
-            text={manualButtonText}
-            type="button"
-            variant="secondary"
-            onClick={handleAddManually}
-          />
+          {!!manualButtonText && (
+            <>
+              {!isLookupFailed && (
+                <Text color="text-color-3" variant="text-xs">
+                  Nemaš VAT (porezni broj) u EU?
+                </Text>
+              )}
+              <TextButton
+                iconLeft="IconPlus"
+                size="s"
+                text={manualButtonText}
+                type="button"
+                variant="secondary"
+                onClick={handleAddManually}
+              />
+            </>
+          )}
         </FlexLayout>
       </FlexLayout>
 

@@ -19,9 +19,11 @@ interface NewContractorFormProps {
   contractor?: Contractor;
   /** Prefill for a new contractor, e.g. the company the VIES lookup returned. Ignored when editing. */
   initialValues?: CompanyFormInitialValues;
+  /** Called with the created contractor instead of navigating to the contractors list. Ignored when editing. */
+  onCreated?: (contractor: Contractor) => void;
 }
 
-export const NewContractorForm: React.FC<NewContractorFormProps> = ({ contractor, initialValues }) => {
+export const NewContractorForm: React.FC<NewContractorFormProps> = ({ contractor, initialValues, onCreated }) => {
   const { replace } = useRouter();
   const isEdit = !!contractor;
 
@@ -56,9 +58,13 @@ export const NewContractorForm: React.FC<NewContractorFormProps> = ({ contractor
         showSuccessToast({ title: `Kontraktor "${name}" uspješno ažuriran` });
         await replace(`/dashboard/contractors/${contractor.id}`);
       } else {
-        await createContractor(payload);
+        const createdContractor = await createContractor(payload);
         showSuccessToast({ title: `Kontraktor "${name}" uspješno kreiran` });
-        await replace('/dashboard/contractors');
+        if (onCreated) {
+          onCreated(createdContractor);
+        } else {
+          await replace('/dashboard/contractors');
+        }
       }
     } catch {
       showErrorToast({ title: 'Dogodila se greška s unosom kontraktora. Pokušajte ponovno.' });
