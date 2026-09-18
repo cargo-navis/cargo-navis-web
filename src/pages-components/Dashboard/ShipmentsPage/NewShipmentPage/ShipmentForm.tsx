@@ -271,9 +271,7 @@ const AgencyShipmentFields: React.FC<{ tenant: Tenant; onAddContractor(): void }
       return;
     }
 
-    const contractorId = getValues('transportContractorId');
-    const clientId = getValues('clientId');
-    if (contractorId !== tenant.id && clientId !== tenant.id) {
+    if (getValues('transportContractorId') !== tenant.id) {
       setValue('transportContractorId', tenant.id, { shouldDirty: true, shouldValidate: true });
     }
   }, [isAgency, tenant.id, getValues, setValue]);
@@ -282,18 +280,27 @@ const AgencyShipmentFields: React.FC<{ tenant: Tenant; onAddContractor(): void }
 
   return (
     <>
-      <FlexLayout className="flex-col gap-1">
-        <ContractorField excludeTenant={!!isAgency} name="transportContractorId" tenant={tenant} />
-        <TextButton
-          iconLeft="IconPlus"
-          size="s"
-          text="Dodaj novog prijevoznika"
-          type="button"
-          variant="secondary"
-          onClick={onAddContractor}
-        />
+      <FlexLayout className="gap-4">
+        <FlexLayout className="flex-1 flex-col gap-1">
+          <ContractorField
+            excludeTenant={!!isAgency}
+            isDisabled={!isAgency}
+            name="transportContractorId"
+            tenant={tenant}
+          />
+          {isAgency && (
+            <TextButton
+              iconLeft="IconPlus"
+              size="s"
+              text="Dodaj novog prijevoznika"
+              type="button"
+              variant="secondary"
+              onClick={onAddContractor}
+            />
+          )}
+        </FlexLayout>
+        <FormSwitch label="Agencijski nalog" name="isAgency" />
       </FlexLayout>
-      <FormSwitch label="Agencijski nalog" name="isAgency" />
       {isAgency && (
         <FlexLayout className="gap-4 items-end">
           <Box className="flex-1">
