@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
 
-import { type Cargo, type Client, type Shipment, type ShipmentDraft } from '@/lib/api';
+import { type Cargo, type Client, type Contractor, type Shipment, type ShipmentDraft } from '@/lib/api';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { FormNumberInput, FormSwitch, FormTextarea, FormTextInput } from '@/lib/components/form';
 import {
@@ -22,6 +22,7 @@ import { CargoFieldList } from './CargoFieldList';
 import { ClientField } from './ClientField';
 import { ContractorField } from './ContractorField';
 import { NewClientModal } from './NewClientModal';
+import { NewContractorModal } from './NewContractorModal';
 import { PriceField } from './PriceField';
 import { getShipmentSchema } from './schema';
 import type { ShipmentFields } from './types';
@@ -77,7 +78,9 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
     clientId?: string | null;
     cargos: Cargo[];
   } | null>(null);
-  const [isNewClientModalOpen, setIsNewClientModalOpen] = useState(false);
+  // Both create modals live outside the shipment <form>, so their own submit
+  // events cannot bubble up into it through the dialog portal.
+  const [openCreateModal, setOpenCreateModal] = useState<'client' | 'contractor' | null>(null);
 
   const schema = useMemo(() => getShipmentSchema(tenant.id), [tenant.id]);
 
@@ -158,8 +161,13 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
   }
 
   function handleClientCreated(client: Client) {
-    setIsNewClientModalOpen(false);
+    setOpenCreateModal(null);
     setValue('clientId', client.id, { shouldDirty: true, shouldValidate: true });
+  }
+
+  function handleContractorCreated(contractor: Contractor) {
+    setOpenCreateModal(null);
+    setValue('transportContractorId', contractor.id, { shouldDirty: true, shouldValidate: true });
   }
 
   return (
@@ -176,9 +184,14 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
         />
       )}
       <NewClientModal
-        isOpen={isNewClientModalOpen}
-        onClose={() => setIsNewClientModalOpen(false)}
+        isOpen={openCreateModal === 'client'}
+        onClose={() => setOpenCreateModal(null)}
         onCreated={handleClientCreated}
+      />
+      <NewContractorModal
+        isOpen={openCreateModal === 'contractor'}
+        onClose={() => setOpenCreateModal(null)}
+        onCreated={handleContractorCreated}
       />
       <Box as="form" className="max-w-[1400px]" onSubmit={handleSubmit(handleFormSubmit)}>
         <FlexLayout className="relative flex-col gap-7 w-full">
@@ -195,14 +208,14 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
                       text="Dodaj novog klijenta"
                       type="button"
                       variant="secondary"
-                      onClick={() => setIsNewClientModalOpen(true)}
+                      onClick={() => setOpenCreateModal('client')}
                     />
                   </FlexLayout>
                   <Box className="flex-1">
                     <PriceField />
                   </Box>
                 </FlexLayout>
-                <AgencyShipmentFields tenant={tenant} />
+                <AgencyShipmentFields tenant={tenant} onAddContractor={() => setOpenCreateModal('contractor')} />
                 <FormTextarea
                   label={
                     <NoteLabel
@@ -241,7 +254,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
   );
 };
 
-const AgencyShipmentFields: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
+const AgencyShipmentFields: React.FC<{ tenant: Tenant; onAddContractor(): void }> = ({ tenant, onAddContractor }) => {
   const { setValue, getValues } = useFormContext<ShipmentFields>();
   const isAgency = useWatch<ShipmentFields>({ name: 'isAgency' });
   const price = useWatch<ShipmentFields>({ name: 'price' });
@@ -269,7 +282,17 @@ const AgencyShipmentFields: React.FC<{ tenant: Tenant }> = ({ tenant }) => {
 
   return (
     <>
-      <ContractorField excludeTenant={!!isAgency} name="transportContractorId" tenant={tenant} />
+      <FlexLayout className="flex-col gap-1">
+        <ContractorField excludeTenant={!!isAgency} name="transportContractorId" tenant={tenant} />
+        <TextButton
+          iconLeft="IconPlus"
+          size="s"
+          text="Dodaj novog prijevoznika"
+          type="button"
+          variant="secondary"
+          onClick={onAddContractor}
+        />
+      </FlexLayout>
       <FormSwitch label="Agencijski nalog" name="isAgency" />
       {isAgency && (
         <FlexLayout className="gap-4 items-end">
