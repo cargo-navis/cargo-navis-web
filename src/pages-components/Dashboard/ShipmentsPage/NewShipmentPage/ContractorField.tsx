@@ -17,9 +17,10 @@ interface ContractorFieldProps {
   name: string;
   tenant: Tenant;
   excludeTenant?: boolean;
+  isDisabled?: boolean;
 }
 
-export const ContractorField: React.FC<ContractorFieldProps> = ({ name, tenant, excludeTenant }) => {
+export const ContractorField: React.FC<ContractorFieldProps> = ({ name, tenant, excludeTenant, isDisabled }) => {
   const { data: contractors = [] } = useContractors();
   const allContractors = useMemo(
     () => (excludeTenant ? contractors : [tenant, ...contractors]),
@@ -29,6 +30,7 @@ export const ContractorField: React.FC<ContractorFieldProps> = ({ name, tenant, 
 
   return (
     <FormSingleSelect
+      isDisabled={isDisabled}
       isSearchable
       label="Prijevoznik"
       name={name}

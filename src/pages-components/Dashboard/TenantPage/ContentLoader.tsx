@@ -39,14 +39,8 @@ export const ContentLoader = () => {
                   <Divider />
                 </Box>
 
-                {/* OIB and VAT section */}
+                {/* Tax id section */}
                 <FlexLayout className="gap-4">
-                  <Box className="flex-1">
-                    <FlexLayout className="flex-col gap-2">
-                      <Skeleton borderRadius="xs" height={20} width={48} />
-                      <Skeleton borderRadius="s" height={20} width={128} />
-                    </FlexLayout>
-                  </Box>
                   <Box className="flex-1">
                     <FlexLayout className="flex-col gap-2">
                       <Skeleton borderRadius="xs" height={20} width={48} />

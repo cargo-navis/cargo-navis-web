@@ -8,6 +8,7 @@ export const Head = () => {
       <link href="/favicon-32x32.png?v=1" rel="icon" sizes="32x32" type="image/png" />
       <link href="/favicon-16x16.png?v=1" rel="icon" sizes="16x16" type="image/png" />
       <link href="/favicon.ico?v=1" rel="shortcut icon" />
+      <link href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.5.0/css/flag-icons.min.css" rel="stylesheet" />
       <meta content="#060606" name="msapplication-TileColor" />
       <meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport" />
     </NextHead>

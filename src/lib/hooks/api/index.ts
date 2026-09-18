@@ -12,3 +12,4 @@ export * from './tenant';
 export * from './user';
 export * from './vehicles';
 export * from './vehicleStops';
+export * from './vies';

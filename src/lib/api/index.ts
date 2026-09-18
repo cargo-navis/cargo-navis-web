@@ -28,3 +28,5 @@ export * from './vehicles';
 export * from './vehicles.d';
 export * from './vehicleStops';
 export * from './vehicleStops.d';
+export * from './vies';
+export * from './vies.d';

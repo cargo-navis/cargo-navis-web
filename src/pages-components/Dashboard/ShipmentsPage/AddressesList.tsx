@@ -1,5 +1,4 @@
-import Flag from 'react-flagpack';
-
+import { CountryFlag } from '@/components/countries';
 import { LoadStatus } from '@/lib/api/shipments';
 import { LoadingAddress } from '@/lib/api/shipments.d';
 import { Box, FlexLayout, Pill, Text, Tooltip } from '@/ui';
@@ -33,7 +32,7 @@ export const AddressItem = ({ address, loadStatus }: AddressItemProps) => {
       <FlexLayout className="items-center gap-1 truncate" title={`${titlePrefix} ${address.placeName ?? ''}`.trim()}>
         {flagCode && (
           <Box className="shrink-0 leading-none">
-            <Flag code={flagCode as never} hasBorder={false} size="m" />
+            <CountryFlag code={flagCode as never} size="xs" />
           </Box>
         )}
         <Text as="span" color="text-color-2" variant="text-xs-medium">

@@ -1,6 +1,7 @@
 import { BackButton } from '@/components/BackButton';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
+import { ViesLookupFlow } from '@/components/vies';
 import { Box, FlexLayout, Heading } from '@/ui';
 
 import { NewContractorForm } from './NewContractorForm';
@@ -17,7 +18,11 @@ export const NewContractorPage = () => {
         </FlexLayout>
         <FlexLayout className="py-5 flex-col gap-[40px]">
           <BackButton targetLocation="/dashboard/contractors" />
-          <NewContractorForm />
+          <ViesLookupFlow
+            manualButtonText="Dodaj kontraktora ručno"
+            renderForm={(initialValues) => <NewContractorForm initialValues={initialValues} />}
+            searchTitle="Pretraži kontraktora u VIES tražilici"
+          />
         </FlexLayout>
       </Box>
     </DashboardLayout>
