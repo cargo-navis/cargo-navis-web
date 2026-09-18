@@ -19,9 +19,10 @@ interface NewClientFormProps {
   client?: Client;
   /** Prefill for a new client, e.g. the company the VIES lookup returned. Ignored when editing. */
   initialValues?: CompanyFormInitialValues;
+  onCreated?(client: Client): void;
 }
 
-export const NewClientForm: React.FC<NewClientFormProps> = ({ client, initialValues }) => {
+export const NewClientForm: React.FC<NewClientFormProps> = ({ client, initialValues, onCreated }) => {
   const { replace } = useRouter();
   const isEdit = !!client;
 
@@ -55,9 +56,14 @@ export const NewClientForm: React.FC<NewClientFormProps> = ({ client, initialVal
         showSuccessToast({ title: `Klijent "${name}" uspješno ažuriran` });
         await replace(`/dashboard/clients/${client.id}`);
       } else {
-        await createClient(payload);
+        const createdClient = await createClient(payload);
         showSuccessToast({ title: `Klijent "${name}" uspješno kreiran` });
-        await replace('/dashboard/clients');
+
+        if (onCreated) {
+          onCreated(createdClient);
+        } else {
+          await replace('/dashboard/clients');
+        }
       }
     } catch {
       showErrorToast({ title: 'Dogodila se greška s unosom klijenta. Pokušajte ponovno.' });

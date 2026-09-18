@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { FormProvider, useForm, useFormContext, useWatch } from 'react-hook-form';
 
-import { type Cargo, type Shipment, type ShipmentDraft } from '@/lib/api';
+import { type Cargo, type Client, type Shipment, type ShipmentDraft } from '@/lib/api';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { FormNumberInput, FormSwitch, FormTextarea, FormTextInput } from '@/lib/components/form';
 import {
@@ -15,12 +15,13 @@ import {
   useUpdateShipment,
 } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, FlexLayout, Icon, LoadingSpinner, Text, Tooltip } from '@/ui';
+import { Box, Button, FlexLayout, Icon, LoadingSpinner, Text, TextButton, Tooltip } from '@/ui';
 
 import { AssignVehicleModal } from './AssignVehicleModal';
 import { CargoFieldList } from './CargoFieldList';
 import { ClientField } from './ClientField';
 import { ContractorField } from './ContractorField';
+import { NewClientModal } from './NewClientModal';
 import { PriceField } from './PriceField';
 import { getShipmentSchema } from './schema';
 import type { ShipmentFields } from './types';
@@ -76,6 +77,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
     clientId?: string | null;
     cargos: Cargo[];
   } | null>(null);
+  const [isNewClientModalOpen, setIsNewClientModalOpen] = useState(false);
 
   const schema = useMemo(() => getShipmentSchema(tenant.id), [tenant.id]);
 
@@ -85,7 +87,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
     mode: 'all',
   });
 
-  const { handleSubmit, formState } = formMethods;
+  const { handleSubmit, formState, setValue } = formMethods;
   const { isDirty, isValid, isLoading, isSubmitting } = formState;
 
   // For prefilled-new shipments (copy or draft), only check validity — the
@@ -155,6 +157,11 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
     await push(`/dashboard/vehicle-stops/${vehicleId}`);
   }
 
+  function handleClientCreated(client: Client) {
+    setIsNewClientModalOpen(false);
+    setValue('clientId', client.id, { shouldDirty: true, shouldValidate: true });
+  }
+
   return (
     <FormProvider {...formMethods}>
       {assignVehicleFor && (
@@ -168,6 +175,11 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
           onClose={handleAssignDismiss}
         />
       )}
+      <NewClientModal
+        isOpen={isNewClientModalOpen}
+        onClose={() => setIsNewClientModalOpen(false)}
+        onCreated={handleClientCreated}
+      />
       <Box as="form" className="max-w-[1400px]" onSubmit={handleSubmit(handleFormSubmit)}>
         <FlexLayout className="relative flex-col gap-7 w-full">
           <FlexLayout className="flex-row gap-7">
@@ -175,9 +187,17 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
               <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
                 <FormTextInput label="Vanjska referenca narudžbe" name="externalOrderReference" />
                 <FlexLayout className="gap-4">
-                  <Box className="flex-1">
+                  <FlexLayout className="flex-1 flex-col gap-1">
                     <ClientField />
-                  </Box>
+                    <TextButton
+                      iconLeft="IconPlus"
+                      size="s"
+                      text="Dodaj novog klijenta"
+                      type="button"
+                      variant="secondary"
+                      onClick={() => setIsNewClientModalOpen(true)}
+                    />
+                  </FlexLayout>
                   <Box className="flex-1">
                     <PriceField />
                   </Box>
