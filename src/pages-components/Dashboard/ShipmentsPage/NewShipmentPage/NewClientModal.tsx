@@ -1,15 +1,20 @@
-import { ViesLookupFlow } from '@/components/vies';
+import { type CompanyFormInitialValues, ViesLookupFlow } from '@/components/vies';
 import type { Client } from '@/lib/api';
 import { NewClientForm } from '@/pages-components/Dashboard/ClientsPage/NewClientPage/NewClientForm';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, Icon, Text } from '@/ui';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, FlexLayout, Icon, Text } from '@/ui';
 
 interface NewClientModalProps {
   isOpen: boolean;
+  /**
+   * Skips the VIES search and opens the form on these values, e.g. the client
+   * the AI extraction suggested. Without it the user searches VIES first.
+   */
+  initialValues?: CompanyFormInitialValues;
   onClose(): void;
   onCreated(client: Client): void;
 }
 
-export const NewClientModal: React.FC<NewClientModalProps> = ({ isOpen, onClose, onCreated }) => {
+export const NewClientModal: React.FC<NewClientModalProps> = ({ isOpen, initialValues, onClose, onCreated }) => {
   return (
     <Dialog open={isOpen}>
       <DialogContent
@@ -24,13 +29,23 @@ export const NewClientModal: React.FC<NewClientModalProps> = ({ isOpen, onClose,
           </DialogTitle>
           <Icon className="cursor-pointer" icon="IconX" onClick={onClose} />
         </DialogHeader>
-        {isOpen && (
-          <ViesLookupFlow
-            isFormOpenInitially
-            renderForm={(initialValues) => <NewClientForm initialValues={initialValues} onCreated={onCreated} />}
-            searchTitle="Pretraži klijenta u VIES tražilici"
-          />
-        )}
+        {isOpen &&
+          (initialValues ? (
+            <FlexLayout className="flex-col gap-4">
+              {!!initialValues.taxId && (
+                <Text color="text-color-3" variant="text-xs">
+                  Podaci dohvaćeni iz VIES-a za {initialValues.taxId}
+                </Text>
+              )}
+              <NewClientForm initialValues={initialValues} onCreated={onCreated} />
+            </FlexLayout>
+          ) : (
+            <ViesLookupFlow
+              isFormOpenInitially
+              renderForm={(viesValues) => <NewClientForm initialValues={viesValues} onCreated={onCreated} />}
+              searchTitle="Pretraži klijenta u VIES tražilici"
+            />
+          ))}
       </DialogContent>
     </Dialog>
   );

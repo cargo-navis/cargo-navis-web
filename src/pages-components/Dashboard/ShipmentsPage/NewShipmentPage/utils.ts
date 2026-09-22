@@ -1,7 +1,10 @@
+import { type CompanyFormInitialValues, getCompanyFormInitialValuesFromVies } from '@/components/vies';
 import { type CreateAgencyShipmentData, type CreateShipmentData, type Shipment, type ShipmentDraft } from '@/lib/api';
 import { getPostalCode } from '@/lib/api/postalCodes';
+import type { SuggestedNewClient } from '@/lib/api/shipment-drafts.d';
 import type { Tenant } from '@/lib/api/tenant.d';
 import { PalleteType } from '@/lib/utils/palletes';
+import { parseTaxId } from '@/lib/utils/vies';
 
 import type { Cargo, CargoType, ShipmentFields } from './types.d';
 
@@ -327,4 +330,14 @@ export const transformFormDataToAgencyPayload = (
     transportContractorId,
     contractorPrice: agencyPrice,
   } as CreateAgencyShipmentData;
+};
+
+export const getSuggestedNewClient = (draft?: ShipmentDraft): SuggestedNewClient | undefined => {
+  return draft?.suggestedNewClient ?? draft?.aiExtractedData?.suggestedNewClient ?? undefined;
+};
+
+export const getSuggestedClientFormValues = (suggestedClient: SuggestedNewClient): CompanyFormInitialValues => {
+  const { vatId, name, address } = suggestedClient;
+
+  return getCompanyFormInitialValuesFromVies({ taxId: vatId, name, address }, parseTaxId(vatId).countryCode);
 };

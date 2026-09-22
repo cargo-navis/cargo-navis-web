@@ -5,6 +5,7 @@ import { buildTaxId, MIN_TAX_NUMBER_LENGTH, parseTaxId } from '@/lib/utils/vies'
 import { Box, Divider, FlexLayout, Icon, Text, TextButton, Tooltip } from '@/ui';
 
 import type { CompanyFormInitialValues } from './types';
+import { getCompanyFormInitialValuesFromVies } from './utils';
 import { ViesSearchRow } from './ViesSearchRow';
 
 const VIES_INFO_URL = 'https://europa.eu/youreurope/business/finance-and-tax/vat/check-vat-number-vies/index_hr.htm';
@@ -72,23 +73,9 @@ export const ViesLookupFlow: React.FC<ViesLookupFlowProps> = ({
 
     setOpenForm({
       key: taxId,
-      // Every field is guarded on its own, VIES may return any subset of them
       source: !name && !address ? 'vies-without-details' : 'vies',
-      initialValues: {
-        name: name ?? undefined,
-        taxId,
-        addressName: address?.streetName,
-        // Falls back to the searched country when VIES has no postal code for the address
-        countryCode: confirmedLookup?.countryCode,
-        postalCode: address?.postalCodeId
-          ? {
-              id: address.postalCodeId,
-              postalCode: address.postalCode,
-              placeName: address.placeName,
-              countryCode: address.countryCode,
-            }
-          : undefined,
-      },
+      // Falls back to the searched country when VIES has no postal code for the address
+      initialValues: getCompanyFormInitialValuesFromVies(viesCompany, confirmedLookup?.countryCode),
     });
   }, [viesCompany, confirmedLookup]);
 
