@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
+import { CountryFlag } from '@/components/countries';
 import type { Shipment } from '@/lib/api';
 import { useClient, useContractors, useDeleteAgencyShipment, useDeleteShipment } from '@/lib/hooks';
 import { getAuthTokens } from '@/lib/utils/session';
@@ -16,10 +17,25 @@ const toSnakeCase = (input: string) =>
     .replace(/[^a-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '');
 
-const buildPdfFilename = (orderNumber: string, name?: string, fallbackId?: string) => {
+type PdfLanguage = 'HR' | 'EN';
+
+const PDF_LANGUAGES: { value: PdfLanguage; text: string; flagCode: string }[] = [
+  { value: 'HR', text: 'Na hrvatskom', flagCode: 'HR' },
+  { value: 'EN', text: 'Na engleskom', flagCode: 'GB' },
+];
+
+type PdfDocument = {
+  label?: string;
+  shipmentId: string;
+  orderNumber: string;
+  recipientName?: string;
+};
+
+const buildPdfFilename = (language: PdfLanguage, orderNumber: string, name?: string, fallbackId?: string) => {
   const slug = name ? toSnakeCase(name) : '';
-  if (!slug) return `shipment-${fallbackId}.pdf`;
-  return `${orderNumber}-${slug}-nalog.pdf`;
+  const suffix = language === 'EN' ? '-en' : '';
+  if (!slug) return `shipment-${fallbackId}${suffix}.pdf`;
+  return `${orderNumber}-${slug}-nalog${suffix}.pdf`;
 };
 
 export const ShipmentActions: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
@@ -57,7 +73,7 @@ export const ShipmentActions: React.FC<{ shipment: Shipment }> = ({ shipment }) 
     void push(`/dashboard/shipments/new?copyFromId=${id}`);
   }
 
-  async function handleDownloadPdf(shipmentId: string, orderNumber: string, recipientName?: string) {
+  async function handleDownloadPdf({ shipmentId, orderNumber, recipientName }: PdfDocument, language: PdfLanguage) {
     setIsDownloadingPdf(true);
     try {
       const { accessToken } = getAuthTokens();
@@ -66,13 +82,16 @@ export const ShipmentActions: React.FC<{ shipment: Shipment }> = ({ shipment }) 
         throw new Error('Error with authentication');
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/shipments/${shipmentId}/generate-pdf`, {
-        method: 'GET',
-        headers: {
-          Accept: 'application/pdf',
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/shipments/${shipmentId}/generate-pdf?language=${language}`,
+        {
+          method: 'GET',
+          headers: {
+            Accept: 'application/pdf',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -84,7 +103,7 @@ export const ShipmentActions: React.FC<{ shipment: Shipment }> = ({ shipment }) 
       const a = document.createElement('a');
       a.style.display = 'none';
       a.href = url;
-      a.download = buildPdfFilename(orderNumber, recipientName, shipmentId);
+      a.download = buildPdfFilename(language, orderNumber, recipientName, shipmentId);
       document.body.appendChild(a);
       a.click();
 
@@ -98,33 +117,53 @@ export const ShipmentActions: React.FC<{ shipment: Shipment }> = ({ shipment }) 
     }
   }
 
-  const pdfMenuItems: MenuComponent[] = isAgency
+  const clientDocument: PdfDocument = {
+    label: 'Nalog za klijenta',
+    shipmentId: id,
+    orderNumber: shipment.orderNumber,
+    recipientName: client?.name,
+  };
+
+  // The PDF for the carrier is generated from the outgoing (child) order,
+  // which is the one id the UI takes from the shipment rather than routes to.
+  const pdfDocuments: PdfDocument[] = isAgency
     ? [
-        {
-          type: 'item' as const,
-          iconLeft: 'IconCloudDownload',
-          text: 'Nalog za klijenta',
-          helper: client?.name,
-          isDisabled: isDeleting || isDownloadingPdf,
-          onClick: () => handleDownloadPdf(id, shipment.orderNumber, client?.name),
-        },
-        // The PDF for the carrier is generated from the outgoing (child) order,
-        // which is the one id the UI takes from the shipment rather than routes to.
+        clientDocument,
         ...(shipment.childId
           ? [
               {
-                type: 'item' as const,
-                iconLeft: 'IconCloudDownload' as const,
-                text: 'Nalog za prijevoznika',
-                helper: carrier?.name,
-                isDisabled: isDeleting || isDownloadingPdf,
-                onClick: () =>
-                  handleDownloadPdf(shipment.childId as string, shipment.contractorOrderNumber ?? '', carrier?.name),
+                label: 'Nalog za prijevoznika',
+                shipmentId: shipment.childId,
+                orderNumber: shipment.contractorOrderNumber ?? '',
+                recipientName: carrier?.name,
               },
             ]
           : []),
       ]
-    : [];
+    : [{ ...clientDocument, label: undefined }];
+
+  const pdfMenuItems: MenuComponent[] = pdfDocuments.flatMap((pdfDocument, index) => [
+    ...(index > 0 ? [{ type: 'divider' as const }] : []),
+    ...(pdfDocument.label
+      ? [
+          {
+            type: 'label' as const,
+            text: pdfDocument.recipientName ? `${pdfDocument.label} · ${pdfDocument.recipientName}` : pdfDocument.label,
+          },
+        ]
+      : []),
+    ...PDF_LANGUAGES.map(({ value, text, flagCode }) => ({
+      type: 'item' as const,
+      iconLeft: () => (
+        <Box>
+          <CountryFlag code={flagCode} size="xs" />
+        </Box>
+      ),
+      text,
+      isDisabled: isDeleting || isDownloadingPdf,
+      onClick: () => handleDownloadPdf(pdfDocument, value),
+    })),
+  ]);
 
   const menuItems: MenuComponent[] = [
     {
@@ -152,37 +191,26 @@ export const ShipmentActions: React.FC<{ shipment: Shipment }> = ({ shipment }) 
         variant="secondary"
         onClick={handleCopyShipment}
       />
-      {isAgency ? (
-        <Menu
-          control={
-            <Box>
-              <Button
-                iconLeft="IconCloudDownload"
-                iconRight="IconChevronDown"
-                isDisabled={isDeleting}
-                isLoading={isDownloadingPdf}
-                text="Preuzmi PDF"
-                variant="secondary"
-              />
-            </Box>
-          }
-          isOpen={isPdfMenuOpen}
-          items={pdfMenuItems}
-          minWidth="240px"
-          position="bottom-end"
-          onClose={() => setIsPdfMenuOpen(false)}
-          onOpen={() => setIsPdfMenuOpen(true)}
-        />
-      ) : (
-        <Button
-          iconLeft="IconCloudDownload"
-          isDisabled={isDeleting}
-          isLoading={isDownloadingPdf}
-          text="Preuzmi PDF"
-          variant="secondary"
-          onClick={() => handleDownloadPdf(id, shipment.orderNumber, client?.name)}
-        />
-      )}
+      <Menu
+        control={
+          <Box>
+            <Button
+              iconLeft="IconCloudDownload"
+              iconRight="IconChevronDown"
+              isDisabled={isDeleting}
+              isLoading={isDownloadingPdf}
+              text="Preuzmi PDF"
+              variant="secondary"
+            />
+          </Box>
+        }
+        isOpen={isPdfMenuOpen}
+        items={pdfMenuItems}
+        minWidth="240px"
+        position="bottom-end"
+        onClose={() => setIsPdfMenuOpen(false)}
+        onOpen={() => setIsPdfMenuOpen(true)}
+      />
       <Menu
         control={
           <FlexLayout className="items-center hover:bg-dark-200 dark:hover:bg-light-800 p-1 cursor-pointer rounded-s">

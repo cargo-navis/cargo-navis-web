@@ -10,7 +10,7 @@ import { Badge } from './Badge';
 
 export interface MenuItemProps {
   text: string;
-  iconLeft?: IconType;
+  iconLeft?: IconType | (() => React.ReactNode);
   iconRight?: IconType;
   badge?: string;
   helper?: string;
@@ -50,7 +50,13 @@ export const MenuItemContent = React.forwardRef<any, Omit<MenuItemProps, 'onClic
         {...rest}
       >
         <DisplayIf condition={!!iconLeft}>
-          <Box className="mt-1">{!!iconLeft && <Icon color={itemColor} icon={iconLeft} size="s" />}</Box>
+          {typeof iconLeft === 'function'
+            ? iconLeft()
+            : !!iconLeft && (
+                <Box className="mt-1">
+                  <Icon color={itemColor} icon={iconLeft} size="s" />
+                </Box>
+              )}
         </DisplayIf>
         <FlexLayout className="w-full justify-between items-center">
           <FlexLayout className="pr-[40px] flex-col break-word">
