@@ -72,6 +72,12 @@ export function handleLocalDownload(href: string, name: string) {
   document.body.removeChild(link);
 }
 
+export function downloadBlob(blob: Blob, name: string) {
+  const url = URL.createObjectURL(blob);
+  handleLocalDownload(url, name);
+  URL.revokeObjectURL(url);
+}
+
 export function bytesToMegabytes(bytes: number) {
   return bytes / 1024 ** 2;
 }
