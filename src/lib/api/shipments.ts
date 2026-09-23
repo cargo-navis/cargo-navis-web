@@ -1,7 +1,7 @@
 import { backend } from '@/lib/services/backendService';
 
 import type { PaginatedResponse } from './pagination.d';
-import type { CreateShipmentData, GetShipmentParams, Shipment } from './shipments.d';
+import type { CreateShipmentData, GetShipmentParams, Shipment, ShipmentPdfLanguage } from './shipments.d';
 
 export enum LoadStatus {
   NotYetLoaded = 'not_yet_loaded',
@@ -74,4 +74,15 @@ export async function getShipmentDocumentUrl(
 
 export async function deleteShipmentFile(shipmentId: string, documentId: string, isAgency?: boolean) {
   return backend.delete<void>(`${getShipmentBasePath(isAgency)}/${shipmentId}/files/${documentId}`);
+}
+
+export async function generateShipmentPdf(id: string, language: ShipmentPdfLanguage) {
+  const response = await backend.get<{ data: Blob }>(`/api/shipments/${id}/generate-pdf`, {
+    params: { language },
+    headers: { Accept: 'application/pdf' },
+    responseType: 'blob',
+    fullResponse: true,
+  });
+
+  return response.data;
 }

@@ -21,10 +21,12 @@ import { AssignVehicleModal } from './AssignVehicleModal';
 import { CargoFieldList } from './CargoFieldList';
 import { ClientField } from './ClientField';
 import { ContractorField } from './ContractorField';
+import { useSuggestedClient } from './hooks';
 import { NewClientModal } from './NewClientModal';
 import { NewContractorModal } from './NewContractorModal';
 import { PriceField } from './PriceField';
 import { getShipmentSchema } from './schema';
+import { SuggestedClientBanner } from './SuggestedClientBanner';
 import type { ShipmentFields } from './types';
 import { getFormDefaultValues, transformFormDataToAgencyPayload, transformFormDataToPayload } from './utils';
 
@@ -81,6 +83,14 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
   // Both create modals live outside the shipment <form>, so their own submit
   // events cannot bubble up into it through the dialog portal.
   const [openCreateModal, setOpenCreateModal] = useState<'client' | 'contractor' | null>(null);
+  const {
+    suggestedClient,
+    isBannerVisible: isSuggestedClientBannerVisible,
+    clientFormInitialValues,
+    confirmSuggestion,
+    hideSuggestion,
+    clearClientFormValues,
+  } = useSuggestedClient({ draft, onOpenClientForm: () => setOpenCreateModal('client') });
 
   const schema = useMemo(() => getShipmentSchema(tenant.id), [tenant.id]);
 
@@ -160,9 +170,21 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
     await push(`/dashboard/vehicle-stops/${vehicleId}`);
   }
 
-  function handleClientCreated(client: Client) {
+  function handleCreateModalClose() {
     setOpenCreateModal(null);
+    clearClientFormValues();
+  }
+
+  function handleClientCreated(client: Client) {
+    handleCreateModalClose();
+    hideSuggestion();
+    // Links the draft to the client that was just created
     setValue('clientId', client.id, { shouldDirty: true, shouldValidate: true });
+  }
+
+  function handleAddClientFromScratch() {
+    clearClientFormValues();
+    setOpenCreateModal('client');
   }
 
   function handleContractorCreated(contractor: Contractor) {
@@ -184,8 +206,9 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
         />
       )}
       <NewClientModal
+        initialValues={clientFormInitialValues}
         isOpen={openCreateModal === 'client'}
-        onClose={() => setOpenCreateModal(null)}
+        onClose={handleCreateModalClose}
         onCreated={handleClientCreated}
       />
       <NewContractorModal
@@ -195,6 +218,13 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
       />
       <Box as="form" className="max-w-[1400px]" onSubmit={handleSubmit(handleFormSubmit)}>
         <FlexLayout className="relative flex-col gap-7 w-full">
+          {isSuggestedClientBannerVisible && suggestedClient && (
+            <SuggestedClientBanner
+              suggestedClient={suggestedClient}
+              onConfirm={confirmSuggestion}
+              onDismiss={hideSuggestion}
+            />
+          )}
           <FlexLayout className="flex-row gap-7">
             <FlexLayout className="w-[500px] flex-col gap-4">
               <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
@@ -208,7 +238,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
                       text="Dodaj novog klijenta"
                       type="button"
                       variant="secondary"
-                      onClick={() => setOpenCreateModal('client')}
+                      onClick={handleAddClientFromScratch}
                     />
                   </FlexLayout>
                   <Box className="flex-1">
