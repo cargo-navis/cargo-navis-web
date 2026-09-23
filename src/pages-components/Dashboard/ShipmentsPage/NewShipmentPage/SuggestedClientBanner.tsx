@@ -14,7 +14,7 @@ export const SuggestedClientBanner: React.FC<SuggestedClientBannerProps> = ({
   onDismiss,
 }) => {
   // VIES confirms some tax ids without revealing the company name
-  const clientLabel = suggestedClient.name || suggestedClient.vatId;
+  const clientLabel = suggestedClient.name || suggestedClient.taxId;
 
   return (
     <Alert

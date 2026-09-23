@@ -337,7 +337,5 @@ export const getSuggestedNewClient = (draft?: ShipmentDraft): SuggestedNewClient
 };
 
 export const getSuggestedClientFormValues = (suggestedClient: SuggestedNewClient): CompanyFormInitialValues => {
-  const { vatId, name, address } = suggestedClient;
-
-  return getCompanyFormInitialValuesFromVies({ taxId: vatId, name, address }, parseTaxId(vatId).countryCode);
+  return getCompanyFormInitialValuesFromVies(suggestedClient, parseTaxId(suggestedClient.taxId).countryCode);
 };

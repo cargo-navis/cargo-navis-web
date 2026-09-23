@@ -11,7 +11,7 @@ export type ShipmentDraftSource = 'EMAIL' | 'MANUAL_UPLOAD';
  * carries whatever VIES gave the backend, so any part of it may be missing.
  */
 export interface SuggestedNewClient {
-  vatId: string;
+  taxId: string;
   name?: string | null;
   address?: Partial<ViesCompanyAddress> | null;
 }
