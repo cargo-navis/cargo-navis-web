@@ -1,4 +1,7 @@
+import snakeCase from 'lodash/snakeCase';
+
 import { InvoiceStatus } from '@/lib/api/shipments';
+import type { ShipmentPdfLanguage } from '@/lib/api/shipments.d';
 
 const MS_PER_DAY = 86_400_000;
 
@@ -33,4 +36,30 @@ export function getShipmentOverdueInfo({
     isOverdue: Date.now() > dueDateMs,
     daysOverdue: Math.max(daysOverdue, 0),
   };
+}
+
+export const SHIPMENT_PDF_LANGUAGES: { value: ShipmentPdfLanguage; text: string; flagCode: string }[] = [
+  { value: 'HR', text: 'Na hrvatskom', flagCode: 'HR' },
+  { value: 'EN', text: 'Na engleskom', flagCode: 'GB' },
+];
+
+interface ShipmentPdfFilenameParams {
+  shipmentId: string;
+  orderNumber: string;
+  recipientName?: string;
+  language: ShipmentPdfLanguage;
+}
+
+export function buildShipmentPdfFilename({
+  shipmentId,
+  orderNumber,
+  recipientName,
+  language,
+}: ShipmentPdfFilenameParams) {
+  const slug = recipientName ? snakeCase(recipientName) : '';
+  const suffix = language === 'EN' ? '-en' : '';
+
+  if (!slug) return `shipment-${shipmentId}${suffix}.pdf`;
+
+  return `${orderNumber}-${slug}-nalog${suffix}.pdf`;
 }

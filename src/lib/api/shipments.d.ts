@@ -1,6 +1,8 @@
 import { InvoiceStatus, LoadStatus } from './shipments';
 import type { VehicleStop, VehicleStopCargoShipment } from './vehicleStops.d';
 
+export type ShipmentPdfLanguage = 'HR' | 'EN';
+
 /**
  * Agency-specific fields. The backend returns these on every ShipmentResponse:
  * populated for agency shipments (parent), `null` for regular ones.
