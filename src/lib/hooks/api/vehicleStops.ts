@@ -219,21 +219,10 @@ function applyStopUpdateToCache(queryClient: ReturnType<typeof useQueryClient>, 
       : old
   );
 
-  queryClient.setQueriesData<PaginatedResponse<Shipment>>(
-    { queryKey: ['shipments'] },
-    (old) =>
-      old && {
-        ...old,
-        data: old.data.map((shipment) =>
-          shipment.vehicleStops
-            ? {
-                ...shipment,
-                vehicleStops: shipment.vehicleStops.map((s) => (s.id === updatedStop.id ? updatedStop : s)),
-              }
-            : shipment
-        ),
-      }
-  );
+  // Completing a stop changes server-derived data (cargo loadStatus), which the
+  // shipments list displays and filters on, so patching the stop isn't enough.
+  void queryClient.invalidateQueries({ queryKey: ['shipment'] });
+  void queryClient.invalidateQueries({ queryKey: ['shipments'], refetchType: 'all' });
 }
 
 export function useCompleteVehicleStop(id: string) {
