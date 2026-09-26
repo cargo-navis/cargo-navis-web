@@ -18,6 +18,8 @@ export * from './pagination.d';
 export * from './postalCodes';
 export * from './postalCodes.d';
 export * from './push-subscriptions';
+export * from './search';
+export * from './search.d';
 export * from './shipment-drafts';
 export * from './shipment-drafts.d';
 export * from './shipments';
