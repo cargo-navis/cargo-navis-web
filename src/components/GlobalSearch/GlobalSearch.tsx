@@ -6,6 +6,7 @@ import { useMemo, useState } from 'react';
 import { GLOBAL_SEARCH_MIN_LENGTH, useGlobalSearch } from '@/lib/hooks';
 import { Box, Dialog, DialogContent, DialogTitle, FlexLayout, Icon, LoadingSpinner, Text } from '@/ui';
 
+import { HighlightedText } from './HighlightedText';
 import { mapToSearchResultGroups } from './utils';
 
 const DEBOUNCE_MS = 300;
@@ -89,11 +90,11 @@ const SearchCommand = ({ onNavigate }: { onNavigate(): void }) => {
             <Icon color="text-dark-600 dark:text-light-300" icon={group.icon} />
             <FlexLayout className="flex-col min-w-0">
               <Text className="truncate" color="text-color-1" variant="text-s-medium">
-                {item.title}
+                <HighlightedText query={debouncedQuery} text={item.title} />
               </Text>
               {item.subtitle && (
                 <Text className="truncate" color="text-color-3" variant="text-xs">
-                  {item.subtitle}
+                  <HighlightedText query={debouncedQuery} text={item.subtitle} />
                 </Text>
               )}
             </FlexLayout>
