@@ -1,8 +1,14 @@
+import type { SearchTypeEnum } from './search';
 import type { VehicleEnum } from './vehicles';
 
 export interface GlobalSearchParams {
   q: string;
+  // Results per type, backend default 5 (max 20)
   limit?: number;
+  // 0-based, backend default 0
+  page?: number;
+  // Backend searches all types when omitted
+  types?: SearchTypeEnum[];
 }
 
 export interface SearchShipment {
