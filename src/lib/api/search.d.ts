@@ -47,10 +47,16 @@ export interface SearchContractor {
   vatNumber: string | null;
 }
 
+export interface SearchResultPage<T> {
+  items: T[];
+  // Total matches for the category, independent of limit
+  total: number;
+}
+
 export interface GlobalSearchResults {
-  shipments: SearchShipment[];
-  fleet: SearchFleetItem[];
-  employees: SearchEmployee[];
-  clients: SearchClient[];
-  contractors: SearchContractor[];
+  shipments: SearchResultPage<SearchShipment>;
+  fleet: SearchResultPage<SearchFleetItem>;
+  employees: SearchResultPage<SearchEmployee>;
+  clients: SearchResultPage<SearchClient>;
+  contractors: SearchResultPage<SearchContractor>;
 }

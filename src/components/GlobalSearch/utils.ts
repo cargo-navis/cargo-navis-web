@@ -40,7 +40,7 @@ export function mapToSearchResultGroups(results: GlobalSearchResults): SearchRes
       key: 'shipments',
       heading: 'Nalozi',
       icon: 'IconFileDescription',
-      items: results.shipments.map((s) => ({
+      items: results.shipments.items.map((s) => ({
         id: s.id,
         href: `/dashboard/shipments/${s.id}`,
         title: s.orderNumber,
@@ -51,7 +51,7 @@ export function mapToSearchResultGroups(results: GlobalSearchResults): SearchRes
       key: 'fleet',
       heading: 'Flota',
       icon: 'IconTruck',
-      items: results.fleet.map((v) => ({
+      items: results.fleet.items.map((v) => ({
         id: v.id,
         href: `/dashboard/fleet/${fleetPathMap[v.fleetType]}/${v.id}`,
         title: v.registration,
@@ -62,7 +62,7 @@ export function mapToSearchResultGroups(results: GlobalSearchResults): SearchRes
       key: 'employees',
       heading: 'Zaposlenici',
       icon: 'IconUsers',
-      items: results.employees.map((e) => ({
+      items: results.employees.items.map((e) => ({
         id: e.id,
         href: `/dashboard/employees/${e.id}`,
         title: `${e.firstName} ${e.lastName}`,
@@ -73,7 +73,7 @@ export function mapToSearchResultGroups(results: GlobalSearchResults): SearchRes
       key: 'clients',
       heading: 'Klijenti',
       icon: 'IconBriefcase',
-      items: results.clients.map((c) => ({
+      items: results.clients.items.map((c) => ({
         id: c.id,
         href: `/dashboard/clients/${c.id}`,
         title: c.name,
@@ -84,7 +84,7 @@ export function mapToSearchResultGroups(results: GlobalSearchResults): SearchRes
       key: 'contractors',
       heading: 'Kontraktori',
       icon: 'IconLicense',
-      items: results.contractors.map((c) => ({
+      items: results.contractors.items.map((c) => ({
         id: c.id,
         href: `/dashboard/contractors/${c.id}`,
         title: c.name,
