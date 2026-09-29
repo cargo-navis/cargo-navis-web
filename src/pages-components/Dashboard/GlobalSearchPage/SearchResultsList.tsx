@@ -1,7 +1,7 @@
 import Link from 'next/link';
 
-import { HighlightedText, type SearchResultItem } from '@/components/GlobalSearch';
-import { Box, FlexLayout, Icon, type IconType, Text } from '@/ui';
+import { type SearchResultItem, SearchResultText } from '@/components/GlobalSearch';
+import { Box, FlexLayout, Icon, type IconType } from '@/ui';
 
 interface SearchResultsListProps {
   items: SearchResultItem[];
@@ -20,16 +20,7 @@ export const SearchResultsList = ({ items, icon, query }: SearchResultsListProps
           <FlexLayout className="shrink-0 items-center justify-center w-[40px] h-[40px] rounded-m border border-dark-100 dark:border-light-800 text-dark-600 dark:text-light-300">
             <Icon icon={icon} size="xl" />
           </FlexLayout>
-          <FlexLayout className="flex-col min-w-0">
-            <Text className="truncate" color="text-color-1" variant="text-s-medium">
-              <HighlightedText query={query} text={item.title} />
-            </Text>
-            {item.subtitle && (
-              <Text className="truncate" color="text-color-3" variant="text-xs">
-                <HighlightedText query={query} text={item.subtitle} />
-              </Text>
-            )}
-          </FlexLayout>
+          <SearchResultText item={item} query={query} />
         </Link>
       </li>
     ))}

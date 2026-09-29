@@ -8,6 +8,8 @@ export interface SearchResultItem {
   href: string;
   title: string;
   subtitle?: string;
+  // Set only when the matched field isn't already visible in the title or subtitle
+  matchedValue?: string;
 }
 
 export interface SearchCategory {
@@ -48,6 +50,11 @@ const fleetTypeLabelMap: Record<VehicleEnum, string> = {
   [VehicleEnum.VAN]: 'Kombi',
 };
 
+function withMatchedValue(item: Omit<SearchResultItem, 'matchedValue'>, matchedValue: string | undefined) {
+  const isVisible = !matchedValue || item.title.includes(matchedValue) || !!item.subtitle?.includes(matchedValue);
+  return isVisible ? item : { ...item, matchedValue };
+}
+
 function joinDefined(...parts: (string | null | undefined)[]) {
   return parts.filter(Boolean).join(' • ') || undefined;
 }
@@ -60,12 +67,17 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
     icon: 'IconFileDescription',
     pluralNoun: 'naloga',
     mapItems: ({ shipments }) =>
-      (shipments?.items ?? []).map((s) => ({
-        id: s.id,
-        href: `/dashboard/shipments/${s.id}`,
-        title: s.orderNumber,
-        subtitle: joinDefined(s.clientName ?? s.transportContractorName, s.externalOrderReference),
-      })),
+      (shipments?.items ?? []).map((s) =>
+        withMatchedValue(
+          {
+            id: s.id,
+            href: `/dashboard/shipments/${s.id}`,
+            title: s.orderNumber,
+            subtitle: joinDefined(s.clientName ?? s.transportContractorName, s.externalOrderReference),
+          },
+          s.matchedValue
+        )
+      ),
   },
   {
     key: 'fleet',
@@ -74,12 +86,17 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
     icon: 'IconTruck',
     pluralNoun: 'vozila',
     mapItems: ({ fleet }) =>
-      (fleet?.items ?? []).map((v) => ({
-        id: v.id,
-        href: `/dashboard/fleet/${fleetPathMap[v.fleetType]}/${v.id}`,
-        title: v.registration,
-        subtitle: joinDefined(fleetTypeLabelMap[v.fleetType], v.brand),
-      })),
+      (fleet?.items ?? []).map((v) =>
+        withMatchedValue(
+          {
+            id: v.id,
+            href: `/dashboard/fleet/${fleetPathMap[v.fleetType]}/${v.id}`,
+            title: v.registration,
+            subtitle: joinDefined(fleetTypeLabelMap[v.fleetType], v.brand),
+          },
+          v.matchedValue
+        )
+      ),
   },
   {
     key: 'employees',
@@ -88,12 +105,17 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
     icon: 'IconUser',
     pluralNoun: 'zaposlenika',
     mapItems: ({ employees }) =>
-      (employees?.items ?? []).map((e) => ({
-        id: e.id,
-        href: `/dashboard/employees/${e.id}`,
-        title: `${e.firstName} ${e.lastName}`,
-        subtitle: joinDefined(e.email, e.phoneNumber?.value),
-      })),
+      (employees?.items ?? []).map((e) =>
+        withMatchedValue(
+          {
+            id: e.id,
+            href: `/dashboard/employees/${e.id}`,
+            title: `${e.firstName} ${e.lastName}`,
+            subtitle: joinDefined(e.email, e.phoneNumber?.value),
+          },
+          e.matchedValue
+        )
+      ),
   },
   {
     key: 'clients',
@@ -102,12 +124,17 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
     icon: 'IconBriefcase',
     pluralNoun: 'klijenata',
     mapItems: ({ clients }) =>
-      (clients?.items ?? []).map((c) => ({
-        id: c.id,
-        href: `/dashboard/clients/${c.id}`,
-        title: c.name,
-        subtitle: joinDefined(c.vatNumber),
-      })),
+      (clients?.items ?? []).map((c) =>
+        withMatchedValue(
+          {
+            id: c.id,
+            href: `/dashboard/clients/${c.id}`,
+            title: c.name,
+            subtitle: joinDefined(c.vatNumber),
+          },
+          c.matchedValue
+        )
+      ),
   },
   {
     key: 'contractors',
@@ -116,12 +143,17 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
     icon: 'IconLicense',
     pluralNoun: 'kontraktora',
     mapItems: ({ contractors }) =>
-      (contractors?.items ?? []).map((c) => ({
-        id: c.id,
-        href: `/dashboard/contractors/${c.id}`,
-        title: c.name,
-        subtitle: joinDefined(c.vatNumber),
-      })),
+      (contractors?.items ?? []).map((c) =>
+        withMatchedValue(
+          {
+            id: c.id,
+            href: `/dashboard/contractors/${c.id}`,
+            title: c.name,
+            subtitle: joinDefined(c.vatNumber),
+          },
+          c.matchedValue
+        )
+      ),
   },
 ];
 
