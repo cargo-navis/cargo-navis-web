@@ -59,7 +59,7 @@ const SearchCommand = ({ onNavigate }: { onNavigate(): void }) => {
 
   const { data, isFetching, isError } = useGlobalSearch(debouncedQuery);
 
-  const groups = useMemo(() => (data ? mapToSearchResultGroups(data) : []), [data]);
+  const groups = useMemo(() => (data ? mapToSearchResultGroups(data, debouncedQuery) : []), [data, debouncedQuery]);
 
   const isQueryTooShort = trimmedQuery.length < GLOBAL_SEARCH_MIN_LENGTH;
   const isSearching = !isQueryTooShort && (trimmedQuery !== debouncedQuery || isFetching);
@@ -87,7 +87,7 @@ const SearchCommand = ({ onNavigate }: { onNavigate(): void }) => {
             value={`${group.key}-${item.id}`}
             onSelect={() => handleSelect(item.href)}
           >
-            <Icon color="text-dark-600 dark:text-light-300" icon={group.icon} />
+            <Icon color="text-dark-600 dark:text-light-300" icon={group.icon} size="l" />
             <FlexLayout className="flex-col min-w-0">
               <Text className="truncate" color="text-color-1" variant="text-s-medium">
                 <HighlightedText query={debouncedQuery} text={item.title} />
@@ -100,6 +100,14 @@ const SearchCommand = ({ onNavigate }: { onNavigate(): void }) => {
             </FlexLayout>
           </Command.Item>
         ))}
+        {group.showAll && (
+          <ShowAllItem
+            href={group.showAll.href}
+            label={group.showAll.label}
+            value={`${group.key}-show-all`}
+            onSelect={handleSelect}
+          />
+        )}
       </Command.Group>
     ));
   }
@@ -121,6 +129,26 @@ const SearchCommand = ({ onNavigate }: { onNavigate(): void }) => {
     </Command>
   );
 };
+
+interface ShowAllItemProps {
+  href: string;
+  label: string;
+  value: string;
+  onSelect(href: string): void;
+}
+
+const ShowAllItem = ({ href, label, value, onSelect }: ShowAllItemProps) => (
+  <Command.Item
+    className="flex items-center gap-3 px-3 py-2 rounded-s cursor-pointer text-teal-600 dark:text-teal-500 data-[selected=true]:bg-dark-50 dark:data-[selected=true]:bg-light-800"
+    value={value}
+    onSelect={() => onSelect(href)}
+  >
+    <FlexLayout className="justify-center w-[24px]">
+      <Icon icon="IconArrowRight" size="s" />
+    </FlexLayout>
+    <Text variant="text-xs-medium">{label}</Text>
+  </Command.Item>
+);
 
 const StatusMessage = ({ text }: { text: string }) => (
   <Text as="p" className="px-3 py-6 text-center" color="text-color-3">
