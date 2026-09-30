@@ -22,6 +22,7 @@ export interface SearchShipment extends SearchResultBase {
   externalOrderReference: string | null;
   clientName: string | null;
   transportContractorName: string | null;
+  isAgency: boolean;
 }
 
 export interface SearchFleetItem extends SearchResultBase {

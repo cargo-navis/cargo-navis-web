@@ -14,10 +14,16 @@ export const variantsMap = {
 
 export type PillVariant = keyof typeof variantsMap;
 
-export type PillSize = 's' | 'm';
+export type PillSize = 'xs' | 's' | 'm';
 
 export const getSizeStyles = (size: PillSize) => {
   switch (size) {
+    case 'xs':
+      return {
+        styles: 'px-1 py-0 rounded-l',
+        textVariant: 'text-xxxxs-medium' as TextVariant,
+        iconSize: 'xs' as IconSize,
+      };
     case 's':
       return {
         styles: 'px-2 py-[2px] rounded-l',
