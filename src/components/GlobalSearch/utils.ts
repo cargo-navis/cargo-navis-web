@@ -1,5 +1,5 @@
 import { type GlobalSearchResults, SearchTypeEnum, VehicleEnum } from '@/lib/api';
-import type { IconType } from '@/ui';
+import type { IconType, PillVariant } from '@/ui';
 
 export type SearchCategoryKey = keyof GlobalSearchResults;
 
@@ -8,6 +8,11 @@ export interface SearchResultItem {
   href: string;
   title: string;
   subtitle?: string;
+  // Rendered next to the title, e.g. "Agencijski nalog" for agency shipments
+  titlePill?: {
+    text: string;
+    variant: PillVariant;
+  };
   // Set only when the matched field isn't already visible in the title or subtitle
   matchedValue?: string;
 }
@@ -73,6 +78,7 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
             id: s.id,
             href: `/dashboard/shipments/${s.id}`,
             title: s.orderNumber,
+            titlePill: s.isAgency ? { text: 'Agencijski nalog', variant: 'warning' } : undefined,
             subtitle: joinDefined(s.clientName ?? s.transportContractorName, s.externalOrderReference),
           },
           s.matchedValue
