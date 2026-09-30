@@ -1,4 +1,5 @@
 export const fontSize: Record<string, string | [string, string]> = {
+  xxxxs: ['9px', '14px'],
   xxxs: ['11px', '16px'],
   xxs: ['13px', '24px'],
   xs: ['14px', '24px'],
@@ -21,6 +22,7 @@ export const variantMap = {
   'text-xs': 'text-xs font-normal',
   'text-xxs': 'text-xxs font-normal',
   'text-xxxs': 'text-xxxs font-normal',
+  'text-xxxxs': 'text-xxxxs font-normal',
   'text-xxxl-medium': 'text-xxxl font-semibold',
   'text-xxl-medium': 'text-xxl font-semibold',
   'text-xl-medium': 'text-xl font-semibold',
@@ -30,6 +32,7 @@ export const variantMap = {
   'text-xs-medium': 'text-xs font-semibold',
   'text-xxs-medium': 'text-xxs font-semibold',
   'text-xxxs-medium': 'text-xxxs font-semibold',
+  'text-xxxxs-medium': 'text-xxxxs font-semibold',
   'text-xxxl-bold': 'text-xxxl font-bold',
   'text-xxl-bold': 'text-xxl font-bold',
   'text-xl-bold': 'text-xl font-bold',
@@ -39,6 +42,7 @@ export const variantMap = {
   'text-xs-bold': 'text-xs font-bold',
   'text-xxs-bold': 'text-xxs font-bold',
   'text-xxxs-bold': 'text-xxxs font-bold',
+  'text-xxxxs-bold': 'text-xxxxs font-bold',
 };
 
 export type TextVariant = keyof typeof variantMap;
