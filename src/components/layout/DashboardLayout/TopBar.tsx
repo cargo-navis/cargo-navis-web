@@ -1,3 +1,4 @@
+import { GlobalSearch } from '@/components/GlobalSearch';
 import { useCurrentUser } from '@/lib/hooks';
 import { DisplayIf, FlexLayout, LoadingSpinner, Text } from '@/ui';
 
@@ -5,7 +6,8 @@ export const TopBar = () => {
   const { data: user, isLoading } = useCurrentUser();
 
   return (
-    <FlexLayout className="justify-end w-full p-2 border-0 border-b-[1px] border-b-black-alpha-10 dark:border-b-white-alpha-10">
+    <FlexLayout className="justify-between items-center gap-4 w-full p-2 border-0 border-b-[1px] border-b-black-alpha-10 dark:border-b-white-alpha-10">
+      <GlobalSearch />
       <DisplayIf
         condition={!!user && !isLoading}
         fallback={
