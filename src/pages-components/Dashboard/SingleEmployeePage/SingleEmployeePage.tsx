@@ -12,6 +12,7 @@ import { Box, DisplayIf, FlexLayout, Icon, Pill, Text } from '@/ui';
 
 import { OccupationPill } from '../EmployeesPage/OccupationPill';
 import { ContactInfo } from './ContactInfo';
+import { DocumentsSection } from './DocumentsSection';
 import { EmployeeActions } from './EmployeeActions';
 import { ResendInviteButton } from './ResendInviteButton';
 
@@ -90,6 +91,7 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
         <DisplayIf condition={employee.positions.includes(PositionEnum.Driver)}>
           <DriverInfo employee={employee} />
         </DisplayIf>
+        <DocumentsSection employee={employee} />
       </FlexLayout>
     </FlexLayout>
   );

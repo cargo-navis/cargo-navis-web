@@ -1,5 +1,6 @@
 import { AxiosError } from 'axios';
 
+import { getEmployeeDocumentUrl } from '../api/employees';
 import { getShipmentDocumentUrl } from '../api/shipments';
 import { getVehicleDocumentUrl } from '../api/vehicles';
 import { getVehicleStopFileUrl } from '../api/vehicleStops';
@@ -29,6 +30,18 @@ export const getFileInput = (
 export async function downloadVehicleFile(id: string, documentId: string) {
   try {
     const url = await getVehicleDocumentUrl(id, documentId, 'attachment');
+    handleLocalDownload(url, 'file');
+  } catch (err) {
+    const error = err as AxiosError<any>;
+    const message = error?.response?.data?.message?.[0];
+    showErrorToast({ title: 'Greška prilikom preuzimanja dokumenta', description: message });
+    return;
+  }
+}
+
+export async function downloadEmployeeFile(id: string, documentId: string) {
+  try {
+    const url = await getEmployeeDocumentUrl(id, documentId, 'attachment');
     handleLocalDownload(url, 'file');
   } catch (err) {
     const error = err as AxiosError<any>;
