@@ -26,3 +26,22 @@ export async function deleteEmployee(id: string) {
 export async function resendEmployeeInvite(id: string) {
   return backend.post<void>(`/api/employees/${id}/resend-invite`);
 }
+
+export async function uploadEmployeeFile(id: string, file: File, fileName: string) {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('fileName', fileName);
+  return backend.post<Employee>(`/api/employees/${id}/files`, formData);
+}
+
+export async function getEmployeeDocumentUrl(
+  id: string,
+  documentId: string,
+  disposition: 'inline' | 'attachment' = 'attachment'
+) {
+  return backend.get<string>(`/api/employees/${id}/files/${documentId}`, { params: { disposition } });
+}
+
+export async function deleteEmployeeFile(id: string, documentId: string) {
+  return backend.delete<void>(`/api/employees/${id}/files/${documentId}`);
+}

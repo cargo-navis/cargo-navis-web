@@ -3,10 +3,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   createEmployee,
   deleteEmployee,
+  deleteEmployeeFile,
+  getEmployeeDocumentUrl,
   getEmployees,
   PositionEnum,
   resendEmployeeInvite,
   updateEmployee,
+  uploadEmployeeFile,
 } from '@/lib/api';
 import type { Employee, UpdateEmployeeParams } from '@/lib/api/employees.d';
 import { decorateFullName } from '@/lib/utils/employees';
@@ -119,5 +122,32 @@ export function useDeleteEmployee(id: string) {
 export function useResendEmployeeInvite(id: string) {
   return useMutation({
     mutationFn: () => resendEmployeeInvite(id),
+  });
+}
+
+export function useUploadEmployeeFile(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (params: { file: File; fileName: string }) => uploadEmployeeFile(id, params.file, params.fileName),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['employees'], type: 'all' });
+    },
+  });
+}
+
+export function useDeleteEmployeeFile(id: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (documentId: string) => deleteEmployeeFile(id, documentId),
+    onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ['employees'], type: 'all' });
+    },
+  });
+}
+
+export function useGetEmployeeDocumentUrl(id: string) {
+  return useMutation({
+    mutationFn: async (params: { documentId: string; disposition: 'inline' | 'attachment' }) =>
+      getEmployeeDocumentUrl(id, params.documentId, params.disposition),
   });
 }
