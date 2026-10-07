@@ -19,6 +19,7 @@ import type { Cargo, LoadingAddress, Vehicle } from '@/lib/api';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { useAssignShipmentToVehicle, useEmployees, useVehicles, useVehicleStopsByVehicle } from '@/lib/hooks';
 import { getCargoLabel, getCargoLabelParts } from '@/lib/utils/cargo';
+import { DateTimeFormat, formatDateString } from '@/lib/utils/date';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import {
@@ -107,6 +108,20 @@ function buildCargoGroups(stop: PreviewStop, cargoById: Map<string, Cargo>): { l
   return { loading: pickCargos(stop.loadingCargoIds), unloading: pickCargos(stop.unloadingCargoIds) };
 }
 
+// Prefill each stop with the earliest of its cargos' loadingReadyDate / unloadingDueDate.
+function buildDefaultDates(stops: PreviewStop[], cargoById: Map<string, Cargo>): Record<string, string | null> {
+  return Object.fromEntries(
+    stops.map((stop) => {
+      const { loading, unloading } = buildCargoGroups(stop, cargoById);
+      const dates = [...loading.map((c) => c.loadingReadyDate), ...unloading.map((c) => c.unloadingDueDate)]
+        .filter((d): d is string => !!d)
+        .map((d) => formatDateString(d, DateTimeFormat.IsoShort))
+        .sort();
+      return [stop.key, dates[0] ?? null];
+    })
+  );
+}
+
 export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
   isOpen,
   shipmentId,
@@ -123,10 +138,11 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
 
   const previewStops = useMemo(() => buildPreviewStops(cargos), [cargos]);
   const cargoById = useMemo(() => new Map(cargos.map((c) => [c.id, c])), [cargos]);
+  const defaultDatesByKey = useMemo(() => buildDefaultDates(previewStops, cargoById), [previewStops, cargoById]);
 
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null);
   const [search, setSearch] = useState('');
-  const [datesByKey, setDatesByKey] = useState<Record<string, string | null>>({});
+  const [datesByKey, setDatesByKey] = useState<Record<string, string | null>>(defaultDatesByKey);
   const [isNavigating, setIsNavigating] = useState(false);
 
   const isBusy = isPending || isNavigating;
@@ -176,9 +192,9 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
     if (!isOpen) {
       setSelectedVehicleId(null);
       setSearch('');
-      setDatesByKey({});
+      setDatesByKey(defaultDatesByKey);
     }
-  }, [isOpen]);
+  }, [isOpen, defaultDatesByKey]);
 
   const allDatesPicked = previewStops.every((p) => !!datesByKey[p.key]);
   const isConfirmReady = !!selectedVehicleId && previewStops.length > 0 && allDatesPicked;

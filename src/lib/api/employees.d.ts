@@ -41,6 +41,13 @@ export interface Employee {
   messageChannel?: MessageChannelEnum | null;
   hasSetPassword: boolean;
   deleted: boolean;
+  documents?: {
+    id: string;
+    createdAt: string;
+    name: string;
+    mimeType: string;
+    status: string;
+  }[];
 }
 
 export enum GenderEnum {
