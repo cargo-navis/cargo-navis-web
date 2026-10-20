@@ -1,18 +1,12 @@
 import { addToast } from '@heroui/react';
 import React from 'react';
 
-import { FlexLayout, Icon, LoadingSpinner } from '@/ui';
+import { FlexLayout, Icon } from '@/ui';
 
 interface ToastProps {
   title: string;
   description?: string;
   timeout?: number;
-}
-
-interface PromiseToastProps extends ToastProps {
-  promise: Promise<unknown>;
-  endContent?: React.ReactNode;
-  shouldShowTimeoutProgress?: boolean;
 }
 
 const successToastClassNames = {
@@ -31,45 +25,28 @@ const successToastCloseIcon = (
   </FlexLayout>
 );
 
-export const showSuccessToast = ({ title, description, timeout = 2500 }: ToastProps) => {
-  addToast({
-    title,
-    description,
-    timeout,
-    classNames: successToastClassNames,
-    radius: 'sm',
-    icon: successToastIcon,
-    closeIcon: successToastCloseIcon,
-  });
-};
+interface SuccessToastProps extends ToastProps {
+  /** E.g. an undo button; replaces the close button. */
+  endContent?: React.ReactNode;
+  shouldShowTimeoutProgress?: boolean;
+}
 
-/**
- * Success-styled toast that shows a spinner until `promise` settles; the timeout starts after that.
- * Returns the toast key so callers can close it (e.g. when the promise fails).
- */
-export const showPromiseToast = ({
+/** Returns the toast key, so callers can close it (e.g. from an action in `endContent`). */
+export const showSuccessToast = ({
   title,
   description,
   timeout = 2500,
-  promise,
   endContent,
   shouldShowTimeoutProgress,
-}: PromiseToastProps) => {
+}: SuccessToastProps) => {
   return addToast({
     title,
     description,
     timeout,
-    // HeroUI chains `.finally()` on the promise without a catch; hand it one that never rejects.
-    promise: promise.catch(() => undefined),
     endContent,
     shouldShowTimeoutProgress,
     hideCloseButton: !!endContent,
-    classNames: {
-      ...successToastClassNames,
-      progressIndicator: 'bg-white/70',
-    },
-    // HeroUI's default spinner relies on plugin animations we don't ship; use ours.
-    loadingComponent: <LoadingSpinner color="text-white" size="m" />,
+    classNames: { ...successToastClassNames, progressIndicator: 'bg-white/70' },
     radius: 'sm',
     icon: successToastIcon,
     closeIcon: successToastCloseIcon,

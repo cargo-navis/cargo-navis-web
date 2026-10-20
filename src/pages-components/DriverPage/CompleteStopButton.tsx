@@ -1,48 +1,19 @@
 import { closeToast } from '@heroui/react';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
 
 import type { DriverStop } from '@/lib/api/driver';
 import { useCompleteDriverStop, useUncompleteDriverStop } from '@/lib/hooks/api/driver';
-import { showErrorToast, showPromiseToast } from '@/lib/utils/toast';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Button, FlexLayout, Icon, Text } from '@/ui';
 
 import { getStopKindLabels } from './utils';
 
-export const UNDO_TIMEOUT_MS = 10_000;
+export const UNDO_TIMEOUT_MS = 5_000;
 
 function formatCompletedAt(completedAt: string) {
   const date = dayjs(completedAt);
   return date.isSame(dayjs(), 'day') ? date.format('HH:mm') : date.format('D.M. HH:mm');
 }
-
-/** Promise toast whose error path closes it and shows an error toast instead. */
-function showActionToast(params: Parameters<typeof showPromiseToast>[0], errorTitle: string) {
-  const toastKey = showPromiseToast(params);
-  params.promise.catch(() => {
-    if (toastKey) closeToast(toastKey);
-    showErrorToast({ title: errorTitle });
-  });
-  return toastKey;
-}
-
-// Undo only makes sense once the confirmation has actually been saved.
-const UndoToastButton: React.FC<{ completion: Promise<unknown>; onUndo(): void }> = ({ completion, onUndo }) => {
-  const [isSaved, setIsSaved] = useState(false);
-
-  useEffect(() => {
-    let isActive = true;
-    completion.then(
-      () => isActive && setIsSaved(true),
-      () => undefined
-    );
-    return () => {
-      isActive = false;
-    };
-  }, [completion]);
-
-  return <Button isDisabled={!isSaved} size="m" text="Poništi" variant="secondary" onClick={onUndo} />;
-};
 
 export const CompleteStopButton: React.FC<{ stop: DriverStop }> = ({ stop }) => {
   const { mutateAsync: completeStop, isPending } = useCompleteDriverStop();
@@ -61,28 +32,36 @@ export const CompleteStopButton: React.FC<{ stop: DriverStop }> = ({ stop }) => 
 
   const labels = getStopKindLabels(stop);
 
-  function handleUndo(confirmToastKey: string | null) {
+  async function handleUndo(confirmToastKey: string | null) {
     if (confirmToastKey) closeToast(confirmToastKey);
-    showActionToast(
-      { title: 'Potvrda poništena', promise: uncompleteStop({ stopId: stop.id }) },
-      'Poništavanje nije uspjelo.'
-    );
+    try {
+      await uncompleteStop({ stopId: stop.id });
+      showSuccessToast({ title: 'Potvrda poništena' });
+    } catch {
+      showErrorToast({ title: 'Poništavanje nije uspjelo.' });
+    }
   }
 
-  function handleComplete() {
-    const completion = completeStop({ stopId: stop.id });
-    // The undo button only runs after the toast exists, so it can read the key declared here.
-    const confirmToastKey: string | null = showActionToast(
-      {
-        title: labels.confirmed,
-        promise: completion,
-        timeout: UNDO_TIMEOUT_MS,
-        shouldShowTimeoutProgress: true,
-        endContent: <UndoToastButton completion={completion} onUndo={() => handleUndo(confirmToastKey)} />,
-      },
-      'Potvrda nije uspjela. Pokušaj ponovno.'
-    );
+  // The button shows the pending state while saving; the undo toast only appears once the confirmation is saved.
+  async function handleComplete() {
+    try {
+      await completeStop({ stopId: stop.id });
+    } catch {
+      showErrorToast({ title: 'Potvrda nije uspjela. Pokušaj ponovno.' });
+      return;
+    }
+
+    const confirmToastKey = showSuccessToast({
+      title: labels.confirmed,
+      timeout: UNDO_TIMEOUT_MS,
+      shouldShowTimeoutProgress: true,
+      endContent: (
+        <Button size="m" text="Poništi" variant="secondary" onClick={() => void handleUndo(confirmToastKey)} />
+      ),
+    });
   }
 
-  return <Button isFullWidth isLoading={isPending} size="l" text={labels.action} onClick={handleComplete} />;
+  return (
+    <Button isFullWidth isLoading={isPending} size="l" text={labels.action} onClick={() => void handleComplete()} />
+  );
 };
