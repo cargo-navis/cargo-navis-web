@@ -5,10 +5,9 @@ import { useEffect, useMemo, useState } from 'react';
 import type { DriverStop } from '@/lib/api/driver';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 
-import { CompleteStopButton } from './CompleteStopButton';
 import { StickySectionHeader } from './StickySectionHeader';
 import { StopCard } from './StopCard';
-import { StopDocuments } from './StopDocuments';
+import { StopDrawer } from './StopDrawer';
 import { buildRouteTimeline } from './utils';
 
 interface StopsTabProps {
@@ -35,9 +34,10 @@ export const StopsTab: React.FC<StopsTabProps> = ({ stops, focusedStopId }) => {
   const [focusStopId] = useState(() =>
     focusedStopId && stops.some((stop) => stop.id === focusedStopId) ? focusedStopId : null
   );
-  const [expandedStopIds, setExpandedStopIds] = useState<Set<string>>(
-    () => new Set([focusStopId ?? timeline.nextStopId].filter((id): id is string => Boolean(id)))
-  );
+  // The drawer keeps the last stop id while closing, so its content doesn't vanish mid-animation.
+  const [drawerStopId, setDrawerStopId] = useState<string | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const drawerStop = stops.find((stop) => stop.id === drawerStopId) ?? null;
   const [isCompletedOpen, setIsCompletedOpen] = useState(() =>
     timeline.completed.some((stop) => stop.id === focusStopId)
   );
@@ -47,16 +47,9 @@ export const StopsTab: React.FC<StopsTabProps> = ({ stops, focusedStopId }) => {
     document.querySelector(`[data-stop-id="${focusStopId}"]`)?.scrollIntoView({ block: 'center' });
   }, [focusStopId]);
 
-  function toggleStop(stopId: string) {
-    setExpandedStopIds((ids) => {
-      const next = new Set(ids);
-      if (next.has(stopId)) {
-        next.delete(stopId);
-      } else {
-        next.add(stopId);
-      }
-      return next;
-    });
+  function openStop(stopId: string) {
+    setDrawerStopId(stopId);
+    setIsDrawerOpen(true);
   }
 
   // The rail runs through day dividers so the active route reads as one line; it only stops at its ends.
@@ -93,18 +86,11 @@ export const StopsTab: React.FC<StopsTabProps> = ({ stops, focusedStopId }) => {
               </FlexLayout>
               <Box className="min-w-0 grow pb-2">
                 <StopCard
-                  actions={
-                    <>
-                      <CompleteStopButton stop={stop} />
-                      <StopDocuments stop={stop} />
-                    </>
-                  }
-                  isExpanded={expandedStopIds.has(stop.id)}
                   isHighlighted={stop.id === focusStopId}
                   isNext={isNext}
                   showDate={showDate}
                   stop={stop}
-                  onToggle={() => toggleStop(stop.id)}
+                  onOpen={() => openStop(stop.id)}
                 />
               </Box>
             </FlexLayout>
@@ -150,6 +136,12 @@ export const StopsTab: React.FC<StopsTabProps> = ({ stops, focusedStopId }) => {
           })}
         </FlexLayout>
       ))}
+      <StopDrawer
+        isNext={drawerStop?.id === timeline.nextStopId}
+        isOpen={isDrawerOpen && !!drawerStop}
+        stop={drawerStop}
+        onOpenChange={setIsDrawerOpen}
+      />
     </FlexLayout>
   );
 };

@@ -5,19 +5,7 @@ import { CountryFlag } from '@/components/countries';
 import type { DriverStop } from '@/lib/api/driver';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 
-import { StopDetails } from './StopDetails';
 import { formatStopDate, getStopCompanyName } from './utils';
-
-interface StopCardProps {
-  stop: DriverStop;
-  isExpanded: boolean;
-  isHighlighted: boolean;
-  isNext?: boolean;
-  /** Day dividers already show the date on the timeline; only standalone lists need it on the card. */
-  showDate?: boolean;
-  onToggle(): void;
-  actions?: React.ReactNode;
-}
 
 // Same convention as the dispatcher dashboard: utovar = orange, istovar = teal.
 const KIND_BADGE_CLASSES = {
@@ -32,80 +20,81 @@ const KindBadge: React.FC<{ kind: 'loading' | 'unloading' }> = ({ kind }) => (
   </Text>
 );
 
-export const StopCard: React.FC<StopCardProps> = ({
-  stop,
-  isExpanded,
-  isHighlighted,
-  isNext,
-  showDate,
-  onToggle,
-  actions,
-}) => {
+interface StopSummaryProps {
+  stop: DriverStop;
+  isNext?: boolean;
+  /** Day dividers already show the date on the timeline; only standalone lists need it. */
+  showDate?: boolean;
+}
+
+/** Badges, company and place; shared by the stop card and the stop drawer header. */
+export const StopSummary: React.FC<StopSummaryProps> = ({ stop, isNext, showDate }) => {
   const companyName = getStopCompanyName(stop);
   const orderNumbers = Array.from(
     new Set([...stop.loadingCargos, ...stop.unloadingCargos].map((cargo) => `#${cargo.shipment.orderNumber}`))
   );
-  const isCompleted = Boolean(stop.completedAt);
 
   return (
-    <Box
-      className={clsx(
-        'rounded-l border border-dark-100 bg-white shadow-sm dark:border-light-850 dark:bg-light-875',
-        isHighlighted && 'card-highlight-fade'
-      )}
-      data-stop-id={stop.id}
-    >
-      <FlexLayout
-        aria-expanded={isExpanded}
-        as="button"
-        className="w-full flex-col gap-1 p-4 text-left"
-        type="button"
-        onClick={onToggle}
-      >
-        <FlexLayout className="w-full items-center justify-between gap-2">
-          <FlexLayout className="items-center gap-2">
-            {stop.loadingCargos.length > 0 && <KindBadge kind="loading" />}
-            {stop.unloadingCargos.length > 0 && <KindBadge kind="unloading" />}
-            {isNext && (
-              <Text
-                className="rounded-l bg-teal-700 px-2 py-[2px] text-white dark:bg-teal-600"
-                variant="text-xxxs-medium"
-              >
-                SLJEDEĆA
-              </Text>
-            )}
-            {showDate && (
-              <Text color="text-color-2" variant="text-xs-medium">
-                {formatStopDate(stop.date, dayjs())}
-              </Text>
-            )}
-          </FlexLayout>
-          <FlexLayout className="items-center gap-2">
-            {isCompleted && <Icon color="text-green-600" icon="IconCircleCheck" size="m" />}
-            <Icon
-              color="text-dark-500 dark:text-light-300"
-              icon={isExpanded ? 'IconChevronUp' : 'IconChevronDown'}
-              size="m"
-            />
-          </FlexLayout>
-        </FlexLayout>
-        {companyName && (
-          <Text color="text-color-1" variant="text-s-medium">
-            {companyName}
+    <FlexLayout className="min-w-0 flex-col gap-1 text-left">
+      <FlexLayout className="flex-wrap items-center gap-2">
+        {stop.loadingCargos.length > 0 && <KindBadge kind="loading" />}
+        {stop.unloadingCargos.length > 0 && <KindBadge kind="unloading" />}
+        {isNext && (
+          <Text className="rounded-l bg-teal-700 px-2 py-[2px] text-white dark:bg-teal-600" variant="text-xxxs-medium">
+            SLJEDEĆA
           </Text>
         )}
-        <FlexLayout className="items-center gap-[6px]">
-          {stop.address?.countryCode && <CountryFlag code={stop.address.countryCode} size="xxs" />}
-          <Text color="text-color-3" variant="text-xs">
-            {[stop.address?.placeName, orderNumbers.join(' • ')].filter(Boolean).join(' • ')}
+        {showDate && (
+          <Text color="text-color-2" variant="text-xs-medium">
+            {formatStopDate(stop.date, dayjs())}
           </Text>
-        </FlexLayout>
+        )}
       </FlexLayout>
-      {isExpanded && (
-        <Box className="border-t border-dark-100 p-4 dark:border-light-850">
-          <StopDetails actions={actions} showSideBars stop={stop} />
-        </Box>
+      {companyName && (
+        <Text color="text-color-1" variant="text-s-medium">
+          {companyName}
+        </Text>
       )}
-    </Box>
+      <FlexLayout className="items-start gap-[6px]">
+        {/* Centered on the first 24px text line, so it stays put when the line wraps. */}
+        {stop.address?.countryCode && (
+          <Box className="mt-[6px] flex shrink-0">
+            <CountryFlag code={stop.address.countryCode} size="xxs" />
+          </Box>
+        )}
+        <Text color="text-color-3" variant="text-xs">
+          {[stop.address?.placeName, orderNumbers.join(' • ')].filter(Boolean).join(' • ')}
+        </Text>
+      </FlexLayout>
+    </FlexLayout>
   );
 };
+
+interface StopCardProps extends StopSummaryProps {
+  isHighlighted: boolean;
+  onOpen(): void;
+}
+
+export const StopCard: React.FC<StopCardProps> = ({ stop, isHighlighted, isNext, showDate, onOpen }) => (
+  <Box
+    className={clsx(
+      'rounded-l border border-dark-100 bg-white shadow-sm dark:border-light-850 dark:bg-light-875',
+      isHighlighted && 'card-highlight-fade'
+    )}
+    data-stop-id={stop.id}
+  >
+    <FlexLayout
+      aria-haspopup="dialog"
+      as="button"
+      className="w-full items-center justify-between gap-2 p-4"
+      type="button"
+      onClick={onOpen}
+    >
+      <StopSummary isNext={isNext} showDate={showDate} stop={stop} />
+      <FlexLayout className="shrink-0 items-center gap-2">
+        {stop.completedAt && <Icon color="text-green-600" icon="IconCircleCheck" size="m" />}
+        <Icon color="text-dark-500 dark:text-light-300" icon="IconChevronRight" size="m" />
+      </FlexLayout>
+    </FlexLayout>
+  </Box>
+);
