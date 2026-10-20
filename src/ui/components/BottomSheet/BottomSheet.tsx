@@ -21,6 +21,14 @@ interface BottomSheetProps {
   children?: ReactNode;
 }
 
+// HeroUI toasts render in their own top layer, outside the sheet. Tapping a toast action
+// (e.g. "Poništi") would otherwise count as an outside press and close the sheet.
+function keepOpenOnToastPress(event: Event) {
+  if ((event.target as Element | null)?.closest?.('[data-react-aria-top-layer]')) {
+    event.preventDefault();
+  }
+}
+
 /** Floating mobile bottom sheet with a swipe handle, capped at the page width. */
 export const BottomSheet: React.FC<BottomSheetProps> = ({
   isOpen,
@@ -42,6 +50,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   >
     <DrawerContent
       className="mx-auto max-w-[480px]"
+      onPointerDownOutside={keepOpenOnToastPress}
       // Without a description, opt out explicitly so Radix doesn't warn about a missing one.
       {...(!description && { 'aria-describedby': undefined })}
     >
