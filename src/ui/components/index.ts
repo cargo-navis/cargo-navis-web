@@ -1,5 +1,6 @@
 export * from './Alert';
 export * from './BarChart';
+export * from './BottomSheet';
 export * from './Box';
 export * from './Button';
 export * from './Checkbox';
