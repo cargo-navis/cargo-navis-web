@@ -110,4 +110,20 @@ export function createDriverBackendService({ adapter }: { adapter?: AxiosAdapter
   };
 }
 
-export const driverBackend = createDriverBackendService();
+function createLazyAdapter(load: () => Promise<AxiosAdapter>): AxiosAdapter {
+  let adapter: Promise<AxiosAdapter> | null = null;
+  return async (config) => {
+    adapter ??= load();
+    return (await adapter)(config);
+  };
+}
+
+// The import sits inside the env check so production builds drop the dev mock entirely.
+export const driverBackend = createDriverBackendService({
+  adapter:
+    process.env.NEXT_PUBLIC_DRIVER_API_MOCK === 'true'
+      ? createLazyAdapter(() =>
+          import('./driverMock/driverMockAdapter').then(({ createDriverMockAdapter }) => createDriverMockAdapter())
+        )
+      : undefined,
+});
