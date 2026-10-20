@@ -34,7 +34,9 @@ export function createDriverMockAdapter({ delayMs = 400 }: { delayMs?: number } 
 
     if (method === 'post' && url === '/auth/exchange') {
       const { token } = JSON.parse(config.data ?? '{}');
-      return token === 'expired' ? respond(config, 410) : respond(config, 200, { accessToken: 'mock-jwt' });
+      return token === 'expired'
+        ? respond(config, 410)
+        : respond(config, 200, { data: { accessToken: 'mock-jwt' }, status: 'success' });
     }
 
     if (method === 'get' && url === '/api/account') {

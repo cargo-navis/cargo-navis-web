@@ -21,12 +21,14 @@ function createAdapter(handler: Handler) {
 }
 
 const isExchange = (config: InternalAxiosRequestConfig) => config.url === '/auth/exchange';
+// Same shape as the real POST /auth/exchange response (API envelope).
+const exchanged = (accessToken: string) => ({ data: { accessToken }, status: 'success' });
 const bearer = (config: InternalAxiosRequestConfig) => config.headers?.Authorization;
 
 describe('driverBackendService', () => {
   it('startSession exchanges link token and sends JWT as bearer on later requests', async () => {
     const adapter = createAdapter((config) =>
-      isExchange(config) ? { status: 200, data: { accessToken: 'jwt-1' } } : { status: 200, data: { data: [] } }
+      isExchange(config) ? { status: 200, data: exchanged('jwt-1') } : { status: 200, data: { data: [] } }
     );
     const service = createDriverBackendService({ adapter });
 
@@ -57,7 +59,7 @@ describe('driverBackendService', () => {
 
   it('unwraps data envelope', async () => {
     const adapter = createAdapter((config) =>
-      isExchange(config) ? { status: 200, data: { accessToken: 'jwt-1' } } : { status: 200, data: { data: [1] } }
+      isExchange(config) ? { status: 200, data: exchanged('jwt-1') } : { status: 200, data: { data: [1] } }
     );
     const service = createDriverBackendService({ adapter });
     await service.startSession('link-1');
@@ -68,7 +70,7 @@ describe('driverBackendService', () => {
   it('re-exchanges once on 401 and retries the request', async () => {
     let exchanges = 0;
     const adapter = createAdapter((config) => {
-      if (isExchange(config)) return { status: 200, data: { accessToken: `jwt-${++exchanges}` } };
+      if (isExchange(config)) return { status: 200, data: exchanged(`jwt-${++exchanges}`) };
       return bearer(config) === 'Bearer jwt-1' ? { status: 401 } : { status: 200, data: { data: 'ok' } };
     });
     const service = createDriverBackendService({ adapter });
@@ -83,7 +85,7 @@ describe('driverBackendService', () => {
   it('parallel 401s share a single exchange call', async () => {
     let exchanges = 0;
     const adapter = createAdapter((config) => {
-      if (isExchange(config)) return { status: 200, data: { accessToken: `jwt-${++exchanges}` } };
+      if (isExchange(config)) return { status: 200, data: exchanged(`jwt-${++exchanges}`) };
       return bearer(config) === 'Bearer jwt-1' ? { status: 401 } : { status: 200, data: { data: 'ok' } };
     });
     const service = createDriverBackendService({ adapter });
@@ -95,11 +97,20 @@ describe('driverBackendService', () => {
 
   it('rejects with DriverLinkExpiredError when retried request still returns 401', async () => {
     const adapter = createAdapter((config) =>
-      isExchange(config) ? { status: 200, data: { accessToken: 'jwt' } } : { status: 401 }
+      isExchange(config) ? { status: 200, data: exchanged('jwt') } : { status: 401 }
     );
     const service = createDriverBackendService({ adapter });
     await service.startSession('link-1');
 
     await expect(service.get('/api/driver/stops')).rejects.toBeInstanceOf(DriverLinkExpiredError);
+  });
+
+  it('rejects when the exchange response has no access token', async () => {
+    const adapter = createAdapter((config) =>
+      isExchange(config) ? { status: 200, data: { data: {}, status: 'success' } } : { status: 200, data: { data: [] } }
+    );
+    const service = createDriverBackendService({ adapter });
+
+    await expect(service.startSession('link-1')).rejects.toThrow('missing access token');
   });
 });

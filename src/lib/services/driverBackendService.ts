@@ -50,9 +50,15 @@ export function createDriverBackendService({ adapter }: { adapter?: AxiosAdapter
   function exchange() {
     if (!pendingExchange) {
       pendingExchange = exchangeClient
-        .post<DriverTokenExchangeResponse>('/auth/exchange', { token: linkToken })
-        .then(({ data }) => {
-          accessToken = data.accessToken;
+        // Wrapped in the API envelope: { data: { accessToken }, status: 'success' }.
+        .post<{ data?: DriverTokenExchangeResponse }>('/auth/exchange', { token: linkToken })
+        .then(({ data: body }) => {
+          const token = body?.data?.accessToken;
+          if (!token) {
+            // Fail loudly; a silent undefined would send every later request without a token.
+            throw new Error('Driver token exchange: missing access token in response');
+          }
+          accessToken = token;
         })
         .catch((error) => {
           throw isClientError(error) ? new DriverLinkExpiredError() : error;
