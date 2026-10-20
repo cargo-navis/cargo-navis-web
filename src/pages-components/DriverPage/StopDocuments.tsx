@@ -6,7 +6,7 @@ import { useDeleteDriverStopFile, useDriverAccount, useUploadDriverStopFile } fr
 import { getDataPointDateString } from '@/lib/utils/date';
 import { bytesToMegabytes, getFileInput } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Button, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, FlexLayout, Icon, Text } from '@/ui';
+import { BottomSheet, Box, Button, FlexLayout, Icon, Text } from '@/ui';
 
 import { prepareUploadFile } from './prepareUploadFile';
 
@@ -17,7 +17,9 @@ export const StopDocuments: React.FC<{ stop: DriverStop }> = ({ stop }) => {
   const { mutateAsync: uploadFile } = useUploadDriverStopFile();
   const { mutate: deleteFile, isPending: isDeleting } = useDeleteDriverStopFile();
   const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null);
+  // The document stays set while the sheet slides closed, so its name doesn't vanish mid-animation.
   const [documentToDelete, setDocumentToDelete] = useState<DriverStopDocument | null>(null);
+  const [isDeleteSheetOpen, setIsDeleteSheetOpen] = useState(false);
 
   async function handleFiles(files: FileList | null) {
     if (!files || files.length === 0) return;
@@ -85,7 +87,7 @@ export const StopDocuments: React.FC<{ stop: DriverStop }> = ({ stop }) => {
     deleteFile(
       { stopId: stop.id, documentId: documentToDelete.id },
       {
-        onSuccess: () => setDocumentToDelete(null),
+        onSuccess: () => setIsDeleteSheetOpen(false),
         onError: (error) => {
           const isForbidden = (error as AxiosError).response?.status === 403;
           showErrorToast({
@@ -128,7 +130,10 @@ export const StopDocuments: React.FC<{ stop: DriverStop }> = ({ stop }) => {
               as="button"
               className="size-[44px] shrink-0 items-center justify-center"
               type="button"
-              onClick={() => setDocumentToDelete(document)}
+              onClick={() => {
+                setDocumentToDelete(document);
+                setIsDeleteSheetOpen(true);
+              }}
             >
               <Icon color="text-red-500" icon="IconTrash" size="m" />
             </FlexLayout>
@@ -149,28 +154,26 @@ export const StopDocuments: React.FC<{ stop: DriverStop }> = ({ stop }) => {
           Učitavanje {uploadProgress.current}/{uploadProgress.total}…
         </Text>
       )}
-      <Dialog open={!!documentToDelete} onOpenChange={(open) => !open && setDocumentToDelete(null)}>
-        <DialogContent aria-describedby={undefined} className="mx-4 w-auto">
-          <DialogHeader>
-            <DialogTitle>
-              <Text variant="text-m-medium">Obrisati dokument?</Text>
-            </DialogTitle>
-            <Text color="text-color-3" variant="text-xs">
-              {documentToDelete?.name}
-            </Text>
-          </DialogHeader>
-          <DialogFooter className="gap-2">
+      <BottomSheet
+        description={documentToDelete?.name}
+        footer={
+          <Box className="grid grid-cols-2 gap-3">
             <Button
               isDisabled={isDeleting}
+              isFullWidth
               size="l"
               text="Odustani"
               variant="secondary"
-              onClick={() => setDocumentToDelete(null)}
+              onClick={() => setIsDeleteSheetOpen(false)}
             />
-            <Button isLoading={isDeleting} size="l" text="Obriši" variant="danger" onClick={handleDelete} />
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            <Button isFullWidth isLoading={isDeleting} size="l" text="Obriši" variant="danger" onClick={handleDelete} />
+          </Box>
+        }
+        isNested
+        isOpen={isDeleteSheetOpen}
+        title="Obrisati dokument?"
+        onOpenChange={setIsDeleteSheetOpen}
+      />
     </FlexLayout>
   );
 };
