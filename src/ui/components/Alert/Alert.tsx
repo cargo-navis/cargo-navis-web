@@ -3,31 +3,55 @@ import type { ReactNode } from 'react';
 
 import { FlexLayout, Icon, type IconType, Text } from '@/ui';
 
-import { type AlertVariant, variantsMap } from './const';
+import { type AlertSize, type AlertVariant, sizesMap, variantsMap } from './const';
 
 interface AlertProps {
   text: ReactNode;
   title?: string;
   icon?: IconType;
   variant?: AlertVariant;
+  size?: AlertSize;
   className?: string;
   /** Buttons the alert asks for, rendered below the text. */
   actions?: ReactNode;
 }
 
-export const Alert: React.FC<AlertProps> = ({ text, title, icon, variant = 'info', className, actions }) => (
-  <FlexLayout className={clsx('gap-2 rounded-m px-4 py-3', variantsMap[variant], className)}>
-    {icon && <Icon className={clsx('shrink-0', !!text && !!title ? 'mt-[2px]' : '')} icon={icon} size="l" />}
-    <FlexLayout className="flex-col gap-1">
-      {title && (
-        <Text className="text-inherit" variant="text-s-medium">
-          {title}
-        </Text>
+export const Alert: React.FC<AlertProps> = ({
+  text,
+  title,
+  icon,
+  variant = 'info',
+  size = 'm',
+  className,
+  actions,
+}) => {
+  const sizeStyles = sizesMap[size];
+
+  return (
+    <FlexLayout className={clsx('items-start', sizeStyles.container, variantsMap[variant], className)}>
+      {icon && (
+        <Icon
+          className={clsx(
+            'shrink-0',
+            sizeStyles.iconOffset,
+            // Original `m` behaviour, kept so existing alerts render unchanged.
+            size === 'm' && !!text && !!title && 'mt-[2px]'
+          )}
+          icon={icon}
+          size={sizeStyles.icon}
+        />
       )}
-      <Text className="text-inherit" variant="text-s">
-        {text}
-      </Text>
-      {!!actions && <FlexLayout className="items-center gap-3 mt-2">{actions}</FlexLayout>}
+      <FlexLayout className="flex-col gap-1">
+        {title && (
+          <Text className="text-inherit" variant={sizeStyles.title}>
+            {title}
+          </Text>
+        )}
+        <Text className="text-inherit" variant={sizeStyles.text}>
+          {text}
+        </Text>
+        {!!actions && <FlexLayout className="items-center gap-3 mt-2">{actions}</FlexLayout>}
+      </FlexLayout>
     </FlexLayout>
-  </FlexLayout>
-);
+  );
+};

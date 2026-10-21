@@ -76,6 +76,17 @@ body {
   html.dark .row-highlight-fade {
     animation: row-highlight-fade-dark 2s ease-out forwards;
   }
+
+  .card-highlight-fade {
+    animation: card-highlight-fade 5s ease-out forwards;
+  }
+
+  /* Tailwind dark mode here follows prefers-color-scheme, not an html.dark class. */
+  @media (prefers-color-scheme: dark) {
+    .card-highlight-fade {
+      animation-name: card-highlight-fade-dark;
+    }
+  }
 }
 
 @keyframes row-highlight-fade {
@@ -93,5 +104,26 @@ body {
   }
   100% {
     background-color: transparent;
+  }
+}
+
+/* Ends on the card background (white / light-875) instead of transparent, so cards don't turn see-through. */
+@keyframes card-highlight-fade {
+  0%,
+  20% {
+    background-color: #fff6b3;
+  }
+  100% {
+    background-color: #ffffff;
+  }
+}
+
+@keyframes card-highlight-fade-dark {
+  0%,
+  20% {
+    background-color: #312d16;
+  }
+  100% {
+    background-color: #212126;
   }
 }

@@ -9,25 +9,47 @@ interface ToastProps {
   timeout?: number;
 }
 
-export const showSuccessToast = ({ title, description, timeout = 2500 }: ToastProps) => {
-  addToast({
+const successToastClassNames = {
+  base: 'bg-teal-700 text-white border border-teal-600 max-w-[560px]',
+  content: 'text-white',
+  description: 'text-white whitespace-normal break-words',
+  title: 'text-white whitespace-normal break-words',
+  closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
+};
+
+const successToastIcon = <Icon color="text-white" icon="IconInfoCircle" size="xl" />;
+
+const successToastCloseIcon = (
+  <FlexLayout className="bg-teal-700 p-1 items-center justify-center">
+    <Icon color="text-white" icon="IconX" size="l" />
+  </FlexLayout>
+);
+
+interface SuccessToastProps extends ToastProps {
+  /** E.g. an undo button; replaces the close button. */
+  endContent?: React.ReactNode;
+  shouldShowTimeoutProgress?: boolean;
+}
+
+/** Returns the toast key, so callers can close it (e.g. from an action in `endContent`). */
+export const showSuccessToast = ({
+  title,
+  description,
+  timeout = 2500,
+  endContent,
+  shouldShowTimeoutProgress,
+}: SuccessToastProps) => {
+  return addToast({
     title,
     description,
     timeout,
-    classNames: {
-      base: 'bg-teal-700 text-white border border-teal-600 max-w-[560px]',
-      content: 'text-white',
-      description: 'text-white whitespace-normal break-words',
-      title: 'text-white whitespace-normal break-words',
-      closeButton: 'hover:opacity-100 absolute right-3 top-1/2 -translate-y-1/2',
-    },
+    endContent,
+    shouldShowTimeoutProgress,
+    hideCloseButton: !!endContent,
+    classNames: { ...successToastClassNames, progressIndicator: 'bg-white/70' },
     radius: 'sm',
-    icon: <Icon color="text-white" icon="IconInfoCircle" size="xl" />,
-    closeIcon: (
-      <FlexLayout className="bg-teal-700 p-1 items-center justify-center">
-        <Icon color="text-white" icon="IconX" size="l" />
-      </FlexLayout>
-    ),
+    icon: successToastIcon,
+    closeIcon: successToastCloseIcon,
   });
 };
 

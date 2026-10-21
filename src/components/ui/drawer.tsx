@@ -3,9 +3,41 @@ import { Drawer as DrawerPrimitive } from 'vaul';
 
 import { cn } from '@/lib/utils';
 
-const Drawer = ({ shouldScaleBackground = true, ...props }: React.ComponentProps<typeof DrawerPrimitive.Root>) => (
-  <DrawerPrimitive.Root shouldScaleBackground={shouldScaleBackground} {...props} />
-);
+type DrawerVariant = 'default' | 'floating';
+
+interface DrawerOptions {
+  showSwipeHandle: boolean;
+  variant: DrawerVariant;
+}
+
+// Drawer-level options that DrawerContent renders from.
+const DrawerOptionsContext = React.createContext<DrawerOptions>({ showSwipeHandle: false, variant: 'default' });
+
+type DrawerProps = React.ComponentProps<typeof DrawerPrimitive.Root> & {
+  /** Renders vaul's draggable handle at the top of a bottom drawer. */
+  showSwipeHandle?: boolean;
+  /** `floating`: bottom sheet inset from the screen edges, fully rounded, with a blurred backdrop. */
+  variant?: DrawerVariant;
+  /** Opened from inside another open drawer (vaul's NestedRoot), so closing it leaves the parent open. */
+  nested?: boolean;
+};
+
+const Drawer = ({
+  shouldScaleBackground = true,
+  showSwipeHandle = false,
+  variant = 'default',
+  nested = false,
+  ...props
+}: DrawerProps) => {
+  const options = React.useMemo(() => ({ showSwipeHandle, variant }), [showSwipeHandle, variant]);
+  const Root = nested ? DrawerPrimitive.NestedRoot : DrawerPrimitive.Root;
+
+  return (
+    <DrawerOptionsContext.Provider value={options}>
+      <Root shouldScaleBackground={shouldScaleBackground} {...props} />
+    </DrawerOptionsContext.Provider>
+  );
+};
 Drawer.displayName = 'Drawer';
 
 const DrawerTrigger = DrawerPrimitive.Trigger;
@@ -25,26 +57,37 @@ DrawerOverlay.displayName = DrawerPrimitive.Overlay.displayName;
 const DrawerContent = React.forwardRef<
   React.ElementRef<typeof DrawerPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DrawerPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <DrawerPortal>
-    <DrawerOverlay />
-    <DrawerPrimitive.Content
-      className={cn(
-        'group/drawer-content fixed z-50 flex h-auto flex-col bg-background dark:bg-[#1a1a1a] dark:border-light-850',
-        'data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=top]:mb-24 data-[vaul-drawer-direction=top]:max-h-[80vh] data-[vaul-drawer-direction=top]:rounded-b-[10px]',
-        'data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:mt-24 data-[vaul-drawer-direction=bottom]:max-h-[80vh] data-[vaul-drawer-direction=bottom]:rounded-t-[10px]',
-        'data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:w-3/4 data-[vaul-drawer-direction=right]:sm:max-w-sm data-[vaul-drawer-direction=right]:rounded-l-[10px] border-l',
-        'data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:w-3/4 data-[vaul-drawer-direction=left]:sm:max-w-sm data-[vaul-drawer-direction=left]:rounded-r-[10px]',
-        className
-      )}
-      ref={ref}
-      {...props}
-    >
-      <div className="mx-auto mt-4 hidden h-2 w-[100px] shrink-0 rounded-full bg-muted group-data-[vaul-drawer-direction=bottom]/drawer-content:block" />
-      {children}
-    </DrawerPrimitive.Content>
-  </DrawerPortal>
-));
+>(({ className, children, ...props }, ref) => {
+  const { showSwipeHandle, variant } = React.useContext(DrawerOptionsContext);
+  const isFloating = variant === 'floating';
+
+  return (
+    <DrawerPortal>
+      <DrawerOverlay className={cn(isFloating && 'backdrop-blur-sm')} />
+      <DrawerPrimitive.Content
+        className={cn(
+          'group/drawer-content fixed z-50 flex h-auto flex-col bg-background dark:bg-[#1a1a1a] dark:border-light-850',
+          'data-[vaul-drawer-direction=top]:inset-x-0 data-[vaul-drawer-direction=top]:top-0 data-[vaul-drawer-direction=top]:mb-24 data-[vaul-drawer-direction=top]:max-h-[80vh] data-[vaul-drawer-direction=top]:rounded-b-[10px]',
+          'data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:mt-24 data-[vaul-drawer-direction=bottom]:max-h-[80vh] data-[vaul-drawer-direction=bottom]:rounded-t-[10px]',
+          'data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:w-3/4 data-[vaul-drawer-direction=right]:sm:max-w-sm data-[vaul-drawer-direction=right]:rounded-l-[10px] border-l',
+          'data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:w-3/4 data-[vaul-drawer-direction=left]:sm:max-w-sm data-[vaul-drawer-direction=left]:rounded-r-[10px]',
+          // Floating bottom sheet: 8px off the screen edges (plus the iPhone home bar), all corners rounded.
+          // `border-l-0` drops the unprefixed `border-l` above, which is meant for right-side drawers.
+          isFloating &&
+            'overflow-hidden border-l-0 data-[vaul-drawer-direction=bottom]:inset-x-2 data-[vaul-drawer-direction=bottom]:bottom-[calc(8px+env(safe-area-inset-bottom))] data-[vaul-drawer-direction=bottom]:rounded-[32px]',
+          className
+        )}
+        ref={ref}
+        {...props}
+      >
+        {showSwipeHandle && (
+          <DrawerPrimitive.Handle className="!mt-3 !h-[6px] !w-[48px] shrink-0 !rounded-[3px] !bg-dark-200 !opacity-100 dark:!bg-light-700" />
+        )}
+        {children}
+      </DrawerPrimitive.Content>
+    </DrawerPortal>
+  );
+});
 DrawerContent.displayName = 'DrawerContent';
 
 const DrawerHeader = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
