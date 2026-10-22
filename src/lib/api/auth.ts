@@ -1,6 +1,11 @@
 import axios from 'axios';
 
+import { getAuthBaseUrl } from '@/lib/utils/authBaseUrl';
+
 import type { AuthResponse } from './login';
+
+// Plain axios (not `backend`): these calls run without an access token and must never trigger a refresh.
+const authClient = axios.create({ baseURL: getAuthBaseUrl() });
 
 export interface LoginArgs {
   email: string;
@@ -8,10 +13,8 @@ export interface LoginArgs {
 }
 
 export async function login(values: LoginArgs) {
-  const response = await axios.post<AuthResponse.RootObject>(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/token`,
-    values
-  );
+  // Credentials so the browser stores the httpOnly refresh cookie from the response.
+  const response = await authClient.post<AuthResponse.RootObject>('/auth/token', values, { withCredentials: true });
   return response.data;
 }
 
@@ -21,5 +24,10 @@ export interface AcceptInviteArgs {
 }
 
 export async function acceptInvite(values: AcceptInviteArgs) {
-  await axios.post<void>(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/accept-invite`, values);
+  await authClient.post<void>('/auth/accept-invite', values);
+}
+
+/** Clears the httpOnly refresh cookie, which only the server can remove. */
+export async function logout() {
+  await authClient.post<void>('/auth/logout', undefined, { withCredentials: true });
 }
