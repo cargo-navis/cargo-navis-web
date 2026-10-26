@@ -1,5 +1,5 @@
 import { AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createBackendService } from './backendService';
 
@@ -47,6 +47,10 @@ const acceptsNewToken: Handler = (config) => {
 };
 
 describe('backendService', () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
   it('refreshes once on 401 and retries with the new token', async () => {
     const { service, setAccessToken, calls } = setup(acceptsNewToken);
 
@@ -159,5 +163,14 @@ describe('backendService', () => {
 
     expect(setAccessToken).not.toHaveBeenCalled();
     expect(onSessionExpired).not.toHaveBeenCalled();
+  });
+
+  it('calls the API same-origin when the backend is proxied', async () => {
+    vi.stubEnv('NEXT_PUBLIC_BACKEND_PROXY', 'true');
+    const { service, calls } = setup(acceptsNewToken);
+
+    await service.get('/api/x');
+
+    expect(calls().map((config) => config.baseURL)).toEqual(['', '', '']);
   });
 });

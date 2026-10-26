@@ -4,14 +4,8 @@ const nextConfig = {
     PROJECT_ENV: process.env.PROJECT_ENV,
     // Always defined at build time so production builds drop the driver portal dev mock.
     NEXT_PUBLIC_DRIVER_API_MOCK: process.env.NEXT_PUBLIC_DRIVER_API_MOCK ?? 'false',
-    // Tells the client to call /auth/* same-origin when it is proxied (see rewrites).
-    NEXT_PUBLIC_AUTH_PROXY: process.env.AUTH_PROXY_TARGET ? 'true' : 'false',
-  },
-  async rewrites() {
-    const authProxyTarget = process.env.AUTH_PROXY_TARGET;
-    // Local dev and Vercel previews are cross-site with the API, so the browser would not send the httpOnly
-    // refresh cookie. Proxying /auth/* makes it same-origin there (see NEXT_PUBLIC_AUTH_PROXY above).
-    return authProxyTarget ? [{ source: '/auth/:path*', destination: `${authProxyTarget}/auth/:path*` }] : [];
+    // Tells the client to call the backend same-origin when src/middleware.ts proxies it.
+    NEXT_PUBLIC_BACKEND_PROXY: process.env.BACKEND_PROXY_TARGET ? 'true' : 'false',
   },
   webpack(nextConfig) {
     nextConfig.module.rules.push({

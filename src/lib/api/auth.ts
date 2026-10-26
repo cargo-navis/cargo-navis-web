@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-import { getAuthBaseUrl } from '@/lib/utils/authBaseUrl';
+import { getBackendBaseUrl } from '@/lib/utils/backendBaseUrl';
 
 import type { AuthResponse } from './login';
 
 // Plain axios (not `backend`): these calls run without an access token and must never trigger a refresh.
-const authClient = axios.create({ baseURL: getAuthBaseUrl() });
+const authClient = axios.create({ baseURL: getBackendBaseUrl() });
 
 export interface LoginArgs {
   email: string;

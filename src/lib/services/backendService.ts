@@ -5,7 +5,7 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from 'axios';
 
-import { getAuthBaseUrl } from '@/lib/utils/authBaseUrl';
+import { getBackendBaseUrl } from '@/lib/utils/backendBaseUrl';
 import { isServer } from '@/lib/utils/browser';
 import { clearAuthCookies, getAuthTokens, setAuthTokens } from '@/lib/utils/session';
 
@@ -49,15 +49,10 @@ export function createBackendService({
     }
   },
 }: BackendServiceOptions = {}) {
-  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
-
-  if (!baseURL) {
-    throw new Error('Missing NEXT_PUBLIC_BACKEND_URL env var.');
-  }
-
+  const baseURL = getBackendBaseUrl();
   const instance = axios.create({ baseURL, adapter });
   // Separate client so the refresh call never runs through the 401 handling below.
-  const authClient = axios.create({ baseURL: getAuthBaseUrl(), adapter });
+  const authClient = axios.create({ baseURL, adapter });
 
   // Parallel 401s share one refresh. The refresh token travels as an httpOnly cookie.
   const refresh = createSingleFlight(async () => {

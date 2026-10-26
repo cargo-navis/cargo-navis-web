@@ -7,7 +7,7 @@ import axios, {
 } from 'axios';
 
 import type { DriverTokenExchangeResponse } from '@/lib/api/driver.d';
-import { getAuthBaseUrl } from '@/lib/utils/authBaseUrl';
+import { getBackendBaseUrl } from '@/lib/utils/backendBaseUrl';
 
 import { readAccessToken } from './readAccessToken';
 import { createSingleFlight } from './singleFlight';
@@ -44,9 +44,9 @@ function isClientError(error: unknown) {
  * exchange sets. A 401 never redirects to /login.
  */
 export function createDriverBackendService({ adapter }: { adapter?: AxiosAdapter } = {}) {
-  const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
-  // Exchange and refresh set or read the refresh cookie, so they go through the auth base URL with credentials.
-  const authClient = axios.create({ baseURL: getAuthBaseUrl(), adapter, withCredentials: true });
+  const baseURL = getBackendBaseUrl();
+  // Exchange and refresh set or read the refresh cookie, so they are sent with credentials.
+  const authClient = axios.create({ baseURL, adapter, withCredentials: true });
   const instance = axios.create({ baseURL, adapter });
 
   let accessToken: string | null = null;
