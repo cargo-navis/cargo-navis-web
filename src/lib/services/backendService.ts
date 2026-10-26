@@ -1,9 +1,16 @@
-import axios, { type AxiosRequestConfig, type InternalAxiosRequestConfig } from 'axios';
+import axios, {
+  type AxiosAdapter,
+  type AxiosError,
+  type AxiosRequestConfig,
+  type InternalAxiosRequestConfig,
+} from 'axios';
 
-import { decorateRequest } from '@/lib/utils/auth';
-import { clearAuthCookies } from '@/lib/utils/session';
+import type { AuthResponse } from '@/lib/api/login';
+import { getAuthBaseUrl } from '@/lib/utils/authBaseUrl';
+import { isServer } from '@/lib/utils/browser';
+import { clearAuthCookies, getAuthTokens, setAuthTokens } from '@/lib/utils/session';
 
-// import { AuthResponse } from '~/apis';
+import { createSingleFlight } from './singleFlight';
 
 type AxiosFunction = <T>(url: string, config?: AxiosRequestConfig & { fullResponse?: boolean }) => Promise<T>;
 type AxiosDataFunction = <T>(
@@ -12,29 +19,69 @@ type AxiosDataFunction = <T>(
   config?: AxiosRequestConfig & { fullResponse?: boolean }
 ) => Promise<T>;
 
-type OriginalRequest = InternalAxiosRequestConfig & { _doNotRefresh: boolean; _ignoreRedirect: boolean };
+type OriginalRequest = InternalAxiosRequestConfig & {
+  _doNotRefresh?: boolean;
+  _ignoreRedirect?: boolean;
+  _retried?: boolean;
+};
 
-function createBackendService() {
+interface BackendServiceOptions {
+  adapter?: AxiosAdapter;
+  getAccessToken?(): string | undefined;
+  setAccessToken?(token: string): void;
+  onSessionExpired?(options: { redirect: boolean }): void;
+}
+
+function isClientError(error: unknown) {
+  const status = (error as AxiosError)?.response?.status;
+  return status !== undefined && status >= 400 && status < 500;
+}
+
+export function createBackendService({
+  adapter,
+  getAccessToken = () => (isServer ? undefined : getAuthTokens().accessToken),
+  setAccessToken = (accessToken) => setAuthTokens({ accessToken }),
+  onSessionExpired = ({ redirect }) => {
+    clearAuthCookies();
+    if (redirect) {
+      // replace, not push: Back from /login should not return to the page whose session just died.
+      window.location.replace('/login');
+    }
+  },
+}: BackendServiceOptions = {}) {
   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   if (!baseURL) {
     throw new Error('Missing NEXT_PUBLIC_BACKEND_URL env var.');
   }
 
-  const instance = axios.create({
-    baseURL,
+  const instance = axios.create({ baseURL, adapter });
+  // Separate client so the refresh call never runs through the 401 handling below.
+  const authClient = axios.create({ baseURL: getAuthBaseUrl(), adapter });
+
+  // Parallel 401s share one refresh. The refresh token travels as an httpOnly cookie.
+  const refresh = createSingleFlight(async () => {
+    // Unlike login, refresh answers in the API envelope: { data: { accessToken }, status: 'success' }.
+    const { data: body } = await authClient.post<{ data?: AuthResponse.RootObject }>('/auth/refresh', undefined, {
+      withCredentials: true,
+    });
+    const accessToken = body?.data?.accessToken;
+    if (!accessToken) {
+      throw new Error('Token refresh: missing access token in response');
+    }
+
+    setAccessToken(accessToken);
   });
 
-  // let isRefreshing = false;
-  // let failedRequestsQueue: any[] = [];
+  instance.interceptors.request.use((config) => {
+    const accessToken = getAccessToken();
 
-  // TODO - add token refreshment logic after BE implements designated endpoint
-  // function processFailedRequestsQueue(err: unknown) {
-  //   failedRequestsQueue.forEach((promise) => (err ? promise.reject(err) : promise.resolve()));
-  //   failedRequestsQueue = [];
-  // }
+    if (accessToken) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    return config;
+  });
 
-  instance.interceptors.request.use(decorateRequest);
   instance.interceptors.response.use(
     (response) => {
       const { config, data } = response;
@@ -62,49 +109,34 @@ function createBackendService() {
 
       // Get original request, so we can retry it after refreshing our tokens
       const originalRequest: OriginalRequest = error.config;
+      const expireSession = () => onSessionExpired({ redirect: !originalRequest._ignoreRedirect });
 
       if (originalRequest._doNotRefresh) {
         return Promise.reject(error);
       }
 
-      // Store other parallel API requests (all except for the first one) into a queue
-      // and resolve them after token refresh
-      // TODO - add token refreshment logic after BE implements designated endpoint
-      // if (isRefreshing) {
-      //   return new Promise((resolve, reject) => failedRequestsQueue.push({ resolve, reject }))
-      //     .then(() => instance(originalRequest))
-      //     .catch((err) => Promise.reject(err));
-      // }
+      if (originalRequest._retried) {
+        expireSession();
+        return Promise.reject(error);
+      }
 
-      // TODO - add token refreshment logic after BE implements designated endpoint
-      // isRefreshing = true;
-      // // First attempt to refresh the token
-      // try {
-      //   const { data: authResponse } = await refreshAccessTokens();
-      //   setAuthTokens(authResponse.authTokens);
-      //
-      //   isRefreshing = false;
-      //   processFailedRequestsQueue(null);
-      //
-      //   return instance(originalRequest);
-      // } catch (e) {
-      //   clearAuthCookies();
-      //
-      //   isRefreshing = false;
-      //   processFailedRequestsQueue(e);
-      //
-      //   if (!originalRequest._ignoreRedirect) {
-      //     window.location.pathname = '/login';
-      //   }
-      //
-      //   return Promise.reject(error);
-      // }
+      originalRequest._retried = true;
 
-      clearAuthCookies();
+      // Another request may already have refreshed the token; only refresh if this one used the current token.
+      const currentToken = getAccessToken();
+      if (!currentToken || originalRequest.headers.Authorization === `Bearer ${currentToken}`) {
+        try {
+          await refresh();
+        } catch (refreshError) {
+          // A network error or 5xx is not a verdict on the session, so keep the user signed in.
+          if (isClientError(refreshError)) {
+            expireSession();
+          }
+          return Promise.reject(error);
+        }
+      }
 
-      window.location.pathname = '/login';
-
-      return Promise.reject(error);
+      return instance(originalRequest);
     }
   );
 
@@ -118,12 +150,3 @@ function createBackendService() {
 }
 
 export const backend = createBackendService();
-
-// async function refreshAccessTokens() {
-//   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
-//
-//   const instance = axios.create({ baseURL });
-//   const refreshToken = getAuthTokens()?.refreshToken;
-//
-//   return instance.post<AuthResponse.RootObject>('/v1/auth/refresh-token', { refreshToken });
-// }
