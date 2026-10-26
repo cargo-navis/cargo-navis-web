@@ -21,7 +21,7 @@ type AxiosDataFunction = <T>(
 
 type DriverRequest = InternalAxiosRequestConfig & { fullResponse?: boolean; _retried?: boolean };
 
-/** The WhatsApp link token can no longer be exchanged; the driver has to open a newer link. */
+/** The link token can no longer be exchanged; the driver needs a new link. */
 export class DriverLinkExpiredError extends Error {
   constructor() {
     super('Driver link expired');
@@ -40,7 +40,7 @@ function isClientError(error: unknown) {
 
 /**
  * API client for the driver portal. Kept apart from the dispatcher `backend` client: the driver JWT lives only
- * in memory and comes from exchanging the WhatsApp link token or from the httpOnly refresh cookie that the
+ * in memory and comes from exchanging the link token or from the httpOnly refresh cookie that the
  * exchange sets. A 401 never redirects to /login.
  */
 export function createDriverBackendService({ adapter }: { adapter?: AxiosAdapter } = {}) {

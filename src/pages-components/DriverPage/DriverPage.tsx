@@ -9,10 +9,14 @@ import { DriverHeader } from './DriverHeader';
 import { DriverStatusScreen } from './DriverStatusScreen';
 import { type DriverTab, DriverTabs } from './DriverTabs';
 import { getDriverPageState } from './getDriverPageState';
+import { InstallGate } from './InstallGate';
+import { isIos } from './installHint';
+import { InstallHintCard } from './InstallHintCard';
 import { registerDriverServiceWorker } from './registerDriverServiceWorker';
 import { ShipmentsTab } from './ShipmentsTab';
 import { StopsTab } from './StopsTab';
 import { useDriverSession } from './useDriverSession';
+import { isInstalledApp, useInstallPrompt } from './useInstallPrompt';
 
 function getQueryValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -20,7 +24,7 @@ function getQueryValue(value: string | string[] | undefined) {
 
 export const DriverPage = () => {
   const router = useRouter();
-  // `/driver/{token}` comes from a WhatsApp link; `/driver` (installed app start page) has none.
+  // `/driver/{token}` is the link the driver got from their superior; `/driver` (installed app start page) has none.
   const linkToken = router.isReady ? (getQueryValue(router.query.token) ?? null) : undefined;
   const focusedStopId = getQueryValue(router.query.vehicleStopId) ?? null;
 
@@ -31,20 +35,42 @@ export const DriverPage = () => {
 
   const [activeTab, setActiveTab] = useState<DriverTab>('stops');
 
+  const installPrompt = useInstallPrompt();
+  const [installedOn, setInstalledOn] = useState<'ios' | 'android' | null>(null);
+
   useEffect(() => {
     registerDriverServiceWorker();
+    if (isInstalledApp()) {
+      setInstalledOn(isIos(navigator.userAgent) ? 'ios' : 'android');
+    }
   }, []);
 
   const pageState = getDriverPageState({ sessionStatus: status, hasStops: !!stops, accountError, stopsError });
 
   function renderContent() {
-    if (pageState === 'expired') return <DriverStatusScreen variant={linkToken ? 'expired' : 'signed-out'} />;
+    if (pageState === 'expired') {
+      return <DriverStatusScreen installedOn={installedOn} variant={linkToken ? 'expired' : 'signed-out'} />;
+    }
     if (pageState === 'session-error') return <DriverStatusScreen variant="error" onRetry={retry} />;
     if (pageState === 'stops-error') return <DriverStatusScreen variant="error" onRetry={() => void refetchStops()} />;
     if (!stops) return <DriverStatusScreen variant="loading" />;
 
+    // Phone browser: install first (the session already exists, so iOS copies the cookie into the app).
+    if (installPrompt.mode === 'gate') {
+      return (
+        <InstallGate
+          platform={installPrompt.platform}
+          onContinueInBrowser={installPrompt.continueInBrowser}
+          onInstall={() => void installPrompt.install()}
+        />
+      );
+    }
+
     return (
       <>
+        {installPrompt.mode === 'card' && (
+          <InstallHintCard platform={installPrompt.platform} onInstall={() => void installPrompt.install()} />
+        )}
         {activeTab === 'stops' ? (
           <StopsTab focusedStopId={focusedStopId} stops={stops} />
         ) : (

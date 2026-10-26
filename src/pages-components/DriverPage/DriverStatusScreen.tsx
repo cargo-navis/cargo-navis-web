@@ -1,11 +1,29 @@
 import { Button, FlexLayout, Icon, LoadingSpinner, Text } from '@/ui';
 
+const NEW_LINK_TEXT = 'Za pristup ti je potreban novi link. Zatraži ga od nadređenog.';
+
 interface DriverStatusScreenProps {
   variant: 'loading' | 'expired' | 'signed-out' | 'error';
+  /** Set inside the app added to the home screen; changes the signed-out copy. */
+  installedOn?: 'ios' | 'android' | null;
   onRetry?(): void;
 }
 
-export const DriverStatusScreen: React.FC<DriverStatusScreenProps> = ({ variant, onRetry }) => {
+function getSignedOutCopy(installedOn: DriverStatusScreenProps['installedOn']) {
+  if (installedOn === 'ios') {
+    // The installed iOS app only gets Safari's cookies when it is added, so a new link alone does not sign it in.
+    return {
+      title: 'Sesija je istekla',
+      text: 'Za pristup ti je potreban novi link. Zatraži ga od nadređenog i otvori ga u Safariju, zatim obriši aplikaciju s početnog zaslona i dodaj je ponovno.',
+    };
+  }
+  if (installedOn === 'android') {
+    return { title: 'Sesija je istekla', text: NEW_LINK_TEXT };
+  }
+  return { title: 'Prijava putem linka', text: 'Za pristup nalozima potreban ti je link. Zatraži ga od nadređenog.' };
+}
+
+export const DriverStatusScreen: React.FC<DriverStatusScreenProps> = ({ variant, installedOn, onRetry }) => {
   if (variant === 'loading') {
     return (
       <FlexLayout className="grow items-center justify-center">
@@ -15,14 +33,15 @@ export const DriverStatusScreen: React.FC<DriverStatusScreenProps> = ({ variant,
   }
 
   if (variant === 'signed-out') {
+    const { title, text } = getSignedOutCopy(installedOn);
     return (
       <FlexLayout className="grow flex-col items-center justify-center gap-3 px-8 text-center">
-        <Icon color="text-dark-500 dark:text-light-300" icon="IconBrandWhatsapp" size="xxxl" />
+        <Icon color="text-dark-500 dark:text-light-300" icon="IconLink" size="xxxl" />
         <Text color="text-color-1" variant="text-m-medium">
-          Otvori link iz WhatsAppa
+          {title}
         </Text>
         <Text color="text-color-3" variant="text-xs">
-          Za pristup nalozima otvori zadnji link koji si dobio u WhatsAppu.
+          {text}
         </Text>
       </FlexLayout>
     );
@@ -42,7 +61,7 @@ export const DriverStatusScreen: React.FC<DriverStatusScreenProps> = ({ variant,
       </Text>
       {isExpired ? (
         <Text color="text-color-3" variant="text-xs">
-          Otvori najnoviju poruku iz WhatsAppa.
+          {NEW_LINK_TEXT}
         </Text>
       ) : (
         <Button iconLeft="IconReload" size="l" text="Pokušaj ponovno" variant="secondary" onClick={onRetry} />
