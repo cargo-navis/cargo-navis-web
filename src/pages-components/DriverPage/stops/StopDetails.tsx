@@ -4,7 +4,7 @@ import type { DriverStop, DriverStopCargo } from '@/lib/api/driver';
 import { getCargoLabel } from '@/lib/utils/cargo';
 import { Alert, Box, FlexLayout, Icon, type IconType, Text } from '@/ui';
 
-import { formatCargoMeasures, getNavigationUrl, groupCargosByShipment } from './utils';
+import { formatCargoMeasures, getNavigationUrl, groupCargosByShipment } from '../utils';
 
 interface StopDetailsProps {
   stop: DriverStop;

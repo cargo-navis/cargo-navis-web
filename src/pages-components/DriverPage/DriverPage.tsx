@@ -5,18 +5,18 @@ import { useEffect, useState } from 'react';
 import { useDriverAccount, useDriverStops } from '@/lib/hooks/api/driver';
 import { Box, FlexLayout } from '@/ui';
 
-import { DriverHeader } from './DriverHeader';
-import { DriverStatusScreen } from './DriverStatusScreen';
-import { type DriverTab, DriverTabs } from './DriverTabs';
 import { getDriverPageState } from './getDriverPageState';
-import { InstallGate } from './InstallGate';
-import { isIos } from './installHint';
-import { InstallHintCard } from './InstallHintCard';
-import { registerDriverServiceWorker } from './registerDriverServiceWorker';
-import { ShipmentsTab } from './ShipmentsTab';
-import { StopsTab } from './StopsTab';
-import { useDriverSession } from './useDriverSession';
-import { isInstalledApp, useInstallPrompt } from './useInstallPrompt';
+import { useDriverSession } from './hooks/useDriverSession';
+import { InstallGate } from './install/InstallGate';
+import { isIos } from './install/installHint';
+import { InstallHintCard } from './install/InstallHintCard';
+import { registerDriverServiceWorker } from './install/registerDriverServiceWorker';
+import { isInstalledApp, useInstallPrompt } from './install/useInstallPrompt';
+import { DriverHeader } from './layout/DriverHeader';
+import { DriverStatusScreen } from './layout/DriverStatusScreen';
+import { type DriverTab, DriverTabs } from './layout/DriverTabs';
+import { ShipmentsTab } from './shipments/ShipmentsTab';
+import { StopsTab } from './stops/StopsTab';
 
 function getQueryValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;

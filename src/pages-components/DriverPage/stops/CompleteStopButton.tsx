@@ -6,7 +6,7 @@ import { useCompleteDriverStop, useUncompleteDriverStop } from '@/lib/hooks/api/
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Button, FlexLayout, Icon, Text } from '@/ui';
 
-import { getStopKindLabels } from './utils';
+import { getStopKindLabels } from '../utils';
 
 export const UNDO_TIMEOUT_MS = 5_000;
 

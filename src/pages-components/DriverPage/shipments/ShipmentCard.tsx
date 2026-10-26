@@ -7,10 +7,10 @@ import type { DriverShipment } from '@/lib/api/driver';
 import type { VehicleStopAddress } from '@/lib/api/vehicleStops';
 import { BottomSheet, Box, FlexLayout, Icon, Text } from '@/ui';
 
-import { CompleteStopButton } from './CompleteStopButton';
-import { StopDetails } from './StopDetails';
-import { StopDocuments } from './StopDocuments';
-import { formatStopDate, getStopKindLabels } from './utils';
+import { CompleteStopButton } from '../stops/CompleteStopButton';
+import { StopDetails } from '../stops/StopDetails';
+import { StopDocuments } from '../stops/StopDocuments';
+import { formatStopDate, getStopKindLabels } from '../utils';
 
 const RoutePlace: React.FC<{ address: VehicleStopAddress | null }> = ({ address }) => (
   <FlexLayout className="items-center gap-[6px]">

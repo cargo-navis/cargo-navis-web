@@ -5,7 +5,7 @@ import { CountryFlag } from '@/components/countries';
 import type { DriverStop } from '@/lib/api/driver';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 
-import { formatStopDate, getStopCompanyName } from './utils';
+import { formatStopDate, getStopCompanyName } from '../utils';
 
 // Same convention as the dispatcher dashboard: utovar = orange, istovar = teal.
 const KIND_BADGE_CLASSES = {

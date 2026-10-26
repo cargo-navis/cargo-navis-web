@@ -3,8 +3,8 @@ import { useMemo } from 'react';
 import type { DriverStop } from '@/lib/api/driver';
 import { FlexLayout, Text } from '@/ui';
 
+import { buildDriverShipments } from '../utils';
 import { ShipmentCard } from './ShipmentCard';
-import { buildDriverShipments } from './utils';
 
 export const ShipmentsTab: React.FC<{ stops: DriverStop[] }> = ({ stops }) => {
   const shipments = useMemo(() => buildDriverShipments(stops), [stops]);

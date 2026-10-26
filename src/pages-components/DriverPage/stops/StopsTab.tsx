@@ -5,10 +5,10 @@ import { useEffect, useMemo, useState } from 'react';
 import type { DriverStop } from '@/lib/api/driver';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 
-import { StickySectionHeader } from './StickySectionHeader';
+import { StickySectionHeader } from '../layout/StickySectionHeader';
+import { buildRouteTimeline } from '../utils';
 import { StopCard } from './StopCard';
 import { StopDrawer } from './StopDrawer';
-import { buildRouteTimeline } from './utils';
 
 interface StopsTabProps {
   stops: DriverStop[];
