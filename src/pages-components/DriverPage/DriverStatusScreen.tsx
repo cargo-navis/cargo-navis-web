@@ -1,7 +1,7 @@
 import { Button, FlexLayout, Icon, LoadingSpinner, Text } from '@/ui';
 
 interface DriverStatusScreenProps {
-  variant: 'loading' | 'expired' | 'error';
+  variant: 'loading' | 'expired' | 'signed-out' | 'error';
   onRetry?(): void;
 }
 
@@ -10,6 +10,20 @@ export const DriverStatusScreen: React.FC<DriverStatusScreenProps> = ({ variant,
     return (
       <FlexLayout className="grow items-center justify-center">
         <LoadingSpinner color="text-teal-700 dark:text-teal-300" size="l" />
+      </FlexLayout>
+    );
+  }
+
+  if (variant === 'signed-out') {
+    return (
+      <FlexLayout className="grow flex-col items-center justify-center gap-3 px-8 text-center">
+        <Icon color="text-dark-500 dark:text-light-300" icon="IconBrandWhatsapp" size="xxxl" />
+        <Text color="text-color-1" variant="text-m-medium">
+          Otvori link iz WhatsAppa
+        </Text>
+        <Text color="text-color-3" variant="text-xs">
+          Za pristup nalozima otvori zadnji link koji si dobio u WhatsAppu.
+        </Text>
       </FlexLayout>
     );
   }

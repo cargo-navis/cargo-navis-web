@@ -19,7 +19,8 @@ function getQueryValue(value: string | string[] | undefined) {
 
 export const DriverPage = () => {
   const router = useRouter();
-  const linkToken = router.isReady ? getQueryValue(router.query.token) : undefined;
+  // `/driver/{token}` comes from a WhatsApp link; `/driver` (installed app start page) has none.
+  const linkToken = router.isReady ? (getQueryValue(router.query.token) ?? null) : undefined;
   const focusedStopId = getQueryValue(router.query.vehicleStopId) ?? null;
 
   const { status, retry } = useDriverSession(linkToken);
@@ -32,7 +33,7 @@ export const DriverPage = () => {
   const pageState = getDriverPageState({ sessionStatus: status, hasStops: !!stops, accountError, stopsError });
 
   function renderContent() {
-    if (pageState === 'expired') return <DriverStatusScreen variant="expired" />;
+    if (pageState === 'expired') return <DriverStatusScreen variant={linkToken ? 'expired' : 'signed-out'} />;
     if (pageState === 'session-error') return <DriverStatusScreen variant="error" onRetry={retry} />;
     if (pageState === 'stops-error') return <DriverStatusScreen variant="error" onRetry={() => void refetchStops()} />;
     if (!stops) return <DriverStatusScreen variant="loading" />;

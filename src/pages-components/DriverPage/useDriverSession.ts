@@ -4,12 +4,13 @@ import { driverBackend, isDriverLinkExpiredError } from '@/lib/services/driverBa
 
 export type DriverSessionStatus = 'loading' | 'ready' | 'expired' | 'error';
 
-export function useDriverSession(linkToken: string | undefined) {
+/** `linkToken`: `undefined` while the router is not ready, `null` without a link (restore from the refresh cookie). */
+export function useDriverSession(linkToken: string | null | undefined) {
   const [status, setStatus] = useState<DriverSessionStatus>('loading');
   const [attempt, setAttempt] = useState(0);
 
   useEffect(() => {
-    if (!linkToken) return;
+    if (linkToken === undefined) return;
 
     let isCancelled = false;
     setStatus('loading');
