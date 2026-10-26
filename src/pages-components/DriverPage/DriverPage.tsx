@@ -96,8 +96,8 @@ export const DriverPage = () => {
         <meta content="default" name="apple-mobile-web-app-status-bar-style" />
       </NextHead>
       <Box className="min-h-dvh bg-dark-50 dark:bg-light-900">
-        {/* Bottom padding keeps the last card clear of the fixed tab bar. */}
-        <FlexLayout className="mx-auto min-h-dvh w-full max-w-[480px] flex-col pb-[calc(76px+env(safe-area-inset-bottom))]">
+        {/* Padding keeps content clear of the fixed header (top) and tab bar (bottom). */}
+        <FlexLayout className="mx-auto min-h-dvh w-full max-w-[480px] flex-col pb-[calc(76px+env(safe-area-inset-bottom))] pt-[52px]">
           <DriverHeader driverName={account?.fullName} />
           {renderContent()}
         </FlexLayout>
