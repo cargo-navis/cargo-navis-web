@@ -2,10 +2,15 @@ import axios, {
   type AxiosAdapter,
   type AxiosError,
   type AxiosRequestConfig,
+  type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from 'axios';
 
 import type { DriverTokenExchangeResponse } from '@/lib/api/driver.d';
+import { getAuthBaseUrl } from '@/lib/utils/authBaseUrl';
+
+import { readAccessToken } from './readAccessToken';
+import { createSingleFlight } from './singleFlight';
 
 type AxiosFunction = <T>(url: string, config?: AxiosRequestConfig & { fullResponse?: boolean }) => Promise<T>;
 type AxiosDataFunction = <T>(
@@ -34,47 +39,77 @@ function isClientError(error: unknown) {
 }
 
 /**
- * API client for the driver portal. Kept apart from the dispatcher `backend` client: the driver JWT
- * lives only in memory, comes from exchanging the WhatsApp link token, and a 401 never redirects to /login.
+ * API client for the driver portal. Kept apart from the dispatcher `backend` client: the driver JWT lives only
+ * in memory and comes from exchanging the WhatsApp link token or from the httpOnly refresh cookie that the
+ * exchange sets. A 401 never redirects to /login.
  */
 export function createDriverBackendService({ adapter }: { adapter?: AxiosAdapter } = {}) {
   const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
-  const exchangeClient = axios.create({ baseURL, adapter });
+  // Exchange and refresh set or read the refresh cookie, so they go through the auth base URL with credentials.
+  const authClient = axios.create({ baseURL: getAuthBaseUrl(), adapter, withCredentials: true });
   const instance = axios.create({ baseURL, adapter });
 
-  let linkToken: string | null = null;
   let accessToken: string | null = null;
-  let pendingExchange: Promise<void> | null = null;
+  // Last link that exchanged successfully; a fallback while it is still valid (see recoverSession).
+  let linkToken: string | null = null;
 
-  // Parallel callers share one in-flight exchange.
-  function exchange() {
-    if (!pendingExchange) {
-      pendingExchange = exchangeClient
-        // Wrapped in the API envelope: { data: { accessToken }, status: 'success' }.
-        .post<{ data?: DriverTokenExchangeResponse }>('/auth/exchange', { token: linkToken })
-        .then(({ data: body }) => {
-          const token = body?.data?.accessToken;
-          if (!token) {
-            // Fail loudly; a silent undefined would send every later request without a token.
-            throw new Error('Driver token exchange: missing access token in response');
-          }
-          accessToken = token;
-        })
-        .catch((error) => {
-          throw isClientError(error) ? new DriverLinkExpiredError() : error;
-        })
-        .finally(() => {
-          pendingExchange = null;
-        });
-    }
-
-    return pendingExchange;
+  // Exchange and refresh answer in the API envelope (see readAccessToken).
+  function storeAccessToken({ data }: AxiosResponse<{ data?: DriverTokenExchangeResponse }>) {
+    accessToken = readAccessToken(data);
   }
 
-  function startSession(token: string) {
-    linkToken = token;
+  function toSessionError(error: unknown) {
+    return isClientError(error) ? new DriverLinkExpiredError() : error;
+  }
+
+  async function exchange(linkToken: string) {
+    const result = await authClient.post('/auth/exchange', { token: linkToken });
+    return storeAccessToken(result);
+  }
+
+  // Parallel callers share one in-flight refresh.
+  const refresh = createSingleFlight(() =>
+    authClient
+      .post('/auth/refresh')
+      .then(storeAccessToken)
+      .catch((error) => {
+        throw toSessionError(error);
+      })
+  );
+
+  // After a 401: refresh, or re-exchange the link if refresh is rejected because the httpOnly refresh cookie is
+  // missing (not set, blocked or cleared by the browser) or was replaced by a dashboard login in the same browser.
+  // The link dies 15 minutes after first use, so this fallback is short-lived.
+  const recoverSession = createSingleFlight(async () => {
+    try {
+      await refresh();
+    } catch (error) {
+      if (!isDriverLinkExpiredError(error) || !linkToken) throw error;
+      await exchange(linkToken).catch((exchangeError) => {
+        throw toSessionError(exchangeError);
+      });
+    }
+  });
+
+  /**
+   * A link always wins, so a newer link (or another driver's) replaces the session. A used-up link falls back to
+   * the refresh cookie, e.g. the installed app reopening an old link URL.
+   */
+  async function startSession(newLinkToken: string | null) {
     accessToken = null;
-    return exchange();
+    linkToken = null;
+
+    if (newLinkToken) {
+      try {
+        await exchange(newLinkToken);
+        linkToken = newLinkToken;
+        return;
+      } catch (error) {
+        if (!isClientError(error)) throw error;
+      }
+    }
+
+    await refresh();
   }
 
   instance.interceptors.request.use((config) => {
@@ -99,9 +134,9 @@ export function createDriverBackendService({ adapter }: { adapter?: AxiosAdapter
 
       request._retried = true;
 
-      // Another request may already have refreshed the JWT; only exchange if this one used the current token.
+      // Another request may already have refreshed the JWT; only refresh if this one used the current token.
       if (request.headers.Authorization === `Bearer ${accessToken}`) {
-        await exchange();
+        await recoverSession();
       }
 
       return instance(request);

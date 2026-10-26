@@ -6,6 +6,23 @@ import { createMockStops, MOCK_DRIVER_ID, mockAccount } from './driverMockData';
 export { MOCK_DRIVER_ID };
 
 const MOCK_FILE_URL = '/apple-touch-icon.png';
+const MOCK_SESSION_KEY = 'driver-mock-session';
+
+/** Stands in for the httpOnly refresh cookie; sessionStorage keeps it across reloads in the browser. */
+function createMockSession() {
+  const storage = typeof sessionStorage === 'undefined' ? null : sessionStorage;
+  let isActive = storage?.getItem(MOCK_SESSION_KEY) === 'true';
+
+  return {
+    get isActive() {
+      return isActive;
+    },
+    start() {
+      isActive = true;
+      storage?.setItem(MOCK_SESSION_KEY, 'true');
+    },
+  };
+}
 
 /**
  * Dev-only fake of the driver portal backend (run `npm run dev:driverMock`, which sets NEXT_PUBLIC_DRIVER_API_MOCK=true).
@@ -13,6 +30,7 @@ const MOCK_FILE_URL = '/apple-touch-icon.png';
  */
 export function createDriverMockAdapter({ delayMs = 400 }: { delayMs?: number } = {}): AxiosAdapter {
   const stops = createMockStops();
+  const session = createMockSession();
   let documentCounter = 0;
 
   function respond(config: InternalAxiosRequestConfig, status: number, data?: unknown): AxiosResponse {
@@ -34,9 +52,15 @@ export function createDriverMockAdapter({ delayMs = 400 }: { delayMs?: number } 
 
     if (method === 'post' && url === '/auth/exchange') {
       const { token } = JSON.parse(config.data ?? '{}');
-      return token === 'expired'
-        ? respond(config, 410)
-        : respond(config, 200, { data: { accessToken: 'mock-jwt' }, status: 'success' });
+      if (token === 'expired') return respond(config, 410);
+      session.start();
+      return respond(config, 200, { data: { accessToken: 'mock-jwt' }, status: 'success' });
+    }
+
+    if (method === 'post' && url === '/auth/refresh') {
+      return session.isActive
+        ? respond(config, 200, { data: { accessToken: 'mock-jwt' }, status: 'success' })
+        : respond(config, 401);
     }
 
     if (method === 'get' && url === '/api/account') {

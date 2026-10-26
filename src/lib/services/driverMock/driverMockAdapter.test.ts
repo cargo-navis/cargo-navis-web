@@ -54,4 +54,21 @@ describe('driverMockAdapter', () => {
 
     await expect(service.startSession('expired')).rejects.toBeInstanceOf(DriverLinkExpiredError);
   });
+
+  it('refresh returns 401 before any exchange', async () => {
+    const service = createDriverBackendService({ adapter: createDriverMockAdapter({ delayMs: 0 }) });
+
+    await expect(service.startSession(null)).rejects.toBeInstanceOf(DriverLinkExpiredError);
+  });
+
+  it('refresh succeeds after an exchange', async () => {
+    const adapter = createDriverMockAdapter({ delayMs: 0 });
+    await createDriverBackendService({ adapter }).startSession('abc');
+
+    // A fresh client (like a reload of /driver) restores the session from the simulated cookie.
+    const service = createDriverBackendService({ adapter });
+    await service.startSession(null);
+
+    await expect(service.get<DriverStop[]>('/api/driver/stops')).resolves.toEqual(expect.any(Array));
+  });
 });

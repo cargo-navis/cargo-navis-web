@@ -5,11 +5,11 @@ import axios, {
   type InternalAxiosRequestConfig,
 } from 'axios';
 
-import type { AuthResponse } from '@/lib/api/login';
 import { getAuthBaseUrl } from '@/lib/utils/authBaseUrl';
 import { isServer } from '@/lib/utils/browser';
 import { clearAuthCookies, getAuthTokens, setAuthTokens } from '@/lib/utils/session';
 
+import { readAccessToken } from './readAccessToken';
 import { createSingleFlight } from './singleFlight';
 
 type AxiosFunction = <T>(url: string, config?: AxiosRequestConfig & { fullResponse?: boolean }) => Promise<T>;
@@ -61,16 +61,9 @@ export function createBackendService({
 
   // Parallel 401s share one refresh. The refresh token travels as an httpOnly cookie.
   const refresh = createSingleFlight(async () => {
-    // Unlike login, refresh answers in the API envelope: { data: { accessToken }, status: 'success' }.
-    const { data: body } = await authClient.post<{ data?: AuthResponse.RootObject }>('/auth/refresh', undefined, {
-      withCredentials: true,
-    });
-    const accessToken = body?.data?.accessToken;
-    if (!accessToken) {
-      throw new Error('Token refresh: missing access token in response');
-    }
-
-    setAccessToken(accessToken);
+    // Unlike login, refresh answers in the API envelope (see readAccessToken).
+    const { data } = await authClient.post('/auth/refresh', undefined, { withCredentials: true });
+    setAccessToken(readAccessToken(data));
   });
 
   instance.interceptors.request.use((config) => {
