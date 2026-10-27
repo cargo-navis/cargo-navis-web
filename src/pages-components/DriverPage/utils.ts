@@ -125,6 +125,18 @@ export function formatStopDate(date: string | null, now: Dayjs): string {
   return day.format('ddd D.M.');
 }
 
+/** When a stop was confirmed: `Danas · 09:05`, `Jučer · 17:45`, `pon. 12.10. · 09:00`, other years with the full year. */
+export function formatCompletedAt(completedAt: string, now: Dayjs): string {
+  const at = dayjs(completedAt).locale('hr');
+  const time = at.format('HH:mm');
+
+  if (at.isSame(now, 'day')) return `Danas · ${time}`;
+  if (at.isSame(now.subtract(1, 'day'), 'day')) return `Jučer · ${time}`;
+
+  const date = at.isSame(now, 'year') ? at.format('ddd D.M.') : at.format('ddd D.M.YYYY.');
+  return `${date} · ${time}`;
+}
+
 // The API returns stops only, so shipments are rebuilt here. Stops completed before the
 // `completedWithinDays` window are not returned, so older shipments can miss early stops (known gap).
 export function buildDriverShipments(stops: DriverStop[]): DriverShipment[] {

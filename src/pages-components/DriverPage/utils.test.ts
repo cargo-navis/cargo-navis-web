@@ -8,6 +8,7 @@ import {
   buildDriverShipments,
   buildRouteTimeline,
   formatCargoMeasures,
+  formatCompletedAt,
   formatStopDate,
   getDayDividerLabel,
   getDocumentIcon,
@@ -260,6 +261,25 @@ describe('groupCargosByShipment', () => {
     expect(groups.map((g) => g.shipment.id)).toEqual(['a', 'b']);
     expect(groups[0].cargos).toEqual([a1, a2]);
     expect(groups[1].cargos).toEqual([b1]);
+  });
+});
+
+describe('formatCompletedAt', () => {
+  // now: Monday 2026-10-19 10:00
+  it('shows "Danas" for today', () => {
+    expect(formatCompletedAt('2026-10-19T09:05:00', now)).toBe('Danas · 09:05');
+  });
+
+  it('shows "Jučer" for yesterday', () => {
+    expect(formatCompletedAt('2026-10-18T17:45:00', now)).toBe('Jučer · 17:45');
+  });
+
+  it('shows weekday and date for older days this year', () => {
+    expect(formatCompletedAt('2026-10-12T09:00:00', now)).toBe('pon. 12.10. · 09:00');
+  });
+
+  it('adds the full year for another year', () => {
+    expect(formatCompletedAt('2025-12-30T08:30:00', now)).toBe('uto. 30.12.2025. · 08:30');
   });
 });
 

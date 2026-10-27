@@ -1,10 +1,11 @@
 import clsx from 'clsx';
+import dayjs from 'dayjs';
 
 import type { DriverStop, DriverStopCargo } from '@/lib/api/driver';
 import { getCargoLabel } from '@/lib/utils/cargo';
 import { Alert, Box, FlexLayout, Icon, type IconType, Text } from '@/ui';
 
-import { formatCargoMeasures, getNavigationUrl, groupCargosByShipment } from '../utils';
+import { formatCargoMeasures, formatCompletedAt, getNavigationUrl, groupCargosByShipment } from '../utils';
 
 interface StopDetailsProps {
   stop: DriverStop;
@@ -39,14 +40,23 @@ const SIDE_STYLES: Record<
   },
 };
 
+// A confirmed stop turns its sections green with a check and shows when it was confirmed, whatever the side.
+const COMPLETED_STYLE = {
+  icon: 'IconCircleCheck',
+  color: 'text-green-600 dark:text-green-400',
+  line: 'bg-green-300 dark:bg-green-700',
+  bar: 'bg-green-600 dark:bg-green-400',
+} satisfies Omit<(typeof SIDE_STYLES)['loading'], 'title'>;
+
 const CargoSide: React.FC<{
   side: 'loading' | 'unloading';
   cargos: DriverStopCargo[];
+  completedAt: string | null;
   hideShipmentHeaders?: boolean;
   showSideBar?: boolean;
-}> = ({ side, cargos, hideShipmentHeaders, showSideBar }) => {
+}> = ({ side, cargos, completedAt, hideShipmentHeaders, showSideBar }) => {
   const isLoading = side === 'loading';
-  const style = SIDE_STYLES[side];
+  const style = completedAt ? { ...SIDE_STYLES[side], ...COMPLETED_STYLE } : SIDE_STYLES[side];
 
   return (
     <FlexLayout className={clsx('relative flex-col gap-2', showSideBar && '-ml-4 pl-4')}>
@@ -55,6 +65,11 @@ const CargoSide: React.FC<{
         <Icon icon={style.icon} size="s" />
         <Text variant="text-xxxs-bold">{style.title}</Text>
         <Box className={clsx('h-[1px] grow', style.line)} />
+        {completedAt && (
+          <Text className="shrink-0" variant="text-xxxs-medium">
+            {formatCompletedAt(completedAt, dayjs())}
+          </Text>
+        )}
       </FlexLayout>
       <FlexLayout className="flex-col gap-4">
         {groupCargosByShipment(cargos).map(({ shipment, cargos: shipmentCargos }) => {
@@ -64,7 +79,7 @@ const CargoSide: React.FC<{
           );
 
           return (
-            <FlexLayout className="flex-col gap-1" key={shipment.id}>
+            <FlexLayout className={clsx('flex-col gap-1', completedAt && 'opacity-50')} key={shipment.id}>
               {!hideShipmentHeaders && (
                 <Text color="text-color-1" variant="text-xs-medium">
                   Nalog #{shipment.orderNumber}
@@ -134,6 +149,7 @@ export const StopDetails: React.FC<StopDetailsProps> = ({ stop, hideShipmentHead
       {stop.loadingCargos.length > 0 && (
         <CargoSide
           cargos={stop.loadingCargos}
+          completedAt={stop.completedAt}
           hideShipmentHeaders={hideShipmentHeaders}
           showSideBar={showSideBars}
           side="loading"
@@ -142,6 +158,7 @@ export const StopDetails: React.FC<StopDetailsProps> = ({ stop, hideShipmentHead
       {stop.unloadingCargos.length > 0 && (
         <CargoSide
           cargos={stop.unloadingCargos}
+          completedAt={stop.completedAt}
           hideShipmentHeaders={hideShipmentHeaders}
           showSideBar={showSideBars}
           side="unloading"

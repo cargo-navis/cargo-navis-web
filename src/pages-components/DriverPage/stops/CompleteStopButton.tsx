@@ -1,34 +1,20 @@
 import { closeToast } from '@heroui/react';
-import dayjs from 'dayjs';
 
 import type { DriverStop } from '@/lib/api/driver';
 import { useCompleteDriverStop, useUncompleteDriverStop } from '@/lib/hooks/api/driver';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Button, FlexLayout, Icon, Text } from '@/ui';
+import { Button } from '@/ui';
 
 import { getStopKindLabels, getStopToastDescription } from '../utils';
 
 export const UNDO_TIMEOUT_MS = 5_000;
 
-function formatCompletedAt(completedAt: string) {
-  const date = dayjs(completedAt);
-  return date.isSame(dayjs(), 'day') ? date.format('HH:mm') : date.format('D.M. HH:mm');
-}
-
 export const CompleteStopButton: React.FC<{ stop: DriverStop }> = ({ stop }) => {
   const { mutateAsync: completeStop, isPending } = useCompleteDriverStop();
   const { mutateAsync: uncompleteStop } = useUncompleteDriverStop();
 
-  if (stop.completedAt) {
-    return (
-      <FlexLayout className="items-center gap-2">
-        <Icon color="text-green-600" icon="IconCircleCheck" size="m" />
-        <Text color="text-color-2" variant="text-xs-medium">
-          Potvrđeno {formatCompletedAt(stop.completedAt)}
-        </Text>
-      </FlexLayout>
-    );
-  }
+  // A confirmed stop shows its time in the green section header instead (see StopDetails).
+  if (stop.completedAt) return null;
 
   const labels = getStopKindLabels(stop);
 
