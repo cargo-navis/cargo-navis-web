@@ -1,4 +1,4 @@
-import { FlexLayout, Text } from '@/ui';
+import { Box, FlexLayout, Icon, Text } from '@/ui';
 
 import type { InstallPlatform } from './installHint';
 import { InstallInstructions } from './InstallInstructions';
@@ -19,9 +19,11 @@ export const InstallHintCard: React.FC<InstallHintCardProps> = ({ platform, onIn
         Koristi aplikaciju Cargo Navis
       </Text>
       <InstallInstructions layout="compact" platform={platform} onInstall={onInstall} />
-      <Text color="text-color-3" variant="text-xs">
-        Ako je već imaš, a traži ponovnu prijavu, obriši je i dodaj ponovno.
-      </Text>
+      <Box as="hr" className="text-dark-200 dark:text-light-800 my-1" />
+      <FlexLayout className="gap-1 text-orange-500">
+        <Icon className="mt-[2px]" icon="IconInfoCircle" />
+        <Text variant="text-xs">Ako je već imaš (a traži te ponovnu prijavu), obriši je i dodaj ponovno.</Text>
+      </FlexLayout>
     </FlexLayout>
   </FlexLayout>
 );

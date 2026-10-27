@@ -1,33 +1,70 @@
+import { createContext, useContext } from 'react';
+
 import { Box, Button, FlexLayout, Icon, Text } from '@/ui';
 
 import type { InstallPlatform } from './installHint';
 
+type Layout = 'steps' | 'compact';
+
+// Same numbered steps in both places; the card (`compact`) only renders them smaller.
+const LayoutContext = createContext<Layout>('steps');
+
+const SIZES = {
+  steps: {
+    listGap: 'gap-3',
+    badge: 'size-[24px]',
+    number: 'text-xs-medium',
+    text: 'text-s',
+    icon: 'm',
+    offset: 'mt-[2px]',
+  },
+  compact: {
+    listGap: 'gap-2',
+    badge: 'size-[20px]',
+    number: 'text-xxxs-medium',
+    text: 'text-xs',
+    icon: 's',
+    offset: 'mt-1',
+  },
+} as const;
+
+function useSizes() {
+  return SIZES[useContext(LayoutContext)];
+}
+
 const StepList: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <FlexLayout as="ol" className="flex-col gap-3">
+  <FlexLayout as="ol" className={`flex-col ${useSizes().listGap}`}>
     {children}
   </FlexLayout>
 );
 
-const Step: React.FC<{ number: number; children: React.ReactNode }> = ({ number, children }) => (
-  <FlexLayout as="li" className="items-start gap-3">
-    <FlexLayout className="size-[24px] shrink-0 items-center justify-center mt-[2px] rounded-circle bg-teal-50 dark:bg-teal-900">
-      <Text className="tabular-nums" color="text-teal-700 dark:text-teal-300" variant="text-xs-medium">
-        {number}
-      </Text>
+const Step: React.FC<{ number: number; children: React.ReactNode }> = ({ number, children }) => {
+  const sizes = useSizes();
+  return (
+    <FlexLayout as="li" className="items-start gap-3">
+      <FlexLayout
+        className={`${sizes.badge} ${sizes.offset} shrink-0 items-center justify-center rounded-circle bg-teal-100 dark:bg-teal-900`}
+      >
+        <Text className="tabular-nums" color="text-teal-700 dark:text-teal-300" variant={sizes.number}>
+          {number}
+        </Text>
+      </FlexLayout>
+      <FlexLayout className="min-w-0 flex-wrap items-center gap-x-1 pt-[2px]">{children}</FlexLayout>
     </FlexLayout>
-    <FlexLayout className="min-w-0 flex-wrap items-center gap-x-1 pt-[2px]">{children}</FlexLayout>
-  </FlexLayout>
-);
+  );
+};
 
 const StepText: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Text color="text-color-2" variant="text-s">
+  <Text color="text-color-2" variant={useSizes().text}>
     {children}
   </Text>
 );
 
-const ShareIcon = () => <Icon color="text-dark-700 dark:text-light-100" icon="IconShare2" size="m" />;
+const ShareIcon = () => <Icon color="text-dark-700 dark:text-light-100" icon="IconShare2" size={useSizes().icon} />;
 
-const SafariIcon = () => <Icon color="text-dark-700 dark:text-light-100" icon="IconBrandSafari" size="m" />;
+const SafariIcon = () => (
+  <Icon color="text-dark-700 dark:text-light-100" icon="IconBrandSafari" size={useSizes().icon} />
+);
 
 /** Steps inside Safari, shared by Safari itself and by other iOS browsers once they switch to Safari. */
 const SafariSteps: React.FC<{ startAt: number }> = ({ startAt }) => (
@@ -52,19 +89,57 @@ const SafariSteps: React.FC<{ startAt: number }> = ({ startAt }) => (
   </>
 );
 
-const CompactLine: React.FC<{ icon?: React.ReactNode; children: React.ReactNode }> = ({ icon, children }) => (
-  <FlexLayout className="items-start gap-2">
-    {icon && <Box className="mt-[4px]">{icon}</Box>}
-    <Text color="text-color-3" variant="text-xs">
-      {children}
-    </Text>
-  </FlexLayout>
-);
+const PlatformSteps: React.FC<{ platform: 'ios-safari' | 'ios-other' | 'android-other' }> = ({ platform }) => {
+  if (platform === 'ios-safari') {
+    return (
+      <StepList>
+        <SafariSteps startAt={1} />
+      </StepList>
+    );
+  }
+
+  if (platform === 'ios-other') {
+    // Chrome/Firefox/in-app browsers on iOS: switch to Safari first, then the Safari steps.
+    return (
+      <StepList>
+        <Step number={1}>
+          <StepText>Otvori link u</StepText>
+          <SafariIcon />
+          <StepText>
+            <strong>Safariju</strong>
+          </StepText>
+        </Step>
+        <SafariSteps startAt={2} />
+      </StepList>
+    );
+  }
+
+  // android-other: no install dialog here, e.g. an in-app browser or Firefox. Any real browser can install the app.
+  return (
+    <StepList>
+      <Step number={1}>
+        <StepText>
+          Otvori link u <strong>pregledniku</strong> (npr. Chrome)
+        </StepText>
+      </Step>
+      <Step number={2}>
+        <StepText>
+          U izborniku ⋮ odaberi <strong>„Instaliraj aplikaciju”</strong> ili <strong>„Dodaj na početni zaslon”</strong>
+        </StepText>
+      </Step>
+      <Step number={3}>
+        <StepText>
+          Otvori <strong>Cargo Navis</strong> s početnog zaslona
+        </StepText>
+      </Step>
+    </StepList>
+  );
+};
 
 interface InstallInstructionsProps {
   platform: InstallPlatform;
-  /** `steps`: numbered list for the full-screen gate. `compact`: one sentence for the card. */
-  layout: 'steps' | 'compact';
+  /** `steps`: the full-screen gate. `compact`: the same steps, smaller, for the card. */
+  layout: Layout;
   onInstall(): void;
 }
 
@@ -86,68 +161,15 @@ export const InstallInstructions: React.FC<InstallInstructionsProps> = ({ platfo
 
   if (platform === 'installed') {
     return (
-      <Text color="text-color-2" variant={layout === 'steps' ? 'text-s' : 'text-xs'}>
+      <Text color="text-color-2" variant={SIZES[layout].text}>
         Aplikacija je instalirana. Otvori Cargo Navis s početnog zaslona.
       </Text>
     );
   }
 
-  if (platform === 'ios-safari') {
-    if (layout === 'compact') {
-      return <CompactLine icon={<ShareIcon />}>Dodirni Podijeli, zatim „Dodaj na početni zaslon”.</CompactLine>;
-    }
-    return (
-      <StepList>
-        <SafariSteps startAt={1} />
-      </StepList>
-    );
-  }
-
-  if (platform === 'ios-other') {
-    // Chrome/Firefox/in-app browsers on iOS: switch to Safari first, then the Safari steps.
-    if (layout === 'compact') {
-      return <CompactLine icon={<SafariIcon />}>Otvori link u Safariju, zatim ga dodaj na početni zaslon.</CompactLine>;
-    }
-    return (
-      <StepList>
-        <Step number={1}>
-          <StepText>Otvori link u</StepText>
-          <SafariIcon />
-          <StepText>
-            <strong>Safariju</strong>
-          </StepText>
-        </Step>
-        <SafariSteps startAt={2} />
-      </StepList>
-    );
-  }
-
-  // android-other: no install dialog here, e.g. an in-app browser or Firefox. Any real browser can install the app.
-  if (layout === 'compact') {
-    return (
-      <CompactLine>
-        Otvori link u pregledniku (npr. Chrome), zatim u izborniku ⋮ odaberi „Instaliraj aplikaciju” ili „Dodaj na
-        početni zaslon”.
-      </CompactLine>
-    );
-  }
   return (
-    <StepList>
-      <Step number={1}>
-        <StepText>
-          Otvori link u <strong>pregledniku</strong> (npr. Chrome)
-        </StepText>
-      </Step>
-      <Step number={2}>
-        <StepText>
-          U izborniku ⋮ odaberi <strong>„Instaliraj aplikaciju”</strong> ili <strong>„Dodaj na početni zaslon”</strong>
-        </StepText>
-      </Step>
-      <Step number={3}>
-        <StepText>
-          Otvori <strong>Cargo Navis</strong> s početnog zaslona
-        </StepText>
-      </Step>
-    </StepList>
+    <LayoutContext.Provider value={layout}>
+      <PlatformSteps platform={platform} />
+    </LayoutContext.Provider>
   );
 };
