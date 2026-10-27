@@ -3,7 +3,8 @@ import 'dayjs/locale/hr';
 import dayjs, { type Dayjs } from 'dayjs';
 
 import type { DriverCargoShipment, DriverShipment, DriverStop, DriverStopCargo } from '@/lib/api/driver.d';
-import type { VehicleStopAddress } from '@/lib/api/vehicleStops.d';
+import type { VehicleStopAddress, VehicleStopDocument } from '@/lib/api/vehicleStops.d';
+import type { IconType } from '@/ui';
 
 const isCompleted = (stop: DriverStop) => Boolean(stop.completedAt);
 
@@ -163,4 +164,37 @@ export function formatCargoMeasures(cargo: Pick<DriverStopCargo, 'weight' | 'ldm
   if (cargo.weight != null) measures.push(`${formatNumber(cargo.weight)} kg`);
   if (cargo.ldm != null) measures.push(`${formatNumber(cargo.ldm)} ldm`);
   return measures;
+}
+
+const ICON_BY_MIME_TYPE: Record<string, IconType> = {
+  'application/pdf': 'IconFileTypePdf',
+  'image/jpeg': 'IconFileTypeJpg',
+  'image/png': 'IconFileTypePng',
+};
+
+const ICON_BY_EXTENSION: Record<string, IconType> = {
+  pdf: 'IconFileTypePdf',
+  jpg: 'IconFileTypeJpg',
+  jpeg: 'IconFileTypeJpg',
+  png: 'IconFileTypePng',
+  doc: 'IconFileTypeDoc',
+  docx: 'IconFileTypeDocx',
+  xls: 'IconFileTypeXls',
+  xlsx: 'IconFileTypeXls',
+  csv: 'IconFileTypeCsv',
+  zip: 'IconFileTypeZip',
+  txt: 'IconFileTypeTxt',
+  xml: 'IconFileTypeXml',
+};
+
+/** Icon for a document in the stop sheet: by mime type, then by file extension (uploads are often octet-stream). */
+export function getDocumentIcon(document: Pick<VehicleStopDocument, 'name' | 'mimeType'>): IconType {
+  const mimeType = document.mimeType.toLowerCase();
+  const extension = document.name.split('.').pop()?.toLowerCase() ?? '';
+
+  return (
+    ICON_BY_MIME_TYPE[mimeType] ??
+    ICON_BY_EXTENSION[extension] ??
+    (mimeType.startsWith('image/') ? 'IconPhoto' : 'IconFile')
+  );
 }

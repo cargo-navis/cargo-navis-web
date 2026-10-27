@@ -8,6 +8,7 @@ import type { VehicleStopAddress } from '@/lib/api/vehicleStops';
 import { BottomSheet, Box, FlexLayout, Icon, Text } from '@/ui';
 
 import { CompleteStopButton } from '../stops/CompleteStopButton';
+import { DocumentsIndicator } from '../stops/StopCard';
 import { StopDetails } from '../stops/StopDetails';
 import { StopDocuments } from '../stops/StopDocuments';
 import { formatStopDate, getStopKindLabels } from '../utils';
@@ -47,6 +48,7 @@ const ShipmentSummary: React.FC<{ shipment: DriverShipment }> = ({ shipment }) =
       <Text color="text-color-3" variant="text-xxs">
         {shipment.completedStopsCount}/{shipment.totalStopsCount} postaja
       </Text>
+      {shipment.stops.some((stop) => stop.documents.length > 0) && <DocumentsIndicator />}
     </FlexLayout>
   </FlexLayout>
 );

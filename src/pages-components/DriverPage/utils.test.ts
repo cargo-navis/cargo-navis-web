@@ -10,6 +10,7 @@ import {
   formatCargoMeasures,
   formatStopDate,
   getDayDividerLabel,
+  getDocumentIcon,
   getNavigationUrl,
   getStopCompanyName,
   getStopKindLabels,
@@ -323,5 +324,29 @@ describe('formatCargoMeasures', () => {
   it('skips missing weight or ldm instead of crashing', () => {
     expect(formatCargoMeasures({ weight: 900, ldm: null })).toEqual(['900 kg']);
     expect(formatCargoMeasures({ weight: null, ldm: null })).toEqual([]);
+  });
+});
+
+describe('getDocumentIcon', () => {
+  const doc = (name: string, mimeType: string) => ({ name, mimeType });
+
+  it('picks the icon from the mime type', () => {
+    expect(getDocumentIcon(doc('cmr', 'application/pdf'))).toBe('IconFileTypePdf');
+    expect(getDocumentIcon(doc('photo', 'image/jpeg'))).toBe('IconFileTypeJpg');
+    expect(getDocumentIcon(doc('scan', 'image/png'))).toBe('IconFileTypePng');
+  });
+
+  it('uses a photo icon for other images', () => {
+    expect(getDocumentIcon(doc('IMG_0042.HEIC', 'image/heic'))).toBe('IconPhoto');
+  });
+
+  it('falls back to the file extension when the mime type is generic', () => {
+    expect(getDocumentIcon(doc('Racun.DOCX', 'application/octet-stream'))).toBe('IconFileTypeDocx');
+    expect(getDocumentIcon(doc('popis.xlsx', ''))).toBe('IconFileTypeXls');
+    expect(getDocumentIcon(doc('export.csv', 'text/csv'))).toBe('IconFileTypeCsv');
+  });
+
+  it('uses a plain file icon for unknown types', () => {
+    expect(getDocumentIcon(doc('data.bin', 'application/octet-stream'))).toBe('IconFile');
   });
 });
