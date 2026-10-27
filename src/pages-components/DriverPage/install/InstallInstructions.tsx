@@ -15,6 +15,7 @@ const SIZES = {
     badge: 'size-[24px]',
     number: 'text-xs-medium',
     text: 'text-s',
+    helper: 'text-xs',
     icon: 'm',
     offset: 'mt-[2px]',
   },
@@ -23,6 +24,7 @@ const SIZES = {
     badge: 'size-[20px]',
     number: 'text-xxxs-medium',
     text: 'text-xs',
+    helper: 'text-xxs',
     icon: 's',
     offset: 'mt-1',
   },
@@ -38,7 +40,13 @@ const StepList: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   </FlexLayout>
 );
 
-const Step: React.FC<{ number: number; children: React.ReactNode }> = ({ number, children }) => {
+interface StepProps {
+  number: number;
+  helperText?: React.ReactNode;
+  children: React.ReactNode;
+}
+
+const Step: React.FC<StepProps> = ({ number, helperText, children }) => {
   const sizes = useSizes();
   return (
     <FlexLayout as="li" className="items-start gap-3">
@@ -49,7 +57,10 @@ const Step: React.FC<{ number: number; children: React.ReactNode }> = ({ number,
           {number}
         </Text>
       </FlexLayout>
-      <FlexLayout className="min-w-0 flex-wrap items-center gap-x-1 pt-[2px]">{children}</FlexLayout>
+      <FlexLayout className="min-w-0 flex-col pt-[2px]">
+        <FlexLayout className="flex-wrap items-center gap-x-1">{children}</FlexLayout>
+        {helperText && <FlexLayout className="flex-wrap items-center gap-x-1">{helperText}</FlexLayout>}
+      </FlexLayout>
     </FlexLayout>
   );
 };
@@ -58,6 +69,24 @@ const StepText: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <Text color="text-color-2" variant={useSizes().text}>
     {children}
   </Text>
+);
+
+const HelperText: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <Text color="text-color-3" variant={useSizes().helper}>
+    {children}
+  </Text>
+);
+
+// The English menu label, for phones set to English.
+const AddToHomeScreenHelper = () => (
+  <>
+    <HelperText>Eng.</HelperText>
+    <FlexLayout className="items-center gap-[2px]">
+      <HelperText>&quot;</HelperText>
+      <Icon color="text-dark-500 dark:text-light-300" icon="IconSquarePlus" size="m" />
+      <HelperText>Add to Home Screen&quot;</HelperText>
+    </FlexLayout>
+  </>
 );
 
 const ShareIcon = () => <Icon color="text-dark-700 dark:text-light-100" icon="IconShare2" size={useSizes().icon} />;
@@ -76,7 +105,7 @@ const SafariSteps: React.FC<{ startAt: number }> = ({ startAt }) => (
         <strong>Podijeli</strong>
       </StepText>
     </Step>
-    <Step number={startAt + 1}>
+    <Step helperText={<AddToHomeScreenHelper />} number={startAt + 1}>
       <StepText>
         Odaberi <strong>„Dodaj na početni zaslon”</strong>
       </StepText>
@@ -122,7 +151,7 @@ const PlatformSteps: React.FC<{ platform: 'ios-safari' | 'ios-other' | 'android-
           Otvori link u <strong>pregledniku</strong> (npr. Chrome)
         </StepText>
       </Step>
-      <Step number={2}>
+      <Step helperText={<AddToHomeScreenHelper />} number={2}>
         <StepText>
           U izborniku ⋮ odaberi <strong>„Instaliraj aplikaciju”</strong> ili <strong>„Dodaj na početni zaslon”</strong>
         </StepText>
