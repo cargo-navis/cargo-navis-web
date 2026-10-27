@@ -7,7 +7,7 @@ export type DriverTab = 'stops' | 'shipments';
 
 const TABS: { key: DriverTab; label: string; icon: IconType }[] = [
   { key: 'stops', label: 'Postaje', icon: 'IconRoute' },
-  { key: 'shipments', label: 'Nalozi', icon: 'IconFileDescription' },
+  { key: 'shipments', label: 'Nalozi', icon: 'IconClipboardText' },
 ];
 
 interface DriverTabsProps {
