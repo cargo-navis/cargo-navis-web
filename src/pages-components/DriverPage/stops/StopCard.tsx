@@ -5,7 +5,7 @@ import { CountryFlag } from '@/components/countries';
 import type { DriverStop } from '@/lib/api/driver';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 
-import { formatStopDate, getStopCompanyName } from '../utils';
+import { formatStopDate, getStopCompanyName, getStopOrderNumbers } from '../utils';
 
 // Same convention as the dispatcher dashboard: utovar = orange, istovar = teal.
 const KIND_BADGE_CLASSES = {
@@ -32,9 +32,7 @@ interface StopSummaryProps {
 /** Badges, company and place; shared by the stop card and the stop drawer header. */
 export const StopSummary: React.FC<StopSummaryProps> = ({ stop, isNext, showDate, showDocumentsIndicator }) => {
   const companyName = getStopCompanyName(stop);
-  const orderNumbers = Array.from(
-    new Set([...stop.loadingCargos, ...stop.unloadingCargos].map((cargo) => `#${cargo.shipment.orderNumber}`))
-  );
+  const orderNumbers = getStopOrderNumbers(stop);
 
   return (
     <FlexLayout className="min-w-0 flex-col gap-1 text-left">

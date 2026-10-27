@@ -6,7 +6,7 @@ import { useCompleteDriverStop, useUncompleteDriverStop } from '@/lib/hooks/api/
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Button, FlexLayout, Icon, Text } from '@/ui';
 
-import { getStopKindLabels } from '../utils';
+import { getStopKindLabels, getStopToastDescription } from '../utils';
 
 export const UNDO_TIMEOUT_MS = 5_000;
 
@@ -36,7 +36,7 @@ export const CompleteStopButton: React.FC<{ stop: DriverStop }> = ({ stop }) => 
     if (confirmToastKey) closeToast(confirmToastKey);
     try {
       await uncompleteStop({ stopId: stop.id });
-      showSuccessToast({ title: 'Potvrda poništena' });
+      showSuccessToast({ title: 'Potvrda poništena', description: getStopToastDescription(stop) });
     } catch {
       showErrorToast({ title: 'Poništavanje nije uspjelo.' });
     }
@@ -53,6 +53,7 @@ export const CompleteStopButton: React.FC<{ stop: DriverStop }> = ({ stop }) => 
 
     const confirmToastKey = showSuccessToast({
       title: labels.confirmed,
+      description: getStopToastDescription(stop),
       timeout: UNDO_TIMEOUT_MS,
       shouldShowTimeoutProgress: true,
       endContent: (

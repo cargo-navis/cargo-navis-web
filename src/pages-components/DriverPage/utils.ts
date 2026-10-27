@@ -78,6 +78,17 @@ export function getStopCompanyName(stop: DriverStop): string | null {
   );
 }
 
+/** The stop's order numbers, each once, as `#2026/1234`. */
+export function getStopOrderNumbers(stop: DriverStop): string[] {
+  const cargos = [...stop.loadingCargos, ...stop.unloadingCargos];
+  return Array.from(new Set(cargos.map((cargo) => `#${cargo.shipment.orderNumber}`)));
+}
+
+/** Subtext for stop toasts, e.g. `Podravka d.d. • #2026/1234 • #2026/1240` (same separator as the card's place line). */
+export function getStopToastDescription(stop: DriverStop): string {
+  return [getStopCompanyName(stop), ...getStopOrderNumbers(stop)].filter(Boolean).join(' • ');
+}
+
 export function getNavigationUrl(address: VehicleStopAddress | null): string | null {
   if (!address) return null;
 

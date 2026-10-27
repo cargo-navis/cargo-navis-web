@@ -14,6 +14,7 @@ import {
   getNavigationUrl,
   getStopCompanyName,
   getStopKindLabels,
+  getStopToastDescription,
   groupCargosByShipment,
 } from './utils';
 
@@ -191,6 +192,32 @@ describe('getStopCompanyName', () => {
 
   it('returns null when no company names', () => {
     expect(getStopCompanyName(makeStop('A'))).toBeNull();
+  });
+});
+
+describe('getStopToastDescription', () => {
+  const cargo = (shipmentId: string, orderNumber: string, overrides: Partial<DriverStopCargo> = {}) =>
+    makeCargo(shipmentId, { shipment: { id: shipmentId, orderNumber }, ...overrides });
+
+  it('combines the company name and the order number', () => {
+    const stop = makeStop('A', { loadingCargos: [cargo('s1', '2026/1234', { loadingCompanyName: 'Podravka d.d.' })] });
+    expect(getStopToastDescription(stop)).toBe('Podravka d.d. • #2026/1234');
+  });
+
+  it('lists every order of the stop once', () => {
+    const stop = makeStop('A', {
+      loadingCargos: [
+        cargo('s1', '2026/1234', { loadingCompanyName: 'Podravka d.d.' }),
+        cargo('s1', '2026/1234'),
+        cargo('s2', '2026/1240'),
+      ],
+    });
+    expect(getStopToastDescription(stop)).toBe('Podravka d.d. • #2026/1234 • #2026/1240');
+  });
+
+  it('leaves out a missing company name', () => {
+    const stop = makeStop('A', { loadingCargos: [], unloadingCargos: [cargo('s1', '2026/1234')] });
+    expect(getStopToastDescription(stop)).toBe('#2026/1234');
   });
 });
 
