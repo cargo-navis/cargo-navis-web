@@ -25,6 +25,11 @@ export const SearchResultText = ({ item, query }: SearchResultTextProps) => (
         <HighlightedText query={query} text={item.subtitle} />
       </Text>
     )}
+    {item.detail && (
+      <Text className="truncate" color="text-color-3" variant="text-xs">
+        {item.detail.label}: <HighlightedText query={query} text={item.detail.value} />
+      </Text>
+    )}
     {item.matchedValue && (
       <Text className="truncate" color="text-color-4" variant="text-xs">
         <HighlightedText query={query} text={item.matchedValue} />
