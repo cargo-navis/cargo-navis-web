@@ -8,6 +8,11 @@ export interface SearchResultItem {
   href: string;
   title: string;
   subtitle?: string;
+  // Labelled line below the subtitle, e.g. "Prijevoznik: …" for agency shipments
+  detail?: {
+    label: string;
+    value: string;
+  };
   // Rendered next to the title, e.g. "Agencijski nalog" for agency shipments
   titlePill?: {
     text: string;
@@ -56,7 +61,12 @@ const fleetTypeLabelMap: Record<VehicleEnum, string> = {
 };
 
 function withMatchedValue(item: Omit<SearchResultItem, 'matchedValue'>, matchedValue: string | undefined) {
-  const isVisible = !matchedValue || item.title.includes(matchedValue) || !!item.subtitle?.includes(matchedValue);
+  const isVisible =
+    !matchedValue ||
+    item.title.includes(matchedValue) ||
+    !!item.subtitle?.includes(matchedValue) ||
+    !!item.detail?.value.includes(matchedValue);
+
   return isVisible ? item : { ...item, matchedValue };
 }
 
@@ -72,18 +82,25 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
     icon: 'IconFileDescription',
     pluralNoun: 'naloga',
     mapItems: ({ shipments }) =>
-      (shipments?.items ?? []).map((s) =>
-        withMatchedValue(
+      (shipments?.items ?? []).map((s) => {
+        // For agency shipments the contractor is the one handling it, so it gets its own line
+        const agencyContractorName = s.isAgency ? s.transportContractorName : null;
+
+        return withMatchedValue(
           {
             id: s.id,
             href: `/dashboard/shipments/${s.id}`,
             title: s.orderNumber,
             titlePill: s.isAgency ? { text: 'Agencijski nalog', variant: 'warning' } : undefined,
-            subtitle: joinDefined(s.clientName ?? s.transportContractorName, s.externalOrderReference),
+            subtitle: joinDefined(
+              agencyContractorName ? s.clientName : (s.clientName ?? s.transportContractorName),
+              s.externalOrderReference
+            ),
+            detail: agencyContractorName ? { label: 'Prijevoznik', value: agencyContractorName } : undefined,
           },
           s.matchedValue
-        )
-      ),
+        );
+      }),
   },
   {
     key: 'fleet',
