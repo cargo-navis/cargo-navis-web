@@ -28,7 +28,7 @@ export async function resendEmployeeInvite(id: string) {
 }
 
 export async function generateDriverPortalToken(id: string) {
-  return backend.post<DriverPortalToken>(`/api/employees/${id}/driver-portal-link`);
+  return backend.post<DriverPortalToken>(`/api/employees/${id}/driver-portal-token`);
 }
 
 export async function uploadEmployeeFile(id: string, file: File, fileName: string) {
