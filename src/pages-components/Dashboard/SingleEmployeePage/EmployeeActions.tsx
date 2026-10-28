@@ -4,7 +4,15 @@ import { useDeleteEmployee } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Button, FlexLayout } from '@/ui';
 
-export const EmployeeActions: React.FC<{ id: string; name: string }> = ({ id, name }) => {
+import { DriverPortalLinkButton } from './DriverPortalLinkButton';
+
+interface EmployeeActionsProps {
+  id: string;
+  name: string;
+  isDriver: boolean;
+}
+
+export const EmployeeActions: React.FC<EmployeeActionsProps> = ({ id, name, isDriver }) => {
   const { back } = useRouter();
   const { mutateAsync, isPending } = useDeleteEmployee(id);
 
@@ -23,6 +31,7 @@ export const EmployeeActions: React.FC<{ id: string; name: string }> = ({ id, na
 
   return (
     <FlexLayout className="gap-3">
+      {isDriver && <DriverPortalLinkButton id={id} name={name} />}
       <Button
         href={`/dashboard/employees/${id}/edit`}
         iconLeft="IconEdit"
