@@ -23,6 +23,8 @@ const countryCallingCodes = [
   { countryCode: 'BA', callingCode: '+387' },
   { countryCode: 'RS', callingCode: '+381' },
   { countryCode: 'XK', callingCode: '+383' },
+  { countryCode: 'AL', callingCode: '+355' },
+  { countryCode: 'MK', callingCode: '+389' },
   { countryCode: 'AT', callingCode: '+43' },
 ];
 
