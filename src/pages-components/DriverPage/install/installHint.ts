@@ -42,6 +42,7 @@ export function getInstallPlatform({
 }): InstallPlatform {
   if (isInstalled) return 'installed';
   if (canPromptInstall) return 'prompt';
+
   if (isIos(userAgent)) {
     // Only Safari adds web apps to the home screen reliably; Chrome/Firefox/Edge/Opera and in-app browsers
     // (which drop the "Safari/" token) are sent to Safari.

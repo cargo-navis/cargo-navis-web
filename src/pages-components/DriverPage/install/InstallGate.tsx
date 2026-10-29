@@ -18,7 +18,7 @@ export const InstallGate: React.FC<InstallGateProps> = ({ platform, onInstall, o
         Instaliraj Cargo Navis
       </Text>
       <Text color="text-color-3" variant="text-s">
-        Nalozi i postaje rade kao aplikacija na tvom mobitelu.
+        Nalozi i ruta prijevoza rade kao aplikacija na tvom mobitelu.
       </Text>
     </FlexLayout>
     <FlexLayout className="flex-col gap-4 rounded-l border border-dark-100 bg-white p-5 shadow-sm dark:border-light-850 dark:bg-light-875">

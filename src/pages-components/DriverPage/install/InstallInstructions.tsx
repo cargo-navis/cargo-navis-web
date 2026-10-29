@@ -77,7 +77,7 @@ const HelperText: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   </Text>
 );
 
-// The English menu label, for phones set to English.
+// The English label of the iOS share sheet item (with its icon), for iPhones set to English.
 const AddToHomeScreenHelper = () => (
   <>
     <HelperText>Eng.</HelperText>
@@ -151,7 +151,7 @@ const PlatformSteps: React.FC<{ platform: 'ios-safari' | 'ios-other' | 'android-
           Otvori link u <strong>pregledniku</strong> (npr. Chrome)
         </StepText>
       </Step>
-      <Step helperText={<AddToHomeScreenHelper />} number={2}>
+      <Step number={2}>
         <StepText>
           U izborniku ⋮ odaberi <strong>„Instaliraj aplikaciju”</strong> ili <strong>„Dodaj na početni zaslon”</strong>
         </StepText>
