@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import dayjs from 'dayjs';
-import { useState } from 'react';
 
 import { CountryFlag } from '@/components/countries';
 import type { DriverShipment } from '@/lib/api/driver';
@@ -104,9 +103,13 @@ const ShipmentTimeline: React.FC<{ shipment: DriverShipment }> = ({ shipment }) 
   </FlexLayout>
 );
 
-export const ShipmentCard: React.FC<{ shipment: DriverShipment }> = ({ shipment }) => {
-  const [isOpen, setIsOpen] = useState(false);
+interface ShipmentCardProps {
+  shipment: DriverShipment;
+  isOpen: boolean;
+  onOpenChange(isOpen: boolean): void;
+}
 
+export const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment, isOpen, onOpenChange }) => {
   return (
     <>
       <FlexLayout
@@ -114,7 +117,7 @@ export const ShipmentCard: React.FC<{ shipment: DriverShipment }> = ({ shipment 
         as="button"
         className="w-full items-center justify-between gap-2 rounded-l border border-dark-100 bg-white p-4 shadow-sm dark:border-light-850 dark:bg-light-875"
         type="button"
-        onClick={() => setIsOpen(true)}
+        onClick={() => onOpenChange(true)}
       >
         <ShipmentSummary shipment={shipment} />
         <Icon className="shrink-0" color="text-dark-500 dark:text-light-300" icon="IconChevronRight" size="m" />
@@ -123,7 +126,7 @@ export const ShipmentCard: React.FC<{ shipment: DriverShipment }> = ({ shipment 
         header={<ShipmentSummary shipment={shipment} />}
         isOpen={isOpen}
         title={`Nalog #${shipment.orderNumber}`}
-        onOpenChange={setIsOpen}
+        onOpenChange={onOpenChange}
       >
         <ShipmentTimeline shipment={shipment} />
       </BottomSheet>

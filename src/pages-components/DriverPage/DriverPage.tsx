@@ -15,6 +15,7 @@ import { isInstalledApp, useInstallPrompt } from './install/useInstallPrompt';
 import { DriverHeader } from './layout/DriverHeader';
 import { DriverStatusScreen } from './layout/DriverStatusScreen';
 import { type DriverTab, DriverTabs } from './layout/DriverTabs';
+import { useServiceWorkerMessages } from './notifications/useServiceWorkerMessages';
 import { ShipmentsTab } from './shipments/ShipmentsTab';
 import { StopsTab } from './stops/StopsTab';
 
@@ -27,6 +28,8 @@ export const DriverPage = () => {
   // `/driver/{token}` is the link the driver got from their superior; `/driver` (installed app start page) has none.
   const linkToken = router.isReady ? (getQueryValue(router.query.token) ?? null) : undefined;
   const focusedStopId = getQueryValue(router.query.vehicleStopId) ?? null;
+  // Set when a notification opened the app (see public/driver-sw.js).
+  const linkedShipmentId = getQueryValue(router.query.shipmentId) ?? null;
 
   const { status, retry } = useDriverSession(linkToken);
   const isSessionReady = status === 'ready';
@@ -34,6 +37,28 @@ export const DriverPage = () => {
   const { data: stops, error: stopsError, refetch: refetchStops } = useDriverStops({ enabled: isSessionReady });
 
   const [activeTab, setActiveTab] = useState<DriverTab>('stops');
+  const [openShipmentId, setOpenShipmentId] = useState<string | null>(null);
+
+  function showShipment(shipmentId: string) {
+    setActiveTab('shipments');
+    setOpenShipmentId(shipmentId);
+  }
+
+  useEffect(() => {
+    if (linkedShipmentId) showShipment(linkedShipmentId);
+  }, [linkedShipmentId]);
+
+  // The app is open while a push arrives or its notification is tapped. refetch() ignores `enabled`, so it waits
+  // for a session.
+  useServiceWorkerMessages({
+    onStopsChanged: () => {
+      if (isSessionReady) void refetchStops();
+    },
+    onOpenShipment: (shipmentId) => {
+      if (isSessionReady) void refetchStops();
+      showShipment(shipmentId);
+    },
+  });
 
   const installPrompt = useInstallPrompt();
   const [installedOn, setInstalledOn] = useState<'ios' | 'android' | null>(null);
@@ -74,7 +99,7 @@ export const DriverPage = () => {
         {activeTab === 'stops' ? (
           <StopsTab focusedStopId={focusedStopId} stops={stops} />
         ) : (
-          <ShipmentsTab stops={stops} />
+          <ShipmentsTab openShipmentId={openShipmentId} stops={stops} onOpenShipmentChange={setOpenShipmentId} />
         )}
         <DriverTabs activeTab={activeTab} onChange={setActiveTab} />
       </>

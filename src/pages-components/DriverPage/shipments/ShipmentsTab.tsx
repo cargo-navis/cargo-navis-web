@@ -6,7 +6,14 @@ import { FlexLayout, Text } from '@/ui';
 import { buildDriverShipments } from '../utils';
 import { ShipmentCard } from './ShipmentCard';
 
-export const ShipmentsTab: React.FC<{ stops: DriverStop[] }> = ({ stops }) => {
+interface ShipmentsTabProps {
+  stops: DriverStop[];
+  /** The order whose sheet is open; a notification tap opens one from outside. */
+  openShipmentId: string | null;
+  onOpenShipmentChange(shipmentId: string | null): void;
+}
+
+export const ShipmentsTab: React.FC<ShipmentsTabProps> = ({ stops, openShipmentId, onOpenShipmentChange }) => {
   const shipments = useMemo(() => buildDriverShipments(stops), [stops]);
   return (
     <FlexLayout className="flex-col gap-3 p-4">
@@ -16,7 +23,12 @@ export const ShipmentsTab: React.FC<{ stops: DriverStop[] }> = ({ stops }) => {
         </Text>
       )}
       {shipments.map((shipment) => (
-        <ShipmentCard key={shipment.id} shipment={shipment} />
+        <ShipmentCard
+          isOpen={shipment.id === openShipmentId}
+          key={shipment.id}
+          shipment={shipment}
+          onOpenChange={(isOpen) => onOpenShipmentChange(isOpen ? shipment.id : null)}
+        />
       ))}
     </FlexLayout>
   );
