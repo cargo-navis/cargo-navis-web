@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { useState } from 'react';
 
-import { showErrorToast } from '@/lib/utils/toast';
+import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Box, Button, FlexLayout, Icon, Text } from '@/ui';
 
 import { isIos } from '../install/installHint';
@@ -13,7 +13,7 @@ function getSettingsHint() {
   if (isIos(navigator.userAgent)) return 'Otvori Postavke → Obavijesti → Cargo Navis i uključi Dopusti obavijesti.';
   if (isInstalledApp()) return 'Uključi ih u Postavke → Aplikacije → Cargo Navis → Obavijesti.';
 
-  return 'U pregledniku otvori postavke stranice (ikona pokraj URL adrese) i dopusti obavijesti.';
+  return 'U pregledniku otvori postavke stranice (ikonica pokraj URL adrese) i dopusti obavijesti.';
 }
 
 // Teal invites (brand colour, something good to turn on); orange flags that the driver blocked notifications.
@@ -32,7 +32,7 @@ const STATE_STYLES = {
 
 interface NotificationsCardProps {
   status: DriverPushNotificationsStatus;
-  onEnable(): Promise<void>;
+  onEnable(): Promise<NotificationPermission>;
 }
 
 /** Above the route until the driver allows notifications. Hidden where web push isn't available. */
@@ -44,7 +44,13 @@ export const NotificationsCard: React.FC<NotificationsCardProps> = ({ status, on
   async function handleEnable() {
     setIsEnabling(true);
     try {
-      await onEnable();
+      const permission = await onEnable();
+      if (permission === 'granted') {
+        showSuccessToast({
+          title: 'Obavijesti su uključene.',
+          description: 'Javit ćemo ti kad ti se dodijele novi nalozi.',
+        });
+      }
     } catch {
       showErrorToast({ title: 'Uključivanje obavijesti nije uspjelo. Pokušaj ponovno.' });
     } finally {
@@ -72,8 +78,8 @@ export const NotificationsCard: React.FC<NotificationsCardProps> = ({ status, on
           </FlexLayout>
           <Text color="text-color-2" variant="text-xs">
             {isDenied
-              ? `Nećemo ti moći javiti za nove postaje. ${getSettingsHint()}`
-              : 'Obavijestit ćemo te o svakoj novoj postaji, i kad aplikacija nije otvorena.'}
+              ? `Nećemo ti moći javiti za nove naloge. ${getSettingsHint()}`
+              : 'Obavijestit ćemo te o novim nalozima, i kad aplikacija nije otvorena.'}
           </Text>
         </FlexLayout>
         {!isDenied && (

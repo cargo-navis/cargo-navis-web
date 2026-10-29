@@ -116,9 +116,9 @@ function getNotification(payload) {
 
 function getStopsAssignedNotification({ shipmentId, orderNumber, stopCount }) {
   return {
-    title: 'Dodijeljene nove postaje',
+    title: `Novi nalog ${orderNumber}`,
     options: {
-      body: `${getStopsAssignedText(stopCount)} za nalog ${orderNumber}.`,
+      body: `${getStopsAssignedText(stopCount)}.`,
       icon: '/android-chrome-192x192.png',
       // One notification per order: a later assignment for the same order replaces the earlier one.
       tag: `shipment-${shipmentId}`,

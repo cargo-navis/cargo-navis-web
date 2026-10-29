@@ -53,8 +53,10 @@ export function useDriverPushNotifications({ enabled }: { enabled: boolean }) {
   async function enable() {
     // The first await after the tap: iOS only shows the permission prompt for a direct user action.
     const permission = await Notification.requestPermission();
-    setStatus(permission);
+    // 'granted' only once the backend has the subscription; if saving fails the card stays, so the driver can retry.
     if (permission === 'granted') await syncPushSubscription();
+    setStatus(permission);
+    return permission;
   }
 
   return { status, enable };
