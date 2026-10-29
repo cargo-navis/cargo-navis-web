@@ -4,7 +4,7 @@ import { useDeleteEmployee } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Button, FlexLayout } from '@/ui';
 
-import { DriverPortalLinkButton } from './DriverPortalLinkButton';
+import { DriverPortalInviteButton } from './DriverPortalInviteButton';
 
 interface EmployeeActionsProps {
   id: string;
@@ -31,7 +31,7 @@ export const EmployeeActions: React.FC<EmployeeActionsProps> = ({ id, name, isDr
 
   return (
     <FlexLayout className="gap-3">
-      {isDriver && <DriverPortalLinkButton id={id} name={name} />}
+      {isDriver && <DriverPortalInviteButton id={id} name={name} />}
       <Button
         href={`/dashboard/employees/${id}/edit`}
         iconLeft="IconEdit"
