@@ -17,12 +17,16 @@ export const InstallHintCard: React.FC<InstallHintCardProps> = ({ platform, onIn
 
   return (
     <FlexLayout className="px-4 pb-2">
-      <FlexLayout className="w-full flex-col gap-2 rounded-l border border-dark-100 bg-white p-4 shadow-sm dark:border-light-850 dark:bg-light-875">
-        <Text color="text-color-1" variant="text-s-medium">
-          Koristi aplikaciju Cargo Navis
-        </Text>
+      {/* Blue sets "get the app" apart from the teal notifications card that can sit right below it. */}
+      <FlexLayout className="w-full flex-col gap-2 rounded-l border border-blue-100 bg-blue-50 p-4 shadow-sm dark:border-blue-800 dark:bg-blue-900/40">
+        <FlexLayout className="items-center gap-2">
+          <Icon color="text-blue-600 dark:text-blue-300" icon="IconDeviceMobileDown" size="m" />
+          <Text color="text-blue-800 dark:text-blue-100" variant="text-s-medium">
+            Koristi aplikaciju Cargo Navis
+          </Text>
+        </FlexLayout>
         <InstallInstructions layout="compact" platform={platform} onInstall={onInstall} />
-        <Box as="hr" className="text-dark-200 dark:text-light-800 my-1" />
+        <Box as="hr" className="text-blue-100 dark:text-blue-800 my-1" />
         {/* iPhone browsers can't receive web push at all; only the installed app can. */}
         {isIos && (
           <FlexLayout className="gap-1 text-color-2">
