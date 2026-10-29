@@ -22,12 +22,15 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 ## Environment variables
 
-Set in `.env.local` (git-ignored). Next.js reads them at startup, so restart `npm run dev` after a change.
+Set in `.env.local` (git-ignored). Next.js reads them at startup, so restart `npm run dev` after a change. Variables marked **Required** are checked in `next.config.mjs`: `next dev`/`build`/`start` refuse to start without them.
 
 | Variable | Example | Purpose |
 |---|---|---|
-| `NEXT_PUBLIC_BACKEND_URL` | `https://api-dev.cargo-navis.com` | API base URL. Ignored while `BACKEND_PROXY_TARGET` is set (calls then go to this app). |
+| `PROJECT_ENV` | `local` | **Required.** One of `local`, `dev`, `production`. Scopes saved dashboard filters (`production` vs the rest). |
+| `NEXT_PUBLIC_APP_URL` | `http://localhost:3000` | **Required.** The app's own URL, used for links in the dashboard's push notifications. |
+| `NEXT_PUBLIC_BACKEND_URL` | `https://api-dev.cargo-navis.com` | **Required.** API base URL. Ignored while `BACKEND_PROXY_TARGET` is set (calls then go to this app). |
 | `BACKEND_PROXY_TARGET` | `https://api-dev.cargo-navis.com` | Local dev and Vercel previews only; never on dev/prod deploys. All backend calls (`/auth/*`, `/api/*`) then go to this app and `src/middleware.ts` forwards them here. See [Local backend proxy](#local-backend-proxy). |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | `BNc…` (base64url) | **Required.** Web push public key; must match the backend's `vapid.public-key`. Used by push notifications in the dashboard and the driver portal. |
 | `NEXT_PUBLIC_DRIVER_API_MOCK` | `true` | Driver portal only: serve driver API calls from an in-browser mock (`npm run dev:driverMock` sets it). Never set in deployed builds. |
 
 ## Local backend proxy

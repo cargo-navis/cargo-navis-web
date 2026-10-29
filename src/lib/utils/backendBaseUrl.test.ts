@@ -20,11 +20,4 @@ describe('getBackendBaseUrl', () => {
 
     expect(getBackendBaseUrl()).toBe('https://api.test');
   });
-
-  it('throws without a backend URL when the backend is not proxied', () => {
-    vi.stubEnv('NEXT_PUBLIC_BACKEND_PROXY', undefined);
-    vi.stubEnv('NEXT_PUBLIC_BACKEND_URL', undefined);
-
-    expect(() => getBackendBaseUrl()).toThrow('Missing NEXT_PUBLIC_BACKEND_URL');
-  });
 });
