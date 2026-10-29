@@ -15,6 +15,8 @@ import { isInstalledApp, useInstallPrompt } from './install/useInstallPrompt';
 import { DriverHeader } from './layout/DriverHeader';
 import { DriverStatusScreen } from './layout/DriverStatusScreen';
 import { type DriverTab, DriverTabs } from './layout/DriverTabs';
+import { NotificationsCard } from './notifications/NotificationsCard';
+import { useDriverPushNotifications } from './notifications/useDriverPushNotifications';
 import { useServiceWorkerMessages } from './notifications/useServiceWorkerMessages';
 import { ShipmentsTab } from './shipments/ShipmentsTab';
 import { StopsTab } from './stops/StopsTab';
@@ -47,6 +49,8 @@ export const DriverPage = () => {
   useEffect(() => {
     if (linkedShipmentId) showShipment(linkedShipmentId);
   }, [linkedShipmentId]);
+
+  const pushNotifications = useDriverPushNotifications({ enabled: isSessionReady });
 
   // The app is open while a push arrives or its notification is tapped. refetch() ignores `enabled`, so it waits
   // for a session.
@@ -95,6 +99,9 @@ export const DriverPage = () => {
       <>
         {installPrompt.mode === 'card' && (
           <InstallHintCard platform={installPrompt.platform} onInstall={() => void installPrompt.install()} />
+        )}
+        {activeTab === 'stops' && (
+          <NotificationsCard status={pushNotifications.status} onEnable={pushNotifications.enable} />
         )}
         {activeTab === 'stops' ? (
           <StopsTab focusedStopId={focusedStopId} stops={stops} />

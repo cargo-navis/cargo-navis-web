@@ -73,6 +73,18 @@ body {
     animation: row-highlight-fade 2s ease-out forwards;
   }
 
+  /* A short ringing swing every few seconds, pivoting at the top of the bell. Still for reduced motion. */
+  .bell-ring {
+    transform-origin: 50% 10%;
+    animation: bell-ring 3s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bell-ring {
+      animation: none;
+    }
+  }
+
   html.dark .row-highlight-fade {
     animation: row-highlight-fade-dark 2s ease-out forwards;
   }
@@ -86,6 +98,31 @@ body {
     .card-highlight-fade {
       animation-name: card-highlight-fade-dark;
     }
+  }
+}
+
+@keyframes bell-ring {
+  0% {
+    transform: rotate(0);
+  }
+  4% {
+    transform: rotate(16deg);
+  }
+  8% {
+    transform: rotate(-14deg);
+  }
+  12% {
+    transform: rotate(10deg);
+  }
+  16% {
+    transform: rotate(-8deg);
+  }
+  20% {
+    transform: rotate(4deg);
+  }
+  24%,
+  100% {
+    transform: rotate(0);
   }
 }
 

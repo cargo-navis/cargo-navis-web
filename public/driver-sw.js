@@ -8,7 +8,7 @@
  *   left alone and goes to the network as usual. Chrome also requires a service worker with a fetch handler before
  *   it offers to install the app.
  * - Push notifications: shows a notification when the backend sends one (e.g. new stops assigned) and opens the
- *   order when the driver taps it. The driver portal subscribes through this worker (usePushNotifications.ts), so
+ *   order when the driver taps it. The driver portal subscribes through this worker (useDriverPushNotifications.ts), so
  *   pushes for drivers arrive here, not in the dashboard's push service worker.
  *
  * When driver-offline.html changes, bump OFFLINE_PAGE_CACHE_VERSION so installed apps download the new copy.
