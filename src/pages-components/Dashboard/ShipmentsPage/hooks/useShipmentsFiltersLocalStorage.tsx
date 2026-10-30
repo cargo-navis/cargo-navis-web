@@ -3,15 +3,10 @@ import { createContext, useCallback, useContext, useState } from 'react';
 import type { SelectValue } from '@/ui/components/Select/Select';
 
 const projectEnv = process.env.PROJECT_ENV;
-
-if (!projectEnv) {
-  throw new Error('Missing PROJECT_ENV env var.');
-}
-
-const isProductionEnv = process.env.PROJECT_ENV === 'production';
+const isProductionEnv = projectEnv === 'production';
 
 const keyName = 'cargo-navis-shipments-filters';
-const STORAGE_KEY = isProductionEnv ? keyName : `${projectEnv.toLowerCase()}-${keyName}`;
+const STORAGE_KEY = isProductionEnv ? keyName : `${projectEnv}-${keyName}`;
 
 export interface ShipmentsFiltersStorage {
   clientId?: string;

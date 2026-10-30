@@ -1,11 +1,11 @@
 import type { DriverStop } from '@/lib/api/driver';
 import { BottomSheet } from '@/ui';
 
+import { getStopCompanyName } from '../utils';
 import { CompleteStopButton } from './CompleteStopButton';
 import { StopSummary } from './StopCard';
 import { StopDetails } from './StopDetails';
 import { StopDocuments } from './StopDocuments';
-import { getStopCompanyName } from './utils';
 
 interface StopDrawerProps {
   /** Kept set while closing, so the content doesn't vanish during the slide-out. */

@@ -6,8 +6,8 @@ import { FlexLayout, Icon, type IconType, Text, VerticalDivider } from '@/ui';
 export type DriverTab = 'stops' | 'shipments';
 
 const TABS: { key: DriverTab; label: string; icon: IconType }[] = [
-  { key: 'stops', label: 'Postaje', icon: 'IconRoute' },
-  { key: 'shipments', label: 'Nalozi', icon: 'IconFileDescription' },
+  { key: 'stops', label: 'Ruta', icon: 'IconRoute' },
+  { key: 'shipments', label: 'Nalozi', icon: 'IconClipboardText' },
 ];
 
 interface DriverTabsProps {

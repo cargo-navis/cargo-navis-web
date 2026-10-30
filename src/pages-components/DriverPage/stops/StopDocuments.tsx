@@ -8,6 +8,7 @@ import { bytesToMegabytes, getFileInput } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { BottomSheet, Box, Button, FlexLayout, Icon, Text } from '@/ui';
 
+import { getDocumentIcon } from '../utils';
 import { prepareUploadFile } from './prepareUploadFile';
 
 const FILE_SIZE_LIMIT_IN_MB = 10;
@@ -105,7 +106,7 @@ export const StopDocuments: React.FC<{ stop: DriverStop }> = ({ stop }) => {
       </Text>
       {stop.documents.map((document) => (
         <FlexLayout
-          className="items-center gap-2 rounded-m border border-dark-100 dark:border-light-850"
+          className="items-center gap-2 mb-2 rounded-m border border-dark-100 dark:border-light-850"
           key={document.id}
         >
           <FlexLayout
@@ -114,7 +115,12 @@ export const StopDocuments: React.FC<{ stop: DriverStop }> = ({ stop }) => {
             type="button"
             onClick={() => void handlePreview(document)}
           >
-            <Icon className="shrink-0" color="text-dark-600 dark:text-light-300" icon="IconFileDescription" size="m" />
+            <Icon
+              className="shrink-0"
+              color="text-dark-600 dark:text-light-300"
+              icon={getDocumentIcon(document)}
+              size="m"
+            />
             <FlexLayout className="min-w-0 flex-col">
               <Text className="truncate" color="text-color-1" variant="text-xs-medium">
                 {document.name}

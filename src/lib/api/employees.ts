@@ -1,6 +1,6 @@
 import { backend } from '@/lib/services/backendService';
 
-import type { CreateEmployeeParams, Employee, UpdateEmployeeParams } from './employees.d';
+import type { CreateEmployeeParams, DriverPortalToken, Employee, UpdateEmployeeParams } from './employees.d';
 
 export async function getEmployees() {
   return backend.get<Employee[]>('/api/employees');
@@ -25,6 +25,10 @@ export async function deleteEmployee(id: string) {
 
 export async function resendEmployeeInvite(id: string) {
   return backend.post<void>(`/api/employees/${id}/resend-invite`);
+}
+
+export async function generateDriverPortalToken(id: string) {
+  return backend.post<DriverPortalToken>(`/api/employees/${id}/driver-portal-token`);
 }
 
 export async function uploadEmployeeFile(id: string, file: File, fileName: string) {

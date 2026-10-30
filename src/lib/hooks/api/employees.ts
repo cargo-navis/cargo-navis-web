@@ -4,6 +4,7 @@ import {
   createEmployee,
   deleteEmployee,
   deleteEmployeeFile,
+  generateDriverPortalToken,
   getEmployeeDocumentUrl,
   getEmployees,
   PositionEnum,
@@ -122,6 +123,12 @@ export function useDeleteEmployee(id: string) {
 export function useResendEmployeeInvite(id: string) {
   return useMutation({
     mutationFn: () => resendEmployeeInvite(id),
+  });
+}
+
+export function useGenerateDriverPortalToken(id: string) {
+  return useMutation({
+    mutationFn: () => generateDriverPortalToken(id),
   });
 }
 

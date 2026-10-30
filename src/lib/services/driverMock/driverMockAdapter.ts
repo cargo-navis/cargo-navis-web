@@ -1,11 +1,28 @@
 import { type AxiosAdapter, AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
 import dayjs from 'dayjs';
 
-import { createMockStops, MOCK_DRIVER_ID, mockAccount } from './driverMockData';
+import { createMockStops, MOCK_DRIVER_ID, mockAccount, syncMockLoadStatuses } from './driverMockData';
 
 export { MOCK_DRIVER_ID };
 
 const MOCK_FILE_URL = '/apple-touch-icon.png';
+const MOCK_SESSION_KEY = 'driver-mock-session';
+
+/** Stands in for the httpOnly refresh cookie; sessionStorage keeps it across reloads in the browser. */
+function createMockSession() {
+  const storage = typeof sessionStorage === 'undefined' ? null : sessionStorage;
+  let isActive = storage?.getItem(MOCK_SESSION_KEY) === 'true';
+
+  return {
+    get isActive() {
+      return isActive;
+    },
+    start() {
+      isActive = true;
+      storage?.setItem(MOCK_SESSION_KEY, 'true');
+    },
+  };
+}
 
 /**
  * Dev-only fake of the driver portal backend (run `npm run dev:driverMock`, which sets NEXT_PUBLIC_DRIVER_API_MOCK=true).
@@ -13,6 +30,7 @@ const MOCK_FILE_URL = '/apple-touch-icon.png';
  */
 export function createDriverMockAdapter({ delayMs = 400 }: { delayMs?: number } = {}): AxiosAdapter {
   const stops = createMockStops();
+  const session = createMockSession();
   let documentCounter = 0;
 
   function respond(config: InternalAxiosRequestConfig, status: number, data?: unknown): AxiosResponse {
@@ -34,9 +52,15 @@ export function createDriverMockAdapter({ delayMs = 400 }: { delayMs?: number } 
 
     if (method === 'post' && url === '/auth/exchange') {
       const { token } = JSON.parse(config.data ?? '{}');
-      return token === 'expired'
-        ? respond(config, 410)
-        : respond(config, 200, { data: { accessToken: 'mock-jwt' }, status: 'success' });
+      if (token === 'expired') return respond(config, 410);
+      session.start();
+      return respond(config, 200, { data: { accessToken: 'mock-jwt' }, status: 'success' });
+    }
+
+    if (method === 'post' && url === '/auth/refresh') {
+      return session.isActive
+        ? respond(config, 200, { data: { accessToken: 'mock-jwt' }, status: 'success' })
+        : respond(config, 401);
     }
 
     if (method === 'get' && url === '/api/account') {
@@ -53,7 +77,16 @@ export function createDriverMockAdapter({ delayMs = 400 }: { delayMs?: number } 
     if (method === 'post' && (match = url.match(/^\/api\/vehicle-stops\/([^/]+)\/(complete|uncomplete)$/))) {
       const stop = findStop(match[1]);
       if (!stop) return respond(config, 404);
-      stop.completedAt = match[2] === 'complete' ? new Date().toISOString() : null;
+      const isComplete = match[2] === 'complete';
+      // Same guards as the backend: unload only loaded cargo; undo a loading only while its cargo isn't unloaded.
+      if (isComplete && stop.unloadingCargos.some((cargo) => cargo.loadStatus === 'not_yet_loaded')) {
+        return respond(config, 400, { status: 'failed', errorCode: 'CARGO_NOT_YET_LOADED' });
+      }
+      if (!isComplete && stop.loadingCargos.some((cargo) => cargo.loadStatus === 'unloaded')) {
+        return respond(config, 400, { status: 'failed', errorCode: 'CARGO_STATUS_CHANGED_BY_LATER_STOP' });
+      }
+      stop.completedAt = isComplete ? new Date().toISOString() : null;
+      syncMockLoadStatuses(stops);
       return respond(config, 200, { data: stop });
     }
 

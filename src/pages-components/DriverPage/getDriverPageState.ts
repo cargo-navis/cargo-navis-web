@@ -1,6 +1,6 @@
 import { isDriverLinkExpiredError } from '@/lib/services/driverBackendService';
 
-import type { DriverSessionStatus } from './useDriverSession';
+import type { DriverSessionStatus } from './hooks/useDriverSession';
 
 export type DriverPageState = 'loading' | 'expired' | 'session-error' | 'stops-error' | 'ready';
 

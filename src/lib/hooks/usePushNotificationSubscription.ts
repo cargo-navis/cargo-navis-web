@@ -24,17 +24,10 @@ export function usePushNotificationSubscription() {
             return;
           }
 
-          const publicVapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-          if (!publicVapidKey) {
-            console.error('VAPID_PUBLIC_KEY is not set');
-            // TODO - report to Sentry
-            return;
-          }
-
           // Subscribe to push notifications
           const subscription = await activeRegistration.pushManager.subscribe({
             userVisibleOnly: true,
-            applicationServerKey: publicVapidKey,
+            applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
           });
 
           // pushManager.subscribe() is idempotent in the browser, but the

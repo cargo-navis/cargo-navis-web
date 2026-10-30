@@ -16,7 +16,7 @@ const DrawerOptionsContext = React.createContext<DrawerOptions>({ showSwipeHandl
 type DrawerProps = React.ComponentProps<typeof DrawerPrimitive.Root> & {
   /** Renders vaul's draggable handle at the top of a bottom drawer. */
   showSwipeHandle?: boolean;
-  /** `floating`: bottom sheet inset from the screen edges, fully rounded, with a blurred backdrop. */
+  /** `floating`: bottom sheet inset from the screen edges, fully rounded. */
   variant?: DrawerVariant;
   /** Opened from inside another open drawer (vaul's NestedRoot), so closing it leaves the parent open. */
   nested?: boolean;
@@ -63,7 +63,9 @@ const DrawerContent = React.forwardRef<
 
   return (
     <DrawerPortal>
-      <DrawerOverlay className={cn(isFloating && 'backdrop-blur-sm')} />
+      {/* No backdrop-filter here: with one, iOS Safari ignores the overlay when tinting the status bar and keeps
+          sampling the light page behind it, flashing a white band under the status bar while the sheet opens. */}
+      <DrawerOverlay />
       <DrawerPrimitive.Content
         className={cn(
           'group/drawer-content fixed z-50 flex h-auto flex-col bg-background dark:bg-[#1a1a1a] dark:border-light-850',
@@ -71,10 +73,12 @@ const DrawerContent = React.forwardRef<
           'data-[vaul-drawer-direction=bottom]:inset-x-0 data-[vaul-drawer-direction=bottom]:bottom-0 data-[vaul-drawer-direction=bottom]:mt-24 data-[vaul-drawer-direction=bottom]:max-h-[80vh] data-[vaul-drawer-direction=bottom]:rounded-t-[10px]',
           'data-[vaul-drawer-direction=right]:inset-y-0 data-[vaul-drawer-direction=right]:right-0 data-[vaul-drawer-direction=right]:w-3/4 data-[vaul-drawer-direction=right]:sm:max-w-sm data-[vaul-drawer-direction=right]:rounded-l-[10px] border-l',
           'data-[vaul-drawer-direction=left]:inset-y-0 data-[vaul-drawer-direction=left]:left-0 data-[vaul-drawer-direction=left]:w-3/4 data-[vaul-drawer-direction=left]:sm:max-w-sm data-[vaul-drawer-direction=left]:rounded-r-[10px]',
-          // Floating bottom sheet: 8px off the screen edges (plus the iPhone home bar), all corners rounded.
+          // Floating bottom sheet: 8px off the screen edges, all corners rounded. Like native iOS sheets it ignores
+          // the home-indicator inset (the sheet's own bottom padding keeps content clear of it), and its 40px radius is
+          // roughly concentric with an iPhone's ~48px screen corners minus the 8px gap.
           // `border-l-0` drops the unprefixed `border-l` above, which is meant for right-side drawers.
           isFloating &&
-            'overflow-hidden border-l-0 data-[vaul-drawer-direction=bottom]:inset-x-2 data-[vaul-drawer-direction=bottom]:bottom-[calc(8px+env(safe-area-inset-bottom))] data-[vaul-drawer-direction=bottom]:rounded-[32px]',
+            'overflow-hidden border-l-0 data-[vaul-drawer-direction=bottom]:inset-x-2 data-[vaul-drawer-direction=bottom]:bottom-2 data-[vaul-drawer-direction=bottom]:rounded-[40px]',
           className
         )}
         ref={ref}

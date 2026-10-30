@@ -65,3 +65,7 @@ export enum PositionEnum {
 export type CreateEmployeeParams = Partial<Employee>;
 
 export type UpdateEmployeeParams = Partial<CreateEmployeeParams>;
+
+export interface DriverPortalToken {
+  token: string;
+}

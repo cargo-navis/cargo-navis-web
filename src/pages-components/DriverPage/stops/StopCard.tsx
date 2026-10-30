@@ -5,7 +5,7 @@ import { CountryFlag } from '@/components/countries';
 import type { DriverStop } from '@/lib/api/driver';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 
-import { formatStopDate, getStopCompanyName } from './utils';
+import { formatStopDate, getStopCompanyName, getStopOrderNumbers } from '../utils';
 
 // Same convention as the dispatcher dashboard: utovar = orange, istovar = teal.
 const KIND_BADGE_CLASSES = {
@@ -25,14 +25,14 @@ interface StopSummaryProps {
   isNext?: boolean;
   /** Day dividers already show the date on the timeline; only standalone lists need it. */
   showDate?: boolean;
+  /** Cards mark stops with documents; the sheet lists them instead. */
+  showDocumentsIndicator?: boolean;
 }
 
 /** Badges, company and place; shared by the stop card and the stop drawer header. */
-export const StopSummary: React.FC<StopSummaryProps> = ({ stop, isNext, showDate }) => {
+export const StopSummary: React.FC<StopSummaryProps> = ({ stop, isNext, showDate, showDocumentsIndicator }) => {
   const companyName = getStopCompanyName(stop);
-  const orderNumbers = Array.from(
-    new Set([...stop.loadingCargos, ...stop.unloadingCargos].map((cargo) => `#${cargo.shipment.orderNumber}`))
-  );
+  const orderNumbers = getStopOrderNumbers(stop);
 
   return (
     <FlexLayout className="min-w-0 flex-col gap-1 text-left">
@@ -65,10 +65,20 @@ export const StopSummary: React.FC<StopSummaryProps> = ({ stop, isNext, showDate
         <Text color="text-color-3" variant="text-xs">
           {[stop.address?.placeName, orderNumbers.join(' • ')].filter(Boolean).join(' • ')}
         </Text>
+        {showDocumentsIndicator && stop.documents.length > 0 && <DocumentsIndicator />}
       </FlexLayout>
     </FlexLayout>
   );
 };
+
+export const DocumentsIndicator = () => (
+  <FlexLayout className="h-[24px] shrink-0 items-center gap-[6px]">
+    <Text color="text-color-3" variant="text-xs">
+      •
+    </Text>
+    <Icon aria-label="Ima dokumente" color="text-dark-400 dark:text-light-500" icon="IconFile" size="s" />
+  </FlexLayout>
+);
 
 interface StopCardProps extends StopSummaryProps {
   isHighlighted: boolean;
@@ -90,7 +100,7 @@ export const StopCard: React.FC<StopCardProps> = ({ stop, isHighlighted, isNext,
       type="button"
       onClick={onOpen}
     >
-      <StopSummary isNext={isNext} showDate={showDate} stop={stop} />
+      <StopSummary isNext={isNext} showDate={showDate} showDocumentsIndicator stop={stop} />
       <FlexLayout className="shrink-0 items-center gap-2">
         {stop.completedAt && <Icon color="text-green-600" icon="IconCircleCheck" size="m" />}
         <Icon color="text-dark-500 dark:text-light-300" icon="IconChevronRight" size="m" />

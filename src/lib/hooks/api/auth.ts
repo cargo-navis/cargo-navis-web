@@ -17,5 +17,5 @@ function useAuth<T>(authFunc: (args: T) => Promise<AuthResponse.RootObject>) {
 }
 
 function storeAuthRes(authRes: AuthResponse.RootObject) {
-  setAuthTokens({ accessToken: authRes.token });
+  setAuthTokens({ accessToken: authRes.accessToken });
 }

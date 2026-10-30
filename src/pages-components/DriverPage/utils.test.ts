@@ -8,11 +8,17 @@ import {
   buildDriverShipments,
   buildRouteTimeline,
   formatCargoMeasures,
+  formatCompletedAt,
   formatStopDate,
   getDayDividerLabel,
+  getDocumentIcon,
   getNavigationUrl,
+  getNotYetLoadedCargos,
+  getPendingLoadingStops,
   getStopCompanyName,
   getStopKindLabels,
+  getStopShortName,
+  getStopToastDescription,
   groupCargosByShipment,
 } from './utils';
 
@@ -41,6 +47,7 @@ function makeCargo(shipmentId: string, overrides: Partial<DriverStopCargo> = {})
     unloadingDueDate: null,
     unloadingDescription: null,
     unloadingReference: null,
+    loadStatus: 'not_yet_loaded',
     ...overrides,
   };
 }
@@ -193,6 +200,32 @@ describe('getStopCompanyName', () => {
   });
 });
 
+describe('getStopToastDescription', () => {
+  const cargo = (shipmentId: string, orderNumber: string, overrides: Partial<DriverStopCargo> = {}) =>
+    makeCargo(shipmentId, { shipment: { id: shipmentId, orderNumber }, ...overrides });
+
+  it('combines the company name and the order number', () => {
+    const stop = makeStop('A', { loadingCargos: [cargo('s1', '2026/1234', { loadingCompanyName: 'Podravka d.d.' })] });
+    expect(getStopToastDescription(stop)).toBe('Podravka d.d. • #2026/1234');
+  });
+
+  it('lists every order of the stop once', () => {
+    const stop = makeStop('A', {
+      loadingCargos: [
+        cargo('s1', '2026/1234', { loadingCompanyName: 'Podravka d.d.' }),
+        cargo('s1', '2026/1234'),
+        cargo('s2', '2026/1240'),
+      ],
+    });
+    expect(getStopToastDescription(stop)).toBe('Podravka d.d. • #2026/1234 • #2026/1240');
+  });
+
+  it('leaves out a missing company name', () => {
+    const stop = makeStop('A', { loadingCargos: [], unloadingCargos: [cargo('s1', '2026/1234')] });
+    expect(getStopToastDescription(stop)).toBe('#2026/1234');
+  });
+});
+
 describe('getNavigationUrl', () => {
   const base = 'https://www.google.com/maps/search/?api=1&query=';
 
@@ -232,6 +265,25 @@ describe('groupCargosByShipment', () => {
     expect(groups.map((g) => g.shipment.id)).toEqual(['a', 'b']);
     expect(groups[0].cargos).toEqual([a1, a2]);
     expect(groups[1].cargos).toEqual([b1]);
+  });
+});
+
+describe('formatCompletedAt', () => {
+  // now: Monday 2026-10-19 10:00
+  it('shows "Danas" for today', () => {
+    expect(formatCompletedAt('2026-10-19T09:05:00', now)).toBe('Danas · 09:05');
+  });
+
+  it('shows "Jučer" for yesterday', () => {
+    expect(formatCompletedAt('2026-10-18T17:45:00', now)).toBe('Jučer · 17:45');
+  });
+
+  it('shows weekday and date for older days this year', () => {
+    expect(formatCompletedAt('2026-10-12T09:00:00', now)).toBe('pon. 12.10. · 09:00');
+  });
+
+  it('adds the full year for another year', () => {
+    expect(formatCompletedAt('2025-12-30T08:30:00', now)).toBe('uto. 30.12.2025. · 08:30');
   });
 });
 
@@ -323,5 +375,74 @@ describe('formatCargoMeasures', () => {
   it('skips missing weight or ldm instead of crashing', () => {
     expect(formatCargoMeasures({ weight: 900, ldm: null })).toEqual(['900 kg']);
     expect(formatCargoMeasures({ weight: null, ldm: null })).toEqual([]);
+  });
+});
+
+describe('getDocumentIcon', () => {
+  const doc = (name: string, mimeType: string) => ({ name, mimeType });
+
+  it('picks the icon from the mime type', () => {
+    expect(getDocumentIcon(doc('cmr', 'application/pdf'))).toBe('IconFileTypePdf');
+    expect(getDocumentIcon(doc('photo', 'image/jpeg'))).toBe('IconFileTypeJpg');
+    expect(getDocumentIcon(doc('scan', 'image/png'))).toBe('IconFileTypePng');
+  });
+
+  it('uses a photo icon for other images', () => {
+    expect(getDocumentIcon(doc('IMG_0042.HEIC', 'image/heic'))).toBe('IconPhoto');
+  });
+
+  it('falls back to the file extension when the mime type is generic', () => {
+    expect(getDocumentIcon(doc('Racun.DOCX', 'application/octet-stream'))).toBe('IconFileTypeDocx');
+    expect(getDocumentIcon(doc('popis.xlsx', ''))).toBe('IconFileTypeXls');
+    expect(getDocumentIcon(doc('export.csv', 'text/csv'))).toBe('IconFileTypeCsv');
+  });
+
+  it('uses a plain file icon for unknown types', () => {
+    expect(getDocumentIcon(doc('data.bin', 'application/octet-stream'))).toBe('IconFile');
+  });
+});
+
+describe('getNotYetLoadedCargos', () => {
+  it('returns unloading cargo that is not loaded yet', () => {
+    const notLoaded = makeCargo('s1');
+    const loaded = makeCargo('s2', { loadStatus: 'loaded' });
+    const stop = makeStop('U', { loadingCargos: [], unloadingCargos: [notLoaded, loaded] });
+    expect(getNotYetLoadedCargos(stop)).toEqual([notLoaded]);
+  });
+
+  it('ignores cargo loaded at the same stop', () => {
+    const cargo = makeCargo('s1');
+    const stop = makeStop('M', { loadingCargos: [cargo], unloadingCargos: [cargo] });
+    expect(getNotYetLoadedCargos(stop)).toEqual([]);
+  });
+
+  it('is empty for a loading-only stop', () => {
+    expect(getNotYetLoadedCargos(makeStop('L'))).toEqual([]);
+  });
+});
+
+describe('getPendingLoadingStops', () => {
+  const cargo = makeCargo('s1');
+
+  it('returns unconfirmed stops that load the cargo', () => {
+    const loading = makeStop('L', { loadingCargos: [cargo] });
+    const other = makeStop('O', { loadingCargos: [makeCargo('s2')] });
+    expect(ids(getPendingLoadingStops([cargo], [loading, other]))).toEqual(['L']);
+  });
+
+  it('skips confirmed stops', () => {
+    const loading = makeStop('L', { loadingCargos: [cargo], completedAt: '2026-10-19T08:00:00Z' });
+    expect(getPendingLoadingStops([cargo], [loading])).toEqual([]);
+  });
+});
+
+describe('getStopShortName', () => {
+  it('uses the company name', () => {
+    const stop = makeStop('A', { loadingCargos: [makeCargo('s1', { loadingCompanyName: 'Podravka d.d.' })] });
+    expect(getStopShortName(stop)).toBe('Podravka d.d.');
+  });
+
+  it('falls back to the place', () => {
+    expect(getStopShortName(makeStop('A'))).toBe('Place A');
   });
 });

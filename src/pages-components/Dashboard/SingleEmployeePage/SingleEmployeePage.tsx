@@ -85,7 +85,13 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
             </FlexLayout>
           </FlexLayout>
         </FlexLayout>
-        {!employee.deleted && <EmployeeActions id={employee.id} name={employee.fullName} />}
+        {!employee.deleted && (
+          <EmployeeActions
+            id={employee.id}
+            isDriver={employee.positions.includes(PositionEnum.Driver)}
+            name={employee.fullName}
+          />
+        )}
       </FlexLayout>
       <FlexLayout className="ml-4 gap-8">
         <DisplayIf condition={employee.positions.includes(PositionEnum.Driver)}>

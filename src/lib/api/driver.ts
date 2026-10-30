@@ -1,6 +1,7 @@
 import { driverBackend } from '@/lib/services/driverBackendService';
 
 import type { DriverStop, DriverStopDocument } from './driver.d';
+import { toPushSubscriptionRequest } from './push-subscriptions';
 import type { User } from './user.d';
 import type { VehicleStop } from './vehicleStops.d';
 
@@ -45,4 +46,12 @@ export async function getDriverStopFileUrl(
 
 export async function deleteDriverStopFile(stopId: string, documentId: string) {
   return driverBackend.delete<void>(`/api/vehicle-stops/${stopId}/files/${documentId}`);
+}
+
+export async function getDriverPushSubscriptions() {
+  return driverBackend.get<{ endpoint: string }[]>('/api/push-subscriptions');
+}
+
+export async function createDriverPushSubscription(subscription: PushSubscription) {
+  return driverBackend.post<void>('/api/push-subscriptions', toPushSubscriptionRequest(subscription));
 }

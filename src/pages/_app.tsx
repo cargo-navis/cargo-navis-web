@@ -10,10 +10,10 @@ import { QueryClientCreator } from '@/lib/components/providers/QueryClientCreato
 import { inter, playfairDisplaySc } from '@/ui/theme/fonts';
 
 // Driver portal toasts carry actions (undo), so keep them in thumb reach, above its 60px bottom tab bar.
-const DRIVER_PORTAL_PATHNAME = '/d/[token]';
+const DRIVER_PORTAL_PATHNAMES = ['/driver', '/driver/[token]'];
 
 export default function App({ Component, pageProps, router }: AppProps) {
-  const isDriverPortal = router.pathname === DRIVER_PORTAL_PATHNAME;
+  const isDriverPortal = DRIVER_PORTAL_PATHNAMES.includes(router.pathname);
 
   return (
     <HeroUIProvider>

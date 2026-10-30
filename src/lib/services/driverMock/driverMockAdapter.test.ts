@@ -24,6 +24,29 @@ describe('driverMockAdapter', () => {
     expect(updated.find((stop) => stop.id === active.id)?.completedAt).toEqual(expect.any(String));
   });
 
+  it('refuses to unload cargo before its loading stop is confirmed, then allows it', async () => {
+    const service = await createService();
+
+    // Osijek unloads what Zagreb loads.
+    const error = await service.post('/api/vehicle-stops/stop-osijek/complete').catch((e: AxiosError) => e);
+    expect((error as AxiosError<{ errorCode: string }>).response?.data.errorCode).toBe('CARGO_NOT_YET_LOADED');
+
+    // Zagreb also unloads Koprivnica's cargo, so Koprivnica goes first.
+    await service.post('/api/vehicle-stops/stop-koprivnica/complete');
+    await service.post('/api/vehicle-stops/stop-zagreb/complete');
+    await expect(service.post('/api/vehicle-stops/stop-osijek/complete')).resolves.toBeDefined();
+  });
+
+  it('refuses to undo a loading once its cargo is unloaded', async () => {
+    const service = await createService();
+
+    // Rijeka's cargo was already unloaded in Graz.
+    const error = await service.post('/api/vehicle-stops/stop-rijeka/uncomplete').catch((e: AxiosError) => e);
+    expect((error as AxiosError<{ errorCode: string }>).response?.data.errorCode).toBe(
+      'CARGO_STATUS_CHANGED_BY_LATER_STOP'
+    );
+  });
+
   it('deleting a document uploaded by someone else returns 403', async () => {
     const service = await createService();
     const stops = await service.get<DriverStop[]>('/api/driver/stops');
@@ -53,5 +76,22 @@ describe('driverMockAdapter', () => {
     const service = createDriverBackendService({ adapter: createDriverMockAdapter({ delayMs: 0 }) });
 
     await expect(service.startSession('expired')).rejects.toBeInstanceOf(DriverLinkExpiredError);
+  });
+
+  it('refresh returns 401 before any exchange', async () => {
+    const service = createDriverBackendService({ adapter: createDriverMockAdapter({ delayMs: 0 }) });
+
+    await expect(service.startSession(null)).rejects.toBeInstanceOf(DriverLinkExpiredError);
+  });
+
+  it('refresh succeeds after an exchange', async () => {
+    const adapter = createDriverMockAdapter({ delayMs: 0 });
+    await createDriverBackendService({ adapter }).startSession('abc');
+
+    // A fresh client (like a reload of /driver) restores the session from the simulated cookie.
+    const service = createDriverBackendService({ adapter });
+    await service.startSession(null);
+
+    await expect(service.get<DriverStop[]>('/api/driver/stops')).resolves.toEqual(expect.any(Array));
   });
 });

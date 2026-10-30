@@ -9,6 +9,8 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
+    // backendService creates its default client on import and throws without a backend URL.
+    env: { NEXT_PUBLIC_BACKEND_URL: 'http://backend.test' },
     include: ['src/**/*.test.ts'],
   },
 });

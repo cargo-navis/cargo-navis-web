@@ -3,7 +3,8 @@ import 'dayjs/locale/hr';
 import dayjs, { type Dayjs } from 'dayjs';
 
 import type { DriverCargoShipment, DriverShipment, DriverStop, DriverStopCargo } from '@/lib/api/driver.d';
-import type { VehicleStopAddress } from '@/lib/api/vehicleStops.d';
+import type { VehicleStopAddress, VehicleStopDocument } from '@/lib/api/vehicleStops.d';
+import type { IconType } from '@/ui';
 
 const isCompleted = (stop: DriverStop) => Boolean(stop.completedAt);
 
@@ -77,6 +78,37 @@ export function getStopCompanyName(stop: DriverStop): string | null {
   );
 }
 
+/** The stop's order numbers, each once, as `#2026/1234`. */
+export function getStopOrderNumbers(stop: DriverStop): string[] {
+  const cargos = [...stop.loadingCargos, ...stop.unloadingCargos];
+  return Array.from(new Set(cargos.map((cargo) => `#${cargo.shipment.orderNumber}`)));
+}
+
+/** Subtext for stop toasts, e.g. `Podravka d.d. • #2026/1234 • #2026/1240` (same separator as the card's place line). */
+export function getStopToastDescription(stop: DriverStop): string {
+  return [getStopCompanyName(stop), ...getStopOrderNumbers(stop)].filter(Boolean).join(' • ');
+}
+
+/**
+ * Cargo this stop unloads that isn't loaded yet. The backend refuses to confirm the stop until it is (error
+ * CARGO_NOT_YET_LOADED). Cargo loaded at this same stop doesn't count: confirming loads it first.
+ */
+export function getNotYetLoadedCargos(stop: DriverStop): DriverStopCargo[] {
+  const loadedHere = new Set(stop.loadingCargos.map((cargo) => cargo.id));
+  return stop.unloadingCargos.filter((cargo) => cargo.loadStatus === 'not_yet_loaded' && !loadedHere.has(cargo.id));
+}
+
+/** Unconfirmed stops in the route that load any of these cargos. Empty when they are on another route. */
+export function getPendingLoadingStops(cargos: DriverStopCargo[], stops: DriverStop[]): DriverStop[] {
+  const cargoIds = new Set(cargos.map((cargo) => cargo.id));
+  return stops.filter((stop) => !stop.completedAt && stop.loadingCargos.some((cargo) => cargoIds.has(cargo.id)));
+}
+
+/** Short name of a stop for inline text: the company, else the place. */
+export function getStopShortName(stop: DriverStop): string | null {
+  return getStopCompanyName(stop) ?? stop.address?.placeName ?? null;
+}
+
 export function getNavigationUrl(address: VehicleStopAddress | null): string | null {
   if (!address) return null;
 
@@ -111,6 +143,18 @@ export function formatStopDate(date: string | null, now: Dayjs): string {
   if (day.isSame(now.add(1, 'day'), 'day')) return 'Sutra';
 
   return day.format('ddd D.M.');
+}
+
+/** When a stop was confirmed: `Danas · 09:05`, `Jučer · 17:45`, `pon. 12.10. · 09:00`, other years with the full year. */
+export function formatCompletedAt(completedAt: string, now: Dayjs): string {
+  const at = dayjs(completedAt).locale('hr');
+  const time = at.format('HH:mm');
+
+  if (at.isSame(now, 'day')) return `Danas · ${time}`;
+  if (at.isSame(now.subtract(1, 'day'), 'day')) return `Jučer · ${time}`;
+
+  const date = at.isSame(now, 'year') ? at.format('ddd D.M.') : at.format('ddd D.M.YYYY.');
+  return `${date} · ${time}`;
 }
 
 // The API returns stops only, so shipments are rebuilt here. Stops completed before the
@@ -163,4 +207,37 @@ export function formatCargoMeasures(cargo: Pick<DriverStopCargo, 'weight' | 'ldm
   if (cargo.weight != null) measures.push(`${formatNumber(cargo.weight)} kg`);
   if (cargo.ldm != null) measures.push(`${formatNumber(cargo.ldm)} ldm`);
   return measures;
+}
+
+const ICON_BY_MIME_TYPE: Record<string, IconType> = {
+  'application/pdf': 'IconFileTypePdf',
+  'image/jpeg': 'IconFileTypeJpg',
+  'image/png': 'IconFileTypePng',
+};
+
+const ICON_BY_EXTENSION: Record<string, IconType> = {
+  pdf: 'IconFileTypePdf',
+  jpg: 'IconFileTypeJpg',
+  jpeg: 'IconFileTypeJpg',
+  png: 'IconFileTypePng',
+  doc: 'IconFileTypeDoc',
+  docx: 'IconFileTypeDocx',
+  xls: 'IconFileTypeXls',
+  xlsx: 'IconFileTypeXls',
+  csv: 'IconFileTypeCsv',
+  zip: 'IconFileTypeZip',
+  txt: 'IconFileTypeTxt',
+  xml: 'IconFileTypeXml',
+};
+
+/** Icon for a document in the stop sheet: by mime type, then by file extension (uploads are often octet-stream). */
+export function getDocumentIcon(document: Pick<VehicleStopDocument, 'name' | 'mimeType'>): IconType {
+  const mimeType = document.mimeType.toLowerCase();
+  const extension = document.name.split('.').pop()?.toLowerCase() ?? '';
+
+  return (
+    ICON_BY_MIME_TYPE[mimeType] ??
+    ICON_BY_EXTENSION[extension] ??
+    (mimeType.startsWith('image/') ? 'IconPhoto' : 'IconFile')
+  );
 }
