@@ -59,7 +59,34 @@ function cargo(
     unloadingDueDate: null,
     unloadingDescription: isLoading ? null : (details.description ?? null),
     unloadingReference: isLoading ? null : (details.reference ?? null),
+    // Set from the confirmed stops by syncMockLoadStatuses.
+    loadStatus: 'not_yet_loaded',
   };
+}
+
+// The real API returns one cargo object on both its loading and its unloading stop; the mock builds two, matched by
+// order and weight (unique in this data).
+function cargoKey(cargo: DriverStopCargo) {
+  return `${cargo.shipment.id}:${cargo.weight}`;
+}
+
+/** Recomputes every cargo's loadStatus from the confirmed stops, like the backend does on complete/uncomplete. */
+export function syncMockLoadStatuses(stops: DriverStop[]) {
+  const loaded = new Set<string>();
+  const unloaded = new Set<string>();
+  stops
+    .filter((stop) => stop.completedAt)
+    .forEach((stop) => {
+      stop.loadingCargos.forEach((cargo) => loaded.add(cargoKey(cargo)));
+      stop.unloadingCargos.forEach((cargo) => unloaded.add(cargoKey(cargo)));
+    });
+
+  stops
+    .flatMap((stop) => [...stop.loadingCargos, ...stop.unloadingCargos])
+    .forEach((cargo) => {
+      const key = cargoKey(cargo);
+      cargo.loadStatus = unloaded.has(key) ? 'unloaded' : loaded.has(key) ? 'loaded' : 'not_yet_loaded';
+    });
 }
 
 function document(id: string, name: string, uploadedBy: string, createdAt: string): DriverStopDocument {
@@ -72,7 +99,7 @@ export function createMockStops(): DriverStop[] {
   const day = (offset: number) => today.add(offset, 'day').format('YYYY-MM-DD');
   const at = (offset: number, hour: number) => today.add(offset, 'day').hour(hour).toISOString();
 
-  return [
+  const stops: DriverStop[] = [
     {
       id: 'stop-rijeka',
       address: address('Riva 1', '51000', 'Rijeka'),
@@ -187,4 +214,7 @@ export function createMockStops(): DriverStop[] {
       documents: [],
     },
   ];
+
+  syncMockLoadStatuses(stops);
+  return stops;
 }

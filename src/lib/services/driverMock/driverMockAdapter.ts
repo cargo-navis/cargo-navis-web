@@ -1,7 +1,7 @@
 import { type AxiosAdapter, AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
 import dayjs from 'dayjs';
 
-import { createMockStops, MOCK_DRIVER_ID, mockAccount } from './driverMockData';
+import { createMockStops, MOCK_DRIVER_ID, mockAccount, syncMockLoadStatuses } from './driverMockData';
 
 export { MOCK_DRIVER_ID };
 
@@ -77,7 +77,16 @@ export function createDriverMockAdapter({ delayMs = 400 }: { delayMs?: number } 
     if (method === 'post' && (match = url.match(/^\/api\/vehicle-stops\/([^/]+)\/(complete|uncomplete)$/))) {
       const stop = findStop(match[1]);
       if (!stop) return respond(config, 404);
-      stop.completedAt = match[2] === 'complete' ? new Date().toISOString() : null;
+      const isComplete = match[2] === 'complete';
+      // Same guards as the backend: unload only loaded cargo; undo a loading only while its cargo isn't unloaded.
+      if (isComplete && stop.unloadingCargos.some((cargo) => cargo.loadStatus === 'not_yet_loaded')) {
+        return respond(config, 400, { status: 'failed', errorCode: 'CARGO_NOT_YET_LOADED' });
+      }
+      if (!isComplete && stop.loadingCargos.some((cargo) => cargo.loadStatus === 'unloaded')) {
+        return respond(config, 400, { status: 'failed', errorCode: 'CARGO_STATUS_CHANGED_BY_LATER_STOP' });
+      }
+      stop.completedAt = isComplete ? new Date().toISOString() : null;
+      syncMockLoadStatuses(stops);
       return respond(config, 200, { data: stop });
     }
 

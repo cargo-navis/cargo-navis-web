@@ -5,8 +5,13 @@ export interface DriverCargoShipment {
   orderNumber: string;
 }
 
+/** Same values as `LoadStatus` in shipments.ts, kept as a type so the driver bundle doesn't import that module. */
+export type DriverCargoLoadStatus = 'not_yet_loaded' | 'loaded' | 'unloaded';
+
 export interface DriverStopCargo extends Omit<VehicleStopCargo, 'shipment' | 'weight' | 'ldm'> {
   shipment: DriverCargoShipment;
+  /** The backend only confirms an unloading stop when its cargo is `loaded`. */
+  loadStatus: DriverCargoLoadStatus | null;
   // Cargo forms treat these as optional, so the API can return null.
   weight: number | null;
   ldm: number | null;

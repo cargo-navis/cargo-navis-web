@@ -89,6 +89,26 @@ export function getStopToastDescription(stop: DriverStop): string {
   return [getStopCompanyName(stop), ...getStopOrderNumbers(stop)].filter(Boolean).join(' • ');
 }
 
+/**
+ * Cargo this stop unloads that isn't loaded yet. The backend refuses to confirm the stop until it is (error
+ * CARGO_NOT_YET_LOADED). Cargo loaded at this same stop doesn't count: confirming loads it first.
+ */
+export function getNotYetLoadedCargos(stop: DriverStop): DriverStopCargo[] {
+  const loadedHere = new Set(stop.loadingCargos.map((cargo) => cargo.id));
+  return stop.unloadingCargos.filter((cargo) => cargo.loadStatus === 'not_yet_loaded' && !loadedHere.has(cargo.id));
+}
+
+/** Unconfirmed stops in the route that load any of these cargos. Empty when they are on another route. */
+export function getPendingLoadingStops(cargos: DriverStopCargo[], stops: DriverStop[]): DriverStop[] {
+  const cargoIds = new Set(cargos.map((cargo) => cargo.id));
+  return stops.filter((stop) => !stop.completedAt && stop.loadingCargos.some((cargo) => cargoIds.has(cargo.id)));
+}
+
+/** Short name of a stop for inline text: the company, else the place. */
+export function getStopShortName(stop: DriverStop): string | null {
+  return getStopCompanyName(stop) ?? stop.address?.placeName ?? null;
+}
+
 export function getNavigationUrl(address: VehicleStopAddress | null): string | null {
   if (!address) return null;
 

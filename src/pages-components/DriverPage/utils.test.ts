@@ -13,8 +13,11 @@ import {
   getDayDividerLabel,
   getDocumentIcon,
   getNavigationUrl,
+  getNotYetLoadedCargos,
+  getPendingLoadingStops,
   getStopCompanyName,
   getStopKindLabels,
+  getStopShortName,
   getStopToastDescription,
   groupCargosByShipment,
 } from './utils';
@@ -44,6 +47,7 @@ function makeCargo(shipmentId: string, overrides: Partial<DriverStopCargo> = {})
     unloadingDueDate: null,
     unloadingDescription: null,
     unloadingReference: null,
+    loadStatus: 'not_yet_loaded',
     ...overrides,
   };
 }
@@ -395,5 +399,50 @@ describe('getDocumentIcon', () => {
 
   it('uses a plain file icon for unknown types', () => {
     expect(getDocumentIcon(doc('data.bin', 'application/octet-stream'))).toBe('IconFile');
+  });
+});
+
+describe('getNotYetLoadedCargos', () => {
+  it('returns unloading cargo that is not loaded yet', () => {
+    const notLoaded = makeCargo('s1');
+    const loaded = makeCargo('s2', { loadStatus: 'loaded' });
+    const stop = makeStop('U', { loadingCargos: [], unloadingCargos: [notLoaded, loaded] });
+    expect(getNotYetLoadedCargos(stop)).toEqual([notLoaded]);
+  });
+
+  it('ignores cargo loaded at the same stop', () => {
+    const cargo = makeCargo('s1');
+    const stop = makeStop('M', { loadingCargos: [cargo], unloadingCargos: [cargo] });
+    expect(getNotYetLoadedCargos(stop)).toEqual([]);
+  });
+
+  it('is empty for a loading-only stop', () => {
+    expect(getNotYetLoadedCargos(makeStop('L'))).toEqual([]);
+  });
+});
+
+describe('getPendingLoadingStops', () => {
+  const cargo = makeCargo('s1');
+
+  it('returns unconfirmed stops that load the cargo', () => {
+    const loading = makeStop('L', { loadingCargos: [cargo] });
+    const other = makeStop('O', { loadingCargos: [makeCargo('s2')] });
+    expect(ids(getPendingLoadingStops([cargo], [loading, other]))).toEqual(['L']);
+  });
+
+  it('skips confirmed stops', () => {
+    const loading = makeStop('L', { loadingCargos: [cargo], completedAt: '2026-10-19T08:00:00Z' });
+    expect(getPendingLoadingStops([cargo], [loading])).toEqual([]);
+  });
+});
+
+describe('getStopShortName', () => {
+  it('uses the company name', () => {
+    const stop = makeStop('A', { loadingCargos: [makeCargo('s1', { loadingCompanyName: 'Podravka d.d.' })] });
+    expect(getStopShortName(stop)).toBe('Podravka d.d.');
+  });
+
+  it('falls back to the place', () => {
+    expect(getStopShortName(makeStop('A'))).toBe('Place A');
   });
 });

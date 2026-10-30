@@ -24,6 +24,29 @@ describe('driverMockAdapter', () => {
     expect(updated.find((stop) => stop.id === active.id)?.completedAt).toEqual(expect.any(String));
   });
 
+  it('refuses to unload cargo before its loading stop is confirmed, then allows it', async () => {
+    const service = await createService();
+
+    // Osijek unloads what Zagreb loads.
+    const error = await service.post('/api/vehicle-stops/stop-osijek/complete').catch((e: AxiosError) => e);
+    expect((error as AxiosError<{ errorCode: string }>).response?.data.errorCode).toBe('CARGO_NOT_YET_LOADED');
+
+    // Zagreb also unloads Koprivnica's cargo, so Koprivnica goes first.
+    await service.post('/api/vehicle-stops/stop-koprivnica/complete');
+    await service.post('/api/vehicle-stops/stop-zagreb/complete');
+    await expect(service.post('/api/vehicle-stops/stop-osijek/complete')).resolves.toBeDefined();
+  });
+
+  it('refuses to undo a loading once its cargo is unloaded', async () => {
+    const service = await createService();
+
+    // Rijeka's cargo was already unloaded in Graz.
+    const error = await service.post('/api/vehicle-stops/stop-rijeka/uncomplete').catch((e: AxiosError) => e);
+    expect((error as AxiosError<{ errorCode: string }>).response?.data.errorCode).toBe(
+      'CARGO_STATUS_CHANGED_BY_LATER_STOP'
+    );
+  });
+
   it('deleting a document uploaded by someone else returns 403', async () => {
     const service = await createService();
     const stops = await service.get<DriverStop[]>('/api/driver/stops');
