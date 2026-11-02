@@ -6,6 +6,7 @@ import { useMemo, useState } from 'react';
 import { GLOBAL_SEARCH_MIN_LENGTH, useGlobalSearch } from '@/lib/hooks';
 import { Box, Dialog, DialogContent, DialogTitle, FlexLayout, Icon, LoadingSpinner, Text } from '@/ui';
 
+import { SearchResultAside } from './SearchResultAside';
 import { SearchResultText } from './SearchResultText';
 import { mapToSearchResultGroups } from './utils';
 
@@ -87,8 +88,11 @@ const SearchCommand = ({ onNavigate }: { onNavigate(): void }) => {
             value={`${group.key}-${item.id}`}
             onSelect={() => handleSelect(item.href)}
           >
-            <Icon color="text-dark-600 dark:text-light-300" icon={group.icon} size="l" />
-            <SearchResultText item={item} query={debouncedQuery} />
+            <Icon className="mt-1 self-start" color="text-dark-600 dark:text-light-300" icon={group.icon} size="l" />
+            <Box className="flex-1 min-w-0">
+              <SearchResultText item={item} query={debouncedQuery} />
+            </Box>
+            {item.aside && <SearchResultAside aside={item.aside} className="w-[160px]" query={debouncedQuery} />}
           </Command.Item>
         ))}
         {group.showAll && (
