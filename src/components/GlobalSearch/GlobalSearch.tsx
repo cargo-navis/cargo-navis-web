@@ -108,7 +108,9 @@ const SearchCommand = ({ onNavigate }: { onNavigate(): void }) => {
   }
 
   return (
-    <Command label="Globalno pretraživanje" loop shouldFilter={false}>
+    // min-w-0: DialogContent is a grid, whose items grow to their content by default, so one long result line (e.g. an
+    // address) would widen the whole list past the modal and push the cargo column out of view
+    <Command className="min-w-0" label="Globalno pretraživanje" loop shouldFilter={false}>
       <FlexLayout className="items-center gap-2 px-4 border-b border-dark-100 dark:border-light-800">
         <Icon color="text-dark-600 dark:text-light-300" icon="IconSearch" />
         <Command.Input
