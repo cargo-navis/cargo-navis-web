@@ -13,7 +13,13 @@ import { prepareUploadFile } from './prepareUploadFile';
 
 const FILE_SIZE_LIMIT_IN_MB = 10;
 
-export const StopDocuments: React.FC<{ stop: DriverStop }> = ({ stop }) => {
+interface StopDocumentsProps {
+  stop: DriverStop;
+  // On in the Nalozi tab: documents are added and deleted from the stop on the route, the order sheet only lists them
+  isReadOnly?: boolean;
+}
+
+export const StopDocuments: React.FC<StopDocumentsProps> = ({ stop, isReadOnly = false }) => {
   const { data: account } = useDriverAccount({ enabled: true });
   const { mutateAsync: uploadFile } = useUploadDriverStopFile();
   const { mutate: deleteFile, isPending: isDeleting } = useDeleteDriverStopFile();
@@ -99,6 +105,9 @@ export const StopDocuments: React.FC<{ stop: DriverStop }> = ({ stop }) => {
     );
   }
 
+  // Without the upload button an empty section would be just a heading
+  if (isReadOnly && stop.documents.length === 0) return null;
+
   return (
     <FlexLayout className="flex-col gap-2">
       <Text color="text-color-3" variant="text-xxxs-medium">
@@ -130,7 +139,7 @@ export const StopDocuments: React.FC<{ stop: DriverStop }> = ({ stop }) => {
               </Text>
             </FlexLayout>
           </FlexLayout>
-          {account && document.uploadedBy === account.id && (
+          {!isReadOnly && account && document.uploadedBy === account.id && (
             <FlexLayout
               aria-label="Obriši dokument"
               as="button"
@@ -146,15 +155,17 @@ export const StopDocuments: React.FC<{ stop: DriverStop }> = ({ stop }) => {
           )}
         </FlexLayout>
       ))}
-      <Button
-        iconLeft="IconCamera"
-        isFullWidth
-        isLoading={!!uploadProgress}
-        size="l"
-        text="Dodaj dokument"
-        variant="secondary"
-        onClick={() => getFileInput(handleFiles, { accept: 'image/*,application/pdf', multiple: true })}
-      />
+      {!isReadOnly && (
+        <Button
+          iconLeft="IconCamera"
+          isFullWidth
+          isLoading={!!uploadProgress}
+          size="l"
+          text="Dodaj dokument"
+          variant="secondary"
+          onClick={() => getFileInput(handleFiles, { accept: 'image/*,application/pdf', multiple: true })}
+        />
+      )}
       {uploadProgress && (
         <Text className="text-center" color="text-color-3" variant="text-xxs">
           Učitavanje {uploadProgress.current}/{uploadProgress.total}…

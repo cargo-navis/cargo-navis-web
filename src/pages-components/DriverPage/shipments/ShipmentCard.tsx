@@ -91,7 +91,7 @@ const ShipmentTimeline: React.FC<{ shipment: DriverShipment }> = ({ shipment }) 
               actions={
                 <>
                   <CompleteStopButton stop={stop} />
-                  <StopDocuments stop={stop} />
+                  <StopDocuments isReadOnly stop={stop} />
                 </>
               }
               hideShipmentHeaders
