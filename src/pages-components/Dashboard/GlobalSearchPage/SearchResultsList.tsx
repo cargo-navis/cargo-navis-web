@@ -10,10 +10,9 @@ interface SearchResultsListProps {
 }
 
 export const SearchResultsList = ({ items, icon, query }: SearchResultsListProps) => (
-  // Capped so the side column stays next to the text instead of at the far edge of a wide screen
-  <Box as="ul" className="flex flex-col gap-1 max-w-[760px]">
+  <Box as="ul" className="flex flex-col max-w-[760px] divide-y divide-dark-100 dark:divide-light-900">
     {items.map((item) => (
-      <li key={item.id}>
+      <li className="py-1" key={item.id}>
         <Link
           className="flex items-center gap-3 p-2 rounded-s hover:bg-dark-50 dark:hover:bg-light-800"
           href={item.href}
