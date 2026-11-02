@@ -28,6 +28,7 @@ interface VerticalStopEntryProps {
   stop: VehicleStop;
   step: number;
   isDragOverlay?: boolean;
+  isHighlighted?: boolean;
   onEdit?(stop: VehicleStop): void;
   onDelete?(stop: VehicleStop): void;
   onInsertBefore?(): void;
@@ -37,6 +38,7 @@ export const VerticalStopEntry = ({
   stop,
   step,
   isDragOverlay,
+  isHighlighted,
   onEdit,
   onDelete,
   onInsertBefore,
@@ -70,8 +72,13 @@ export const VerticalStopEntry = ({
 
   return (
     <TimelineItem
-      className={clsx('group/stop-entry relative', isDragging && 'opacity-40')}
+      className={clsx(
+        'group/stop-entry relative rounded-s',
+        isDragging && 'opacity-40',
+        isHighlighted && 'row-highlight-fade'
+      )}
       completed={isCompleted}
+      data-stop-id={stop.id}
       ref={setNodeRef}
       separatorActive={isCompleted}
       step={step}

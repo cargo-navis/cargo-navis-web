@@ -57,6 +57,14 @@ export function useNotificationUpdates() {
         return;
       }
 
+      if (notificationType === 'vehicle_stop_document_uploaded') {
+        // Stop documents show on the vehicle stops page and in the shipment page timeline. The metadata names neither
+        // the vehicle nor the shipment, so every open one reloads.
+        void queryClient.invalidateQueries({ queryKey: ['vehicleStops'] });
+        void queryClient.invalidateQueries({ queryKey: ['shipment'] });
+        return;
+      }
+
       if (notificationType === 'shipment_draft_updated') {
         void queryClient.invalidateQueries({ queryKey: ['shipment-drafts'] });
         if (metadata.draftId) {

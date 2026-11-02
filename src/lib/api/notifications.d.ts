@@ -5,6 +5,7 @@ export enum NotificationType {
   SHIPMENT_MESSAGE_ACCEPTED = 'shipment_message_accepted',
   VEHICLE_STOP_COMPLETED = 'vehicle_stop_completed',
   SHIPMENT_DRAFT_UPDATED = 'shipment_draft_updated',
+  VEHICLE_STOP_DOCUMENT_UPLOADED = 'vehicle_stop_document_uploaded',
 }
 
 export interface Notification {
@@ -29,4 +30,6 @@ export interface NotificationMetadata {
   shipments?: { shipmentId: string; orderNumber: string }[];
   draftId?: string;
   fileName?: string;
+  documentId?: string;
+  documentName?: string;
 }
