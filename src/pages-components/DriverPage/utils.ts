@@ -2,7 +2,13 @@ import 'dayjs/locale/hr';
 
 import dayjs, { type Dayjs } from 'dayjs';
 
-import type { DriverCargoShipment, DriverShipment, DriverStop, DriverStopCargo } from '@/lib/api/driver.d';
+import type {
+  DriverCargoShipment,
+  DriverShipment,
+  DriverStop,
+  DriverStopCargo,
+  DriverStopDisponent,
+} from '@/lib/api/driver.d';
 import type { VehicleStopAddress, VehicleStopDocument } from '@/lib/api/vehicleStops.d';
 import type { IconType } from '@/ui';
 
@@ -102,6 +108,18 @@ export function getNotYetLoadedCargos(stop: DriverStop): DriverStopCargo[] {
 export function getPendingLoadingStops(cargos: DriverStopCargo[], stops: DriverStop[]): DriverStop[] {
   const cargoIds = new Set(cargos.map((cargo) => cargo.id));
   return stops.filter((stop) => !stop.completedAt && stop.loadingCargos.some((cargo) => cargoIds.has(cargo.id)));
+}
+
+export function getDisponentName(disponent: DriverStopDisponent): string | null {
+  return [disponent.firstName, disponent.lastName].filter(Boolean).join(' ') || null;
+}
+
+/** The order's dispatcher: an order has one, so the first stop that names it is enough. */
+export function getStopsDisponent(stops: DriverStop[]): DriverStopDisponent | null {
+  return (
+    stops.find(({ disponent }) => disponent && (getDisponentName(disponent) || disponent.phoneNumber))?.disponent ??
+    null
+  );
 }
 
 /** Short name of a stop for inline text: the company, else the place. */

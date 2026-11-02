@@ -7,10 +7,11 @@ import type { VehicleStopAddress } from '@/lib/api/vehicleStops';
 import { BottomSheet, Box, FlexLayout, Icon, Text } from '@/ui';
 
 import { CompleteStopButton } from '../stops/CompleteStopButton';
+import { DisponentContact } from '../stops/DisponentContact';
 import { DocumentsIndicator } from '../stops/StopCard';
 import { StopDetails } from '../stops/StopDetails';
 import { StopDocuments } from '../stops/StopDocuments';
-import { formatStopDate, getStopKindLabels } from '../utils';
+import { formatStopDate, getStopKindLabels, getStopsDisponent } from '../utils';
 
 const RoutePlace: React.FC<{ address: VehicleStopAddress | null }> = ({ address }) => (
   <FlexLayout className="items-center gap-[6px]">
@@ -128,7 +129,10 @@ export const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment, isOpen, on
         title={`Nalog #${shipment.orderNumber}`}
         onOpenChange={onOpenChange}
       >
-        <ShipmentTimeline shipment={shipment} />
+        <FlexLayout className="flex-col gap-6">
+          <ShipmentTimeline shipment={shipment} />
+          <DisponentContact disponent={getStopsDisponent(shipment.stops)} />
+        </FlexLayout>
       </BottomSheet>
     </>
   );

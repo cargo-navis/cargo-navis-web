@@ -1,6 +1,12 @@
 import dayjs from 'dayjs';
 
-import type { DriverCargoShipment, DriverStop, DriverStopCargo, DriverStopDocument } from '@/lib/api/driver.d';
+import type {
+  DriverCargoShipment,
+  DriverStop,
+  DriverStopCargo,
+  DriverStopDisponent,
+  DriverStopDocument,
+} from '@/lib/api/driver.d';
 import type { User } from '@/lib/api/user.d';
 import type { VehicleStopAddress } from '@/lib/api/vehicleStops.d';
 
@@ -93,6 +99,8 @@ function document(id: string, name: string, uploadedBy: string, createdAt: strin
   return { id, name, createdAt, uploadedBy, mimeType: 'image/jpeg', status: 'uploaded', publicUrl: null };
 }
 
+const MOCK_DISPONENT: DriverStopDisponent = { firstName: 'Dario', lastName: 'Jukić', phoneNumber: '+385915632655' };
+
 /** Stops in route order, dates relative to today. */
 export function createMockStops(): DriverStop[] {
   const today = dayjs().startOf('day');
@@ -110,6 +118,7 @@ export function createMockStops(): DriverStop[] {
       ],
       unloadingCargos: [],
       documents: [document('doc-dispatcher', 'Nalog za utovar.jpg', 'dispatcher-id', at(-2, 8))],
+      disponent: MOCK_DISPONENT,
     },
     {
       id: 'stop-graz',
@@ -121,6 +130,7 @@ export function createMockStops(): DriverStop[] {
         cargo(shipments.s4, 'unloading', { companyName: 'Spar Österreich', pallets: 6, weight: 4200, ldm: 2.4 }),
       ],
       documents: [document('doc-driver', 'CMR.jpg', MOCK_DRIVER_ID, at(-1, 15))],
+      disponent: MOCK_DISPONENT,
     },
     {
       id: 'stop-koprivnica',
@@ -153,6 +163,7 @@ export function createMockStops(): DriverStop[] {
       ],
       unloadingCargos: [],
       documents: [],
+      disponent: MOCK_DISPONENT,
     },
     {
       id: 'stop-zagreb',
@@ -172,6 +183,7 @@ export function createMockStops(): DriverStop[] {
         cargo(shipments.s2, 'unloading', { companyName: 'Konzum d.d.', pallets: 4, weight: 2100, ldm: 1.6 }),
       ],
       documents: [],
+      disponent: MOCK_DISPONENT,
     },
     {
       id: 'stop-osijek',
@@ -183,6 +195,7 @@ export function createMockStops(): DriverStop[] {
         cargo(shipments.s3, 'unloading', { companyName: 'Pivovara Osijek', pallets: 8, weight: 5000, ldm: 3.2 }),
       ],
       documents: [],
+      disponent: MOCK_DISPONENT,
     },
     {
       id: 'stop-munchen',
@@ -201,6 +214,7 @@ export function createMockStops(): DriverStop[] {
         }),
       ],
       documents: [],
+      disponent: MOCK_DISPONENT,
     },
     {
       id: 'stop-salzburg',
@@ -212,6 +226,7 @@ export function createMockStops(): DriverStop[] {
         cargo(shipments.s1, 'unloading', { companyName: 'Hofer KG', pallets: 2, weight: 900, ldm: 0.8 }),
       ],
       documents: [],
+      disponent: MOCK_DISPONENT,
     },
   ];
 

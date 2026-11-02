@@ -3,6 +3,7 @@ import { BottomSheet } from '@/ui';
 
 import { getStopCompanyName } from '../utils';
 import { CompleteStopButton } from './CompleteStopButton';
+import { DisponentContact } from './DisponentContact';
 import { StopSummary } from './StopCard';
 import { StopDetails } from './StopDetails';
 import { StopDocuments } from './StopDocuments';
@@ -28,6 +29,7 @@ export const StopDrawer: React.FC<StopDrawerProps> = ({ stop, isNext, isOpen, on
           <>
             <CompleteStopButton stop={stop} />
             <StopDocuments stop={stop} />
+            <DisponentContact disponent={stop.disponent} />
           </>
         }
         showSideBars

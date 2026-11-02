@@ -5,7 +5,14 @@ import { toPushSubscriptionRequest } from './push-subscriptions';
 import type { User } from './user.d';
 import type { VehicleStop } from './vehicleStops.d';
 
-export type { DriverCargoShipment, DriverShipment, DriverStop, DriverStopCargo, DriverStopDocument } from './driver.d';
+export type {
+  DriverCargoShipment,
+  DriverShipment,
+  DriverStop,
+  DriverStopCargo,
+  DriverStopDisponent,
+  DriverStopDocument,
+} from './driver.d';
 
 /** How far back completed stops are returned (backend default is 7 as well). */
 export const DRIVER_COMPLETED_WITHIN_DAYS = 7;

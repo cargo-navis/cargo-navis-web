@@ -11,12 +11,14 @@ import {
   formatCompletedAt,
   formatStopDate,
   getDayDividerLabel,
+  getDisponentName,
   getDocumentIcon,
   getNavigationUrl,
   getNotYetLoadedCargos,
   getPendingLoadingStops,
   getStopCompanyName,
   getStopKindLabels,
+  getStopsDisponent,
   getStopShortName,
   getStopToastDescription,
   groupCargosByShipment,
@@ -61,6 +63,7 @@ function makeStop(id: string, overrides: Partial<DriverStop> = {}): DriverStop {
     loadingCargos: [makeCargo('s1')],
     unloadingCargos: [],
     documents: [],
+    disponent: null,
     ...overrides,
   };
 }
@@ -444,5 +447,28 @@ describe('getStopShortName', () => {
 
   it('falls back to the place', () => {
     expect(getStopShortName(makeStop('A'))).toBe('Place A');
+  });
+});
+
+describe('getDisponentName', () => {
+  it('joins first and last name', () => {
+    expect(getDisponentName({ firstName: 'Dario', lastName: 'Jukić', phoneNumber: null })).toBe('Dario Jukić');
+  });
+
+  it('is null without a name', () => {
+    expect(getDisponentName({ firstName: null, lastName: null, phoneNumber: '+385915632655' })).toBeNull();
+  });
+});
+
+describe('getStopsDisponent', () => {
+  const dario = { firstName: 'Dario', lastName: 'Jukić', phoneNumber: '+385915632655' };
+
+  it('takes the first stop that has a dispatcher', () => {
+    expect(getStopsDisponent([makeStop('A'), makeStop('B', { disponent: dario })])).toEqual(dario);
+  });
+
+  it('skips a dispatcher with neither name nor number', () => {
+    const empty = { firstName: null, lastName: null, phoneNumber: null };
+    expect(getStopsDisponent([makeStop('A', { disponent: empty })])).toBeNull();
   });
 });

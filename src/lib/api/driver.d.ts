@@ -30,6 +30,15 @@ export interface DriverStop {
   loadingCargos: DriverStopCargo[];
   unloadingCargos: DriverStopCargo[];
   documents: DriverStopDocument[];
+  /** The dispatcher in charge of the stop, so the driver knows whom to contact. */
+  disponent: DriverStopDisponent | null;
+}
+
+export interface DriverStopDisponent {
+  firstName: string | null;
+  lastName: string | null;
+  /** E.164, e.g. '+385915632655'. */
+  phoneNumber: string | null;
 }
 
 /** Derived on the frontend by `buildDriverShipments`, not returned by the API. */
