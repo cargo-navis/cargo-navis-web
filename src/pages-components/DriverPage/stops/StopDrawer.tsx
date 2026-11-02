@@ -1,7 +1,7 @@
 import type { DriverStop } from '@/lib/api/driver';
 import { BottomSheet } from '@/ui';
 
-import { getStopCompanyName } from '../utils';
+import { getStopTitle } from '../utils';
 import { CompleteStopButton } from './CompleteStopButton';
 import { DisponentContact } from './DisponentContact';
 import { StopSummary } from './StopCard';
@@ -20,7 +20,7 @@ export const StopDrawer: React.FC<StopDrawerProps> = ({ stop, isNext, isOpen, on
   <BottomSheet
     header={stop && <StopSummary isNext={isNext} showDate stop={stop} />}
     isOpen={isOpen}
-    title={(stop && getStopCompanyName(stop)) ?? 'Postaja'}
+    title={(stop && getStopTitle(stop)) ?? 'Postaja'}
     onOpenChange={onOpenChange}
   >
     {stop && (

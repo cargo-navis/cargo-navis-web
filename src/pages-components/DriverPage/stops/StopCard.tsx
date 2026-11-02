@@ -5,7 +5,7 @@ import { CountryFlag } from '@/components/countries';
 import type { DriverStop } from '@/lib/api/driver';
 import { Box, FlexLayout, Icon, Text } from '@/ui';
 
-import { formatStopDate, getStopCompanyName, getStopOrderNumbers } from '../utils';
+import { formatStopDate, getStopClientNames, getStopOrderNumbers, getStopTitle } from '../utils';
 
 // Same convention as the dispatcher dashboard: utovar = orange, istovar = teal.
 const KIND_BADGE_CLASSES = {
@@ -29,10 +29,11 @@ interface StopSummaryProps {
   showDocumentsIndicator?: boolean;
 }
 
-/** Badges, company and place; shared by the stop card and the stop drawer header. */
+/** Badges, client, place and orders; shared by the stop card and the stop drawer header. Companies are in the cargo sections. */
 export const StopSummary: React.FC<StopSummaryProps> = ({ stop, isNext, showDate, showDocumentsIndicator }) => {
-  const companyName = getStopCompanyName(stop);
-  const orderNumbers = getStopOrderNumbers(stop);
+  const title = getStopTitle(stop);
+  // Without a client the order numbers are already the title, so they aren't repeated below it.
+  const orderNumbers = getStopClientNames(stop).length > 0 ? getStopOrderNumbers(stop) : [];
 
   return (
     <FlexLayout className="min-w-0 flex-col gap-1 text-left">
@@ -50,9 +51,9 @@ export const StopSummary: React.FC<StopSummaryProps> = ({ stop, isNext, showDate
           </Text>
         )}
       </FlexLayout>
-      {companyName && (
-        <Text color="text-color-1" variant="text-s-medium">
-          {companyName}
+      {title && (
+        <Text color="text-color-1" variant="text-l-bold">
+          {title}
         </Text>
       )}
       <FlexLayout className="items-start gap-[6px]">

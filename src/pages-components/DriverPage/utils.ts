@@ -76,12 +76,19 @@ export function getStopKindLabels(stop: DriverStop): { title: string; action: st
   return { title: 'UTOVAR', action: 'Potvrdi utovar', confirmed: 'Utovar potvrđen' };
 }
 
-export function getStopCompanyName(stop: DriverStop): string | null {
-  return (
-    stop.loadingCargos.find((cargo) => cargo.loadingCompanyName)?.loadingCompanyName ??
-    stop.unloadingCargos.find((cargo) => cargo.unloadingCompanyName)?.unloadingCompanyName ??
-    null
-  );
+/** The clients of the stop's orders, each once (a stop can serve several orders). */
+export function getStopClientNames(stop: DriverStop): string[] {
+  const cargos = [...stop.loadingCargos, ...stop.unloadingCargos];
+  return Array.from(new Set(cargos.map((cargo) => cargo.shipment.clientName).filter((name): name is string => !!name)));
+}
+
+/** Main title of a stop: its clients, else its order numbers (`Nalog #2026/1234`). */
+export function getStopTitle(stop: DriverStop): string | null {
+  const clientNames = getStopClientNames(stop);
+  if (clientNames.length > 0) return clientNames.join(', ');
+
+  const orderNumbers = getStopOrderNumbers(stop);
+  return orderNumbers.length > 0 ? `Nalog ${orderNumbers.join(', ')}` : null;
 }
 
 /** The stop's order numbers, each once, as `#2026/1234`. */
@@ -90,9 +97,9 @@ export function getStopOrderNumbers(stop: DriverStop): string[] {
   return Array.from(new Set(cargos.map((cargo) => `#${cargo.shipment.orderNumber}`)));
 }
 
-/** Subtext for stop toasts, e.g. `Podravka d.d. • #2026/1234 • #2026/1240` (same separator as the card's place line). */
+/** Subtext for stop toasts: the clients and orders, e.g. `Podravka d.d. • #2026/1234 • #2026/1240`. */
 export function getStopToastDescription(stop: DriverStop): string {
-  return [getStopCompanyName(stop), ...getStopOrderNumbers(stop)].filter(Boolean).join(' • ');
+  return [getStopClientNames(stop).join(', '), ...getStopOrderNumbers(stop)].filter(Boolean).join(' • ');
 }
 
 /**
@@ -110,6 +117,14 @@ export function getPendingLoadingStops(cargos: DriverStopCargo[], stops: DriverS
   return stops.filter((stop) => !stop.completedAt && stop.loadingCargos.some((cargo) => cargoIds.has(cargo.id)));
 }
 
+/** Compact name for the header, e.g. "I. Horvat". Falls back to whichever part exists. */
+export function getShortName({ firstName, lastName }: { firstName?: string | null; lastName?: string | null }) {
+  const first = firstName?.trim();
+  const last = lastName?.trim();
+  if (first && last) return `${first[0]}. ${last}`;
+  return first || last || undefined;
+}
+
 export function getDisponentName(disponent: DriverStopDisponent): string | null {
   return [disponent.firstName, disponent.lastName].filter(Boolean).join(' ') || null;
 }
@@ -122,9 +137,12 @@ export function getStopsDisponent(stops: DriverStop[]): DriverStopDisponent | nu
   );
 }
 
-/** Short name of a stop for inline text: the company, else the place. */
+/** Short name of a stop for inline text, as its card reads: the title and the place, e.g. "Podravka d.d. (Koprivnica)". */
 export function getStopShortName(stop: DriverStop): string | null {
-  return getStopCompanyName(stop) ?? stop.address?.placeName ?? null;
+  const title = getStopTitle(stop);
+  const place = stop.address?.placeName;
+  if (title && place) return `${title} (${place})`;
+  return title ?? place ?? null;
 }
 
 export function getNavigationUrl(address: VehicleStopAddress | null): string | null {
@@ -191,10 +209,11 @@ export function buildDriverShipments(stops: DriverStop[]): DriverShipment[] {
 
       let shipment = shipments.get(shipmentId);
       if (!shipment) {
-        const { orderNumber } = (loadingCargos[0] ?? unloadingCargos[0]).shipment;
+        const { orderNumber, clientName } = (loadingCargos[0] ?? unloadingCargos[0]).shipment;
         shipment = {
           id: shipmentId,
           orderNumber,
+          clientName,
           origin: null,
           destination: null,
           completedStopsCount: 0,

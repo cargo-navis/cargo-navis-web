@@ -58,13 +58,26 @@ const CargoSide: React.FC<{
   const isLoading = side === 'loading';
   const style = completedAt ? { ...SIDE_STYLES[side], ...COMPLETED_STYLE } : SIDE_STYLES[side];
 
+  // Where the side happens, named in its header line (several orders can load or unload at different companies)
+  const companies = unique(cargos.map((c) => (isLoading ? c.loadingCompanyName : c.unloadingCompanyName)));
+
   return (
     <FlexLayout className={clsx('relative flex-col gap-2', showSideBar && '-ml-4 pl-4')}>
       {showSideBar && <Box className={clsx('absolute inset-y-0 left-0 w-[4px] rounded-r-xs', style.bar)} />}
       <FlexLayout className={clsx('items-center gap-2', style.color)}>
         <Icon icon={style.icon} size="s" />
-        <Text variant="text-xxxs-bold">{style.title}</Text>
-        <Box className={clsx('h-[1px] grow', style.line)} />
+        <Text className="shrink-0" variant="text-xxxs-bold">
+          {style.title}
+        </Text>
+        {companies.length > 0 && (
+          <>
+            •
+            <Text className="min-w-0 truncate" title={companies.join(', ')} variant="text-xxs-medium">
+              {companies.join(', ')}
+            </Text>
+          </>
+        )}
+        <Box className={clsx('h-[1px] min-w-[12px] grow', style.line)} />
         {completedAt && (
           <Text className="shrink-0" variant="text-xxxs-medium">
             {formatCompletedAt(completedAt, dayjs())}

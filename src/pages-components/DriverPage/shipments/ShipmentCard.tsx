@@ -22,12 +22,19 @@ const RoutePlace: React.FC<{ address: VehicleStopAddress | null }> = ({ address 
   </FlexLayout>
 );
 
-/** Order number, route and progress; shared by the card and its bottom sheet header. */
+/** Client, order number, route and progress; shared by the card and its bottom sheet header. */
 const ShipmentSummary: React.FC<{ shipment: DriverShipment }> = ({ shipment }) => (
   <FlexLayout className="min-w-0 flex-col gap-1 text-left">
-    <Text color="text-color-1" variant="text-s-medium">
-      Nalog #{shipment.orderNumber}
-    </Text>
+    <FlexLayout className="flex-col">
+      <Text color="text-color-1" variant="text-l-bold">
+        {shipment.clientName ?? `Nalog #${shipment.orderNumber}`}
+      </Text>
+      {shipment.clientName && (
+        <Text color="text-color-3" variant="text-xs">
+          Nalog #{shipment.orderNumber}
+        </Text>
+      )}
+    </FlexLayout>
     <FlexLayout className="flex-wrap items-center gap-[6px]">
       <RoutePlace address={shipment.origin} />
       <Icon color="text-dark-500 dark:text-light-300" icon="IconArrowRight" size="s" />
@@ -126,7 +133,7 @@ export const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment, isOpen, on
       <BottomSheet
         header={<ShipmentSummary shipment={shipment} />}
         isOpen={isOpen}
-        title={`Nalog #${shipment.orderNumber}`}
+        title={shipment.clientName ?? `Nalog #${shipment.orderNumber}`}
         onOpenChange={onOpenChange}
       >
         <FlexLayout className="flex-col gap-6">

@@ -20,10 +20,10 @@ export const mockAccount = {
 } as User;
 
 const shipments: Record<string, DriverCargoShipment> = {
-  s1: { id: 'shipment-1', orderNumber: '2026/1234' },
-  s2: { id: 'shipment-2', orderNumber: '2026/1240' },
-  s3: { id: 'shipment-3', orderNumber: '2026/1251' },
-  s4: { id: 'shipment-4', orderNumber: '2026/1229' },
+  s1: { id: 'shipment-1', orderNumber: '2026/1234', clientName: 'Podravka d.d.' },
+  s2: { id: 'shipment-2', orderNumber: '2026/1240', clientName: 'Konzum plus d.o.o.' },
+  s3: { id: 'shipment-3', orderNumber: '2026/1251', clientName: 'Atlantic Grupa d.d.' },
+  s4: { id: 'shipment-4', orderNumber: '2026/1229', clientName: null },
 };
 
 function address(streetName: string, postalCode: string, placeName: string, countryCode = 'HR'): VehicleStopAddress {

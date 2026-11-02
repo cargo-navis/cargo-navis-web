@@ -20,6 +20,7 @@ import { useDriverPushNotifications } from './notifications/useDriverPushNotific
 import { useServiceWorkerMessages } from './notifications/useServiceWorkerMessages';
 import { ShipmentsTab } from './shipments/ShipmentsTab';
 import { StopsTab } from './stops/StopsTab';
+import { getShortName } from './utils';
 
 function getQueryValue(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -130,7 +131,7 @@ export const DriverPage = () => {
       <Box className="min-h-dvh bg-dark-50 dark:bg-light-900">
         {/* Padding keeps content clear of the fixed header (top) and tab bar (bottom). */}
         <FlexLayout className="mx-auto min-h-dvh w-full max-w-[480px] flex-col pb-[calc(76px+env(safe-area-inset-bottom))] pt-[52px]">
-          <DriverHeader driverName={account?.fullName} />
+          <DriverHeader driverName={account && getShortName(account)} />
           {renderContent()}
         </FlexLayout>
       </Box>

@@ -92,7 +92,7 @@ export const CompleteStopButton: React.FC<{ stop: DriverStop }> = ({ stop }) => 
   const loadingStopNames = getPendingLoadingStops(notYetLoadedCargos, stops)
     .map(getStopShortName)
     .filter(Boolean)
-    .join(', ');
+    .join('; ');
 
   return (
     <FlexLayout className="flex-col gap-2">
