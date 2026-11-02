@@ -13,6 +13,7 @@ import {
   TimelineTitle,
 } from '@/components/reui/timeline';
 import { ToggleStopCompletionButton } from '@/components/vehicleStops/ToggleStopCompletionButton';
+import { VehicleStopDocumentCards } from '@/components/vehicleStops/VehicleStopDocumentCards';
 import type { VehicleStop, VehicleStopCargo } from '@/lib/api/vehicleStops';
 import { useVehicles } from '@/lib/hooks';
 import { getCargoLabel } from '@/lib/utils/cargo';
@@ -178,6 +179,11 @@ const SidebarStopEntry = ({
             )}
           </FlexLayout>
           <OpenDetailsLink vehicleId={stop.vehicleId} />
+        </FlexLayout>
+      )}
+      {stop.documents.length > 0 && (
+        <FlexLayout className="flex-col gap-2 mt-2">
+          <VehicleStopDocumentCards stop={stop} />
         </FlexLayout>
       )}
     </FlexLayout>

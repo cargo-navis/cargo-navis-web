@@ -256,6 +256,7 @@ export function useDeleteVehicleStopFile(id: string) {
   return useMutation({
     mutationFn: (documentId: string) => deleteVehicleStopFile(id, documentId),
     onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['shipment'], type: 'all' });
       return queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
     },
   });

@@ -11,13 +11,17 @@ import {
   formatCompletedAt,
   formatStopDate,
   getDayDividerLabel,
+  getDisponentName,
   getDocumentIcon,
   getNavigationUrl,
   getNotYetLoadedCargos,
   getPendingLoadingStops,
-  getStopCompanyName,
+  getShortName,
+  getStopClientNames,
   getStopKindLabels,
+  getStopsDisponent,
   getStopShortName,
+  getStopTitle,
   getStopToastDescription,
   groupCargosByShipment,
 } from './utils';
@@ -31,7 +35,7 @@ function makeAddress(placeName: string): VehicleStopAddress {
 function makeCargo(shipmentId: string, overrides: Partial<DriverStopCargo> = {}): DriverStopCargo {
   return {
     id: `cargo-${shipmentId}-${Math.random()}`,
-    shipment: { id: shipmentId, orderNumber: `#${shipmentId}` },
+    shipment: { id: shipmentId, orderNumber: `#${shipmentId}`, clientName: null },
     weight: 1000,
     ldm: 2,
     description: null,
@@ -61,6 +65,7 @@ function makeStop(id: string, overrides: Partial<DriverStop> = {}): DriverStop {
     loadingCargos: [makeCargo('s1')],
     unloadingCargos: [],
     documents: [],
+    disponent: null,
     ...overrides,
   };
 }
@@ -178,49 +183,27 @@ describe('getStopKindLabels', () => {
   });
 });
 
-describe('getStopCompanyName', () => {
-  it('prefers first loadingCompanyName of loading cargos', () => {
-    const stop = makeStop('A', {
-      loadingCargos: [makeCargo('s1'), makeCargo('s2', { loadingCompanyName: 'Podravka d.d.' })],
-      unloadingCargos: [makeCargo('s3', { unloadingCompanyName: 'Konzum d.d.' })],
-    });
-    expect(getStopCompanyName(stop)).toBe('Podravka d.d.');
-  });
-
-  it('falls back to unloadingCompanyName of unloading cargos', () => {
-    const stop = makeStop('A', {
-      loadingCargos: [makeCargo('s1')],
-      unloadingCargos: [makeCargo('s3', { unloadingCompanyName: 'Konzum d.d.' })],
-    });
-    expect(getStopCompanyName(stop)).toBe('Konzum d.d.');
-  });
-
-  it('returns null when no company names', () => {
-    expect(getStopCompanyName(makeStop('A'))).toBeNull();
-  });
-});
-
 describe('getStopToastDescription', () => {
-  const cargo = (shipmentId: string, orderNumber: string, overrides: Partial<DriverStopCargo> = {}) =>
-    makeCargo(shipmentId, { shipment: { id: shipmentId, orderNumber }, ...overrides });
+  const cargo = (shipmentId: string, orderNumber: string, clientName: string | null = null) =>
+    makeCargo(shipmentId, { shipment: { id: shipmentId, orderNumber, clientName } });
 
-  it('combines the company name and the order number', () => {
-    const stop = makeStop('A', { loadingCargos: [cargo('s1', '2026/1234', { loadingCompanyName: 'Podravka d.d.' })] });
+  it('combines the client and the order number', () => {
+    const stop = makeStop('A', { loadingCargos: [cargo('s1', '2026/1234', 'Podravka d.d.')] });
     expect(getStopToastDescription(stop)).toBe('Podravka d.d. • #2026/1234');
   });
 
-  it('lists every order of the stop once', () => {
+  it('lists every client and order of the stop once', () => {
     const stop = makeStop('A', {
       loadingCargos: [
-        cargo('s1', '2026/1234', { loadingCompanyName: 'Podravka d.d.' }),
-        cargo('s1', '2026/1234'),
-        cargo('s2', '2026/1240'),
+        cargo('s1', '2026/1234', 'Podravka d.d.'),
+        cargo('s1', '2026/1234', 'Podravka d.d.'),
+        cargo('s2', '2026/1240', 'Konzum'),
       ],
     });
-    expect(getStopToastDescription(stop)).toBe('Podravka d.d. • #2026/1234 • #2026/1240');
+    expect(getStopToastDescription(stop)).toBe('Podravka d.d., Konzum • #2026/1234 • #2026/1240');
   });
 
-  it('leaves out a missing company name', () => {
+  it('leaves out a missing client', () => {
     const stop = makeStop('A', { loadingCargos: [], unloadingCargos: [cargo('s1', '2026/1234')] });
     expect(getStopToastDescription(stop)).toBe('#2026/1234');
   });
@@ -437,12 +420,84 @@ describe('getPendingLoadingStops', () => {
 });
 
 describe('getStopShortName', () => {
-  it('uses the company name', () => {
-    const stop = makeStop('A', { loadingCargos: [makeCargo('s1', { loadingCompanyName: 'Podravka d.d.' })] });
-    expect(getStopShortName(stop)).toBe('Podravka d.d.');
+  it('uses the title and the place, not the company', () => {
+    const stop = makeStop('A', {
+      loadingCargos: [
+        makeCargo('s1', {
+          shipment: { id: 's1', orderNumber: '1', clientName: 'Podravka d.d.' },
+          loadingCompanyName: 'Skladište',
+        }),
+      ],
+    });
+    expect(getStopShortName(stop)).toBe('Podravka d.d. (Place A)');
   });
 
   it('falls back to the place', () => {
-    expect(getStopShortName(makeStop('A'))).toBe('Place A');
+    expect(getStopShortName(makeStop('A', { loadingCargos: [] }))).toBe('Place A');
+  });
+});
+
+describe('getDisponentName', () => {
+  it('joins first and last name', () => {
+    expect(getDisponentName({ firstName: 'Dario', lastName: 'Jukić', phoneNumber: null })).toBe('Dario Jukić');
+  });
+
+  it('is null without a name', () => {
+    expect(getDisponentName({ firstName: null, lastName: null, phoneNumber: '+385915632655' })).toBeNull();
+  });
+});
+
+describe('getStopsDisponent', () => {
+  const dario = { firstName: 'Dario', lastName: 'Jukić', phoneNumber: '+385915632655' };
+
+  it('takes the first stop that has a dispatcher', () => {
+    expect(getStopsDisponent([makeStop('A'), makeStop('B', { disponent: dario })])).toEqual(dario);
+  });
+
+  it('skips a dispatcher with neither name nor number', () => {
+    const empty = { firstName: null, lastName: null, phoneNumber: null };
+    expect(getStopsDisponent([makeStop('A', { disponent: empty })])).toBeNull();
+  });
+});
+
+describe('getShortName', () => {
+  it('abbreviates the first name', () => {
+    expect(getShortName({ firstName: 'Ivan', lastName: 'Horvat' })).toBe('I. Horvat');
+  });
+
+  it('falls back to whichever part exists', () => {
+    expect(getShortName({ firstName: 'Ivan', lastName: null })).toBe('Ivan');
+    expect(getShortName({ firstName: ' ', lastName: 'Horvat' })).toBe('Horvat');
+    expect(getShortName({ firstName: null, lastName: null })).toBeUndefined();
+  });
+});
+
+describe('getStopClientNames', () => {
+  it('lists each client once', () => {
+    const podravka = { id: 's1', orderNumber: '1', clientName: 'Podravka d.d.' };
+    const stop = makeStop('A', {
+      loadingCargos: [makeCargo('s1', { shipment: podravka }), makeCargo('s1', { shipment: podravka })],
+      unloadingCargos: [makeCargo('s2', { shipment: { id: 's2', orderNumber: '2', clientName: 'Konzum' } })],
+    });
+    expect(getStopClientNames(stop)).toEqual(['Podravka d.d.', 'Konzum']);
+  });
+});
+
+describe('getStopTitle', () => {
+  it('uses the clients', () => {
+    const stop = makeStop('A', {
+      loadingCargos: [
+        makeCargo('s1', {
+          shipment: { id: 's1', orderNumber: '1', clientName: 'Podravka d.d.' },
+          loadingCompanyName: 'Skladište Koprivnica',
+        }),
+      ],
+    });
+    expect(getStopTitle(stop)).toBe('Podravka d.d.');
+  });
+
+  it('falls back to the order numbers', () => {
+    const stop = makeStop('A', { loadingCargos: [makeCargo('s1', { loadingCompanyName: 'Skladište Koprivnica' })] });
+    expect(getStopTitle(stop)).toBe('Nalog ##s1');
   });
 });

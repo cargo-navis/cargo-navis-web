@@ -2,11 +2,6 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
-import { ACCESS_TOKEN_KEY } from '@/lib/utils/session';
-
-// Routes accessible only to non-authenticated users; logged-in users get sent to the dashboard.
-const GUEST_ONLY_ROUTES = ['/set-password'];
-
 /**
  * Dev-only backend proxy, active when BACKEND_PROXY_TARGET is set (local dev, Vercel previews). The client then
  * calls /auth/* and /api/* on this app (see getBackendBaseUrl), and they are forwarded to the backend: the httpOnly
@@ -29,22 +24,18 @@ function proxyToBackend(request: NextRequest) {
 }
 
 export function middleware(request: NextRequest) {
-  const accessToken = request.cookies.get(ACCESS_TOKEN_KEY)?.value;
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith('/auth/') || pathname.startsWith('/api/')) {
     return proxyToBackend(request);
   }
 
-  if (GUEST_ONLY_ROUTES.includes(pathname)) {
-    return accessToken ? NextResponse.redirect(new URL('/dashboard', request.url)) : NextResponse.next();
-  }
-
-  const redirectDestination = accessToken ? '/dashboard' : '/login';
-
-  return NextResponse.redirect(new URL(redirectDestination, request.url));
+  // `/`: the server can't tell whether someone is signed in (the access token lives only in the browser's memory and
+  // the refresh cookie belongs to the API), so always go to the dashboard, which signs in through the refresh cookie
+  // or sends the user to /login.
+  return NextResponse.redirect(new URL('/dashboard', request.url));
 }
 
 export const config = {
-  matcher: ['/', '/set-password', '/auth/:path*', '/api/:path*'],
+  matcher: ['/', '/auth/:path*', '/api/:path*'],
 };

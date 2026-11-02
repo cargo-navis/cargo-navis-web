@@ -7,8 +7,10 @@ import axios, {
 
 import { getBackendBaseUrl } from '@/lib/utils/backendBaseUrl';
 import { isServer } from '@/lib/utils/browser';
-import { clearAuthCookies, getAuthTokens, setAuthTokens } from '@/lib/utils/session';
 
+import { isAccessTokenExpiring } from './accessTokenExpiry';
+import { accessTokenStore } from './accessTokenStore';
+import { withCrossTabLock } from './crossTabLock';
 import { readAccessToken } from './readAccessToken';
 import { createSingleFlight } from './singleFlight';
 
@@ -25,11 +27,18 @@ type OriginalRequest = InternalAxiosRequestConfig & {
   _retried?: boolean;
 };
 
+const REFRESH_URL = '/auth/refresh';
+const REFRESH_LOCK = 'cargo-navis-auth-refresh';
+
 interface BackendServiceOptions {
   adapter?: AxiosAdapter;
   getAccessToken?(): string | undefined;
   setAccessToken?(token: string): void;
   onSessionExpired?(options: { redirect: boolean }): void;
+  // Refresh a missing or expiring token before sending. Off on the server, which has no refresh cookie to send.
+  refreshBeforeSend?: boolean;
+  // Runs the refresh call so that only one tab refreshes at a time (see the refresh below)
+  withRefreshLock?<T>(run: () => Promise<T>): Promise<T>;
 }
 
 function isClientError(error: unknown) {
@@ -39,29 +48,56 @@ function isClientError(error: unknown) {
 
 export function createBackendService({
   adapter,
-  getAccessToken = () => (isServer ? undefined : getAuthTokens().accessToken),
-  setAccessToken = (accessToken) => setAuthTokens({ accessToken }),
+  getAccessToken = accessTokenStore.get,
+  setAccessToken = accessTokenStore.set,
   onSessionExpired = ({ redirect }) => {
-    clearAuthCookies();
+    accessTokenStore.clear();
     if (redirect) {
       // replace, not push: Back from /login should not return to the page whose session just died.
       window.location.replace('/login');
     }
   },
+  refreshBeforeSend = !isServer,
+  withRefreshLock = (run) => withCrossTabLock(REFRESH_LOCK, run),
 }: BackendServiceOptions = {}) {
   const baseURL = getBackendBaseUrl();
   const instance = axios.create({ baseURL, adapter });
   // Separate client so the refresh call never runs through the 401 handling below.
   const authClient = axios.create({ baseURL, adapter });
 
-  // Parallel 401s share one refresh. The refresh token travels as an httpOnly cookie.
-  const refresh = createSingleFlight(async () => {
-    // Unlike login, refresh answers in the API envelope (see readAccessToken).
-    const { data } = await authClient.post('/auth/refresh', undefined, { withCredentials: true });
-    setAccessToken(readAccessToken(data));
-  });
+  // Parallel requests share one refresh. The refresh token travels as an httpOnly cookie.
+  // Tabs take turns: each refresh replaces the refresh cookie, and the backend treats a replaced cookie sent again as
+  // stolen and signs the account out everywhere. Waiting for the other tab means this one sends the new cookie.
+  const refresh = createSingleFlight(() =>
+    withRefreshLock(async () => {
+      // Unlike login, refresh answers in the API envelope (see readAccessToken).
+      const { data } = await authClient.post(REFRESH_URL, undefined, { withCredentials: true });
+      setAccessToken(readAccessToken(data));
+    })
+  );
 
-  instance.interceptors.request.use((config) => {
+  // Before sending, so requests don't go out only to come back 401:
+  // - a refresh is already running (another request got a 401): wait for it;
+  // - the token is missing or about to expire: refresh first; parallel requests share that one refresh.
+  // The 401 handling below still covers tokens rejected for other reasons (revoked, unreadable).
+  instance.interceptors.request.use(async (config) => {
+    const request = config as OriginalRequest;
+    await refresh.inFlight()?.catch(() => undefined);
+
+    const token = getAccessToken();
+    if (refreshBeforeSend && !request._doNotRefresh && (!token || isAccessTokenExpiring(token))) {
+      try {
+        await refresh();
+      } catch (refreshError) {
+        // The refresh cookie is gone or rejected: the session is over, so don't send the request at all.
+        if (isClientError(refreshError)) {
+          onSessionExpired({ redirect: !request._ignoreRedirect });
+          throw refreshError;
+        }
+        // A network error or 5xx says nothing about the session; send the request and let the 401 handling retry.
+      }
+    }
+
     const accessToken = getAccessToken();
 
     if (accessToken) {
@@ -91,7 +127,8 @@ export function createBackendService({
         return Promise.reject(error);
       }
 
-      if (error.response.status !== 401) {
+      // A failed refresh from the check before sending arrives here too; it is not an API 401 to retry.
+      if (error.response.status !== 401 || error.config?.url === REFRESH_URL) {
         return Promise.reject(error);
       }
 

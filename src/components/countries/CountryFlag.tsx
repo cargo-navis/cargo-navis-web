@@ -21,5 +21,5 @@ interface CountryFlagProps {
 export const CountryFlag: React.FC<CountryFlagProps> = ({ code, size = 'm' }) => {
   const { fontSize, radius } = sizesMap[size];
 
-  return <Box as="span" className={clsx('fi shrink-0', `fi-${code.toLowerCase()}`, fontSize, radius)} />;
+  return <Box as="span" className={clsx('fi shrink-0 !bg-cover', `fi-${code.toLowerCase()}`, fontSize, radius)} />;
 };

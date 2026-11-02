@@ -54,4 +54,17 @@ describe('createSingleFlight', () => {
     await expect(call()).resolves.toBe('token');
     expect(run).toHaveBeenCalledTimes(2);
   });
+
+  it('exposes the call in progress, and null once it settled', async () => {
+    const pending = deferred<string>();
+    const call = createSingleFlight(() => pending.promise);
+
+    expect(call.inFlight()).toBeNull();
+    const running = call();
+    expect(call.inFlight()).toBe(running);
+    pending.resolve('token');
+    await running;
+
+    expect(call.inFlight()).toBeNull();
+  });
 });

@@ -91,6 +91,26 @@ export function getNotificationItemData(notification: Notification) {
       );
       break;
     }
+    case NotificationType.VEHICLE_STOP_DOCUMENT_UPLOADED: {
+      const { driverId, documentName, address, vehicleStopId } = metadata;
+      avatarDriverId = driverId;
+
+      // Resolves the stop's vehicle and opens its stops page with the stop highlighted.
+      targetUrl = `/dashboard/vehicle-stops/stop/${vehicleStopId}`;
+      descriptionNode = (
+        <Text color="text-color-2" variant="text-s">
+          <EmployeeName id={driverId} variant="text-s-bold" /> je dodao dokument <strong>{documentName}</strong>
+          {address ? (
+            <>
+              {' '}
+              na stanici na adresi <strong>{address}</strong>
+            </>
+          ) : null}
+          .
+        </Text>
+      );
+      break;
+    }
     default: {
       // Handle non-existing case
       targetUrl = '';

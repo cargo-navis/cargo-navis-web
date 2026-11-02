@@ -57,3 +57,17 @@ describe('middleware /auth proxy', () => {
     expect(forwarded).toContain('authorization');
   });
 });
+
+describe('middleware routing', () => {
+  it('sends / to the dashboard, which signs in through the refresh cookie or goes to /login', () => {
+    const response = middleware(new NextRequest('http://localhost:3000/'));
+
+    expect(response.headers.get('location')).toBe('http://localhost:3000/dashboard');
+  });
+
+  it('does the same when an old access-token cookie is still around', () => {
+    const response = middleware(new NextRequest('http://localhost:3000/', { headers: { cookie: 'access-token=old' } }));
+
+    expect(response.headers.get('location')).toBe('http://localhost:3000/dashboard');
+  });
+});

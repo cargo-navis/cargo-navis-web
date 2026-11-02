@@ -3,6 +3,7 @@ import type { VehicleStopAddress, VehicleStopCargo, VehicleStopDocument } from '
 export interface DriverCargoShipment {
   id: string;
   orderNumber: string;
+  clientName: string | null;
 }
 
 /** Same values as `LoadStatus` in shipments.ts, kept as a type so the driver bundle doesn't import that module. */
@@ -30,12 +31,22 @@ export interface DriverStop {
   loadingCargos: DriverStopCargo[];
   unloadingCargos: DriverStopCargo[];
   documents: DriverStopDocument[];
+  /** The dispatcher in charge of the stop, so the driver knows whom to contact. */
+  disponent: DriverStopDisponent | null;
+}
+
+export interface DriverStopDisponent {
+  firstName: string | null;
+  lastName: string | null;
+  /** E.164, e.g. '+385915632655'. */
+  phoneNumber: string | null;
 }
 
 /** Derived on the frontend by `buildDriverShipments`, not returned by the API. */
 export interface DriverShipment {
   id: string;
   orderNumber: string;
+  clientName: string | null;
   origin: VehicleStopAddress | null;
   destination: VehicleStopAddress | null;
   completedStopsCount: number;
