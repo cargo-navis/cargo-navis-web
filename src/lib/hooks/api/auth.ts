@@ -1,6 +1,6 @@
 import { login, type LoginArgs } from '@/lib/api';
 import type { AuthResponse } from '@/lib/api/login';
-import { setAuthTokens } from '@/lib/utils/session';
+import { accessTokenStore } from '@/lib/services/accessTokenStore';
 
 export function useLogin() {
   const { authUser } = useAuth<LoginArgs>(login);
@@ -17,5 +17,5 @@ function useAuth<T>(authFunc: (args: T) => Promise<AuthResponse.RootObject>) {
 }
 
 function storeAuthRes(authRes: AuthResponse.RootObject) {
-  setAuthTokens({ accessToken: authRes.accessToken });
+  accessTokenStore.set(authRes.accessToken);
 }

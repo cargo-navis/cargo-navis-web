@@ -1,27 +1,3 @@
-import { deleteCookie, readCookie, setCookie } from './cookies';
-
-export const ACCESS_TOKEN_KEY = 'access-token';
-
-interface AuthTokens {
-  accessToken: string | undefined;
-}
-
-export function getAuthTokens(): AuthTokens {
-  return {
-    accessToken: readCookie(ACCESS_TOKEN_KEY),
-  };
-}
-
-export function setAuthTokens({ accessToken }: AuthTokens) {
-  // Lives as long as the refresh cookie (30 days): middleware only checks that it exists, and an expired
-  // token is refreshed before the next request (see backendService).
-  setCookie(ACCESS_TOKEN_KEY, accessToken, { expires: 30 });
-}
-
-export function clearAuthCookies() {
-  deleteCookie(ACCESS_TOKEN_KEY);
-}
-
 export async function unsubscribePushOnLogout() {
   if ('serviceWorker' in navigator && 'PushManager' in window) {
     try {

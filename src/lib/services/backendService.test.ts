@@ -19,7 +19,13 @@ const bearer = (config: InternalAxiosRequestConfig) => config.headers?.Authoriza
 // Same shape as the real POST /auth/refresh response (API envelope).
 const refreshed = (accessToken: string) => ({ data: { accessToken }, status: 'success' });
 
-function setup(handler: Handler, { initialToken = 'old' }: { initialToken?: string } = {}) {
+function setup(
+  handler: Handler,
+  {
+    initialToken = 'old',
+    withRefreshLock,
+  }: { initialToken?: string; withRefreshLock?: <T>(run: () => Promise<T>) => Promise<T> } = {}
+) {
   let accessToken: string | undefined = initialToken || undefined;
   const adapter = vi.fn(async (config: InternalAxiosRequestConfig) => {
     const { status, data } = await handler(config);
@@ -35,6 +41,7 @@ function setup(handler: Handler, { initialToken = 'old' }: { initialToken?: stri
     setAccessToken,
     onSessionExpired,
     refreshBeforeSend: true,
+    withRefreshLock,
   });
   const calls = () => adapter.mock.calls.map(([config]) => config);
   const refreshCalls = () => calls().filter(isRefresh);
@@ -275,6 +282,19 @@ describe('backendService', () => {
 
     expect(setAccessToken).not.toHaveBeenCalled();
     expect(onSessionExpired).not.toHaveBeenCalled();
+  });
+
+  it('runs the refresh inside the cross-tab lock', async () => {
+    let lockedRuns = 0;
+    const withRefreshLock = <T>(run: () => Promise<T>) => {
+      lockedRuns += 1;
+      return run();
+    };
+    const { service } = setup(acceptsNewToken, { withRefreshLock });
+
+    await expect(service.get('/api/x')).resolves.toBe('ok');
+
+    expect(lockedRuns).toBe(1);
   });
 
   it('calls the API same-origin when the backend is proxied', async () => {

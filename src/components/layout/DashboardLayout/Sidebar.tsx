@@ -5,7 +5,8 @@ import { AppMenu } from '@/components/AppMenu';
 import { logout } from '@/lib/api';
 import { PositionEnum } from '@/lib/api/employees.d';
 import { useCurrentTenant, useCurrentUser } from '@/lib/hooks';
-import { clearAuthCookies, clearServiceWorkerOnLogout, unsubscribePushOnLogout } from '@/lib/utils/session';
+import { accessTokenStore } from '@/lib/services/accessTokenStore';
+import { clearServiceWorkerOnLogout, unsubscribePushOnLogout } from '@/lib/utils/session';
 import { Box, Divider, FlexLayout, Heading, Icon, LoadingSpinner, Text } from '@/ui';
 
 import { links, NavLink } from './data';
@@ -40,7 +41,7 @@ export function Sidebar() {
     // The refresh cookie is httpOnly, so only the server can clear it; log out locally even if this fails.
     await logout().catch(() => undefined);
 
-    clearAuthCookies();
+    accessTokenStore.clear();
     window.location.pathname = '/login';
   }
 
