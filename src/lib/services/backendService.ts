@@ -9,6 +9,7 @@ import { getBackendBaseUrl } from '@/lib/utils/backendBaseUrl';
 import { isServer } from '@/lib/utils/browser';
 import { clearAuthCookies, getAuthTokens, setAuthTokens } from '@/lib/utils/session';
 
+import { isAccessTokenExpiring } from './accessTokenExpiry';
 import { readAccessToken } from './readAccessToken';
 import { createSingleFlight } from './singleFlight';
 
@@ -25,11 +26,15 @@ type OriginalRequest = InternalAxiosRequestConfig & {
   _retried?: boolean;
 };
 
+const REFRESH_URL = '/auth/refresh';
+
 interface BackendServiceOptions {
   adapter?: AxiosAdapter;
   getAccessToken?(): string | undefined;
   setAccessToken?(token: string): void;
   onSessionExpired?(options: { redirect: boolean }): void;
+  // Refresh a missing or expiring token before sending. Off on the server, which has no refresh cookie to send.
+  refreshBeforeSend?: boolean;
 }
 
 function isClientError(error: unknown) {
@@ -48,6 +53,7 @@ export function createBackendService({
       window.location.replace('/login');
     }
   },
+  refreshBeforeSend = !isServer,
 }: BackendServiceOptions = {}) {
   const baseURL = getBackendBaseUrl();
   const instance = axios.create({ baseURL, adapter });
@@ -57,11 +63,32 @@ export function createBackendService({
   // Parallel 401s share one refresh. The refresh token travels as an httpOnly cookie.
   const refresh = createSingleFlight(async () => {
     // Unlike login, refresh answers in the API envelope (see readAccessToken).
-    const { data } = await authClient.post('/auth/refresh', undefined, { withCredentials: true });
+    const { data } = await authClient.post(REFRESH_URL, undefined, { withCredentials: true });
     setAccessToken(readAccessToken(data));
   });
 
-  instance.interceptors.request.use((config) => {
+  // Before sending, so requests don't go out only to come back 401:
+  // - a refresh is already running (another request got a 401): wait for it;
+  // - the token is missing or about to expire: refresh first; parallel requests share that one refresh.
+  // The 401 handling below still covers tokens rejected for other reasons (revoked, unreadable).
+  instance.interceptors.request.use(async (config) => {
+    const request = config as OriginalRequest;
+    await refresh.inFlight()?.catch(() => undefined);
+
+    const token = getAccessToken();
+    if (refreshBeforeSend && !request._doNotRefresh && (!token || isAccessTokenExpiring(token))) {
+      try {
+        await refresh();
+      } catch (refreshError) {
+        // The refresh cookie is gone or rejected: the session is over, so don't send the request at all.
+        if (isClientError(refreshError)) {
+          onSessionExpired({ redirect: !request._ignoreRedirect });
+          throw refreshError;
+        }
+        // A network error or 5xx says nothing about the session; send the request and let the 401 handling retry.
+      }
+    }
+
     const accessToken = getAccessToken();
 
     if (accessToken) {
@@ -91,7 +118,8 @@ export function createBackendService({
         return Promise.reject(error);
       }
 
-      if (error.response.status !== 401) {
+      // A failed refresh from the check before sending arrives here too; it is not an API 401 to retry.
+      if (error.response.status !== 401 || error.config?.url === REFRESH_URL) {
         return Promise.reject(error);
       }
 

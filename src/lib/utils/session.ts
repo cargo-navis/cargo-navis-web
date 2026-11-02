@@ -14,7 +14,7 @@ export function getAuthTokens(): AuthTokens {
 
 export function setAuthTokens({ accessToken }: AuthTokens) {
   // Lives as long as the refresh cookie (30 days): middleware only checks that it exists, and an expired
-  // token is refreshed on the first 401.
+  // token is refreshed before the next request (see backendService).
   setCookie(ACCESS_TOKEN_KEY, accessToken, { expires: 30 });
 }
 
