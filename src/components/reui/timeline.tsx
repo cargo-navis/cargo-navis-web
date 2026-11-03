@@ -3,6 +3,7 @@ import { createContext, forwardRef, type HTMLAttributes, useCallback, useContext
 
 import { cn } from '@/lib/utils';
 import { Box, FlexLayout, Text } from '@/ui';
+import { type TextVariant } from '@/ui/theme/fontSizes';
 
 // Types
 type TimelineContextValue = {
@@ -81,9 +82,16 @@ function TimelineContent({ className, children, ...props }: HTMLAttributes<HTMLD
 // TimelineDate
 interface TimelineDateProps extends HTMLAttributes<HTMLElement> {
   asChild?: boolean;
+  textVariant?: TextVariant;
 }
 
-function TimelineDate({ asChild = false, className, children, ...props }: TimelineDateProps) {
+function TimelineDate({
+  asChild = false,
+  className,
+  children,
+  textVariant = 'text-xxxs',
+  ...props
+}: TimelineDateProps) {
   if (asChild) {
     return (
       <Slot className={cn('block', className)} data-slot="timeline-date" {...props}>
@@ -98,7 +106,7 @@ function TimelineDate({ asChild = false, className, children, ...props }: Timeli
       className={cn('block', className)}
       color="text-color-4"
       data-slot="timeline-date"
-      variant="text-xxxs"
+      variant={textVariant}
       {...props}
     >
       {children}

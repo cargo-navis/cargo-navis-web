@@ -4,13 +4,13 @@ import { Box, FlexLayout, Skeleton } from '@/ui';
 
 export const StopSkeleton = ({ isLast = false }: { isLast?: boolean }) => (
   <Box className="relative pl-6 pb-[78px]">
-    <Box className="absolute left-0 top-[58px] w-4 h-4 rounded-circle bg-dark-200 dark:bg-light-850" />
-    {!isLast && <Box className="absolute left-[7px] top-[58px] -bottom-[58px] w-[2px] bg-dark-200 dark:bg-light-850" />}
+    <Box className="absolute left-0 top-[65px] w-4 h-4 rounded-circle bg-dark-200 dark:bg-light-850" />
+    {!isLast && <Box className="absolute left-[7px] top-[65px] -bottom-[58px] w-[2px] bg-dark-200 dark:bg-light-850" />}
 
     <FlexLayout className="flex-col gap-3">
-      <Skeleton borderRadius="xs" height={14} width={90} />
+      <Skeleton borderRadius="xs" height={20} width={90} />
       <FlexLayout className="items-center justify-between">
-        <Skeleton borderRadius="xs" height={16} width={140} />
+        <Skeleton borderRadius="xs" height={20} width={140} />
       </FlexLayout>
       <Skeleton borderRadius="s" height={24} width={220} />
       <Skeleton borderRadius="xs" height={14} width={260} />
@@ -32,7 +32,7 @@ export const ContentLoader = () => {
 
       <ClientSideOnly>
         <Box>
-          <Skeleton borderRadius="s" height={28} width={180} />
+          <Skeleton borderRadius="s" height={40} width={180} />
           <Box className="mt-2">
             <Skeleton borderRadius="xs" height={18} width={120} />
           </Box>

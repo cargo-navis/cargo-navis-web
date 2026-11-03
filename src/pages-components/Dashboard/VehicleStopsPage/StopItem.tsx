@@ -214,7 +214,7 @@ export const StopTimelineEntry = ({ stop, nextStop, step, connectsToMore = false
         <TimelineSeparator
           className={isNextCompleted ? undefined : 'bg-transparent'}
           style={{
-            top: '28px',
+            top: '32px',
             height: '2px',
             width: 'calc(100% - 20px)',
             transform: 'translateX(18px) translateY(-50%)',
@@ -226,7 +226,7 @@ export const StopTimelineEntry = ({ stop, nextStop, step, connectsToMore = false
                 }),
           }}
         />
-        <TimelineDate style={{ marginBottom: '20px' }}>
+        <TimelineDate style={{ marginBottom: '20px' }} textVariant="text-xxs-medium">
           <Box as="span" className="inline-flex items-center gap-1">
             {date ? (
               dayjs(date).format('DD.MM.YYYY')
@@ -261,7 +261,7 @@ export const StopTimelineEntry = ({ stop, nextStop, step, connectsToMore = false
               'z-10 cursor-default',
               isCompleted && 'flex items-center justify-center bg-teal-500 text-white'
             )}
-            style={{ top: '28px', left: 0, transform: 'translateY(-50%)' }}
+            style={{ top: '32px', left: 0, transform: 'translateY(-50%)' }}
             onClick={(e) => e.preventDefault()}
           >
             {isCompleted && (
@@ -341,7 +341,7 @@ export const RemainingStopsBadge = ({ count, step, stops, isNextCompleted }: Rem
     <TimelineIndicator
       className="z-10 cursor-default flex items-center justify-center bg-teal-50 dark:bg-teal-900/40 border-teal-500/50 text-teal-700 dark:text-teal-200"
       style={{
-        top: '28px',
+        top: '32px',
         left: 0,
         transform: 'translateY(-50%)',
         width: '32px',
@@ -365,7 +365,7 @@ export const RemainingStopsBadge = ({ count, step, stops, isNextCompleted }: Rem
           <TimelineSeparator
             className={isNextCompleted ? undefined : 'bg-transparent'}
             style={{
-              top: '28px',
+              top: '32px',
               height: '2px',
               width: 'calc(100% - 40px)',
               transform: 'translateX(38px) translateY(-50%)',
