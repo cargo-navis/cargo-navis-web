@@ -5,7 +5,6 @@ import type { DriverStop, DriverStopCargo } from '@/lib/api/driver.d';
 import type { VehicleStopAddress } from '@/lib/api/vehicleStops.d';
 
 import {
-  buildDriverShipments,
   formatCargoMeasures,
   formatCompletedAt,
   formatStopDate,
@@ -243,68 +242,6 @@ describe('formatStopDate', () => {
 
   it('returns "Bez datuma" for null', () => {
     expect(formatStopDate(null, now)).toBe('Bez datuma');
-  });
-});
-
-describe('buildDriverShipments', () => {
-  it("collects each shipment's stops in route order", () => {
-    const stops = [
-      makeStop('L1', { loadingCargos: [makeCargo('s1')] }),
-      makeStop('L2', { loadingCargos: [makeCargo('s2')] }),
-      makeStop('U1', { loadingCargos: [], unloadingCargos: [makeCargo('s1')] }),
-    ];
-    const s1 = buildDriverShipments(stops).find((s) => s.id === 's1');
-    expect(ids(s1!.stops)).toEqual(['L1', 'U1']);
-  });
-
-  it("keeps only that shipment's cargos at a stop shared by two shipments", () => {
-    const stops = [
-      makeStop('L', { loadingCargos: [makeCargo('s1'), makeCargo('s2')] }),
-      makeStop('U', { loadingCargos: [], unloadingCargos: [makeCargo('s1'), makeCargo('s2')] }),
-    ];
-    const s2 = buildDriverShipments(stops).find((s) => s.id === 's2')!;
-    expect(s2.stops[0].loadingCargos.map((c) => c.shipment.id)).toEqual(['s2']);
-    expect(s2.stops[1].unloadingCargos.map((c) => c.shipment.id)).toEqual(['s2']);
-  });
-
-  it('omits shipments whose stops are all completed', () => {
-    const done = '2026-10-18T08:00:00Z';
-    const stops = [
-      makeStop('L1', { loadingCargos: [makeCargo('s1')], completedAt: done }),
-      makeStop('U1', { loadingCargos: [], unloadingCargos: [makeCargo('s1')], completedAt: done }),
-      makeStop('L2', { loadingCargos: [makeCargo('s2')] }),
-    ];
-    expect(buildDriverShipments(stops).map((s) => s.id)).toEqual(['s2']);
-  });
-
-  it('orders shipments by the route position of their first active stop', () => {
-    const done = '2026-10-18T08:00:00Z';
-    const stops = [
-      makeStop('L1', { loadingCargos: [makeCargo('s1')], completedAt: done }),
-      makeStop('L2', { loadingCargos: [makeCargo('s2')] }),
-      makeStop('U1', { loadingCargos: [], unloadingCargos: [makeCargo('s1')] }),
-    ];
-    expect(buildDriverShipments(stops).map((s) => s.id)).toEqual(['s2', 's1']);
-  });
-
-  it('uses first loading stop address as origin and last unloading stop address as destination', () => {
-    const stops = [
-      makeStop('L1', { address: makeAddress('Koprivnica'), loadingCargos: [makeCargo('s1')] }),
-      makeStop('U1', { address: makeAddress('Graz'), loadingCargos: [], unloadingCargos: [makeCargo('s1')] }),
-      makeStop('U2', { address: makeAddress('München'), loadingCargos: [], unloadingCargos: [makeCargo('s1')] }),
-    ];
-    const [s1] = buildDriverShipments(stops);
-    expect(s1.origin?.placeName).toBe('Koprivnica');
-    expect(s1.destination?.placeName).toBe('München');
-  });
-
-  it('counts completed and total stops', () => {
-    const stops = [
-      makeStop('L1', { loadingCargos: [makeCargo('s1')], completedAt: '2026-10-18T08:00:00Z' }),
-      makeStop('U1', { loadingCargos: [], unloadingCargos: [makeCargo('s1')] }),
-    ];
-    const [s1] = buildDriverShipments(stops);
-    expect(s1).toMatchObject({ completedStopsCount: 1, totalStopsCount: 2, orderNumber: '#s1' });
   });
 });
 

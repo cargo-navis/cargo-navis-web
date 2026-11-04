@@ -2,7 +2,7 @@ import NextHead from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { useDriverAccount, useDriverStops, useRefreshDriverStops } from '@/lib/hooks/api/driver';
+import { useDriverAccount, useDriverShipments, useDriverStops, useRefreshDriverStops } from '@/lib/hooks/api/driver';
 import { Box, FlexLayout } from '@/ui';
 
 import { getDriverPageState } from './getDriverPageState';
@@ -39,6 +39,8 @@ export const DriverPage = () => {
   const { data: account, error: accountError } = useDriverAccount({ enabled: isSessionReady });
   const stopsQuery = useDriverStops({ enabled: isSessionReady });
   const { data: stops, error: stopsError, refetch: refetchStops } = stopsQuery;
+  // Loaded with the route, so the Nalozi tab is ready when the driver switches to it.
+  const shipmentsQuery = useDriverShipments({ enabled: isSessionReady });
   const refreshStops = useRefreshDriverStops();
 
   const [activeTab, setActiveTab] = useState<DriverTab>('stops');
@@ -108,7 +110,14 @@ export const DriverPage = () => {
         {activeTab === 'stops' ? (
           <StopsTab focusedStopId={focusedStopId} pagination={stopsQuery} stops={stops} />
         ) : (
-          <ShipmentsTab openShipmentId={openShipmentId} stops={stops} onOpenShipmentChange={setOpenShipmentId} />
+          <ShipmentsTab
+            isError={shipmentsQuery.isError}
+            openShipmentId={openShipmentId}
+            pagination={shipmentsQuery}
+            shipments={shipmentsQuery.data}
+            onOpenShipmentChange={setOpenShipmentId}
+            onRetry={() => void shipmentsQuery.refetch()}
+          />
         )}
         <DriverTabs activeTab={activeTab} onChange={setActiveTab} />
       </>

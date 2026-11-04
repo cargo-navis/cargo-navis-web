@@ -4,7 +4,7 @@ import dayjs, { type Dayjs } from 'dayjs';
 
 import type {
   DriverCargoShipment,
-  DriverShipment,
+  DriverShipmentSummary,
   DriverStop,
   DriverStopCargo,
   DriverStopDisponent,
@@ -12,7 +12,10 @@ import type {
 import type { VehicleStopAddress, VehicleStopDocument } from '@/lib/api/vehicleStops.d';
 import type { IconType } from '@/ui';
 
-const isCompleted = (stop: DriverStop) => Boolean(stop.completedAt);
+/** Every stop of the order is confirmed. */
+export function isShipmentCompleted(shipment: DriverShipmentSummary): boolean {
+  return shipment.totalStopsCount > 0 && shipment.completedStopsCount === shipment.totalStopsCount;
+}
 
 /** The stop to drive to next: in the latest-first list, the lowest one not completed yet. */
 export function getNextStopId(stops: DriverStop[]): string | null {
@@ -173,50 +176,6 @@ export function formatCompletedAt(completedAt: string, now: Dayjs): string {
 
   const date = at.isSame(now, 'year') ? at.format('ddd D.M.') : at.format('ddd D.M.YYYY.');
   return `${date} · ${time}`;
-}
-
-// The API returns stops only, so shipments are rebuilt here. Stops completed before the
-// `completedWithinDays` window are not returned, so older shipments can miss early stops (known gap).
-export function buildDriverShipments(stops: DriverStop[]): DriverShipment[] {
-  const shipments = new Map<string, DriverShipment>();
-  const firstActiveStopIndex = new Map<string, number>();
-
-  stops.forEach((stop, index) => {
-    const shipmentIds = new Set([...stop.loadingCargos, ...stop.unloadingCargos].map((cargo) => cargo.shipment.id));
-
-    shipmentIds.forEach((shipmentId) => {
-      const loadingCargos = stop.loadingCargos.filter((cargo) => cargo.shipment.id === shipmentId);
-      const unloadingCargos = stop.unloadingCargos.filter((cargo) => cargo.shipment.id === shipmentId);
-      const shipmentStop: DriverStop = { ...stop, loadingCargos, unloadingCargos };
-
-      let shipment = shipments.get(shipmentId);
-      if (!shipment) {
-        const { orderNumber, clientName } = (loadingCargos[0] ?? unloadingCargos[0]).shipment;
-        shipment = {
-          id: shipmentId,
-          orderNumber,
-          clientName,
-          origin: null,
-          destination: null,
-          completedStopsCount: 0,
-          totalStopsCount: 0,
-          stops: [],
-        };
-        shipments.set(shipmentId, shipment);
-      }
-
-      shipment.stops.push(shipmentStop);
-      shipment.totalStopsCount += 1;
-      if (isCompleted(stop)) shipment.completedStopsCount += 1;
-      if (loadingCargos.length > 0 && !shipment.origin) shipment.origin = stop.address;
-      if (unloadingCargos.length > 0) shipment.destination = stop.address;
-      if (!isCompleted(stop) && !firstActiveStopIndex.has(shipmentId)) firstActiveStopIndex.set(shipmentId, index);
-    });
-  });
-
-  return Array.from(shipments.values())
-    .filter((shipment) => firstActiveStopIndex.has(shipment.id))
-    .sort((a, b) => firstActiveStopIndex.get(a.id)! - firstActiveStopIndex.get(b.id)!);
 }
 
 const formatNumber = (value: number) => value.toLocaleString('hr-HR');
