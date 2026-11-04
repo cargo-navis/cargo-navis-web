@@ -30,19 +30,26 @@ function paginate<T>(items: T[], params?: { page?: number | string; size?: numbe
   };
 }
 
-/** Stands in for the httpOnly refresh cookie; sessionStorage keeps it across reloads in the browser. */
+/**
+ * Stands in for the httpOnly refresh cookie. Signed in by default: the installed iOS app gets Safari's real cookie at
+ * install, which the mock can't copy, so the app (opened on /driver, without a link) would otherwise always show the
+ * signed-out screen. Only the "expired" link signs out; localStorage keeps that across reloads and tabs.
+ */
 function createMockSession() {
-  const storage = typeof sessionStorage === 'undefined' ? null : sessionStorage;
-  let isActive = storage?.getItem(MOCK_SESSION_KEY) === 'true';
+  const storage = typeof localStorage === 'undefined' ? null : localStorage;
+  let isActive = storage?.getItem(MOCK_SESSION_KEY) !== 'false';
+
+  function setActive(value: boolean) {
+    isActive = value;
+    storage?.setItem(MOCK_SESSION_KEY, String(value));
+  }
 
   return {
     get isActive() {
       return isActive;
     },
-    start() {
-      isActive = true;
-      storage?.setItem(MOCK_SESSION_KEY, 'true');
-    },
+    start: () => setActive(true),
+    end: () => setActive(false),
   };
 }
 
@@ -74,7 +81,10 @@ export function createDriverMockAdapter({ delayMs = 400 }: { delayMs?: number } 
 
     if (method === 'post' && url === '/auth/exchange') {
       const { token } = JSON.parse(config.data ?? '{}');
-      if (token === 'expired') return respond(config, 410);
+      if (token === 'expired') {
+        session.end();
+        return respond(config, 410);
+      }
       session.start();
       return respond(config, 200, { data: { accessToken: 'mock-jwt' }, status: 'success' });
     }
