@@ -25,7 +25,7 @@ const shipments: Record<string, DriverCargoShipment> = {
   // Long on purpose, to check how client names overflow.
   s2: { id: 'shipment-2', orderNumber: '2026/1240', clientName: 'Konzum plus Transportation services' },
   s3: { id: 'shipment-3', orderNumber: '2026/1251', clientName: 'Atlantic Grupa d.d.' },
-  s4: { id: 'shipment-4', orderNumber: '2026/1229', clientName: null },
+  s4: { id: 'shipment-4', orderNumber: '2026/1229', clientName: 'Lidl Hrvatska d.o.o.' },
   s5: { id: 'shipment-5', orderNumber: '2026/1262', clientName: 'Kraš d.d.' },
 };
 
@@ -108,7 +108,7 @@ type DayFormatter = (offset: number) => string;
 type TimeFormatter = (offset: number, hour: number) => string;
 
 const HISTORY_SHIPMENT_COUNT = 20;
-const HISTORY_CLIENTS = ['Kraš d.d.', 'Vindija d.d.', 'Podravka d.d.', 'Atlantic Grupa d.d.', null];
+const HISTORY_CLIENTS = ['Kraš d.d.', 'Vindija d.d.', 'Podravka d.d.', 'Atlantic Grupa d.d.', 'Zvijezda d.d.'];
 const HISTORY_ROUTES = [
   {
     from: address('Radnička cesta 80', '10000', 'Zagreb'),
