@@ -2,58 +2,47 @@ import clsx from 'clsx';
 import dayjs from 'dayjs';
 
 import { CountryFlag } from '@/components/countries';
-import type { DriverStop } from '@/lib/api/driver';
-import { Box, FlexLayout, Icon, type IconType, Text } from '@/ui';
+import type { DriverStop, DriverStopCargo } from '@/lib/api/driver';
+import { Box, FlexLayout, Icon, type IconSize, type IconType, Text } from '@/ui';
 
 import {
-  formatMoreOrders,
+  formatCargoTotals,
   formatStopDate,
   getStopClientNames,
+  getStopClientsByKind,
   getStopOrderNumbers,
   getStopOrders,
   getStopTitle,
+  getStopWhen,
   type StopOrder,
 } from '../utils';
 
 /**
  * How a stop card reads in the route: `next` is the stop to drive to (teal, white text), `completed` is history
- * (dimmed), `default` is everything else and the drawer header.
+ * (faded), `default` is a stop ahead.
  */
 export type StopTone = 'default' | 'next' | 'completed';
 
-// Same convention as the dispatcher dashboard: utovar = orange, istovar = teal. On the teal card they turn white.
+// Same convention as the dispatcher dashboard: utovar = orange, istovar = teal.
 const KIND_BADGE_CLASSES = {
   loading:
     'border-orange-500/30 bg-orange-50 text-orange-600 dark:border-orange-700 dark:bg-orange-900 dark:text-orange-200',
   unloading: 'border-teal-500/30 bg-teal-50 text-teal-700 dark:border-teal-700 dark:bg-teal-900 dark:text-teal-200',
 };
-const NEXT_KIND_BADGE_CLASSES = {
-  loading: 'border-white bg-white text-orange-600',
-  unloading: 'border-white bg-white text-teal-700',
-};
 
 // White text needs teal-600 or darker to stay readable (about 4.7:1); teal-500 is too light.
+/** A completed stop or order: barely tinted green, so history reads as done without standing out. */
+export const COMPLETED_CARD_CLASSES = 'border-0 bg-green-50/40 shadow-sm dark:border-light-850 dark:bg-green-900/20';
+
 const CARD_CLASSES: Record<StopTone, string> = {
   default: 'border-dark-100 bg-white shadow-sm dark:border-light-850 dark:bg-light-875',
   next: 'border-teal-600 bg-teal-600 shadow-md dark:border-teal-700 dark:bg-teal-700',
-  completed: 'border-dark-100 bg-transparent dark:border-light-850',
+  completed: COMPLETED_CARD_CLASSES,
 };
-
-const KindBadge: React.FC<{ kind: 'loading' | 'unloading'; tone: StopTone }> = ({ kind, tone }) => (
-  <Text
-    className={clsx(
-      'rounded-l border px-2 py-[2px]',
-      (tone === 'next' ? NEXT_KIND_BADGE_CLASSES : KIND_BADGE_CLASSES)[kind]
-    )}
-    variant="text-xxxs-medium"
-  >
-    {kind === 'loading' ? 'UTOVAR' : 'ISTOVAR'}
-  </Text>
-);
 
 // Same icons and colours as the drawer's utovar/istovar sections. On the teal card they take the lightest shades, the
 // only ones the thin outline icons stay visible in (about 3.7:1 and 4.3:1 against teal-600).
-const ORDER_KIND_ICONS: Record<
+const ORDER_KIND_STYLES: Record<
   StopOrder['kind'],
   { icon: IconType; color: string; onTealColor: string; label: string }
 > = {
@@ -71,31 +60,27 @@ const ORDER_KIND_ICONS: Record<
   },
 };
 
-/** One order of a stop with several: what happens to it here, its client and its number. */
-const StopOrderRow: React.FC<StopOrder & { isOnTeal: boolean; isCompact: boolean }> = ({
-  kind,
-  shipment,
-  isOnTeal,
-  isCompact,
-}) => {
-  const { icon, color, onTealColor, label } = ORDER_KIND_ICONS[kind];
+const KindBadge: React.FC<{ kind: StopOrder['kind'] }> = ({ kind }) => (
+  <Text className={clsx('rounded-l border px-2 py-[2px]', KIND_BADGE_CLASSES[kind])} variant="text-xxxs-medium">
+    {kind === 'loading' ? 'UTOVAR' : 'ISTOVAR'}
+  </Text>
+);
+
+/** One order in the drawer header of a stop with several: what happens to it here, its client and its number. */
+const StopOrderRow: React.FC<StopOrder> = ({ kind, shipment }) => {
+  const { icon, color, label } = ORDER_KIND_STYLES[kind];
+
   return (
     <FlexLayout className="items-start gap-2">
-      {/* Icon and number sit in boxes as tall as the name's first line (text-m: 32px), so they're centred on it and
-          stay put when a name wraps. */}
       <FlexLayout className="h-[32px] shrink-0 items-center">
-        <Icon aria-label={label} color={isOnTeal ? onTealColor : color} icon={icon} size="m" />
+        <Icon aria-label={label} color={color} icon={icon} size="m" />
       </FlexLayout>
-      <Text
-        className={clsx('min-w-0 grow', isCompact && 'truncate')}
-        color={isOnTeal ? 'text-white' : 'text-color-1'}
-        variant="text-m-bold"
-      >
+      <Text className="min-w-0 grow" color="text-color-1" variant="text-m-bold">
         {shipment.clientName ?? `Nalog #${shipment.orderNumber}`}
       </Text>
       {shipment.clientName && (
         <FlexLayout className="h-[32px] shrink-0 items-center">
-          <Text color={isOnTeal ? 'text-white' : 'text-color-3'} variant="text-xs">
+          <Text color="text-color-3" variant="text-xs">
             #{shipment.orderNumber}
           </Text>
         </FlexLayout>
@@ -107,51 +92,25 @@ const StopOrderRow: React.FC<StopOrder & { isOnTeal: boolean; isCompact: boolean
 interface StopSummaryProps {
   stop: DriverStop;
   isNext?: boolean;
-  tone?: StopTone;
-  /**
-   * Cards cap the order rows of a stop with several orders: past this many, the last row becomes "+ još N naloga".
-   * The drawer header lists them all.
-   */
-  maxOrderRows?: number;
-  /** The route shows day labels above the cards; only the drawer header needs the date. */
   showDate?: boolean;
-  /** Cards mark stops with documents; the sheet lists them instead. */
-  showDocumentsIndicator?: boolean;
 }
 
-/** Badges, client, place and orders; shared by the stop card and the stop drawer header. Companies are in the cargo sections. */
-export const StopSummary: React.FC<StopSummaryProps> = ({
-  stop,
-  isNext,
-  tone = 'default',
-  maxOrderRows,
-  showDate,
-  showDocumentsIndicator,
-}) => {
-  const isOnTeal = tone === 'next';
+/** Badges, client, place and orders for the stop drawer header. Companies are in the cargo sections. */
+export const StopSummary: React.FC<StopSummaryProps> = ({ stop, isNext, showDate }) => {
   const title = getStopTitle(stop);
   // Several orders get a row each (client next to its own order number); one order keeps the client as the title.
   const orders = getStopOrders(stop);
   const hasOrderRows = orders.length > 1;
-  const visibleOrders = maxOrderRows && orders.length > maxOrderRows ? orders.slice(0, maxOrderRows - 1) : orders;
-  const hiddenOrdersCount = orders.length - visibleOrders.length;
   // Without a client the order numbers are already the title, so they aren't repeated below it.
   const orderNumbers = !hasOrderRows && getStopClientNames(stop).length > 0 ? getStopOrderNumbers(stop) : [];
 
   return (
-    // History fades as a whole (text, badges and flag), so the route ahead stands out.
-    <FlexLayout className={clsx('min-w-0 flex-col gap-1 text-left', tone === 'completed' && 'opacity-60')}>
+    <FlexLayout className="min-w-0 flex-col gap-1 text-left">
       <FlexLayout className="flex-wrap items-center gap-2">
-        {stop.loadingCargos.length > 0 && <KindBadge kind="loading" tone={tone} />}
-        {stop.unloadingCargos.length > 0 && <KindBadge kind="unloading" tone={tone} />}
+        {stop.loadingCargos.length > 0 && <KindBadge kind="loading" />}
+        {stop.unloadingCargos.length > 0 && <KindBadge kind="unloading" />}
         {isNext && (
-          <Text
-            className={clsx(
-              'rounded-l border px-2 py-[2px] text-white',
-              isOnTeal ? 'border-white' : 'border-teal-700 bg-teal-700 dark:border-teal-600 dark:bg-teal-600'
-            )}
-            variant="text-xxxs-medium"
-          >
+          <Text className="rounded-l bg-teal-700 px-2 py-[2px] text-white dark:bg-teal-600" variant="text-xxxs-medium">
             SLJEDEĆA
           </Text>
         )}
@@ -163,66 +122,189 @@ export const StopSummary: React.FC<StopSummaryProps> = ({
       </FlexLayout>
       {hasOrderRows ? (
         <FlexLayout className="flex-col gap-1">
-          {visibleOrders.map((order) => (
-            <StopOrderRow
-              {...order}
-              isCompact={!!maxOrderRows}
-              isOnTeal={isOnTeal}
-              key={`${order.kind}-${order.shipment.id}`}
-            />
+          {orders.map((order) => (
+            <StopOrderRow {...order} key={`${order.kind}-${order.shipment.id}`} />
           ))}
-          {hiddenOrdersCount > 0 && (
-            <Text className="pl-7" color={isOnTeal ? 'text-white' : 'text-color-3'} variant="text-xs-medium">
-              {formatMoreOrders(hiddenOrdersCount)}
-            </Text>
-          )}
         </FlexLayout>
       ) : (
         title && (
-          <Text color={isOnTeal ? 'text-white' : 'text-color-1'} variant="text-l-bold">
+          <Text color="text-color-1" variant="text-l-bold">
             {title}
           </Text>
         )
       )}
       <FlexLayout className="items-start gap-[6px]">
-        {/* Centered on the first 24px text line, so it stays put when the line wraps. */}
         {stop.address?.countryCode && (
           <Box className="mt-[6px] flex shrink-0">
             <CountryFlag code={stop.address.countryCode} size="xxs" />
           </Box>
         )}
-        <Text color={isOnTeal ? 'text-white' : 'text-color-3'} variant="text-xs">
+        <Text color="text-color-3" variant="text-xs">
           {[stop.address?.placeName, orderNumbers.join(' • ')].filter(Boolean).join(' • ')}
         </Text>
-        {showDocumentsIndicator && stop.documents.length > 0 && <DocumentsIndicator isOnTeal={isOnTeal} />}
       </FlexLayout>
     </FlexLayout>
   );
 };
 
-export const DocumentsIndicator: React.FC<{ isOnTeal?: boolean }> = ({ isOnTeal }) => (
+/** Marks a stop or an order that has documents. */
+export const DocumentsIcon: React.FC<{ isOnTeal?: boolean; size?: IconSize }> = ({ isOnTeal, size = 's' }) => (
+  <Icon
+    aria-label="Ima dokumente"
+    color={isOnTeal ? 'text-white' : 'text-dark-400 dark:text-light-500'}
+    icon="IconFileCheck"
+    size={size}
+  />
+);
+
+/** The documents icon at the end of a line of text, after a separating dot. */
+export const DocumentsIndicator = () => (
   <FlexLayout className="h-[24px] shrink-0 items-center gap-[6px]">
-    <Text color={isOnTeal ? 'text-white' : 'text-color-3'} variant="text-xs">
+    <Text color="text-color-3" variant="text-xs">
       •
     </Text>
-    <Icon
-      aria-label="Ima dokumente"
-      color={isOnTeal ? 'text-white' : 'text-dark-400 dark:text-light-500'}
-      icon="IconFile"
-      size="s"
-    />
+    <DocumentsIcon />
   </FlexLayout>
 );
 
-interface StopCardProps extends Pick<StopSummaryProps, 'stop' | 'isNext' | 'tone'> {
+// "Done" text and checks: a stop's confirmation day and time, a completed order's title.
+export const COMPLETED_COLOR = 'text-green-600 dark:text-green-500';
+
+/** Coloured small caps saying what happens at the stop: `UTOVAR`, `ISTOVAR` or both. */
+const KindLine: React.FC<{ stop: DriverStop; isOnTeal: boolean }> = ({ stop, isOnTeal }) => {
+  const kinds = (['loading', 'unloading'] as const).filter((kind) =>
+    kind === 'loading' ? stop.loadingCargos.length > 0 : stop.unloadingCargos.length > 0
+  );
+
+  return (
+    <FlexLayout className="items-center gap-1">
+      {kinds.map((kind, index) => {
+        const { color, onTealColor } = ORDER_KIND_STYLES[kind];
+        return (
+          <FlexLayout className="items-center gap-1" key={kind}>
+            {index > 0 && (
+              <Text color={isOnTeal ? 'text-light-100' : 'text-color-3'} variant="text-xxxs-bold">
+                ·
+              </Text>
+            )}
+            <Text color={isOnTeal ? onTealColor : color} variant="text-xxxs-bold">
+              {kind === 'loading' ? 'UTOVAR' : 'ISTOVAR'}
+            </Text>
+          </FlexLayout>
+        );
+      })}
+    </FlexLayout>
+  );
+};
+
+/**
+ * A card's clients of one kind, cut short to fit, with their cargo totals (`14 palete · 9.300 kg`) below; the icon
+ * only when the stop both loads and unloads.
+ */
+const KindClientsLine: React.FC<{
+  kind: StopOrder['kind'];
+  names: string[];
+  cargos: DriverStopCargo[];
+  isOnTeal: boolean;
+  showIcon: boolean;
+}> = ({ kind, names, cargos, isOnTeal, showIcon }) => {
+  const totals = formatCargoTotals(cargos);
+  const { icon, color, onTealColor, label } = ORDER_KIND_STYLES[kind];
+  return (
+    <FlexLayout className="min-w-0 flex-col">
+      <FlexLayout className="items-center gap-2">
+        {showIcon && (
+          <Icon aria-label={label} className="shrink-0" color={isOnTeal ? onTealColor : color} icon={icon} size="s" />
+        )}
+        <Text className="min-w-0 truncate" color={isOnTeal ? 'text-light-50' : 'text-color-2'} variant="text-s-medium">
+          {names.join(', ')}
+        </Text>
+      </FlexLayout>
+      {totals && (
+        <Text
+          className={clsx(showIcon && 'pl-[24px]')}
+          color={isOnTeal ? 'text-light-100' : 'text-color-4'}
+          variant="text-xs"
+        >
+          {totals}
+        </Text>
+      )}
+    </FlexLayout>
+  );
+};
+
+interface StopCardProps {
+  stop: DriverStop;
+  tone: StopTone;
   isHighlighted: boolean;
   onOpen(): void;
 }
 
-export const StopCard: React.FC<StopCardProps> = ({ stop, isHighlighted, isNext, tone = 'default', onOpen }) => (
-  <Box className={clsx('rounded-l border', CARD_CLASSES[tone], isHighlighted && 'card-highlight-fade')}>
-    <FlexLayout aria-haspopup="dialog" as="button" className="w-full p-4" type="button" onClick={onOpen}>
-      <StopSummary isNext={isNext} maxOrderRows={3} showDocumentsIndicator stop={stop} tone={tone} />
-    </FlexLayout>
-  </Box>
-);
+/**
+ * A stop in the route: what happens there, the city with its clients below and when (the day of the confirmation or
+ * of a stop ahead). Clients get a line per kind, without order numbers (`Nalog #…` names an order without a client);
+ * the drawer has the numbers. A completed stop gets a light green background and a check before its day.
+ */
+export const StopCard: React.FC<StopCardProps> = ({ stop, tone, isHighlighted, onOpen }) => {
+  const isOnTeal = tone === 'next';
+  const isCompleted = tone === 'completed';
+  const clientsByKind = getStopClientsByKind(stop);
+  const when = getStopWhen(stop, dayjs());
+  const primaryColor = isOnTeal ? 'text-white' : when.isLate ? 'text-red-600 dark:text-red-400' : 'text-color-1';
+
+  return (
+    <Box className={clsx('rounded-l border', CARD_CLASSES[tone], isHighlighted && 'card-highlight-fade')}>
+      <FlexLayout
+        aria-haspopup="dialog"
+        as="button"
+        className="w-full items-center gap-3 p-4 text-left"
+        type="button"
+        onClick={onOpen}
+      >
+        <FlexLayout className={clsx('min-w-0 grow items-center gap-3', isCompleted && 'opacity-60')}>
+          <FlexLayout className="min-w-0 grow flex-col">
+            <FlexLayout className="items-center gap-[6px]">
+              <KindLine isOnTeal={isOnTeal} stop={stop} />
+              {stop.documents.length > 0 && <DocumentsIcon isOnTeal={isOnTeal} size="s" />}
+            </FlexLayout>
+            <FlexLayout className="items-center gap-2">
+              {stop.address?.countryCode && (
+                <Box className="flex shrink-0">
+                  <CountryFlag code={stop.address.countryCode} size="xs" />
+                </Box>
+              )}
+              <Text color={isOnTeal ? 'text-white' : 'text-color-1'} variant="text-l-bold">
+                {stop.address?.placeName ?? 'Bez adrese'}
+              </Text>
+            </FlexLayout>
+            <FlexLayout className="flex-col">
+              {clientsByKind.map(({ kind, names, cargos }) => (
+                <KindClientsLine
+                  cargos={cargos}
+                  isOnTeal={isOnTeal}
+                  key={kind}
+                  kind={kind}
+                  names={names}
+                  showIcon={clientsByKind.length > 1}
+                />
+              ))}
+            </FlexLayout>
+          </FlexLayout>
+          <FlexLayout className="shrink-0 flex-col items-end">
+            <FlexLayout className="items-center gap-1">
+              {isCompleted && <Icon aria-label="Potvrđeno" color={COMPLETED_COLOR} icon="IconCircleCheck" size="s" />}
+              <Text color={isCompleted ? COMPLETED_COLOR : primaryColor} variant="text-s-bold">
+                {when.primary}
+              </Text>
+            </FlexLayout>
+            {when.secondary && (
+              <Text color={isCompleted ? COMPLETED_COLOR : isOnTeal ? 'text-white' : 'text-color-3'} variant="text-xxs">
+                {when.secondary}
+              </Text>
+            )}
+          </FlexLayout>
+        </FlexLayout>
+      </FlexLayout>
+    </Box>
+  );
+};

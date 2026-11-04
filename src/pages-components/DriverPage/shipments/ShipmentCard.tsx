@@ -9,7 +9,7 @@ import { BottomSheet, Box, Button, FlexLayout, Icon, Text } from '@/ui';
 
 import { CompleteStopButton } from '../stops/CompleteStopButton';
 import { DisponentContact } from '../stops/DisponentContact';
-import { DocumentsIndicator } from '../stops/StopCard';
+import { COMPLETED_CARD_CLASSES, COMPLETED_COLOR, DocumentsIndicator } from '../stops/StopCard';
 import { StopDetails } from '../stops/StopDetails';
 import { StopDocuments } from '../stops/StopDocuments';
 import { formatStopDate, getStopKindLabels, getStopsDisponent, isShipmentCompleted } from '../utils';
@@ -27,16 +27,27 @@ const RoutePlace: React.FC<{ address: VehicleStopAddress | null }> = ({ address 
 const getShipmentTitle = (shipment: DriverShipmentSummary) => shipment.clientName ?? `Nalog #${shipment.orderNumber}`;
 
 /** Client, order number, route and progress; shared by the card and its bottom sheet header. */
-const ShipmentSummary: React.FC<{ shipment: DriverShipmentSummary; isDimmed?: boolean; hasDocuments?: boolean }> = ({
-  shipment,
-  isDimmed,
-  hasDocuments,
-}) => (
-  <FlexLayout className="min-w-0 flex-col gap-1 text-left">
+// Same fade as completed stop cards.
+const FADED_CLASS = 'opacity-60';
+
+const ShipmentSummary: React.FC<{
+  shipment: DriverShipmentSummary;
+  /** The card of a completed order: a green title ending in a check, all faded like completed stops. */
+  isCompleted?: boolean;
+  hasDocuments?: boolean;
+}> = ({ shipment, isCompleted, hasDocuments }) => (
+  <FlexLayout className={clsx('min-w-0 flex-col gap-1 text-left', isCompleted && FADED_CLASS)}>
     <FlexLayout className="flex-col">
-      <Text color={isDimmed ? 'text-color-2' : 'text-color-1'} variant="text-l-bold">
-        {getShipmentTitle(shipment)}
-      </Text>
+      <FlexLayout className="items-start gap-2">
+        <Text color={isCompleted ? COMPLETED_COLOR : 'text-color-1'} variant="text-l-bold">
+          {getShipmentTitle(shipment)}
+        </Text>
+        {isCompleted && (
+          <FlexLayout className="h-[40px] shrink-0 items-center">
+            <Icon aria-label="Završen nalog" color={COMPLETED_COLOR} icon="IconCircleCheck" size="l" />
+          </FlexLayout>
+        )}
+      </FlexLayout>
       {shipment.clientName && (
         <Text color="text-color-3" variant="text-xs">
           Nalog #{shipment.orderNumber}
@@ -49,7 +60,6 @@ const ShipmentSummary: React.FC<{ shipment: DriverShipmentSummary; isDimmed?: bo
       <RoutePlace address={shipment.destination} />
     </FlexLayout>
     <FlexLayout className="items-center gap-2">
-      {/* Stops are confirmed in route order, so the completed ones come first. */}
       <FlexLayout className="gap-1">
         {Array.from({ length: shipment.totalStopsCount }, (_, index) => (
           <Box
@@ -125,7 +135,7 @@ interface ShipmentCardProps {
   onOpen(): void;
 }
 
-/** A completed order is history, dimmed like completed stops in the route. */
+/** A completed order is history, with the same light green card as completed stops in the route. */
 export const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment, onOpen }) => {
   const isCompleted = isShipmentCompleted(shipment);
 
@@ -134,13 +144,15 @@ export const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment, onOpen }) 
       aria-haspopup="dialog"
       as="button"
       className={clsx(
-        'w-full rounded-l border border-dark-100 p-4 dark:border-light-850',
-        isCompleted ? 'bg-transparent' : 'bg-white shadow-sm dark:bg-light-875'
+        'w-full rounded-l p-4',
+        isCompleted
+          ? COMPLETED_CARD_CLASSES
+          : 'border border-dark-100 bg-white shadow-sm dark:border-light-850 dark:bg-light-875'
       )}
       type="button"
       onClick={onOpen}
     >
-      <ShipmentSummary isDimmed={isCompleted} shipment={shipment} />
+      <ShipmentSummary isCompleted={isCompleted} shipment={shipment} />
     </FlexLayout>
   );
 };

@@ -6,8 +6,8 @@ import type { VehicleStopAddress } from '@/lib/api/vehicleStops.d';
 
 import {
   formatCargoMeasures,
+  formatCargoTotals,
   formatCompletedAt,
-  formatMoreOrders,
   formatStopDate,
   getDisponentName,
   getDocumentIcon,
@@ -17,13 +17,14 @@ import {
   getPendingLoadingStops,
   getShortName,
   getStopClientNames,
-  getStopDayLabel,
+  getStopClientsByKind,
   getStopKindLabels,
   getStopOrders,
   getStopsDisponent,
   getStopShortName,
   getStopTitle,
   getStopToastDescription,
+  getStopWhen,
   groupCargosByShipment,
 } from './utils';
 
@@ -73,31 +74,32 @@ function makeStop(id: string, overrides: Partial<DriverStop> = {}): DriverStop {
 
 const ids = (stops: DriverStop[]) => stops.map((s) => s.id);
 
-describe('getStopDayLabel', () => {
-  const done = '2026-10-18T08:00:00Z';
-  const label = (date: string | null, completedAt: string | null = null) => getStopDayLabel({ date, completedAt }, now);
+describe('getStopWhen', () => {
+  const when = (date: string | null, completedAt: string | null = null) => getStopWhen({ date, completedAt }, now);
 
-  it('labels a past stop not completed yet as late', () => {
-    expect(label('2026-10-17')).toEqual({ label: 'Kasni · sub. 17.10.', isLate: true });
+  it('shows when a completed stop was confirmed', () => {
+    expect(when('2026-10-19', '2026-10-19T09:05:00')).toEqual({ primary: 'Danas', secondary: '09:05', isLate: false });
+    expect(when('2026-10-18', '2026-10-18T17:45:00')).toEqual({ primary: 'Jučer', secondary: '17:45', isLate: false });
+    expect(when('2026-10-16', '2026-10-16T08:00:00')).toEqual({
+      primary: 'pet. 16.10.',
+      secondary: '08:00',
+      isLate: false,
+    });
   });
 
-  it('labels a completed stop of an earlier day with its date, yesterday as "Jučer"', () => {
-    expect(label('2026-10-17', done)).toEqual({ label: 'sub. 17.10.', isLate: false });
-    expect(label('2026-10-18', done)).toEqual({ label: 'Jučer · ned. 18.10.', isLate: false });
+  it('shows the day of a stop ahead', () => {
+    expect(when('2026-10-19')).toEqual({ primary: 'Danas', secondary: null, isLate: false });
+    expect(when('2026-10-20')).toEqual({ primary: 'Sutra', secondary: null, isLate: false });
+    expect(when('2026-10-22')).toEqual({ primary: 'čet. 22.10.', secondary: null, isLate: false });
   });
 
-  it('labels today and tomorrow', () => {
-    expect(label('2026-10-19')).toEqual({ label: 'Danas · pon. 19.10.', isLate: false });
-    expect(label('2026-10-20')).toEqual({ label: 'Sutra · uto. 20.10.', isLate: false });
+  it('marks a stop not completed after its day as late', () => {
+    expect(when('2026-10-17')).toEqual({ primary: 'Kasni', secondary: 'sub. 17.10.', isLate: true });
   });
 
-  it('labels later dates with weekday and date, other years with the full year', () => {
-    expect(label('2026-10-22')).toEqual({ label: 'čet. 22.10.', isLate: false });
-    expect(label('2025-12-30', done)).toEqual({ label: 'uto. 30.12.2025.', isLate: false });
-  });
-
-  it('labels missing dates', () => {
-    expect(label(null)).toEqual({ label: 'Bez datuma', isLate: false });
+  it('handles a missing date and other years', () => {
+    expect(when(null)).toEqual({ primary: 'Bez datuma', secondary: null, isLate: false });
+    expect(when('2027-01-05')).toEqual({ primary: 'uto. 5.1.2027.', secondary: null, isLate: false });
   });
 });
 
@@ -131,16 +133,43 @@ describe('getStopOrders', () => {
   });
 });
 
-describe('formatMoreOrders', () => {
-  it('agrees the noun with the count', () => {
-    expect([1, 2, 5, 11, 21, 22].map(formatMoreOrders)).toEqual([
-      '+ još 1 nalog',
-      '+ još 2 naloga',
-      '+ još 5 naloga',
-      '+ još 11 naloga',
-      '+ još 21 nalog',
-      '+ još 22 naloga',
+describe('getStopClientsByKind', () => {
+  const cargo = (shipmentId: string, clientName: string | null) =>
+    makeCargo(shipmentId, { shipment: { id: shipmentId, orderNumber: `2026/${shipmentId}`, clientName } });
+
+  it('groups clients by kind, loading first, each once', () => {
+    const stop = makeStop('A', {
+      loadingCargos: [cargo('1', 'Podravka d.d.'), cargo('2', 'Konzum'), cargo('3', 'Podravka d.d.')],
+      unloadingCargos: [cargo('4', 'Kraš d.d.')],
+    });
+    expect(getStopClientsByKind(stop).map(({ kind, names, cargos }) => [kind, names, cargos.length])).toEqual([
+      ['loading', ['Podravka d.d.', 'Konzum'], 3],
+      ['unloading', ['Kraš d.d.'], 1],
     ]);
+  });
+
+  it('names an order without a client by its number', () => {
+    const stop = makeStop('A', { loadingCargos: [], unloadingCargos: [cargo('5', null)] });
+    expect(getStopClientsByKind(stop).map(({ names }) => names)).toEqual([['Nalog #2026/5']]);
+  });
+});
+
+describe('formatCargoTotals', () => {
+  const cargo = (pallets: number, weight: number | null) =>
+    makeCargo('s1', {
+      weight,
+      metadata: { type: 'standard', palleteType: 'eur', palleteAmount: pallets, width: 0, height: 0, length: 0 },
+    });
+
+  it('adds up pallets and weight', () => {
+    expect(formatCargoTotals([cargo(12, 8400), cargo(2, 900)])).toBe('14 paleta · 9.300 kg');
+    expect(formatCargoTotals([cargo(2, 1000), cargo(1, 500)])).toBe('3 palete · 1.500 kg');
+  });
+
+  it('leaves out what no cargo has', () => {
+    expect(formatCargoTotals([cargo(0, 1200)])).toBe('1.200 kg');
+    expect(formatCargoTotals([cargo(4, null)])).toBe('4 palete');
+    expect(formatCargoTotals([cargo(0, null)])).toBeNull();
   });
 });
 
