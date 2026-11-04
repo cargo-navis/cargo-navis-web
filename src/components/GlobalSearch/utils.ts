@@ -1,4 +1,5 @@
 import { type GlobalSearchResults, type SearchShipmentCargo, SearchTypeEnum, VehicleEnum } from '@/lib/api';
+import { getPalletsNoun } from '@/lib/utils/cargo';
 import type { IconType, PillVariant } from '@/ui';
 
 export type SearchCategoryKey = keyof GlobalSearchResults;
@@ -86,13 +87,6 @@ function joinDefined(...parts: (string | null | undefined)[]) {
 }
 
 const formatNumber = (value: number) => value.toLocaleString('hr-HR', { maximumFractionDigits: 2 });
-
-// 1, 21… paleta; 2–4, 22–24… palete; everything else paleta
-function getPalletsNoun(count: number) {
-  const lastDigit = count % 10;
-  const lastTwoDigits = count % 100;
-  return lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 12 || lastTwoDigits > 14) ? 'palete' : 'paleta';
-}
 
 // Null when no cargo has the value, so it is left out instead of shown as 0
 function sumDefined(values: (number | null)[]) {
