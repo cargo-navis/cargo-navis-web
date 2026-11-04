@@ -22,9 +22,11 @@ export const mockAccount = {
 
 const shipments: Record<string, DriverCargoShipment> = {
   s1: { id: 'shipment-1', orderNumber: '2026/1234', clientName: 'Podravka d.d.' },
-  s2: { id: 'shipment-2', orderNumber: '2026/1240', clientName: 'Konzum plus d.o.o.' },
+  // Long on purpose, to check how client names overflow.
+  s2: { id: 'shipment-2', orderNumber: '2026/1240', clientName: 'Konzum plus Transportation services' },
   s3: { id: 'shipment-3', orderNumber: '2026/1251', clientName: 'Atlantic Grupa d.d.' },
   s4: { id: 'shipment-4', orderNumber: '2026/1229', clientName: null },
+  s5: { id: 'shipment-5', orderNumber: '2026/1262', clientName: 'Kraš d.d.' },
 };
 
 function address(streetName: string, postalCode: string, placeName: string, countryCode = 'HR'): VehicleStopAddress {
@@ -247,7 +249,7 @@ export function createMockStops(): DriverStop[] {
       address: address('Lagergasse 12', '8020', 'Graz', 'AT'),
       date: day(-1),
       completedAt: at(-1, 14),
-      loadingCargos: [],
+      loadingCargos: [cargo(shipments.s5, 'loading', { companyName: 'Magna Steyr', pallets: 5, weight: 3100, ldm: 2 })],
       unloadingCargos: [
         cargo(shipments.s4, 'unloading', { companyName: 'Spar Österreich', pallets: 6, weight: 4200, ldm: 2.4 }),
       ],
@@ -283,7 +285,10 @@ export function createMockStops(): DriverStop[] {
           ldm: 1.6,
         }),
       ],
-      unloadingCargos: [],
+      // Cargo picked up in Graz, so the next stop both unloads and loads.
+      unloadingCargos: [
+        cargo(shipments.s5, 'unloading', { companyName: 'Podravka d.d.', pallets: 5, weight: 3100, ldm: 2 }),
+      ],
       documents: [],
       disponent: MOCK_DISPONENT,
     },

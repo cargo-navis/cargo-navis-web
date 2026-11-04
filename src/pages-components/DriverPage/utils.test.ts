@@ -7,6 +7,7 @@ import type { VehicleStopAddress } from '@/lib/api/vehicleStops.d';
 import {
   formatCargoMeasures,
   formatCompletedAt,
+  formatMoreOrders,
   formatStopDate,
   getDisponentName,
   getDocumentIcon,
@@ -18,6 +19,7 @@ import {
   getStopClientNames,
   getStopDayLabel,
   getStopKindLabels,
+  getStopOrders,
   getStopsDisponent,
   getStopShortName,
   getStopTitle,
@@ -109,6 +111,36 @@ describe('getNextStopId', () => {
 
   it('is null when every stop is completed', () => {
     expect(getNextStopId([makeStop('A', { completedAt: done })])).toBeNull();
+  });
+});
+
+describe('getStopOrders', () => {
+  const orders = (stop: DriverStop) => getStopOrders(stop).map(({ kind, shipment }) => `${kind}:${shipment.id}`);
+
+  it('lists each order once per kind, loading first', () => {
+    const stop = makeStop('A', {
+      loadingCargos: [makeCargo('s1'), makeCargo('s1'), makeCargo('s3')],
+      unloadingCargos: [makeCargo('s2')],
+    });
+    expect(orders(stop)).toEqual(['loading:s1', 'loading:s3', 'unloading:s2']);
+  });
+
+  it('lists an order loaded and unloaded at the same stop twice', () => {
+    const stop = makeStop('A', { loadingCargos: [makeCargo('s1')], unloadingCargos: [makeCargo('s1')] });
+    expect(orders(stop)).toEqual(['loading:s1', 'unloading:s1']);
+  });
+});
+
+describe('formatMoreOrders', () => {
+  it('agrees the noun with the count', () => {
+    expect([1, 2, 5, 11, 21, 22].map(formatMoreOrders)).toEqual([
+      '+ još 1 nalog',
+      '+ još 2 naloga',
+      '+ još 5 naloga',
+      '+ još 11 naloga',
+      '+ još 21 nalog',
+      '+ još 22 naloga',
+    ]);
   });
 });
 

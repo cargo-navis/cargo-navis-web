@@ -42,7 +42,7 @@ describe('driverMockAdapter', () => {
     const service = await createService();
     const page = await getPage<DriverShipmentSummary>(service, '/api/driver/shipments', 1);
 
-    expect(page).toMatchObject({ totalElements: 24, totalPages: 2 });
+    expect(page).toMatchObject({ totalElements: 25, totalPages: 2 });
     expect(page.data[0]).toMatchObject({ id: 'shipment-1', completedStopsCount: 0, totalStopsCount: 3 });
     expect(page.data[0]).not.toHaveProperty('stops');
 

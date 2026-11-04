@@ -82,6 +82,28 @@ export function getStopOrderNumbers(stop: DriverStop): string[] {
   return Array.from(new Set(cargos.map((cargo) => `#${cargo.shipment.orderNumber}`)));
 }
 
+export interface StopOrder {
+  /** What happens to the order at this stop. */
+  kind: 'loading' | 'unloading';
+  shipment: DriverCargoShipment;
+}
+
+/**
+ * The stop's orders, each with what happens to it here, loading ones first like the stop's cargo sections. An order
+ * both loaded and unloaded at the stop is listed twice.
+ */
+export function getStopOrders(stop: DriverStop): StopOrder[] {
+  const toOrders = (kind: StopOrder['kind'], cargos: DriverStopCargo[]) =>
+    groupCargosByShipment(cargos).map(({ shipment }) => ({ kind, shipment }));
+  return [...toOrders('loading', stop.loadingCargos), ...toOrders('unloading', stop.unloadingCargos)];
+}
+
+/** Line for orders left out of a card: `+ još 1 nalog`, `+ još 3 naloga`, `+ još 21 nalog`. */
+export function formatMoreOrders(count: number): string {
+  const noun = count % 10 === 1 && count % 100 !== 11 ? 'nalog' : 'naloga';
+  return `+ još ${count} ${noun}`;
+}
+
 /** Subtext for stop toasts: the clients and orders, e.g. `Podravka d.d. • #2026/1234 • #2026/1240`. */
 export function getStopToastDescription(stop: DriverStop): string {
   return [getStopClientNames(stop).join(', '), ...getStopOrderNumbers(stop)].filter(Boolean).join(' • ');

@@ -3,9 +3,17 @@ import dayjs from 'dayjs';
 
 import { CountryFlag } from '@/components/countries';
 import type { DriverStop } from '@/lib/api/driver';
-import { Box, FlexLayout, Icon, Text } from '@/ui';
+import { Box, FlexLayout, Icon, type IconType, Text } from '@/ui';
 
-import { formatStopDate, getStopClientNames, getStopOrderNumbers, getStopTitle } from '../utils';
+import {
+  formatMoreOrders,
+  formatStopDate,
+  getStopClientNames,
+  getStopOrderNumbers,
+  getStopOrders,
+  getStopTitle,
+  type StopOrder,
+} from '../utils';
 
 /**
  * How a stop card reads in the route: `next` is the stop to drive to (teal, white text), `completed` is history
@@ -43,10 +51,68 @@ const KindBadge: React.FC<{ kind: 'loading' | 'unloading'; tone: StopTone }> = (
   </Text>
 );
 
+// Same icons and colours as the drawer's utovar/istovar sections. On the teal card they take the lightest shades, the
+// only ones the thin outline icons stay visible in (about 3.7:1 and 4.3:1 against teal-600).
+const ORDER_KIND_ICONS: Record<
+  StopOrder['kind'],
+  { icon: IconType; color: string; onTealColor: string; label: string }
+> = {
+  loading: {
+    icon: 'IconPackageImport',
+    color: 'text-orange-500 dark:text-orange-400',
+    onTealColor: 'text-orange-200',
+    label: 'Utovar',
+  },
+  unloading: {
+    icon: 'IconPackageExport',
+    color: 'text-teal-500 dark:text-teal-400',
+    onTealColor: 'text-teal-100',
+    label: 'Istovar',
+  },
+};
+
+/** One order of a stop with several: what happens to it here, its client and its number. */
+const StopOrderRow: React.FC<StopOrder & { isOnTeal: boolean; isCompact: boolean }> = ({
+  kind,
+  shipment,
+  isOnTeal,
+  isCompact,
+}) => {
+  const { icon, color, onTealColor, label } = ORDER_KIND_ICONS[kind];
+  return (
+    <FlexLayout className="items-start gap-2">
+      {/* Icon and number sit in boxes as tall as the name's first line (text-m: 32px), so they're centred on it and
+          stay put when a name wraps. */}
+      <FlexLayout className="h-[32px] shrink-0 items-center">
+        <Icon aria-label={label} color={isOnTeal ? onTealColor : color} icon={icon} size="m" />
+      </FlexLayout>
+      <Text
+        className={clsx('min-w-0 grow', isCompact && 'truncate')}
+        color={isOnTeal ? 'text-white' : 'text-color-1'}
+        variant="text-m-bold"
+      >
+        {shipment.clientName ?? `Nalog #${shipment.orderNumber}`}
+      </Text>
+      {shipment.clientName && (
+        <FlexLayout className="h-[32px] shrink-0 items-center">
+          <Text color={isOnTeal ? 'text-white' : 'text-color-3'} variant="text-xs">
+            #{shipment.orderNumber}
+          </Text>
+        </FlexLayout>
+      )}
+    </FlexLayout>
+  );
+};
+
 interface StopSummaryProps {
   stop: DriverStop;
   isNext?: boolean;
   tone?: StopTone;
+  /**
+   * Cards cap the order rows of a stop with several orders: past this many, the last row becomes "+ još N naloga".
+   * The drawer header lists them all.
+   */
+  maxOrderRows?: number;
   /** The route shows day labels above the cards; only the drawer header needs the date. */
   showDate?: boolean;
   /** Cards mark stops with documents; the sheet lists them instead. */
@@ -58,13 +124,19 @@ export const StopSummary: React.FC<StopSummaryProps> = ({
   stop,
   isNext,
   tone = 'default',
+  maxOrderRows,
   showDate,
   showDocumentsIndicator,
 }) => {
   const isOnTeal = tone === 'next';
   const title = getStopTitle(stop);
+  // Several orders get a row each (client next to its own order number); one order keeps the client as the title.
+  const orders = getStopOrders(stop);
+  const hasOrderRows = orders.length > 1;
+  const visibleOrders = maxOrderRows && orders.length > maxOrderRows ? orders.slice(0, maxOrderRows - 1) : orders;
+  const hiddenOrdersCount = orders.length - visibleOrders.length;
   // Without a client the order numbers are already the title, so they aren't repeated below it.
-  const orderNumbers = getStopClientNames(stop).length > 0 ? getStopOrderNumbers(stop) : [];
+  const orderNumbers = !hasOrderRows && getStopClientNames(stop).length > 0 ? getStopOrderNumbers(stop) : [];
 
   return (
     // History fades as a whole (text, badges and flag), so the route ahead stands out.
@@ -89,10 +161,28 @@ export const StopSummary: React.FC<StopSummaryProps> = ({
           </Text>
         )}
       </FlexLayout>
-      {title && (
-        <Text color={isOnTeal ? 'text-white' : 'text-color-1'} variant="text-l-bold">
-          {title}
-        </Text>
+      {hasOrderRows ? (
+        <FlexLayout className="flex-col gap-1">
+          {visibleOrders.map((order) => (
+            <StopOrderRow
+              {...order}
+              isCompact={!!maxOrderRows}
+              isOnTeal={isOnTeal}
+              key={`${order.kind}-${order.shipment.id}`}
+            />
+          ))}
+          {hiddenOrdersCount > 0 && (
+            <Text className="pl-7" color={isOnTeal ? 'text-white' : 'text-color-3'} variant="text-xs-medium">
+              {formatMoreOrders(hiddenOrdersCount)}
+            </Text>
+          )}
+        </FlexLayout>
+      ) : (
+        title && (
+          <Text color={isOnTeal ? 'text-white' : 'text-color-1'} variant="text-l-bold">
+            {title}
+          </Text>
+        )
       )}
       <FlexLayout className="items-start gap-[6px]">
         {/* Centered on the first 24px text line, so it stays put when the line wraps. */}
@@ -132,7 +222,7 @@ interface StopCardProps extends Pick<StopSummaryProps, 'stop' | 'isNext' | 'tone
 export const StopCard: React.FC<StopCardProps> = ({ stop, isHighlighted, isNext, tone = 'default', onOpen }) => (
   <Box className={clsx('rounded-l border', CARD_CLASSES[tone], isHighlighted && 'card-highlight-fade')}>
     <FlexLayout aria-haspopup="dialog" as="button" className="w-full p-4" type="button" onClick={onOpen}>
-      <StopSummary isNext={isNext} showDocumentsIndicator stop={stop} tone={tone} />
+      <StopSummary isNext={isNext} maxOrderRows={3} showDocumentsIndicator stop={stop} tone={tone} />
     </FlexLayout>
   </Box>
 );
