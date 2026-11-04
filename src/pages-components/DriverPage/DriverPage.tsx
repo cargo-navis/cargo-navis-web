@@ -2,7 +2,7 @@ import NextHead from 'next/head';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-import { useDriverAccount, useDriverStops } from '@/lib/hooks/api/driver';
+import { useDriverAccount, useDriverStops, useRefreshDriverStops } from '@/lib/hooks/api/driver';
 import { Box, FlexLayout } from '@/ui';
 
 import { getDriverPageState } from './getDriverPageState';
@@ -37,7 +37,9 @@ export const DriverPage = () => {
   const { status, retry } = useDriverSession(linkToken);
   const isSessionReady = status === 'ready';
   const { data: account, error: accountError } = useDriverAccount({ enabled: isSessionReady });
-  const { data: stops, error: stopsError, refetch: refetchStops } = useDriverStops({ enabled: isSessionReady });
+  const stopsQuery = useDriverStops({ enabled: isSessionReady });
+  const { data: stops, error: stopsError, refetch: refetchStops } = stopsQuery;
+  const refreshStops = useRefreshDriverStops();
 
   const [activeTab, setActiveTab] = useState<DriverTab>('stops');
   const [openShipmentId, setOpenShipmentId] = useState<string | null>(null);
@@ -53,14 +55,13 @@ export const DriverPage = () => {
 
   const pushNotifications = useDriverPushNotifications({ enabled: isSessionReady });
 
-  // The app is open while a push arrives or its notification is tapped. refetch() ignores `enabled`, so it waits
-  // for a session.
+  // The app is open while a push arrives or its notification is tapped; reload what shows stops once there's a session.
   useServiceWorkerMessages({
     onStopsChanged: () => {
-      if (isSessionReady) void refetchStops();
+      if (isSessionReady) void refreshStops();
     },
     onOpenShipment: (shipmentId) => {
-      if (isSessionReady) void refetchStops();
+      if (isSessionReady) void refreshStops();
       showShipment(shipmentId);
     },
   });
@@ -105,7 +106,7 @@ export const DriverPage = () => {
           <NotificationsCard status={pushNotifications.status} onEnable={pushNotifications.enable} />
         )}
         {activeTab === 'stops' ? (
-          <StopsTab focusedStopId={focusedStopId} stops={stops} />
+          <StopsTab focusedStopId={focusedStopId} pagination={stopsQuery} stops={stops} />
         ) : (
           <ShipmentsTab openShipmentId={openShipmentId} stops={stops} onOpenShipmentChange={setOpenShipmentId} />
         )}

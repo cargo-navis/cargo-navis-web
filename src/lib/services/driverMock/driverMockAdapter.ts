@@ -1,5 +1,4 @@
 import { type AxiosAdapter, AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
-import dayjs from 'dayjs';
 
 import type { PaginatedResponse } from '@/lib/api/pagination.d';
 
@@ -90,17 +89,9 @@ export function createDriverMockAdapter({ delayMs = 400 }: { delayMs?: number } 
       return respond(config, 200, { data: mockAccount });
     }
 
-    // Paginated, latest first (the reverse of the route order) when a page is asked for; otherwise the current
-    // route-order list of recent stops.
-    if (method === 'get' && url === '/api/driver/stops' && config.params?.page != null) {
-      return respond(config, 200, paginate([...stops].reverse(), config.params));
-    }
-
     if (method === 'get' && url === '/api/driver/stops') {
-      const days = Number(config.params?.completedWithinDays ?? 7);
-      const since = dayjs().subtract(days, 'day');
-      const visible = stops.filter((stop) => !stop.completedAt || dayjs(stop.completedAt).isAfter(since));
-      return respond(config, 200, { data: visible });
+      // Latest first: the reverse of the route order, so upcoming stops come before completed ones.
+      return respond(config, 200, paginate([...stops].reverse(), config.params));
     }
 
     if (method === 'get' && url === '/api/driver/shipments') {

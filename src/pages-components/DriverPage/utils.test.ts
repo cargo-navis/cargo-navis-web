@@ -6,18 +6,18 @@ import type { VehicleStopAddress } from '@/lib/api/vehicleStops.d';
 
 import {
   buildDriverShipments,
-  buildRouteTimeline,
   formatCargoMeasures,
   formatCompletedAt,
   formatStopDate,
-  getDayDividerLabel,
   getDisponentName,
   getDocumentIcon,
   getNavigationUrl,
+  getNextStopId,
   getNotYetLoadedCargos,
   getPendingLoadingStops,
   getShortName,
   getStopClientNames,
+  getStopDayLabel,
   getStopKindLabels,
   getStopsDisponent,
   getStopShortName,
@@ -72,86 +72,44 @@ function makeStop(id: string, overrides: Partial<DriverStop> = {}): DriverStop {
 
 const ids = (stops: DriverStop[]) => stops.map((s) => s.id);
 
-describe('getDayDividerLabel', () => {
-  it('labels past dates as late', () => {
-    expect(getDayDividerLabel('2026-10-18', now)).toEqual({ label: 'Kasni · ned. 18.10.', isLate: true });
+describe('getStopDayLabel', () => {
+  const done = '2026-10-18T08:00:00Z';
+  const label = (date: string | null, completedAt: string | null = null) => getStopDayLabel({ date, completedAt }, now);
+
+  it('labels a past stop not completed yet as late', () => {
+    expect(label('2026-10-17')).toEqual({ label: 'Kasni · sub. 17.10.', isLate: true });
   });
 
-  it('labels today', () => {
-    expect(getDayDividerLabel('2026-10-19', now)).toEqual({ label: 'Danas · pon. 19.10.', isLate: false });
+  it('labels a completed stop of an earlier day with its date, yesterday as "Jučer"', () => {
+    expect(label('2026-10-17', done)).toEqual({ label: 'sub. 17.10.', isLate: false });
+    expect(label('2026-10-18', done)).toEqual({ label: 'Jučer · ned. 18.10.', isLate: false });
   });
 
-  it('labels tomorrow', () => {
-    expect(getDayDividerLabel('2026-10-20', now)).toEqual({ label: 'Sutra · uto. 20.10.', isLate: false });
+  it('labels today and tomorrow', () => {
+    expect(label('2026-10-19')).toEqual({ label: 'Danas · pon. 19.10.', isLate: false });
+    expect(label('2026-10-20')).toEqual({ label: 'Sutra · uto. 20.10.', isLate: false });
   });
 
-  it('labels later dates with weekday and date', () => {
-    expect(getDayDividerLabel('2026-10-22', now)).toEqual({ label: 'čet. 22.10.', isLate: false });
+  it('labels later dates with weekday and date, other years with the full year', () => {
+    expect(label('2026-10-22')).toEqual({ label: 'čet. 22.10.', isLate: false });
+    expect(label('2025-12-30', done)).toEqual({ label: 'uto. 30.12.2025.', isLate: false });
   });
 
   it('labels missing dates', () => {
-    expect(getDayDividerLabel(null, now)).toEqual({ label: 'Bez datuma', isLate: false });
+    expect(label(null)).toEqual({ label: 'Bez datuma', isLate: false });
   });
 });
 
-describe('buildRouteTimeline', () => {
+describe('getNextStopId', () => {
   const done = '2026-10-18T08:00:00Z';
 
-  it('keeps completed stops apart, in route order', () => {
-    const timeline = buildRouteTimeline(
-      [makeStop('A', { completedAt: done }), makeStop('B'), makeStop('C', { completedAt: done })],
-      now
-    );
-    expect(ids(timeline.completed)).toEqual(['A', 'C']);
-    expect(timeline.days.flatMap((day) => ids(day.stops))).toEqual(['B']);
+  it('picks the lowest stop not completed yet in the latest-first list', () => {
+    const stops = [makeStop('C'), makeStop('B'), makeStop('A', { completedAt: done })];
+    expect(getNextStopId(stops)).toBe('B');
   });
 
-  it('marks the first active stop in route order as next', () => {
-    const timeline = buildRouteTimeline(
-      [makeStop('A', { completedAt: done }), makeStop('B', { date: '2026-10-20' }), makeStop('C')],
-      now
-    );
-    expect(timeline.nextStopId).toBe('B');
-  });
-
-  it('groups consecutive active stops by day without reordering them', () => {
-    const timeline = buildRouteTimeline(
-      [
-        makeStop('A', { date: '2026-10-18' }),
-        makeStop('B', { date: '2026-10-19' }),
-        makeStop('C', { date: '2026-10-19' }),
-        makeStop('D', { date: null }),
-      ],
-      now
-    );
-    expect(timeline.days.map((day) => [day.label, ids(day.stops), day.isLate])).toEqual([
-      ['Kasni · ned. 18.10.', ['A'], true],
-      ['Danas · pon. 19.10.', ['B', 'C'], false],
-      ['Bez datuma', ['D'], false],
-    ]);
-  });
-
-  it('repeats a day divider when the route goes back to an earlier day', () => {
-    const timeline = buildRouteTimeline(
-      [
-        makeStop('A', { date: '2026-10-19' }),
-        makeStop('B', { date: '2026-10-20' }),
-        makeStop('C', { date: '2026-10-19' }),
-      ],
-      now
-    );
-    expect(timeline.days.map((day) => day.label)).toEqual([
-      'Danas · pon. 19.10.',
-      'Sutra · uto. 20.10.',
-      'Danas · pon. 19.10.',
-    ]);
-    expect(new Set(timeline.days.map((day) => day.key)).size).toBe(3);
-  });
-
-  it('has no next stop and no days when every stop is completed', () => {
-    const timeline = buildRouteTimeline([makeStop('A', { completedAt: done })], now);
-    expect(timeline.nextStopId).toBeNull();
-    expect(timeline.days).toEqual([]);
+  it('is null when every stop is completed', () => {
+    expect(getNextStopId([makeStop('A', { completedAt: done })])).toBeNull();
   });
 });
 

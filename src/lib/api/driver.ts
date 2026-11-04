@@ -1,6 +1,9 @@
+import type { AxiosResponse } from 'axios';
+
 import { driverBackend } from '@/lib/services/driverBackendService';
 
-import type { DriverStop, DriverStopDocument } from './driver.d';
+import type { DriverShipment, DriverShipmentSummary, DriverStop, DriverStopDocument } from './driver.d';
+import type { PaginatedResponse } from './pagination.d';
 import { toPushSubscriptionRequest } from './push-subscriptions';
 import type { User } from './user.d';
 import type { VehicleStop } from './vehicleStops.d';
@@ -8,23 +11,39 @@ import type { VehicleStop } from './vehicleStops.d';
 export type {
   DriverCargoShipment,
   DriverShipment,
+  DriverShipmentSummary,
   DriverStop,
   DriverStopCargo,
   DriverStopDisponent,
   DriverStopDocument,
 } from './driver.d';
 
-/** How far back completed stops are returned (backend default is 7 as well). */
-export const DRIVER_COMPLETED_WITHIN_DAYS = 7;
+export const DRIVER_PAGE_SIZE = 20;
 
 export async function getDriverAccount() {
   return driverBackend.get<User>('/api/account');
 }
 
-export async function getDriverStops() {
-  return driverBackend.get<DriverStop[]>('/api/driver/stops', {
-    params: { completedWithinDays: DRIVER_COMPLETED_WITHIN_DAYS },
+async function getDriverPage<T>(url: string, page: number): Promise<PaginatedResponse<T>> {
+  const response = await driverBackend.get<AxiosResponse<PaginatedResponse<T>>>(url, {
+    params: { page, size: DRIVER_PAGE_SIZE },
+    fullResponse: true,
   });
+  return response.data;
+}
+
+/** The driver's stops, latest first: upcoming stops before completed ones. `page` starts at 1. */
+export async function getDriverStops(page: number) {
+  return getDriverPage<DriverStop>('/api/driver/stops', page);
+}
+
+/** The driver's orders, latest first. `page` starts at 1. */
+export async function getDriverShipments(page: number) {
+  return getDriverPage<DriverShipmentSummary>('/api/driver/shipments', page);
+}
+
+export async function getDriverShipment(shipmentId: string) {
+  return driverBackend.get<DriverShipment>(`/api/driver/shipments/${shipmentId}`);
 }
 
 export async function completeDriverStop(stopId: string) {

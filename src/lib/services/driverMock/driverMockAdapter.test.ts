@@ -1,7 +1,7 @@
 import type { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { describe, expect, it } from 'vitest';
 
-import type { DriverShipment, DriverStop } from '@/lib/api/driver.d';
+import type { DriverShipment, DriverShipmentSummary, DriverStop } from '@/lib/api/driver.d';
 import type { PaginatedResponse } from '@/lib/api/pagination.d';
 
 import { createDriverBackendService, DriverLinkExpiredError } from '../driverBackendService';
@@ -20,8 +20,6 @@ async function getPage<T>(service: Awaited<ReturnType<typeof createService>>, ur
   });
   return response.data;
 }
-
-type DriverShipmentSummary = Omit<DriverShipment, 'stops'>;
 
 describe('driverMockAdapter', () => {
   it('pages stops latest first, with every upcoming stop before the completed ones', async () => {
@@ -68,7 +66,8 @@ describe('driverMockAdapter', () => {
   it('completing a stop via /api/vehicle-stops/{id}/complete is reflected in GET /api/driver/stops', async () => {
     const service = await createService();
     const stops = await service.get<DriverStop[]>('/api/driver/stops');
-    const active = stops.find((stop) => !stop.completedAt)!;
+    // Latest first, so the next stop is the lowest uncompleted one.
+    const active = stops.findLast((stop) => !stop.completedAt)!;
 
     await service.post(`/api/vehicle-stops/${active.id}/complete`);
 

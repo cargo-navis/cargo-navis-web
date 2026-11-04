@@ -14,51 +14,33 @@ import type { IconType } from '@/ui';
 
 const isCompleted = (stop: DriverStop) => Boolean(stop.completedAt);
 
-export interface RouteDay {
-  key: string;
+/** The stop to drive to next: in the latest-first list, the lowest one not completed yet. */
+export function getNextStopId(stops: DriverStop[]): string | null {
+  return stops.findLast((stop) => !stop.completedAt)?.id ?? null;
+}
+
+/**
+ * Day label shown above the first stop of each day: `Danas · uto 4.11.`, `Jučer · …`, `Sutra · …`, otherwise the
+ * weekday and date. A past stop not completed yet is late instead.
+ */
+export function getStopDayLabel(
+  stop: Pick<DriverStop, 'date' | 'completedAt'>,
+  now: Dayjs
+): {
   label: string;
   isLate: boolean;
-  stops: DriverStop[];
-}
+} {
+  if (!stop.date) return { label: 'Bez datuma', isLate: false };
 
-export interface RouteTimeline {
-  /** Completed stops, in route order. */
-  completed: DriverStop[];
-  /** First active stop in route order. */
-  nextStopId: string | null;
-  /** Active stops in route order, split wherever the day changes. */
-  days: RouteDay[];
-}
+  const day = dayjs(stop.date).locale('hr');
+  const dayAndDate = day.isSame(now, 'year') ? day.format('ddd D.M.') : day.format('ddd D.M.YYYY.');
 
-export function getDayDividerLabel(date: string | null, now: Dayjs): { label: string; isLate: boolean } {
-  if (!date) return { label: 'Bez datuma', isLate: false };
-
-  const day = dayjs(date).locale('hr');
-  const dayAndDate = day.format('ddd D.M.');
-
-  if (day.isBefore(now, 'day')) return { label: `Kasni · ${dayAndDate}`, isLate: true };
+  if (day.isBefore(now, 'day') && !stop.completedAt) return { label: `Kasni · ${dayAndDate}`, isLate: true };
   if (day.isSame(now, 'day')) return { label: `Danas · ${dayAndDate}`, isLate: false };
+  if (day.isSame(now.subtract(1, 'day'), 'day')) return { label: `Jučer · ${dayAndDate}`, isLate: false };
   if (day.isSame(now.add(1, 'day'), 'day')) return { label: `Sutra · ${dayAndDate}`, isLate: false };
 
   return { label: dayAndDate, isLate: false };
-}
-
-// Never re-sorts: the dispatcher's route order is the truth, dates only add dividers.
-export function buildRouteTimeline(stops: DriverStop[], now: Dayjs): RouteTimeline {
-  const completed = stops.filter(isCompleted);
-  const active = stops.filter((stop) => !isCompleted(stop));
-  const days: RouteDay[] = [];
-
-  active.forEach((stop, index) => {
-    const lastDay = days[days.length - 1];
-    if (lastDay && lastDay.stops[lastDay.stops.length - 1].date === stop.date) {
-      lastDay.stops.push(stop);
-      return;
-    }
-    days.push({ key: `${index}-${stop.date ?? 'none'}`, ...getDayDividerLabel(stop.date, now), stops: [stop] });
-  });
-
-  return { completed, nextStopId: active[0]?.id ?? null, days };
 }
 
 export function getStopKindLabels(stop: DriverStop): { title: string; action: string; confirmed: string } {

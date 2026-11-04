@@ -14,7 +14,8 @@ interface ShipmentsTabProps {
 }
 
 export const ShipmentsTab: React.FC<ShipmentsTabProps> = ({ stops, openShipmentId, onOpenShipmentChange }) => {
-  const shipments = useMemo(() => buildDriverShipments(stops), [stops]);
+  // Stops come latest first; orders are rebuilt from them in route order.
+  const shipments = useMemo(() => buildDriverShipments([...stops].reverse()), [stops]);
   return (
     <FlexLayout className="flex-col gap-3 p-4">
       {shipments.length === 0 && (
