@@ -2,6 +2,7 @@ import dayjs from 'dayjs';
 
 import type {
   DriverCargoShipment,
+  DriverShipment,
   DriverStop,
   DriverStopCargo,
   DriverStopDisponent,
@@ -101,13 +102,134 @@ function document(id: string, name: string, uploadedBy: string, createdAt: strin
 
 const MOCK_DISPONENT: DriverStopDisponent = { firstName: 'Dario', lastName: 'Jukić', phoneNumber: '+385915632655' };
 
+type DayFormatter = (offset: number) => string;
+type TimeFormatter = (offset: number, hour: number) => string;
+
+const HISTORY_SHIPMENT_COUNT = 20;
+const HISTORY_CLIENTS = ['Kraš d.d.', 'Vindija d.d.', 'Podravka d.d.', 'Atlantic Grupa d.d.', null];
+const HISTORY_ROUTES = [
+  {
+    from: address('Radnička cesta 80', '10000', 'Zagreb'),
+    loadingCompany: 'Kraš d.d.',
+    to: address('Letališka cesta 3', '1000', 'Ljubljana', 'SI'),
+    unloadingCompany: 'Mercator d.d.',
+  },
+  {
+    from: address('Vukovarska 148', '21000', 'Split'),
+    loadingCompany: 'Dalmacijavino d.d.',
+    to: address('Jankomir 33', '10000', 'Zagreb'),
+    unloadingCompany: 'Konzum d.d.',
+  },
+  {
+    from: address('Međimurska 28', '42000', 'Varaždin'),
+    loadingCompany: 'Vindija d.d.',
+    to: address('Industriestraße 5', '1220', 'Wien', 'AT'),
+    unloadingCompany: 'Billa AG',
+  },
+  {
+    from: address('Vukovarska cesta 239', '31000', 'Osijek'),
+    loadingCompany: 'Žito d.o.o.',
+    to: address('Váci út 22', '1132', 'Budapest', 'HU'),
+    unloadingCompany: 'Tesco Global Zrt.',
+  },
+  {
+    from: address('Bakarska 2', '51000', 'Rijeka'),
+    loadingCompany: 'Luka Rijeka d.d.',
+    to: address('Via Flavia 120', '34147', 'Trieste', 'IT'),
+    unloadingCompany: 'Interporto Trieste',
+  },
+];
+
+/**
+ * Older orders the driver already delivered, oldest first like the route, so the paginated lists span several pages.
+ * Each order has one loading and one unloading stop on consecutive days; the newest one is unloaded 3 days ago.
+ */
+function createHistoryStops(day: DayFormatter, at: TimeFormatter): DriverStop[] {
+  return Array.from({ length: HISTORY_SHIPMENT_COUNT }, (_, index) => {
+    const route = HISTORY_ROUTES[index % HISTORY_ROUTES.length];
+    const shipment: DriverCargoShipment = {
+      id: `history-shipment-${index + 1}`,
+      orderNumber: `2026/${1100 + index}`,
+      clientName: HISTORY_CLIENTS[index % HISTORY_CLIENTS.length],
+    };
+    const pallets = 10 + (index % 5) * 2;
+    const measures = { pallets, weight: 3000 + index * 250, ldm: pallets * 0.4 };
+    const loadingDay = -2 * (HISTORY_SHIPMENT_COUNT - index) - 2;
+    const unloadingDay = loadingDay + 1;
+
+    const loadingStop: DriverStop = {
+      id: `stop-history-${index + 1}-loading`,
+      address: route.from,
+      date: day(loadingDay),
+      completedAt: at(loadingDay, 10),
+      loadingCargos: [cargo(shipment, 'loading', { companyName: route.loadingCompany, ...measures })],
+      unloadingCargos: [],
+      documents: [],
+      disponent: MOCK_DISPONENT,
+    };
+    const unloadingStop: DriverStop = {
+      id: `stop-history-${index + 1}-unloading`,
+      address: route.to,
+      date: day(unloadingDay),
+      completedAt: at(unloadingDay, 15),
+      loadingCargos: [],
+      unloadingCargos: [cargo(shipment, 'unloading', { companyName: route.unloadingCompany, ...measures })],
+      documents: [document(`doc-history-${index + 1}`, 'CMR.jpg', MOCK_DRIVER_ID, at(unloadingDay, 16))],
+      disponent: MOCK_DISPONENT,
+    };
+
+    return [loadingStop, unloadingStop];
+  }).flat();
+}
+
+/**
+ * The orders the driver has stops on, latest first (by the route position of their last stop). Each holds only its
+ * own cargos on its stops, in route order.
+ */
+export function buildMockShipments(stops: DriverStop[]): DriverShipment[] {
+  const shipments = new Map<string, DriverShipment>();
+  const lastStopIndex = new Map<string, number>();
+
+  stops.forEach((stop, index) => {
+    const shipmentIds = new Set([...stop.loadingCargos, ...stop.unloadingCargos].map((cargo) => cargo.shipment.id));
+
+    shipmentIds.forEach((shipmentId) => {
+      const loadingCargos = stop.loadingCargos.filter((cargo) => cargo.shipment.id === shipmentId);
+      const unloadingCargos = stop.unloadingCargos.filter((cargo) => cargo.shipment.id === shipmentId);
+      const { orderNumber, clientName } = (loadingCargos[0] ?? unloadingCargos[0]).shipment;
+
+      const shipment = shipments.get(shipmentId) ?? {
+        id: shipmentId,
+        orderNumber,
+        clientName,
+        origin: null,
+        destination: null,
+        completedStopsCount: 0,
+        totalStopsCount: 0,
+        stops: [],
+      };
+      shipments.set(shipmentId, shipment);
+
+      shipment.stops.push({ ...stop, loadingCargos, unloadingCargos });
+      shipment.totalStopsCount += 1;
+      if (stop.completedAt) shipment.completedStopsCount += 1;
+      if (loadingCargos.length > 0 && !shipment.origin) shipment.origin = stop.address;
+      if (unloadingCargos.length > 0) shipment.destination = stop.address;
+      lastStopIndex.set(shipmentId, index);
+    });
+  });
+
+  return Array.from(shipments.values()).sort((a, b) => lastStopIndex.get(b.id)! - lastStopIndex.get(a.id)!);
+}
+
 /** Stops in route order, dates relative to today. */
 export function createMockStops(): DriverStop[] {
   const today = dayjs().startOf('day');
-  const day = (offset: number) => today.add(offset, 'day').format('YYYY-MM-DD');
-  const at = (offset: number, hour: number) => today.add(offset, 'day').hour(hour).toISOString();
+  const day: DayFormatter = (offset) => today.add(offset, 'day').format('YYYY-MM-DD');
+  const at: TimeFormatter = (offset, hour) => today.add(offset, 'day').hour(hour).toISOString();
 
   const stops: DriverStop[] = [
+    ...createHistoryStops(day, at),
     {
       id: 'stop-rijeka',
       address: address('Riva 1', '51000', 'Rijeka'),

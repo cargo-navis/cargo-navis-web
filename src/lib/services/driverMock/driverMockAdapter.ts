@@ -1,12 +1,35 @@
 import { type AxiosAdapter, AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
 import dayjs from 'dayjs';
 
-import { createMockStops, MOCK_DRIVER_ID, mockAccount, syncMockLoadStatuses } from './driverMockData';
+import type { PaginatedResponse } from '@/lib/api/pagination.d';
+
+import {
+  buildMockShipments,
+  createMockStops,
+  MOCK_DRIVER_ID,
+  mockAccount,
+  syncMockLoadStatuses,
+} from './driverMockData';
 
 export { MOCK_DRIVER_ID };
 
 const MOCK_FILE_URL = '/apple-touch-icon.png';
 const MOCK_SESSION_KEY = 'driver-mock-session';
+const DEFAULT_PAGE_SIZE = 20;
+
+/** Same shape as the backend's paginated lists: `page` starts at 1. */
+function paginate<T>(items: T[], params?: { page?: number | string; size?: number | string }): PaginatedResponse<T> {
+  const page = Number(params?.page ?? 1);
+  const size = Number(params?.size ?? DEFAULT_PAGE_SIZE);
+  return {
+    data: items.slice((page - 1) * size, page * size),
+    currentPage: page,
+    pageSize: size,
+    totalElements: items.length,
+    totalPages: Math.ceil(items.length / size),
+    status: 'success',
+  };
+}
 
 /** Stands in for the httpOnly refresh cookie; sessionStorage keeps it across reloads in the browser. */
 function createMockSession() {
@@ -67,11 +90,27 @@ export function createDriverMockAdapter({ delayMs = 400 }: { delayMs?: number } 
       return respond(config, 200, { data: mockAccount });
     }
 
+    // Paginated, latest first (the reverse of the route order) when a page is asked for; otherwise the current
+    // route-order list of recent stops.
+    if (method === 'get' && url === '/api/driver/stops' && config.params?.page != null) {
+      return respond(config, 200, paginate([...stops].reverse(), config.params));
+    }
+
     if (method === 'get' && url === '/api/driver/stops') {
       const days = Number(config.params?.completedWithinDays ?? 7);
       const since = dayjs().subtract(days, 'day');
       const visible = stops.filter((stop) => !stop.completedAt || dayjs(stop.completedAt).isAfter(since));
       return respond(config, 200, { data: visible });
+    }
+
+    if (method === 'get' && url === '/api/driver/shipments') {
+      const summaries = buildMockShipments(stops).map(({ stops: _stops, ...summary }) => summary);
+      return respond(config, 200, paginate(summaries, config.params));
+    }
+
+    if (method === 'get' && (match = url.match(/^\/api\/driver\/shipments\/([^/]+)$/))) {
+      const shipment = buildMockShipments(stops).find(({ id }) => id === match![1]);
+      return shipment ? respond(config, 200, { data: shipment }) : respond(config, 404);
     }
 
     if (method === 'post' && (match = url.match(/^\/api\/vehicle-stops\/([^/]+)\/(complete|uncomplete)$/))) {
