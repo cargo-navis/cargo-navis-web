@@ -17,7 +17,14 @@ import {
 } from '@/components/reui/timeline';
 import type { Cargo, LoadingAddress, Vehicle } from '@/lib/api';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
-import { useAssignShipmentToVehicle, useEmployees, useVehicles, useVehicleStopsByVehicle } from '@/lib/hooks';
+import {
+  useAssignShipmentToVehicle,
+  useClient,
+  useEmployees,
+  useNotifyShipmentDrivers,
+  useVehicles,
+  useVehicleStopsByVehicle,
+} from '@/lib/hooks';
 import { getCargoLabel, getCargoLabelParts } from '@/lib/utils/cargo';
 import { DateTimeFormat, formatDateString } from '@/lib/utils/date';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
@@ -40,6 +47,8 @@ import {
 } from '@/ui';
 
 import { RemainingStopsBadge, StopTimelineEntry } from '../../VehicleStopsPage/StopItem';
+import { getDriversNotifiedToast, getEmployeeNames, getStopDriverIds } from '../driverNotifications';
+import { NotifyDriversDialog } from './NotifyDriversDialog';
 
 interface AssignVehicleModalProps {
   isOpen: boolean;
@@ -135,6 +144,8 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
   const { data: vehicles, isLoading: isVehiclesLoading } = useVehicles({ enabled: isOpen });
   const { data: employees } = useEmployees({ enabled: isOpen });
   const { mutateAsync: assignShipment, isPending } = useAssignShipmentToVehicle();
+  const { mutateAsync: notifyDrivers, isPending: isNotifying } = useNotifyShipmentDrivers(shipmentId);
+  const { data: client } = useClient(clientId ?? '');
 
   const previewStops = useMemo(() => buildPreviewStops(cargos), [cargos]);
   const cargoById = useMemo(() => new Map(cargos.map((c) => [c.id, c])), [cargos]);
@@ -144,6 +155,8 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
   const [search, setSearch] = useState('');
   const [datesByKey, setDatesByKey] = useState<Record<string, string | null>>(defaultDatesByKey);
   const [isNavigating, setIsNavigating] = useState(false);
+  // Set after an assignment that gave stops to drivers: asks whether to notify them right away.
+  const [notifyPrompt, setNotifyPrompt] = useState<{ vehicleId: string; driverIds: string[] } | null>(null);
 
   const isBusy = isPending || isNavigating;
 
@@ -203,134 +216,180 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
     if (!selectedVehicleId || !allDatesPicked) return;
 
     try {
-      await assignShipment({
+      const assignedStops = await assignShipment({
         shipmentId,
         vehicleId: selectedVehicleId,
         cargoStopDates: buildCargoStopDates(cargos, datesByKey),
       });
       showSuccessToast({ title: `Nalog "${shipmentOrderNumber}" dodijeljen vozilu` });
-      setIsNavigating(true);
-      onAssigned(selectedVehicleId);
+
+      // The stops take over the vehicle's driver; without one there's nobody to notify yet.
+      const driverIds = getStopDriverIds(assignedStops);
+      if (driverIds.length > 0) {
+        setNotifyPrompt({ vehicleId: selectedVehicleId, driverIds });
+        return;
+      }
+      finishAssignment(selectedVehicleId);
     } catch {
       showErrorToast({ title: 'Greška pri dodjeli naloga vozilu' });
     }
   }
 
+  function finishAssignment(vehicleId: string) {
+    setNotifyPrompt(null);
+    setIsNavigating(true);
+    onAssigned(vehicleId);
+  }
+
+  async function handleNotifyDrivers() {
+    if (!notifyPrompt) return;
+
+    try {
+      const notifiedStops = await notifyDrivers();
+      if (notifiedStops.length === 0) {
+        showErrorToast({ title: 'Obavijest nije poslana.', description: 'Nijedna postaja nije dostavljena vozaču.' });
+      } else {
+        showSuccessToast(
+          getDriversNotifiedToast({
+            notifiedStops,
+            employees,
+            clientName: client?.name,
+            orderNumber: shipmentOrderNumber,
+          })
+        );
+      }
+    } catch (error) {
+      console.error(error);
+      showErrorToast({ title: 'Greška prilikom slanja obavijesti. Pokušajte ponovno s naloga.' });
+    }
+    // Moves on either way: the shipment is assigned, and the driver can still be notified from it.
+    finishAssignment(notifyPrompt.vehicleId);
+  }
+
   return (
-    <Dialog open={isOpen}>
-      <DialogContent
-        aria-describedby={undefined}
-        className="max-w-[1040px]"
-        onOpenAutoFocus={(e) => e.preventDefault()}
-      >
-        <DialogHeader className="flex-col">
-          <FlexLayout className="items-center gap-1 text-dark-800 dark:text-light-50">
-            <Icon icon="IconTruck" size="l" />
-            <DialogTitle>
-              <Text variant="text-m-medium">Dodijeli vozilo</Text>
-            </DialogTitle>
-          </FlexLayout>
-          <Text as="span" color="text-color-3" variant="text-xs">
-            Odaberi vozilo na koje će se dodijeliti nalog &quot;{shipmentOrderNumber}&quot;
-            {clientId && (
-              <>
-                {' '}
-                za <ClientName as="span" color="text-color-3" id={clientId} variant="text-xs" />
-              </>
-            )}
-          </Text>
-        </DialogHeader>
-
-        <FlexLayout className="flex-col gap-3 pt-2">
-          <Text color="text-color-3" variant="text-xs">
-            Stanice koje će biti dodijeljene vozilu:
-          </Text>
-          <FlexLayout className="flex-col gap-2">
-            {previewStops.map((stop, i) => (
-              <Fragment key={stop.key}>
-                <PreviewStopCard
-                  cargoGroups={buildCargoGroups(stop, cargoById)}
-                  date={datesByKey[stop.key] ?? null}
-                  stop={stop}
-                  onDateChange={(date) => setDatesByKey((prev) => ({ ...prev, [stop.key]: date }))}
-                />
-                {i !== previewStops.length - 1 && <Divider />}
-              </Fragment>
-            ))}
-          </FlexLayout>
-        </FlexLayout>
-
-        <Box className="my-2">
-          <Divider />
-        </Box>
-
-        <FlexLayout className="flex-col gap-3">
-          <Box className="px-1">
-            <Text color="text-color-3" variant="text-xxs-medium">
-              Odaberi vozilo *
+    <>
+      <NotifyDriversDialog
+        driverNames={notifyPrompt ? getEmployeeNames(notifyPrompt.driverIds, employees) : []}
+        isNotifying={isNotifying}
+        isOpen={!!notifyPrompt}
+        onNotify={() => void handleNotifyDrivers()}
+        onSkip={() => notifyPrompt && finishAssignment(notifyPrompt.vehicleId)}
+      />
+      <Dialog open={isOpen}>
+        <DialogContent
+          aria-describedby={undefined}
+          className="max-w-[1040px]"
+          onOpenAutoFocus={(e) => e.preventDefault()}
+        >
+          <DialogHeader className="flex-col">
+            <FlexLayout className="items-center gap-1 text-dark-800 dark:text-light-50">
+              <Icon icon="IconTruck" size="l" />
+              <DialogTitle>
+                <Text variant="text-m-medium">Dodijeli vozilo</Text>
+              </DialogTitle>
+            </FlexLayout>
+            <Text as="span" color="text-color-3" variant="text-xs">
+              Odaberi vozilo na koje će se dodijeliti nalog &quot;{shipmentOrderNumber}&quot;
+              {clientId && (
+                <>
+                  {' '}
+                  za <ClientName as="span" color="text-color-3" id={clientId} variant="text-xs" />
+                </>
+              )}
             </Text>
-          </Box>
-          <Box className="px-1">
-            <TextInput
-              iconLeft="IconSearch"
-              iconRight={search ? 'IconX' : undefined}
-              isDisabled={isLoading}
-              placeholder="Pretraži po registraciji, marki, vozaču ili mjestu..."
-              value={search}
-              onChange={setSearch}
-              onClickIconRight={() => setSearch('')}
-            />
-          </Box>
-          <Box className="h-[420px] overflow-y-auto">
-            {isLoading ? (
-              <FlexLayout className="flex-col gap-2">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <Skeleton borderRadius="m" height={48} key={i} width="100%" />
-                ))}
-              </FlexLayout>
-            ) : rows.length === 0 ? (
-              <Text color="text-color-3" variant="text-s">
-                Nema dostupnih vozila.
-              </Text>
-            ) : filteredRows.length === 0 ? (
-              <Text color="text-color-3" variant="text-s">
-                Nema rezultata.
-              </Text>
-            ) : (
-              <FlexLayout className="flex-col gap-2">
-                {filteredRows.map(({ vehicle, latestStop, stops }) => (
-                  <VehicleRow
-                    cargoById={cargoById}
-                    datesByKey={datesByKey}
-                    isSelected={vehicle.id === selectedVehicleId}
-                    key={vehicle.id}
-                    latestStop={latestStop}
-                    previewStops={previewStops}
-                    stops={stops}
-                    vehicle={vehicle}
-                    onSelect={() => setSelectedVehicleId(vehicle.id)}
+          </DialogHeader>
+
+          <FlexLayout className="flex-col gap-3 pt-2">
+            <Text color="text-color-3" variant="text-xs">
+              Stanice koje će biti dodijeljene vozilu:
+            </Text>
+            <FlexLayout className="flex-col gap-2">
+              {previewStops.map((stop, i) => (
+                <Fragment key={stop.key}>
+                  <PreviewStopCard
+                    cargoGroups={buildCargoGroups(stop, cargoById)}
+                    date={datesByKey[stop.key] ?? null}
+                    stop={stop}
+                    onDateChange={(date) => setDatesByKey((prev) => ({ ...prev, [stop.key]: date }))}
                   />
-                ))}
-              </FlexLayout>
-            )}
+                  {i !== previewStops.length - 1 && <Divider />}
+                </Fragment>
+              ))}
+            </FlexLayout>
+          </FlexLayout>
+
+          <Box className="my-2">
+            <Divider />
           </Box>
-        </FlexLayout>
-        <FlexLayout className="justify-end gap-3 pt-2">
-          <Box className="flex-1">
-            <Button isDisabled={isBusy} isFullWidth text="Odustani" variant="secondary" onClick={onClose} />
-          </Box>
-          <Box className="flex-1">
-            <Button
-              isDisabled={!isConfirmReady || isBusy}
-              isFullWidth
-              isLoading={isBusy}
-              text="Potvrdi"
-              onClick={handleConfirm}
-            />
-          </Box>
-        </FlexLayout>
-      </DialogContent>
-    </Dialog>
+
+          <FlexLayout className="flex-col gap-3">
+            <Box className="px-1">
+              <Text color="text-color-3" variant="text-xxs-medium">
+                Odaberi vozilo *
+              </Text>
+            </Box>
+            <Box className="px-1">
+              <TextInput
+                iconLeft="IconSearch"
+                iconRight={search ? 'IconX' : undefined}
+                isDisabled={isLoading}
+                placeholder="Pretraži po registraciji, marki, vozaču ili mjestu..."
+                value={search}
+                onChange={setSearch}
+                onClickIconRight={() => setSearch('')}
+              />
+            </Box>
+            <Box className="h-[420px] overflow-y-auto">
+              {isLoading ? (
+                <FlexLayout className="flex-col gap-2">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <Skeleton borderRadius="m" height={48} key={i} width="100%" />
+                  ))}
+                </FlexLayout>
+              ) : rows.length === 0 ? (
+                <Text color="text-color-3" variant="text-s">
+                  Nema dostupnih vozila.
+                </Text>
+              ) : filteredRows.length === 0 ? (
+                <Text color="text-color-3" variant="text-s">
+                  Nema rezultata.
+                </Text>
+              ) : (
+                <FlexLayout className="flex-col gap-2">
+                  {filteredRows.map(({ vehicle, latestStop, stops }) => (
+                    <VehicleRow
+                      cargoById={cargoById}
+                      datesByKey={datesByKey}
+                      isSelected={vehicle.id === selectedVehicleId}
+                      key={vehicle.id}
+                      latestStop={latestStop}
+                      previewStops={previewStops}
+                      stops={stops}
+                      vehicle={vehicle}
+                      onSelect={() => setSelectedVehicleId(vehicle.id)}
+                    />
+                  ))}
+                </FlexLayout>
+              )}
+            </Box>
+          </FlexLayout>
+          <FlexLayout className="justify-end gap-3 pt-2">
+            <Box className="flex-1">
+              <Button isDisabled={isBusy} isFullWidth text="Odustani" variant="secondary" onClick={onClose} />
+            </Box>
+            <Box className="flex-1">
+              <Button
+                isDisabled={!isConfirmReady || isBusy}
+                isFullWidth
+                isLoading={isBusy}
+                text="Potvrdi"
+                onClick={handleConfirm}
+              />
+            </Box>
+          </FlexLayout>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

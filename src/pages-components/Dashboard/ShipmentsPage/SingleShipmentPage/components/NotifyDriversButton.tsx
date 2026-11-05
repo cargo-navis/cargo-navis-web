@@ -1,10 +1,12 @@
 import dayjs from 'dayjs';
 
-import type { Shipment, VehicleStop } from '@/lib/api';
+import type { Shipment } from '@/lib/api';
 import { useClient, useEmployees, useNotifyShipmentDrivers } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Box, Button, FlexLayout, Text, Tooltip } from '@/ui';
+
+import { getDriversNotifiedToast } from '../../driverNotifications';
 
 export const NotifyDriversButton = ({ shipment }: { shipment: Shipment }) => {
   const { mutateAsync: notifyDrivers, isPending } = useNotifyShipmentDrivers(shipment.id);
@@ -23,21 +25,6 @@ export const NotifyDriversButton = ({ shipment }: { shipment: Shipment }) => {
 
   if (activeStops.length === 0) return null;
 
-  // Names the drivers that were actually notified (the backend skips stops it couldn't deliver).
-  function getNotifiedToast(notifiedStops: VehicleStop[]): { title: string; description?: string } {
-    const order = client?.name ? `o nalogu za ${client.name}.` : `o nalogu ${shipment.orderNumber}.`;
-
-    const notifiedDriverIds = Array.from(new Set(notifiedStops.map((stop) => stop.driverId).filter(Boolean)));
-    const names = notifiedDriverIds
-      .map((driverId) => employees?.find((employee) => employee.id === driverId)?.fullName)
-      .filter((name): name is string => !!name);
-
-    if (notifiedDriverIds.length > 1) {
-      return { title: `Vozači obaviješteni ${order}`, description: names.join(', ') || undefined };
-    }
-    return { title: names[0] ? `Vozač ${names[0]} obaviješten ${order}` : `Vozač obaviješten ${order}` };
-  }
-
   async function handleNotify() {
     if (lastSentAt && !confirm('Vozač je već obaviješten. Pošalji ponovno?')) return;
 
@@ -47,7 +34,14 @@ export const NotifyDriversButton = ({ shipment }: { shipment: Shipment }) => {
         showErrorToast({ title: 'Obavijest nije poslana.', description: 'Nijedna postaja nije dostavljena vozaču.' });
         return;
       }
-      showSuccessToast(getNotifiedToast(notifiedStops));
+      showSuccessToast(
+        getDriversNotifiedToast({
+          notifiedStops,
+          employees,
+          clientName: client?.name,
+          orderNumber: shipment.orderNumber,
+        })
+      );
     } catch (error) {
       console.error(error);
       showErrorToast({ title: 'Greška prilikom slanja obavijesti. Pokušajte ponovno.' });
