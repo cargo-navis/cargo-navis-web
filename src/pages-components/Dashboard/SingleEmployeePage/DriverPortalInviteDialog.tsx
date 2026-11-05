@@ -1,6 +1,10 @@
+import { useState } from 'react';
+
+import { sleep } from '@/lib/utils/async';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import {
   Alert,
+  Box,
   Button,
   Dialog,
   DialogContent,
@@ -10,6 +14,7 @@ import {
   DialogTitle,
   FlexLayout,
   Icon,
+  Skeleton,
   Text,
   TextInput,
 } from '@/ui';
@@ -22,9 +27,17 @@ interface DriverPortalInviteDialogProps {
 }
 
 export const DriverPortalInviteDialog: React.FC<DriverPortalInviteDialogProps> = ({ isOpen, name, url, onClose }) => {
+  const [isCopying, setIsCopying] = useState(false);
+  // The dialog opens while the invite is still being generated; the url arrives once it is.
+  const isGenerating = !url;
+  const isLocked = isGenerating || isCopying;
+
   async function handleCopy() {
+    setIsCopying(true);
     try {
+      // Copy before the delay: Safari rejects clipboard writes that land too long after the click.
       await navigator.clipboard.writeText(url);
+      await sleep(1500);
       showSuccessToast({
         title: 'Pozivnica kopirana u međuspremnik.',
         description: 'Sada je pošalji vozaču putem SMS-a, WhatsAppa ili emaila.',
@@ -32,18 +45,21 @@ export const DriverPortalInviteDialog: React.FC<DriverPortalInviteDialogProps> =
       onClose();
     } catch {
       showErrorToast({ title: 'Kopiranje nije uspjelo.' });
+      setIsCopying(false);
     }
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && !isLocked && onClose()}>
       <DialogContent className="max-w-[720px]">
         <DialogHeader>
           <DialogTitle>
-            <Text variant="text-m-medium">Pozivnica za vozački portal</Text>
+            <FlexLayout className="items-center gap-2">
+              <Icon icon="IconDeviceMobileShare" size="m" />
+              <Text variant="text-m-medium">Pozivnica za vozački portal</Text>
+            </FlexLayout>
           </DialogTitle>
           <FlexLayout className="items-center gap-1">
-            <Icon color="text-color-3" icon="IconUser" size="s" />
             <Text as="span" color="text-color-3" variant="text-xs">
               {name}
             </Text>
@@ -57,11 +73,24 @@ export const DriverPortalInviteDialog: React.FC<DriverPortalInviteDialogProps> =
           </Text>
         </DialogDescription>
 
-        <TextInput isDisabled value={url} onChange={() => {}} />
+        <Box className="relative">
+          <TextInput isDisabled value={url} onChange={() => {}} />
+          {isGenerating && (
+            <Box className="absolute inset-0 flex items-center px-3">
+              <Skeleton borderRadius="xs" height={20} width="75%" />
+            </Box>
+          )}
+        </Box>
         <Alert icon="IconInfoCircle" text="Pozivnica vrijedi 14 dana." />
         <DialogFooter>
-          <Button text="Zatvori" variant="secondary" onClick={onClose} />
-          <Button iconLeft="IconCopy" text="Kopiraj" onClick={handleCopy} />
+          <Button isDisabled={isLocked} text="Zatvori" variant="secondary" onClick={onClose} />
+          <Button
+            iconLeft="IconCopy"
+            isDisabled={isGenerating}
+            isLoading={isCopying}
+            text="Kopiraj"
+            onClick={handleCopy}
+          />
         </DialogFooter>
       </DialogContent>
     </Dialog>
