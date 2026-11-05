@@ -13,7 +13,6 @@ import {
   TimelineTitle,
 } from '@/components/reui/timeline';
 import { ToggleStopCompletionButton } from '@/components/vehicleStops/ToggleStopCompletionButton';
-import { VehicleStopDocumentCards } from '@/components/vehicleStops/VehicleStopDocumentCards';
 import type { VehicleStop, VehicleStopCargo } from '@/lib/api/vehicleStops';
 import { useVehicles } from '@/lib/hooks';
 import { getCargoLabel } from '@/lib/utils/cargo';
@@ -115,6 +114,7 @@ const SidebarStopEntry = ({
   const { address, date, loadingCargos, unloadingCargos, driverId } = stop;
   const hasLoading = loadingCargos.length > 0;
   const hasUnloading = unloadingCargos.length > 0;
+  const hasDocuments = stop.documents.length > 0;
 
   const rowContent = (
     <FlexLayout className="flex-col gap-0.5 relative -top-4">
@@ -138,6 +138,14 @@ const SidebarStopEntry = ({
             </Text>
             {hasLoading && <Icon className="text-orange-500 dark:text-orange-400" icon="IconPackageImport" size="s" />}
             {hasUnloading && <Icon className="text-teal-500 dark:text-teal-400" icon="IconPackageExport" size="s" />}
+            {hasDocuments && (
+              <Icon
+                aria-label="Ima dokumente"
+                color="text-dark-400 dark:text-light-500"
+                icon="IconFileCheck"
+                size="s"
+              />
+            )}
           </FlexLayout>
         </TimelineTitle>
       </Tooltip>
@@ -179,11 +187,6 @@ const SidebarStopEntry = ({
             )}
           </FlexLayout>
           <OpenDetailsLink vehicleId={stop.vehicleId} />
-        </FlexLayout>
-      )}
-      {stop.documents.length > 0 && (
-        <FlexLayout className="flex-col gap-2 mt-2">
-          <VehicleStopDocumentCards stop={stop} />
         </FlexLayout>
       )}
     </FlexLayout>

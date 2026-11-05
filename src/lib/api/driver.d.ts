@@ -18,9 +18,7 @@ export interface DriverStopCargo extends Omit<VehicleStopCargo, 'shipment' | 'we
   ldm: number | null;
 }
 
-export interface DriverStopDocument extends VehicleStopDocument {
-  uploadedBy: string | null;
-}
+export type DriverStopDocument = VehicleStopDocument;
 
 export interface DriverStop {
   id: string;

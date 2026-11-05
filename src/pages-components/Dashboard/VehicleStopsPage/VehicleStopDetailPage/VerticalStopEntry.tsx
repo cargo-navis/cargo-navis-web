@@ -4,6 +4,8 @@ import clsx from 'clsx';
 import dayjs from 'dayjs';
 
 import { EmployeeName } from '@/components/employees/EmployeeName';
+import { FileCardList } from '@/components/files/FileCardList';
+import { useVehicleStopFileActions } from '@/components/files/useFileActions';
 import {
   TimelineContent,
   TimelineDate,
@@ -14,7 +16,6 @@ import {
   TimelineTitle,
 } from '@/components/reui/timeline';
 import { ToggleStopCompletionButton } from '@/components/vehicleStops/ToggleStopCompletionButton';
-import { VehicleStopDocumentCards } from '@/components/vehicleStops/VehicleStopDocumentCards';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { useSendVehicleStopMessage } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
@@ -45,6 +46,7 @@ export const VerticalStopEntry = ({
 }: VerticalStopEntryProps) => {
   const isCompleted = isStopCompleted(stop);
   const { address, date, loadingCargos, unloadingCargos, documents } = stop;
+  const fileActions = useVehicleStopFileActions()(stop.id);
   const hasLoading = loadingCargos.length > 0;
   const hasUnloading = unloadingCargos.length > 0;
   const isDraggable = !isCompleted;
@@ -215,7 +217,7 @@ export const VerticalStopEntry = ({
           </FlexLayout>
         )}
         <FlexLayout className="flex-wrap gap-3">
-          <VehicleStopDocumentCards stop={stop} />
+          <FileCardList items={(documents ?? []).map((document) => ({ document, actions: fileActions }))} />
           <VehicleStopFileUploadButton id={stop.id} />
         </FlexLayout>
       </FlexLayout>
