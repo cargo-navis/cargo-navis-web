@@ -35,11 +35,16 @@ const ShipmentSummary: React.FC<{
   /** The card of a completed order: a green title ending in a check, all faded like completed stops. */
   isCompleted?: boolean;
   hasDocuments?: boolean;
-}> = ({ shipment, isCompleted, hasDocuments }) => (
+  truncateTitle?: boolean;
+}> = ({ shipment, isCompleted, hasDocuments, truncateTitle }) => (
   <FlexLayout className={clsx('min-w-0 flex-col gap-1 text-left', isCompleted && FADED_CLASS)}>
     <FlexLayout className="flex-col">
       <FlexLayout className="items-start gap-2">
-        <Text color={isCompleted ? COMPLETED_COLOR : 'text-color-1'} variant="text-l-bold">
+        <Text
+          className={clsx('min-w-0', truncateTitle ? 'truncate' : '[overflow-wrap:anywhere]')}
+          color={isCompleted ? COMPLETED_COLOR : 'text-color-1'}
+          variant="text-l-bold"
+        >
           {getShipmentTitle(shipment)}
         </Text>
         {isCompleted && (
@@ -152,7 +157,7 @@ export const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment, onOpen }) 
       type="button"
       onClick={onOpen}
     >
-      <ShipmentSummary isCompleted={isCompleted} shipment={shipment} />
+      <ShipmentSummary isCompleted={isCompleted} shipment={shipment} truncateTitle />
     </FlexLayout>
   );
 };

@@ -128,7 +128,7 @@ export const StopSummary: React.FC<StopSummaryProps> = ({ stop, isNext, showDate
         </FlexLayout>
       ) : (
         title && (
-          <Text color="text-color-1" variant="text-l-bold">
+          <Text className="[overflow-wrap:anywhere]" color="text-color-1" variant="text-l-bold">
             {title}
           </Text>
         )
@@ -273,7 +273,7 @@ export const StopCard: React.FC<StopCardProps> = ({ stop, tone, isHighlighted, o
                   <CountryFlag code={stop.address.countryCode} size="xs" />
                 </Box>
               )}
-              <Text color={isOnTeal ? 'text-white' : 'text-color-1'} variant="text-l-bold">
+              <Text className="min-w-0 truncate" color={isOnTeal ? 'text-white' : 'text-color-1'} variant="text-l-bold">
                 {stop.address?.placeName ?? 'Bez adrese'}
               </Text>
             </FlexLayout>
