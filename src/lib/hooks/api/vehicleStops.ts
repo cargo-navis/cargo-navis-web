@@ -13,6 +13,7 @@ import {
   getVehicleStops,
   getVehicleStopsByVehicle,
   rearrangeVehicleStop,
+  sendShipmentStopsMessage,
   sendVehicleStopMessage,
   uncompleteVehicleStop,
   updateVehicleStop,
@@ -159,6 +160,17 @@ export function useDeleteVehicleStop() {
     onSuccess: () => {
       void queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
       return queryClient.invalidateQueries({ queryKey: ['shipment'], type: 'all' });
+    },
+  });
+}
+
+export function useSendShipmentStopsMessage(shipmentId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => sendShipmentStopsMessage(shipmentId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
+      return queryClient.invalidateQueries({ queryKey: ['shipment', shipmentId] });
     },
   });
 }

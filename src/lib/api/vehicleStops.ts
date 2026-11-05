@@ -79,6 +79,10 @@ export async function sendVehicleStopMessage(id: string) {
   return backend.post<VehicleStop>(`/api/vehicle-stops/${id}/send-message`);
 }
 
+export async function sendShipmentStopsMessage(shipmentId: string) {
+  return backend.post<VehicleStop[]>('/api/vehicle-stops/send-message', { shipmentId });
+}
+
 export async function completeVehicleStop(id: string) {
   return backend.post<VehicleStop>(`/api/vehicle-stops/${id}/complete`);
 }

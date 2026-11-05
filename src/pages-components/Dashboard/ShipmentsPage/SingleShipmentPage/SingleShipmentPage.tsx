@@ -16,7 +16,7 @@ import {
   useUpdateShipment,
 } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, Divider, FlexLayout, Icon, Pill, Text, Tooltip } from '@/ui';
+import { Box, Button, Divider, FlexLayout, Icon, Pill, Text } from '@/ui';
 
 import { invoiceStatusConfig } from '../const';
 import { AssignVehicleModal } from '../NewShipmentPage/AssignVehicleModal';
@@ -24,6 +24,7 @@ import { OverdueIndicator } from '../OverdueIndicator';
 import { CargoItem } from './components/CargoItem';
 import { ContentLoader } from './components/ContentLoader';
 import { InvoiceItem } from './components/InvoiceItem';
+import { NotifyDriversButton } from './components/NotifyDriversButton';
 import { ShipmentActions } from './components/ShipmentActions';
 import { ShipmentFiles } from './components/ShipmentFiles';
 import { ShipmentLeftPanel } from './components/ShipmentLeftPanel';
@@ -99,19 +100,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
         <FlexLayout className="items-center gap-3">
           {!isAgency &&
             (isAssigned ? (
-              <Tooltip
-                content={
-                  <Box className="px-2">
-                    <Text color="text-light-50" variant="text-xs">
-                      Nalog je već dodijeljen vozilu.
-                    </Text>
-                  </Box>
-                }
-              >
-                <Box>
-                  <Button iconLeft="IconTruck" isDisabled text="Dodijeli vozilo" variant="secondary" />
-                </Box>
-              </Tooltip>
+              <NotifyDriversButton shipment={shipment} />
             ) : (
               <Button
                 iconLeft="IconTruck"
