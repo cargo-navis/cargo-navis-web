@@ -4,6 +4,7 @@ import React from 'react';
 import { Box, FlexLayout, Icon, Text, Tooltip } from '@/ui';
 
 import { getDataPointDateString } from '../utils/date';
+import { getFileIcon } from '../utils/fileIcon';
 
 interface FileCardProps {
   id: string;
@@ -19,6 +20,7 @@ interface FileCardProps {
 export const FileCard: React.FC<FileCardProps> = ({
   id,
   name,
+  mimeType,
   isLoading,
   createdAt,
   onDownload,
@@ -37,7 +39,12 @@ export const FileCard: React.FC<FileCardProps> = ({
       )}
     >
       <FlexLayout className="items-start gap-2 px-3 py-2">
-        <Icon className="shrink-0 mt-1" color="text-dark-800 dark:text-light-50" icon="IconFileDescription" size="m" />
+        <Icon
+          className="shrink-0 mt-1"
+          color="text-dark-800 dark:text-light-50"
+          icon={getFileIcon({ name, mimeType }, 'IconFileDescription')}
+          size="m"
+        />
         <FlexLayout className="flex-col overflow-hidden">
           <Text
             className="whitespace-nowrap overflow-hidden text-ellipsis"
