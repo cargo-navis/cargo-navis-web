@@ -4,6 +4,8 @@ import clsx from 'clsx';
 import dayjs from 'dayjs';
 
 import { EmployeeName } from '@/components/employees/EmployeeName';
+import { FileCardList } from '@/components/files/FileCardList';
+import { useVehicleStopFileActions } from '@/components/files/useFileActions';
 import {
   TimelineContent,
   TimelineDate,
@@ -14,9 +16,8 @@ import {
   TimelineTitle,
 } from '@/components/reui/timeline';
 import { ToggleStopCompletionButton } from '@/components/vehicleStops/ToggleStopCompletionButton';
-import { VehicleStopDocumentCards } from '@/components/vehicleStops/VehicleStopDocumentCards';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
-import { useSendVehicleStopMessage } from '@/lib/hooks';
+import { useNotifyVehicleStopDriver } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Box, DisplayIf, FlexLayout, Icon, Text, TextButton } from '@/ui';
@@ -45,6 +46,7 @@ export const VerticalStopEntry = ({
 }: VerticalStopEntryProps) => {
   const isCompleted = isStopCompleted(stop);
   const { address, date, loadingCargos, unloadingCargos, documents } = stop;
+  const fileActions = useVehicleStopFileActions()(stop.id);
   const hasLoading = loadingCargos.length > 0;
   const hasUnloading = unloadingCargos.length > 0;
   const isDraggable = !isCompleted;
@@ -54,15 +56,15 @@ export const VerticalStopEntry = ({
     disabled: !isDraggable || isDragOverlay,
   });
 
-  const { mutateAsync: sendMessage, isPending: isSendingMessage } = useSendVehicleStopMessage(stop.id);
+  const { mutateAsync: notifyDriver, isPending: isNotifyingDriver } = useNotifyVehicleStopDriver(stop.id);
 
-  async function handleSendMessage() {
+  async function handleNotifyDriver() {
     if (stop.messageSentAt) {
       const ok = confirm('Poruka je već poslana. Pošalji ponovno?');
       if (!ok) return;
     }
     try {
-      await sendMessage();
+      await notifyDriver();
       showSuccessToast({ title: 'Poruka poslana' });
     } catch (error) {
       console.error(error);
@@ -158,12 +160,12 @@ export const VerticalStopEntry = ({
             <FlexLayout className="flex-col items-end">
               <TextButton
                 iconLeft="IconBrandWhatsapp"
-                isDisabled={isSendingMessage}
+                isDisabled={isNotifyingDriver}
                 size="s"
                 text={stop.messageSentAt ? 'Obavijesti ponovno' : 'Obavijesti vozača'}
                 type="button"
                 variant="secondary"
-                onClick={handleSendMessage}
+                onClick={handleNotifyDriver}
               />
               {stop.messageSentAt && (
                 <Text className="whitespace-nowrap" color="text-color-3" variant="text-xxxs">
@@ -215,7 +217,7 @@ export const VerticalStopEntry = ({
           </FlexLayout>
         )}
         <FlexLayout className="flex-wrap gap-3">
-          <VehicleStopDocumentCards stop={stop} />
+          <FileCardList items={(documents ?? []).map((document) => ({ document, actions: fileActions }))} />
           <VehicleStopFileUploadButton id={stop.id} />
         </FlexLayout>
       </FlexLayout>

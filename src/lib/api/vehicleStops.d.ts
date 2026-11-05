@@ -53,6 +53,7 @@ export interface VehicleStopDocument {
   mimeType: string;
   status: string;
   publicUrl: string | null;
+  uploadedBy: string | null;
 }
 
 export interface VehicleStop {

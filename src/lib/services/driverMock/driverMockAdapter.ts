@@ -1,26 +1,55 @@
 import { type AxiosAdapter, AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
-import dayjs from 'dayjs';
 
-import { createMockStops, MOCK_DRIVER_ID, mockAccount, syncMockLoadStatuses } from './driverMockData';
+import type { PaginatedResponse } from '@/lib/api/pagination.d';
+
+import {
+  buildMockShipments,
+  createMockStops,
+  MOCK_DRIVER_ID,
+  mockAccount,
+  syncMockLoadStatuses,
+} from './driverMockData';
 
 export { MOCK_DRIVER_ID };
 
 const MOCK_FILE_URL = '/apple-touch-icon.png';
 const MOCK_SESSION_KEY = 'driver-mock-session';
+const DEFAULT_PAGE_SIZE = 20;
 
-/** Stands in for the httpOnly refresh cookie; sessionStorage keeps it across reloads in the browser. */
+/** Same shape as the backend's paginated lists: `page` starts at 1. */
+function paginate<T>(items: T[], params?: { page?: number | string; size?: number | string }): PaginatedResponse<T> {
+  const page = Number(params?.page ?? 1);
+  const size = Number(params?.size ?? DEFAULT_PAGE_SIZE);
+  return {
+    data: items.slice((page - 1) * size, page * size),
+    currentPage: page,
+    pageSize: size,
+    totalElements: items.length,
+    totalPages: Math.ceil(items.length / size),
+    status: 'success',
+  };
+}
+
+/**
+ * Stands in for the httpOnly refresh cookie. Signed in by default: the installed iOS app gets Safari's real cookie at
+ * install, which the mock can't copy, so the app (opened on /driver, without a link) would otherwise always show the
+ * signed-out screen. Only the "expired" link signs out; localStorage keeps that across reloads and tabs.
+ */
 function createMockSession() {
-  const storage = typeof sessionStorage === 'undefined' ? null : sessionStorage;
-  let isActive = storage?.getItem(MOCK_SESSION_KEY) === 'true';
+  const storage = typeof localStorage === 'undefined' ? null : localStorage;
+  let isActive = storage?.getItem(MOCK_SESSION_KEY) !== 'false';
+
+  function setActive(value: boolean) {
+    isActive = value;
+    storage?.setItem(MOCK_SESSION_KEY, String(value));
+  }
 
   return {
     get isActive() {
       return isActive;
     },
-    start() {
-      isActive = true;
-      storage?.setItem(MOCK_SESSION_KEY, 'true');
-    },
+    start: () => setActive(true),
+    end: () => setActive(false),
   };
 }
 
@@ -52,7 +81,10 @@ export function createDriverMockAdapter({ delayMs = 400 }: { delayMs?: number } 
 
     if (method === 'post' && url === '/auth/exchange') {
       const { token } = JSON.parse(config.data ?? '{}');
-      if (token === 'expired') return respond(config, 410);
+      if (token === 'expired') {
+        session.end();
+        return respond(config, 410);
+      }
       session.start();
       return respond(config, 200, { data: { accessToken: 'mock-jwt' }, status: 'success' });
     }
@@ -68,10 +100,18 @@ export function createDriverMockAdapter({ delayMs = 400 }: { delayMs?: number } 
     }
 
     if (method === 'get' && url === '/api/driver/stops') {
-      const days = Number(config.params?.completedWithinDays ?? 7);
-      const since = dayjs().subtract(days, 'day');
-      const visible = stops.filter((stop) => !stop.completedAt || dayjs(stop.completedAt).isAfter(since));
-      return respond(config, 200, { data: visible });
+      // Latest first: the reverse of the route order, so upcoming stops come before completed ones.
+      return respond(config, 200, paginate([...stops].reverse(), config.params));
+    }
+
+    if (method === 'get' && url === '/api/driver/shipments') {
+      const summaries = buildMockShipments(stops).map(({ stops: _stops, ...summary }) => summary);
+      return respond(config, 200, paginate(summaries, config.params));
+    }
+
+    if (method === 'get' && (match = url.match(/^\/api\/driver\/shipments\/([^/]+)$/))) {
+      const shipment = buildMockShipments(stops).find(({ id }) => id === match![1]);
+      return shipment ? respond(config, 200, { data: shipment }) : respond(config, 404);
     }
 
     if (method === 'post' && (match = url.match(/^\/api\/vehicle-stops\/([^/]+)\/(complete|uncomplete)$/))) {

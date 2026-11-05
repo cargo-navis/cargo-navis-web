@@ -38,3 +38,10 @@ export function getCargoLabel(cargo: CargoLike): string {
   const { primary, secondary } = getCargoLabelParts(cargo);
   return secondary ? `${primary} (${secondary})` : primary;
 }
+
+// 1, 21… paleta; 2–4, 22–24… palete; everything else paleta
+export function getPalletsNoun(count: number) {
+  const lastDigit = count % 10;
+  const lastTwoDigits = count % 100;
+  return lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 12 || lastTwoDigits > 14) ? 'palete' : 'paleta';
+}

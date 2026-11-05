@@ -4,61 +4,57 @@ import dayjs, { type Dayjs } from 'dayjs';
 
 import type {
   DriverCargoShipment,
-  DriverShipment,
+  DriverShipmentSummary,
   DriverStop,
   DriverStopCargo,
   DriverStopDisponent,
 } from '@/lib/api/driver.d';
-import type { VehicleStopAddress, VehicleStopDocument } from '@/lib/api/vehicleStops.d';
-import type { IconType } from '@/ui';
+import type { VehicleStopAddress } from '@/lib/api/vehicleStops.d';
+import { getPalletsNoun } from '@/lib/utils/cargo';
 
-const isCompleted = (stop: DriverStop) => Boolean(stop.completedAt);
+/** Every stop of the order is confirmed. */
+export function isShipmentCompleted(shipment: DriverShipmentSummary): boolean {
+  return shipment.totalStopsCount > 0 && shipment.completedStopsCount === shipment.totalStopsCount;
+}
 
-export interface RouteDay {
-  key: string;
-  label: string;
+/** The stop to drive to next: in the latest-first list, the lowest one not completed yet. */
+export function getNextStopId(stops: DriverStop[]): string | null {
+  return stops.findLast((stop) => !stop.completedAt)?.id ?? null;
+}
+
+export interface StopWhen {
+  /** Bold first line: the day (of the confirmation, or of a stop ahead), or `Kasni`. */
+  primary: string;
+  secondary: string | null;
   isLate: boolean;
-  stops: DriverStop[];
 }
 
-export interface RouteTimeline {
-  /** Completed stops, in route order. */
-  completed: DriverStop[];
-  /** First active stop in route order. */
-  nextStopId: string | null;
-  /** Active stops in route order, split wherever the day changes. */
-  days: RouteDay[];
+function formatDay(day: Dayjs, now: Dayjs): string {
+  return day.isSame(now, 'year') ? day.format('ddd D.M.') : day.format('ddd D.M.YYYY.');
 }
 
-export function getDayDividerLabel(date: string | null, now: Dayjs): { label: string; isLate: boolean } {
-  if (!date) return { label: 'Bez datuma', isLate: false };
+/**
+ * The card's "when" column. A completed stop shows when it was confirmed (`Danas`, `Jučer` or a date over `10:42`);
+ * a stop ahead shows its day (`Danas`, `Sutra` or a date), or `Kasni` over the date once that day has passed.
+ */
+export function getStopWhen(stop: Pick<DriverStop, 'date' | 'completedAt'>, now: Dayjs): StopWhen {
+  if (stop.completedAt) {
+    const at = dayjs(stop.completedAt).locale('hr');
+    const day = at.isSame(now, 'day')
+      ? 'Danas'
+      : at.isSame(now.subtract(1, 'day'), 'day')
+        ? 'Jučer'
+        : formatDay(at, now);
+    return { primary: day, secondary: at.format('HH:mm'), isLate: false };
+  }
 
-  const day = dayjs(date).locale('hr');
-  const dayAndDate = day.format('ddd D.M.');
+  if (!stop.date) return { primary: 'Bez datuma', secondary: null, isLate: false };
 
-  if (day.isBefore(now, 'day')) return { label: `Kasni · ${dayAndDate}`, isLate: true };
-  if (day.isSame(now, 'day')) return { label: `Danas · ${dayAndDate}`, isLate: false };
-  if (day.isSame(now.add(1, 'day'), 'day')) return { label: `Sutra · ${dayAndDate}`, isLate: false };
-
-  return { label: dayAndDate, isLate: false };
-}
-
-// Never re-sorts: the dispatcher's route order is the truth, dates only add dividers.
-export function buildRouteTimeline(stops: DriverStop[], now: Dayjs): RouteTimeline {
-  const completed = stops.filter(isCompleted);
-  const active = stops.filter((stop) => !isCompleted(stop));
-  const days: RouteDay[] = [];
-
-  active.forEach((stop, index) => {
-    const lastDay = days[days.length - 1];
-    if (lastDay && lastDay.stops[lastDay.stops.length - 1].date === stop.date) {
-      lastDay.stops.push(stop);
-      return;
-    }
-    days.push({ key: `${index}-${stop.date ?? 'none'}`, ...getDayDividerLabel(stop.date, now), stops: [stop] });
-  });
-
-  return { completed, nextStopId: active[0]?.id ?? null, days };
+  const day = dayjs(stop.date).locale('hr');
+  if (day.isBefore(now, 'day')) return { primary: 'Kasni', secondary: formatDay(day, now), isLate: true };
+  if (day.isSame(now, 'day')) return { primary: 'Danas', secondary: null, isLate: false };
+  if (day.isSame(now.add(1, 'day'), 'day')) return { primary: 'Sutra', secondary: null, isLate: false };
+  return { primary: formatDay(day, now), secondary: null, isLate: false };
 }
 
 export function getStopKindLabels(stop: DriverStop): { title: string; action: string; confirmed: string } {
@@ -95,6 +91,42 @@ export function getStopTitle(stop: DriverStop): string | null {
 export function getStopOrderNumbers(stop: DriverStop): string[] {
   const cargos = [...stop.loadingCargos, ...stop.unloadingCargos];
   return Array.from(new Set(cargos.map((cargo) => `#${cargo.shipment.orderNumber}`)));
+}
+
+export interface StopOrder {
+  /** What happens to the order at this stop. */
+  kind: 'loading' | 'unloading';
+  shipment: DriverCargoShipment;
+}
+
+/**
+ * The stop's orders, each with what happens to it here, loading ones first like the stop's cargo sections. An order
+ * both loaded and unloaded at the stop is listed twice.
+ */
+export function getStopOrders(stop: DriverStop): StopOrder[] {
+  const toOrders = (kind: StopOrder['kind'], cargos: DriverStopCargo[]) =>
+    groupCargosByShipment(cargos).map(({ shipment }) => ({ kind, shipment }));
+  return [...toOrders('loading', stop.loadingCargos), ...toOrders('unloading', stop.unloadingCargos)];
+}
+
+/**
+ * The stop's clients per kind, loading first, each name once (`Nalog #2026/1234` for an order without a client). Cards
+ * of stops with several orders show a line per kind.
+ */
+export function getStopClientsByKind(
+  stop: DriverStop
+): { kind: StopOrder['kind']; names: string[]; cargos: DriverStopCargo[] }[] {
+  const groups = new Map<StopOrder['kind'], Set<string>>();
+  for (const { kind, shipment } of getStopOrders(stop)) {
+    const names = groups.get(kind) ?? new Set<string>();
+    names.add(shipment.clientName ?? `Nalog #${shipment.orderNumber}`);
+    groups.set(kind, names);
+  }
+  return Array.from(groups, ([kind, names]) => ({
+    kind,
+    names: Array.from(names),
+    cargos: kind === 'loading' ? stop.loadingCargos : stop.unloadingCargos,
+  }));
 }
 
 /** Subtext for stop toasts: the clients and orders, e.g. `Podravka d.d. • #2026/1234 • #2026/1240`. */
@@ -193,88 +225,27 @@ export function formatCompletedAt(completedAt: string, now: Dayjs): string {
   return `${date} · ${time}`;
 }
 
-// The API returns stops only, so shipments are rebuilt here. Stops completed before the
-// `completedWithinDays` window are not returned, so older shipments can miss early stops (known gap).
-export function buildDriverShipments(stops: DriverStop[]): DriverShipment[] {
-  const shipments = new Map<string, DriverShipment>();
-  const firstActiveStopIndex = new Map<string, number>();
-
-  stops.forEach((stop, index) => {
-    const shipmentIds = new Set([...stop.loadingCargos, ...stop.unloadingCargos].map((cargo) => cargo.shipment.id));
-
-    shipmentIds.forEach((shipmentId) => {
-      const loadingCargos = stop.loadingCargos.filter((cargo) => cargo.shipment.id === shipmentId);
-      const unloadingCargos = stop.unloadingCargos.filter((cargo) => cargo.shipment.id === shipmentId);
-      const shipmentStop: DriverStop = { ...stop, loadingCargos, unloadingCargos };
-
-      let shipment = shipments.get(shipmentId);
-      if (!shipment) {
-        const { orderNumber, clientName } = (loadingCargos[0] ?? unloadingCargos[0]).shipment;
-        shipment = {
-          id: shipmentId,
-          orderNumber,
-          clientName,
-          origin: null,
-          destination: null,
-          completedStopsCount: 0,
-          totalStopsCount: 0,
-          stops: [],
-        };
-        shipments.set(shipmentId, shipment);
-      }
-
-      shipment.stops.push(shipmentStop);
-      shipment.totalStopsCount += 1;
-      if (isCompleted(stop)) shipment.completedStopsCount += 1;
-      if (loadingCargos.length > 0 && !shipment.origin) shipment.origin = stop.address;
-      if (unloadingCargos.length > 0) shipment.destination = stop.address;
-      if (!isCompleted(stop) && !firstActiveStopIndex.has(shipmentId)) firstActiveStopIndex.set(shipmentId, index);
-    });
-  });
-
-  return Array.from(shipments.values())
-    .filter((shipment) => firstActiveStopIndex.has(shipment.id))
-    .sort((a, b) => firstActiveStopIndex.get(a.id)! - firstActiveStopIndex.get(b.id)!);
-}
-
 const formatNumber = (value: number) => value.toLocaleString('hr-HR');
+
+/**
+ * Pallets and weight of some cargos together, e.g. `14 palete · 9.300 kg`; a part no cargo has is left out, and null
+ * when neither is known.
+ */
+export function formatCargoTotals(cargos: Pick<DriverStopCargo, 'weight' | 'metadata'>[]): string | null {
+  const pallets = cargos.reduce((total, cargo) => total + (cargo.metadata.palleteAmount || 0), 0);
+  const weights = cargos.map((cargo) => cargo.weight).filter((weight): weight is number => weight != null);
+  const weight = weights.reduce((total, value) => total + value, 0);
+
+  const parts = [
+    pallets > 0 ? `${formatNumber(pallets)} ${getPalletsNoun(pallets)}` : null,
+    weights.length > 0 ? `${formatNumber(weight)} kg` : null,
+  ];
+  return parts.filter(Boolean).join(' · ') || null;
+}
 
 export function formatCargoMeasures(cargo: Pick<DriverStopCargo, 'weight' | 'ldm'>): string[] {
   const measures: string[] = [];
   if (cargo.weight != null) measures.push(`${formatNumber(cargo.weight)} kg`);
   if (cargo.ldm != null) measures.push(`${formatNumber(cargo.ldm)} ldm`);
   return measures;
-}
-
-const ICON_BY_MIME_TYPE: Record<string, IconType> = {
-  'application/pdf': 'IconFileTypePdf',
-  'image/jpeg': 'IconFileTypeJpg',
-  'image/png': 'IconFileTypePng',
-};
-
-const ICON_BY_EXTENSION: Record<string, IconType> = {
-  pdf: 'IconFileTypePdf',
-  jpg: 'IconFileTypeJpg',
-  jpeg: 'IconFileTypeJpg',
-  png: 'IconFileTypePng',
-  doc: 'IconFileTypeDoc',
-  docx: 'IconFileTypeDocx',
-  xls: 'IconFileTypeXls',
-  xlsx: 'IconFileTypeXls',
-  csv: 'IconFileTypeCsv',
-  zip: 'IconFileTypeZip',
-  txt: 'IconFileTypeTxt',
-  xml: 'IconFileTypeXml',
-};
-
-/** Icon for a document in the stop sheet: by mime type, then by file extension (uploads are often octet-stream). */
-export function getDocumentIcon(document: Pick<VehicleStopDocument, 'name' | 'mimeType'>): IconType {
-  const mimeType = document.mimeType.toLowerCase();
-  const extension = document.name.split('.').pop()?.toLowerCase() ?? '';
-
-  return (
-    ICON_BY_MIME_TYPE[mimeType] ??
-    ICON_BY_EXTENSION[extension] ??
-    (mimeType.startsWith('image/') ? 'IconPhoto' : 'IconFile')
-  );
 }

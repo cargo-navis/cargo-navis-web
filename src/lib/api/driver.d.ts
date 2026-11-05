@@ -18,9 +18,7 @@ export interface DriverStopCargo extends Omit<VehicleStopCargo, 'shipment' | 'we
   ldm: number | null;
 }
 
-export interface DriverStopDocument extends VehicleStopDocument {
-  uploadedBy: string | null;
-}
+export type DriverStopDocument = VehicleStopDocument;
 
 export interface DriverStop {
   id: string;
@@ -42,16 +40,22 @@ export interface DriverStopDisponent {
   phoneNumber: string | null;
 }
 
-/** Derived on the frontend by `buildDriverShipments`, not returned by the API. */
-export interface DriverShipment {
+/** An order the driver has stops on, as listed in the Nalozi tab. */
+export interface DriverShipmentSummary {
   id: string;
   orderNumber: string;
   clientName: string | null;
+  /** Address of the order's first loading stop. */
   origin: VehicleStopAddress | null;
+  /** Address of the order's last unloading stop. */
   destination: VehicleStopAddress | null;
   completedStopsCount: number;
   totalStopsCount: number;
-  /** Stops of this shipment in route order, with cargos filtered to this shipment. */
+}
+
+/** One order with its stops, for the order sheet. */
+export interface DriverShipment extends DriverShipmentSummary {
+  /** Stops of this order in route order, with cargos filtered to this order. */
   stops: DriverStop[];
 }
 

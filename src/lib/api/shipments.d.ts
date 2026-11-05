@@ -43,6 +43,7 @@ export interface Shipment extends AgencyShipmentFields {
     name: string;
     mimeType: string;
     status: string;
+    uploadedBy: string | null;
   }[];
   vehicleStops?: VehicleStop[];
 }

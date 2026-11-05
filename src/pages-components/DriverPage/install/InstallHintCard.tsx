@@ -17,7 +17,6 @@ export const InstallHintCard: React.FC<InstallHintCardProps> = ({ platform, onIn
 
   return (
     <FlexLayout className="px-4 pb-2">
-      {/* Blue sets "get the app" apart from the teal notifications card that can sit right below it. */}
       <FlexLayout className="w-full flex-col gap-2 rounded-l border border-blue-100 bg-blue-50 p-4 shadow-sm dark:border-blue-800 dark:bg-blue-900/40">
         <FlexLayout className="items-center gap-2">
           <Icon color="text-blue-600 dark:text-blue-300" icon="IconDeviceMobileDown" size="m" />

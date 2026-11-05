@@ -5,10 +5,10 @@ import { type DriverStop, type DriverStopDocument, getDriverStopFileUrl } from '
 import { useDeleteDriverStopFile, useDriverAccount, useUploadDriverStopFile } from '@/lib/hooks/api/driver';
 import { getDataPointDateString } from '@/lib/utils/date';
 import { bytesToMegabytes, getFileInput } from '@/lib/utils/file';
+import { getFileIcon } from '@/lib/utils/fileIcon';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { BottomSheet, Box, Button, FlexLayout, Icon, Text } from '@/ui';
 
-import { getDocumentIcon } from '../utils';
 import { prepareUploadFile } from './prepareUploadFile';
 
 const FILE_SIZE_LIMIT_IN_MB = 10;
@@ -127,7 +127,7 @@ export const StopDocuments: React.FC<StopDocumentsProps> = ({ stop, isReadOnly =
             <Icon
               className="shrink-0"
               color="text-dark-600 dark:text-light-300"
-              icon={getDocumentIcon(document)}
+              icon={getFileIcon(document)}
               size="m"
             />
             <FlexLayout className="min-w-0 flex-col">

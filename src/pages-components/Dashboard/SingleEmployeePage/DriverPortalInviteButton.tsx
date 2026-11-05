@@ -10,15 +10,20 @@ export const DriverPortalInviteButton: React.FC<{ id: string; name: string }> = 
   const { mutateAsync, isPending } = useGenerateDriverPortalToken(id);
   const [url, setUrl] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const [inviteCount, setInviteCount] = useState(0);
 
   async function handleGenerate() {
+    setUrl('');
+    setInviteCount((count) => count + 1);
+    setIsOpen(true);
+
     try {
       const { token } = await mutateAsync();
-      // Built here rather than by the backend, so the link matches the app it was generated in (preview, ngrok).
+      console.log(token);
       setUrl(`${window.location.origin}/driver/${token}`);
-      setIsOpen(true);
     } catch {
       showErrorToast({ title: 'Greška s generiranjem pozivnice.' });
+      setIsOpen(false);
     }
   }
 
@@ -35,15 +40,22 @@ export const DriverPortalInviteButton: React.FC<{ id: string; name: string }> = 
         {/* Button doesn't forward refs, so the tooltip anchors to this wrapper. */}
         <Box>
           <Button
-            iconLeft="IconSend"
-            isLoading={isPending}
+            iconLeft="IconDeviceMobileShare"
+            isLoading={isPending || isOpen}
             text="Generiraj pozivnicu"
             variant="secondary"
             onClick={handleGenerate}
           />
         </Box>
       </Tooltip>
-      <DriverPortalInviteDialog isOpen={isOpen} name={name} url={url} onClose={() => setIsOpen(false)} />
+      {/* Keyed per invite so every one starts with a fresh dialog. */}
+      <DriverPortalInviteDialog
+        isOpen={isOpen}
+        key={inviteCount}
+        name={name}
+        url={url}
+        onClose={() => setIsOpen(false)}
+      />
     </>
   );
 };
