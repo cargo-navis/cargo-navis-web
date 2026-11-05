@@ -17,7 +17,7 @@ import {
 } from '@/components/reui/timeline';
 import { ToggleStopCompletionButton } from '@/components/vehicleStops/ToggleStopCompletionButton';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
-import { useSendVehicleStopMessage } from '@/lib/hooks';
+import { useNotifyVehicleStopDriver } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Box, DisplayIf, FlexLayout, Icon, Text, TextButton } from '@/ui';
@@ -56,15 +56,15 @@ export const VerticalStopEntry = ({
     disabled: !isDraggable || isDragOverlay,
   });
 
-  const { mutateAsync: sendMessage, isPending: isSendingMessage } = useSendVehicleStopMessage(stop.id);
+  const { mutateAsync: notifyDriver, isPending: isNotifyingDriver } = useNotifyVehicleStopDriver(stop.id);
 
-  async function handleSendMessage() {
+  async function handleNotifyDriver() {
     if (stop.messageSentAt) {
       const ok = confirm('Poruka je već poslana. Pošalji ponovno?');
       if (!ok) return;
     }
     try {
-      await sendMessage();
+      await notifyDriver();
       showSuccessToast({ title: 'Poruka poslana' });
     } catch (error) {
       console.error(error);
@@ -160,12 +160,12 @@ export const VerticalStopEntry = ({
             <FlexLayout className="flex-col items-end">
               <TextButton
                 iconLeft="IconBrandWhatsapp"
-                isDisabled={isSendingMessage}
+                isDisabled={isNotifyingDriver}
                 size="s"
                 text={stop.messageSentAt ? 'Obavijesti ponovno' : 'Obavijesti vozača'}
                 type="button"
                 variant="secondary"
-                onClick={handleSendMessage}
+                onClick={handleNotifyDriver}
               />
               {stop.messageSentAt && (
                 <Text className="whitespace-nowrap" color="text-color-3" variant="text-xxxs">

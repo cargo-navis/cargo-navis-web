@@ -12,7 +12,7 @@ import {
   TimelineTitle,
 } from '@/components/reui/timeline';
 import type { VehicleStop, VehicleStopCargo, VehicleStopCargoShipment } from '@/lib/api/vehicleStops';
-import { useSendVehicleStopMessage } from '@/lib/hooks';
+import { useNotifyVehicleStopDriver } from '@/lib/hooks';
 import { useEmployee } from '@/lib/hooks/api/employees';
 import { getCargoLabelParts } from '@/lib/utils/cargo';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
@@ -102,7 +102,7 @@ const ShipmentSectionDisplay = ({ section }: { section: ShipmentSection }) => (
 
 const MessageStatusTooltipContent = ({ stop }: { stop: VehicleStop }) => {
   const messageSent = !!stop.messageSentAt;
-  const { mutateAsync: sendMessage, isPending } = useSendVehicleStopMessage(stop.id);
+  const { mutateAsync: notifyDriver, isPending } = useNotifyVehicleStopDriver(stop.id);
   const { data: driver } = useEmployee(stop.driverId ?? '');
   const driverName = driver?.fullName ?? '-';
 
@@ -111,7 +111,7 @@ const MessageStatusTooltipContent = ({ stop }: { stop: VehicleStop }) => {
     e.stopPropagation();
 
     try {
-      await sendMessage();
+      await notifyDriver();
       showSuccessToast({ title: 'Poruka poslana' });
     } catch (error) {
       console.error(error);

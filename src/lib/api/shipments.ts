@@ -2,6 +2,7 @@ import { backend } from '@/lib/services/backendService';
 
 import type { PaginatedResponse } from './pagination.d';
 import type { CreateShipmentData, GetShipmentParams, Shipment, ShipmentPdfLanguage } from './shipments.d';
+import type { VehicleStop } from './vehicleStops.d';
 
 export enum LoadStatus {
   NotYetLoaded = 'not_yet_loaded',
@@ -85,4 +86,8 @@ export async function generateShipmentPdf(id: string, language: ShipmentPdfLangu
   });
 
   return response.data;
+}
+
+export async function notifyShipmentDrivers(shipmentId: string) {
+  return backend.post<VehicleStop[]>(`/api/shipments/${shipmentId}/notify-drivers`);
 }

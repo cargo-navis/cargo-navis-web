@@ -12,9 +12,8 @@ import {
   getVehicleStopFileUrl,
   getVehicleStops,
   getVehicleStopsByVehicle,
+  notifyVehicleStopDriver,
   rearrangeVehicleStop,
-  sendShipmentStopsMessage,
-  sendVehicleStopMessage,
   uncompleteVehicleStop,
   updateVehicleStop,
   type UpdateVehicleStopParams,
@@ -164,21 +163,10 @@ export function useDeleteVehicleStop() {
   });
 }
 
-export function useSendShipmentStopsMessage(shipmentId: string) {
+export function useNotifyVehicleStopDriver(id: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => sendShipmentStopsMessage(shipmentId),
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
-      return queryClient.invalidateQueries({ queryKey: ['shipment', shipmentId] });
-    },
-  });
-}
-
-export function useSendVehicleStopMessage(id: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: () => sendVehicleStopMessage(id),
+    mutationFn: () => notifyVehicleStopDriver(id),
     onSuccess: (updatedStop) => {
       queryClient.setQueriesData<InfiniteData<PaginatedResponse<VehicleStop>>>(
         { queryKey: [QUERY_KEY, 'paginated', updatedStop.vehicleId] },

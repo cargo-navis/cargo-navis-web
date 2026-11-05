@@ -1,13 +1,13 @@
 import dayjs from 'dayjs';
 
 import type { Shipment, VehicleStop } from '@/lib/api';
-import { useClient, useEmployees, useSendShipmentStopsMessage } from '@/lib/hooks';
+import { useClient, useEmployees, useNotifyShipmentDrivers } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Box, Button, FlexLayout, Text, Tooltip } from '@/ui';
 
 export const NotifyDriversButton = ({ shipment }: { shipment: Shipment }) => {
-  const { mutateAsync: notifyDrivers, isPending } = useSendShipmentStopsMessage(shipment.id);
+  const { mutateAsync: notifyDrivers, isPending } = useNotifyShipmentDrivers(shipment.id);
   const { data: client } = useClient(shipment.clientId ?? '');
   const { data: employees } = useEmployees({ includeDeleted: true });
 
