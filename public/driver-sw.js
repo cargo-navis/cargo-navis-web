@@ -7,9 +7,9 @@
  *   /driver-offline.html instead of the browser's error page. Every other request (API calls, scripts, images) is
  *   left alone and goes to the network as usual. Chrome also requires a service worker with a fetch handler before
  *   it offers to install the app.
- * - Push notifications: shows a notification when the backend sends one (e.g. new stops assigned) and opens the
- *   order when the driver taps it. The driver portal subscribes through this worker (useDriverPushNotifications.ts), so
- *   pushes for drivers arrive here, not in the dashboard's push service worker.
+ * - Push notifications: shows a notification when the backend sends one (new stops assigned, route changed) and
+ *   opens the order when the driver taps it. The driver portal subscribes through this worker
+ *   (useDriverPushNotifications.ts), so pushes for drivers arrive here, not in the dashboard's push service worker.
  *
  * When driver-offline.html changes, bump OFFLINE_PAGE_CACHE_VERSION so installed apps download the new copy.
  */
@@ -108,6 +108,8 @@ function getNotification(payload) {
   switch (payload?.type) {
     case 'vehicle_stops_assigned':
       return getStopsAssignedNotification(payload.metadata);
+    case 'vehicle_route_changed':
+      return getRouteChangedNotification(payload.metadata);
     default:
       console.warn('[driver-sw] Unsupported push type', payload?.type);
       return null;
@@ -116,11 +118,27 @@ function getNotification(payload) {
 
 function getStopsAssignedNotification({ shipmentId, orderNumber, stopCount }) {
   return {
-    title: `Novi nalog ${orderNumber}`,
+    title: `Novi nalog #${orderNumber}`,
     options: {
       body: `${getStopsAssignedText(stopCount)}.`,
       icon: '/android-chrome-192x192.png',
       // One notification per order: a later assignment for the same order replaces the earlier one.
+      tag: `shipment-${shipmentId}`,
+      renotify: true,
+      data: { shipmentId },
+    },
+  };
+}
+
+// The dispatcher changed stops the driver was already notified about (date, address, cargo, order or a removed stop);
+// the push doesn't say which, so the order is opened to re-read it.
+function getRouteChangedNotification({ shipmentId, orderNumber }) {
+  return {
+    title: `Promjena naloga #${orderNumber}`,
+    options: {
+      body: 'Detalji naloga su ažurirani. Otvori za pregled.',
+      icon: '/android-chrome-192x192.png',
+      // Same tag as "Novi nalog": several edits in a row leave one notification per order.
       tag: `shipment-${shipmentId}`,
       renotify: true,
       data: { shipmentId },
