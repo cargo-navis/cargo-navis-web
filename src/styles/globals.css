@@ -73,8 +73,56 @@ body {
     animation: row-highlight-fade 2s ease-out forwards;
   }
 
+  /* A short ringing swing every few seconds, pivoting at the top of the bell. Still for reduced motion. */
+  .bell-ring {
+    transform-origin: 50% 10%;
+    animation: bell-ring 3s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bell-ring {
+      animation: none;
+    }
+  }
+
   html.dark .row-highlight-fade {
     animation: row-highlight-fade-dark 2s ease-out forwards;
+  }
+
+  .card-highlight-fade {
+    animation: card-highlight-fade 5s ease-out forwards;
+  }
+
+  /* Tailwind dark mode here follows prefers-color-scheme, not an html.dark class. */
+  @media (prefers-color-scheme: dark) {
+    .card-highlight-fade {
+      animation-name: card-highlight-fade-dark;
+    }
+  }
+}
+
+@keyframes bell-ring {
+  0% {
+    transform: rotate(0);
+  }
+  4% {
+    transform: rotate(16deg);
+  }
+  8% {
+    transform: rotate(-14deg);
+  }
+  12% {
+    transform: rotate(10deg);
+  }
+  16% {
+    transform: rotate(-8deg);
+  }
+  20% {
+    transform: rotate(4deg);
+  }
+  24%,
+  100% {
+    transform: rotate(0);
   }
 }
 
@@ -93,5 +141,26 @@ body {
   }
   100% {
     background-color: transparent;
+  }
+}
+
+/* Ends on the card background (white / light-875) instead of transparent, so cards don't turn see-through. */
+@keyframes card-highlight-fade {
+  0%,
+  20% {
+    background-color: #fff6b3;
+  }
+  100% {
+    background-color: #ffffff;
+  }
+}
+
+@keyframes card-highlight-fade-dark {
+  0%,
+  20% {
+    background-color: #312d16;
+  }
+  100% {
+    background-color: #212126;
   }
 }

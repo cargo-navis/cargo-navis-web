@@ -75,8 +75,8 @@ export async function deleteVehicleStop(id: string) {
   return backend.delete<void>(`/api/vehicle-stops/${id}`);
 }
 
-export async function sendVehicleStopMessage(id: string) {
-  return backend.post<VehicleStop>(`/api/vehicle-stops/${id}/send-message`);
+export async function notifyVehicleStopDriver(id: string) {
+  return backend.post<VehicleStop>(`/api/vehicle-stops/${id}/notify-driver`);
 }
 
 export async function completeVehicleStop(id: string) {

@@ -9,6 +9,7 @@ import {
   getShipmentDocumentUrl,
   GetShipmentParams,
   getShipments,
+  notifyShipmentDrivers,
   PaginatedResponse,
   Shipment,
   updateShipment,
@@ -197,6 +198,17 @@ export function useDeleteShipmentFile(shipmentId: string, isAgency?: boolean) {
   return useMutation({
     mutationFn: (documentId: string) => deleteShipmentFile(shipmentId, documentId, isAgency),
     onSuccess: () => {
+      return queryClient.invalidateQueries({ queryKey: ['shipment', shipmentId] });
+    },
+  });
+}
+
+export function useNotifyShipmentDrivers(shipmentId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => notifyShipmentDrivers(shipmentId),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['vehicleStops'], type: 'all' });
       return queryClient.invalidateQueries({ queryKey: ['shipment', shipmentId] });
     },
   });

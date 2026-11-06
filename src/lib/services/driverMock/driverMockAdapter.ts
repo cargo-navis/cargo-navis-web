@@ -1,0 +1,177 @@
+import { type AxiosAdapter, AxiosError, type AxiosResponse, type InternalAxiosRequestConfig } from 'axios';
+
+import type { PaginatedResponse } from '@/lib/api/pagination.d';
+
+import {
+  buildMockShipments,
+  createMockStops,
+  MOCK_DRIVER_ID,
+  mockAccount,
+  syncMockLoadStatuses,
+} from './driverMockData';
+
+export { MOCK_DRIVER_ID };
+
+const MOCK_FILE_URL = '/apple-touch-icon.png';
+const MOCK_SESSION_KEY = 'driver-mock-session';
+const DEFAULT_PAGE_SIZE = 20;
+
+/** Same shape as the backend's paginated lists: `page` starts at 1. */
+function paginate<T>(items: T[], params?: { page?: number | string; size?: number | string }): PaginatedResponse<T> {
+  const page = Number(params?.page ?? 1);
+  const size = Number(params?.size ?? DEFAULT_PAGE_SIZE);
+  return {
+    data: items.slice((page - 1) * size, page * size),
+    currentPage: page,
+    pageSize: size,
+    totalElements: items.length,
+    totalPages: Math.ceil(items.length / size),
+    status: 'success',
+  };
+}
+
+/**
+ * Stands in for the httpOnly refresh cookie. Signed in by default: the installed iOS app gets Safari's real cookie at
+ * install, which the mock can't copy, so the app (opened on /driver, without a link) would otherwise always show the
+ * signed-out screen. Only the "expired" link signs out; localStorage keeps that across reloads and tabs.
+ */
+function createMockSession() {
+  const storage = typeof localStorage === 'undefined' ? null : localStorage;
+  let isActive = storage?.getItem(MOCK_SESSION_KEY) !== 'false';
+
+  function setActive(value: boolean) {
+    isActive = value;
+    storage?.setItem(MOCK_SESSION_KEY, String(value));
+  }
+
+  return {
+    get isActive() {
+      return isActive;
+    },
+    start: () => setActive(true),
+    end: () => setActive(false),
+  };
+}
+
+/**
+ * Dev-only fake of the driver portal backend (run `npm run dev:driverMock`, which sets NEXT_PUBLIC_DRIVER_API_MOCK=true).
+ * Keeps state in memory, so confirmations and uploads survive until a page reload.
+ */
+export function createDriverMockAdapter({ delayMs = 400 }: { delayMs?: number } = {}): AxiosAdapter {
+  const stops = createMockStops();
+  const session = createMockSession();
+  let documentCounter = 0;
+
+  function respond(config: InternalAxiosRequestConfig, status: number, data?: unknown): AxiosResponse {
+    const response: AxiosResponse = { data, status, statusText: '', headers: {}, config };
+    if (status >= 400) {
+      throw new AxiosError(`Request failed with status code ${status}`, String(status), config, null, response);
+    }
+    return response;
+  }
+
+  function findStop(id: string) {
+    return stops.find((stop) => stop.id === id);
+  }
+
+  function handle(config: InternalAxiosRequestConfig): AxiosResponse {
+    const method = (config.method ?? 'get').toLowerCase();
+    const url = config.url ?? '';
+    let match: RegExpMatchArray | null;
+
+    if (method === 'post' && url === '/auth/exchange') {
+      const { token } = JSON.parse(config.data ?? '{}');
+      if (token === 'expired') {
+        session.end();
+        return respond(config, 410);
+      }
+      session.start();
+      return respond(config, 200, { data: { accessToken: 'mock-jwt' }, status: 'success' });
+    }
+
+    if (method === 'post' && url === '/auth/refresh') {
+      return session.isActive
+        ? respond(config, 200, { data: { accessToken: 'mock-jwt' }, status: 'success' })
+        : respond(config, 401);
+    }
+
+    if (method === 'get' && url === '/api/account') {
+      return respond(config, 200, { data: mockAccount });
+    }
+
+    if (method === 'get' && url === '/api/driver/stops') {
+      // Latest first: the reverse of the route order, so upcoming stops come before completed ones.
+      return respond(config, 200, paginate([...stops].reverse(), config.params));
+    }
+
+    if (method === 'get' && url === '/api/driver/shipments') {
+      const summaries = buildMockShipments(stops).map(({ stops: _stops, ...summary }) => summary);
+      return respond(config, 200, paginate(summaries, config.params));
+    }
+
+    if (method === 'get' && (match = url.match(/^\/api\/driver\/shipments\/([^/]+)$/))) {
+      const shipment = buildMockShipments(stops).find(({ id }) => id === match![1]);
+      return shipment ? respond(config, 200, { data: shipment }) : respond(config, 404);
+    }
+
+    if (method === 'post' && (match = url.match(/^\/api\/vehicle-stops\/([^/]+)\/(complete|uncomplete)$/))) {
+      const stop = findStop(match[1]);
+      if (!stop) return respond(config, 404);
+      const isComplete = match[2] === 'complete';
+      // Same guards as the backend: unload only loaded cargo; undo a loading only while its cargo isn't unloaded.
+      if (isComplete && stop.unloadingCargos.some((cargo) => cargo.loadStatus === 'not_yet_loaded')) {
+        return respond(config, 400, { status: 'failed', errorCode: 'CARGO_NOT_YET_LOADED' });
+      }
+      if (!isComplete && stop.loadingCargos.some((cargo) => cargo.loadStatus === 'unloaded')) {
+        return respond(config, 400, { status: 'failed', errorCode: 'CARGO_STATUS_CHANGED_BY_LATER_STOP' });
+      }
+      stop.completedAt = isComplete ? new Date().toISOString() : null;
+      syncMockLoadStatuses(stops);
+      return respond(config, 200, { data: stop });
+    }
+
+    if (method === 'post' && (match = url.match(/^\/api\/vehicle-stops\/([^/]+)\/files$/))) {
+      const stop = findStop(match[1]);
+      if (!stop) return respond(config, 404);
+      const file = (config.data as FormData).get('file') as File;
+      documentCounter += 1;
+      const document = {
+        id: `mock-upload-${documentCounter}`,
+        createdAt: new Date().toISOString(),
+        name: config.params?.filename ?? file.name,
+        mimeType: file.type,
+        status: 'uploaded',
+        publicUrl: null,
+        uploadedBy: MOCK_DRIVER_ID,
+      };
+      stop.documents.push(document);
+      return respond(config, 200, { data: document });
+    }
+
+    if ((match = url.match(/^\/api\/vehicle-stops\/([^/]+)\/files\/([^/]+)$/))) {
+      const stop = findStop(match[1]);
+      const document = stop?.documents.find((doc) => doc.id === match![2]);
+      if (!stop || !document) return respond(config, 404);
+
+      if (method === 'get') return respond(config, 200, { data: MOCK_FILE_URL });
+
+      if (method === 'delete') {
+        if (document.uploadedBy !== MOCK_DRIVER_ID) return respond(config, 403);
+        stop.documents = stop.documents.filter((doc) => doc.id !== document.id);
+        return respond(config, 200, { data: null });
+      }
+    }
+
+    return respond(config, 404);
+  }
+
+  return async (config) => {
+    if (delayMs > 0) {
+      await new Promise((resolve) => setTimeout(resolve, delayMs));
+    }
+
+    const response = handle(config);
+    // Hand out copies so React Query never holds references the adapter mutates later.
+    return { ...response, data: structuredClone(response.data) };
+  };
+}

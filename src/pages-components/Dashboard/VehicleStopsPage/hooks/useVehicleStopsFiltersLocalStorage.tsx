@@ -1,15 +1,10 @@
 import { useCallback, useState } from 'react';
 
 const projectEnv = process.env.PROJECT_ENV;
-
-if (!projectEnv) {
-  throw new Error('Missing PROJECT_ENV env var.');
-}
-
-const isProductionEnv = process.env.PROJECT_ENV === 'production';
+const isProductionEnv = projectEnv === 'production';
 
 const keyName = 'cargo-navis-vehicle-stops-filters';
-const STORAGE_KEY = isProductionEnv ? keyName : `${projectEnv.toLowerCase()}-${keyName}`;
+const STORAGE_KEY = isProductionEnv ? keyName : `${projectEnv}-${keyName}`;
 
 export interface VehicleStopsFiltersStorage {
   dispatcherId?: string;

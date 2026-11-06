@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 
-import { Box, FlexLayout, VerticalDivider } from '@/ui';
+import { CountryFlag } from '@/components/countries';
+import { Box, FlexLayout, type SelectOption, VerticalDivider } from '@/ui';
 import { SingleSelect } from '@/ui/components/Select/SingleSelect/SingleSelect';
 import { TextInput } from '@/ui/components/TextInput/TextInput';
 
@@ -16,14 +17,26 @@ export interface PhoneNumberInputProps {
   onChange(value: PhoneNumberValue): void;
 }
 
-const countryOptions = [
-  { value: '+385', label: '🇭🇷 +385' },
-  { value: '+386', label: '🇸🇮 +386' },
-  { value: '+387', label: '🇧🇦 +387' },
-  { value: '+381', label: '🇷🇸 +381' },
-  { value: '+383', label: '🇦🇱 +383' },
-  { value: '+43', label: '🇦🇹 +43' },
+const countryCallingCodes = [
+  { countryCode: 'HR', callingCode: '+385' },
+  { countryCode: 'SI', callingCode: '+386' },
+  { countryCode: 'BA', callingCode: '+387' },
+  { countryCode: 'RS', callingCode: '+381' },
+  { countryCode: 'XK', callingCode: '+383' },
+  { countryCode: 'AL', callingCode: '+355' },
+  { countryCode: 'MK', callingCode: '+389' },
+  { countryCode: 'AT', callingCode: '+43' },
 ];
+
+const countryOptions: SelectOption[] = countryCallingCodes.map(({ countryCode, callingCode }) => ({
+  value: callingCode,
+  label: callingCode,
+  iconLeft: () => (
+    <FlexLayout className="items-center">
+      <CountryFlag code={countryCode} size="s" />
+    </FlexLayout>
+  ),
+}));
 
 export const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
   value,

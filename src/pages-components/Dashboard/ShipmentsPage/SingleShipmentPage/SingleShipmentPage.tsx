@@ -7,20 +7,16 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
 import { InvoiceStatus, Shipment } from '@/lib/api';
 import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
-import { FileCard } from '@/lib/components/FileCard';
 import {
   useClient,
   useContractor,
   useCurrentTenant,
-  useDeleteShipmentFile,
-  useGetShipmentDocumentUrl,
   useShipment,
   useUpdateAgencyShipment,
   useUpdateShipment,
 } from '@/lib/hooks';
-import { downloadShipmentFile } from '@/lib/utils/file';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, Divider, FlexLayout, Icon, Pill, Text, Tooltip } from '@/ui';
+import { Box, Button, Divider, FlexLayout, Icon, Pill, Text } from '@/ui';
 
 import { invoiceStatusConfig } from '../const';
 import { AssignVehicleModal } from '../NewShipmentPage/AssignVehicleModal';
@@ -28,8 +24,9 @@ import { OverdueIndicator } from '../OverdueIndicator';
 import { CargoItem } from './components/CargoItem';
 import { ContentLoader } from './components/ContentLoader';
 import { InvoiceItem } from './components/InvoiceItem';
+import { NotifyDriversButton } from './components/NotifyDriversButton';
 import { ShipmentActions } from './components/ShipmentActions';
-import { ShipmentFileUploadButton } from './components/ShipmentFileUploadButton';
+import { ShipmentFiles } from './components/ShipmentFiles';
 import { ShipmentLeftPanel } from './components/ShipmentLeftPanel';
 import type { CargoWithMetadata } from './components/types';
 
@@ -61,11 +58,6 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
 
   const { mutateAsync: updateShipment, isPending: isUpdatingShipment } = useUpdateShipment();
   const { mutateAsync: updateAgencyShipment, isPending: isUpdatingAgencyShipment } = useUpdateAgencyShipment();
-  const { mutateAsync: deleteFile, isPending: isDeletingFile } = useDeleteShipmentFile(shipment.id, isAgency);
-  const { mutateAsync: getDocumentUrl, isPending: isGettingDocumentUrl } = useGetShipmentDocumentUrl(
-    shipment.id,
-    isAgency
-  );
 
   const isPending = isUpdatingShipment || isUpdatingAgencyShipment;
 
@@ -101,40 +93,6 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
     }
   };
 
-  function handleDownloadFile(documentId: string) {
-    try {
-      downloadShipmentFile(shipment.id, documentId, isAgency);
-    } catch (error) {
-      console.error(error);
-      showErrorToast({ title: 'Greška prilikom preuzimanja dokumenta. Pokušajte ponovno.' });
-    }
-  }
-
-  async function handlePreview(documentId: string) {
-    try {
-      const url = await getDocumentUrl({ documentId, disposition: 'inline' });
-      window.open(url, '_blank');
-    } catch (error) {
-      console.error(error);
-      showErrorToast({ title: 'Greška prilikom pregleda dokumenta. Pokušajte ponovno.' });
-    }
-  }
-
-  async function handleDeleteFile(documentId: string, documentName: string) {
-    const answer = confirm(`Jeste li sigurni da želite izbrisati ovaj dokument "${documentName}"?`);
-    if (!answer) return;
-
-    try {
-      await deleteFile(documentId);
-      showSuccessToast({ title: `Dokument "${documentName}" izbrisan` });
-    } catch (error) {
-      console.error(error);
-      showErrorToast({ title: 'Greška prilikom brisanja dokumenta. Pokušajte ponovno.' });
-    }
-  }
-
-  const isLoading = isPending || isDeletingFile || isGettingDocumentUrl;
-
   return (
     <FlexLayout className="py-5 flex-col gap-5">
       <FlexLayout className="justify-between">
@@ -142,19 +100,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
         <FlexLayout className="items-center gap-3">
           {!isAgency &&
             (isAssigned ? (
-              <Tooltip
-                content={
-                  <Box className="px-2">
-                    <Text color="text-light-50" variant="text-xs">
-                      Nalog je već dodijeljen vozilu.
-                    </Text>
-                  </Box>
-                }
-              >
-                <Box>
-                  <Button iconLeft="IconTruck" isDisabled text="Dodijeli vozilo" variant="secondary" />
-                </Box>
-              </Tooltip>
+              <NotifyDriversButton shipment={shipment} />
             ) : (
               <Button
                 iconLeft="IconTruck"
@@ -222,20 +168,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
                   onChange={handleInvoiceChange}
                 />
               </FlexLayout>
-              <FlexLayout className="gap-4 mt-2">
-                {shipment.documents?.map((document) => (
-                  <Box className="max-w-[300px]" key={document.id}>
-                    <FileCard
-                      {...document}
-                      isLoading={isLoading}
-                      onDelete={(documentId) => handleDeleteFile(documentId, document.name)}
-                      onDownload={handleDownloadFile}
-                      onPreview={handlePreview}
-                    />
-                  </Box>
-                ))}
-                <ShipmentFileUploadButton id={shipment.id} isAgency={isAgency} />
-              </FlexLayout>
+              <ShipmentFiles isDisabled={isPending} shipment={shipment} />
             </FlexLayout>
           </FlexLayout>
           <Divider />

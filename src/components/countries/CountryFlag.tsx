@@ -2,9 +2,10 @@ import clsx from 'clsx';
 
 import { Box } from '@/ui';
 
-type CountryFlagSize = 'xs' | 's' | 'm' | 'l';
+type CountryFlagSize = 'xxs' | 'xs' | 's' | 'm' | 'l';
 
 const sizesMap: Record<CountryFlagSize, { fontSize: string; radius: string }> = {
+  xxs: { fontSize: 'text-[12px]', radius: 'rounded-[2px]' },
   xs: { fontSize: 'text-[16px]', radius: 'rounded-xs' },
   s: { fontSize: 'text-[20px]', radius: 'rounded-xs' },
   m: { fontSize: 'text-[28px]', radius: 'rounded-s' },
@@ -20,5 +21,5 @@ interface CountryFlagProps {
 export const CountryFlag: React.FC<CountryFlagProps> = ({ code, size = 'm' }) => {
   const { fontSize, radius } = sizesMap[size];
 
-  return <Box as="span" className={clsx('fi shrink-0', `fi-${code.toLowerCase()}`, fontSize, radius)} />;
+  return <Box as="span" className={clsx('fi shrink-0 !bg-cover', `fi-${code.toLowerCase()}`, fontSize, radius)} />;
 };

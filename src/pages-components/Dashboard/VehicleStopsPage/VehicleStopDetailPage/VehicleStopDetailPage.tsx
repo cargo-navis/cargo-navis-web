@@ -37,6 +37,9 @@ export const VehicleStopDetailPage = () => {
   const { query } = useRouter();
   const vehicleId = query.vehicleId as string;
 
+  // Set when a single stop was opened, e.g. from a notification (see VehicleStopRedirectPage)
+  const highlightedStopId = typeof query.highlight === 'string' ? query.highlight : undefined;
+
   const {
     data,
     isPending: isLoadingStops,
@@ -56,6 +59,15 @@ export const VehicleStopDetailPage = () => {
   const [activeDragId, setActiveDragId] = useState<string | null>(null);
 
   const stops = useMemo(() => data?.pages.flatMap((p) => p.data) ?? [], [data]);
+  const isHighlightedStopLoaded = !!highlightedStopId && stops.some((stop) => stop.id === highlightedStopId);
+
+  useEffect(() => {
+    if (!isHighlightedStopLoaded) return;
+    document
+      .querySelector(`[data-stop-id="${CSS.escape(highlightedStopId as string)}"]`)
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, [highlightedStopId, isHighlightedStopLoaded]);
+
   const activeDragStop = useMemo(
     () => (activeDragId ? stops.find((s) => s.id === activeDragId) : undefined),
     [activeDragId, stops]
@@ -224,6 +236,7 @@ export const VehicleStopDetailPage = () => {
               <SortableContext items={stops.map((s) => s.id)} strategy={verticalListSortingStrategy}>
                 {stops.map((stop, i) => (
                   <VerticalStopEntry
+                    isHighlighted={stop.id === highlightedStopId}
                     key={stop.id}
                     step={i + 1}
                     stop={stop}
