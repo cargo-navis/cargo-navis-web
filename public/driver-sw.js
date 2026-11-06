@@ -116,11 +116,11 @@ function getNotification(payload) {
   }
 }
 
-function getStopsAssignedNotification({ shipmentId, orderNumber, stopCount }) {
+function getStopsAssignedNotification({ shipmentId, orderNumber }) {
   return {
     title: `Novi nalog #${orderNumber}`,
     options: {
-      body: `${getStopsAssignedText(stopCount)}.`,
+      body: 'Pogledaj više',
       icon: '/android-chrome-192x192.png',
       // One notification per order: a later assignment for the same order replaces the earlier one.
       tag: `shipment-${shipmentId}`,
@@ -144,18 +144,6 @@ function getRouteChangedNotification({ shipmentId, orderNumber }) {
       data: { shipmentId },
     },
   };
-}
-
-// Croatian plural: 1, 21, 31… nova postaja; 2–4, 22–24… nove postaje; everything else novih postaja.
-function getStopsAssignedText(count) {
-  const lastDigit = count % 10;
-  const lastTwoDigits = count % 100;
-
-  if (lastDigit === 1 && lastTwoDigits !== 11) return `Dodijeljena ti je ${count} nova postaja`;
-  if (lastDigit >= 2 && lastDigit <= 4 && (lastTwoDigits < 12 || lastTwoDigits > 14)) {
-    return `Dodijeljene su ti ${count} nove postaje`;
-  }
-  return `Dodijeljeno ti je ${count} novih postaja`;
 }
 
 async function getDriverPages() {
