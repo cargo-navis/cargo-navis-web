@@ -272,6 +272,7 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
         driverNames={notifyPrompt ? getEmployeeNames(notifyPrompt.driverIds, employees) : []}
         isNotifying={isNotifying}
         isOpen={!!notifyPrompt}
+        orderNumber={shipmentOrderNumber}
         onNotify={() => void handleNotifyDrivers()}
         onSkip={() => notifyPrompt && finishAssignment(notifyPrompt.vehicleId)}
       />
