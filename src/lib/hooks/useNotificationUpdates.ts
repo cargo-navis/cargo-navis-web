@@ -36,32 +36,18 @@ export function useNotificationUpdates() {
       queryClient.refetchQueries({ queryKey: ['notifications'], type: 'all' });
 
       if (notificationType === 'vehicle_stop_completed') {
-        const cache = queryClient.getQueryCache();
-        const vehicleStopsQueries = cache.findAll({ queryKey: ['vehicleStops'] });
-
-        const keysToRevalidate = vehicleStopsQueries.map((q) => q.queryKey);
-        console.log(
-          '[useNotificationUpdates] vehicle_stop_completed - matched vehicleStops queries:',
-          keysToRevalidate
-        );
-
-        vehicleStopsQueries.forEach((q) => {
-          void queryClient.refetchQueries({ queryKey: q.queryKey, exact: true, type: 'all' });
-        });
-
-        metadata.shipments?.forEach((s) => {
-          console.log('[useNotificationUpdates] refetching shipment', s.shipmentId);
-          void queryClient.refetchQueries({ queryKey: ['shipment', s.shipmentId], exact: true, type: 'all' });
-        });
-
+        // A driver confirmed a stop in the driver portal. It changes the stop, its shipments and their cargo's
+        // loadStatus, which shipment lists show and filter on, so everything holding stops or shipments reloads.
+        void queryClient.invalidateQueries({ queryKey: ['vehicleStops'], refetchType: 'all' });
+        void queryClient.invalidateQueries({ queryKey: ['shipment'], refetchType: 'all' });
+        void queryClient.invalidateQueries({ queryKey: ['shipments'], refetchType: 'all' });
         return;
       }
 
       if (notificationType === 'vehicle_stop_document_uploaded') {
-        // Stop documents show on the vehicle stops page and in the shipment page timeline. The metadata names neither
-        // the vehicle nor the shipment, so every open one reloads.
-        void queryClient.invalidateQueries({ queryKey: ['vehicleStops'] });
-        void queryClient.invalidateQueries({ queryKey: ['shipment'] });
+        // Stop documents show on the vehicle stops page and on the shipment page.
+        void queryClient.invalidateQueries({ queryKey: ['vehicleStops'], refetchType: 'all' });
+        void queryClient.invalidateQueries({ queryKey: ['shipment'], refetchType: 'all' });
         return;
       }
 
