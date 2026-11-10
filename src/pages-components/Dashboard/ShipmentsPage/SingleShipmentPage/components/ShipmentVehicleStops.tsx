@@ -114,6 +114,7 @@ const SidebarStopEntry = ({
   const { address, date, loadingCargos, unloadingCargos, driverId } = stop;
   const hasLoading = loadingCargos.length > 0;
   const hasUnloading = unloadingCargos.length > 0;
+  const hasDocuments = stop.documents.length > 0;
 
   const rowContent = (
     <FlexLayout className="flex-col gap-0.5 relative -top-4">
@@ -137,6 +138,14 @@ const SidebarStopEntry = ({
             </Text>
             {hasLoading && <Icon className="text-orange-500 dark:text-orange-400" icon="IconPackageImport" size="s" />}
             {hasUnloading && <Icon className="text-teal-500 dark:text-teal-400" icon="IconPackageExport" size="s" />}
+            {hasDocuments && (
+              <Icon
+                aria-label="Ima dokumente"
+                color="text-dark-400 dark:text-light-500"
+                icon="IconFileCheck"
+                size="s"
+              />
+            )}
           </FlexLayout>
         </TimelineTitle>
       </Tooltip>

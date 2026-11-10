@@ -12,14 +12,8 @@ const swOutputPath = path.join(__dirname, './public/cargo-navis_push-service-wor
 
 const swTemplate = fs.readFileSync(swTemplatePath, 'utf-8');
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-if (!appUrl || appUrl.trim() === '') {
-  console.error('❌ ERROR: NEXT_PUBLIC_APP_URL environment variable is not defined or is empty');
-  console.error('   Please set NEXT_PUBLIC_APP_URL in your .env.local file');
-  process.exit(1);
-}
-
-const injected = swTemplate.replace('__APP_URL__', appUrl);
+// Required NEXT_PUBLIC_APP_URL; a missing value is reported by next.config.mjs when next dev/build starts right after this script.
+const injected = swTemplate.replace('__APP_URL__', process.env.NEXT_PUBLIC_APP_URL);
 
 fs.writeFileSync(swOutputPath, injected);
 console.log('✅ Injected env into service-worker.js');

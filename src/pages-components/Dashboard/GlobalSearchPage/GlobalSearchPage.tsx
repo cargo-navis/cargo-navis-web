@@ -1,11 +1,11 @@
 import { getSearchCategoryTotal, SEARCH_CATEGORIES, type SearchCategory } from '@/components/GlobalSearch';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
-import { LoadingPage } from '@/lib/components/LoadingPage';
 import { GLOBAL_SEARCH_MIN_LENGTH, useGlobalSearch } from '@/lib/hooks';
 import { Box, FlexLayout, Heading, Pagination, Text } from '@/ui';
 
 import { SearchResultsList } from './SearchResultsList';
+import { SearchResultsSkeleton } from './SearchResultsSkeleton';
 import { useSearchPageParams } from './useSearchPageParams';
 
 const PAGE_SIZE = 20;
@@ -50,8 +50,9 @@ const SearchResults = ({ category, query, page, setPage }: SearchResultsProps) =
     return <StatusMessage text={`Upišite najmanje ${GLOBAL_SEARCH_MIN_LENGTH} znaka u tražilicu.`} />;
   }
   if (isError) return <StatusMessage text="Pretraživanje nije uspjelo. Pokušajte ponovno." />;
-  // Placeholder data belongs to the previous query/page, so show a loader instead
-  if (!data || isPlaceholderData) return <LoadingPage />;
+  // Placeholder data belongs to the previous query/page, so show a loader instead.
+  // Only shipments have the cargo column on the right.
+  if (!data || isPlaceholderData) return <SearchResultsSkeleton showAside={category.key === 'shipments'} />;
 
   const items = category.mapItems(data);
   if (items.length === 0) return <StatusMessage text="Nema rezultata." />;

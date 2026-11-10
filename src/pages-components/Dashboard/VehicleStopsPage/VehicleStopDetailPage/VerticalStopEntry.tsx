@@ -4,6 +4,8 @@ import clsx from 'clsx';
 import dayjs from 'dayjs';
 
 import { EmployeeName } from '@/components/employees/EmployeeName';
+import { FileCardList } from '@/components/files/FileCardList';
+import { useVehicleStopFileActions } from '@/components/files/useFileActions';
 import {
   TimelineContent,
   TimelineDate,
@@ -15,9 +17,7 @@ import {
 } from '@/components/reui/timeline';
 import { ToggleStopCompletionButton } from '@/components/vehicleStops/ToggleStopCompletionButton';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
-import { FileCard } from '@/lib/components/FileCard';
-import { useDeleteVehicleStopFile, useGetVehicleStopFileUrl, useSendVehicleStopMessage } from '@/lib/hooks';
-import { downloadVehicleStopFile } from '@/lib/utils/file';
+import { useNotifyVehicleStopDriver } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Box, DisplayIf, FlexLayout, Icon, Text, TextButton } from '@/ui';
@@ -29,6 +29,7 @@ interface VerticalStopEntryProps {
   stop: VehicleStop;
   step: number;
   isDragOverlay?: boolean;
+  isHighlighted?: boolean;
   onEdit?(stop: VehicleStop): void;
   onDelete?(stop: VehicleStop): void;
   onInsertBefore?(): void;
@@ -38,12 +39,14 @@ export const VerticalStopEntry = ({
   stop,
   step,
   isDragOverlay,
+  isHighlighted,
   onEdit,
   onDelete,
   onInsertBefore,
 }: VerticalStopEntryProps) => {
   const isCompleted = isStopCompleted(stop);
   const { address, date, loadingCargos, unloadingCargos, documents } = stop;
+  const fileActions = useVehicleStopFileActions()(stop.id);
   const hasLoading = loadingCargos.length > 0;
   const hasUnloading = unloadingCargos.length > 0;
   const isDraggable = !isCompleted;
@@ -53,18 +56,15 @@ export const VerticalStopEntry = ({
     disabled: !isDraggable || isDragOverlay,
   });
 
-  const { mutateAsync: deleteFile, isPending: isDeletingFile } = useDeleteVehicleStopFile(stop.id);
-  const { mutateAsync: getDocumentUrl, isPending: isGettingDocumentUrl } = useGetVehicleStopFileUrl(stop.id);
-  const { mutateAsync: sendMessage, isPending: isSendingMessage } = useSendVehicleStopMessage(stop.id);
-  const isFileLoading = isDeletingFile || isGettingDocumentUrl;
+  const { mutateAsync: notifyDriver, isPending: isNotifyingDriver } = useNotifyVehicleStopDriver(stop.id);
 
-  async function handleSendMessage() {
+  async function handleNotifyDriver() {
     if (stop.messageSentAt) {
       const ok = confirm('Poruka je već poslana. Pošalji ponovno?');
       if (!ok) return;
     }
     try {
-      await sendMessage();
+      await notifyDriver();
       showSuccessToast({ title: 'Poruka poslana' });
     } catch (error) {
       console.error(error);
@@ -72,42 +72,15 @@ export const VerticalStopEntry = ({
     }
   }
 
-  function handleDownloadFile(documentId: string) {
-    try {
-      void downloadVehicleStopFile(stop.id, documentId);
-    } catch (error) {
-      console.error(error);
-      showErrorToast({ title: 'Greška prilikom preuzimanja dokumenta. Pokušajte ponovno.' });
-    }
-  }
-
-  async function handlePreview(documentId: string) {
-    try {
-      const url = await getDocumentUrl({ documentId, disposition: 'inline' });
-      window.open(url, '_blank');
-    } catch (error) {
-      console.error(error);
-      showErrorToast({ title: 'Greška prilikom pregleda dokumenta. Pokušajte ponovno.' });
-    }
-  }
-
-  async function handleDeleteFile(documentId: string, documentName: string) {
-    const answer = confirm(`Jeste li sigurni da želite izbrisati dokument "${documentName}"?`);
-    if (!answer) return;
-
-    try {
-      await deleteFile(documentId);
-      showSuccessToast({ title: `Dokument "${documentName}" izbrisan` });
-    } catch (error) {
-      console.error(error);
-      showErrorToast({ title: 'Greška prilikom brisanja dokumenta. Pokušajte ponovno.' });
-    }
-  }
-
   return (
     <TimelineItem
-      className={clsx('group/stop-entry relative', isDragging && 'opacity-40')}
+      className={clsx(
+        'group/stop-entry relative rounded-s',
+        isDragging && 'opacity-40',
+        isHighlighted && 'row-highlight-fade'
+      )}
       completed={isCompleted}
+      data-stop-id={stop.id}
       ref={setNodeRef}
       separatorActive={isCompleted}
       step={step}
@@ -123,7 +96,7 @@ export const VerticalStopEntry = ({
           className={isCompleted ? undefined : 'bg-transparent'}
           style={{
             left: '40px',
-            top: '74px',
+            top: '80px',
             height: 'calc(100% - 16px)',
             width: '2px',
             ...(isCompleted
@@ -136,7 +109,7 @@ export const VerticalStopEntry = ({
         />
         <TimelineIndicator
           className={isCompleted ? 'flex items-center justify-center bg-teal-500 text-white' : undefined}
-          style={{ top: 58, left: 33 }}
+          style={{ top: 65, left: 33 }}
         >
           {isCompleted && (
             <svg
@@ -154,7 +127,7 @@ export const VerticalStopEntry = ({
           )}
         </TimelineIndicator>
       </TimelineHeader>
-      <TimelineDate>
+      <TimelineDate textVariant="text-xxs-medium">
         {date ? (
           dayjs(date).format('DD.MM.YYYY')
         ) : (
@@ -187,12 +160,12 @@ export const VerticalStopEntry = ({
             <FlexLayout className="flex-col items-end">
               <TextButton
                 iconLeft="IconBrandWhatsapp"
-                isDisabled={isSendingMessage}
+                isDisabled={isNotifyingDriver}
                 size="s"
                 text={stop.messageSentAt ? 'Obavijesti ponovno' : 'Obavijesti vozača'}
                 type="button"
                 variant="secondary"
-                onClick={handleSendMessage}
+                onClick={handleNotifyDriver}
               />
               {stop.messageSentAt && (
                 <Text className="whitespace-nowrap" color="text-color-3" variant="text-xxxs">
@@ -244,17 +217,7 @@ export const VerticalStopEntry = ({
           </FlexLayout>
         )}
         <FlexLayout className="flex-wrap gap-3">
-          {documents?.map((document) => (
-            <Box className="max-w-[300px]" key={document.id}>
-              <FileCard
-                {...document}
-                isLoading={isFileLoading}
-                onDelete={(documentId) => handleDeleteFile(documentId, document.name)}
-                onDownload={handleDownloadFile}
-                onPreview={handlePreview}
-              />
-            </Box>
-          ))}
+          <FileCardList items={(documents ?? []).map((document) => ({ document, actions: fileActions }))} />
           <VehicleStopFileUploadButton id={stop.id} />
         </FlexLayout>
       </FlexLayout>

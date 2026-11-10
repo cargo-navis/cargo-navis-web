@@ -1,4 +1,5 @@
-import { type GlobalSearchResults, SearchTypeEnum, VehicleEnum } from '@/lib/api';
+import { type GlobalSearchResults, type SearchShipmentCargo, SearchTypeEnum, VehicleEnum } from '@/lib/api';
+import { getPalletsNoun } from '@/lib/utils/cargo';
 import type { IconType, PillVariant } from '@/ui';
 
 export type SearchCategoryKey = keyof GlobalSearchResults;
@@ -8,10 +9,25 @@ export interface SearchResultItem {
   href: string;
   title: string;
   subtitle?: string;
+  // Labelled line below the subtitle, e.g. "Prijevoznik: …" for agency shipments
+  detail?: {
+    label: string;
+    value: string;
+  };
   // Rendered next to the title, e.g. "Agencijski nalog" for agency shipments
   titlePill?: {
     text: string;
     variant: PillVariant;
+  };
+  // Summary in a right-hand column beside the result (search modal and search page).
+  // E.g. a shipment's cargo: primary "Transformer components +1", secondaryLead "14 paleta", secondary "2.771 kg"
+  aside?: {
+    primary?: string;
+    // Full text behind `primary`, which the side column cuts off; one entry per line, e.g. every cargo's description
+    primaryTooltip?: string[];
+    // Start of the second line, emphasised
+    secondaryLead?: string;
+    secondary?: string;
   };
   // Set only when the matched field isn't already visible in the title or subtitle
   matchedValue?: string;
@@ -56,12 +72,62 @@ const fleetTypeLabelMap: Record<VehicleEnum, string> = {
 };
 
 function withMatchedValue(item: Omit<SearchResultItem, 'matchedValue'>, matchedValue: string | undefined) {
-  const isVisible = !matchedValue || item.title.includes(matchedValue) || !!item.subtitle?.includes(matchedValue);
+  const isVisible =
+    !matchedValue ||
+    item.title.includes(matchedValue) ||
+    !!item.subtitle?.includes(matchedValue) ||
+    !!item.detail?.value.includes(matchedValue) ||
+    !!item.aside?.primary?.includes(matchedValue);
+
   return isVisible ? item : { ...item, matchedValue };
 }
 
 function joinDefined(...parts: (string | null | undefined)[]) {
   return parts.filter(Boolean).join(' • ') || undefined;
+}
+
+const formatNumber = (value: number) => value.toLocaleString('hr-HR', { maximumFractionDigits: 2 });
+
+// Null when no cargo has the value, so it is left out instead of shown as 0
+function sumDefined(values: (number | null)[]) {
+  const defined = values.filter((value): value is number => value != null);
+  return defined.length > 0 ? defined.reduce((total, value) => total + value, 0) : null;
+}
+
+// Length × width × height in metres, like cargo labels elsewhere (getCargoLabelParts); missing sides are skipped
+function formatDimensions(dimensions: SearchShipmentCargo['dimensions']) {
+  if (!dimensions) return null;
+  const { length, width, height } = dimensions;
+  const sides = [length, width, height].filter((side): side is number => side != null);
+  return sides.length > 0 ? `${sides.map(formatNumber).join(' × ')} m` : null;
+}
+
+/**
+ * Two lines about the shipment's cargo, to recognise it in search results. The first names the first described cargo
+ * ("+N" for the other cargos): its description, or its dimensions when it has none. The second leads with how much is
+ * carried, the pallet count or that cargo's dimensions when the first line already shows its description
+ * (dimensions can't be added up), followed by the total weight.
+ */
+export function getCargoSummary(cargos: SearchShipmentCargo[]): SearchResultItem['aside'] {
+  const leadCargo = cargos.find((cargo) => cargo.description?.trim() || formatDimensions(cargo.dimensions));
+  const description = leadCargo?.description?.trim() || null;
+  const dimensions = leadCargo ? formatDimensions(leadCargo.dimensions) : null;
+  const otherCount = cargos.length - 1;
+
+  const pallets = sumDefined(cargos.map((cargo) => cargo.palleteAmount));
+  const weight = sumDefined(cargos.map((cargo) => cargo.weight));
+
+  const lead = description ?? dimensions;
+  const primary = lead && otherCount > 0 ? `${lead} +${otherCount}` : (lead ?? undefined);
+  const palletsText = pallets ? `${formatNumber(pallets)} ${getPalletsNoun(pallets)}` : undefined;
+  const secondaryLead = description && dimensions ? dimensions : palletsText;
+  const secondary = weight ? `${formatNumber(weight)} kg` : undefined;
+
+  // Every description, since the first line shows only the first one and cuts it off
+  const descriptions = cargos.map((cargo) => cargo.description?.trim()).filter((text): text is string => !!text);
+  const primaryTooltip = description ? descriptions : undefined;
+
+  return primary || secondaryLead || secondary ? { primary, primaryTooltip, secondaryLead, secondary } : undefined;
 }
 
 export const SEARCH_CATEGORIES: SearchCategory[] = [
@@ -72,18 +138,26 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
     icon: 'IconFileDescription',
     pluralNoun: 'naloga',
     mapItems: ({ shipments }) =>
-      (shipments?.items ?? []).map((s) =>
-        withMatchedValue(
+      (shipments?.items ?? []).map((s) => {
+        // For agency shipments the contractor is the one handling it, so it gets its own line
+        const agencyContractorName = s.isAgency ? s.transportContractorName : null;
+
+        return withMatchedValue(
           {
             id: s.id,
             href: `/dashboard/shipments/${s.id}`,
             title: s.orderNumber,
             titlePill: s.isAgency ? { text: 'Agencijski nalog', variant: 'warning' } : undefined,
-            subtitle: joinDefined(s.clientName ?? s.transportContractorName, s.externalOrderReference),
+            subtitle: joinDefined(
+              agencyContractorName ? s.clientName : (s.clientName ?? s.transportContractorName),
+              s.externalOrderReference
+            ),
+            detail: agencyContractorName ? { label: 'Prijevoznik', value: agencyContractorName } : undefined,
+            aside: getCargoSummary(s.cargos ?? []),
           },
           s.matchedValue
-        )
-      ),
+        );
+      }),
   },
   {
     key: 'fleet',

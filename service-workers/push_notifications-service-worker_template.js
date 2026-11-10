@@ -53,6 +53,9 @@ function extractNotificationData(data) {
     case 'shipment_draft_updated': {
       return getShipmentDraftUpdatedNotifData(data);
     }
+    case 'vehicle_stop_document_uploaded': {
+      return getVehicleStopDocumentUploadedNotifData(data);
+    }
     default:
       throw new Error('Unsupported notification type');
   }
@@ -122,6 +125,17 @@ function getShipmentDraftUpdatedNotifData(data) {
     ? `Obrađeni nalog "${fileName}" je spreman za pregled`
     : 'Obrađeni nalog je spreman za pregled';
   const targetUrl = getShipmentDraftsUrl(draftId);
+
+  return { title, message, targetUrl };
+}
+
+function getVehicleStopDocumentUploadedNotifData(data) {
+  const { driverName, documentName, address } = data.metadata;
+
+  const title = `CargoNavis - Novi dokument`;
+  const message = `${driverName} je dodao dokument "${documentName}"${address ? ` na stanici (${address})` : ''}`;
+  // Resolves the stop's vehicle and opens its stops page with the stop highlighted (VehicleStopRedirectPage).
+  const targetUrl = `${ENV_VARS.appUrl}/dashboard/vehicle-stops/stop/${data.metadata.vehicleStopId}`;
 
   return { title, message, targetUrl };
 }

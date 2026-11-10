@@ -1,3 +1,5 @@
+import type { PalleteType } from '@/lib/utils/palletes';
+
 import type { SearchTypeEnum } from './search';
 import type { VehicleEnum } from './vehicles';
 
@@ -17,12 +19,30 @@ interface SearchResultBase {
   matchedValue: string;
 }
 
+export interface SearchCargoDimensions {
+  width: number | null;
+  height: number | null;
+  length: number | null;
+}
+
+export interface SearchShipmentCargo {
+  id: string;
+  weight: number | null;
+  palleteType: PalleteType | null;
+  palleteAmount: number | null;
+  ldm: number | null;
+  // Null when width, height and length are all missing
+  dimensions: SearchCargoDimensions | null;
+  description: string | null;
+}
+
 export interface SearchShipment extends SearchResultBase {
   orderNumber: string;
   externalOrderReference: string | null;
   clientName: string | null;
   transportContractorName: string | null;
   isAgency: boolean;
+  cargos: SearchShipmentCargo[];
 }
 
 export interface SearchFleetItem extends SearchResultBase {

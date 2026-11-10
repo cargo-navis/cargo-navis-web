@@ -5,11 +5,16 @@ export async function getPushSubscriptions() {
 }
 
 export async function createPushSubscription(subscription: PushSubscription) {
-  return backend.post('/api/push-subscriptions', {
+  return backend.post('/api/push-subscriptions', toPushSubscriptionRequest(subscription));
+}
+
+/** Body of POST /api/push-subscriptions; the driver portal sends the same through its own client. */
+export function toPushSubscriptionRequest(subscription: PushSubscription) {
+  return {
     endpoint: subscription.endpoint,
     p256dh: arrayBufferToBase64(subscription.getKey('p256dh')),
     auth: arrayBufferToBase64(subscription.getKey('auth')),
-  });
+  };
 }
 
 // Utility to convert ArrayBuffer to Base64

@@ -1,2 +1,2 @@
 export * from './Alert';
-export type { AlertVariant } from './const';
+export type { AlertSize, AlertVariant } from './const';

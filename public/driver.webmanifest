@@ -1,0 +1,15 @@
+{
+  "id": "/driver",
+  "name": "Cargo Navis",
+  "short_name": "Cargo Navis",
+  "lang": "hr",
+  "start_url": "/driver",
+  "scope": "/driver",
+  "display": "standalone",
+  "background_color": "#F5F6F7",
+  "theme_color": "#F5F6F7",
+  "icons": [
+    { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/android-chrome-512x512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

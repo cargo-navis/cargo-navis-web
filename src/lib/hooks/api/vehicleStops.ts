@@ -12,8 +12,8 @@ import {
   getVehicleStopFileUrl,
   getVehicleStops,
   getVehicleStopsByVehicle,
+  notifyVehicleStopDriver,
   rearrangeVehicleStop,
-  sendVehicleStopMessage,
   uncompleteVehicleStop,
   updateVehicleStop,
   type UpdateVehicleStopParams,
@@ -163,10 +163,10 @@ export function useDeleteVehicleStop() {
   });
 }
 
-export function useSendVehicleStopMessage(id: string) {
+export function useNotifyVehicleStopDriver(id: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: () => sendVehicleStopMessage(id),
+    mutationFn: () => notifyVehicleStopDriver(id),
     onSuccess: (updatedStop) => {
       queryClient.setQueriesData<InfiniteData<PaginatedResponse<VehicleStop>>>(
         { queryKey: [QUERY_KEY, 'paginated', updatedStop.vehicleId] },
@@ -251,19 +251,22 @@ export function useUploadVehicleStopFile(id: string) {
   });
 }
 
-export function useDeleteVehicleStopFile(id: string) {
+// The stop goes with each call, so one hook serves files of several stops (e.g. a shipment's).
+export function useDeleteVehicleStopFile() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (documentId: string) => deleteVehicleStopFile(id, documentId),
+    mutationFn: ({ stopId, documentId }: { stopId: string; documentId: string }) =>
+      deleteVehicleStopFile(stopId, documentId),
     onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ['shipment'], type: 'all' });
       return queryClient.invalidateQueries({ queryKey: [QUERY_KEY], type: 'all' });
     },
   });
 }
 
-export function useGetVehicleStopFileUrl(id: string) {
+export function useGetVehicleStopFileUrl() {
   return useMutation({
-    mutationFn: (params: { documentId: string; disposition: 'inline' | 'attachment' }) =>
-      getVehicleStopFileUrl(id, params.documentId, params.disposition),
+    mutationFn: (params: { stopId: string; documentId: string; disposition: 'inline' | 'attachment' }) =>
+      getVehicleStopFileUrl(params.stopId, params.documentId, params.disposition),
   });
 }

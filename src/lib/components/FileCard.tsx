@@ -3,7 +3,9 @@ import React from 'react';
 
 import { Box, FlexLayout, Icon, Text, Tooltip } from '@/ui';
 
-import { getDataPointDateString } from '../utils/date';
+import { useEmployee } from '../hooks/api/employees';
+import { getDataPointDateString, getDateTimeInLocalTimezone } from '../utils/date';
+import { getFileIcon } from '../utils/fileIcon';
 
 interface FileCardProps {
   id: string;
@@ -11,6 +13,8 @@ interface FileCardProps {
   createdAt: string;
   mimeType: string;
   isLoading?: boolean;
+  uploadedBy?: string | null;
+  shouldShowUploader?: boolean;
   onDownload?(id: string): void;
   onDelete?(id: string): void;
   onPreview?(id: string): void;
@@ -19,8 +23,11 @@ interface FileCardProps {
 export const FileCard: React.FC<FileCardProps> = ({
   id,
   name,
+  mimeType,
   isLoading,
   createdAt,
+  uploadedBy,
+  shouldShowUploader,
   onDownload,
   onDelete,
   onPreview,
@@ -32,12 +39,17 @@ export const FileCard: React.FC<FileCardProps> = ({
       className={clsx(
         'relative group min-w-[240px] overflow-hidden',
         isLoading && 'opacity-50',
-        'border border-dark-300 dark:border-light-400 shadow-md rounded-s',
-        'hover:border-dark-500 dark:hover:border-light-50 hover:shadow-lg transition-all duration-150'
+        'border border-dark-300 dark:border-light-800 shadow-md rounded-s',
+        'hover:border-dark-500 dark:hover:border-light-700 hover:shadow-lg transition-all duration-150'
       )}
     >
       <FlexLayout className="items-start gap-2 px-3 py-2">
-        <Icon className="shrink-0 mt-1" color="text-dark-800 dark:text-light-50" icon="IconFileDescription" size="m" />
+        <Icon
+          className="shrink-0 mt-1"
+          color="text-dark-800 dark:text-light-50"
+          icon={getFileIcon({ name, mimeType }, 'IconFileDescription')}
+          size="m"
+        />
         <FlexLayout className="flex-col overflow-hidden">
           <Text
             className="whitespace-nowrap overflow-hidden text-ellipsis"
@@ -47,9 +59,13 @@ export const FileCard: React.FC<FileCardProps> = ({
           >
             {name}
           </Text>
-          <Text color="text-color-3" variant="text-xxxs">
-            {formattedDate}
-          </Text>
+          {shouldShowUploader ? (
+            <UploadInfo createdAt={createdAt} uploadedBy={uploadedBy ?? null} />
+          ) : (
+            <Text color="text-color-3" variant="text-xxxs">
+              {formattedDate}
+            </Text>
+          )}
         </FlexLayout>
       </FlexLayout>
       <FlexLayout className="group-hover:opacity-100 opacity-0 absolute inset-0 transition-opacity">
@@ -125,5 +141,28 @@ export const FileCard: React.FC<FileCardProps> = ({
         </Tooltip>
       </FlexLayout>
     </Box>
+  );
+};
+
+const UploadInfo = ({ uploadedBy, createdAt }: { uploadedBy: string | null; createdAt: string }) => {
+  const { data: uploader } = useEmployee(uploadedBy ?? '');
+  const dateTime = getDateTimeInLocalTimezone(createdAt);
+
+  return (
+    <FlexLayout className="min-w-0 whitespace-pre">
+      {uploader?.fullName && (
+        <>
+          <Text className="min-w-0 truncate" color="text-color-3" title={uploader.fullName} variant="text-xxxs">
+            {uploader.fullName}
+          </Text>
+          <Text className="shrink-0" color="text-color-3" variant="text-xxxs">
+            {' · '}
+          </Text>
+        </>
+      )}
+      <Text className="shrink-0" color="text-color-3" variant="text-xxxs">
+        {dateTime}
+      </Text>
+    </FlexLayout>
   );
 };
