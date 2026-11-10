@@ -27,7 +27,12 @@ self.addEventListener('push', (event) => {
 
   try {
     const { title, message, targetUrl } = extractNotificationData(notificationData);
-    dispatchNotification(title, message, targetUrl);
+    // Keeps the worker alive until the notification is shown; without it the browser may stop the worker first.
+    event.waitUntil(
+      dispatchNotification(title, message, targetUrl).catch((error) => {
+        console.error('[SW] showNotification failed', error);
+      })
+    );
   } catch (error) {
     console.log('[SW] ERROR DISPATCHING NOTIFICATION');
     console.error(error);
@@ -73,7 +78,7 @@ function getShipmentDraftsUrl(draftId) {
 }
 
 function dispatchNotification(title, message, targetUrl) {
-  self.registration.showNotification(title, {
+  return self.registration.showNotification(title, {
     body: message,
     icon: '/logomark.png',
     data: { url: `${targetUrl}` },
