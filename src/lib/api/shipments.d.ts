@@ -35,6 +35,8 @@ export interface Shipment extends AgencyShipmentFields {
   price: number;
   internalNote?: string;
   externalNote?: string;
+  /** Recipients of load/unload emails. On create, omitting it makes the backend use the client's automatic contacts. */
+  notificationEmails?: string[];
   cargo: Cargo[];
   createdAt: string;
   documents?: {

@@ -13,7 +13,7 @@ export const getFormDefaultValues = (client: Client | undefined) => {
 
     return {
       ...client,
-      email: client.email ?? '',
+      email: '',
       addressName: client.address?.streetName,
       countryCode: client.address?.countryCode,
       addressPostalCode: getPostalCodeOption(postalCodeData),

@@ -8,6 +8,7 @@ import type { CompanyFormInitialValues } from '@/components/vies';
 import type { Client } from '@/lib/api';
 import { FormNumberInput, FormSingleSelect, FormTextInput } from '@/lib/components/form';
 import { useCreateClient, useUpdateClient } from '@/lib/hooks';
+import { normalizeEmail } from '@/lib/utils/notificationEmails';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { countryEuropeOptions } from '@/pages-components/Dashboard/NewEmployeePage/const';
 import { Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
@@ -39,13 +40,14 @@ export const NewClientForm: React.FC<NewClientFormProps> = ({ client, initialVal
   const { isDirty, isValid, isLoading } = formState;
 
   async function handleFormSubmit({ name, addressName, taxId, addressPostalCode, termsOfPayment, email }: any) {
+    // Contacts of an existing client are edited on the client page, so only a new client sends them.
     const payload = {
       name,
       addressName,
       taxId,
       termsOfPayment,
       addressPostalCodeId: addressPostalCode.value,
-      email: email || undefined,
+      ...(!isEdit && { notificationEmails: email ? [{ email: normalizeEmail(email), alwaysNotify: false }] : [] }),
     };
 
     payload['termsOfPayment'] = payload['termsOfPayment'] || 0;
@@ -87,7 +89,13 @@ export const NewClientForm: React.FC<NewClientFormProps> = ({ client, initialVal
           <FormTextInput label="Ime" name="name" rules={{ required: true }} />
           <FormTextInput label="Porezni broj" name="taxId" rules={{ required: true }} />
           <FormNumberInput label="Valuta plaćanja (u danima)" name="termsOfPayment" />
-          <FormTextInput label="Email" name="email" />
+          {!isEdit && (
+            <FormTextInput
+              helperText="Prvi kontakt za obavijesti. Ostale kontakte dodajete na stranici klijenta."
+              label="Email"
+              name="email"
+            />
+          )}
           <FlexLayout className="flex-1 flex-col gap-2">
             <Text color="text-color-3" variant="text-xxs-medium">
               Adresa sjedišta

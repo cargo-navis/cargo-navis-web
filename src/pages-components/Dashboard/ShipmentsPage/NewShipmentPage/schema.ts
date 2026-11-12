@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import * as Yup from 'yup';
 
+import { NOTIFICATION_EMAIL_LIMIT } from '@/lib/utils/notificationEmails';
 import { PalleteType } from '@/lib/utils/palletes';
 
 import type { CargoType } from './types.d';
@@ -121,6 +122,9 @@ export function getShipmentSchema(tenantId: string) {
               .positive('Cijena mora biti pozitivan broj'),
           otherwise: () => Yup.number().optional().nullable().strip(),
         }),
+      notificationEmails: Yup.array()
+        .of(Yup.string().email('Neispravan email').required())
+        .max(NOTIFICATION_EMAIL_LIMIT, `Nalog može imati najviše ${NOTIFICATION_EMAIL_LIMIT} primatelja`),
       cargo: Yup.array().of(cargoSchema).required('Potreban je najmanje jedan teret'),
     })
     .test('tenant-participation', '', function (values) {
