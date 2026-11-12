@@ -5,7 +5,12 @@ import type { Client, ClientNotificationEmail } from '@/lib/api';
 import { useUpdateClient } from '@/lib/hooks';
 import { isValidEmail, normalizeEmail, NOTIFICATION_EMAIL_LIMIT } from '@/lib/utils/notificationEmails';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, FlexLayout, Icon, Pill, Switch, Text, TextInput } from '@/ui';
+import { Box, Button, FlexLayout, Icon, Pill, Switch, Text, TextInput, Tooltip } from '@/ui';
+
+const AUTOMATIC_TOOLTIP =
+  'Ovaj email se sam dodaje kao primatelj na svaki novi nalog ovog klijenta i dobiva mail kad se teret utovari i kad se istovari. Na pojedinom nalogu ga možete ukloniti.';
+const MANUAL_TOOLTIP =
+  'Ovaj email se ne dodaje sam. Kod kreiranja naloga nudi se kao prijedlog, pa obavijesti prima samo za naloge na koje ga dodate.';
 
 export const ClientNotificationEmails: React.FC<{ client: Client }> = ({ client }) => {
   const { mutateAsync: updateClient, isPending } = useUpdateClient(client.id);
@@ -73,7 +78,7 @@ export const ClientNotificationEmails: React.FC<{ client: Client }> = ({ client 
       <FlexLayout className="flex-col">
         <Text variant="text-m-medium">Kontakti za obavijesti</Text>
         <Text color="text-color-3" variant="text-xs">
-          Mailovi koji primaju obavijesti o utovaru i istovaru za naloge ovog klijenta.
+          Definirajte emailove klijenata na koje ćemo poslati obavijesti kad se njihovi tereti utovare i istovare.
         </Text>
       </FlexLayout>
 
@@ -95,7 +100,22 @@ export const ClientNotificationEmails: React.FC<{ client: Client }> = ({ client 
             </Text>
             <FlexLayout className="items-center gap-3">
               <Switch isDisabled={isPending} value={alwaysNotify} onChange={(value) => handleToggle(email, value)} />
-              <Pill size="s" text={alwaysNotify ? 'Automatski' : 'Ručno'} variant={alwaysNotify ? 'info' : 'default'} />
+              <Tooltip
+                content={
+                  <Text className="px-2 py-1 max-w-[280px]" color="text-light-50" variant="text-xxs">
+                    {alwaysNotify ? AUTOMATIC_TOOLTIP : MANUAL_TOOLTIP}
+                  </Text>
+                }
+                isPortal
+              >
+                <Box className="inline-flex cursor-help" tabIndex={0}>
+                  <Pill
+                    size="s"
+                    text={alwaysNotify ? 'Automatski' : 'Ručno'}
+                    variant={alwaysNotify ? 'info' : 'default'}
+                  />
+                </Box>
+              </Tooltip>
             </FlexLayout>
             <Box
               aria-label={`Obriši ${email}`}
