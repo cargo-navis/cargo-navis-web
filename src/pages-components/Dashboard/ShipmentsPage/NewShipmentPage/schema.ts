@@ -81,6 +81,10 @@ const cargoSchema = Yup.object().shape({
   metadata: cargoMetadataSchema.required('Podaci tereta su obavezni'),
 });
 
+export const notificationEmailsSchema = Yup.array()
+  .of(Yup.string().email('Neispravan email').required())
+  .max(NOTIFICATION_EMAIL_LIMIT, `Nalog može imati najviše ${NOTIFICATION_EMAIL_LIMIT} primatelja`);
+
 export function getShipmentSchema(tenantId: string) {
   return Yup.object()
     .shape({
@@ -122,9 +126,7 @@ export function getShipmentSchema(tenantId: string) {
               .positive('Cijena mora biti pozitivan broj'),
           otherwise: () => Yup.number().optional().nullable().strip(),
         }),
-      notificationEmails: Yup.array()
-        .of(Yup.string().email('Neispravan email').required())
-        .max(NOTIFICATION_EMAIL_LIMIT, `Nalog može imati najviše ${NOTIFICATION_EMAIL_LIMIT} primatelja`),
+      notificationEmails: notificationEmailsSchema,
       cargo: Yup.array().of(cargoSchema).required('Potreban je najmanje jedan teret'),
     })
     .test('tenant-participation', '', function (values) {
