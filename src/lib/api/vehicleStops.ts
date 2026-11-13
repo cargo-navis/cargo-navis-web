@@ -59,6 +59,8 @@ export async function assignShipmentToVehicle(data: {
   shipmentId: string;
   vehicleId: string;
   cargoStopDates: CargoStopDate[];
+  /** Driver for the new stops; when omitted they take the driver of the vehicle's last stop. */
+  driverId?: string;
 }) {
   return backend.post<VehicleStop[]>('/api/vehicle-stops/assign-shipment', data);
 }
