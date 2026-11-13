@@ -56,7 +56,7 @@ export const NotificationEmailsField: React.FC<NotificationEmailsFieldProps> = (
       instanceId={instanceId}
       isMulti
       isValidNewOption={(value) => isValidEmail(normalizeEmail(value)) && !emails.includes(normalizeEmail(value))}
-      label="Emailovi za obavijestiti"
+      label="Emailovi za obavijesti"
       noOptionsMessage={({ inputValue }) =>
         inputValue ? 'Neispravan ili već dodan email' : 'Upišite email primatelja'
       }

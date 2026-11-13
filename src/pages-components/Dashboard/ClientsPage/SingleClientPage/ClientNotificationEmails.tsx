@@ -49,7 +49,7 @@ export const ClientNotificationEmails: React.FC<{ client: Client }> = ({ client 
   return (
     <FlexLayout className="flex-col gap-3 max-w-[760px]">
       <FlexLayout className="flex-col">
-        <Text variant="text-m-medium">Kontakti za obavijesti</Text>
+        <Text variant="text-m-medium">Emailovi za obavijesti</Text>
         <Text color="text-color-3" variant="text-xs">
           E-mail adrese koje primaju obavijesti o utovaru i istovaru tereta.
           <br />
