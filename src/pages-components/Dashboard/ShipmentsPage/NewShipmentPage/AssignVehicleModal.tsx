@@ -49,6 +49,7 @@ import {
 import { RemainingStopsBadge, StopTimelineEntry } from '../../VehicleStopsPage/StopItem';
 import { getDriversNotifiedToast, getEmployeeNames, getStopDriverIds } from '../driverNotifications';
 import { NotifyDriversDialog } from './NotifyDriversDialog';
+import { SelectDriverDialog } from './SelectDriverDialog';
 
 interface AssignVehicleModalProps {
   isOpen: boolean;
@@ -157,6 +158,7 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
   const [isNavigating, setIsNavigating] = useState(false);
   // Set after an assignment that gave stops to drivers: asks whether to notify them right away.
   const [notifyPrompt, setNotifyPrompt] = useState<{ vehicleId: string; driverIds: string[] } | null>(null);
+  const [isDriverPromptOpen, setIsDriverPromptOpen] = useState(false);
 
   const isBusy = isPending || isNavigating;
 
@@ -168,6 +170,7 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
       stops: VehicleStop[];
       latestStop?: VehicleStop;
       driverName?: string;
+      hasDriver: boolean;
       placeNames: string[];
     }[]
   >(() => {
@@ -182,8 +185,10 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
       const stops = g.stops;
       const latestStop = stops[0];
       const driverName = latestStop?.driverId ? employeesById.get(latestStop.driverId)?.fullName : undefined;
+      // New stops inherit the latest stop's driver; one missing from the loaded employees was deleted, so it isn't.
+      const hasDriver = !!latestStop?.driverId && (!employees || employeesById.has(latestStop.driverId));
       const placeNames = stops.map((s) => s.address?.placeName).filter((p): p is string => !!p);
-      return [{ vehicle, stops, latestStop, driverName, placeNames }];
+      return [{ vehicle, stops, latestStop, driverName, hasDriver, placeNames }];
     });
   }, [vehicleGroups, vehicles, employees]);
 
@@ -211,8 +216,19 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
 
   const allDatesPicked = previewStops.every((p) => !!datesByKey[p.key]);
   const isConfirmReady = !!selectedVehicleId && previewStops.length > 0 && allDatesPicked;
+  const selectedRow = rows.find((r) => r.vehicle.id === selectedVehicleId);
 
-  async function handleConfirm() {
+  function handleConfirm() {
+    if (!selectedRow || !allDatesPicked) return;
+    // Without a driver on the vehicle the stops would have nobody to drive them, so ask for one first.
+    if (!selectedRow.hasDriver) {
+      setIsDriverPromptOpen(true);
+      return;
+    }
+    void assign();
+  }
+
+  async function assign(pickedDriver?: { driverId: string; shouldNotify: boolean }) {
     if (!selectedVehicleId || !allDatesPicked) return;
 
     try {
@@ -220,8 +236,16 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
         shipmentId,
         vehicleId: selectedVehicleId,
         cargoStopDates: buildCargoStopDates(cargos, datesByKey),
+        driverId: pickedDriver?.driverId,
       });
       showSuccessToast({ title: `Nalog "${shipmentOrderNumber}" dodijeljen vozilu` });
+
+      // The driver prompt already asked whether to notify, so don't ask again.
+      if (pickedDriver) {
+        if (pickedDriver.shouldNotify) await notifyDriversAndFinish(selectedVehicleId);
+        else finishAssignment(selectedVehicleId);
+        return;
+      }
 
       // The stops take over the vehicle's driver; without one there's nobody to notify yet.
       const driverIds = getStopDriverIds(assignedStops);
@@ -237,13 +261,12 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
 
   function finishAssignment(vehicleId: string) {
     setNotifyPrompt(null);
+    setIsDriverPromptOpen(false);
     setIsNavigating(true);
     onAssigned(vehicleId);
   }
 
-  async function handleNotifyDrivers() {
-    if (!notifyPrompt) return;
-
+  async function notifyDriversAndFinish(vehicleId: string) {
     try {
       const notifiedStops = await notifyDrivers();
       if (notifiedStops.length === 0) {
@@ -263,17 +286,25 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
       showErrorToast({ title: 'Greška prilikom slanja obavijesti. Pokušajte ponovno s naloga.' });
     }
     // Moves on either way: the shipment is assigned, and the driver can still be notified from it.
-    finishAssignment(notifyPrompt.vehicleId);
+    finishAssignment(vehicleId);
   }
 
   return (
     <>
+      <SelectDriverDialog
+        isAssigning={isPending || isNotifying}
+        isOpen={isDriverPromptOpen}
+        orderNumber={shipmentOrderNumber}
+        vehicleRegistration={selectedRow?.vehicle.registration ?? ''}
+        onBack={() => setIsDriverPromptOpen(false)}
+        onConfirm={(pickedDriver) => void assign(pickedDriver)}
+      />
       <NotifyDriversDialog
         driverNames={notifyPrompt ? getEmployeeNames(notifyPrompt.driverIds, employees) : []}
         isNotifying={isNotifying}
         isOpen={!!notifyPrompt}
         orderNumber={shipmentOrderNumber}
-        onNotify={() => void handleNotifyDrivers()}
+        onNotify={() => notifyPrompt && void notifyDriversAndFinish(notifyPrompt.vehicleId)}
         onSkip={() => notifyPrompt && finishAssignment(notifyPrompt.vehicleId)}
       />
       <Dialog open={isOpen}>
@@ -357,10 +388,11 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
                 </Text>
               ) : (
                 <FlexLayout className="flex-col gap-2">
-                  {filteredRows.map(({ vehicle, latestStop, stops }) => (
+                  {filteredRows.map(({ vehicle, latestStop, stops, hasDriver }) => (
                     <VehicleRow
                       cargoById={cargoById}
                       datesByKey={datesByKey}
+                      hasDriver={hasDriver}
                       isSelected={vehicle.id === selectedVehicleId}
                       key={vehicle.id}
                       latestStop={latestStop}
@@ -671,6 +703,7 @@ interface VehicleRowProps {
   previewStops: PreviewStop[];
   cargoById: Map<string, Cargo>;
   datesByKey: Record<string, string | null>;
+  hasDriver: boolean;
   isSelected: boolean;
   onSelect(): void;
 }
@@ -682,6 +715,7 @@ const VehicleRow = ({
   previewStops,
   cargoById,
   datesByKey,
+  hasDriver,
   isSelected,
   onSelect,
 }: VehicleRowProps) => {
@@ -712,14 +746,19 @@ const VehicleRow = ({
             {vehicle.brand}
           </Text>
         </FlexLayout>
-        {latestStop?.driverId && (
-          <>
-            •
-            <FlexLayout className="items-center gap-1">
-              <Icon color="text-color-1" icon="IconSteeringWheel" size="m" />
-              <EmployeeName color="text-color-1" id={latestStop.driverId} variant="text-s-medium" />
-            </FlexLayout>
-          </>
+        •
+        {hasDriver && latestStop?.driverId ? (
+          <FlexLayout className="items-center gap-1">
+            <Icon color="text-color-1" icon="IconSteeringWheel" size="m" />
+            <EmployeeName color="text-color-1" id={latestStop.driverId} variant="text-s-medium" />
+          </FlexLayout>
+        ) : (
+          <FlexLayout className="items-center gap-1">
+            <Icon color="text-color-3" icon="IconSteeringWheel" size="m" />
+            <Text color="text-color-3" variant="text-s">
+              Bez vozača
+            </Text>
+          </FlexLayout>
         )}
       </FlexLayout>
       {rows.length > 0 && (
