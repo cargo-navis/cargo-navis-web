@@ -42,6 +42,7 @@ export const formDefaultValues: ShipmentFields = {
   transportContractorId: '',
   clientId: '',
   isAgency: false,
+  notificationEmails: [],
   cargo: [defaultCargo],
 };
 
@@ -141,6 +142,7 @@ const getDraftShipmentFormValues = async (draft: ShipmentDraft, tenant: Tenant) 
     internalNote: ai.internalNote || '',
     externalNote: ai.externalNote || '',
     isAgency: false,
+    notificationEmails: [],
     cargo,
   };
 };
@@ -159,6 +161,8 @@ const getCopyShipmentFormValues = async (shipment: Shipment) => {
     price: shipment.price !== undefined && shipment.price !== null ? shipment.price : undefined,
     internalNote: shipment.internalNote || '',
     externalNote: shipment.externalNote || '',
+    // Recipients come from the client's automatic contacts, same as a new shipment.
+    notificationEmails: [],
     cargo,
   };
 };
@@ -178,6 +182,7 @@ const getEditShipmentFormValues = async (shipment: Shipment) => {
     externalNote: shipment.externalNote || '',
     isAgency,
     agencyPrice: shipment.contractorPrice ?? undefined,
+    notificationEmails: shipment.notificationEmails ?? [],
     cargo,
   };
 };
@@ -229,6 +234,7 @@ export const transformFormDataToPayload = (
   if ('price' in formData && price !== undefined) payload.price = price;
   if ('internalNote' in formData) payload.internalNote = internalNote ?? '';
   if ('externalNote' in formData) payload.externalNote = externalNote ?? '';
+  if ('notificationEmails' in formData) payload.notificationEmails = formData.notificationEmails ?? [];
 
   // Handle cargo with addresses
   if (cargo) {

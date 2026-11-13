@@ -13,6 +13,7 @@ export interface CreateAgencyShipmentData {
   price: number;
   internalNote?: string;
   externalNote?: string;
+  notificationEmails?: string[];
   /** Invoice towards the client (parent). */
   invoiceStatus?: InvoiceStatus;
   /**

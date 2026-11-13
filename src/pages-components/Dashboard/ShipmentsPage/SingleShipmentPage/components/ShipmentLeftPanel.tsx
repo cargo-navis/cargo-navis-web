@@ -7,6 +7,7 @@ import { Box, Divider, FlexLayout, Icon, Text, TextButton, Tooltip } from '@/ui'
 
 import { EmptyShipmentVehicleStops } from './EmptyShipmentVehicleStops';
 import { ShipmentNoteModal } from './ShipmentNoteModal';
+import { ShipmentNotificationEmailsModal } from './ShipmentNotificationEmailsModal';
 import { ShipmentVehicleStops } from './ShipmentVehicleStops';
 
 interface ShipmentLeftPanelProps {
@@ -60,6 +61,8 @@ export const ShipmentLeftPanel = ({ shipment, onAssignClick }: ShipmentLeftPanel
           )}
         </FlexLayout>
       </Box>
+
+      <NotificationEmailsCard shipment={shipment} />
 
       <Box className={cardClass}>
         <FlexLayout className="flex-col gap-1">
@@ -130,6 +133,55 @@ export const ShipmentLeftPanel = ({ shipment, onAssignClick }: ShipmentLeftPanel
         onClose={() => setEditingNoteType(null)}
       />
     </FlexLayout>
+  );
+};
+
+const NotificationEmailsCard: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const emails = shipment.notificationEmails ?? [];
+
+  return (
+    <Box className={cardClass}>
+      <FlexLayout className="flex-col gap-2">
+        <FlexLayout className="items-center justify-between">
+          <FlexLayout className="items-center gap-2 text-dark-700 dark:text-light-100">
+            <Text variant="text-m-medium">Emailovi za obavijesti</Text>
+            <Tooltip
+              content={
+                <Box className="px-2 max-w-[260px]">
+                  <Text as="p" color="text-light-50" variant="text-xs">
+                    Primaju mail kad se teret utovari i istovari.
+                  </Text>
+                </Box>
+              }
+            >
+              <Box className="cursor-default">
+                <Icon icon="IconInfoCircle" />
+              </Box>
+            </Tooltip>
+          </FlexLayout>
+          <TextButton
+            iconRight="IconPencil"
+            size="s"
+            text="Uredi"
+            variant="secondary"
+            onClick={() => setIsModalOpen(true)}
+          />
+        </FlexLayout>
+        {emails.length ? (
+          emails.map((email) => (
+            <Text className="truncate" color="text-color-1" key={email} title={email} variant="text-s">
+              {email}
+            </Text>
+          ))
+        ) : (
+          <Text color="text-color-3" variant="text-s">
+            Nema primatelja
+          </Text>
+        )}
+      </FlexLayout>
+      {isModalOpen && <ShipmentNotificationEmailsModal shipment={shipment} onClose={() => setIsModalOpen(false)} />}
+    </Box>
   );
 };
 

@@ -101,7 +101,8 @@ export function ClientsTable({ clients }: { clients?: Client[] }) {
         header: 'Email',
         size: 250,
         cell: (props) => {
-          const { email } = props.row.original;
+          const [first, ...rest] = props.row.original.notificationEmails ?? [];
+          const email = first?.email;
 
           return (
             <FlexLayout
@@ -109,6 +110,7 @@ export function ClientsTable({ clients }: { clients?: Client[] }) {
               onClick={() => email && copyToClipboard(email)}
             >
               <Text variant="text-s">{email || '–'}</Text>
+              {rest.length > 0 && <Text variant="text-xxs">+{rest.length}</Text>}
               {email && (
                 <Icon
                   className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"

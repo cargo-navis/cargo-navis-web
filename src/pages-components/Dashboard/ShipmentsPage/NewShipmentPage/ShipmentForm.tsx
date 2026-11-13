@@ -24,6 +24,7 @@ import { ContractorField } from './ContractorField';
 import { useSuggestedClient } from './hooks';
 import { NewClientModal } from './NewClientModal';
 import { NewContractorModal } from './NewContractorModal';
+import { NotificationEmailsField } from './NotificationEmailsField';
 import { PriceField } from './PriceField';
 import { getShipmentSchema } from './schema';
 import { SuggestedClientBanner } from './SuggestedClientBanner';
@@ -245,6 +246,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
                     <PriceField />
                   </Box>
                 </FlexLayout>
+                <NotificationEmailsField isAutofillEnabled={!isEdit} />
                 <AgencyShipmentFields tenant={tenant} onAddContractor={() => setOpenCreateModal('contractor')} />
                 <FormTextarea
                   label={
