@@ -51,7 +51,8 @@ export const ClientNotificationEmails: React.FC<{ client: Client }> = ({ client 
       <FlexLayout className="flex-col">
         <Text variant="text-m-medium">Kontakti za obavijesti</Text>
         <Text color="text-color-3" variant="text-xs">
-          E-mail adrese koje primaju obavijesti o utovaru i istovaru tereta.<br></br>
+          E-mail adrese koje primaju obavijesti o utovaru i istovaru tereta.
+          <br />
           Automatski kontakti se sami dodaju na svaki novi nalog, ostali se nude kao prijedlog.
         </Text>
       </FlexLayout>
