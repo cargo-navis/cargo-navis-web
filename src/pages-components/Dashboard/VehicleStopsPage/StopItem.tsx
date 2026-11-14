@@ -205,6 +205,7 @@ export const StopTimelineEntry = ({ stop, nextStop, step, connectsToMore = false
 
   return (
     <TimelineItem
+      className="min-w-0"
       completed={isCompleted}
       separatorActive={isNextCompleted}
       step={step}
@@ -226,7 +227,7 @@ export const StopTimelineEntry = ({ stop, nextStop, step, connectsToMore = false
                 }),
           }}
         />
-        <TimelineDate style={{ marginBottom: '20px' }} textVariant="text-xxs-medium">
+        <TimelineDate className="truncate" style={{ marginBottom: '20px' }} textVariant="text-xxs-medium">
           <Box as="span" className="inline-flex items-center gap-1">
             {date ? (
               dayjs(date).format('DD.MM.YYYY')
@@ -249,10 +250,16 @@ export const StopTimelineEntry = ({ stop, nextStop, step, connectsToMore = false
           </Box>
         </TimelineDate>
         <TimelineTitle>
-          <Text as="span" className="inline-flex items-center gap-1" color="text-color-1" variant="text-s-medium">
-            {address?.placeName ?? '-'}
-            {hasLoading && <Icon className="text-orange-500 dark:text-orange-400" icon="IconPackageImport" size="s" />}
-            {hasUnloading && <Icon className="text-teal-500 dark:text-teal-400" icon="IconPackageExport" size="s" />}
+          <Text as="span" className="flex items-center gap-1 min-w-0" color="text-color-1" variant="text-s-medium">
+            <span className="truncate" title={address?.placeName ?? undefined}>
+              {address?.placeName ?? '-'}
+            </span>
+            {hasLoading && (
+              <Icon className="shrink-0 text-orange-500 dark:text-orange-400" icon="IconPackageImport" size="s" />
+            )}
+            {hasUnloading && (
+              <Icon className="shrink-0 text-teal-500 dark:text-teal-400" icon="IconPackageExport" size="s" />
+            )}
           </Text>
         </TimelineTitle>
         <Tooltip content={<StopTooltipContent stop={stop} />} isPortal>
@@ -282,7 +289,12 @@ export const StopTimelineEntry = ({ stop, nextStop, step, connectsToMore = false
         </Tooltip>
       </TimelineHeader>
       <TimelineContent>
-        <Text color="text-color-3" variant="text-xxxs">
+        <Text
+          className="block truncate"
+          color="text-color-3"
+          title={address?.streetName ?? undefined}
+          variant="text-xxxs"
+        >
           {address?.streetName}
         </Text>
       </TimelineContent>

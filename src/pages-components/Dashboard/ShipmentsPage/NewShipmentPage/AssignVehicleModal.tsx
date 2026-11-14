@@ -279,7 +279,7 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
       <Dialog open={isOpen}>
         <DialogContent
           aria-describedby={undefined}
-          className="max-w-[1040px]"
+          className="max-w-[1040px] grid-cols-[minmax(0,1fr)]"
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <DialogHeader className="flex-col">
@@ -340,7 +340,7 @@ export const AssignVehicleModal: React.FC<AssignVehicleModalProps> = ({
                 onClickIconRight={() => setSearch('')}
               />
             </Box>
-            <Box className="h-[420px] overflow-y-auto">
+            <Box className="h-[420px] overflow-y-auto overflow-x-hidden">
               {isLoading ? (
                 <FlexLayout className="flex-col gap-2">
                   {Array.from({ length: 6 }).map((_, i) => (
@@ -620,7 +620,12 @@ const PreviewStopTimelineEntry: React.FC<{
   const style = previewStyleByKind[kind];
 
   return (
-    <TimelineItem separatorActive={isNextCompleted} step={step} style={{ paddingRight: '32px', isolation: 'isolate' }}>
+    <TimelineItem
+      className="min-w-0"
+      separatorActive={isNextCompleted}
+      step={step}
+      style={{ paddingRight: '32px', isolation: 'isolate' }}
+    >
       <TimelineHeader>
         <TimelineSeparator
           className={isNextCompleted ? undefined : 'bg-transparent'}
@@ -637,14 +642,20 @@ const PreviewStopTimelineEntry: React.FC<{
                 }),
           }}
         />
-        <TimelineDate className={style.text} style={{ marginBottom: '20px' }}>
+        <TimelineDate className={clsx('truncate', style.text)} style={{ marginBottom: '20px' }}>
           {dayjs(date).format('DD.MM.YYYY')}
         </TimelineDate>
         <TimelineTitle>
-          <Text as="span" className="inline-flex items-center gap-1" color={style.text} variant="text-s-medium">
-            {preview.placeName || '-'}
-            {hasLoading && <Icon className="text-orange-500 dark:text-orange-400" icon="IconPackageImport" size="s" />}
-            {hasUnloading && <Icon className="text-teal-500 dark:text-teal-400" icon="IconPackageExport" size="s" />}
+          <Text as="span" className="flex items-center gap-1 min-w-0" color={style.text} variant="text-s-medium">
+            <span className="truncate" title={preview.placeName}>
+              {preview.placeName || '-'}
+            </span>
+            {hasLoading && (
+              <Icon className="shrink-0 text-orange-500 dark:text-orange-400" icon="IconPackageImport" size="s" />
+            )}
+            {hasUnloading && (
+              <Icon className="shrink-0 text-teal-500 dark:text-teal-400" icon="IconPackageExport" size="s" />
+            )}
           </Text>
         </TimelineTitle>
         <Tooltip content={<PreviewTooltipContent cargoGroups={cargoGroups} date={date} preview={preview} />} isPortal>
@@ -656,7 +667,7 @@ const PreviewStopTimelineEntry: React.FC<{
         </Tooltip>
       </TimelineHeader>
       <TimelineContent>
-        <Text color="text-color-3" variant="text-xxxs">
+        <Text className="block truncate" color="text-color-3" title={preview.streetName} variant="text-xxxs">
           {preview.streetName}
         </Text>
       </TimelineContent>
@@ -694,7 +705,7 @@ const VehicleRow = ({
   return (
     <FlexLayout
       as="button"
-      className={`flex-col gap-3 relative rounded-m border p-3 text-left ${
+      className={`flex-col gap-3 relative w-full min-w-0 rounded-m border p-3 text-left ${
         isSelected ? 'border-teal-500 bg-teal-500/10' : 'border-dark-100 hover:border-teal-500/70 dark:border-light-800'
       }`}
       type="button"
