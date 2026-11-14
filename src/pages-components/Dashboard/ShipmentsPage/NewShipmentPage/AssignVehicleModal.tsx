@@ -446,6 +446,8 @@ const CargoList = ({ label, color, cargos }: { label: string; color: string; car
 );
 
 const TIMELINE_SIZE = 5;
+// Past this many new stops, only the first and last stay visible and the rest collapse into one badge.
+const MAX_VISIBLE_PREVIEWS = 3;
 
 const previewStyleByKind = {
   loading: {
@@ -476,7 +478,13 @@ function getPreviewKind(p: PreviewStop): 'loading' | 'unloading' | 'both' {
 type TimelineRow =
   | { kind: 'real'; stop: VehicleStop }
   | { kind: 'preview'; preview: PreviewStop; date: string }
-  | { kind: 'gap'; stops: VehicleStop[] };
+  | { kind: 'gap'; stops: VehicleStop[] }
+  | { kind: 'previewGap'; previews: DatedPreview[] };
+
+interface DatedPreview {
+  preview: PreviewStop;
+  date: string;
+}
 
 function buildVehicleTimelineLayout({
   realStops,
@@ -503,9 +511,14 @@ function buildVehicleTimelineLayout({
     return a.date.localeCompare(b.date);
   });
 
-  // Previews are mandatory; budget the rest of the timeline slots for real stops.
-  const budget = Math.max(0, TIMELINE_SIZE - datedPreviews.length);
-  const visibleReal = new Set(sortedReal.slice(-budget));
+  // Previews take up to MAX_VISIBLE_PREVIEWS slots (first, "+N" badge, last); the rest go to real stops.
+  const isPreviewCollapsed = datedPreviews.length > MAX_VISIBLE_PREVIEWS;
+  const visiblePreviews = new Set(
+    isPreviewCollapsed ? [datedPreviews[0].p, datedPreviews[datedPreviews.length - 1].p] : datedPreviews.map((x) => x.p)
+  );
+  const budget = Math.max(0, TIMELINE_SIZE - Math.min(datedPreviews.length, MAX_VISIBLE_PREVIEWS));
+  // slice(-0) would return every stop, so a zero budget needs its own branch.
+  const visibleReal = new Set(budget > 0 ? sortedReal.slice(-budget) : []);
 
   type Merged =
     | { kind: 'real'; stop: VehicleStop; date: string | null }
@@ -516,13 +529,20 @@ function buildVehicleTimelineLayout({
     ...datedPreviews.map<Merged>(({ p, date }) => ({ kind: 'preview', preview: p, date })),
   ].sort((a, b) => (a.date ?? '￿').localeCompare(b.date ?? '￿'));
 
-  // Walk the merged list, collapsing runs of hidden real stops into gap entries.
+  // Walk the merged list, collapsing runs of hidden real stops and hidden previews into gap entries.
   const rows: TimelineRow[] = [];
   let pendingGap: VehicleStop[] = [];
+  let pendingPreviewGap: DatedPreview[] = [];
   const flushGap = () => {
     if (pendingGap.length > 0) {
       rows.push({ kind: 'gap', stops: pendingGap });
       pendingGap = [];
+    }
+  };
+  const flushPreviewGap = () => {
+    if (pendingPreviewGap.length > 0) {
+      rows.push({ kind: 'previewGap', previews: pendingPreviewGap });
+      pendingPreviewGap = [];
     }
   };
 
@@ -530,19 +550,26 @@ function buildVehicleTimelineLayout({
     if (item.kind === 'real') {
       if (visibleReal.has(item.stop)) {
         flushGap();
+        flushPreviewGap();
         rows.push({ kind: 'real', stop: item.stop });
       } else if (rows.length > 0) {
         // Only buffer a gap once we've emitted something; leading hidden stops
         // are dropped silently (matches VehicleStopCard's behavior of biasing
         // toward recent activity without a leading "+X").
+        flushPreviewGap();
         pendingGap.push(item.stop);
       }
+    } else if (visiblePreviews.has(item.preview)) {
+      flushGap();
+      flushPreviewGap();
+      rows.push({ kind: 'preview', preview: item.preview, date: item.date });
     } else {
       flushGap();
-      rows.push({ kind: 'preview', preview: item.preview, date: item.date });
+      pendingPreviewGap.push({ preview: item.preview, date: item.date });
     }
   }
   flushGap();
+  flushPreviewGap();
 
   return rows;
 }
@@ -630,7 +657,7 @@ const PreviewStopTimelineEntry: React.FC<{
         <TimelineSeparator
           className={isNextCompleted ? undefined : 'bg-transparent'}
           style={{
-            top: '28px',
+            top: '32px',
             height: '2px',
             width: 'calc(100% - 20px)',
             transform: 'translateX(18px) translateY(-50%)',
@@ -642,7 +669,11 @@ const PreviewStopTimelineEntry: React.FC<{
                 }),
           }}
         />
-        <TimelineDate className={clsx('truncate', style.text)} style={{ marginBottom: '20px' }}>
+        <TimelineDate
+          className={clsx('truncate', style.text)}
+          style={{ marginBottom: '20px' }}
+          textVariant="text-xxs-medium"
+        >
           {dayjs(date).format('DD.MM.YYYY')}
         </TimelineDate>
         <TimelineTitle>
@@ -661,7 +692,7 @@ const PreviewStopTimelineEntry: React.FC<{
         <Tooltip content={<PreviewTooltipContent cargoGroups={cargoGroups} date={date} preview={preview} />} isPortal>
           <TimelineIndicator
             className={clsx('z-10 cursor-default', style.indicator)}
-            style={{ top: '28px', left: 0, transform: 'translateY(-50%)' }}
+            style={{ top: '32px', left: 0, transform: 'translateY(-50%)' }}
             onClick={(e) => e.preventDefault()}
           />
         </Tooltip>
@@ -671,6 +702,90 @@ const PreviewStopTimelineEntry: React.FC<{
           {preview.streetName}
         </Text>
       </TimelineContent>
+    </TimelineItem>
+  );
+};
+
+const PreviewGapTooltipContent = ({ previews }: { previews: DatedPreview[] }) => (
+  <FlexLayout className="p-2 flex-col gap-5 items-start">
+    <Text className="italic" color="text-light-300" variant="text-xxs">
+      Bit će dodano
+    </Text>
+    {previews.map(({ preview, date }) => (
+      <FlexLayout className="flex-col items-start" key={preview.key}>
+        <Text className="leading-4" color="text-color-4" variant="text-xxs">
+          {dayjs(date).format('DD.MM.YYYY')}
+        </Text>
+        <FlexLayout className="items-center gap-1">
+          <Text color="text-light-50" variant="text-xxs-medium">
+            {preview.placeName || '-'}
+          </Text>
+          {preview.loadingCargoIds.length > 0 && <Icon className="text-orange-400" icon="IconPackageImport" size="s" />}
+          {preview.unloadingCargoIds.length > 0 && <Icon className="text-teal-400" icon="IconPackageExport" size="s" />}
+        </FlexLayout>
+        <Text className="leading-3" color="text-light-300" variant="text-xxs">
+          {preview.streetName}
+        </Text>
+      </FlexLayout>
+    ))}
+  </FlexLayout>
+);
+
+const PreviewGapBadge = ({
+  previews,
+  step,
+  isNextCompleted,
+}: {
+  previews: DatedPreview[];
+  step: number;
+  isNextCompleted?: boolean;
+}) => {
+  const kinds = new Set(previews.map(({ preview }) => getPreviewKind(preview)));
+  const style = previewStyleByKind[kinds.size === 1 ? getPreviewKind(previews[0].preview) : 'both'];
+  const showSeparator = isNextCompleted !== undefined;
+
+  return (
+    <TimelineItem
+      separatorActive={isNextCompleted}
+      step={step}
+      style={{ flex: 'none', width: '60px', isolation: 'isolate' }}
+    >
+      <TimelineHeader>
+        {showSeparator && (
+          <TimelineSeparator
+            className={isNextCompleted ? undefined : 'bg-transparent'}
+            style={{
+              top: '32px',
+              height: '2px',
+              width: 'calc(100% - 40px)',
+              transform: 'translateX(38px) translateY(-50%)',
+              ...(isNextCompleted
+                ? {}
+                : {
+                    backgroundImage:
+                      'repeating-linear-gradient(to right, rgb(19 148 159 / 0.3) 0 5px, transparent 5px 9px)',
+                  }),
+            }}
+          />
+        )}
+        <Box style={{ height: '20px', marginBottom: '20px' }} />
+        <Tooltip content={<PreviewGapTooltipContent previews={previews} />} isPortal>
+          <TimelineIndicator
+            className={clsx('z-10 cursor-default flex items-center justify-center', style.indicator, style.text)}
+            style={{
+              top: '32px',
+              left: 0,
+              transform: 'translateY(-50%)',
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+            }}
+            onClick={(e) => e.preventDefault()}
+          >
+            <Text variant="text-xxs-medium">+{previews.length}</Text>
+          </TimelineIndicator>
+        </Tooltip>
+      </TimelineHeader>
     </TimelineItem>
   );
 };
@@ -767,6 +882,16 @@ const VehicleRow = ({
                 );
               }
               const isNextCompleted = next ? (next.kind === 'real' ? isStopCompleted(next.stop) : false) : undefined;
+              if (row.kind === 'previewGap') {
+                return (
+                  <PreviewGapBadge
+                    isNextCompleted={isNextCompleted}
+                    key={`preview-gap-${i}`}
+                    previews={row.previews}
+                    step={step}
+                  />
+                );
+              }
               return (
                 <RemainingStopsBadge
                   count={row.stops.length}
