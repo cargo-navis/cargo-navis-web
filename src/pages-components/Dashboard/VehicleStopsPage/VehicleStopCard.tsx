@@ -89,7 +89,8 @@ export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
             </FlexLayout>
           ))}
         </FlexLayout>
-        <Box className="flex-1 min-w-0">
+        {/* w-0 keeps the truncated (nowrap) stop labels from setting the page's minimum width. */}
+        <Box className="flex-1 w-0 min-w-0">
           {stops.length === 0 ? (
             <Text color="text-color-3" variant="text-s">
               Nema stanica za ovo vozilo.
