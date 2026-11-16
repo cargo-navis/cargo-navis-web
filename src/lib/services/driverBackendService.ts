@@ -9,8 +9,15 @@ import axios, {
 import type { DriverTokenExchangeResponse } from '@/lib/api/driver.d';
 import { getBackendBaseUrl } from '@/lib/utils/backendBaseUrl';
 
+import { withCrossTabLock } from './crossTabLock';
 import { readAccessToken } from './readAccessToken';
 import { createSingleFlight } from './singleFlight';
+
+// Shared with the dispatcher client (backendService.ts): a refresh here waits for an in-flight refresh in a
+// dispatcher tab in the same browser, and vice versa. Both portals share the same `refreshToken` cookie, so a
+// parallel refresh from either sends a token the first one has already rotated away — and the backend reads
+// a replayed token as stolen (RefreshAccessTokenImpl invalidates every token on the account).
+const REFRESH_LOCK = 'cargo-navis-auth-refresh';
 
 type AxiosFunction = <T>(url: string, config?: AxiosRequestConfig & { fullResponse?: boolean }) => Promise<T>;
 type AxiosDataFunction = <T>(
@@ -67,14 +74,17 @@ export function createDriverBackendService({ adapter }: { adapter?: AxiosAdapter
     return storeAccessToken(result);
   }
 
-  // Parallel callers share one in-flight refresh.
+  // Parallel callers in this tab share one in-flight refresh (createSingleFlight); other tabs on this origin wait
+  // on the same Web Lock (withCrossTabLock), so only one refresh is in flight across the whole browser.
   const refresh = createSingleFlight(() =>
-    authClient
-      .post('/auth/refresh')
-      .then(storeAccessToken)
-      .catch((error) => {
-        throw toSessionError(error);
-      })
+    withCrossTabLock(REFRESH_LOCK, () =>
+      authClient
+        .post('/auth/refresh')
+        .then(storeAccessToken)
+        .catch((error) => {
+          throw toSessionError(error);
+        })
+    )
   );
 
   // After a 401: refresh, or re-exchange the link if refresh is rejected because the httpOnly refresh cookie is
