@@ -161,7 +161,7 @@ export function PartnerDetail({
                 {email ? (
                   <span className="flex items-center gap-2">
                     <a
-                      className="flex min-w-0 items-center gap-1.5 text-primary hover:underline dark:text-teal-300"
+                      className="flex min-w-0 items-center gap-1.5 text-brand hover:underline"
                       href={`mailto:${email}`}
                     >
                       <Icon className="shrink-0" icon="IconMail" size="s" /> <span className="truncate">{email}</span>

@@ -12,7 +12,7 @@ import { Icon } from '@/ui';
 /**
  * Date fields (lab /forms date-fields.tsx): a trigger styled like an input (40px outline button, calendar icon),
  * Croatian calendar in a popover, „7.11.2026.” format, × to clear. YearPicker = 12-year grid (Calendar has no year
- * view). DateRangePicker = presets on the left + two months (Analitika).
+ * view). DateRangePicker = presets on the left + two months (Analitika, Nalozi).
  */
 
 /** Trigger styled like an input (outline button), so it lines up with the other fields. */
@@ -99,7 +99,8 @@ export function DatePicker({
           mode="single"
           selected={value ?? undefined}
           onSelect={(date) => {
-            onChange(date ?? null);
+            // Clicking the selected day again deselects it in the calendar: keep the value (× clears).
+            if (date) onChange(date);
             setOpen(false);
           }}
         />
@@ -181,7 +182,7 @@ export function YearPicker({
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Date range with presets (Analitika)
+// Date range with presets (Analitika; Nalozi „Spremno za utovar” with `future`)
 // ---------------------------------------------------------------------------------------------------------------------
 
 export type { DateRange };
@@ -192,12 +193,24 @@ function addMonths(date: Date, months: number) {
   return result;
 }
 
+function addDays(date: Date, days: number) {
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+
+/** Monday of the week (Croatian weeks start on Monday). */
+function startOfWeek(date: Date) {
+  return addDays(date, -((date.getDay() + 6) % 7));
+}
+
 export interface DateRangePreset {
   label: string;
   /** undefined = no limit („Ukupno”). */
   range(today: Date): DateRange | undefined;
 }
 
+/** Looking back (Analitika). */
 export const DATE_RANGE_PRESETS: DateRangePreset[] = [
   { label: 'Od početka godine', range: (today) => ({ from: new Date(today.getFullYear(), 0, 1), to: today }) },
   { label: 'Zadnja 3 mjeseca', range: (today) => ({ from: addMonths(today, -3), to: today }) },
@@ -208,23 +221,60 @@ export const DATE_RANGE_PRESETS: DateRangePreset[] = [
   { label: 'Ukupno', range: () => undefined },
 ];
 
+/** Around today, mostly ahead (Nalozi: loading dates are planned days). */
+export const UPCOMING_DATE_RANGE_PRESETS: DateRangePreset[] = [
+  { label: 'Danas', range: (today) => ({ from: today, to: today }) },
+  { label: 'Sutra', range: (today) => ({ from: addDays(today, 1), to: addDays(today, 1) }) },
+  { label: 'Ovaj tjedan', range: (today) => ({ from: startOfWeek(today), to: addDays(startOfWeek(today), 6) }) },
+  {
+    label: 'Sljedeći tjedan',
+    range: (today) => ({ from: addDays(startOfWeek(today), 7), to: addDays(startOfWeek(today), 13) }),
+  },
+  { label: 'Zadnjih 7 dana', range: (today) => ({ from: addDays(today, -6), to: today }) },
+  { label: 'Zadnjih 30 dana', range: (today) => ({ from: addDays(today, -29), to: today }) },
+  { label: 'Ukupno', range: () => undefined },
+];
+
 function sameDay(a: Date | undefined, b: Date | undefined) {
   return !!a && !!b && a.toDateString() === b.toDateString();
 }
 
+/**
+ * Presets on the left, two months on the right. A range is picked with two clicks (start, end; the same day twice =
+ * that day) and only then reported, so the page doesn't refetch on the first click; closing after one click keeps the
+ * previous range. `future` allows days after today (Nalozi), otherwise they're disabled (Analitika).
+ */
 export function DateRangePicker({
   value,
   onChange,
   presets = DATE_RANGE_PRESETS,
+  future = false,
   className,
 }: {
   value: DateRange | undefined;
   onChange(value: DateRange | undefined): void;
   presets?: DateRangePreset[];
+  future?: boolean;
   className?: string;
 }) {
   const today = React.useMemo(() => new Date(), []);
   const [open, setOpen] = React.useState(false);
+  // The start day while the end is being picked; null = not picking.
+  const [start, setStart] = React.useState<Date | null>(null);
+
+  function handleOpenChange(next: boolean) {
+    setOpen(next);
+    if (!next) setStart(null);
+  }
+
+  function handleDayClick(day: Date) {
+    if (!start) {
+      setStart(day);
+      return;
+    }
+    onChange(day < start ? { from: day, to: start } : { from: start, to: day });
+    handleOpenChange(false);
+  }
 
   const activePreset = presets.find((preset) => {
     const presetRange = preset.range(today);
@@ -233,9 +283,10 @@ export function DateRangePicker({
   });
 
   const label = !value?.from ? 'Ukupno' : `${formatDate(value.from)} – ${value.to ? formatDate(value.to) : '…'}`;
+  const anchor = value?.from ? (future ? value.from : addMonths(value.to ?? value.from, -1)) : undefined;
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <DateTrigger className={cn('w-auto min-w-64', className)} isEmpty={false}>
         {activePreset ? `${activePreset.label} · ${label}` : label}
       </DateTrigger>
@@ -250,7 +301,7 @@ export function DateRangePicker({
                 variant={preset === activePreset ? 'secondary' : 'ghost'}
                 onClick={() => {
                   onChange(preset.range(today));
-                  setOpen(false);
+                  handleOpenChange(false);
                 }}
               >
                 {preset.label}
@@ -258,13 +309,13 @@ export function DateRangePicker({
             ))}
           </div>
           <Calendar
-            defaultMonth={value?.from ? addMonths(value.to ?? value.from, -1) : undefined}
-            disabled={{ after: today }}
+            defaultMonth={anchor}
+            disabled={future ? undefined : { after: today }}
             locale={hr}
             mode="range"
             numberOfMonths={2}
-            selected={value}
-            onSelect={onChange}
+            selected={start ? { from: start, to: undefined } : value}
+            onSelect={(_range, day) => handleDayClick(day)}
           />
         </div>
       </PopoverContent>

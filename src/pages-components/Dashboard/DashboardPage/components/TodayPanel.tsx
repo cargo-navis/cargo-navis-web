@@ -38,7 +38,7 @@ function StopRow({ stop, lookups }: { stop: TodayStop; lookups: Lookups }) {
       href={`/dashboard/shipments/${stop.shipmentId}`}
     >
       {stop.done ? (
-        <Icon aria-label="Gotovo" className="text-green-600 dark:text-green-500" icon="IconCheck" size="s" />
+        <Icon aria-label="Gotovo" className="text-success" icon="IconCheck" size="s" />
       ) : (
         <span className="size-2.5 justify-self-center rounded-full border-2 border-muted-foreground/40" />
       )}

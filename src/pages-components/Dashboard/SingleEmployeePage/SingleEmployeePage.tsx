@@ -217,7 +217,7 @@ function EmployeeDetail({ employee }: { employee: Employee }) {
               {employee.email ? (
                 <span className="flex flex-col gap-1.5">
                   <a
-                    className="flex min-w-0 items-center gap-1.5 text-primary hover:underline dark:text-teal-300"
+                    className="flex min-w-0 items-center gap-1.5 text-brand hover:underline"
                     href={`mailto:${employee.email}`}
                   >
                     <Icon className="shrink-0" icon="IconMail" size="s" />
@@ -356,7 +356,7 @@ function ResendInvite({ employee }: { employee: Employee }) {
 
   return (
     <span className="flex flex-wrap items-center gap-x-2 gap-y-1">
-      <span className="text-xs text-amber-700 dark:text-amber-400">Još nije postavio lozinku.</span>
+      <span className="text-xs text-warning">Još nije postavio lozinku.</span>
       <Button loading={isPending} size="xs" variant="ghost" onClick={() => void handleResend()}>
         <Icon data-icon="inline-start" icon="IconMailForward" size="xs" /> Ponovno pošalji pozivnicu
       </Button>

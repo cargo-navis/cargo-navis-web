@@ -54,7 +54,7 @@ export const NAV: NavItem[] = [
     icon: 'IconTruckDelivery',
     match: startsWith('/dashboard/vehicle-stops'),
   },
-  // One item; /dashboard/fleet is today's fleet overview until the one-page Flota (PR 7) replaces that page.
+  // One item: the one-page Flota with type tabs (the old per-type URLs redirect there, next.config.mjs).
   { key: 'fleet', label: 'Flota', href: '/dashboard/fleet', icon: 'IconTruck', match: startsWith('/dashboard/fleet') },
   {
     key: 'clients',
@@ -93,7 +93,7 @@ export function canAccessNavItem(item: NavItem, userPositions: PositionEnum[] | 
 }
 
 export const POSITION_LABELS: Record<PositionEnum, string> = {
-  [PositionEnum.Ceo]: 'CEO',
+  [PositionEnum.Ceo]: 'Direktor',
   [PositionEnum.Manager]: 'Menadžer',
   [PositionEnum.Dispatcher]: 'Disponent',
   [PositionEnum.Driver]: 'Vozač',

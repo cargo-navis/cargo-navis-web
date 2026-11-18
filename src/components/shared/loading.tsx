@@ -19,7 +19,7 @@ export function LoadingBar({ className }: { className?: string }) {
       className={cn('pointer-events-none absolute inset-x-0 top-0 h-0.5 overflow-hidden bg-primary/15', className)}
       data-slot="loading-bar"
     >
-      <div className="h-full w-1/3 animate-[loading-bar_1s_ease-in-out_infinite] bg-primary dark:bg-teal-400" />
+      <div className="h-full w-1/3 animate-[loading-bar_1s_ease-in-out_infinite] bg-brand-solid" />
     </div>
   );
 }

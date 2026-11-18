@@ -67,9 +67,7 @@ export function ViesLookup({ onResult }: { onResult(result: ViesResult): void })
   if (hint) status = <span className="text-destructive">{hint}</span>;
   else if (lookup && !isFetching && data && (data.name || data.address))
     status = (
-      <span className="text-green-700 dark:text-green-400">
-        Pronađeno: {data.name ?? data.taxId} · podaci su upisani, provjeri ih ispod.
-      </span>
+      <span className="text-success">Pronađeno: {data.name ?? data.taxId} · podaci su upisani, provjeri ih ispod.</span>
     );
   else if (lookup && !isFetching && data)
     status = `VIES je potvrdio porezni broj ${data.taxId}, ali ne otkriva podatke o tvrtki. Upiši ih ispod.`;

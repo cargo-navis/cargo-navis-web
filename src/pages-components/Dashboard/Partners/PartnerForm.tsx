@@ -117,6 +117,7 @@ export function PartnerForm({
   initialValues,
   onSaved,
   onCancel,
+  onDirtyChange,
 }: {
   kind: PartnerKind;
   /** Edit this partner; without it the form creates one. */
@@ -126,12 +127,17 @@ export function PartnerForm({
   /** `id` is '' when a create returned no body (then go to the list). */
   onSaved(saved: SavedPartner): void;
   onCancel(): void;
+  /** Reports whether anything differs from the starting values (a dialog asks „Odbaciti promjene?” then). */
+  onDirtyChange?(dirty: boolean): void;
 }) {
   const words = PARTNER_WORDS[kind];
   const isEdit = !!partner;
-  const [values, setValues] = React.useState<Values>(() =>
+  const [initial] = React.useState<Values>(() =>
     partner ? fromPartner(partner) : initialValues ? applyInitial(EMPTY, initialValues) : EMPTY
   );
+  const [values, setValues] = React.useState<Values>(initial);
+  const dirty = JSON.stringify(values) !== JSON.stringify(initial);
+  React.useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
   const [touched, setTouched] = React.useState<Partial<Record<Key, boolean>>>({});
   const [triedToSave, setTriedToSave] = React.useState(false);
   const { mutateAsync: savePartner, isPending: saving } = useSavePartner(kind, partner?.id);

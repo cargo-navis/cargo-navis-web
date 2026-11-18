@@ -12,8 +12,8 @@ import {
   useVehiclesAnalytics,
 } from '@/lib/hooks/api';
 import { plural } from '@/lib/utils/plural';
-import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
 
+import { vehicleHref } from '../FleetPage/fleet';
 import { ChartCard, type Period } from './ChartCard';
 import { type Filters, GRANULARITY } from './filters';
 import { eur, int, percent } from './format';
@@ -213,7 +213,7 @@ export function Regular({ filters, data, today }: ViewProps) {
           id: item.vehicleId,
           name: vehicle?.registration ?? '—',
           detail: vehicle ? [vehicle.brand, VEHICLE_TYPE_LABEL[vehicle.type]].filter(Boolean).join(' · ') : undefined,
-          href: vehicle ? `/dashboard/fleet/${vehicleTypeToPathMap[vehicle.type]}/${vehicle.id}` : undefined,
+          href: vehicle ? vehicleHref(vehicle.id) : undefined,
           count: item.shipmentCount,
           revenue: item.totalPrice,
         };

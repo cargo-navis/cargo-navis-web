@@ -191,7 +191,7 @@ function ExpiryField({
           <span
             className={cn(
               'text-xs font-medium whitespace-nowrap',
-              state === 'expired' ? 'text-destructive' : 'text-amber-700 dark:text-amber-400'
+              state === 'expired' ? 'text-destructive' : 'text-warning'
             )}
           >
             {hint}
@@ -459,7 +459,7 @@ export function EmployeeForm({
                   <label
                     className={cn(
                       'flex h-10 cursor-pointer items-center gap-2 rounded-xl border px-3 text-sm',
-                      checked && 'border-primary/50 bg-teal-50 dark:bg-teal-900/40'
+                      checked && 'border-primary/50 bg-brand-soft'
                     )}
                     key={position}
                   >

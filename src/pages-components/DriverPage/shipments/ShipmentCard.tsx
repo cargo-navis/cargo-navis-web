@@ -1,166 +1,170 @@
-import clsx from 'clsx';
 import dayjs from 'dayjs';
 
-import { CountryFlag } from '@/components/countries';
+import { CountryFlag } from '@/components/shared/country-flag';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import type { DriverShipment, DriverShipmentSummary } from '@/lib/api/driver';
 import type { VehicleStopAddress } from '@/lib/api/vehicleStops';
 import { useDriverShipment } from '@/lib/hooks/api/driver';
-import { BottomSheet, Box, Button, FlexLayout, Icon, Text } from '@/ui';
+import { cn } from '@/lib/utils';
+import { plural } from '@/lib/utils/plural';
+import { Icon } from '@/ui';
 
 import { CompleteStopButton } from '../stops/CompleteStopButton';
 import { DisponentContact } from '../stops/DisponentContact';
-import { COMPLETED_CARD_CLASSES, COMPLETED_COLOR, DocumentsIndicator } from '../stops/StopCard';
+import { DocumentsIcon } from '../stops/StopCard';
 import { StopDetails } from '../stops/StopDetails';
 import { StopDocuments } from '../stops/StopDocuments';
-import { formatStopDate, getStopKindLabels, getStopsDisponent, isShipmentCompleted } from '../utils';
+import { COMPLETED_CARD, COMPLETED_TEXT, DriverEmpty, keepOpenOnToastPress } from '../ui';
+import { formatCompletedAt, formatStopDate, getStopKindLabels, getStopsDisponent, isShipmentCompleted } from '../utils';
 import { ShipmentSheetSkeleton, ShipmentSummarySkeleton } from './ShipmentSheetSkeleton';
 
+/** Flag + place. */
 const RoutePlace: React.FC<{ address: VehicleStopAddress | null }> = ({ address }) => (
-  <FlexLayout className="items-center gap-[6px]">
+  <span className="inline-flex items-center gap-1.5">
     {address?.countryCode && <CountryFlag code={address.countryCode} size="xxs" />}
-    <Text color="text-color-2" variant="text-xs">
-      {address?.placeName ?? '-'}
-    </Text>
-  </FlexLayout>
+    {address?.placeName ?? '-'}
+  </span>
 );
+
+/** „2/3 mjesta”: confirmed of all utovar / istovar places. */
+const formatProgress = ({ completedStopsCount, totalStopsCount }: DriverShipmentSummary) =>
+  `${completedStopsCount}/${totalStopsCount} ${plural(totalStopsCount, ['mjesto', 'mjesta', 'mjesta'])}`;
 
 const getShipmentTitle = (shipment: DriverShipmentSummary) => shipment.clientName ?? `Nalog #${shipment.orderNumber}`;
-
-/** Client, order number, route and progress; shared by the card and its bottom sheet header. */
-// Same fade as completed stop cards.
-const FADED_CLASS = 'opacity-60';
-
-const ShipmentSummary: React.FC<{
-  shipment: DriverShipmentSummary;
-  /** The card of a completed order: a green title ending in a check, all faded like completed stops. */
-  isCompleted?: boolean;
-  hasDocuments?: boolean;
-  truncateTitle?: boolean;
-}> = ({ shipment, isCompleted, hasDocuments, truncateTitle }) => (
-  <FlexLayout className={clsx('min-w-0 flex-col gap-1 text-left', isCompleted && FADED_CLASS)}>
-    <FlexLayout className="flex-col">
-      <FlexLayout className="items-start gap-2">
-        <Text
-          className={clsx('min-w-0', truncateTitle ? 'truncate' : '[overflow-wrap:anywhere]')}
-          color={isCompleted ? COMPLETED_COLOR : 'text-color-1'}
-          variant="text-l-bold"
-        >
-          {getShipmentTitle(shipment)}
-        </Text>
-        {isCompleted && (
-          <FlexLayout className="h-[40px] shrink-0 items-center">
-            <Icon aria-label="Završen nalog" color={COMPLETED_COLOR} icon="IconCircleCheck" size="l" />
-          </FlexLayout>
-        )}
-      </FlexLayout>
-      {shipment.clientName && (
-        <Text color="text-color-3" variant="text-xs">
-          Nalog #{shipment.orderNumber}
-        </Text>
-      )}
-    </FlexLayout>
-    <FlexLayout className="flex-wrap items-center gap-[6px]">
-      <RoutePlace address={shipment.origin} />
-      <Icon color="text-dark-500 dark:text-light-300" icon="IconArrowRight" size="s" />
-      <RoutePlace address={shipment.destination} />
-    </FlexLayout>
-    <FlexLayout className="items-center gap-2">
-      <FlexLayout className="gap-1">
-        {Array.from({ length: shipment.totalStopsCount }, (_, index) => (
-          <Box
-            className={clsx(
-              'size-2 rounded-legacy-circle',
-              index < shipment.completedStopsCount ? 'bg-teal-600' : 'border border-dark-300 dark:border-light-600'
-            )}
-            key={index}
-          />
-        ))}
-      </FlexLayout>
-      <Text color="text-color-3" variant="text-xxs">
-        {shipment.completedStopsCount}/{shipment.totalStopsCount} postaja
-      </Text>
-      {hasDocuments && <DocumentsIndicator />}
-    </FlexLayout>
-  </FlexLayout>
-);
-
-const ShipmentTimeline: React.FC<{ shipment: DriverShipment }> = ({ shipment }) => (
-  <FlexLayout className="flex-col">
-    {shipment.stops.map((stop, index) => {
-      const isLast = index === shipment.stops.length - 1;
-      return (
-        <FlexLayout className="gap-3" key={stop.id}>
-          <FlexLayout className="flex-col items-center">
-            <Box
-              className={clsx(
-                'mt-1 size-3 shrink-0 rounded-legacy-circle border-2',
-                stop.completedAt ? 'border-teal-600 bg-teal-600' : 'border-dark-300 dark:border-light-600'
-              )}
-            />
-            {!isLast && (
-              <Box
-                className={clsx(
-                  'w-[1px] grow',
-                  // Segment between two completed stops: the part of the route already driven.
-                  stop.completedAt && shipment.stops[index + 1].completedAt
-                    ? 'bg-teal-600'
-                    : 'bg-dark-200 dark:bg-light-800'
-                )}
-              />
-            )}
-          </FlexLayout>
-          <FlexLayout className={clsx('min-w-0 grow flex-col gap-3', !isLast && 'pb-8')}>
-            <FlexLayout className="items-center gap-2">
-              <Text color="text-color-1" variant="text-xs-medium">
-                {getStopKindLabels(stop).title}
-              </Text>
-              <Text color="text-color-3" variant="text-xs">
-                {formatStopDate(stop.date, dayjs())}
-              </Text>
-            </FlexLayout>
-            <StopDetails
-              actions={
-                <>
-                  <CompleteStopButton stop={stop} />
-                  <StopDocuments isReadOnly stop={stop} />
-                </>
-              }
-              hideShipmentHeaders
-              stop={stop}
-            />
-          </FlexLayout>
-        </FlexLayout>
-      );
-    })}
-  </FlexLayout>
-);
 
 interface ShipmentCardProps {
   shipment: DriverShipmentSummary;
   onOpen(): void;
 }
 
-/** A completed order is history, with the same light green card as completed stops in the route. */
+/**
+ * An order: client, number, from → to and progress (a dot per stop). A completed order is history, with the same
+ * light green card as completed stops in the route and a green title ending in a check.
+ */
 export const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment, onOpen }) => {
   const isCompleted = isShipmentCompleted(shipment);
 
   return (
-    <FlexLayout
-      aria-haspopup="dialog"
-      as="button"
-      className={clsx(
-        'w-full rounded-legacy-l p-4',
-        isCompleted
-          ? COMPLETED_CARD_CLASSES
-          : 'border border-dark-100 bg-white shadow-xs dark:border-light-850 dark:bg-light-875'
-      )}
-      type="button"
-      onClick={onOpen}
-    >
-      <ShipmentSummary isCompleted={isCompleted} shipment={shipment} truncateTitle />
-    </FlexLayout>
+    <Card className={cn('p-0', isCompleted && COMPLETED_CARD)}>
+      <button
+        aria-haspopup="dialog"
+        className={cn('flex w-full flex-col gap-1 p-4 text-left', isCompleted && 'opacity-60')}
+        type="button"
+        onClick={onOpen}
+      >
+        <span
+          className={cn(
+            'flex items-start gap-2 font-heading text-2xl font-bold tracking-tight [overflow-wrap:anywhere]',
+            isCompleted && COMPLETED_TEXT
+          )}
+        >
+          <span className="min-w-0">{getShipmentTitle(shipment)}</span>
+          {isCompleted && <Icon aria-label="Završen nalog" className="mt-1 shrink-0" icon="IconCircleCheck" size="l" />}
+        </span>
+        {shipment.clientName && <span className="text-sm text-muted-foreground">Nalog #{shipment.orderNumber}</span>}
+        <span className="flex flex-wrap items-center gap-1.5 text-sm text-foreground/80">
+          <RoutePlace address={shipment.origin} />
+          <Icon className="text-muted-foreground" icon="IconArrowRight" size="s" />
+          <RoutePlace address={shipment.destination} />
+        </span>
+        <span className="flex items-center gap-2">
+          <span className="flex gap-1">
+            {Array.from({ length: shipment.totalStopsCount }, (_, index) => (
+              <span
+                className={cn(
+                  'size-2 rounded-full',
+                  index < shipment.completedStopsCount ? 'bg-primary' : 'border border-muted-foreground/40'
+                )}
+                key={index}
+              />
+            ))}
+          </span>
+          <span className="text-[13px] text-muted-foreground">{formatProgress(shipment)}</span>
+        </span>
+      </button>
+    </Card>
   );
 };
+
+/** The order's stops on a line: kind, place and day; then the stop's details, confirm or when it was confirmed. */
+const ShipmentTimeline: React.FC<{ shipment: DriverShipment }> = ({ shipment }) => (
+  <div className="flex flex-col">
+    {shipment.stops.map((stop, index) => {
+      const isLast = index === shipment.stops.length - 1;
+      return (
+        <div className="flex gap-3" key={stop.id}>
+          <div className="flex flex-col items-center">
+            <div
+              className={cn(
+                'mt-1 size-3 shrink-0 rounded-full border-2',
+                stop.completedAt ? 'border-primary bg-primary' : 'border-muted-foreground/40'
+              )}
+            />
+            {!isLast && (
+              <div
+                className={cn(
+                  'w-px grow',
+                  // Segment between two completed stops: the part of the route already driven.
+                  stop.completedAt && shipment.stops[index + 1].completedAt ? 'bg-primary' : 'bg-border'
+                )}
+              />
+            )}
+          </div>
+          <div className={cn('flex min-w-0 grow flex-col gap-3', !isLast && 'pb-8')}>
+            <span className="text-sm">
+              <span className="inline-flex flex-wrap items-center gap-x-1.5 font-medium">
+                {getStopKindLabels(stop).title} ·
+                {stop.address?.countryCode && <CountryFlag code={stop.address.countryCode} size="xxs" />}
+                {stop.address?.placeName ?? 'Bez adrese'}
+              </span>{' '}
+              <span className="text-muted-foreground">{formatStopDate(stop.date, dayjs())}</span>
+            </span>
+            <StopDetails
+              actions={
+                <>
+                  {stop.completedAt ? (
+                    <span className={cn('flex items-center gap-1 text-sm', COMPLETED_TEXT)}>
+                      <Icon icon="IconCircleCheck" size="s" />
+                      Potvrđeno {formatCompletedAt(stop.completedAt, dayjs())}
+                    </span>
+                  ) : (
+                    <CompleteStopButton stop={stop} />
+                  )}
+                  <StopDocuments isReadOnly stop={stop} />
+                </>
+              }
+              isInTimeline
+              stop={stop}
+            />
+          </div>
+        </div>
+      );
+    })}
+  </div>
+);
+
+/** Title, „Nalog #… · from → to” and 📎 when a stop has documents; shared by the loaded order and the list summary. */
+const ShipmentDrawerHeader: React.FC<{ shipment: DriverShipmentSummary; hasDocuments?: boolean }> = ({
+  shipment,
+  hasDocuments,
+}) => (
+  <>
+    <DrawerTitle className="text-2xl [overflow-wrap:anywhere]">{getShipmentTitle(shipment)}</DrawerTitle>
+    {/* A div: the 📎 icon is a div too, which a <p> can't hold. */}
+    <DrawerDescription className="flex flex-wrap items-center gap-1.5" render={<div />}>
+      {[
+        shipment.clientName && `Nalog #${shipment.orderNumber}`,
+        `${shipment.origin?.placeName ?? '-'} → ${shipment.destination?.placeName ?? '-'}`,
+        formatProgress(shipment),
+      ]
+        .filter(Boolean)
+        .join(' · ')}
+      {hasDocuments && <DocumentsIcon />}
+    </DrawerDescription>
+  </>
+);
 
 interface ShipmentSheetProps {
   /** Kept set while closing, so the content doesn't vanish during the slide-out. */
@@ -179,27 +183,26 @@ export const ShipmentSheet: React.FC<ShipmentSheetProps> = ({ shipmentId, summar
   function renderContent() {
     if (shipment) {
       return (
-        <FlexLayout className="flex-col gap-8">
+        <div className="flex flex-col gap-8">
           <ShipmentTimeline shipment={shipment} />
           <DisponentContact disponent={getStopsDisponent(shipment.stops)} />
-        </FlexLayout>
+        </div>
       );
     }
 
     if (isError) {
       return (
-        <FlexLayout className="flex-col items-center gap-2 py-16">
-          <Text color="text-color-3" variant="text-s">
-            Nalog se nije učitao.
-          </Text>
-          <Button
-            isLoading={isRefetching}
-            size="m"
-            text="Pokušaj ponovno"
-            variant="secondary"
-            onClick={() => void refetch()}
-          />
-        </FlexLayout>
+        <DriverEmpty
+          action={
+            <Button loading={isRefetching} size="xl" variant="outline" onClick={() => void refetch()}>
+              <Icon data-icon="inline-start" icon="IconReload" size="m" />
+              Pokušaj ponovno
+            </Button>
+          }
+          icon="IconAlertTriangle"
+          title="Nalog se nije učitao."
+          variant="danger"
+        />
       );
     }
 
@@ -209,21 +212,30 @@ export const ShipmentSheet: React.FC<ShipmentSheetProps> = ({ shipmentId, summar
   function renderHeader() {
     if (header) {
       return (
-        <ShipmentSummary hasDocuments={shipment?.stops.some((stop) => stop.documents.length > 0)} shipment={header} />
+        <ShipmentDrawerHeader
+          hasDocuments={shipment?.stops.some((stop) => stop.documents.length > 0)}
+          shipment={header}
+        />
       );
     }
     // Opened from a notification or link: no list summary to show while the order loads.
-    return isError ? null : <ShipmentSummarySkeleton />;
+    return (
+      <>
+        <DrawerTitle className="sr-only">Nalog</DrawerTitle>
+        {!isError && <ShipmentSummarySkeleton />}
+      </>
+    );
   }
 
   return (
-    <BottomSheet
-      header={renderHeader()}
-      isOpen={isOpen}
-      title={header ? getShipmentTitle(header) : 'Nalog'}
-      onOpenChange={onOpenChange}
-    >
-      {renderContent()}
-    </BottomSheet>
+    <Drawer open={isOpen} onOpenChange={keepOpenOnToastPress(onOpenChange)}>
+      <DrawerContent>
+        <div className="flex min-h-0 flex-col overflow-y-auto overscroll-contain">
+          {/* No divider: header and body scroll together. */}
+          <DrawerHeader className="gap-1.5 p-4 not-last:border-b-0">{renderHeader()}</DrawerHeader>
+          <div className="flex flex-col px-4 pb-[calc(1.5rem+env(safe-area-inset-bottom))]">{renderContent()}</div>
+        </div>
+      </DrawerContent>
+    </Drawer>
   );
 };

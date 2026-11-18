@@ -27,11 +27,7 @@ export function Delta({
       <span
         className={cn(
           'flex items-center gap-0.5 font-medium',
-          Math.abs(change) < 0.5
-            ? 'text-muted-foreground'
-            : good
-              ? 'text-green-700 dark:text-green-500'
-              : 'text-destructive'
+          Math.abs(change) < 0.5 ? 'text-muted-foreground' : good ? 'text-success' : 'text-destructive'
         )}
       >
         <Icon className="size-3.5! [&_svg]:size-full!" icon={up ? 'IconArrowUpRight' : 'IconArrowDownRight'} />

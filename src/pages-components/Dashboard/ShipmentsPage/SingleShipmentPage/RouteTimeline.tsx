@@ -248,7 +248,7 @@ function StopRow({
           <span className="ml-auto flex items-center gap-2 text-xs">
             {done ? (
               <Tooltip>
-                <TooltipTrigger render={<span className={cn('cursor-default', STATUS_TEXT.successStrong)} />}>
+                <TooltipTrigger render={<span className={cn('cursor-default', STATUS_TEXT.success)} />}>
                   Potvrđeno · {formatDateShort(stop.completedAt!)}
                 </TooltipTrigger>
                 <TooltipContent>Potvrđeno {formatDateTime(stop.completedAt!)}</TooltipContent>

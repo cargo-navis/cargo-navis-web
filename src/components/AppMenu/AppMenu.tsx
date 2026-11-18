@@ -76,7 +76,9 @@ export const AppMenu = () => {
   const bell = (
     <>
       <Icon icon="IconBell" size="s" />
-      {hasItems && <span className="absolute top-2 right-2 size-2 rounded-full bg-orange-500 ring-2 ring-background" />}
+      {hasItems && (
+        <span className="absolute top-2 right-2 size-2 rounded-full bg-warning-dot ring-2 ring-background" />
+      )}
     </>
   );
 
@@ -146,7 +148,7 @@ function EntryList({ entries, isLoading, onNavigate }: { entries: Entry[]; isLoa
       {entries.length > MAX_ITEMS && (
         <li>
           <Link
-            className="flex items-center justify-center gap-2 p-3 text-sm font-medium text-primary hover:bg-muted/50 dark:text-teal-300"
+            className="flex items-center justify-center gap-2 p-3 text-sm font-medium text-brand hover:bg-muted/50"
             href="/dashboard"
             onClick={onNavigate}
           >
@@ -203,7 +205,7 @@ function AlertEntry({ alert, onNavigate }: { alert: Alert; onNavigate(): void })
     <EntryRow
       createdAt={alert.createdAt}
       href={targetUrl}
-      icon={<Icon className="mt-0.5 text-orange-500" icon="IconAlertTriangle" size="s" />}
+      icon={<Icon className="mt-0.5 text-warning" icon="IconAlertTriangle" size="s" />}
       onNavigate={onNavigate}
     >
       <span className="text-foreground">{plainNode}.</span>

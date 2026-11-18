@@ -64,7 +64,7 @@ export function WeekBoard({
             <div
               className={cn(
                 'border-b border-l bg-muted px-3 py-2 text-xs font-medium',
-                day.key === today ? 'text-primary dark:text-teal-300' : 'text-muted-foreground'
+                day.key === today ? 'text-brand' : 'text-muted-foreground'
               )}
               key={day.key}
             >

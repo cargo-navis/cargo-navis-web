@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 import { useDriverAccount, useDriverShipments, useDriverStops, useRefreshDriverStops } from '@/lib/hooks/api/driver';
-import { Box, FlexLayout } from '@/ui';
 
 import { getDriverPageState } from './getDriverPageState';
 import { useDriverSession } from './hooks/useDriverSession';
@@ -131,20 +130,21 @@ export const DriverPage = () => {
         <meta content="no-referrer" name="referrer" />
         {/* Installable as "Cargo Navis"; the manifest and service worker are scoped to /driver. */}
         <link href="/driver.webmanifest" rel="manifest" />
-        <meta content="#F5F6F7" media="(prefers-color-scheme: light)" name="theme-color" />
-        <meta content="#1A1B21" media="(prefers-color-scheme: dark)" name="theme-color" />
+        {/* The header's bg-muted (light / dark); iOS 26+ ignores it, Android colours its status bar with it. */}
+        <meta content="#F5F5F5" media="(prefers-color-scheme: light)" name="theme-color" />
+        <meta content="#262626" media="(prefers-color-scheme: dark)" name="theme-color" />
         <meta content="yes" name="mobile-web-app-capable" />
         <meta content="yes" name="apple-mobile-web-app-capable" />
         <meta content="Cargo Navis" name="apple-mobile-web-app-title" />
         <meta content="default" name="apple-mobile-web-app-status-bar-style" />
       </NextHead>
-      <Box className="min-h-dvh bg-dark-50 dark:bg-light-900">
+      <div className="min-h-dvh bg-muted text-foreground">
         {/* Padding keeps content clear of the fixed header (top) and tab bar (bottom). */}
-        <FlexLayout className="mx-auto min-h-dvh w-full max-w-[480px] flex-col pb-[calc(76px+env(safe-area-inset-bottom))] pt-[52px]">
+        <div className="mx-auto flex min-h-dvh w-full max-w-[480px] flex-col pt-[52px] pb-[calc(76px+env(safe-area-inset-bottom))]">
           <DriverHeader driverName={account && getShortName(account)} />
           {renderContent()}
-        </FlexLayout>
-      </Box>
+        </div>
+      </div>
     </>
   );
 };

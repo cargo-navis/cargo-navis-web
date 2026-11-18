@@ -96,7 +96,7 @@ export function AppState({ employee }: { employee: Employee }) {
   if (!isDriver(employee) || !hasWhatsApp(employee)) return <span className="text-muted-foreground">—</span>;
   return (
     <Badge look="outline">
-      <Icon className="text-green-600 dark:text-green-500" icon="IconBrandWhatsapp" size="xs" /> WhatsApp spojen
+      <Icon className="text-success" icon="IconBrandWhatsapp" size="xs" /> WhatsApp spojen
     </Badge>
   );
 }

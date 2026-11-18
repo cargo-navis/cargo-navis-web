@@ -89,7 +89,7 @@ export function getNotificationItemData(notification: Notification) {
             <Fragment key={shipment.shipmentId}>
               {index > 0 && (index === shipments.length - 1 ? ' i ' : ', ')}
               <Link
-                className="font-medium text-primary hover:underline dark:text-teal-300"
+                className="font-medium text-brand hover:underline"
                 href={`/dashboard/shipments/${shipment.shipmentId}`}
               >
                 {shipment.orderNumber}

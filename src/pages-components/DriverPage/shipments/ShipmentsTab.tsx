@@ -1,9 +1,12 @@
 import { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 import type { DriverShipmentSummary } from '@/lib/api/driver';
-import { Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
+import { Icon } from '@/ui';
 
 import { InfiniteListFooter, type InfinitePagination } from '../layout/InfiniteListFooter';
+import { DriverEmpty } from '../ui';
 import { ShipmentCard, ShipmentSheet } from './ShipmentCard';
 
 interface ShipmentsTabProps {
@@ -32,29 +35,34 @@ export const ShipmentsTab: React.FC<ShipmentsTabProps> = ({
   function renderList() {
     if (!shipments && isError) {
       return (
-        <FlexLayout className="flex-col items-center gap-2 py-16">
-          <Text color="text-color-3" variant="text-s">
-            Nalozi se nisu učitali.
-          </Text>
-          <Button size="m" text="Pokušaj ponovno" variant="secondary" onClick={onRetry} />
-        </FlexLayout>
+        <DriverEmpty
+          action={
+            <Button size="xl" variant="outline" onClick={onRetry}>
+              <Icon data-icon="inline-start" icon="IconReload" size="m" />
+              Pokušaj ponovno
+            </Button>
+          }
+          icon="IconAlertTriangle"
+          title="Nalozi se nisu učitali."
+          variant="danger"
+        />
       );
     }
 
+    // First load: card-shaped placeholders (title, number, route, progress).
     if (!shipments) {
-      return (
-        <FlexLayout className="justify-center py-16">
-          <LoadingSpinner />
-        </FlexLayout>
-      );
+      return Array.from({ length: 3 }, (_, index) => (
+        <div aria-busy className="flex flex-col gap-2 rounded-xl bg-card p-4 ring-1 ring-foreground/10" key={index}>
+          <Skeleton className="h-7 w-3/4" />
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-4 w-1/2" />
+          <Skeleton className="h-3 w-20" />
+        </div>
+      ));
     }
 
     if (shipments.length === 0) {
-      return (
-        <Text className="py-16 text-center" color="text-color-3" variant="text-s">
-          Nemaš naloga.
-        </Text>
-      );
+      return <DriverEmpty icon="IconClipboardText" title="Nemaš naloga." />;
     }
 
     return (
@@ -68,7 +76,7 @@ export const ShipmentsTab: React.FC<ShipmentsTabProps> = ({
   }
 
   return (
-    <FlexLayout className="flex-col gap-3 p-4">
+    <div className="flex flex-col gap-2 px-4 pt-1 pb-4">
       {renderList()}
       <ShipmentSheet
         isOpen={!!openShipmentId}
@@ -78,6 +86,6 @@ export const ShipmentsTab: React.FC<ShipmentsTabProps> = ({
           if (!isOpen) onOpenShipmentChange(null);
         }}
       />
-    </FlexLayout>
+    </div>
   );
 };

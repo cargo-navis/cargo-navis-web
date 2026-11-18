@@ -135,7 +135,7 @@ function AgencyFields({ onNewContractor }: { onNewContractor(): void }) {
               <span
                 className={cn(
                   'font-heading text-xl font-bold tracking-tight tabular-nums',
-                  isLoss ? 'text-destructive' : STATUS_TEXT.successStrong
+                  isLoss ? 'text-destructive' : STATUS_TEXT.success
                 )}
               >
                 {isLoss ? '−' : ''}

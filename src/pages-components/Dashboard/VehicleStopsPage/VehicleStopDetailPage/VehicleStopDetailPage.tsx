@@ -283,12 +283,9 @@ export const VehicleStopDetailPage = () => {
     }
     if (entry.type === 'today') {
       return (
-        <li
-          className="flex items-center gap-2 py-2 pl-11 text-xs font-medium text-primary dark:text-teal-300"
-          key="today"
-        >
+        <li className="flex items-center gap-2 py-2 pl-11 text-xs font-medium text-brand" key="today">
           Danas · {formatDateShort(new Date())}
-          <span className="h-px flex-1 bg-primary/30 dark:bg-teal-300/30" />
+          <span className="h-px flex-1 bg-brand/30" />
         </li>
       );
     }

@@ -36,6 +36,13 @@ function DialogOverlay({ className, ...props }: DialogPrimitive.Backdrop.Props) 
   );
 }
 
+/**
+ * Phone (< 640px, DECISIONS §3): the same popup as a floating bottom sheet like the Drawer (8px inset, 2rem radius,
+ * max 80dvh, slides up). Base UI Dialog underneath, so no swipe-to-close; × and Odustani close it.
+ */
+export const PHONE_SHEET =
+  'max-sm:top-auto max-sm:right-2 max-sm:bottom-[calc(0.5rem+env(safe-area-inset-bottom))] max-sm:left-2 max-sm:w-auto max-sm:max-w-none max-sm:max-h-[80dvh] max-sm:overflow-y-auto max-sm:translate-x-0 max-sm:rounded-[2rem] max-sm:data-open:zoom-in-100 max-sm:data-open:slide-in-from-bottom-8 max-sm:data-closed:zoom-out-100 max-sm:data-closed:slide-out-to-bottom-8';
+
 // Fixed width scale (today's modals: 480, 512, 720, 820 set one by one).
 const DIALOG_SIZES = {
   sm: 'sm:max-w-sm', // 384: confirm, 1–2 fields
@@ -46,7 +53,7 @@ const DIALOG_SIZES = {
 
 /**
  * Decided (KAN-55, /overlays/dialog): backdrop 40% (60% dark), top-anchored at 12vh so the title stays put while the
- * form grows, 24px padding, 18px Sora 700 title, grey footer strip, × always shown.
+ * form grows, 24px padding, 18px Sora 700 title, grey footer strip, × always shown. Phone: bottom sheet (PHONE_SHEET).
  */
 function DialogContent({
   className,
@@ -66,6 +73,7 @@ function DialogContent({
       <DialogPrimitive.Popup
         className={cn(
           'fixed top-[12vh] left-1/2 z-50 grid max-h-[76dvh] w-full max-w-[calc(100%-2rem)] -translate-x-1/2 gap-4 overflow-y-auto rounded-xl bg-popover p-6 text-sm text-popover-foreground shadow-lg ring-1 ring-foreground/10 duration-100 outline-none data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
+          PHONE_SHEET,
           DIALOG_SIZES[size],
           className
         )}
@@ -102,7 +110,7 @@ function DialogFooter({
   return (
     <div
       className={cn(
-        '-mx-6 -mb-6 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 px-6 py-4 sm:flex-row sm:justify-end',
+        '-mx-6 -mb-6 flex flex-col-reverse gap-2 rounded-b-xl border-t bg-muted/50 px-6 py-4 max-sm:rounded-b-[2rem] sm:flex-row sm:justify-end',
         className
       )}
       data-slot="dialog-footer"

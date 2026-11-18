@@ -52,7 +52,7 @@ export function getInvoiceInfo(shipment: Shipment, client?: Pick<Client, 'termsO
       updatedAt,
       isUnloaded: true,
       detail: updatedAt ? `plaćeno ${formatDateShort(updatedAt)}` : 'plaćeno',
-      detailClass: STATUS_TEXT.successStrong,
+      detailClass: STATUS_TEXT.success,
     };
   }
 

@@ -27,15 +27,13 @@ function WarningRow({ warning }: { warning: Warning & { alert: Alert } }) {
   const content = (
     <>
       <Icon
-        className={cn('mt-0.5', expired ? 'text-destructive' : 'text-amber-600 dark:text-amber-400')}
+        className={cn('mt-0.5', expired ? 'text-destructive' : 'text-warning')}
         icon={WARNING_ICON[warning.kind]}
         size="s"
       />
       <span className="flex min-w-0 flex-1 flex-col">
         <span className="truncate text-sm">{warning.title}</span>
-        <span className={cn('text-xs', expired ? 'text-destructive' : 'text-amber-700 dark:text-amber-400')}>
-          {warning.detail}
-        </span>
+        <span className={cn('text-xs', expired ? 'text-destructive' : 'text-warning')}>{warning.detail}</span>
       </span>
     </>
   );

@@ -230,10 +230,7 @@ function PasswordPanel() {
                 const ok = rule.test(password);
                 return (
                   <li
-                    className={cn(
-                      'flex items-center gap-1.5',
-                      ok ? 'text-green-700 dark:text-green-400' : 'text-muted-foreground'
-                    )}
+                    className={cn('flex items-center gap-1.5', ok ? 'text-success' : 'text-muted-foreground')}
                     key={rule.label}
                   >
                     <Icon

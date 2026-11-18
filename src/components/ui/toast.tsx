@@ -3,7 +3,8 @@
 /**
  * Decided (KAN-55, /overlays/toast): tinted by type (soft background like the alerts), icon on the first text line,
  * 448px, success / info / warning 4 s, errors 8 s (hover pauses), × always. Dashboard top-center (where users look
- * on big screens, like today), driver portal bottom-center above the nav: `<Toaster position>`.
+ * on big screens, like today), driver portal bottom-center above the nav: `<Toaster position>`. The viewport sits
+ * above dialogs, sheets and drawers (z-60 vs z-50), so a toast fired from an open overlay stays visible.
  */
 
 import { Toast as ToastPrimitive } from '@base-ui/react/toast';
@@ -45,7 +46,7 @@ function ToastViewport({ className, ...props }: ToastPrimitive.Viewport.Props) {
   return (
     <ToastPrimitive.Viewport
       className={cn(
-        'pointer-events-none fixed inset-x-4 z-50 mx-auto w-auto max-w-md outline-none',
+        'pointer-events-none fixed inset-x-4 z-60 mx-auto w-auto max-w-md outline-none',
         VIEWPORT[position],
         className
       )}

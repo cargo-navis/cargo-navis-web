@@ -216,7 +216,7 @@ export function StopCard({
               </span>
             ) : (
               <button
-                className="flex items-center gap-1 text-amber-700 hover:underline disabled:opacity-60 dark:text-amber-400"
+                className="flex items-center gap-1 text-warning hover:underline disabled:opacity-60"
                 disabled={isNotifying}
                 type="button"
                 onClick={() => void notifyDriver()}

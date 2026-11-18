@@ -159,7 +159,7 @@ function UserMenu() {
     <DropdownMenu>
       <DropdownMenuTrigger render={<SidebarMenuButton className="data-popup-open:bg-sidebar-accent" size="lg" />}>
         <Avatar className="size-8 rounded-lg after:rounded-lg">
-          <AvatarFallback className="rounded-lg bg-teal-100 text-teal-800">{initials(name)}</AvatarFallback>
+          <AvatarFallback className="rounded-lg bg-brand-soft text-brand">{initials(name)}</AvatarFallback>
         </Avatar>
         <div className="grid flex-1 text-left text-sm leading-tight">
           <span className="truncate font-medium">{name}</span>

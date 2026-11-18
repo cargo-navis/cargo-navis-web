@@ -1,16 +1,6 @@
-/*
- * Cascade layers recreating Tailwind 3's unlayered cascade: Mantine's class rules beat the preflight (they won on
- * specificity before), Tailwind's components and utilities beat Mantine's core CSS (they came after it), and Mantine's
- * dates CSS comes last (the date pickers imported it, so it loaded after globals.css). Must stay the first statement:
- * it fixes the layer order.
- */
-@layer theme, base, mantine, components, utilities, mantine-dates;
-
 @import 'tailwindcss' source(none);
 @import 'tw-animate-css';
 @import './shadcn.css';
-@import '@mantine/core/styles.layer.css';
-@import '@mantine/dates/styles.css' layer(mantine-dates);
 @import './palette.css';
 @import './legacy-theme.css';
 
@@ -148,6 +138,44 @@
 }
 
 /*
+ * Status colours outside a Badge (a line of text, an icon, a progress line, a row tint), light + dark: the values the
+ * labs use as palette classes. Status pills stay Badge tones. Classes: text-success / text-warning / text-info,
+ * bg-success-dot / bg-warning-dot / bg-info-dot (lines, dots), bg-success-soft / bg-warning-soft (tinted rows and cards).
+ * Brand text: petrol, lighter in dark where #0B5560 is unreadable (links, „Danas”, active tab icons): text-brand;
+ * bg-brand-solid / border-brand-solid for brand fills, lines and markers (teal-500 in dark); bg-brand-soft for a
+ * selected or inviting card (teal-50 / teal-900 at 40 %).
+ */
+:root {
+  --success: #0e750e; /* green-700 */
+  --success-dot: #13a213; /* green-500 */
+  --success-soft: rgb(224 248 224 / 40%); /* green-50 / 40 */
+  --warning: oklch(0.555 0.163 48.998); /* amber-700 */
+  --warning-dot: oklch(0.769 0.188 70.08); /* amber-500 */
+  --warning-soft: oklch(0.987 0.022 95.277); /* amber-50 */
+  --info: oklch(0.488 0.243 264.376); /* blue-700 */
+  --info-dot: oklch(0.623 0.214 259.815); /* blue-500 */
+  --brand: #0b5560;
+  --brand-solid: #0b5560;
+  --brand-soft: #e0f7f8; /* teal-50 */
+  --highlight: #fff6b3; /* a just-created row / card (row-highlight-fade, card-highlight-fade) */
+}
+
+.dark {
+  --success: #26d826; /* green-400 */
+  --success-dot: #13a213;
+  --success-soft: rgb(8 71 8 / 20%); /* green-900 / 20 */
+  --warning: oklch(0.828 0.189 84.429); /* amber-400 */
+  --warning-dot: oklch(0.769 0.188 70.08);
+  --warning-soft: oklch(0.279 0.077 45.635 / 40%); /* amber-950 / 40 */
+  --info: oklch(0.707 0.165 254.624); /* blue-400 */
+  --info-dot: oklch(0.623 0.214 259.815);
+  --brand: #4dd8df; /* teal-300 */
+  --brand-solid: #13949f; /* teal-500, as the dark focus ring */
+  --brand-soft: rgb(8 65 75 / 40%); /* teal-900 / 40 */
+  --highlight: #312d16;
+}
+
+/*
  * Agencijski colour = violet (decided). Amber is the parked alternative (DECISIONS §7): set `data-agency="amber"` on
  * <html> to switch. Badge tone="category", the agency icon tile and the Analitika agency series read these.
  */
@@ -235,6 +263,18 @@ html.dark[data-agency='amber'] {
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
+  --color-success: var(--success);
+  --color-success-dot: var(--success-dot);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-dot: var(--warning-dot);
+  --color-warning-soft: var(--warning-soft);
+  --color-info: var(--info);
+  --color-info-dot: var(--info-dot);
+  --color-brand: var(--brand);
+  --color-brand-solid: var(--brand-solid);
+  --color-brand-soft: var(--brand-soft);
+
   --color-utovar: var(--utovar);
   --color-utovar-dot: var(--utovar-dot);
   --color-istovar: var(--istovar);
@@ -290,8 +330,8 @@ html.dark[data-agency='amber'] {
 
   body {
     @apply bg-background text-foreground;
-    /* Tailwind 3's preflight set this after Mantine's body rule; Tailwind 4's preflight no longer does. */
-    line-height: inherit;
+    /* The containing block of the Base UI drawer backdrop, which is `position: absolute` on iOS. */
+    position: relative;
   }
 
   /* Scale the whole UI on big screens: everything rem-based grows (text-sm 14 → 15 → 16px, 40px fields → ~46px). */
@@ -379,7 +419,7 @@ html.dark[data-agency='amber'] {
 
 @layer utilities {
   .row-highlight-fade {
-    animation: row-highlight-fade 2s ease-out forwards;
+    animation: row-highlight-fade 2s ease-out;
   }
 
   /* A short ringing swing every few seconds, pivoting at the top of the bell. Still for reduced motion. */
@@ -394,16 +434,8 @@ html.dark[data-agency='amber'] {
     }
   }
 
-  html.dark .row-highlight-fade {
-    animation: row-highlight-fade-dark 2s ease-out forwards;
-  }
-
   .card-highlight-fade {
-    animation: card-highlight-fade 5s ease-out forwards;
-  }
-
-  html.dark .card-highlight-fade {
-    animation-name: card-highlight-fade-dark;
+    animation: card-highlight-fade 5s ease-out;
   }
 }
 
@@ -432,41 +464,19 @@ html.dark[data-agency='amber'] {
   }
 }
 
+/*
+ * Highlight of a just-created / just-opened row or card: starts on --highlight and, with no end keyframe, fades back to
+ * the element's own background (card, tinted tone, transparent row) in both themes.
+ */
 @keyframes row-highlight-fade {
   0% {
-    background-color: #fff6b3;
-  }
-  100% {
-    background-color: transparent;
+    background-color: var(--highlight);
   }
 }
 
-@keyframes row-highlight-fade-dark {
-  0% {
-    background-color: rgba(69, 59, 8, 0.45);
-  }
-  100% {
-    background-color: transparent;
-  }
-}
-
-/* Ends on the card background (white / light-875) instead of transparent, so cards don't turn see-through. */
 @keyframes card-highlight-fade {
   0%,
   20% {
-    background-color: #fff6b3;
-  }
-  100% {
-    background-color: #ffffff;
-  }
-}
-
-@keyframes card-highlight-fade-dark {
-  0%,
-  20% {
-    background-color: #312d16;
-  }
-  100% {
-    background-color: #212126;
+    background-color: var(--highlight);
   }
 }

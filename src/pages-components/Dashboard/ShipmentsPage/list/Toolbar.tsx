@@ -8,7 +8,12 @@
 import dayjs from 'dayjs';
 import * as React from 'react';
 
-import { DatePicker, type DateRange, DateRangePicker } from '@/components/shared/date-picker';
+import {
+  DatePicker,
+  type DateRange,
+  DateRangePicker,
+  UPCOMING_DATE_RANGE_PRESETS,
+} from '@/components/shared/date-picker';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -428,6 +433,8 @@ export function ShipmentsToolbar({ columns }: { columns: ColumnToggle[] }) {
 
       <DateRangePicker
         className={cn(range && 'border-primary/40 bg-primary/5')}
+        future
+        presets={UPCOMING_DATE_RANGE_PRESETS}
         value={range}
         onChange={(next) =>
           setFilters({ loadingReadyDateFrom: toStored(next?.from), loadingReadyDateTo: toStored(next?.to) })

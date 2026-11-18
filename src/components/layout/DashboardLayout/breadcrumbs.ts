@@ -10,7 +10,7 @@ export interface Crumb {
   href?: string;
 }
 
-type CrumbKey = NavSection | 'settings' | 'search' | 'trucks' | 'trailers' | 'soloTrucks' | 'vans';
+type CrumbKey = NavSection | 'settings' | 'search';
 
 const navCrumb = (key: NavSection): Crumb => {
   const item = NAV.find((nav) => nav.key === key)!;
@@ -29,10 +29,6 @@ export const CRUMBS: Record<CrumbKey, Crumb> = {
   analytics: navCrumb('analytics'),
   settings: { label: 'Postavke', href: SETTINGS_ACCOUNT_HREF },
   search: { label: 'Pretraga', href: '/dashboard/search' },
-  trucks: { label: 'Tegljači', href: '/dashboard/fleet/trucks' },
-  trailers: { label: 'Poluprikolice', href: '/dashboard/fleet/trailers' },
-  soloTrucks: { label: 'Solo kamioni', href: '/dashboard/fleet/solo-trucks' },
-  vans: { label: 'Kombiji', href: '/dashboard/fleet/vans' },
 };
 
 /** CRUD routes of a list section: list, new, detail, edit (labels are generic until the page passes a name). */
@@ -64,29 +60,7 @@ const ROUTE_CRUMBS: Record<string, Crumb[]> = {
   '/dashboard/vehicle-stops': [CRUMBS.vehicleStops],
   '/dashboard/vehicle-stops/[vehicleId]': [CRUMBS.vehicleStops, { label: 'Ruta' }],
   '/dashboard/vehicle-stops/stop/[stopId]': [CRUMBS.vehicleStops],
-  '/dashboard/fleet': [CRUMBS.fleet],
-  '/dashboard/fleet/overview': [CRUMBS.fleet],
-  ...crudRoutes(
-    '/dashboard/fleet/trucks',
-    CRUMBS.trucks,
-    { new: 'Novi tegljač', one: 'Tegljač', edit: 'Uredi tegljač' },
-    [CRUMBS.fleet]
-  ),
-  ...crudRoutes(
-    '/dashboard/fleet/trailers',
-    CRUMBS.trailers,
-    { new: 'Nova poluprikolica', one: 'Poluprikolica', edit: 'Uredi poluprikolicu' },
-    [CRUMBS.fleet]
-  ),
-  ...crudRoutes(
-    '/dashboard/fleet/solo-trucks',
-    CRUMBS.soloTrucks,
-    { new: 'Novi solo kamion', one: 'Solo kamion', edit: 'Uredi solo kamion' },
-    [CRUMBS.fleet]
-  ),
-  ...crudRoutes('/dashboard/fleet/vans', CRUMBS.vans, { new: 'Novi kombi', one: 'Kombi', edit: 'Uredi kombi' }, [
-    CRUMBS.fleet,
-  ]),
+  ...crudRoutes('/dashboard/fleet', CRUMBS.fleet, { new: 'Novo vozilo', one: 'Vozilo', edit: 'Uredi vozilo' }),
   ...crudRoutes('/dashboard/clients', CRUMBS.clients, { new: 'Novi klijent', one: 'Klijent', edit: 'Uredi klijenta' }),
   ...crudRoutes('/dashboard/contractors', CRUMBS.contractors, {
     new: 'Novi kontraktor',

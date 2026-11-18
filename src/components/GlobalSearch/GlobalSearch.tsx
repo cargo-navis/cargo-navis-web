@@ -16,9 +16,11 @@ import {
 import { Kbd } from '@/components/ui/kbd';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
+import { VehicleEnum } from '@/lib/api';
 import { GLOBAL_SEARCH_MIN_LENGTH, useCreateShipmentDraft, useDelayedFlag, useGlobalSearch } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
+import { newVehicleHref } from '@/pages-components/Dashboard/FleetPage/fleet';
 import { Icon, type IconType } from '@/ui';
 
 import { addRecentSearchItem, useRecentSearchItems } from './recent';
@@ -55,24 +57,30 @@ const ACTIONS: Action[] = [
     key: 'new-truck',
     label: 'Dodaj tegljač',
     icon: 'IconTruck',
-    href: '/dashboard/fleet/trucks/new',
+    href: newVehicleHref(VehicleEnum.TRUCK),
     keywords: 'vozilo',
   },
   {
     key: 'new-trailer',
     label: 'Dodaj poluprikolicu',
     icon: 'IconTruck',
-    href: '/dashboard/fleet/trailers/new',
+    href: newVehicleHref(VehicleEnum.TRAILER),
     keywords: 'vozilo',
   },
   {
     key: 'new-solo',
     label: 'Dodaj solo kamion',
     icon: 'IconTruck',
-    href: '/dashboard/fleet/solo-trucks/new',
+    href: newVehicleHref(VehicleEnum.SOLO_TRUCK),
     keywords: 'vozilo',
   },
-  { key: 'new-van', label: 'Dodaj kombi', icon: 'IconTruck', href: '/dashboard/fleet/vans/new', keywords: 'vozilo' },
+  {
+    key: 'new-van',
+    label: 'Dodaj kombi',
+    icon: 'IconTruck',
+    href: newVehicleHref(VehicleEnum.VAN),
+    keywords: 'vozilo',
+  },
   { key: 'new-client', label: 'Dodaj klijenta', icon: 'IconBriefcase', href: '/dashboard/clients/new' },
   { key: 'new-contractor', label: 'Dodaj kontraktora', icon: 'IconLicense', href: '/dashboard/contractors/new' },
 ];
@@ -226,7 +234,7 @@ function Palette({ onClose, onUpload }: { onClose(): void; onUpload(): void }) {
               ))}
               {group.showAll && (
                 <CommandItem
-                  className="text-primary dark:text-teal-300"
+                  className="text-brand"
                   value={`${group.key}-show-all`}
                   onSelect={() => go(group.showAll!.href)}
                 >

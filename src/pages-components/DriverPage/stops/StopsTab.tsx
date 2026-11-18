@@ -1,10 +1,10 @@
-import clsx from 'clsx';
 import { Fragment, useEffect, useRef, useState } from 'react';
 
 import type { DriverStop } from '@/lib/api/driver';
-import { Box, FlexLayout, Text } from '@/ui';
+import { cn } from '@/lib/utils';
 
 import { InfiniteListFooter, type InfinitePagination } from '../layout/InfiniteListFooter';
+import { DriverEmpty } from '../ui';
 import { getNextStopId } from '../utils';
 import { StopCard, type StopTone } from './StopCard';
 import { StopDrawer } from './StopDrawer';
@@ -21,8 +21,7 @@ interface StopsTabProps {
  * into history, above the tab bar (60px + its 1px border) while they look ahead. Its parent must be the whole list,
  * or it would let go at the end of a smaller wrapper.
  */
-const PINNED_CLASS =
-  'sticky top-[52px] bottom-[calc(61px+env(safe-area-inset-bottom))] z-10 -mx-4 bg-dark-50 px-4 dark:bg-light-900';
+const PINNED_CLASS = 'sticky top-[52px] bottom-[calc(61px+env(safe-area-inset-bottom))] z-10 -mx-4 bg-muted px-4';
 // Gap between cards; the pinned one keeps it on both sides, so it never touches the header or the tab bar.
 const ITEM_CLASS = 'py-1';
 
@@ -37,6 +36,12 @@ export const StopsTab: React.FC<StopsTabProps> = ({ stops, focusedStopId, pagina
   const [drawerStopId, setDrawerStopId] = useState<string | null>(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const drawerStop = stops.find((stop) => stop.id === drawerStopId) ?? null;
+  // Which stop the drawer shows while open, read when a confirmation resolves (it may have been closed or switched to
+  // another stop while saving).
+  const openDrawerStopIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    openDrawerStopIdRef.current = isDrawerOpen ? drawerStopId : null;
+  }, [isDrawerOpen, drawerStopId]);
 
   const { isFetchingNextPage, isFetchNextPageError, fetchNextPage } = pagination;
   useEffect(() => {
@@ -56,33 +61,34 @@ export const StopsTab: React.FC<StopsTabProps> = ({ stops, focusedStopId, pagina
     if (stopId) document.querySelector(`[data-stop-anchor="${stopId}"]`)?.scrollIntoView({ block: 'center' });
   }, [isNextStopKnown, focusedStopId, nextStopId, stops]);
 
+  // Confirmed: close the drawer (the toast offers „Poništi”), unless the driver already left that stop's drawer.
+  function handleStopCompleted(stopId: string) {
+    if (openDrawerStopIdRef.current === stopId) setIsDrawerOpen(false);
+  }
+
   function openStop(stopId: string) {
     setDrawerStopId(stopId);
     setIsDrawerOpen(true);
   }
 
   return (
-    <FlexLayout className="flex-col px-4 pb-4">
-      {!nextStopId && (
-        <Text className="py-16 text-center" color="text-color-3" variant="text-s">
-          Nemaš aktivnih postaja.
-        </Text>
-      )}
+    <div className="flex flex-col px-4 pb-4">
+      {!nextStopId && <DriverEmpty icon="IconRoute" title="Nemaš aktivnih utovara ni istovara." />}
       {stops.map((stop) => {
         const isNext = stop.id === nextStopId;
         const tone: StopTone = isNext ? 'next' : stop.completedAt ? 'completed' : 'default';
 
         return (
           <Fragment key={stop.id}>
-            <Box data-stop-anchor={stop.id} />
-            <Box className={clsx(ITEM_CLASS, isNext && PINNED_CLASS)}>
+            <div data-stop-anchor={stop.id} />
+            <div className={cn(ITEM_CLASS, isNext && PINNED_CLASS)}>
               <StopCard
                 isHighlighted={stop.id === highlightedStopId}
                 stop={stop}
                 tone={tone}
                 onOpen={() => openStop(stop.id)}
               />
-            </Box>
+            </div>
           </Fragment>
         );
       })}
@@ -92,7 +98,8 @@ export const StopsTab: React.FC<StopsTabProps> = ({ stops, focusedStopId, pagina
         isOpen={isDrawerOpen && !!drawerStop}
         stop={drawerStop}
         onOpenChange={setIsDrawerOpen}
+        onStopCompleted={handleStopCompleted}
       />
-    </FlexLayout>
+    </div>
   );
 };

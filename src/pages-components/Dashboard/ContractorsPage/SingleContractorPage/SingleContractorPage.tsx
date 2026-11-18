@@ -37,7 +37,7 @@ function ContractorMoney({ contractorId }: { contractorId: string }) {
       isLoading={isLoading}
       items={[
         {
-          label: `Plaćeno prijevozniku ${year}.`,
+          label: `Plaćeno kontraktoru ${year}.`,
           value: formatEuro(cost),
           error: failed,
           onRetry: retry,
@@ -58,7 +58,7 @@ function ContractorMoney({ contractorId }: { contractorId: string }) {
           label: 'Zarada',
           value: `${margin > 0 ? '+' : ''}${formatEuro(margin)}`,
           detail: marginShare === null ? undefined : `${marginShare}% marže`,
-          tone: margin > 0 ? 'text-green-700 dark:text-green-400' : margin < 0 ? 'text-destructive' : undefined,
+          tone: margin > 0 ? 'text-success' : margin < 0 ? 'text-destructive' : undefined,
           error: failed,
           onRetry: retry,
         },

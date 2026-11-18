@@ -2,9 +2,8 @@ import type { ReactNode } from 'react';
 
 import { type Employee, type Shipment, type Vehicle } from '@/lib/api';
 import { type Alert, AlertType } from '@/lib/api';
-import { vehicleTypeToPathMap } from '@/lib/utils/vehicles';
-import type { AlertVariant } from '@/ui/components/Alert';
-import type { IconType } from '@/ui/components/Icon/Icon';
+import { vehicleHref } from '@/pages-components/Dashboard/FleetPage/fleet';
+import type { IconType } from '@/ui';
 
 // Leading icon per alert type — used by the dashboard Alert bars.
 export const alertIconMap: Record<AlertType, IconType> = {
@@ -80,7 +79,7 @@ export function getAlertItemData(alert: Alert) {
 
   // Only overdue invoices are danger by default; everything else is a warning
   // until AlertItem promotes it to danger once its expiry date has passed.
-  const variant: AlertVariant = ruleName === AlertType.SHIPMENT_INVOICE_OVERDUE ? 'danger' : 'warning';
+  const variant: 'danger' | 'warning' = ruleName === AlertType.SHIPMENT_INVOICE_OVERDUE ? 'danger' : 'warning';
   const icon = alertIconMap[ruleName];
 
   let targetUrl = '';
@@ -114,7 +113,7 @@ export function getAlertItemData(alert: Alert) {
     );
   } else if (vehicleAlert) {
     const vehicle = alertable as Vehicle;
-    targetUrl = `/dashboard/fleet/${vehicleTypeToPathMap[vehicle.type]}/${vehicle.id}`;
+    targetUrl = vehicleHref(vehicle.id);
     plainNode = (
       <>
         Vozilu <B>{vehicle.registration}</B> {vehicleAlert}

@@ -175,7 +175,7 @@ export function KpiStrip({
               <span
                 className={cn(
                   'flex items-center gap-0.5 font-medium',
-                  change >= 0 ? 'text-green-700 dark:text-green-500' : 'text-destructive'
+                  change >= 0 ? 'text-success' : 'text-destructive'
                 )}
               >
                 <Icon

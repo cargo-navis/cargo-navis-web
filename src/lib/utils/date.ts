@@ -16,20 +16,8 @@ export function formatDateString(date: string, dateFormat = 'MMM D, YYYY') {
   return dayjs(date).format(dateFormat);
 }
 
-export function getDateInLocalTimezone(isoString: string) {
-  return dayjs(isoString).toDate();
-}
-
 export function isToday(date?: string) {
   return !!date && dayjs(date).isSame(dayjs(), 'day');
-}
-
-export function getDataPointDateString(dataPoint: string | undefined) {
-  return dataPoint ? formatDateString(dataPoint, 'DD.MM.YYYY') : '—';
-}
-
-export function getDateTimeInLocalTimezone(isoString: string, format = 'DD.MM.YYYY, HH:mm') {
-  return dayjs(isoString).local().format(format);
 }
 
 // ---------------------------------------------------------------------------------------------------------------------

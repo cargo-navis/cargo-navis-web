@@ -1,9 +1,10 @@
 import type { AxiosError } from 'axios';
 
+import { Button } from '@/components/ui/button';
 import type { DriverStop } from '@/lib/api/driver';
 import { useCompleteDriverStop, useDriverStops, useUncompleteDriverStop } from '@/lib/hooks/api/driver';
 import { closeToast, showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Button, FlexLayout, Icon, Text } from '@/ui';
+import { Icon } from '@/ui';
 
 import {
   getNotYetLoadedCargos,
@@ -20,13 +21,19 @@ function getErrorCode(error: unknown) {
   return (error as AxiosError<{ errorCode?: string }>)?.response?.data?.errorCode;
 }
 
-export const CompleteStopButton: React.FC<{ stop: DriverStop }> = ({ stop }) => {
+interface CompleteStopButtonProps {
+  stop: DriverStop;
+  /** Called once the confirmation is saved, e.g. to close the stop drawer (the undo toast stays). */
+  onCompleted?(): void;
+}
+
+export const CompleteStopButton: React.FC<CompleteStopButtonProps> = ({ stop, onCompleted }) => {
   const { mutateAsync: completeStop, isPending } = useCompleteDriverStop();
   const { mutateAsync: uncompleteStop } = useUncompleteDriverStop();
   // Reads the already loaded route (DriverPage fetches it); `stop` can be cut down to one order in the Nalozi tab.
   const { data: stops = [], refetch: refetchStops } = useDriverStops({ enabled: false });
 
-  // A confirmed stop shows its time in the green section header instead (see StopDetails).
+  // A confirmed stop shows its time in green instead (the section titles, or the order sheet's timeline).
   if (stop.completedAt) return null;
 
   const labels = getStopKindLabels(stop);
@@ -57,13 +64,14 @@ export const CompleteStopButton: React.FC<{ stop: DriverStop }> = ({ stop }) => 
       if (getErrorCode(error) === 'CARGO_NOT_YET_LOADED') {
         // The route on screen was out of date; reloading it disables the button with the reason.
         void refetchStops();
-        showErrorToast({ title: 'Najprije potvrdi utovar.', description: 'Teret ove postaje još nije utovaren.' });
+        showErrorToast({ title: 'Najprije potvrdi utovar.', description: 'Teret ovog istovara još nije utovaren.' });
         return;
       }
       showErrorToast({ title: 'Potvrda nije uspjela. Pokušaj ponovno.' });
       return;
     }
 
+    onCompleted?.();
     const confirmToastKey = showSuccessToast({
       title: labels.confirmed,
       description: getStopToastDescription(stop),
@@ -73,14 +81,9 @@ export const CompleteStopButton: React.FC<{ stop: DriverStop }> = ({ stop }) => 
   }
 
   const button = (
-    <Button
-      isDisabled={isBlocked}
-      isFullWidth
-      isLoading={isPending}
-      size="l"
-      text={labels.action}
-      onClick={() => void handleComplete()}
-    />
+    <Button className="w-full" disabled={isBlocked} loading={isPending} size="xl" onClick={() => void handleComplete()}>
+      {isPending ? 'Potvrđujem…' : labels.action}
+    </Button>
   );
 
   if (!isBlocked) return button;
@@ -91,14 +94,12 @@ export const CompleteStopButton: React.FC<{ stop: DriverStop }> = ({ stop }) => 
     .join('; ');
 
   return (
-    <FlexLayout className="flex-col gap-2">
+    <div className="flex flex-col gap-2">
       {button}
-      <FlexLayout className="items-start gap-1 text-orange-500 dark:text-orange-400">
-        <Icon className="mt-1" icon="IconInfoCircle" size="s" />
-        <Text variant="text-xs">
-          {loadingStopNames ? `Najprije potvrdi utovar: ${loadingStopNames}.` : 'Najprije potvrdi utovar ovog tereta.'}
-        </Text>
-      </FlexLayout>
-    </FlexLayout>
+      <div className="flex items-start gap-1 text-sm text-utovar">
+        <Icon className="mt-0.5 shrink-0" icon="IconInfoCircle" size="s" />
+        {loadingStopNames ? `Najprije potvrdi utovar: ${loadingStopNames}.` : 'Najprije potvrdi utovar ovog tereta.'}
+      </div>
+    </div>
   );
 };

@@ -1,6 +1,7 @@
 import { type GlobalSearchResults, type SearchShipmentCargo, SearchTypeEnum, VehicleEnum } from '@/lib/api';
 import { getPalletsNoun } from '@/lib/utils/cargo';
 import type { PluralForms } from '@/lib/utils/plural';
+import { vehicleHref } from '@/pages-components/Dashboard/FleetPage/fleet';
 import type { IconType } from '@/ui';
 
 export type SearchCategoryKey = keyof GlobalSearchResults;
@@ -10,7 +11,7 @@ export interface SearchResultItem {
   href: string;
   title: string;
   subtitle?: string;
-  // Labelled line below the subtitle, e.g. "Prijevoznik: …" for agency shipments
+  // Labelled line below the subtitle, e.g. "Kontraktor: …" for agency shipments
   detail?: {
     label: string;
     value: string;
@@ -56,13 +57,6 @@ export interface SearchResultGroup {
 }
 
 export const SEARCH_PAGE_PATH = '/dashboard/search';
-
-const fleetPathMap: Record<VehicleEnum, string> = {
-  [VehicleEnum.TRUCK]: 'trucks',
-  [VehicleEnum.TRAILER]: 'trailers',
-  [VehicleEnum.SOLO_TRUCK]: 'solo-trucks',
-  [VehicleEnum.VAN]: 'vans',
-};
 
 const fleetTypeLabelMap: Record<VehicleEnum, string> = {
   [VehicleEnum.TRUCK]: 'Tegljač',
@@ -153,7 +147,7 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
               agencyContractorName ? s.clientName : (s.clientName ?? s.transportContractorName),
               s.externalOrderReference
             ),
-            detail: agencyContractorName ? { label: 'Prijevoznik', value: agencyContractorName } : undefined,
+            detail: agencyContractorName ? { label: 'Kontraktor', value: agencyContractorName } : undefined,
             aside: getCargoSummary(s.cargos ?? []),
           },
           s.matchedValue
@@ -172,7 +166,7 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
         withMatchedValue(
           {
             id: v.id,
-            href: `/dashboard/fleet/${fleetPathMap[v.fleetType]}/${v.id}`,
+            href: vehicleHref(v.id),
             title: v.registration,
             subtitle: joinDefined(fleetTypeLabelMap[v.fleetType], v.brand),
           },

@@ -175,7 +175,7 @@ export function CargoPicker({
               <div className="flex flex-col gap-1.5" key={group.key}>
                 {group.shipment && (
                   <button
-                    className="flex w-fit items-center gap-1.5 text-left text-sm hover:text-primary dark:hover:text-teal-300"
+                    className="flex w-fit items-center gap-1.5 text-left text-sm hover:text-brand"
                     type="button"
                     onClick={() => toggleGroup(group.cargos)}
                   >

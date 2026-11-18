@@ -8,14 +8,20 @@ the decision in their comment.
 
 - **Tokens, never raw palette classes**: `bg-background`, `bg-card`, `text-muted-foreground`, `border-border`,
   `bg-primary`, `text-destructive` …; domain: `text-utovar` / `text-istovar`, `bg-driver-1…5` (+ `-soft` / `-ink`),
-  `bg-agency-*`, `bg-series-*` (src/styles/globals.css). Status colours go through `Badge` tones.
+  `bg-agency-*`, `bg-series-*` (src/styles/globals.css). Status pills go through `Badge` tones; status outside a pill
+  (a line of text, an icon, a progress line, a row tint) uses `text-success` / `text-warning` / `text-info`,
+  `bg-success-dot` / `bg-warning-dot` / `bg-info-dot`, `bg-success-soft` / `bg-warning-soft`. Petrol text that must stay readable in dark
+  (links, „Danas”) = `text-brand`; brand fills / lines `bg-brand-solid`; a selected or inviting card `bg-brand-soft`.
 - **Icons** only through `@/ui` `Icon` (`<Icon icon="IconTruck" size="s" />`); it renders a `div` around the svg. The
   components' svg selectors reach the svg inside, but the wrapper keeps the `size` you pass, so match it:
   `size="s"` (16px) in buttons, menus, inputs, tabs, sidebar; `size="xs"` (12px) in Badge sm / md and `icon-xs`
   buttons; `size="m"` (20px) in xl / 2xl buttons, Alert, Empty / AlertDialog media tiles. In buttons add
   `data-icon="inline-start"` / `"inline-end"` like the labs. Exact other sizes: `className="size-3.5! [&_svg]:size-full!"`.
-- **Old classes**: the old `@/ui` code runs on legacy tokens (`text-legacy-*`, `rounded-legacy-*`, `legacy-blue-*` …,
-  `dark-*`, `light-*`; src/styles/legacy-theme.css). Don't use them in new code; delete them as pages move over.
+- **Old classes**: what is left of the old `@/ui` (Alert, Box, Button, DisplayIf, FlexLayout, Heading, LoadingSpinner,
+  Skeleton, Text, TextInput + the `hocs` label wrapper, `ui/theme`) serves only Prijava, Postavi lozinku, the root
+  redirect, `LoadingPage` and the Skladište / Kapacitet / Dodjela kamiona placeholders. It runs on legacy tokens
+  (`text-legacy-*`, `rounded-legacy-*`, `legacy-red-*` …, `dark-*`, `light-*`, `text-color-*`;
+  src/styles/legacy-theme.css). Don't use them in new code; delete them when those pages move over. `Icon` stays.
 - Dates via `src/lib/utils/date.ts`, counts via `src/lib/utils/plural.ts`, confirmations via AlertDialog, refetch via
   `useDelayedFlag` + `components/shared/loading`.
 
@@ -39,9 +45,8 @@ the decision in their comment.
 | combobox | Base UI combobox: Combobox, ComboboxInput (`showClear`), ComboboxContent / List / Item / Empty / Group … (async: `shared/async-combobox`). |
 | command | cmdk palette: Command, CommandDialog, Input, List, Empty, Group, Item, Separator, Shortcut (⌘K). |
 | context-menu | Right-click menu, same items as dropdown-menu (36px, 44px touch). |
-| dialog | Dialog: `size` sm 384 · md 512 (default) · lg 768 · xl 896, top-anchored 12vh, × always, grey footer strip. Dirty forms: `shared/discard-changes`. Phone (<640) → Drawer. |
+| dialog | Dialog: `size` sm 384 · md 512 (default) · lg 768 · xl 896, top-anchored 12vh, × always, grey footer strip. Dirty forms: `shared/discard-changes`. Phone (<640): floating bottom sheet (`PHONE_SHEET`, also AlertDialog; no swipe). |
 | drawer | Base UI bottom sheet (floating, 2rem radius, handle, no backdrop-filter), `showSwipeHandle`, snap points; Header / Title / Description / Footer. |
-| drawer-vaul | The OLD vaul drawer, only for BottomSheet / CargoSelectDrawer until they move to `drawer`. Don't use. |
 | dropdown-menu | ⋯ menus: items 36px (44 touch), icon on every item, `variant="destructive"`, checkbox / radio items, submenus. |
 | empty | Empty state: Empty / Header / Media (`variant` icon · danger · success) / Title (Sora 16) / Description / Content; min-h 320 in tables. |
 | field | Form layout: Field, FieldLabel, FieldDescription, FieldError, FieldGroup, FieldSet, FieldLegend, FieldSeparator, FieldContent, FieldTitle. |
@@ -79,7 +84,7 @@ the decision in their comment.
 | `@/components/shared/country-flag` | `<CountryFlag code="HR" size="xxs\|xs\|s\|m\|l" />` (flag-icons, fixed px). |
 | `@/components/shared/country-combobox` | `<CountryCombobox value onValueChange countries? invalid? …>` flag + Croatian name + code. |
 | `@/components/shared/async-combobox` | `<AsyncCombobox value onValueChange search={(q) => Promise<T[]>} getKey getLabel renderItem? minChars=2 placeholder noResults? …>` server search as you type. |
-| `@/components/shared/date-picker` | `<DatePicker value onChange …>` („7.11.2026.”, × clears), `<YearPicker value onChange>`, `<DateRangePicker value onChange presets?>` + `DATE_RANGE_PRESETS`. |
+| `@/components/shared/date-picker` | `<DatePicker value onChange …>` („7.11.2026.”, × clears; re-clicking the day keeps it), `<YearPicker value onChange>`, `<DateRangePicker value onChange presets? future?>` (reports once both ends are picked; `future` allows days after today) + `DATE_RANGE_PRESETS` (back) / `UPCOMING_DATE_RANGE_PRESETS` (Nalozi). |
 | `@/components/shared/driver-avatar` | `<DriverAvatar driverId name size="sm\|md\|lg" />` initials in the driver's tone; red dashed when no driver. |
 | `@/components/shared/stop-kind` | `STOP_KIND` (label, icon, text / dot classes), `<StopKindLabel kind="loading\|unloading" done? />` (UTOVAR / ISTOVAR), `<StopKindDot kind done? />`. |
 | `@/components/shared/file-row` | `<FileRow name date? icon? onOpen onDownload? onDelete? />` (date gives way to ⬇ 🗑 on hover / focus, both on touch) + `<FileDeleteDialog fileName onConfirm onOpenChange loading? />`. |
@@ -112,7 +117,7 @@ import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 
 | Prop | What |
 |---|---|
-| `breadcrumbs?: Crumb[]` | `{ label, href? }[]`, last = current page. Optional: without it the trail comes from the route (`breadcrumbs.ts`, e.g. `/dashboard/clients/[id]` → Klijenti › Klijent), so pass it only to show names. `CRUMBS.<section>` = linked section crumbs (home, shipments, vehicleStops, fleet, clients, contractors, employees, analytics, settings, search, trucks, trailers, soloTrucks, vans). Hidden below 768px. |
+| `breadcrumbs?: Crumb[]` | `{ label, href? }[]`, last = current page. Optional: without it the trail comes from the route (`breadcrumbs.ts`, e.g. `/dashboard/clients/[id]` → Klijenti › Klijent), so pass it only to show names. `CRUMBS.<section>` = linked section crumbs (home, shipments, vehicleStops, fleet, clients, contractors, employees, analytics, settings, search). Hidden below 768px. |
 | `contentClassName?` | Classes for the content area (default `p-5 md:p-7`, inside the rounded inset card). |
 
 - Page structure inside: `<h1 className="font-heading text-3xl font-bold tracking-tight">` + content; the window scrolls
@@ -124,5 +129,6 @@ import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
   (`@/components/AppMenu`: alerts + notifications; `getAlertItemData` / `getNotificationItemData` in `AppMenu/utils`
   are shared with Početna).
 - Postavke: `/dashboard/settings/account` (Moj račun) and `/dashboard/settings/company` (Tvrtka); `/dashboard/settings`,
-  `/dashboard/tenant`, `/dashboard/tenant/edit` redirect there (next.config.mjs). Flota: `/dashboard/fleet` (today's
-  fleet overview page until PR 7 replaces `src/pages/dashboard/fleet/index.ts`).
+  `/dashboard/tenant`, `/dashboard/tenant/edit` redirect there (next.config.mjs). Flota: `/dashboard/fleet` (one page,
+  type tabs `?vrsta=`), vehicle `/dashboard/fleet/:id`, form `/dashboard/fleet/new?vrsta=…`; link with the helpers in
+  `pages-components/Dashboard/FleetPage/fleet.ts` (`vehicleHref`, `newVehicleHref` …). The old per-type URLs redirect.

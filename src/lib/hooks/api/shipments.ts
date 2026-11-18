@@ -172,19 +172,6 @@ export function useDeleteShipment(id: string) {
   });
 }
 
-export function useSendShipmentToDriver(id: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: { driverId: string; sentToDriver: boolean }) => Promise.resolve(data),
-    // sendShipmentToDriver(id, data.driverId, data.sentToDriver),
-    onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ['shipments'] });
-      await queryClient.invalidateQueries({ queryKey: ['shipment', id] });
-    },
-  });
-}
-
 export function useUploadShipmentFile(id: string, isAgency?: boolean) {
   const queryClient = useQueryClient();
 

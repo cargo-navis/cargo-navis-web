@@ -54,7 +54,7 @@ export function TodayTimelines({
                           className={cn(
                             'flex size-5 shrink-0 items-center justify-center rounded-full border-2',
                             done
-                              ? 'border-primary bg-primary text-primary-foreground dark:border-teal-500 dark:bg-teal-500'
+                              ? 'border-brand-solid bg-brand-solid text-primary-foreground'
                               : 'border-muted-foreground/40 bg-card'
                           )}
                         >
@@ -65,7 +65,7 @@ export function TodayTimelines({
                             className={cn(
                               'h-0.5 flex-1',
                               done && nextDone
-                                ? 'bg-primary dark:bg-teal-500'
+                                ? 'bg-brand-solid'
                                 : 'border-t-2 border-dashed border-muted-foreground/30'
                             )}
                           />

@@ -64,7 +64,7 @@ export const ShipmentsDropZone: React.FC<ShipmentsDropZoneProps> = ({ onFilesAcc
   return (
     <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center border-4 border-dashed border-primary bg-primary/10">
       <div className="flex flex-col items-center gap-3 rounded-xl bg-popover px-16 py-8 text-popover-foreground shadow-lg ring-1 ring-foreground/10">
-        <Icon className="text-primary dark:text-teal-300" icon="IconUpload" size="xxl" />
+        <Icon className="text-brand" icon="IconUpload" size="xxl" />
         <span className="font-heading text-lg font-bold tracking-tight">Pusti za učitavanje</span>
         <span className="text-xs text-muted-foreground">Samo PDF</span>
       </div>

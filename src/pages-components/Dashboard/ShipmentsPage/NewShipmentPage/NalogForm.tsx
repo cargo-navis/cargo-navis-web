@@ -112,6 +112,7 @@ export function NalogForm({
   const [saving, setSaving] = React.useState(false);
   const [ai, setAi] = React.useState<Set<string>>(() => (mode === 'draft' ? aiFieldsOf(initial) : new Set()));
   const [partnerDialog, setPartnerDialog] = React.useState<'client' | 'contractor' | null>(null);
+  const [partnerDirty, setPartnerDirty] = React.useState(false);
 
   const schema = React.useMemo(() => getShipmentSchema(tenant.id), [tenant.id]);
   const errors = React.useMemo(() => validate(schema, values), [schema, values]);
@@ -239,6 +240,7 @@ export function NalogForm({
   function handlePartnerSaved(saved: SavedPartner) {
     const kind = partnerDialog;
     setPartnerDialog(null);
+    setPartnerDirty(false);
     suggested.clearClientFormValues();
     if (!saved.id) return;
     if (kind === 'client') {
@@ -251,8 +253,12 @@ export function NalogForm({
 
   function closePartnerDialog() {
     setPartnerDialog(null);
+    setPartnerDirty(false);
     suggested.clearClientFormValues();
   }
+
+  // Outside click / Esc / Odustani: close at once when nothing was typed, else ask „Odbaciti promjene?”.
+  const partnerGuard = useDiscardGuard({ dirty: partnerDirty, onClose: closePartnerDialog });
 
   return (
     <NalogFormProvider value={api}>
@@ -296,7 +302,7 @@ export function NalogForm({
       {guard.discardDialog}
 
       {/* Novi klijent / kontraktor: Partneri's form in a dialog (today's NewClientModal / NewContractorModal). */}
-      <Dialog disablePointerDismissal open={!!partnerDialog} onOpenChange={(open) => !open && closePartnerDialog()}>
+      <Dialog open={!!partnerDialog} onOpenChange={(open) => !open && partnerGuard.requestClose()}>
         <DialogContent size="lg">
           <DialogHeader>
             <DialogTitle>{partnerDialog === 'contractor' ? 'Novi kontraktor' : 'Novi klijent'}</DialogTitle>
@@ -310,12 +316,14 @@ export function NalogForm({
             <PartnerForm
               initialValues={partnerDialog === 'client' ? suggested.clientFormInitialValues : undefined}
               kind={partnerDialog}
-              onCancel={closePartnerDialog}
+              onCancel={partnerGuard.requestClose}
+              onDirtyChange={setPartnerDirty}
               onSaved={handlePartnerSaved}
             />
           )}
         </DialogContent>
       </Dialog>
+      {partnerGuard.discardDialog}
     </NalogFormProvider>
   );
 }
