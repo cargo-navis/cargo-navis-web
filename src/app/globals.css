@@ -1,26 +1,27 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Same cascade as src/styles/globals.css (see there). */
+@layer theme, base, mantine, components, utilities;
+
+@import 'tailwindcss' source(none);
+@import '@mantine/core/styles.layer.css';
+
+@config '../../tailwind.config.ts';
+
+@source '..';
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-rgb: rgba(214, 219, 220, 0.5);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-rgb: rgb(0, 0, 0);
-  }
+.dark {
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: rgb(0, 0, 0);
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background-color: var(--background-rgb);
-}
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+  line-height: inherit;
 }

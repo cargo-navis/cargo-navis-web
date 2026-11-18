@@ -29,7 +29,7 @@ export const NotificationEmailsField: React.FC<NotificationEmailsFieldProps> = (
   const client = clients?.find((c) => c.id === clientId);
   const contacts = client?.notificationEmails ?? [];
 
-  const autofilledClientId = useRef<string>();
+  const autofilledClientId = useRef<string | undefined>(undefined);
   useEffect(() => {
     if (!isAutofillEnabled || !client || autofilledClientId.current === client.id) return;
     autofilledClientId.current = client.id;

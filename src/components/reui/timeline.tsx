@@ -169,10 +169,7 @@ const TimelineItem = forwardRef<HTMLDivElement, TimelineItemProps>(
 
     return (
       <FlexLayout
-        className={cn(
-          'group/timeline-item relative flex-1 flex-col group-data-[orientation=vertical]/timeline:not-last:pb-6',
-          className
-        )}
+        className={cn('group/timeline-item relative flex-1 flex-col', className)}
         data-completed={isCompleted || undefined}
         data-separator-active={isNextCompleted || undefined}
         data-slot="timeline-item"

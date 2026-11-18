@@ -1,16 +1,4 @@
-export enum DriverLicenceEnum {
-  B1 = 'B1',
-  B = 'B',
-  C1 = 'C1',
-  C = 'C',
-  C1E = 'C1E',
-  CE = 'CE',
-}
-
-export enum MessageChannelEnum {
-  WHATSAPP = 'whatsapp',
-  // VIBER = 'viber',
-}
+import type { DriverLicenceEnum, GenderEnum, MessageChannelEnum, PositionEnum } from './employees';
 
 export interface Employee {
   id: string;
@@ -48,18 +36,6 @@ export interface Employee {
     mimeType: string;
     status: string;
   }[];
-}
-
-export enum GenderEnum {
-  Male = 'M',
-  Female = 'F',
-}
-
-export enum PositionEnum {
-  Driver = 'driver',
-  Dispatcher = 'dispatcher',
-  Manager = 'manager',
-  Ceo = 'ceo',
 }
 
 export type CreateEmployeeParams = Partial<Employee>;

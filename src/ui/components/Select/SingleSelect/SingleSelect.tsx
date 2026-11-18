@@ -34,6 +34,7 @@ export interface SingleSelectProps extends SelectProps {
 }
 
 // Fixes custom selectProps typing in react-select v5 (https://github.com/JedWatson/react-select/issues/4804#issuecomment-927223471)
+// tsconfig `paths` maps this deep path: `moduleResolution: bundler` (required by Next 16) follows react-select's exports.
 declare module 'react-select/dist/declarations/src/Select' {
   // eslint-disable-next-line unused-imports/no-unused-vars
   export interface Props<Option, IsMulti extends boolean, Group extends GroupBase<Option>> {

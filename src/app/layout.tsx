@@ -1,10 +1,9 @@
-import '@mantine/core/styles.css';
 import './globals.css';
 
 import { MantineProvider } from '@mantine/core';
 import type { Metadata } from 'next';
 
-import { inter, playfairDisplaySc } from '@/ui/theme/fonts';
+import { geist, geistMono, sora } from '@/ui/theme/fonts';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -21,7 +20,7 @@ export default function RootLayout({
       <head>
         <title>CargoNavis</title>
       </head>
-      <body className={`${inter.variable} ${playfairDisplaySc.variable} font-display`}>
+      <body className={`${geist.variable} ${geistMono.variable} ${sora.variable} font-display`}>
         <MantineProvider>{children}</MantineProvider>
       </body>
     </html>

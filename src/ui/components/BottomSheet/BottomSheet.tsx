@@ -21,10 +21,10 @@ interface BottomSheetProps {
   children?: ReactNode;
 }
 
-// HeroUI toasts render in their own top layer, outside the sheet. Tapping a toast action
+// Toasts render in their own portal, outside the sheet. Tapping a toast action
 // (e.g. "Poništi") would otherwise count as an outside press and close the sheet.
 function keepOpenOnToastPress(event: Event) {
-  if ((event.target as Element | null)?.closest?.('[data-react-aria-top-layer]')) {
+  if ((event.target as Element | null)?.closest?.('[data-slot="toast-viewport"]')) {
     event.preventDefault();
   }
 }

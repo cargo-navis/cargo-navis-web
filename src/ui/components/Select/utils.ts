@@ -8,8 +8,8 @@ export function getOptionsMap({
   optionIconRenderer,
 }: {
   options: SelectOption[];
-  optionIconRenderer?: (...args: any) => JSX.Element;
-}): Dictionary<SelectOption & { icon?: JSX.Element }> {
+  optionIconRenderer?: (...args: any) => React.JSX.Element;
+}): Dictionary<SelectOption & { icon?: React.JSX.Element }> {
   const optionsWithRenderer = (options as (SelectOption & { icon: any })[]).map((option) => {
     if (optionIconRenderer) {
       option.icon = optionIconRenderer(option);

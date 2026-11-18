@@ -1,2 +1,2 @@
-export * from './Select.d';
+export type * from './Select.d';
 export * from './SingleSelect';

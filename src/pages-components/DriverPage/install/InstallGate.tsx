@@ -21,7 +21,7 @@ export const InstallGate: React.FC<InstallGateProps> = ({ platform, onInstall, o
         Nalozi i ruta prijevoza rade kao aplikacija na tvom mobitelu.
       </Text>
     </FlexLayout>
-    <FlexLayout className="flex-col gap-4 rounded-l border border-dark-100 bg-white p-5 shadow-sm dark:border-light-850 dark:bg-light-875">
+    <FlexLayout className="flex-col gap-4 rounded-l border border-dark-100 bg-white p-5 shadow-xs dark:border-light-850 dark:bg-light-875">
       <InstallInstructions layout="steps" platform={platform} onInstall={onInstall} />
     </FlexLayout>
     <FlexLayout className="flex-col items-center gap-4 text-center">

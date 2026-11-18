@@ -23,13 +23,7 @@ export const Switch = forwardRef<any, SwitchProps>(({ value, isDisabled, onChang
       type="button"
       onClick={() => onChange(!value)}
     >
-      <Box
-        className={clsx(
-          'h-4 w-4 transition-all duration-250 rounded-circle',
-          value && 'translate-x-[16px]',
-          circleColor
-        )}
-      />
+      <Box className={clsx('h-4 w-4 transition-all rounded-circle', value && 'translate-x-[16px]', circleColor)} />
     </Box>
   );
 });

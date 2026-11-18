@@ -3,7 +3,8 @@ import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
-import { type Employee, PositionEnum } from '@/lib/api/employees.d';
+import { PositionEnum } from '@/lib/api/employees';
+import type { Employee } from '@/lib/api/employees.d';
 import {
   FormCheckboxGroup,
   FormDatepicker,

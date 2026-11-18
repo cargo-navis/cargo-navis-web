@@ -72,7 +72,7 @@ const clearStorage = (): void => {
   }
 };
 
-export const ShipmentsFiltersStorageProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
+export const ShipmentsFiltersStorageProvider = ({ children }: { children: React.ReactNode }): React.JSX.Element => {
   const [storage, setStorage] = useState<ShipmentsFiltersStorage>(readFromStorage);
   const [isReady] = useState(() => typeof window !== 'undefined');
 

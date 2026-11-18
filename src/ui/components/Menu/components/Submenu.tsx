@@ -21,7 +21,7 @@ export const Submenu: React.FC<SubmenuProps> = ({ triggerItem, items, onSubmenuT
         <MenuItemContent {...rest} />
       </DropdownMenu.SubTrigger>
       <DropdownMenu.SubContent asChild loop sideOffset={-8}>
-        <Box className={`${menuStyles} max-h-[--radix-dropdown-menu-content-available-height] z-[2]`}>
+        <Box className={`${menuStyles} max-h-(--radix-dropdown-menu-content-available-height) z-[2]`}>
           {items.map(({ type, ...rest }, index) => {
             const MenuComponent = itemsMap[type];
             return MenuComponent ? <MenuComponent key={index} {...rest} /> : null;

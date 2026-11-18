@@ -23,7 +23,7 @@ const motionVariantsMap = {
 export interface MenuProps {
   isOpen: boolean;
   items: MenuComponent[];
-  control: React.ReactElement;
+  control: React.ReactElement<{ isDisabled?: boolean }>;
   onOpen(): void;
   onClose(): void;
   isFullWidth?: boolean;

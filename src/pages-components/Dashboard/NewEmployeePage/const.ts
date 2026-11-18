@@ -1,6 +1,6 @@
 import keyBy from 'lodash/keyBy';
 
-import { PositionEnum } from '@/lib/api/employees.d';
+import { PositionEnum } from '@/lib/api/employees';
 import type { RadioOption } from '@/ui';
 
 interface PositionOption {

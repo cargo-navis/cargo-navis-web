@@ -5,7 +5,7 @@ import { IconType } from '@/ui';
 export type SelectValue = string;
 
 export interface SelectOption {
-  iconLeft?: IconType | (() => JSX.Element);
+  iconLeft?: IconType | (() => React.JSX.Element);
   iconRight?: IconType;
   isDisabled?: boolean;
   helper?: string;

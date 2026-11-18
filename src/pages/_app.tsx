@@ -1,34 +1,34 @@
-import '@mantine/core/styles.css';
+// Before any other CSS: globals.css fixes the cascade layer order and brings in Mantine's CSS (see there).
 import '../styles/globals.css';
 
-import { HeroUIProvider, ToastProvider } from '@heroui/react';
 import { MantineProvider } from '@mantine/core';
 import type { AppProps } from 'next/app';
+import NextHead from 'next/head';
+import { ThemeProvider } from 'next-themes';
 
+import { AppToaster } from '@/components/AppToaster';
 import { Head } from '@/components/Head';
 import { QueryClientCreator } from '@/lib/components/providers/QueryClientCreator';
-import { inter, playfairDisplaySc } from '@/ui/theme/fonts';
+import { fontVariablesCss } from '@/ui/theme/fonts';
 
-// Driver portal toasts carry actions (undo), so keep them in thumb reach, above its 60px bottom tab bar.
-const DRIVER_PORTAL_PATHNAMES = ['/driver', '/driver/[token]'];
-
-export default function App({ Component, pageProps, router }: AppProps) {
-  const isDriverPortal = DRIVER_PORTAL_PATHNAMES.includes(router.pathname);
-
+export default function App({ Component, pageProps }: AppProps) {
   return (
-    <HeroUIProvider>
+    // Dark mode = the `dark` class on <html>, following the system like before. `color-scheme` stays unset, as before
+    // (light scrollbars and form controls in both themes).
+    <ThemeProvider attribute="class" defaultTheme="system" enableColorScheme={false} enableSystem>
       <MantineProvider>
         <QueryClientCreator>
-          <Head />
-          <div className={`${inter.variable} ${playfairDisplaySc.variable} font-display isolate`}>
-            <Component {...pageProps} />
-          </div>
-          <ToastProvider
-            placement={isDriverPortal ? 'bottom-center' : 'top-center'}
-            toastOffset={isDriverPortal ? 76 : 20}
-          />
+          <AppToaster>
+            <Head />
+            <NextHead>
+              <style key="font-variables">{fontVariablesCss}</style>
+            </NextHead>
+            <div className="font-display isolate">
+              <Component {...pageProps} />
+            </div>
+          </AppToaster>
         </QueryClientCreator>
       </MantineProvider>
-    </HeroUIProvider>
+    </ThemeProvider>
   );
 }

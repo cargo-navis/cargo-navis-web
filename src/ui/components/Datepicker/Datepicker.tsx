@@ -1,5 +1,4 @@
 import 'dayjs/locale/hr';
-import '@mantine/dates/styles.css';
 
 import { DateInput, DatesProvider } from '@mantine/dates';
 

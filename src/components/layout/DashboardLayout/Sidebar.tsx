@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 import { AppMenu } from '@/components/AppMenu';
 import { logout } from '@/lib/api';
-import { PositionEnum } from '@/lib/api/employees.d';
+import { PositionEnum } from '@/lib/api/employees';
 import { useCurrentTenant, useCurrentUser } from '@/lib/hooks';
 import { accessTokenStore } from '@/lib/services/accessTokenStore';
 import { clearServiceWorkerOnLogout, unsubscribePushOnLogout } from '@/lib/utils/session';

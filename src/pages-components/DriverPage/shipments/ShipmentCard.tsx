@@ -152,7 +152,7 @@ export const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment, onOpen }) 
         'w-full rounded-l p-4',
         isCompleted
           ? COMPLETED_CARD_CLASSES
-          : 'border border-dark-100 bg-white shadow-sm dark:border-light-850 dark:bg-light-875'
+          : 'border border-dark-100 bg-white shadow-xs dark:border-light-850 dark:bg-light-875'
       )}
       type="button"
       onClick={onOpen}

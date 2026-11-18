@@ -32,10 +32,10 @@ const KIND_BADGE_CLASSES = {
 
 // White text needs teal-600 or darker to stay readable (about 4.7:1); teal-500 is too light.
 /** A completed stop or order: barely tinted green, so history reads as done without standing out. */
-export const COMPLETED_CARD_CLASSES = 'border-0 bg-green-50/40 shadow-sm dark:border-light-850 dark:bg-green-900/20';
+export const COMPLETED_CARD_CLASSES = 'border-0 bg-green-50/40 shadow-xs dark:border-light-850 dark:bg-green-900/20';
 
 const CARD_CLASSES: Record<StopTone, string> = {
-  default: 'border-dark-100 bg-white shadow-sm dark:border-light-850 dark:bg-light-875',
+  default: 'border-dark-100 bg-white shadow-xs dark:border-light-850 dark:bg-light-875',
   next: 'border-teal-600 bg-teal-600 shadow-md dark:border-teal-700 dark:bg-teal-700',
   completed: COMPLETED_CARD_CLASSES,
 };

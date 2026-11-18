@@ -4,7 +4,8 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 
 import { AlertsTooltip } from '@/components/alerts/AlertsTooltip';
-import { type Employee, MessageChannelEnum, PositionEnum } from '@/lib/api/employees.d';
+import { MessageChannelEnum, PositionEnum } from '@/lib/api/employees';
+import type { Employee } from '@/lib/api/employees.d';
 import { useEmployeeAlerts } from '@/lib/hooks';
 import { copyToClipboard } from '@/lib/utils/clipboard';
 import { Box, DisplayIf, FlexLayout, Icon, Pill, Table, Text } from '@/ui';

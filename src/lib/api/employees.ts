@@ -49,3 +49,30 @@ export async function getEmployeeDocumentUrl(
 export async function deleteEmployeeFile(id: string, documentId: string) {
   return backend.delete<void>(`/api/employees/${id}/files/${documentId}`);
 }
+
+// Runtime enums live here, not in employees.d.ts: Next 15+ (SWC) does not compile .d.ts files.
+export enum DriverLicenceEnum {
+  B1 = 'B1',
+  B = 'B',
+  C1 = 'C1',
+  C = 'C',
+  C1E = 'C1E',
+  CE = 'CE',
+}
+
+export enum MessageChannelEnum {
+  WHATSAPP = 'whatsapp',
+  // VIBER = 'viber',
+}
+
+export enum GenderEnum {
+  Male = 'M',
+  Female = 'F',
+}
+
+export enum PositionEnum {
+  Driver = 'driver',
+  Dispatcher = 'dispatcher',
+  Manager = 'manager',
+  Ceo = 'ceo',
+}

@@ -1,9 +1,8 @@
-import { closeToast } from '@heroui/react';
 import type { AxiosError } from 'axios';
 
 import type { DriverStop } from '@/lib/api/driver';
 import { useCompleteDriverStop, useDriverStops, useUncompleteDriverStop } from '@/lib/hooks/api/driver';
-import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
+import { closeToast, showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Button, FlexLayout, Icon, Text } from '@/ui';
 
 import {
@@ -69,10 +68,7 @@ export const CompleteStopButton: React.FC<{ stop: DriverStop }> = ({ stop }) => 
       title: labels.confirmed,
       description: getStopToastDescription(stop),
       timeout: UNDO_TIMEOUT_MS,
-      shouldShowTimeoutProgress: true,
-      endContent: (
-        <Button size="m" text="Poništi" variant="secondary" onClick={() => void handleUndo(confirmToastKey)} />
-      ),
+      action: { label: 'Poništi', onClick: () => void handleUndo(confirmToastKey) },
     });
   }
 

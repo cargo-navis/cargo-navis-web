@@ -1,8 +1,134 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/*
+ * Cascade layers recreating Tailwind 3's unlayered cascade: Mantine's class rules beat the preflight (they won on
+ * specificity before), Tailwind's components and utilities beat Mantine's core CSS (they came after it), and Mantine's
+ * dates CSS comes last (the date pickers imported it, so it loaded after globals.css). Must stay the first statement:
+ * it fixes the layer order.
+ */
+@layer theme, base, mantine, components, utilities, mantine-dates;
 
+@import 'tailwindcss' source(none);
+@import '@mantine/core/styles.layer.css';
+@import '@mantine/dates/styles.css' layer(mantine-dates);
 @import './app.css';
+
+/* Tailwind 4 compat: the old theme (custom colors, fontSize, borderRadius, spacing) still comes from the JS config. */
+@config '../../tailwind.config.ts';
+
+@source '..';
+
+/* Dark mode follows the `dark` class next-themes puts on <html> (default theme: system). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Tailwind 3 preflight defaults that Tailwind 4 changed; kept so the old pages look the same. */
+@layer base {
+  /* v3 only cleared the background of buttons; v4 also clears it (and the radius) on fields. */
+  input:where(:not([type='button'], [type='reset'], [type='submit'])),
+  select,
+  optgroup,
+  textarea {
+    border-radius: revert;
+    background-color: revert;
+  }
+
+  td,
+  th {
+    padding: revert;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #9ca3af;
+  }
+
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
+  dialog {
+    margin: auto;
+  }
+}
+
+/*
+ * KAN-55 PR1 · minimal tokens for toast, PR 2 replaces.
+ * Values from the playground's app/globals.css. Prefixed `toast-` so they don't touch the old shadcn HSL variables
+ * (--background, --popover, …) or switch on classes that are no-ops today (e.g. `bg-background` in Dialog / drawer).
+ * The palette entries are Tailwind's default blue / red / amber / green-950, which the old theme replaces or lacks.
+ */
+:root {
+  --toast-background: oklch(1 0 0);
+  --toast-foreground: oklch(0.145 0 0);
+  --toast-popover: oklch(1 0 0);
+  --toast-popover-foreground: oklch(0.145 0 0);
+  --toast-muted: oklch(0.97 0 0);
+  --toast-muted-foreground: oklch(0.556 0 0);
+  --toast-border: oklch(0.922 0 0);
+  --toast-input: oklch(0.922 0 0);
+  --toast-ring: #0b5560;
+}
+
+.dark {
+  --toast-background: #141414;
+  --toast-foreground: oklch(0.985 0 0);
+  --toast-popover: #1c1c1c;
+  --toast-popover-foreground: oklch(0.985 0 0);
+  --toast-muted: #262626;
+  --toast-muted-foreground: oklch(0.708 0 0);
+  --toast-border: oklch(1 0 0 / 12%);
+  --toast-input: oklch(1 0 0 / 15%);
+  --toast-ring: #13949f;
+}
+
+@theme inline {
+  --color-toast-background: var(--toast-background);
+  --color-toast-foreground: var(--toast-foreground);
+  --color-toast-popover: var(--toast-popover);
+  --color-toast-popover-foreground: var(--toast-popover-foreground);
+  --color-toast-muted: var(--toast-muted);
+  --color-toast-muted-foreground: var(--toast-muted-foreground);
+  --color-toast-border: var(--toast-border);
+  --color-toast-input: var(--toast-input);
+  --color-toast-ring: var(--toast-ring);
+}
+
+@theme {
+  --color-toast-blue-50: oklch(97% 0.014 254.604);
+  --color-toast-blue-200: oklch(88.2% 0.059 254.128);
+  --color-toast-blue-400: oklch(70.7% 0.165 254.624);
+  --color-toast-blue-600: oklch(54.6% 0.245 262.881);
+  --color-toast-blue-900: oklch(37.9% 0.146 265.522);
+  --color-toast-blue-950: oklch(28.2% 0.091 267.935);
+  --color-toast-red-50: oklch(97.1% 0.013 17.38);
+  --color-toast-red-200: oklch(88.5% 0.062 18.334);
+  --color-toast-red-400: oklch(70.4% 0.191 22.216);
+  --color-toast-red-600: oklch(57.7% 0.245 27.325);
+  --color-toast-red-900: oklch(39.6% 0.141 25.723);
+  --color-toast-red-950: oklch(25.8% 0.092 26.042);
+  --color-toast-amber-50: oklch(98.7% 0.022 95.277);
+  --color-toast-amber-200: oklch(92.4% 0.12 95.746);
+  --color-toast-amber-400: oklch(82.8% 0.189 84.429);
+  --color-toast-amber-600: oklch(66.6% 0.179 58.318);
+  --color-toast-amber-900: oklch(41.4% 0.112 45.904);
+  --color-toast-amber-950: oklch(27.9% 0.077 45.635);
+  --color-toast-green-950: oklch(26.6% 0.065 152.934);
+}
+
+@utility text-color-1 {
+  @apply text-dark-800 dark:text-light-50;
+}
+
+@utility text-color-2 {
+  @apply text-dark-700 dark:text-light-100;
+}
+
+@utility text-color-3 {
+  @apply text-dark-600 dark:text-light-300;
+}
+
+@utility text-color-4 {
+  @apply text-dark-500 dark:text-light-300;
+}
 
 @layer base {
   :root {
@@ -31,44 +157,40 @@
     --radius: 0.5rem;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --foreground-rgb: 255, 255, 255;
-      --background-rgb: rgb(0, 0, 0);
+  .dark {
+    --foreground-rgb: 255, 255, 255;
+    --background-rgb: rgb(0, 0, 0);
 
-      --background: 240 10% 3.9%;
-      --foreground: 0 0% 98%;
-      --card: 240 10% 3.9%;
-      --card-foreground: 0 0% 98%;
-      --popover: 240 10% 3.9%;
-      --popover-foreground: 0 0% 98%;
-      --primary: 0 0% 98%;
-      --primary-foreground: 240 5.9% 10%;
-      --secondary: 240 3.7% 15.9%;
-      --secondary-foreground: 0 0% 98%;
-      --muted: 240 3.7% 15.9%;
-      --muted-foreground: 240 5% 64.9%;
-      --accent: 240 3.7% 15.9%;
-      --accent-foreground: 0 0% 98%;
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 0 0% 98%;
-      --border: 240 3.7% 15.9%;
-      --input: 240 3.7% 15.9%;
-      --ring: 240 4.9% 83.9%;
-    }
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
   }
 }
 
 body {
   color: rgb(var(--foreground-rgb));
   background-color: var(--background-rgb);
+  /* Tailwind 3's preflight set this after Mantine's body rule; Tailwind 4's preflight no longer does. */
+  line-height: inherit;
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-
   .row-highlight-fade {
     animation: row-highlight-fade 2s ease-out forwards;
   }
@@ -93,11 +215,8 @@ body {
     animation: card-highlight-fade 5s ease-out forwards;
   }
 
-  /* Tailwind dark mode here follows prefers-color-scheme, not an html.dark class. */
-  @media (prefers-color-scheme: dark) {
-    .card-highlight-fade {
-      animation-name: card-highlight-fade-dark;
-    }
+  html.dark .card-highlight-fade {
+    animation-name: card-highlight-fade-dark;
   }
 }
 

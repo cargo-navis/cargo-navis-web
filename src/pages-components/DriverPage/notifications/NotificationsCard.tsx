@@ -63,7 +63,7 @@ export const NotificationsCard: React.FC<NotificationsCardProps> = ({ status, on
 
   return (
     <FlexLayout className="px-4 pb-2">
-      <FlexLayout className={clsx('w-full flex-col gap-4 rounded-l border p-4 shadow-sm', styles.card)}>
+      <FlexLayout className={clsx('w-full flex-col gap-4 rounded-l border p-4 shadow-xs', styles.card)}>
         <FlexLayout className="flex-col gap-1">
           <FlexLayout className="items-center gap-2">
             <Icon

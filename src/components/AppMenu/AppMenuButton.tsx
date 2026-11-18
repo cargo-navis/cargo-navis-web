@@ -22,7 +22,7 @@ export const AppMenuButton = React.forwardRef<any, AppMenuButtonProps>(({ should
       ref={ref}
     >
       <Icon
-        className="transition-transform group-hover:scale-110 group-focus:scale-110 duration-100 z-1"
+        className="transition-transform group-hover:scale-110 group-focus:scale-110 duration-100"
         icon="IconBell"
         size="l"
       />

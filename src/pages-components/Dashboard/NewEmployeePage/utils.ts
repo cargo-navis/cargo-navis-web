@@ -1,6 +1,7 @@
 import { FormState } from 'react-hook-form';
 
-import { type Employee, MessageChannelEnum } from '@/lib/api/employees.d';
+import { MessageChannelEnum } from '@/lib/api/employees';
+import type { Employee } from '@/lib/api/employees.d';
 import { PhoneNumberValue } from '@/lib/components/PhoneNumberInput';
 import { replaceEmptyStringsWithNull } from '@/lib/utils/data';
 

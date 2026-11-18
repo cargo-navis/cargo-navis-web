@@ -30,7 +30,7 @@ export const ShipmentsPageTabs: React.FC<ShipmentsPageTabsProps> = ({ tab, setTa
           <Box
             as="button"
             className={clsx(
-              'relative px-4 py-3 outline-none -mb-px border-b-2 transition-colors',
+              'relative px-4 py-3 outline-none border-b-2 transition-colors',
               isActive
                 ? 'border-teal-500 text-teal-500'
                 : 'border-transparent text-dark-700 dark:text-light-200 hover:text-teal-500'

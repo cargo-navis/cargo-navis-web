@@ -1,4 +1,4 @@
-import { PositionEnum } from '@/lib/api/employees.d';
+import { PositionEnum } from '@/lib/api/employees';
 import { IconType } from '@/ui';
 
 export interface NavLink {

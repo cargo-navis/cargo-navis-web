@@ -39,7 +39,7 @@ export const CargoSection = ({ cargos, addressType, icon, label, className }: Ca
         {groups.map((group) => (
           <FlexLayout
             as="li"
-            className={`relative flex-col gap-2 rounded-m border-1 ${borderClass} px-2 pt-3 pb-2`}
+            className={`relative flex-col gap-2 rounded-m ${borderClass} px-2 pt-3 pb-2`}
             key={group.shipment.id}
           >
             <ShipmentHeader

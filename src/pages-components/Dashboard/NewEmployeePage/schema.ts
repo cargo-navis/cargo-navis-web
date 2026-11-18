@@ -1,6 +1,6 @@
 import { array, object, type Schema, string } from 'yup';
 
-import { GenderEnum, PositionEnum } from '@/lib/api/employees.d';
+import { GenderEnum, PositionEnum } from '@/lib/api/employees';
 
 // Helper function to create a trimmed string schema
 const trimmedString = () => string().transform((value) => (value ? value.trim() : value));
