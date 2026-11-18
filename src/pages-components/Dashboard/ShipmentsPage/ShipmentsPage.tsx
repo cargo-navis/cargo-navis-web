@@ -1,7 +1,8 @@
 /**
  * Nalozi (DECISIONS §5 „Nalozi”, labs /tables, /nalog, /routes, /invoice, /overlays/pagination|loading|empty): header
  * with „Učitaj nalog” + „Dodaj nalog”, page tabs Nalozi / Nalozi u pripremi (count of ready drafts, tab in the URL),
- * toolbar + chip row, the table, pages below. Page in the URL, page size remembered.
+ * toolbar + chip row, the table, pages below. Page in the URL, page size remembered. A row click opens the quick look
+ * sheet (desktop; phones open the nalog page).
  */
 
 import { useRouter } from 'next/router';
@@ -13,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useDelayedFlag, useScrollRestoration, useShipmentDrafts } from '@/lib/hooks';
+import { useDelayedFlag, useIsMobile, useScrollRestoration, useShipmentDrafts } from '@/lib/hooks';
 import { useHasMounted } from '@/lib/hooks/dom';
 import { Icon } from '@/ui';
 
@@ -25,6 +26,7 @@ import {
   useShipmentsPageTab,
   useUploadDraftFiles,
 } from './hooks';
+import { QuickLookSheet } from './list/QuickLookSheet';
 import { ShipmentsFooter } from './list/ShipmentsFooter';
 import { COLUMN_LABELS, ShipmentsTable, useColumnVisibility } from './list/ShipmentsTable';
 import { type ActiveFilter, FilterChipRow, ShipmentsToolbar, useActiveFilters } from './list/Toolbar';
@@ -115,8 +117,14 @@ function ShipmentsList({ onUpload }: { onUpload(): void }) {
   const activeFilters = useActiveFilters();
   const { visibility, update } = useColumnVisibility();
   const tableTopRef = React.useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
+  const [quickLookId, setQuickLookId] = React.useState<string>();
 
   const shipments = data?.data ?? [];
+  // The quick look follows the row (fresh after an assign / status change) and closes once the row is gone from the
+  // list (another page, filters, sort, deleted). A filter change keeps the old rows until the new page arrives.
+  const quickLook = quickLookId ? shipments.find((shipment) => shipment.id === quickLookId) : undefined;
+  if (quickLookId && !quickLook) setQuickLookId(undefined);
   // No data yet (also while the request waits for the router or URL filters): skeleton, unless it failed.
   const isFirstLoad = !data && (!isError || isLookupsLoading);
   const showFetching = useDelayedFlag(isFetching && !isFirstLoad && (isPlaceholderData || !!data));
@@ -205,11 +213,13 @@ function ShipmentsList({ onUpload }: { onUpload(): void }) {
       <FilterChipRow filters={activeFilters} resultsLabel={resultsLabel} />
       <ShipmentsTable
         empty={empty}
+        selectedId={isMobile ? undefined : quickLook?.id}
         shipments={shipments}
         showFetching={showFetching}
         state={state}
         tableTopRef={tableTopRef}
         visibility={visibility}
+        onRowOpen={isMobile ? undefined : (shipment) => setQuickLookId(shipment.id)}
       />
       {state === 'data' && resultsLabel && (
         <ShipmentsFooter
@@ -221,6 +231,7 @@ function ShipmentsList({ onUpload }: { onUpload(): void }) {
           onPageSizeChange={setPageSize}
         />
       )}
+      <QuickLookSheet shipment={isMobile ? undefined : quickLook} onClose={() => setQuickLookId(undefined)} />
     </>
   );
 }

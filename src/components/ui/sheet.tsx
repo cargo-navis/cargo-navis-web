@@ -82,7 +82,7 @@ function SheetContent({
             render={<Button className="absolute top-4.5 right-4" size="icon-sm" variant="ghost" />}
           >
             <Icon icon="IconX" size="s" />
-            <span className="sr-only">Close</span>
+            <span className="sr-only">Zatvori</span>
           </SheetPrimitive.Close>
         )}
       </SheetPrimitive.Popup>

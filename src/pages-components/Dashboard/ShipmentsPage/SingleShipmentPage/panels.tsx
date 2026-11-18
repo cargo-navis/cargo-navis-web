@@ -9,26 +9,17 @@ import * as React from 'react';
 import { DriverAvatar } from '@/components/shared/driver-avatar';
 import { Panel } from '@/components/shared/panel';
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { Shipment } from '@/lib/api';
-import { InvoiceStatus } from '@/lib/api/shipments';
 import { cn } from '@/lib/utils';
 import { formatDate, formatDateTime } from '@/lib/utils/date';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Icon } from '@/ui';
 
 import { MarginPill } from '../list/cells';
-import { useChangeInvoiceStatus } from '../shared/actions';
 import { formatEuroExact, getMargin } from '../shared/format';
-import { getInvoiceInfo, INVOICE_STATUS_LABEL, INVOICE_STATUSES } from '../shared/invoice';
-import { InvoiceCell } from '../shared/InvoiceCell';
+import { getInvoiceInfo } from '../shared/invoice';
+import { InvoiceCell, InvoiceStatusMenu } from '../shared/InvoiceCell';
 import { useLookups } from '../shared/lookups';
 import { MISSING_BUTTON, TEXT_LINK } from '../shared/tones';
 import { RecipientsDialog } from './RecipientsDialog';
@@ -36,33 +27,11 @@ import { sortStops } from './RouteTimeline';
 
 export function InvoicePanel({ shipment }: { shipment: Shipment }) {
   const { clientsById } = useLookups();
-  const { change, isPending } = useChangeInvoiceStatus();
   const client = shipment.clientId ? clientsById.get(shipment.clientId) : undefined;
   const info = getInvoiceInfo(shipment, client);
 
   return (
-    <Panel
-      action={
-        <DropdownMenu>
-          <DropdownMenuTrigger render={<Button loading={isPending} size="sm" variant="ghost" />}>
-            Promijeni <Icon data-icon="inline-end" icon="IconChevronDown" size="s" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-44">
-            <DropdownMenuRadioGroup
-              value={shipment.invoiceStatus}
-              onValueChange={(value) => void change(shipment, value as InvoiceStatus)}
-            >
-              {INVOICE_STATUSES.map((status) => (
-                <DropdownMenuRadioItem key={status} value={status}>
-                  {INVOICE_STATUS_LABEL[status]}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      }
-      title="Faktura"
-    >
+    <Panel action={<InvoiceStatusMenu shipment={shipment} />} title="Faktura">
       <div className="flex items-start justify-between gap-3">
         <InvoiceCell align="start" amount={shipment.price ?? 0} info={info} />
         {shipment.invoiceStatusUpdatedAt && (

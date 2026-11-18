@@ -12,7 +12,14 @@ import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { type Employee, notifyVehicleStopDriver, type Shipment, type VehicleStop } from '@/lib/api';
+import {
+  type Contractor,
+  type Employee,
+  notifyVehicleStopDriver,
+  type Shipment,
+  type Vehicle,
+  type VehicleStop,
+} from '@/lib/api';
 import { useAssignShipmentToVehicle, useUpdateVehicleStop } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
 import { closeToast, showErrorToast, showSuccessToast } from '@/lib/utils/toast';
@@ -142,7 +149,21 @@ interface NotifyContext {
   onDone(): void;
 }
 
-export function AssignmentCell({ shipment }: { shipment: Shipment }) {
+/** What the nalog's vehicle / driver look like: the contractor (agency, nothing assigned) or the vehicle + driver. */
+export type Assignment =
+  | { kind: 'contractor'; contractor?: Contractor }
+  | {
+      kind: 'own';
+      vehicle?: Vehicle;
+      driver?: Employee;
+      /** „+ Dodijeli vozilo” when there is no vehicle. */
+      assignVehicle: React.ReactNode;
+      /** „+ Dodijeli vozača” when there is a vehicle but no driver. */
+      assignDriver: React.ReactNode;
+    };
+
+/** The nalog's vehicle / driver and, where one is missing, the quick-assign button (table cell and quick look). */
+export function useAssignment(shipment: Shipment): Assignment {
   const { vehiclesById, employeesById, contractorsById, clientsById, motorVehicles, drivers } = useLookups();
   const queryClient = useQueryClient();
   const { mutateAsync: assignShipment } = useAssignShipmentToVehicle();
@@ -153,12 +174,10 @@ export function AssignmentCell({ shipment }: { shipment: Shipment }) {
   const driver = latestStop?.driverId ? employeesById.get(latestStop.driverId) : undefined;
 
   if (shipment.isAgency && !vehicle && !latestStop?.driverId) {
-    const contractor = shipment.transportContractorId ? contractorsById.get(shipment.transportContractorId) : undefined;
-    return (
-      <span title="Agencijski nalog: prijevoz obavlja kontraktor">
-        <Line icon="IconBriefcase" muted text={contractor?.name ?? '—'} />
-      </span>
-    );
+    return {
+      kind: 'contractor',
+      contractor: shipment.transportContractorId ? contractorsById.get(shipment.transportContractorId) : undefined,
+    };
   }
 
   const { cargoStopDates, missingDates } = getAssignStopDates(shipment.cargo);
@@ -212,6 +231,56 @@ export function AssignmentCell({ shipment }: { shipment: Shipment }) {
 
   const hasOpenStops = driverlessStops.length > 0;
 
+  return {
+    kind: 'own',
+    vehicle,
+    driver,
+    assignVehicle: vehicle ? null : (
+      <AssignButton
+        disabledReason={
+          missingDates
+            ? 'Nekim utovarima ili istovarima nedostaje datum. Dodijeli vozilo s naloga.'
+            : !shipment.cargo.length
+              ? 'Nalog nema tereta.'
+              : undefined
+        }
+        heading="Vozila"
+        label="Dodijeli vozilo"
+        options={motorVehicles.map((option) => ({
+          value: option.id,
+          label: option.registration,
+          hint: option.brand,
+        }))}
+        placeholder="Traži registraciju…"
+        onSelect={handleAssignVehicle}
+      />
+    ),
+    assignDriver:
+      driver || !vehicle ? null : (
+        <AssignButton
+          disabledReason={hasOpenStops ? undefined : 'Nema nezavršenih utovara ni istovara bez vozača.'}
+          heading="Vozači"
+          label="Dodijeli vozača"
+          options={drivers.map((option) => ({ value: option.id, label: option.fullName }))}
+          placeholder="Traži vozača…"
+          onSelect={handleAssignDriver}
+        />
+      ),
+  };
+}
+
+export function AssignmentCell({ shipment }: { shipment: Shipment }) {
+  const assignment = useAssignment(shipment);
+
+  if (assignment.kind === 'contractor') {
+    return (
+      <span title="Agencijski nalog: prijevoz obavlja kontraktor">
+        <Line icon="IconBriefcase" muted text={assignment.contractor?.name ?? '—'} />
+      </span>
+    );
+  }
+
+  const { vehicle, driver } = assignment;
   return (
     <div className="flex min-w-0 flex-col gap-1">
       {vehicle ? (
@@ -221,39 +290,9 @@ export function AssignmentCell({ shipment }: { shipment: Shipment }) {
           title={[vehicle.registration, vehicle.brand].filter(Boolean).join(' · ')}
         />
       ) : (
-        <AssignButton
-          disabledReason={
-            missingDates
-              ? 'Nekim utovarima ili istovarima nedostaje datum. Dodijeli vozilo s naloga.'
-              : !shipment.cargo.length
-                ? 'Nalog nema tereta.'
-                : undefined
-          }
-          heading="Vozila"
-          label="Dodijeli vozilo"
-          options={motorVehicles.map((option) => ({
-            value: option.id,
-            label: option.registration,
-            hint: option.brand,
-          }))}
-          placeholder="Traži registraciju…"
-          onSelect={handleAssignVehicle}
-        />
+        assignment.assignVehicle
       )}
-      {driver ? (
-        <Line icon="IconUser" text={driver.fullName} title={driver.fullName} />
-      ) : (
-        vehicle && (
-          <AssignButton
-            disabledReason={hasOpenStops ? undefined : 'Nema nezavršenih utovara ni istovara bez vozača.'}
-            heading="Vozači"
-            label="Dodijeli vozača"
-            options={drivers.map((option) => ({ value: option.id, label: option.fullName }))}
-            placeholder="Traži vozača…"
-            onSelect={handleAssignDriver}
-          />
-        )
-      )}
+      {driver ? <Line icon="IconUser" text={driver.fullName} title={driver.fullName} /> : assignment.assignDriver}
     </div>
   );
 }

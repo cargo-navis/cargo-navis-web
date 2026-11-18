@@ -1,9 +1,10 @@
 /**
  * The Nalozi table (DECISIONS §5 Nalozi, lab /tables shipments-table.tsx): Nalog · Utovar → Istovar (route track) ·
  * Teret · Vozilo / Vozač · Cijena · Status fakture · ⋯. Sticky header under the top bar, top-aligned cells, subtle row
- * tints (missing vehicle / driver red, paid green), row click opens, right-click = the ⋯ menu. States: skeleton rows on
- * the first load, dimmed rows + a bar under the header on a refetch (after 300ms), empty / filtered-empty / error
- * inside the table under its header.
+ * tints (missing vehicle / driver red, paid green), row click opens (the quick look sheet where the page passes
+ * `onRowOpen`, else the nalog page; ⌘ / Ctrl / middle click = new tab), right-click = the ⋯ menu. States: skeleton
+ * rows on the first load, dimmed rows + a bar under the header on a refetch (after 300ms), empty / filtered-empty /
+ * error inside the table under its header.
  */
 
 import {
@@ -174,6 +175,8 @@ export function ShipmentsTable({
   visibility,
   empty,
   tableTopRef,
+  selectedId,
+  onRowOpen,
 }: {
   shipments: Shipment[];
   state: TableState;
@@ -183,6 +186,10 @@ export function ShipmentsTable({
   /** What goes in the table body when there are no rows (filtered-empty / first use / error). */
   empty?: React.ReactNode;
   tableTopRef?: React.Ref<HTMLDivElement>;
+  /** The row shown in the quick look. */
+  selectedId?: string;
+  /** A plain row click: given = quick look, otherwise the nalog page. */
+  onRowOpen?(shipment: Shipment): void;
 }) {
   const router = useRouter();
   const columns = useColumns();
@@ -202,7 +209,8 @@ export function ShipmentsTable({
     // overflow-clip (not hidden / auto) keeps the rounded corners without making a scroll box, so the header can stick.
     // Narrower than the table's minimum (laptops with the sidebar open): it scrolls sideways instead, so ⋯ stays
     // reachable (the header then pins to the table, not the page).
-    <div className="overflow-clip rounded-xl border" ref={tableTopRef}>
+    // `data-quick-look-rows`: a press in here switches the quick look instead of closing it.
+    <div className="overflow-clip rounded-xl border" data-quick-look-rows="" ref={tableTopRef}>
       <div ref={containerRef}>
         <Table
           className="min-w-[74rem] table-fixed"
@@ -253,18 +261,21 @@ export function ShipmentsTable({
                 const shipment = row.original;
                 const latestStop = getLatestStop(shipment);
                 const isMissing = !shipment.isAgency && (!latestStop?.vehicleId || !latestStop?.driverId);
+                const isSelected = shipment.id === selectedId;
                 return (
                   <RowContextMenu key={row.id} shipment={shipment}>
                     <TableRow
                       className={cn(
                         'cursor-pointer data-popup-open:bg-muted/50',
                         isMissing && ROW_TINT.warning,
-                        !isMissing && shipment.invoiceStatus === InvoiceStatus.Paid && ROW_TINT.paid
+                        !isMissing && shipment.invoiceStatus === InvoiceStatus.Paid && ROW_TINT.paid,
+                        isSelected && 'bg-brand-soft hover:bg-brand-soft'
                       )}
                       onClick={(event) => {
                         // ⌘ / Ctrl / middle click: a new tab, like a link.
                         if (event.metaKey || event.ctrlKey)
                           window.open(shipmentHref(shipment.id), '_blank', 'noopener');
+                        else if (onRowOpen) onRowOpen(shipment);
                         else void router.push(shipmentHref(shipment.id));
                       }}
                       onMouseDown={(event) => {

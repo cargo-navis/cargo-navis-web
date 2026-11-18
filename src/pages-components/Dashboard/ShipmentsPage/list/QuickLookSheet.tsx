@@ -1,0 +1,194 @@
+/**
+ * Quick look at a nalog from the Nalozi list (DECISIONS §3 Sheet, labs /overlays/sheet + /overlays QuickLookSheet):
+ * floating md (512) side sheet, `modal={false}` and no backdrop, so the table stays usable. A click on another row
+ * switches to that nalog; a click anywhere else (filters, sidebar, empty space) closes it, as do × and Esc. Read + small
+ * actions: quick assign, invoice status, Uredi and „Otvori nalog” (the full page). Not on phones: the row opens the page.
+ */
+
+import Link from 'next/link';
+import * as React from 'react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetTitle } from '@/components/ui/sheet';
+import { Skeleton } from '@/components/ui/skeleton';
+import type { Shipment } from '@/lib/api';
+import { Icon, type IconType } from '@/ui';
+
+import { editShipmentHref, shipmentHref } from '../shared/actions';
+import { formatEuroExact, getMargin } from '../shared/format';
+import { getInvoiceInfo } from '../shared/invoice';
+import { InvoiceCell, InvoiceStatusMenu } from '../shared/InvoiceCell';
+import { useLookups } from '../shared/lookups';
+import { useAssignment } from './AssignmentCell';
+import { CargoCell, MarginPill } from './cells';
+import { RouteTrack } from './RouteTrack';
+
+// Presses and focus moves that don't close the sheet: the table (`data-quick-look-rows` on ShipmentsTable; a row click
+// switches the sheet), toasts (e.g. „Obavijesti” after an assignment), a row's ⋯ / right-click menu and its delete
+// confirm.
+const KEEPS_OPEN = '[data-quick-look-rows], [data-slot="toast-viewport"], [role="menu"], [role="alertdialog"]';
+
+export function QuickLookSheet({ shipment, onClose }: { shipment: Shipment | undefined; onClose(): void }) {
+  // The last nalog stays inside while the sheet animates out.
+  const [shown, setShown] = React.useState(shipment);
+  if (shipment && shipment !== shown) setShown(shipment);
+  const popupRef = React.useRef<HTMLDivElement>(null);
+
+  return (
+    <Sheet
+      modal={false}
+      open={!!shipment}
+      onOpenChange={(open, details) => {
+        if (open) return;
+        if (details.reason === 'outside-press' || details.reason === 'focus-out') {
+          const target =
+            details.reason === 'focus-out' ? (details.event as FocusEvent).relatedTarget : details.event.target;
+          if (target instanceof Element && target.closest(KEEPS_OPEN)) return;
+        }
+        onClose();
+      }}
+    >
+      {shown && (
+        <SheetContent
+          // Focus the panel, not its first button (no focus ring or tooltip on open).
+          initialFocus={popupRef}
+          overlayClassName="hidden"
+          ref={popupRef}
+          showCloseButton={false}
+        >
+          <QuickLook shipment={shown} />
+        </SheetContent>
+      )}
+    </Sheet>
+  );
+}
+
+function DetailRow({ icon, label, children }: { icon: IconType; label: string; children: React.ReactNode }) {
+  return (
+    <div className="grid grid-cols-[7rem_1fr] items-start gap-3 py-2.5">
+      <span className="flex items-center gap-1.5 text-muted-foreground">
+        <Icon icon={icon} size="s" /> {label}
+      </span>
+      <div className="min-w-0">{children}</div>
+    </div>
+  );
+}
+
+const Missing = () => <span className="text-muted-foreground">—</span>;
+
+function QuickLook({ shipment }: { shipment: Shipment }) {
+  const { clientsById, isLoading } = useLookups();
+  const assignment = useAssignment(shipment);
+  const client = shipment.clientId ? clientsById.get(shipment.clientId) : undefined;
+  const notes = [
+    { label: 'Interna', text: shipment.internalNote },
+    { label: 'Vanjska', text: shipment.externalNote },
+  ].filter((note) => !!note.text);
+  const margin =
+    shipment.isAgency && shipment.contractorPrice !== null && shipment.contractorPrice !== undefined
+      ? getMargin(shipment.price ?? 0, shipment.contractorPrice)
+      : undefined;
+
+  return (
+    <>
+      <div className="flex shrink-0 items-start gap-2 border-b px-6 py-5">
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <SheetTitle className="truncate">
+            {client?.name ??
+              (isLoading && shipment.clientId ? (
+                <Skeleton className="my-0.5 h-6 w-48" />
+              ) : (
+                `Nalog #${shipment.orderNumber}`
+              ))}
+          </SheetTitle>
+          <SheetDescription className="flex items-center gap-2 tabular-nums">
+            #{shipment.orderNumber} · {formatEuroExact(shipment.price ?? 0)}
+            {shipment.isAgency && (
+              <Badge size="sm" tone="category">
+                <Icon icon="IconBriefcase" size="xs" /> Agencijski
+              </Badge>
+            )}
+          </SheetDescription>
+        </div>
+        <SheetClose render={<Button aria-label="Zatvori" size="icon-sm" variant="ghost" />}>
+          <Icon icon="IconX" size="s" />
+        </SheetClose>
+      </div>
+
+      <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
+        <RouteTrack cargos={shipment.cargo} />
+        <div className="mt-4 divide-y border-t text-sm">
+          <DetailRow icon="IconPackage" label="Teret">
+            <CargoCell shipment={shipment} />
+          </DetailRow>
+          {assignment.kind === 'contractor' ? (
+            <DetailRow icon="IconBriefcase" label="Kontraktor">
+              <div className="flex flex-col">
+                <span className="truncate">{assignment.contractor?.name ?? '—'}</span>
+                <span className="text-xs text-muted-foreground">Vozilo i vozača određuje kontraktor</span>
+              </div>
+            </DetailRow>
+          ) : (
+            <>
+              <DetailRow icon="IconTruck" label="Vozilo">
+                {assignment.vehicle ? (
+                  <span className="truncate">
+                    {[assignment.vehicle.registration, assignment.vehicle.brand].filter(Boolean).join(' · ')}
+                  </span>
+                ) : (
+                  assignment.assignVehicle
+                )}
+              </DetailRow>
+              <DetailRow icon="IconUser" label="Vozač">
+                {assignment.driver?.fullName ?? assignment.assignDriver ?? <Missing />}
+              </DetailRow>
+            </>
+          )}
+          {margin && (
+            <DetailRow
+              icon={margin.isLoss ? 'IconTrendingDown' : 'IconTrendingUp'}
+              label={margin.isLoss ? 'Gubitak' : 'Zarada'}
+            >
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                <MarginPill earnings={margin.earnings} isLoss={margin.isLoss} percent={margin.percent} />
+                <span className="text-xs text-muted-foreground tabular-nums">
+                  Cijena kontraktora −{formatEuroExact(shipment.contractorPrice ?? 0)}
+                </span>
+              </div>
+            </DetailRow>
+          )}
+          {notes.length > 0 && (
+            <DetailRow icon="IconMessage" label="Napomena">
+              <div className="flex flex-col gap-2">
+                {notes.map((note) => (
+                  <div className="flex flex-col" key={note.label}>
+                    <span className="text-xs text-muted-foreground">{note.label}</span>
+                    <span className="whitespace-pre-wrap">{note.text}</span>
+                  </div>
+                ))}
+              </div>
+            </DetailRow>
+          )}
+          <DetailRow icon="IconSend" label="Faktura">
+            <div className="flex items-start justify-between gap-3">
+              <InvoiceCell align="start" amount={shipment.price ?? 0} info={getInvoiceInfo(shipment, client)} />
+              <div className="-my-1">
+                <InvoiceStatusMenu shipment={shipment} />
+              </div>
+            </div>
+          </DetailRow>
+        </div>
+      </div>
+
+      <SheetFooter className="flex-row justify-end">
+        <Button nativeButton={false} render={<Link href={editShipmentHref(shipment.id)} />} variant="outline">
+          <Icon data-icon="inline-start" icon="IconPencil" size="s" /> Uredi
+        </Button>
+        <Button nativeButton={false} render={<Link href={shipmentHref(shipment.id)} />}>
+          <Icon data-icon="inline-start" icon="IconExternalLink" size="s" /> Otvori nalog
+        </Button>
+      </SheetFooter>
+    </>
+  );
+}

@@ -1,9 +1,21 @@
 import { InvoiceStatusBadge } from '@/components/shared/invoice-status-badge';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import type { Shipment } from '@/lib/api';
+import { InvoiceStatus } from '@/lib/api/shipments';
 import { cn } from '@/lib/utils';
+import { Icon } from '@/ui';
 
+import { useChangeInvoiceStatus } from './actions';
 import { formatEuro } from './format';
-import { INVOICE_STATUS_LABEL, invoiceDateLines, type InvoiceInfo } from './invoice';
+import { INVOICE_STATUS_LABEL, INVOICE_STATUSES, invoiceDateLines, type InvoiceInfo } from './invoice';
 
 /** The invoice pill (same tones everywhere: table, Faktura panel, summary strip). */
 export function InvoiceBadge({ info, size }: { info: InvoiceInfo; size?: 'sm' | 'md' | 'lg' }) {
@@ -60,5 +72,29 @@ export function InvoiceCell({
         </div>
       </TooltipContent>
     </Tooltip>
+  );
+}
+
+/** „Promijeni ▾”: the invoice status, no confirm (Faktura panel and the list's quick look). */
+export function InvoiceStatusMenu({ shipment }: { shipment: Shipment }) {
+  const { change, isPending } = useChangeInvoiceStatus();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger render={<Button loading={isPending} size="sm" variant="ghost" />}>
+        Promijeni <Icon data-icon="inline-end" icon="IconChevronDown" size="s" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-44">
+        <DropdownMenuRadioGroup
+          value={shipment.invoiceStatus}
+          onValueChange={(value) => void change(shipment, value as InvoiceStatus)}
+        >
+          {INVOICE_STATUSES.map((status) => (
+            <DropdownMenuRadioItem key={status} value={status}>
+              {INVOICE_STATUS_LABEL[status]}
+            </DropdownMenuRadioItem>
+          ))}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
