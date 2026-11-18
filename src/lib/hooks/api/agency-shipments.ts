@@ -52,8 +52,9 @@ export function useUpdateAgencyShipment() {
       queryClient.setQueryData(['shipment', variables.id], updated);
 
       // Cargo edits can rewrite vehicle stops on the backend, and the list rows
-      // carry both the client-side and the contractor-side price.
-      void queryClient.removeQueries({ queryKey: ['shipments'] });
+      // carry both the client-side and the contractor-side price. Invalidate (not remove), so a mounted list
+      // re-renders with the fresh rows.
+      void queryClient.invalidateQueries({ queryKey: ['shipments'] });
       void queryClient.invalidateQueries({ queryKey: ['vehicleStops'], refetchType: 'all' });
 
       return queryClient.invalidateQueries({ queryKey: ['shipment', variables.id] });
@@ -77,6 +78,8 @@ export function useDeleteAgencyShipment(id: string) {
         if (filtered.length === data.data.length) return data;
         return { ...data, data: filtered, totalElements: Math.max(0, data.totalElements - 1) };
       });
+      // Then refetch: the page refills from the next one and the totals / page count are exact again.
+      void queryClient.invalidateQueries({ queryKey: ['shipments'] });
     },
   });
 }

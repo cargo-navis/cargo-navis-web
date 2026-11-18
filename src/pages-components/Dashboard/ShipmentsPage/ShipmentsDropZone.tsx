@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { Box, FlexLayout, Icon, Text } from '@/ui';
+import { Icon } from '@/ui';
 
 import { useUploadDraftFiles } from './hooks';
 
@@ -12,6 +12,7 @@ function isFileDrag(event: DragEvent) {
   return !!event.dataTransfer?.types?.includes('Files');
 }
 
+/** Drop a PDF anywhere on the Nalozi page → a new nalog u pripremi. */
 export const ShipmentsDropZone: React.FC<ShipmentsDropZoneProps> = ({ onFilesAccepted }) => {
   const uploadFiles = useUploadDraftFiles(onFilesAccepted);
   const dragCounter = useRef(0);
@@ -42,9 +43,7 @@ export const ShipmentsDropZone: React.FC<ShipmentsDropZoneProps> = ({ onFilesAcc
       event.preventDefault();
       dragCounter.current = 0;
       setIsDragging(false);
-
-      const files = Array.from(event.dataTransfer?.files ?? []);
-      await uploadFiles(files);
+      await uploadFiles(Array.from(event.dataTransfer?.files ?? []));
     }
 
     window.addEventListener('dragenter', handleDragEnter);
@@ -63,14 +62,12 @@ export const ShipmentsDropZone: React.FC<ShipmentsDropZoneProps> = ({ onFilesAcc
   if (!isDragging) return null;
 
   return (
-    <Box className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center bg-teal-500/15 backdrop-blur-xs border-4 border-dashed border-teal-500">
-      <FlexLayout className="flex-col items-center gap-3 bg-white/95 dark:bg-black/90 rounded-legacy-xl px-16 py-8 shadow-xl">
-        <Icon color="text-teal-500" icon="IconUpload" size="xxl" />
-        <Text variant="text-l-medium">Otpustite za upload</Text>
-        <Text color="text-color-3" variant="text-xs">
-          Samo PDF
-        </Text>
-      </FlexLayout>
-    </Box>
+    <div className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center border-4 border-dashed border-primary bg-primary/10">
+      <div className="flex flex-col items-center gap-3 rounded-xl bg-popover px-16 py-8 text-popover-foreground shadow-lg ring-1 ring-foreground/10">
+        <Icon className="text-primary dark:text-teal-300" icon="IconUpload" size="xxl" />
+        <span className="font-heading text-lg font-bold tracking-tight">Pusti za učitavanje</span>
+        <span className="text-xs text-muted-foreground">Samo PDF</span>
+      </div>
+    </div>
   );
 };

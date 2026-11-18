@@ -1,198 +1,190 @@
-import Link from 'next/link';
+/**
+ * Nalog detail (DECISIONS §5 „Nalog detail”, lab /order, decided layout C with the side column on the left — the same
+ * for own and agency nalozi): header, summary strip, tabs Pregled / Dokumenti / Napomene (tab in the URL). Pregled:
+ * left 380px Faktura, Vozilo / Kontraktor, email recipients (KAN-112) and the compact Ruta (own nalozi with vehicle
+ * stops only — agency nalozi never show a Ruta); right the Tereti cards. Povijest is left out: the API has no log.
+ */
+
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import * as React from 'react';
 
-import { BackButton } from '@/components/BackButton';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
-import { InvoiceStatus, Shipment } from '@/lib/api';
-import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
-import {
-  useClient,
-  useContractor,
-  useCurrentTenant,
-  useShipment,
-  useUpdateAgencyShipment,
-  useUpdateShipment,
-} from '@/lib/hooks';
-import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, Divider, FlexLayout, Icon, Pill, Text } from '@/ui';
+import { Panel } from '@/components/shared/panel';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import type { Shipment } from '@/lib/api';
+import { useShipment } from '@/lib/hooks';
+import { Icon } from '@/ui';
 
-import { invoiceStatusConfig } from '../const';
 import { AssignVehicleModal } from '../NewShipmentPage/AssignVehicleModal';
-import { OverdueIndicator } from '../OverdueIndicator';
-import { CargoItem } from './components/CargoItem';
-import { ContentLoader } from './components/ContentLoader';
-import { InvoiceItem } from './components/InvoiceItem';
-import { NotifyDriversButton } from './components/NotifyDriversButton';
-import { ShipmentActions } from './components/ShipmentActions';
-import { ShipmentFiles } from './components/ShipmentFiles';
-import { ShipmentLeftPanel } from './components/ShipmentLeftPanel';
-import type { CargoWithMetadata } from './components/types';
+import { ShipmentLookupsProvider, useShipmentLookups } from '../shared/lookups';
+import { CargoCards } from './CargoCards';
+import { documentsOf, DocumentsTab } from './DocumentsTab';
+import { NotesTab } from './NotesTab';
+import { OrderHeader } from './OrderHeader';
+import { AssignmentPanel, InvoicePanel, RecipientsPanel } from './panels';
+import { RouteTimeline } from './RouteTimeline';
+import { SummaryStrip } from './SummaryStrip';
+
+const TABS = ['pregled', 'dokumenti', 'napomene'] as const;
+type Tab = (typeof TABS)[number];
+
+function useDetailTab() {
+  const router = useRouter();
+  const tab: Tab = TABS.includes(router.query.tab as Tab) ? (router.query.tab as Tab) : 'pregled';
+  const setTab = (next: Tab) => {
+    const query = { ...router.query };
+    if (next === 'pregled') delete query.tab;
+    else query.tab = next;
+    void router.replace({ pathname: router.pathname, query }, undefined, { shallow: true, scroll: false });
+  };
+  return { tab, setTab };
+}
 
 export const SingleShipmentPage = () => {
   const { query } = useRouter();
-  const id = query.id;
-
-  const { data: shipment, isLoading } = useShipment(id as string);
+  const id = typeof query.id === 'string' ? query.id : undefined;
+  const { data: shipment, isLoading, isError, refetch, isFetching } = useShipment(id);
+  const lookups = useShipmentLookups();
 
   return (
-    <DashboardLayout>
-      <PageTitle title={shipment?.orderNumber} type="Nalog" />
-      {!shipment || isLoading ? (
-        <ClientSideOnly>
-          <ContentLoader />
-        </ClientSideOnly>
-      ) : (
-        <Box>
+    <ShipmentLookupsProvider value={lookups}>
+      <DashboardLayout breadcrumbs={[CRUMBS.shipments, { label: shipment?.orderNumber ?? 'Nalog' }]}>
+        <PageTitle title={shipment?.orderNumber} type="Nalog" />
+        {shipment ? (
           <MainContent shipment={shipment} />
-        </Box>
-      )}
-    </DashboardLayout>
+        ) : isError && !isLoading ? (
+          <Empty>
+            <EmptyHeader>
+              <EmptyMedia variant="danger">
+                <Icon icon="IconAlertOctagon" size="m" />
+              </EmptyMedia>
+              <EmptyTitle>Nalog se nije učitao</EmptyTitle>
+              <EmptyDescription>Možda je izbrisan, ili je problem kod nas. Pokušaj ponovno.</EmptyDescription>
+            </EmptyHeader>
+            <Button loading={isFetching} variant="outline" onClick={() => void refetch()}>
+              <Icon data-icon="inline-start" icon="IconRefresh" size="s" /> Pokušaj ponovno
+            </Button>
+          </Empty>
+        ) : (
+          <PageSkeleton />
+        )}
+      </DashboardLayout>
+    </ShipmentLookupsProvider>
   );
 };
 
-const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
+function MainContent({ shipment }: { shipment: Shipment }) {
   const { push } = useRouter();
-  const { isAgency } = shipment;
-
-  const { mutateAsync: updateShipment, isPending: isUpdatingShipment } = useUpdateShipment();
-  const { mutateAsync: updateAgencyShipment, isPending: isUpdatingAgencyShipment } = useUpdateAgencyShipment();
-
-  const isPending = isUpdatingShipment || isUpdatingAgencyShipment;
-
-  const { data: client } = useClient(shipment.clientId || '');
-  const { data: tenant } = useCurrentTenant();
-
-  const isAssigned = (shipment.vehicleStops?.length ?? 0) > 0;
-
-  // For an agency shipment this is already the external carrier the order was
-  // forwarded to, not the tenant.
-  const transporterId = shipment.transportContractorId;
-  const { data: contractor } = useContractor(transporterId || '');
-  const transporter = contractor ?? (transporterId === tenant?.id ? tenant : undefined);
-  const transporterHref = contractor ? `/dashboard/contractors/${contractor.id}` : '/dashboard/tenant';
-
-  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
-
-  const handleInvoiceChange = async (invoiceStatus: InvoiceStatus) => {
-    try {
-      if (isAgency) {
-        await updateAgencyShipment({ id: shipment.id, invoiceStatus });
-      } else {
-        await updateShipment({ id: shipment.id, invoiceStatus });
-      }
-
-      const invoiceStatusText = invoiceStatusConfig[invoiceStatus].label.toUpperCase();
-      showSuccessToast({
-        title: `Nalog označen kao ${invoiceStatusText}`,
-      });
-    } catch (error) {
-      console.error(error);
-      showErrorToast({ title: 'Greška prilikom ažuriranja fakture. Pokušajte ponovno.' });
-    }
-  };
+  const { tab, setTab } = useDetailTab();
+  const [isAssignOpen, setIsAssignOpen] = React.useState(false);
+  const documentsCount = documentsOf(shipment).length;
+  const hasRoute = !shipment.isAgency && (shipment.vehicleStops?.length ?? 0) > 0;
 
   return (
-    <FlexLayout className="py-6 flex-col gap-6">
-      <FlexLayout className="justify-between">
-        <BackButton targetLocation="/dashboard/shipments" />
-        <FlexLayout className="items-center gap-3">
-          {!isAgency &&
-            (isAssigned ? (
-              <NotifyDriversButton shipment={shipment} />
-            ) : (
-              <Button
-                iconLeft="IconTruck"
-                text="Dodijeli vozilo"
-                variant="secondary"
-                onClick={() => setIsAssignModalOpen(true)}
-              />
-            ))}
-          <ShipmentActions shipment={shipment} />
-        </FlexLayout>
-      </FlexLayout>
-      {!isAgency && isAssignModalOpen && (
+    <div className="flex flex-col gap-6">
+      <OrderHeader shipment={shipment} onAssignClick={() => setIsAssignOpen(true)} />
+      <SummaryStrip shipment={shipment} />
+      <Tabs value={tab} onValueChange={(value) => setTab(value as Tab)}>
+        <TabsList variant="line">
+          <TabsTrigger value="pregled">Pregled</TabsTrigger>
+          <TabsTrigger value="dokumenti">
+            Dokumenti
+            {documentsCount > 0 && (
+              <Badge className="tabular-nums" size="sm">
+                {documentsCount}
+              </Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="napomene">Napomene</TabsTrigger>
+        </TabsList>
+        <TabsContent className="pt-5" value="pregled">
+          <div className="grid items-start gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
+            <div className="flex flex-col gap-6">
+              <InvoicePanel shipment={shipment} />
+              <AssignmentPanel shipment={shipment} onAssignClick={() => setIsAssignOpen(true)} />
+              <RecipientsPanel shipment={shipment} />
+              {hasRoute && (
+                <Panel title="Ruta">
+                  <RouteTimeline shipment={shipment} />
+                </Panel>
+              )}
+            </div>
+            <div className="flex min-w-0 flex-col gap-3">
+              <h2 className="font-heading text-base font-bold tracking-tight">Tereti</h2>
+              <CargoCards shipment={shipment} />
+            </div>
+          </div>
+        </TabsContent>
+        <TabsContent className="max-w-2xl pt-5" value="dokumenti">
+          <DocumentsTab shipment={shipment} />
+        </TabsContent>
+        <TabsContent className="max-w-2xl pt-5" value="napomene">
+          <NotesTab shipment={shipment} />
+        </TabsContent>
+      </Tabs>
+
+      {/* „Dodijeli vozilo” keeps today's flow (the modal); PR 4 moves it to its own page. */}
+      {!shipment.isAgency && isAssignOpen && (
         <AssignVehicleModal
           cargos={shipment.cargo}
           clientId={shipment.clientId}
-          isOpen={isAssignModalOpen}
+          isOpen={isAssignOpen}
           shipmentId={shipment.id}
           shipmentOrderNumber={shipment.orderNumber}
           onAssigned={(vehicleId) => {
-            setIsAssignModalOpen(false);
+            setIsAssignOpen(false);
             void push(`/dashboard/vehicle-stops/${vehicleId}`);
           }}
-          onClose={() => setIsAssignModalOpen(false)}
+          onClose={() => setIsAssignOpen(false)}
         />
       )}
-      <Box className="max-w-[1400px]">
-        <FlexLayout className="relative flex-col gap-6 w-full">
-          <FlexLayout className="flex-col gap-4">
-            <FlexLayout className="flex-col gap-1">
-              <FlexLayout className="items-center justify-between">
-                <FlexLayout className="flex-col">
-                  <FlexLayout className="items-center gap-4">
-                    <Text as="h1" color="text-color-1" variant="text-xl-bold">
-                      {shipment.orderNumber}
-                    </Text>
-                    {isAgency && <Pill size="s" text="Agencijski nalog" variant="warning" />}
-                    <OverdueIndicator shipment={shipment} />
-                  </FlexLayout>
-                  <FlexLayout className="flex-wrap items-center gap-3 text-dark-600 dark:text-light-300">
-                    <Link
-                      className="flex items-center gap-1 hover:text-teal-500 transition-colors"
-                      href={`/dashboard/clients/${client?.id}`}
-                    >
-                      <Icon icon="IconBriefcase" size="m" />
-                      <Text variant="text-m">{client?.name ?? '—'}</Text>
-                    </Link>
-                    {transporter && (
-                      <>
-                        <Text variant="text-m">•</Text>
-                        <Link
-                          className="flex items-center gap-1 hover:text-teal-500 transition-colors"
-                          href={transporterHref}
-                        >
-                          <Icon icon="IconTruck" size="m" />
-                          <Text variant="text-m">{transporter.name}</Text>
-                        </Link>
-                      </>
-                    )}
-                  </FlexLayout>
-                </FlexLayout>
-                <InvoiceItem
-                  invoiceStatus={shipment.invoiceStatus}
-                  invoiceStatusUpdatedAt={shipment.invoiceStatusUpdatedAt}
-                  isPending={isPending}
-                  onChange={handleInvoiceChange}
-                />
-              </FlexLayout>
-              <ShipmentFiles isDisabled={isPending} shipment={shipment} />
-            </FlexLayout>
-          </FlexLayout>
-          <Divider />
-          <FlexLayout className="flex-row gap-6">
-            <FlexLayout className="w-[380px] flex-col gap-4">
-              <ShipmentLeftPanel shipment={shipment} onAssignClick={() => setIsAssignModalOpen(true)} />
-            </FlexLayout>
-            <FlexLayout as="section" className="flex-1 flex-col gap-4 min-w-0">
-              <Text color="text-color-2" variant="text-l-medium">
-                Tereti
-              </Text>
-              {(shipment.cargo as CargoWithMetadata[]).map((item, index) => (
-                <CargoItem
-                  cargo={item}
-                  index={index}
-                  isAgency={isAgency}
-                  key={shipment.cargo[index].id}
-                  shipmentId={shipment.id}
-                />
-              ))}
-            </FlexLayout>
-          </FlexLayout>
-        </FlexLayout>
-      </Box>
-    </FlexLayout>
+    </div>
   );
-};
+}
+
+/** First load: the page's shape (header, strip, tabs, side column + cargo cards). */
+function PageSkeleton() {
+  return (
+    <div aria-busy className="flex flex-col gap-6">
+      <div className="flex flex-col gap-3">
+        <Skeleton className="h-4 w-20" />
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="flex flex-col gap-2">
+            <Skeleton className="h-8 w-40" />
+            <Skeleton className="h-4 w-72" />
+          </div>
+          <div className="flex gap-2">
+            <Skeleton className="h-10 w-36" />
+            <Skeleton className="h-10 w-32" />
+            <Skeleton className="h-10 w-24" />
+          </div>
+        </div>
+      </div>
+      <div className="grid gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-2 xl:grid-cols-4">
+        {Array.from({ length: 4 }, (_, index) => (
+          <div className="flex flex-col gap-2 bg-card px-4 py-3" key={index}>
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-5 w-40" />
+            <Skeleton className="h-3 w-28" />
+          </div>
+        ))}
+      </div>
+      <Skeleton className="h-10 w-80" />
+      <div className="grid items-start gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
+        <div className="flex flex-col gap-6">
+          <Skeleton className="h-32 rounded-xl" />
+          <Skeleton className="h-40 rounded-xl" />
+        </div>
+        <div className="flex flex-col gap-4">
+          <Skeleton className="h-56 rounded-xl" />
+          <Skeleton className="h-56 rounded-xl" />
+        </div>
+      </div>
+    </div>
+  );
+}
