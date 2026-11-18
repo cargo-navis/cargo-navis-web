@@ -44,6 +44,20 @@ const nextConfig = {
       { source: '/dashboard/settings', destination: '/dashboard/settings/account', permanent: false },
       { source: '/dashboard/tenant', destination: '/dashboard/settings/company', permanent: false },
       { source: '/dashboard/tenant/edit', destination: '/dashboard/settings/company', permanent: false },
+      // KAN-55 Flota: one page with type tabs (?vrsta=…) and one vehicle page for every type; Pregled flote and the
+      // four type pages (list, new, detail, edit) land on it. „new” before „:id”, so it isn't read as an id.
+      { source: '/dashboard/fleet/overview', destination: '/dashboard/fleet', permanent: false },
+      ...[
+        ['trucks', 'tegljaci'],
+        ['trailers', 'poluprikolice'],
+        ['solo-trucks', 'solo-kamioni'],
+        ['vans', 'kombiji'],
+      ].flatMap(([path, vrsta]) => [
+        { source: `/dashboard/fleet/${path}`, destination: `/dashboard/fleet?vrsta=${vrsta}`, permanent: false },
+        { source: `/dashboard/fleet/${path}/new`, destination: `/dashboard/fleet/new?vrsta=${vrsta}`, permanent: false },
+        { source: `/dashboard/fleet/${path}/:id`, destination: '/dashboard/fleet/:id', permanent: false },
+        { source: `/dashboard/fleet/${path}/:id/edit`, destination: '/dashboard/fleet/:id/edit', permanent: false },
+      ]),
     ];
   },
   // SVG imports are React components (@svgr/webpack). Next 16 defaults to Turbopack; package.json runs dev and build

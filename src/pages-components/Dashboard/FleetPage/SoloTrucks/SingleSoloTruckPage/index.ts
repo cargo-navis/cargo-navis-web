@@ -1,1 +1,0 @@
-export { SingleSoloTruckPage } from './SingleSoloTruckPage';

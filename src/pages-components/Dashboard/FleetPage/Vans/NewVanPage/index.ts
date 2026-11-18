@@ -1,1 +1,0 @@
-export { NewVanPage } from './NewVanPage';
