@@ -53,7 +53,7 @@ export const OverviewSection = ({
   const granularityLabel = getGranularityLabel(granularity);
 
   return (
-    <FlexLayout className="flex-col gap-5">
+    <FlexLayout className="flex-col gap-6">
       <AnalyticsFilters
         dateRange={dateRange}
         granularity={granularity}
@@ -68,7 +68,7 @@ export const OverviewSection = ({
           <ContentLoader />
         </ClientSideOnly>
       ) : (
-        <FlexLayout className="flex-col gap-5">
+        <FlexLayout className="flex-col gap-6">
           <FlexLayout className="w-full gap-4">
             <StatTile
               icon="IconFileDescription"

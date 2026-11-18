@@ -16,11 +16,11 @@ export const SetPasswordPage = () => {
   return (
     <FlexLayout className="h-screen flex-row">
       <PageTitle title="Postavljanje lozinke" />
-      <FlexLayout as="main" className="flex-col flex-grow p-5 md:p-7 justify-center items-center bg-sidebar-gradient">
-        <Heading as="h1" className="text-center -mt-10 mb-9" variant="text-xl">
+      <FlexLayout as="main" className="flex-col flex-grow p-6 md:p-12 justify-center items-center bg-sidebar-gradient">
+        <Heading as="h1" className="text-center -mt-30 mb-20" variant="text-xl">
           CargoNavis
         </Heading>
-        <FlexLayout className="w-full md:w-[640px] bg-gradient-to-bl from-teal-50 to-white to-50% dark:from-teal-900 dark:to-dark-900 flex-col p-6 md:px-8 md:py-7 rounded-xl gap-6 shadow-lg">
+        <FlexLayout className="w-full md:w-[640px] bg-gradient-to-bl from-teal-50 to-white to-50% dark:from-teal-900 dark:to-dark-900 flex-col p-8 md:px-16 md:py-12 rounded-legacy-xl gap-8 shadow-lg">
           <FlexLayout className="flex-col gap-2">
             <Text as="h2" color="text-color-1" variant="text-xl-medium">
               Postavljanje lozinke

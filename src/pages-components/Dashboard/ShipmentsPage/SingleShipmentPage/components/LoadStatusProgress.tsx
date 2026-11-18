@@ -44,7 +44,7 @@ export const LoadStatusProgress: React.FC<LoadStatusProgressProps> = ({
               >
                 <Pill size={size} text={config.label} variant={variant} />
               </Box>
-              {index < statuses.length - 1 && <Box className="w-8 h-[2px] bg-light-200 dark:bg-white-alpha-25 mx-2" />}
+              {index < statuses.length - 1 && <Box className="w-16 h-[2px] bg-light-200 dark:bg-white-alpha-25 mx-2" />}
             </FlexLayout>
           );
         })}

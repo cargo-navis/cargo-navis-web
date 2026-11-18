@@ -94,7 +94,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
   };
 
   return (
-    <FlexLayout className="py-5 flex-col gap-5">
+    <FlexLayout className="py-6 flex-col gap-6">
       <FlexLayout className="justify-between">
         <BackButton targetLocation="/dashboard/shipments" />
         <FlexLayout className="items-center gap-3">
@@ -127,7 +127,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
         />
       )}
       <Box className="max-w-[1400px]">
-        <FlexLayout className="relative flex-col gap-5 w-full">
+        <FlexLayout className="relative flex-col gap-6 w-full">
           <FlexLayout className="flex-col gap-4">
             <FlexLayout className="flex-col gap-1">
               <FlexLayout className="items-center justify-between">
@@ -172,7 +172,7 @@ const MainContent: React.FC<{ shipment: Shipment }> = ({ shipment }) => {
             </FlexLayout>
           </FlexLayout>
           <Divider />
-          <FlexLayout className="flex-row gap-5">
+          <FlexLayout className="flex-row gap-6">
             <FlexLayout className="w-[380px] flex-col gap-4">
               <ShipmentLeftPanel shipment={shipment} onAssignClick={() => setIsAssignModalOpen(true)} />
             </FlexLayout>

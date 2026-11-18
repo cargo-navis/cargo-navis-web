@@ -15,7 +15,7 @@ interface ShipmentLeftPanelProps {
   onAssignClick(): void;
 }
 
-const cardClass = 'rounded-m border border-dark-200 dark:border-light-800 p-4';
+const cardClass = 'rounded-legacy-m border border-dark-200 dark:border-light-800 p-4';
 
 export const ShipmentLeftPanel = ({ shipment, onAssignClick }: ShipmentLeftPanelProps) => {
   const { isAgency } = shipment;
@@ -24,7 +24,9 @@ export const ShipmentLeftPanel = ({ shipment, onAssignClick }: ShipmentLeftPanel
   const transportPrice = shipment.contractorPrice ?? undefined;
   const ruc = transportPrice !== undefined ? shipment.price - transportPrice : undefined;
   const rucClass =
-    ruc !== undefined && ruc < 0 ? 'text-red-500 dark:text-red-400' : 'text-green-500 dark:text-green-400';
+    ruc !== undefined && ruc < 0
+      ? 'text-legacy-red-500 dark:text-legacy-red-400'
+      : 'text-green-500 dark:text-green-400';
 
   const [editingNoteType, setEditingNoteType] = useState<'internal' | 'external' | null>(null);
 
@@ -83,7 +85,7 @@ export const ShipmentLeftPanel = ({ shipment, onAssignClick }: ShipmentLeftPanel
                 <Text color="text-color-3" variant="text-xs-medium">
                   Cijena transporta
                 </Text>
-                <Text className="text-red-500 dark:text-red-400" variant="text-l-medium">
+                <Text className="text-legacy-red-500 dark:text-legacy-red-400" variant="text-l-medium">
                   -{transportPrice}€
                 </Text>
               </FlexLayout>
@@ -223,9 +225,9 @@ const NoteCard: React.FC<NoteCardProps> = ({ title, tooltip, note, onEdit }) => 
       ) : (
         <Box className="relative">
           <FlexLayout className="flex-col gap-3 py-1 opacity-70">
-            <Box className="rounded-xs bg-dark-200/40 dark:bg-light-800/40 h-[16px] w-[80%]" />
-            <Box className="rounded-xs bg-dark-200/40 dark:bg-light-800/40 h-[16px] w-[60%]" />
-            <Box className="rounded-xs bg-dark-200/40 dark:bg-light-800/40 h-[16px] w-[70%]" />
+            <Box className="rounded-legacy-xs bg-dark-200/40 dark:bg-light-800/40 h-[16px] w-[80%]" />
+            <Box className="rounded-legacy-xs bg-dark-200/40 dark:bg-light-800/40 h-[16px] w-[60%]" />
+            <Box className="rounded-legacy-xs bg-dark-200/40 dark:bg-light-800/40 h-[16px] w-[70%]" />
           </FlexLayout>
           <FlexLayout className="absolute inset-0 items-center justify-center">
             <TextButton iconLeft="IconPlus" text="Dodaj napomenu" variant="secondary" onClick={onEdit} />

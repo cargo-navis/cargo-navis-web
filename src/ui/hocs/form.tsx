@@ -22,13 +22,13 @@ export const withFieldLabels = <T,>(WrappedComponent: React.FC<T>) => {
               <Text color="text-color-3" variant="text-xxs-medium">
                 {label}
                 {isRequired && (
-                  <Box as="span" className="text-red-600 dark:text-red-500 ml-1">
+                  <Box as="span" className="text-legacy-red-600 dark:text-legacy-red-500 ml-1">
                     *
                   </Box>
                 )}
               </Text>
             </DisplayIf>
-            <Text color="text-red-600 dark:text-red-500" variant="text-xxxs">
+            <Text color="text-legacy-red-600 dark:text-legacy-red-500" variant="text-xxxs">
               {errorText ?? <>&ensp;</>}
             </Text>
           </FlexLayout>

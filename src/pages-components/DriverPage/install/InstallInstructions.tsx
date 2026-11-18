@@ -51,7 +51,7 @@ const Step: React.FC<StepProps> = ({ number, helperText, children }) => {
   return (
     <FlexLayout as="li" className="items-start gap-3">
       <FlexLayout
-        className={`${sizes.badge} ${sizes.offset} shrink-0 items-center justify-center rounded-circle bg-teal-100 dark:bg-teal-900`}
+        className={`${sizes.badge} ${sizes.offset} shrink-0 items-center justify-center rounded-legacy-circle bg-teal-100 dark:bg-teal-900`}
       >
         <Text className="tabular-nums" color="text-teal-700 dark:text-teal-300" variant={sizes.number}>
           {number}

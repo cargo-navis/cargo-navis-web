@@ -14,7 +14,7 @@ export const HighlightedText = ({ text, query }: HighlightedTextProps) => {
     <>
       {segments.map((segment, index) =>
         segment.isMatch ? (
-          <mark className="rounded-xs bg-teal-100 text-teal-900 dark:bg-teal-900 dark:text-teal-50" key={index}>
+          <mark className="rounded-[2px] bg-teal-100 text-teal-900 dark:bg-teal-900 dark:text-teal-50" key={index}>
             {segment.text}
           </mark>
         ) : (

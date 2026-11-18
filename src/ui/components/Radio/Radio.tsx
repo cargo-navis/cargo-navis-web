@@ -17,7 +17,7 @@ export const Radio: React.FC<RadioProps> = ({ isDisabled, option }) => {
   return (
     <Field
       className={clsx(
-        'rounded-xl',
+        'rounded-legacy-xl',
         'bg-dark-100 dark:bg-white-alpha-10 transition-colors duration-75',
         !isDisabled && 'hover:bg-white-alpha-50 hover:dark:bg-white-alpha-25',
         !isDisabled && 'cursor-pointer'
@@ -28,13 +28,13 @@ export const Radio: React.FC<RadioProps> = ({ isDisabled, option }) => {
         <Box
           className={clsx(
             'flex items-center size-[20px] justify-center',
-            'rounded-circle border',
+            'rounded-legacy-circle border',
             'border-black-alpha-50 dark:border-white-alpha-25',
             'enabled:hover:border-black-alpha-75 enabled:hover:dark:border-white-alpha-50',
-            'group-data-[checked]:bg-teal-700 dark:group-data-[checked]:bg-teal-600 group-data-[disabled]:bg-gray-100 group-data-[checked]:!border-transparent transition-colors duration-75'
+            'group-data-[checked]:bg-teal-700 dark:group-data-[checked]:bg-teal-600 group-data-[checked]:!border-transparent transition-colors duration-75'
           )}
         >
-          <Box as="span" className="invisible size-2 rounded-circle bg-white group-data-[checked]:visible" />
+          <Box as="span" className="invisible size-2 rounded-legacy-circle bg-white group-data-[checked]:visible" />
         </Box>
         <Box>
           <Label>

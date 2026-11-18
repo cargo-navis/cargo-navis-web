@@ -154,7 +154,7 @@ export const DraftsTab = () => {
 
   if (isLoading) {
     return (
-      <FlexLayout className="justify-center py-10">
+      <FlexLayout className="justify-center py-30">
         <LoadingSpinner size="l" />
       </FlexLayout>
     );
@@ -162,7 +162,7 @@ export const DraftsTab = () => {
 
   if (sortedDrafts.length === 0) {
     return (
-      <FlexLayout className="flex-col gap-2 items-center justify-center my-10">
+      <FlexLayout className="flex-col gap-2 items-center justify-center my-30">
         <Text color="text-color-2" variant="text-l-medium">
           📥 Nema naloga u pripremi
         </Text>
@@ -174,7 +174,7 @@ export const DraftsTab = () => {
   }
 
   return (
-    <Box className="py-5" ref={containerRef}>
+    <Box className="py-6" ref={containerRef}>
       <Table
         columns={columns}
         data={sortedDrafts}

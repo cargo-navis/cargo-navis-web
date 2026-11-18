@@ -46,8 +46,8 @@ export const NotificationEmailsField: React.FC<NotificationEmailsFieldProps> = (
     <EmailsSelect
       classNames={{
         ...commonStylesClassNames,
-        multiValue: () => '!bg-dark-50 dark:!bg-light-850 !rounded-s',
-        multiValueLabel: () => '!text-xxs !text-dark-800 dark:!text-light-50',
+        multiValue: () => '!bg-dark-50 dark:!bg-light-850 !rounded-legacy-s',
+        multiValueLabel: () => '!text-legacy-xxs !text-dark-800 dark:!text-light-50',
         multiValueRemove: () => '!text-dark-600 dark:!text-light-300 hover:!bg-dark-100 dark:hover:!bg-light-800',
       }}
       components={commonComponents}

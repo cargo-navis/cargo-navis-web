@@ -58,7 +58,7 @@ export const PhoneNumberInput: React.FC<PhoneNumberInputProps> = ({
     <FlexLayout
       className={clsx(
         'items-center py-1 gap-2 [&_*]:!border-none',
-        'border-[2px] rounded-s border-dark-300 dark:border-light-800',
+        'border-[2px] rounded-legacy-s border-dark-300 dark:border-light-800',
         'hover:border-dark-500 hover:dark:border-light-700',
         'focus-within:!border-teal-600 dark:focus-within:!border-teal-800'
       )}

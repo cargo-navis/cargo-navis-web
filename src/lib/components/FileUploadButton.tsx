@@ -63,7 +63,7 @@ export const FileUploadButton: React.FC<FileUploadButtonProps> = ({ isLoading, u
       <FlexLayout
         className={clsx(
           'flex-col items-center justify-center grow',
-          'rounded-s px-3 py-2',
+          'rounded-legacy-s px-3 py-2',
           'border-2 border-dashed border-dark-300 dark:border-light-600',
           'hover:border-dark-500 dark:hover:border-light-400',
           'text-dark-500 dark:text-light-300 transition-colors duration-150',

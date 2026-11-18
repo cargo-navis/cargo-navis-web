@@ -31,12 +31,12 @@ const MainContent: React.FC<{ truck: Vehicle }> = ({ truck }) => {
   const { registration, brand, manufacturingYear, id, type } = truck;
 
   return (
-    <FlexLayout className="py-5 flex-col gap-5">
+    <FlexLayout className="py-6 flex-col gap-6">
       <BackButton targetLocation="/dashboard/fleet/trucks" />
       <FlexLayout className="justify-between">
-        <FlexLayout className="items-center gap-6">
+        <FlexLayout className="items-center gap-8">
           <Box className="py-3 pl-3">
-            <FlexLayout className="items-center justify-center w-[80px] h-[80px] rounded-circle bg-teal-900">
+            <FlexLayout className="items-center justify-center w-[80px] h-[80px] rounded-legacy-circle bg-teal-900">
               <Icon color="text-white" icon="IconTruck" size="xl" />
             </FlexLayout>
           </Box>
@@ -56,7 +56,7 @@ const MainContent: React.FC<{ truck: Vehicle }> = ({ truck }) => {
         </FlexLayout>
         <VehicleActions id={id} name={registration} type={type} />
       </FlexLayout>
-      <FlexLayout className="ml-4 gap-9">
+      <FlexLayout className="ml-4 gap-20">
         <GeneralInfo vehicle={truck} />
         <VehicleInfo vehicle={truck} />
         <DocumentsSection vehicle={truck} />

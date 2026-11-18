@@ -2,24 +2,24 @@ import { Box, Icon, Text } from '@/ui';
 
 const colorClasses = {
   blue: {
-    background: 'bg-blue-100 dark:bg-blue-900',
-    hover: 'hover:bg-blue-200 dark:hover:bg-blue-800',
+    background: 'bg-legacy-blue-100 dark:bg-legacy-blue-900',
+    hover: 'hover:bg-legacy-blue-200 dark:hover:bg-legacy-blue-800',
   },
   green: {
     background: 'bg-green-100 dark:bg-green-900',
     hover: 'hover:bg-green-200 dark:hover:bg-green-800',
   },
   purple: {
-    background: 'bg-purple-100 dark:bg-purple-900',
-    hover: 'hover:bg-purple-200 dark:hover:bg-purple-800',
+    background: 'bg-legacy-purple-100 dark:bg-legacy-purple-900',
+    hover: 'hover:bg-legacy-purple-200 dark:hover:bg-legacy-purple-800',
   },
   orange: {
     background: 'bg-orange-100 dark:bg-orange-900',
     hover: 'hover:bg-orange-200 dark:hover:bg-orange-800',
   },
   red: {
-    background: 'bg-red-100 dark:bg-red-900',
-    hover: 'hover:bg-red-200 dark:hover:bg-red-800',
+    background: 'bg-legacy-red-100 dark:bg-legacy-red-900',
+    hover: 'hover:bg-legacy-red-200 dark:hover:bg-legacy-red-800',
   },
 };
 
@@ -34,7 +34,7 @@ export const FilterTag = ({ label, value, colorScheme, onRemove }: FilterTagProp
   const colors = colorClasses[colorScheme];
 
   return (
-    <Box className={`inline-flex items-center gap-1 px-2 py-1 ${colors.background} rounded-s text-xs`}>
+    <Box className={`inline-flex items-center gap-1 px-2 py-1 ${colors.background} rounded-legacy-s text-legacy-xs`}>
       <Text variant="text-xs">
         <strong>{label}:</strong> {value}
       </Text>

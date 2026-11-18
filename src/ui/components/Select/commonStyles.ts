@@ -94,7 +94,7 @@ export const commonStyles: StylesConfig<SelectOption, boolean, any> = {
 export const commonStylesClassNames: ClassNamesConfig<SelectOption, boolean, any> = {
   input: () =>
     clsx(
-      'font-display text-xxs max-md:text-mobile-override !text-dark-800 dark:!text-light-50',
+      'font-display text-legacy-xxs max-md:text-legacy-mobile-override !text-dark-800 dark:!text-light-50',
       'caret-teal-600 dark:caret-teal-800'
     ),
   group: () => 'border-b border-dark-100 dark:border-light-800',

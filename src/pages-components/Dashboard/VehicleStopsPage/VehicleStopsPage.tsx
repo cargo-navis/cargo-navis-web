@@ -104,12 +104,12 @@ export const VehicleStopsPage = () => {
         <FlexLayout className="flex-col gap-4 mt-4">
           {Array.from({ length: 3 }).map((_, i) => (
             <Box className="space-y-3" key={i}>
-              <Skeleton className="h-[200px] w-full rounded-lg" />
+              <Skeleton className="h-[200px] w-full" />
             </Box>
           ))}
         </FlexLayout>
       ) : !filteredGroups.length ? (
-        <Text as="p" className="mt-6" color="text-[hsl(var(--muted-foreground))]" variant="text-s">
+        <Text as="p" className="mt-8" color="text-muted-foreground" variant="text-s">
           Nema podataka o stanicama vozila.
         </Text>
       ) : (

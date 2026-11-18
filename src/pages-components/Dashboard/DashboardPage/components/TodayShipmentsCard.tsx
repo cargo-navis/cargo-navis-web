@@ -48,9 +48,9 @@ export const TodayShipmentsCard = () => {
 
   return (
     <DashboardCard
-      gradient="from-white dark:from-transparent from-65% to-blue-600/20"
+      gradient="from-white dark:from-transparent from-65% to-legacy-blue-600/20"
       icon="IconFileDescription"
-      iconColor="text-blue-600"
+      iconColor="text-legacy-blue-600"
       subtitle={
         <Text color="text-color-3" variant="text-xxs">
           {formattedDate}
@@ -93,7 +93,7 @@ const ShipmentNotes = ({ internalNote, externalNote }: { internalNote?: string; 
       content={
         <FlexLayout className="flex-col gap-2 px-1 max-w-[280px]">
           {internalNote && (
-            <FlexLayout className="flex-col gap-0.5">
+            <FlexLayout className="flex-col">
               <Text color="text-light-300" variant="text-xxxs-medium">
                 INTERNA NAPOMENA
               </Text>
@@ -103,7 +103,7 @@ const ShipmentNotes = ({ internalNote, externalNote }: { internalNote?: string; 
             </FlexLayout>
           )}
           {externalNote && (
-            <FlexLayout className="flex-col gap-0.5">
+            <FlexLayout className="flex-col">
               <Text color="text-light-300" variant="text-xxxs-medium">
                 EKSTERNA NAPOMENA
               </Text>
@@ -147,7 +147,7 @@ const TodayShipmentRow = ({ shipment, transporterName, clientName, dispatcherNam
 
   return (
     <Box
-      className="rounded-m border border-dark-100 dark:border-light-800 p-4 transition-colors hover:bg-dark-50 dark:hover:bg-light-800"
+      className="rounded-legacy-m border border-dark-100 dark:border-light-800 p-4 transition-colors hover:bg-dark-50 dark:hover:bg-light-800"
       onClick={() => push(`/dashboard/shipments/${shipment.id}`)}
     >
       {isAgency && (
@@ -165,7 +165,7 @@ const TodayShipmentRow = ({ shipment, transporterName, clientName, dispatcherNam
         </Text>
         <ShipmentNotes externalNote={shipment.externalNote} internalNote={shipment.internalNote} />
       </FlexLayout>
-      <Text className="block truncate mt-0.5" color="text-color-3" variant="text-xxs">
+      <Text className="block truncate" color="text-color-3" variant="text-xxs">
         {[clientName ?? '—', dispatcherName].filter(Boolean).join(' · ')}
       </Text>
       <FlexLayout className="flex-col gap-2 mt-2">

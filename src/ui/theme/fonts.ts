@@ -1,7 +1,7 @@
 import { Geist, Geist_Mono, Sora } from 'next/font/google';
 
 // KAN-55: Geist body, Sora 700 headings, Geist Mono for registrations (latin-ext for Croatian čćđšž).
-// tailwind.config.ts maps `font-display` → Geist and `font-heading` → Sora.
+// src/styles/legacy-theme.css maps `font-display` → Geist and `font-heading` → Sora.
 
 export const geist = Geist({
   subsets: ['latin', 'latin-ext'],

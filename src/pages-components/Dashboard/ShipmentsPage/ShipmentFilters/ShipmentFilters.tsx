@@ -16,7 +16,7 @@ export const ShipmentFilters = () => {
   const hasActiveFilters = activeFiltersCount > 0;
 
   return (
-    <Box className="mt-4 border border-dark-200 dark:border-light-800 hover:border-dark-300 dark:hover:border-light-700 transition-colors duration-100 rounded-s">
+    <Box className="mt-4 border border-dark-200 dark:border-light-800 hover:border-dark-300 dark:hover:border-light-700 transition-colors duration-100 rounded-legacy-s">
       <FilterHeader
         activeFiltersCount={activeFiltersCount}
         hasActiveFilters={hasActiveFilters}

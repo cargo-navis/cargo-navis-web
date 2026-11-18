@@ -57,7 +57,7 @@ export const ClientNotificationEmails: React.FC<{ client: Client }> = ({ client 
         </Text>
       </FlexLayout>
 
-      <Box className="border border-dark-200 dark:border-light-800 rounded-m overflow-hidden">
+      <Box className="border border-dark-200 dark:border-light-800 rounded-legacy-m overflow-hidden">
         {emails.map(({ email, alwaysNotify }) => (
           <FlexLayout
             className="items-center gap-4 px-4 py-2 border-b border-dark-100 dark:border-light-850"
@@ -82,7 +82,7 @@ export const ClientNotificationEmails: React.FC<{ client: Client }> = ({ client 
             <Box
               aria-label={`Obriši ${email}`}
               as="button"
-              className="p-1 rounded-s text-dark-600 dark:text-light-300 hover:bg-dark-75 dark:hover:bg-light-850 hover:text-red-500 disabled:opacity-40"
+              className="p-1 rounded-legacy-s text-dark-600 dark:text-light-300 hover:bg-dark-75 dark:hover:bg-light-850 hover:text-legacy-red-500 disabled:opacity-40"
               isDisabled={isPending}
               type="button"
               onClick={() =>
@@ -130,7 +130,7 @@ export const ClientNotificationEmails: React.FC<{ client: Client }> = ({ client 
       </Box>
 
       {inputError && (
-        <Text color="text-red-600 dark:text-red-500" variant="text-xxxs">
+        <Text color="text-legacy-red-600 dark:text-legacy-red-500" variant="text-xxxs">
           {inputError}
         </Text>
       )}

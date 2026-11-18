@@ -38,7 +38,7 @@ export const InvoiceItem: React.FC<InvoiceItemProps> = ({
         >
           <Pill text="Nefakturiran" variant={isInvoiceNotSent || hoveredIndex === 0 ? 'danger' : 'default'} />
         </Box>
-        <Box className="w-5 h-[2px] bg-light-200 dark:bg-white-alpha-25 mx-2" />
+        <Box className="w-6 h-[2px] bg-light-200 dark:bg-white-alpha-25 mx-2" />
         <Box
           className={clsx(
             'cursor-pointer transition-opacity',
@@ -51,7 +51,7 @@ export const InvoiceItem: React.FC<InvoiceItemProps> = ({
         >
           <Pill text="Fakturiran" variant={isInvoiceSent || hoveredIndex === 1 ? 'info' : 'default'} />
         </Box>
-        <Box className="w-5 h-[2px] bg-light-200 dark:bg-white-alpha-25 mx-2" />
+        <Box className="w-6 h-[2px] bg-light-200 dark:bg-white-alpha-25 mx-2" />
         <Box
           className={clsx(
             'cursor-pointer transition-opacity',

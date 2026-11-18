@@ -6,10 +6,10 @@ type CountryFlagSize = 'xxs' | 'xs' | 's' | 'm' | 'l';
 
 const sizesMap: Record<CountryFlagSize, { fontSize: string; radius: string }> = {
   xxs: { fontSize: 'text-[12px]', radius: 'rounded-[2px]' },
-  xs: { fontSize: 'text-[16px]', radius: 'rounded-xs' },
-  s: { fontSize: 'text-[20px]', radius: 'rounded-xs' },
-  m: { fontSize: 'text-[28px]', radius: 'rounded-s' },
-  l: { fontSize: 'text-[40px]', radius: 'rounded-m' },
+  xs: { fontSize: 'text-[16px]', radius: 'rounded-legacy-xs' },
+  s: { fontSize: 'text-[20px]', radius: 'rounded-legacy-xs' },
+  m: { fontSize: 'text-[28px]', radius: 'rounded-legacy-s' },
+  l: { fontSize: 'text-[40px]', radius: 'rounded-legacy-m' },
 };
 
 interface CountryFlagProps {

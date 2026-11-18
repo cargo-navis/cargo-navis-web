@@ -35,7 +35,7 @@ export const DriverStatusScreen: React.FC<DriverStatusScreenProps> = ({ variant,
   if (variant === 'signed-out') {
     const { title, text } = getSignedOutCopy(installedOn);
     return (
-      <FlexLayout className="grow flex-col items-center justify-center gap-3 px-8 text-center">
+      <FlexLayout className="grow flex-col items-center justify-center gap-3 px-16 text-center">
         <Icon color="text-dark-500 dark:text-light-300" icon="IconLink" size="xxxl" />
         <Text color="text-color-1" variant="text-m-medium">
           {title}
@@ -50,9 +50,9 @@ export const DriverStatusScreen: React.FC<DriverStatusScreenProps> = ({ variant,
   const isExpired = variant === 'expired';
 
   return (
-    <FlexLayout className="grow flex-col items-center justify-center gap-3 px-8 text-center">
+    <FlexLayout className="grow flex-col items-center justify-center gap-3 px-16 text-center">
       <Icon
-        color={isExpired ? 'text-dark-500 dark:text-light-300' : 'text-red-500 dark:text-red-300'}
+        color={isExpired ? 'text-dark-500 dark:text-light-300' : 'text-legacy-red-500 dark:text-legacy-red-300'}
         icon={isExpired ? 'IconLinkOff' : 'IconAlertTriangle'}
         size="xxxl"
       />

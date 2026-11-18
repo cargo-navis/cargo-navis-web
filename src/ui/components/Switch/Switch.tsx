@@ -17,13 +17,19 @@ export const Switch = forwardRef<any, SwitchProps>(({ value, isDisabled, onChang
   return (
     <Box
       as="button"
-      className={clsx('p-1 border-none rounded-l h-5 w-[40px] outline-0 shrink-0 disabled:opacity-40', bg, hoverStyle)}
+      className={clsx(
+        'p-1 border-none rounded-legacy-l h-6 w-[40px] outline-0 shrink-0 disabled:opacity-40',
+        bg,
+        hoverStyle
+      )}
       isDisabled={isDisabled}
       ref={ref}
       type="button"
       onClick={() => onChange(!value)}
     >
-      <Box className={clsx('h-4 w-4 transition-all rounded-circle', value && 'translate-x-[16px]', circleColor)} />
+      <Box
+        className={clsx('h-4 w-4 transition-all rounded-legacy-circle', value && 'translate-x-[16px]', circleColor)}
+      />
     </Box>
   );
 });

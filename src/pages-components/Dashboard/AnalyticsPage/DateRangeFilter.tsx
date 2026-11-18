@@ -140,7 +140,7 @@ export const DateRangeFilter = ({ value, onChange }: DateRangeFilterProps) => {
         <Box
           as="button"
           className={clsx(
-            'inline-flex items-center gap-2 px-3 py-2 h-[44px] w-[260px] rounded-s cursor-pointer',
+            'inline-flex items-center gap-2 px-3 py-2 h-[44px] w-[260px] rounded-legacy-s cursor-pointer',
             'border-[2px] border-dark-300 dark:border-light-800',
             'hover:border-dark-500 hover:dark:border-light-700',
             'focus:!border-teal-600 dark:focus:!border-teal-800',
@@ -163,7 +163,7 @@ export const DateRangeFilter = ({ value, onChange }: DateRangeFilterProps) => {
         <Popover.Content
           align="start"
           className={clsx(
-            'z-[50] w-[300px] rounded-xl p-4',
+            'z-[50] w-[300px] rounded-legacy-xl p-4',
             'bg-white dark:bg-light-850',
             'border border-dark-100 dark:border-light-800',
             'shadow-dark-3',

@@ -34,7 +34,7 @@ export const EditShipmentPage = () => {
 const MainContent = ({ shipment, shipmentId, tenant }: { tenant: Tenant; shipment: Shipment; shipmentId: string }) => {
   return (
     <Box>
-      <Box className="py-5 flex flex-col gap-[40px]">
+      <Box className="py-6 flex flex-col gap-[40px]">
         <Heading as="h1" variant="text-xl">
           Ažuriraj Nalog
         </Heading>

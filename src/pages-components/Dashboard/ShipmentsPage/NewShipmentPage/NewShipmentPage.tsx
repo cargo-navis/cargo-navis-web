@@ -41,7 +41,7 @@ export const NewShipmentPage = () => {
               Nalog nije spreman
             </Heading>
           </FlexLayout>
-          <FlexLayout className="py-5 flex-col gap-4">
+          <FlexLayout className="py-6 flex-col gap-4">
             <BackButton targetLocation="/dashboard/shipments?tab=drafts" />
             <Text color="text-color-2" variant="text-m">
               {message}
@@ -80,7 +80,7 @@ export const NewShipmentPage = () => {
             </Text>
           )}
         </FlexLayout>
-        <FlexLayout className="py-5 flex-col gap-[40px]">
+        <FlexLayout className="py-6 flex-col gap-[40px]">
           <BackButton targetLocation={backTarget} />
           <ShipmentForm
             copyFromId={copyFromId}

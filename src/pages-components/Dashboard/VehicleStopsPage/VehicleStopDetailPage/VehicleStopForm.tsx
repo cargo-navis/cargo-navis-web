@@ -190,7 +190,7 @@ export const VehicleStopForm = ({ vehicleId, stop, previousStop, onSuccess, onDi
           </Box>
         </FlexLayout>
         <FormSingleSelect isClearable isSearchable label="Prikolica" name="trailerId" options={trailerOptions} />
-        <FlexLayout className="items-start gap-6 mt-2">
+        <FlexLayout className="items-start gap-8 mt-2">
           <FlexLayout className="flex-1 flex-col gap-2">
             <TextButton
               iconLeft="IconPackageImport"
@@ -257,7 +257,7 @@ const SelectedCargoList = ({ cargos, onRemove }: { cargos: Cargo[]; onRemove(id:
     <FlexLayout className="flex-col gap-1">
       {cargos.map((cargo) => (
         <FlexLayout
-          className="items-center justify-between gap-2 rounded-m border border-dark-100 dark:border-light-800 px-3 py-2"
+          className="items-center justify-between gap-2 rounded-legacy-m border border-dark-100 dark:border-light-800 px-3 py-2"
           key={cargo.id}
         >
           <FlexLayout className="flex-col">

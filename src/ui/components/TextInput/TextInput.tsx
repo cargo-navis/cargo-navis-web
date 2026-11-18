@@ -43,11 +43,11 @@ export const TextInput: React.FC<TextInputProps> = ({
     <Box
       className={clsx(
         'relative',
-        'border-[2px] rounded-s border-dark-300 dark:border-light-800',
+        'border-[2px] rounded-legacy-s border-dark-300 dark:border-light-800',
         'hover:border-dark-500 hover:dark:border-light-700',
         'focus-within:!border-teal-600 dark:focus-within:!border-teal-800',
         'isolate',
-        iconLeft && 'pl-6 pr-3',
+        iconLeft && 'pl-8 pr-3',
         isDisabled && 'opacity-50 pointer-events-none'
       )}
       isDisabled={isDisabled}
@@ -60,8 +60,8 @@ export const TextInput: React.FC<TextInputProps> = ({
       <Box
         as="input"
         className={clsx(
-          'p-3 w-full h-full bg-transparent outline-none z-20 rounded-s',
-          'font-display md:text-s text-dark-800 dark:text-light-50 placeholder:text-dark-400 dark:placeholder:text-light-800',
+          'p-3 w-full h-full bg-transparent outline-none z-20 rounded-legacy-s',
+          'font-display md:text-legacy-s text-dark-800 dark:text-light-50 placeholder:text-dark-400 dark:placeholder:text-light-800',
           'caret-teal-600 dark:caret-teal-800'
         )}
         isDisabled={isDisabled}

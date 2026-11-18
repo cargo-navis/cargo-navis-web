@@ -75,7 +75,7 @@ export const VerticalStopEntry = ({
   return (
     <TimelineItem
       className={clsx(
-        'group/stop-entry relative rounded-s',
+        'group/stop-entry relative rounded-legacy-s',
         isDragging && 'opacity-40',
         isHighlighted && 'row-highlight-fade'
       )}
@@ -131,7 +131,7 @@ export const VerticalStopEntry = ({
         {date ? (
           dayjs(date).format('DD.MM.YYYY')
         ) : (
-          <Box as="span" className="text-red-600 italic">
+          <Box as="span" className="text-legacy-red-600 italic">
             Datum nedostaje
           </Box>
         )}
@@ -140,7 +140,7 @@ export const VerticalStopEntry = ({
         <FlexLayout
           className={clsx(
             'items-center gap-1 text-dark-600 dark:text-light-300',
-            !stop.driverId && 'text-red-600 dark:text-red-600'
+            !stop.driverId && 'text-legacy-red-600 dark:text-legacy-red-600'
           )}
         >
           <Icon icon="IconSteeringWheel" size="m" type="solid" />
@@ -231,10 +231,10 @@ export const VerticalStopEntry = ({
         </Box>
       )}
       {onInsertBefore && (
-        <FlexLayout className="flex-col absolute hidden group-hover/stop-entry:flex justify-center left-5 bottom-6">
+        <FlexLayout className="flex-col absolute hidden group-hover/stop-entry:flex justify-center left-6 bottom-8">
           <FlexLayout
             as="button"
-            className="items-center justify-center w-[32px] h-[32px] rounded-circle bg-white dark:bg-black border-2 border-dashed border-teal-500 hover:border-teal-700 text-teal-500 hover:text-teal-700"
+            className="items-center justify-center w-[32px] h-[32px] rounded-legacy-circle bg-white dark:bg-black border-2 border-dashed border-teal-500 hover:border-teal-700 text-teal-500 hover:text-teal-700"
             type="button"
             onClick={onInsertBefore}
           >
@@ -255,7 +255,7 @@ export const VerticalStopEntry = ({
             )}
             {onDelete && (
               <Icon
-                className="cursor-pointer text-dark-600 hover:text-red-500 dark:text-light-300"
+                className="cursor-pointer text-dark-600 hover:text-legacy-red-500 dark:text-light-300"
                 icon="IconTrash"
                 size="l"
                 onClick={() => onDelete(stop)}

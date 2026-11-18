@@ -3,8 +3,8 @@ import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
 import { Box, FlexLayout, Skeleton } from '@/ui';
 
 export const StopSkeleton = ({ isLast = false }: { isLast?: boolean }) => (
-  <Box className="relative pl-6 pb-[78px]">
-    <Box className="absolute left-0 top-[65px] w-4 h-4 rounded-circle bg-dark-200 dark:bg-light-850" />
+  <Box className="relative pl-8 pb-[78px]">
+    <Box className="absolute left-0 top-[65px] w-4 h-4 rounded-legacy-circle bg-dark-200 dark:bg-light-850" />
     {!isLast && <Box className="absolute left-[7px] top-[65px] -bottom-[58px] w-[2px] bg-dark-200 dark:bg-light-850" />}
 
     <FlexLayout className="flex-col gap-3">
@@ -27,7 +27,7 @@ export const StopSkeleton = ({ isLast = false }: { isLast?: boolean }) => (
 
 export const ContentLoader = () => {
   return (
-    <FlexLayout className="py-5 flex-col gap-5">
+    <FlexLayout className="py-6 flex-col gap-6">
       <BackButton targetLocation="/dashboard/vehicle-stops" />
 
       <ClientSideOnly>
@@ -38,7 +38,7 @@ export const ContentLoader = () => {
           </Box>
         </Box>
         <Box className="max-w-[1200px]">
-          <Box className="mb-6">
+          <Box className="mb-8">
             <Skeleton borderRadius="s" height={32} width={180} />
           </Box>
           <Box className="pt-2">

@@ -218,7 +218,7 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
         onCreated={handleContractorCreated}
       />
       <Box as="form" className="max-w-[1400px]" onSubmit={handleSubmit(handleFormSubmit)}>
-        <FlexLayout className="relative flex-col gap-7 w-full">
+        <FlexLayout className="relative flex-col gap-12 w-full">
           {isSuggestedClientBannerVisible && suggestedClient && (
             <SuggestedClientBanner
               suggestedClient={suggestedClient}
@@ -226,9 +226,9 @@ export const ShipmentForm: React.FC<ShipmentFormProps> = ({ shipment, tenant, co
               onDismiss={hideSuggestion}
             />
           )}
-          <FlexLayout className="flex-row gap-7">
+          <FlexLayout className="flex-row gap-12">
             <FlexLayout className="w-[500px] flex-col gap-4">
-              <FlexLayout as="fieldset" className="flex-1 flex-col gap-5">
+              <FlexLayout as="fieldset" className="flex-1 flex-col gap-6">
                 <FormTextInput label="Vanjska referenca narudžbe" name="externalOrderReference" />
                 <FlexLayout className="gap-4">
                   <FlexLayout className="flex-1 flex-col gap-1">
@@ -349,7 +349,7 @@ const AgencyShipmentFields: React.FC<{ tenant: Tenant; onAddContractor(): void }
             <Text color="text-color-3" variant="text-xxs-medium">
               RUC (Razlika u cijeni)
             </Text>
-            <Text color={ruc >= 0 ? 'text-green-500' : 'text-red-500'} variant="text-xl-medium">
+            <Text color={ruc >= 0 ? 'text-green-500' : 'text-legacy-red-500'} variant="text-xl-medium">
               {ruc.toFixed(2)} €
             </Text>
           </FlexLayout>

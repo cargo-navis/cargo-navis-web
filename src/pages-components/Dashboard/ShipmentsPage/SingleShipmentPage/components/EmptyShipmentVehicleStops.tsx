@@ -7,7 +7,7 @@ import {
 } from '@/components/reui/timeline';
 import { Box, FlexLayout, Text, TextButton } from '@/ui';
 
-const PLACEHOLDER_BAR = 'rounded-s bg-dark-200/40 dark:bg-light-800/40';
+const PLACEHOLDER_BAR = 'rounded-legacy-s bg-dark-200/40 dark:bg-light-800/40';
 
 interface EmptyShipmentVehicleStopsProps {
   onAssignClick(): void;
@@ -34,7 +34,7 @@ export const EmptyShipmentVehicleStops = ({ onAssignClick }: EmptyShipmentVehicl
       </Text>
     </FlexLayout>
     <Box className="opacity-70">
-      <Timeline className="w-full pt-5" defaultValue={0} orientation="vertical">
+      <Timeline className="w-full pt-6" defaultValue={0} orientation="vertical">
         {[0, 1, 2].map((i) => (
           <PlaceholderEntry key={i} step={i + 1} />
         ))}

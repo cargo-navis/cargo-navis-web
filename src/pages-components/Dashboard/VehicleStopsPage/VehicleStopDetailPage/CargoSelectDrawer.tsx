@@ -2,7 +2,7 @@ import Fuse from 'fuse.js';
 import { useEffect, useMemo, useState } from 'react';
 
 import { ClientName } from '@/components/clients/ClientName';
-import { Drawer, DrawerContent, DrawerFooter, DrawerHeader } from '@/components/ui/drawer';
+import { Drawer, DrawerContent, DrawerFooter, DrawerHeader } from '@/components/ui/drawer-vaul';
 import type { AvailableCargo, Cargo } from '@/lib/api';
 import type { VehicleStopCargoShipment } from '@/lib/api/vehicleStops';
 import { useAvailableCargos, useClients } from '@/lib/hooks';
@@ -270,7 +270,7 @@ const CargoRow = ({ cargo, addressType, isSelected, onToggle }: CargoRowProps) =
   return (
     <FlexLayout
       as="button"
-      className={`items-center justify-between gap-3 relative rounded-m border p-3 text-left ${
+      className={`items-center justify-between gap-3 relative rounded-legacy-m border p-3 text-left ${
         isSelected
           ? 'border-teal-500 bg-[#eaf4f5] dark:bg-[#1c2627]'
           : 'border-dark-100 hover:border-teal-500/70 dark:border-light-800'
@@ -297,7 +297,7 @@ const CargoRow = ({ cargo, addressType, isSelected, onToggle }: CargoRowProps) =
         </Text>
       </FlexLayout>
       {isSelected && (
-        <Box className="absolute right-0 top-0 bottom-0 rounded-m flex items-center pr-3 pl-4 bg-gradient-to-l from-[#eaf4f5] dark:from-[#1c2627] from-65% to-transparent pointer-events-none">
+        <Box className="absolute right-0 top-0 bottom-0 rounded-legacy-m flex items-center pr-3 pl-4 bg-gradient-to-l from-[#eaf4f5] dark:from-[#1c2627] from-65% to-transparent pointer-events-none">
           <Icon className="text-teal-500" icon="IconCheck" size="m" />
         </Box>
       )}

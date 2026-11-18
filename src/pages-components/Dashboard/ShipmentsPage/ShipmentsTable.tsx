@@ -95,7 +95,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                     content={
                       <FlexLayout className="flex-col gap-2 px-1 max-w-[280px]">
                         {internalNote && (
-                          <FlexLayout className="flex-col gap-0.5">
+                          <FlexLayout className="flex-col">
                             <Text color="text-light-300" variant="text-xxxs-medium">
                               INTERNA NAPOMENA
                             </Text>
@@ -105,7 +105,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                           </FlexLayout>
                         )}
                         {externalNote && (
-                          <FlexLayout className="flex-col gap-0.5">
+                          <FlexLayout className="flex-col">
                             <Text color="text-light-300" variant="text-xxxs-medium">
                               EKSTERNA NAPOMENA
                             </Text>
@@ -158,16 +158,17 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
           const shipment = info.row.original;
           const { isAgency, contractorPrice } = shipment;
           const ruc = isAgency ? (price || 0) - (contractorPrice ?? 0) : 0;
-          const rucClass = ruc >= 0 ? 'text-green-500 dark:text-green-400' : 'text-red-500 dark:text-red-400';
+          const rucClass =
+            ruc >= 0 ? 'text-green-500 dark:text-green-400' : 'text-legacy-red-500 dark:text-legacy-red-400';
 
           return (
-            <FlexLayout className="flex-col items-stretch text-right tabular-nums py-2 pl-4 pr-6">
+            <FlexLayout className="flex-col items-stretch text-right tabular-nums py-2 pl-4 pr-8">
               <Text className="text-green-500 dark:text-green-400" variant="text-m-medium">
                 {`${price}€`}
               </Text>
               {isAgency && (
                 <>
-                  <Text className="text-red-500 dark:text-red-400" variant="text-m-medium">
+                  <Text className="text-legacy-red-500 dark:text-legacy-red-400" variant="text-m-medium">
                     {`-${contractorPrice ?? 0}€`}
                   </Text>
                   <Box className="my-2 self-stretch">
@@ -307,7 +308,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
               <FlexLayout className="items-start gap-1 min-w-0">
                 <Icon
                   className="mt-1 shrink-0"
-                  color={isVehicleMissing ? 'text-red-500' : 'text-color-2'}
+                  color={isVehicleMissing ? 'text-legacy-red-500' : 'text-color-2'}
                   icon="IconTruck"
                   size="s"
                 />
@@ -321,7 +322,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                     {vehicle.registration} {!!vehicle?.brand && `(${vehicle.brand})`}
                   </Text>
                 ) : (
-                  <Text className="block min-w-0 flex-1 truncate" color="text-red-500" variant="text-xs">
+                  <Text className="block min-w-0 flex-1 truncate" color="text-legacy-red-500" variant="text-xs">
                     Vozilo nedodijeljeno
                   </Text>
                 )}
@@ -329,7 +330,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
               <FlexLayout className="items-start gap-1 min-w-0">
                 <Icon
                   className="mt-1 shrink-0"
-                  color={isDriverMissing ? 'text-red-500' : 'text-color-2'}
+                  color={isDriverMissing ? 'text-legacy-red-500' : 'text-color-2'}
                   icon="IconSteeringWheel"
                   size="s"
                 />
@@ -341,7 +342,7 @@ export function ShipmentsTable({ shipments }: { shipments?: Shipment[] }) {
                     variant="text-xxs"
                   />
                 ) : (
-                  <Text className="block min-w-0 flex-1 truncate" color="text-red-500" variant="text-xxs">
+                  <Text className="block min-w-0 flex-1 truncate" color="text-legacy-red-500" variant="text-xxs">
                     Vozač nedodijeljen
                   </Text>
                 )}

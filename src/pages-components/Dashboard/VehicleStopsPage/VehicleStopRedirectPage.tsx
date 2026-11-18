@@ -23,7 +23,7 @@ export const VehicleStopRedirectPage = () => {
   return (
     <DashboardLayout>
       {isError ? (
-        <Text as="p" className="py-6" color="text-color-3">
+        <Text as="p" className="py-8" color="text-color-3">
           Postaja nije pronađena.
         </Text>
       ) : (

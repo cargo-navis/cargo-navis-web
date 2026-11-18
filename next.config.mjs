@@ -37,6 +37,15 @@ const nextConfig = {
     // Tells the client to call the backend same-origin when src/middleware.ts proxies it.
     NEXT_PUBLIC_BACKEND_PROXY: process.env.BACKEND_PROXY_TARGET ? 'true' : 'false',
   },
+  // KAN-55 Postavke: one page with Moj račun · Tvrtka; the old settings / tenant URLs land on the right section.
+  // Temporary (307) so browsers don't cache them for good.
+  async redirects() {
+    return [
+      { source: '/dashboard/settings', destination: '/dashboard/settings/account', permanent: false },
+      { source: '/dashboard/tenant', destination: '/dashboard/settings/company', permanent: false },
+      { source: '/dashboard/tenant/edit', destination: '/dashboard/settings/company', permanent: false },
+    ];
+  },
   // SVG imports are React components (@svgr/webpack). Next 16 defaults to Turbopack; package.json runs dev and build
   // with `--webpack` so this rule (and the rest of the webpack pipeline) keeps working the same as on Next 14.
   webpack(nextConfig) {

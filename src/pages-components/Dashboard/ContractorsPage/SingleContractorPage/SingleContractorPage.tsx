@@ -36,10 +36,10 @@ const MainContent: React.FC<{ contractor: Contractor }> = ({ contractor }) => {
   const country = getCountryFromCode(contractor.address.countryCode);
 
   return (
-    <FlexLayout className="py-5 flex-col gap-5">
+    <FlexLayout className="py-6 flex-col gap-6">
       <BackButton targetLocation="/dashboard/contractors" />
       <FlexLayout className="justify-between">
-        <FlexLayout className="items-start gap-6">
+        <FlexLayout className="items-start gap-8">
           <FlexLayout className="flex-col gap-3 mt-[12px]">
             <FlexLayout className="gap-4 items-center">
               <Text variant="text-xxl-medium">{contractor.name}</Text>
@@ -75,7 +75,7 @@ const MainContent: React.FC<{ contractor: Contractor }> = ({ contractor }) => {
                     Email: <strong>{contractor.email}</strong>
                   </Text>
                   <Icon
-                    className="opacity-0 translate-x-[-4px] group-hover/email:opacity-100 group-hover/email:translate-x-0 w-5 transition-transform ease"
+                    className="opacity-0 translate-x-[-4px] group-hover/email:opacity-100 group-hover/email:translate-x-0 w-6 transition-transform ease"
                     icon="IconCopy"
                   />
                 </FlexLayout>

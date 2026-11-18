@@ -3,7 +3,7 @@ import { Box, Divider, FlexLayout, Skeleton, VerticalDivider } from '@/ui';
 
 export const ContentLoader = () => {
   return (
-    <FlexLayout className="py-5 flex-col gap-5">
+    <FlexLayout className="py-6 flex-col gap-6">
       {/* Top Bar - Back Button + Actions */}
       <FlexLayout className="justify-between">
         <BackButton targetLocation="/dashboard/shipments" />
@@ -15,7 +15,7 @@ export const ContentLoader = () => {
       </FlexLayout>
 
       <Box className="max-w-[1400px]">
-        <FlexLayout className="relative flex-col gap-5 w-full">
+        <FlexLayout className="relative flex-col gap-6 w-full">
           {/* Header Section */}
           <FlexLayout className="flex-col gap-4">
             <FlexLayout className="flex-col gap-1">
@@ -50,10 +50,10 @@ export const ContentLoader = () => {
           <Divider />
 
           {/* Main Content - Two Column Layout */}
-          <FlexLayout className="flex-row gap-5">
+          <FlexLayout className="flex-row gap-6">
             {/* Left Column - Basic Info (380px) */}
             <FlexLayout className="w-[380px] flex-col gap-4">
-              <FlexLayout as="section" className="flex-col gap-5">
+              <FlexLayout as="section" className="flex-col gap-6">
                 {/* Title */}
                 <Skeleton borderRadius="s" height={24} width={120} />
 
@@ -139,7 +139,7 @@ export const ContentLoader = () => {
               <Skeleton borderRadius="s" height={24} width={80} />
 
               {/* Cargo Item 1 */}
-              <FlexLayout className="flex-col gap-4 p-4 rounded-s bg-black-alpha-05 dark:bg-white-alpha-10">
+              <FlexLayout className="flex-col gap-4 p-4 rounded-legacy-s bg-black-alpha-05 dark:bg-white-alpha-10">
                 {/* Cargo Header */}
                 <FlexLayout className="justify-between items-center">
                   <FlexLayout className="flex-col gap-1">
@@ -250,7 +250,7 @@ export const ContentLoader = () => {
               </FlexLayout>
 
               {/* Cargo Item 2 (optional - shows loading state can have multiple items) */}
-              <FlexLayout className="flex-col gap-4 p-4 rounded-s bg-black-alpha-05 dark:bg-white-alpha-10">
+              <FlexLayout className="flex-col gap-4 p-4 rounded-legacy-s bg-black-alpha-05 dark:bg-white-alpha-10">
                 <FlexLayout className="justify-between items-center">
                   <FlexLayout className="flex-col gap-1">
                     <Skeleton borderRadius="xs" height={18} width={80} />

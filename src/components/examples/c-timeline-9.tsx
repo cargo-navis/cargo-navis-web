@@ -38,10 +38,10 @@ export function Pattern() {
       {projectJourney.map((item) => (
         <TimelineItem className="group-data-[orientation=horizontal]/timeline:mt-0" key={item.id} step={item.id}>
           <TimelineHeader>
-            <TimelineSeparator className="group-data-[orientation=horizontal]/timeline:top-8" />
-            <TimelineDate className="mb-10">{item.date}</TimelineDate>
+            <TimelineSeparator className="group-data-[orientation=horizontal]/timeline:top-16" />
+            <TimelineDate className="mb-30">{item.date}</TimelineDate>
             <TimelineTitle>{item.title}</TimelineTitle>
-            <TimelineIndicator className="group-data-[orientation=horizontal]/timeline:top-8" />
+            <TimelineIndicator className="group-data-[orientation=horizontal]/timeline:top-16" />
           </TimelineHeader>
           <TimelineContent>{item.description}</TimelineContent>
         </TimelineItem>

@@ -28,7 +28,7 @@ export const AnalyticsPage = () => {
   return (
     <DashboardLayout>
       <PageTitle title="Analitika" />
-      <FlexLayout className="flex-col gap-5">
+      <FlexLayout className="flex-col gap-6">
         <FlexLayout className="flex-col gap-4">
           <Heading as="h1" variant="text-xl">
             Analitika

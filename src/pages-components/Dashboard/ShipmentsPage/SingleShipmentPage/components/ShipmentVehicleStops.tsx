@@ -70,7 +70,7 @@ export const ShipmentVehicleStops = ({ stops }: ShipmentVehicleStopsProps) => {
           </FlexLayout>
         )}
       </FlexLayout>
-      <Timeline className="w-full pt-5" defaultValue={stops.length} orientation="vertical">
+      <Timeline className="w-full pt-6" defaultValue={stops.length} orientation="vertical">
         {stops.map((stop, i) => (
           <SidebarStopEntry
             isCompleted={isStopCompleted(stop)}
@@ -117,7 +117,7 @@ const SidebarStopEntry = ({
   const hasDocuments = stop.documents.length > 0;
 
   const rowContent = (
-    <FlexLayout className="flex-col gap-0.5 relative -top-4">
+    <FlexLayout className="flex-col relative -top-4">
       <Box className="absolute top-0 right-0">
         <ToggleStopCompletionButton iconOnly stop={stop} />
       </Box>
@@ -125,7 +125,7 @@ const SidebarStopEntry = ({
         {date ? (
           dayjs(date).format('DD.MM.YYYY')
         ) : (
-          <Box as="span" className="text-red-600 italic">
+          <Box as="span" className="text-legacy-red-600 italic">
             Datum nedostaje
           </Box>
         )}
@@ -287,7 +287,7 @@ const CargoListSection = ({
         {label}
       </Text>
     </FlexLayout>
-    <FlexLayout as="ul" className="flex-col gap-0.5 list-disc list-inside">
+    <FlexLayout as="ul" className="flex-col list-disc list-inside">
       {cargos.map((cargo) => (
         <Text as="li" color="text-light-50" key={cargo.id} variant="text-xxs">
           {getCargoLabel(cargo)}

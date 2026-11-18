@@ -61,7 +61,7 @@ const ORDER_KIND_STYLES: Record<
 };
 
 const KindBadge: React.FC<{ kind: StopOrder['kind'] }> = ({ kind }) => (
-  <Text className={clsx('rounded-l border px-2 py-[2px]', KIND_BADGE_CLASSES[kind])} variant="text-xxxs-medium">
+  <Text className={clsx('rounded-legacy-l border px-2 py-[2px]', KIND_BADGE_CLASSES[kind])} variant="text-xxxs-medium">
     {kind === 'loading' ? 'UTOVAR' : 'ISTOVAR'}
   </Text>
 );
@@ -110,7 +110,10 @@ export const StopSummary: React.FC<StopSummaryProps> = ({ stop, isNext, showDate
         {stop.loadingCargos.length > 0 && <KindBadge kind="loading" />}
         {stop.unloadingCargos.length > 0 && <KindBadge kind="unloading" />}
         {isNext && (
-          <Text className="rounded-l bg-teal-700 px-2 py-[2px] text-white dark:bg-teal-600" variant="text-xxxs-medium">
+          <Text
+            className="rounded-legacy-l bg-teal-700 px-2 py-[2px] text-white dark:bg-teal-600"
+            variant="text-xxxs-medium"
+          >
             SLJEDEĆA
           </Text>
         )}
@@ -250,10 +253,14 @@ export const StopCard: React.FC<StopCardProps> = ({ stop, tone, isHighlighted, o
   const isCompleted = tone === 'completed';
   const clientsByKind = getStopClientsByKind(stop);
   const when = getStopWhen(stop, dayjs());
-  const primaryColor = isOnTeal ? 'text-white' : when.isLate ? 'text-red-600 dark:text-red-400' : 'text-color-1';
+  const primaryColor = isOnTeal
+    ? 'text-white'
+    : when.isLate
+      ? 'text-legacy-red-600 dark:text-legacy-red-400'
+      : 'text-color-1';
 
   return (
-    <Box className={clsx('rounded-l border', CARD_CLASSES[tone], isHighlighted && 'card-highlight-fade')}>
+    <Box className={clsx('rounded-legacy-l border', CARD_CLASSES[tone], isHighlighted && 'card-highlight-fade')}>
       <FlexLayout
         aria-haspopup="dialog"
         as="button"

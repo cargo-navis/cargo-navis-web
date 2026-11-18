@@ -16,7 +16,7 @@ export const NewVanPage = () => {
             Novi Kombi
           </Heading>
         </FlexLayout>
-        <FlexLayout className="py-5 flex-col gap-[40px]">
+        <FlexLayout className="py-6 flex-col gap-[40px]">
           <BackButton targetLocation="/dashboard/fleet/vans" />
           <NewVehicleForm type={VehicleEnum.VAN} />
         </FlexLayout>

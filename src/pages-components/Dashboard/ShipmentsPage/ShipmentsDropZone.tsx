@@ -64,7 +64,7 @@ export const ShipmentsDropZone: React.FC<ShipmentsDropZoneProps> = ({ onFilesAcc
 
   return (
     <Box className="fixed inset-0 z-50 pointer-events-none flex items-center justify-center bg-teal-500/15 backdrop-blur-xs border-4 border-dashed border-teal-500">
-      <FlexLayout className="flex-col items-center gap-3 bg-white/95 dark:bg-black/90 rounded-xl px-8 py-6 shadow-xl">
+      <FlexLayout className="flex-col items-center gap-3 bg-white/95 dark:bg-black/90 rounded-legacy-xl px-16 py-8 shadow-xl">
         <Icon color="text-teal-500" icon="IconUpload" size="xxl" />
         <Text variant="text-l-medium">Otpustite za upload</Text>
         <Text color="text-color-3" variant="text-xs">

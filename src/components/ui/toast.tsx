@@ -1,18 +1,15 @@
+'use client';
+
 /**
  * Decided (KAN-55, /overlays/toast): tinted by type (soft background like the alerts), icon on the first text line,
  * 448px, success / info / warning 4 s, errors 8 s (hover pauses), × always. Dashboard top-center (where users look
  * on big screens, like today), driver portal bottom-center above the nav: `<Toaster position>`.
- *
- * KAN-55 PR 1: the playground's components/ui/toast.tsx, adapted to the old Tailwind theme that is still active
- * (custom spacing / radius / font-size scales and Cargo Navis blue / red): those sizes and colours are spelled out as
- * arbitrary values and `toast-*` tokens (src/styles/globals.css), the action and close buttons carry the decided
- * Button classes (outline sm, ghost icon-sm) inline, and icons go through `@/ui` Icon. PR 2 replaces this file with
- * the decided one once the new tokens and `components/ui/button` are in.
  */
 
 import { Toast as ToastPrimitive } from '@base-ui/react/toast';
 import * as React from 'react';
 
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Icon, type IconType } from '@/ui';
 
@@ -38,7 +35,7 @@ function ToastPortal({ ...props }: ToastPrimitive.Portal.Props) {
 }
 
 const VIEWPORT: Record<ToastPosition, string> = {
-  'top-center': 'top-[1.25rem]',
+  'top-center': 'top-5',
   // Driver portal: above the bottom nav (today 76px).
   'bottom-center': 'bottom-[calc(5rem+env(safe-area-inset-bottom))]',
 };
@@ -48,8 +45,7 @@ function ToastViewport({ className, ...props }: ToastPrimitive.Viewport.Props) {
   return (
     <ToastPrimitive.Viewport
       className={cn(
-        // font-display: the portal renders outside the app's font wrapper.
-        'pointer-events-none fixed inset-x-[1rem] z-50 mx-auto w-auto max-w-md font-display outline-none',
+        'pointer-events-none fixed inset-x-4 z-50 mx-auto w-auto max-w-md outline-none',
         VIEWPORT[position],
         className
       )}
@@ -61,7 +57,7 @@ function ToastViewport({ className, ...props }: ToastPrimitive.Viewport.Props) {
 
 // The stack: newest in front, older ones peek out behind it (away from the screen edge), spread on hover.
 const ROOT_SHARED =
-  "group/toast pointer-events-auto absolute right-0 z-[calc(1000-var(--toast-index))] w-full rounded-[1.35rem] border border-toast-border bg-toast-popover text-toast-popover-foreground shadow-lg will-change-transform outline-none select-none focus-visible:ring-[3px] focus-visible:ring-toast-ring/50 [--gap:0.75rem] [--height:var(--toast-frontmost-height,var(--toast-height))] [--peek:0.75rem] [--scale:calc(max(0,1-(var(--toast-index)*0.1)))] [--shrink:calc(1-var(--scale))] h-(--height) [transition:transform_500ms_cubic-bezier(0.22,1,0.36,1),opacity_500ms,height_150ms] data-expanded:h-(--toast-height) data-limited:opacity-0 after:absolute after:left-0 after:h-[calc(var(--gap)+1px)] after:w-full after:content-['']";
+  "group/toast pointer-events-auto absolute right-0 z-[calc(1000-var(--toast-index))] w-full rounded-2xl border bg-popover text-popover-foreground shadow-lg will-change-transform outline-none select-none focus-visible:ring-[3px] focus-visible:ring-ring/50 [--gap:0.75rem] [--height:var(--toast-frontmost-height,var(--toast-height))] [--peek:0.75rem] [--scale:calc(max(0,1-(var(--toast-index)*0.1)))] [--shrink:calc(1-var(--scale))] h-(--height) [transition:transform_500ms_cubic-bezier(0.22,1,0.36,1),opacity_500ms,height_150ms] data-expanded:h-(--toast-height) data-limited:opacity-0 after:absolute after:left-0 after:h-[calc(var(--gap)+1px)] after:w-full after:content-['']";
 
 const ROOT_POSITION: Record<ToastPosition, string> = {
   'bottom-center':
@@ -70,10 +66,9 @@ const ROOT_POSITION: Record<ToastPosition, string> = {
     'top-0 origin-top [--offset-y:calc(var(--toast-offset-y)+calc(var(--toast-index)*var(--gap))+var(--toast-swipe-movement-y))] [transform:translateX(var(--toast-swipe-movement-x))_translateY(calc(var(--toast-swipe-movement-y)+(var(--toast-index)*var(--peek))+(var(--shrink)*var(--height))))_scale(var(--scale))] data-expanded:[transform:translateX(var(--toast-swipe-movement-x))_translateY(var(--offset-y))] data-starting-style:[transform:translateY(-150%)] [&[data-ending-style]:not([data-limited]):not([data-swipe-direction])]:[transform:translateY(-150%)] data-ending-style:data-[swipe-direction=up]:[transform:translateY(calc(var(--toast-swipe-movement-y)-150%))] data-ending-style:data-[swipe-direction=left]:[transform:translateX(calc(var(--toast-swipe-movement-x)-150%))_translateY(var(--offset-y))] data-ending-style:data-[swipe-direction=right]:[transform:translateX(calc(var(--toast-swipe-movement-x)+150%))_translateY(var(--offset-y))] after:bottom-full',
 };
 
-// Tinted by type; loading and untyped toasts stay neutral. Green = the Cargo Navis ramp (as in the playground);
-// blue / red / amber / green-950 = Tailwind's defaults, as `toast-*` tokens while the old blue / red ramps are active.
+// Tinted by type; loading and untyped toasts stay neutral.
 const ROOT_TONE =
-  'data-[type=success]:border-green-200 data-[type=success]:bg-green-50 dark:data-[type=success]:border-green-900 dark:data-[type=success]:bg-toast-green-950 data-[type=info]:border-toast-blue-200 data-[type=info]:bg-toast-blue-50 dark:data-[type=info]:border-toast-blue-900 dark:data-[type=info]:bg-toast-blue-950 data-[type=warning]:border-toast-amber-200 data-[type=warning]:bg-toast-amber-50 dark:data-[type=warning]:border-toast-amber-900 dark:data-[type=warning]:bg-toast-amber-950 data-[type=error]:border-toast-red-200 data-[type=error]:bg-toast-red-50 dark:data-[type=error]:border-toast-red-900 dark:data-[type=error]:bg-toast-red-950';
+  'data-[type=success]:border-green-200 data-[type=success]:bg-green-50 dark:data-[type=success]:border-green-900 dark:data-[type=success]:bg-green-950 data-[type=info]:border-blue-200 data-[type=info]:bg-blue-50 dark:data-[type=info]:border-blue-900 dark:data-[type=info]:bg-blue-950 data-[type=warning]:border-amber-200 data-[type=warning]:bg-amber-50 dark:data-[type=warning]:border-amber-900 dark:data-[type=warning]:bg-amber-950 data-[type=error]:border-red-200 data-[type=error]:bg-red-50 dark:data-[type=error]:border-red-900 dark:data-[type=error]:bg-red-950';
 
 function Toast({ className, ...props }: ToastPrimitive.Root.Props) {
   const position = React.useContext(ToastPositionContext);
@@ -92,7 +87,7 @@ function ToastContent({ className, ...props }: ToastPrimitive.Content.Props) {
     <ToastPrimitive.Content
       className={cn(
         // Start-aligned: the icon sits on the first text line, buttons at the top (one line looks centred).
-        'flex h-full items-start gap-[0.75rem] overflow-hidden px-[1rem] py-[0.75rem] transition-opacity duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] data-behind:opacity-0 data-expanded:opacity-100',
+        'flex h-full items-start gap-3 overflow-hidden px-4 py-3 transition-opacity duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] data-behind:opacity-0 data-expanded:opacity-100',
         className
       )}
       data-slot="toast-content"
@@ -102,46 +97,27 @@ function ToastContent({ className, ...props }: ToastPrimitive.Content.Props) {
 }
 
 function ToastTitle({ className, ...props }: ToastPrimitive.Title.Props) {
-  return (
-    <ToastPrimitive.Title
-      className={cn('text-[0.875rem] leading-[1.25rem] font-medium', className)}
-      data-slot="toast-title"
-      {...props}
-    />
-  );
+  return <ToastPrimitive.Title className={cn('text-sm font-medium', className)} data-slot="toast-title" {...props} />;
 }
 
 function ToastDescription({ className, ...props }: ToastPrimitive.Description.Props) {
   return (
     <ToastPrimitive.Description
-      className={cn('text-[0.875rem] leading-[1.25rem] text-toast-muted-foreground', className)}
+      className={cn('text-sm text-muted-foreground', className)}
       data-slot="toast-description"
       {...props}
     />
   );
 }
 
-// The decided Button's base classes (components/ui/button in the playground), translated to the old theme.
-const BUTTON_BASE =
-  'inline-flex shrink-0 items-center justify-center rounded-[0.75rem] border border-transparent bg-clip-padding text-[0.875rem] leading-[1.25rem] font-semibold whitespace-nowrap transition-all outline-none select-none focus-visible:border-toast-ring focus-visible:ring-3 focus-visible:ring-toast-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50';
-// Button variant="outline" size="sm".
-const BUTTON_OUTLINE_SM =
-  'h-[2rem] gap-[0.375rem] px-[0.625rem] border-toast-border bg-toast-background hover:bg-toast-muted hover:text-toast-foreground dark:border-toast-input dark:bg-toast-input/30 dark:hover:bg-toast-input/50';
-// Button variant="ghost" size="icon-sm".
-const BUTTON_GHOST_ICON_SM =
-  'size-[2rem] hover:bg-toast-muted hover:text-toast-foreground dark:hover:bg-toast-muted/50';
-
 function ToastAction({
   className,
   // Touch screens (driver portal): 40px, like the current app's toast undo button.
   render = (
-    <button
-      className={cn(
-        BUTTON_BASE,
-        BUTTON_OUTLINE_SM,
-        'bg-toast-background pointer-coarse:h-[2.5rem] pointer-coarse:px-[0.75rem] pointer-coarse:text-[0.875rem]'
-      )}
-      type="button"
+    <Button
+      className="bg-background pointer-coarse:h-10 pointer-coarse:px-3 pointer-coarse:text-sm"
+      size="sm"
+      variant="outline"
     />
   ),
   ...props
@@ -154,14 +130,14 @@ function ToastAction({
 function ToastClose({
   className,
   children,
-  render = <button className={cn(BUTTON_BASE, BUTTON_GHOST_ICON_SM)} type="button" />,
+  render = <Button size="icon-sm" variant="ghost" />,
   ...props
 }: ToastPrimitive.Close.Props) {
   return (
     <ToastPrimitive.Close
       aria-label="Zatvori"
       className={cn(
-        "relative shrink-0 text-toast-muted-foreground after:absolute after:-inset-[0.5rem] after:content-[''] hover:text-toast-foreground",
+        "relative shrink-0 text-muted-foreground after:absolute after:-inset-2 after:content-[''] hover:text-foreground",
         className
       )}
       data-slot="toast-close"
@@ -175,10 +151,10 @@ function ToastClose({
 
 const TOAST_ICONS: Record<string, { icon: IconType; className: string }> = {
   success: { icon: 'IconCircleCheck', className: 'text-green-600 dark:text-green-400' },
-  info: { icon: 'IconInfoCircle', className: 'text-toast-blue-600 dark:text-toast-blue-400' },
-  warning: { icon: 'IconAlertTriangle', className: 'text-toast-amber-600 dark:text-toast-amber-400' },
-  error: { icon: 'IconAlertOctagon', className: 'text-toast-red-600 dark:text-toast-red-400' },
-  loading: { icon: 'IconLoader', className: 'animate-spin text-toast-muted-foreground' },
+  info: { icon: 'IconInfoCircle', className: 'text-blue-600 dark:text-blue-400' },
+  warning: { icon: 'IconAlertTriangle', className: 'text-amber-600 dark:text-amber-400' },
+  error: { icon: 'IconAlertOctagon', className: 'text-red-600 dark:text-red-400' },
+  loading: { icon: 'IconLoader', className: 'animate-spin text-muted-foreground' },
 };
 
 function ToastIcon({ type }: { type: string | undefined }) {
@@ -187,7 +163,7 @@ function ToastIcon({ type }: { type: string | undefined }) {
     return null;
   }
   // mt-1.5: centred on the first line of the text block below (20px line inside 6px padding).
-  return <Icon className={cn('mt-[0.375rem]', entry.className)} icon={entry.icon} size="m" />;
+  return <Icon className={cn('mt-1.5 shrink-0', entry.className)} data-slot="toast-icon" icon={entry.icon} size="m" />;
 }
 
 function ToastList() {
@@ -198,7 +174,7 @@ function ToastList() {
       <ToastContent>
         <ToastIcon type={toastItem.type} />
         {/* py-1.5: the first line lines up with the 32px action / close buttons. */}
-        <div className="flex min-w-0 flex-1 flex-col gap-[0.125rem] py-[0.375rem]">
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5 py-1.5">
           <ToastTitle />
           <ToastDescription />
         </div>

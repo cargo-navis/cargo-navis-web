@@ -52,7 +52,7 @@ export const SetPasswordForm = ({ token }: SetPasswordFormProps) => {
 
   return (
     <FormProvider {...formMethods}>
-      <FlexLayout as="form" className="flex-col gap-6" onSubmit={handleSubmit(handleFormSubmit)}>
+      <FlexLayout as="form" className="flex-col gap-8" onSubmit={handleSubmit(handleFormSubmit)}>
         <FormPasswordInput autoFocus label="Nova lozinka" name="newPassword" placeholder="Unesite novu lozinku" />
         <FormPasswordInput label="Potvrda lozinke" name="confirmPassword" placeholder="Potvrdite unesenu lozinku" />
         <Button isDisabled={!isValid} isFullWidth isLoading={isSubmitting} size="l" text="Postavi lozinku" />

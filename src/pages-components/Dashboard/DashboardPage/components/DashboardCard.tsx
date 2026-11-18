@@ -28,7 +28,7 @@ export const DashboardCard = ({
 }: DashboardCardProps) => (
   <Box
     className={cn(
-      'flex flex-col h-[440px] rounded-m bg-white dark:bg-white-alpha-10 shadow-md',
+      'flex flex-col h-[440px] rounded-legacy-m bg-white dark:bg-white-alpha-10 shadow-md',
       gradient && 'bg-gradient-to-tr',
       gradient,
       className

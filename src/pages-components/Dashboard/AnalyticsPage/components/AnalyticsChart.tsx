@@ -82,7 +82,7 @@ export const AnalyticsChart = ({
   amountAxisLabel,
   isStacked = false,
 }: AnalyticsChartProps) => (
-  <Box className="box-content h-[400px] p-5 bg-white dark:bg-white-alpha-10 border border-dark-100 dark:border-light-900 shadow-md rounded-m">
+  <Box className="box-content h-[400px] p-6 bg-white dark:bg-white-alpha-10 border border-dark-100 dark:border-light-900 shadow-md rounded-legacy-m">
     <ComboChart data={{ labels, datasets }} options={getChartOptions(title, amountAxisLabel, isStacked)} />
   </Box>
 );

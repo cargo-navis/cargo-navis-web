@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router';
 
-import { isSearchCategoryKey } from '@/components/GlobalSearch';
+import { isSearchCategoryKey, type SearchCategoryKey } from '@/components/GlobalSearch';
 
-// URL: /dashboard/search?query=marko&type=clients&page=2 (page is 1-based)
+// URL: /dashboard/search?query=marko&type=clients&page=2 (page is 1-based; no type = „Sve”)
 export function useSearchPageParams() {
   const router = useRouter();
 
@@ -10,12 +10,21 @@ export function useSearchPageParams() {
   const type = isSearchCategoryKey(router.query.type) ? router.query.type : undefined;
   const page = Math.max(1, Math.floor(Number(router.query.page)) || 1);
 
-  function setPage(next: number) {
-    const { page: _currentPage, ...params } = router.query;
-    if (next > 1) params.page = String(next);
-
+  function push(params: typeof router.query) {
     void router.push({ pathname: router.pathname, query: params }, undefined, { shallow: true });
   }
 
-  return { query, type, page, isReady: router.isReady, setPage };
+  function setPage(next: number) {
+    const { page: _currentPage, ...params } = router.query;
+    if (next > 1) params.page = String(next);
+    push(params);
+  }
+
+  function setType(next: SearchCategoryKey | undefined) {
+    const { page: _page, type: _type, ...params } = router.query;
+    if (next) params.type = next;
+    push(params);
+  }
+
+  return { query, type, page, isReady: router.isReady, setPage, setType };
 }

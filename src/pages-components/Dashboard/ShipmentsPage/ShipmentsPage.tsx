@@ -123,7 +123,7 @@ const ShipmentPageContent = () => {
   const shouldDisplayPagination = !isLoading && !isEmpty;
 
   return (
-    <Box className="py-5">
+    <Box className="py-6">
       {/* Top pagination controls */}
       <DisplayIf condition={shouldDisplayPagination}>
         {!!paginationInfo && (

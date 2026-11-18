@@ -39,7 +39,7 @@ export const LoginForm = () => {
 
   return (
     <FormProvider {...formMethods}>
-      <FlexLayout as="form" className="flex-col gap-6" onSubmit={handleSubmit(handleFormSubmit)}>
+      <FlexLayout as="form" className="flex-col gap-8" onSubmit={handleSubmit(handleFormSubmit)}>
         <FormTextInput autoFocus label="Email" name="email" placeholder="Unesite svoj email" type="email" />
         <FormPasswordInput label="Lozinka" name="password" placeholder="Unesite svoju lozinku" />
         <Button isDisabled={!isValid} isFullWidth isLoading={isSubmitting} size="l" text="Prijava" />

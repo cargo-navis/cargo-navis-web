@@ -32,7 +32,7 @@ const MainContent: React.FC<{ solo: Vehicle }> = ({ solo }) => {
           Ažuriraj Solo Kamion
         </Heading>
       </FlexLayout>
-      <FlexLayout className="py-5 flex-col gap-[40px]">
+      <FlexLayout className="py-6 flex-col gap-[40px]">
         <BackButton targetLocation="/dashboard/fleet/solo-trucks" />
         <NewVehicleForm type={VehicleEnum.SOLO_TRUCK} vehicle={solo} />
       </FlexLayout>

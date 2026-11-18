@@ -63,7 +63,7 @@ const CargoSide: React.FC<{
 
   return (
     <FlexLayout className={clsx('relative flex-col gap-2', showSideBar && '-ml-4 pl-4')}>
-      {showSideBar && <Box className={clsx('absolute inset-y-0 left-0 w-[4px] rounded-r-xs', style.bar)} />}
+      {showSideBar && <Box className={clsx('absolute inset-y-0 left-0 w-[4px] rounded-r-legacy-xs', style.bar)} />}
       <FlexLayout className={clsx('items-center gap-2', style.color)}>
         <Icon icon={style.icon} size="s" />
         <Text className="shrink-0" variant="text-xxxs-bold">
@@ -148,7 +148,7 @@ export const StopDetails: React.FC<StopDetailsProps> = ({ stop, hideShipmentHead
           {navigationUrl && (
             <a
               aria-label="Navigiraj"
-              className="flex size-[44px] shrink-0 items-center justify-center rounded-m border border-dark-200 text-dark-800 dark:border-light-800 dark:text-light-50"
+              className="flex size-[44px] shrink-0 items-center justify-center rounded-legacy-m border border-dark-200 text-dark-800 dark:border-light-800 dark:text-light-50"
               href={navigationUrl}
               rel="noopener noreferrer"
               target="_blank"

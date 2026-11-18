@@ -14,7 +14,7 @@ export const FleetPage = () => {
           Pregled Flote
         </Heading>
       </Box>
-      <FlexLayout className="gap-5 py-5">
+      <FlexLayout className="gap-6 py-6">
         <FleetSummary />
       </FlexLayout>
     </DashboardLayout>
@@ -67,7 +67,7 @@ export const OverviewItem: React.FC<InfoItemProps> = ({ label, value, href }) =>
     <Link href={href}>
       <FlexLayout className="group/overview-item relative justify-between items-center uppercase text-color-2 hover:text-teal-500">
         <Icon
-          className="absolute opacity-0 left-[-22px] translate-x-[-4px] group-hover/overview-item:opacity-100 group-hover/overview-item:translate-x-0 w-5 transition-transform ease"
+          className="absolute opacity-0 left-[-22px] translate-x-[-4px] group-hover/overview-item:opacity-100 group-hover/overview-item:translate-x-0 w-6 transition-transform ease"
           icon="IconChevronRight"
         />
         <Text variant="text-s-medium">{label}:</Text>

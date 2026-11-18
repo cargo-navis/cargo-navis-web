@@ -15,7 +15,7 @@ export const NewEmployeePage = () => {
             Novi Zaposlenik
           </Heading>
         </FlexLayout>
-        <FlexLayout className="py-5 flex-col gap-[40px]">
+        <FlexLayout className="py-6 flex-col gap-[40px]">
           <BackButton targetLocation="/dashboard/employees" />
           <NewEmployeeForm />
         </FlexLayout>

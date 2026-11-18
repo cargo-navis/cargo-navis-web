@@ -9,7 +9,7 @@ interface AnalyticsCardProps {
 
 /** White card wrapper shared by every analytics table. */
 export const AnalyticsCard = ({ title, children }: AnalyticsCardProps) => (
-  <FlexLayout className="flex-1 flex-col gap-4 p-4 bg-white dark:bg-white-alpha-10 border border-dark-100 dark:border-light-900 shadow-md rounded-m">
+  <FlexLayout className="flex-1 flex-col gap-4 p-4 bg-white dark:bg-white-alpha-10 border border-dark-100 dark:border-light-900 shadow-md rounded-legacy-m">
     <Text color="text-color-1" variant="text-xl-bold">
       {title}
     </Text>
@@ -33,11 +33,11 @@ export const TableRow = ({ index, children }: TableRowProps) => (
 );
 
 export const TableHeader = ({ children }: { children: ReactNode }) => (
-  <FlexLayout className="w-full py-3 px-4 bg-dark-200 dark:bg-white-alpha-10 rounded-t-s">{children}</FlexLayout>
+  <FlexLayout className="w-full py-3 px-4 bg-dark-200 dark:bg-white-alpha-10 rounded-t-legacy-s">{children}</FlexLayout>
 );
 
 export const EmptyTableState = ({ text }: { text: string }) => (
-  <FlexLayout className="w-full py-8 items-center justify-center">
+  <FlexLayout className="w-full py-16 items-center justify-center">
     <Text color="text-color-3" variant="text-s">
       {text}
     </Text>

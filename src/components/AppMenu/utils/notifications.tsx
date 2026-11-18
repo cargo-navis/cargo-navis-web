@@ -1,120 +1,123 @@
 import Link from 'next/link';
-import { forwardRef, Fragment } from 'react';
+import { Fragment, type ReactNode } from 'react';
 
-import { EmployeeName } from '@/components/employees/EmployeeName';
+import { Badge, type BadgeTone } from '@/components/ui/badge';
 import { LoadStatus, type Notification, NotificationType } from '@/lib/api';
-import { Text } from '@/ui';
-import { MenuComponent } from '@/ui/components/Menu/types';
+import { useEmployee } from '@/lib/hooks/api/employees';
 
-import { NotificationMenuItem } from '../NotificationMenuItem';
-import { ShipmentStatusPill } from './misc';
+const LOAD_STATUS: Record<LoadStatus, { label: string; tone: BadgeTone }> = {
+  [LoadStatus.NotYetLoaded]: { label: 'Nije utovareno', tone: 'neutral' },
+  [LoadStatus.Loaded]: { label: 'Utovareno', tone: 'info' },
+  [LoadStatus.Unloaded]: { label: 'Istovareno', tone: 'success' },
+};
 
-export function mapToNotificationMenuItems(notifications: Notification[]): MenuComponent[] {
-  return notifications.map((n) => ({
-    type: 'custom' as const,
-    Renderer: forwardRef((props, ref) => <NotificationMenuItem notification={n} ref={ref} {...props} />),
-    createdAt: n.createdAt,
-  }));
+const Strong = ({ children }: { children: ReactNode }) => (
+  <strong className="font-medium text-foreground">{children}</strong>
+);
+
+function DriverName({ id, fallback }: { id?: string; fallback?: string }) {
+  const { data: employee } = useEmployee(id ?? '');
+  const name = employee?.fullName || fallback;
+  return name ? <Strong>{name}</Strong> : <>Vozač</>;
 }
 
+function StatusBadge({ status }: { status: LoadStatus }) {
+  const config = LOAD_STATUS[status];
+  if (!config) return <Strong>{status}</Strong>;
+  return (
+    <Badge className="align-middle" size="sm" tone={config.tone}>
+      {config.label}
+    </Badge>
+  );
+}
+
+/**
+ * Link target and one-sentence copy of a notification (inherits the surrounding text size; names and numbers in the
+ * foreground colour). Used by the bell in the top bar and by the notifications card on Početna. Only rows without a
+ * target link to shipments inside the text (no link inside a link).
+ */
 export function getNotificationItemData(notification: Notification) {
-  let targetUrl: string;
-  let descriptionNode: React.ReactNode;
+  let targetUrl = '';
+  let descriptionNode: ReactNode = null;
   let avatarDriverId: string | undefined;
 
   const { type, metadata } = notification;
 
   switch (type) {
     case NotificationType.SHIPMENT_STATUS_CHANGED: {
-      const { driverId, shipmentId, newStatus, orderNumber } = metadata;
+      const { driverId, driverName, shipmentId, newStatus, orderNumber } = metadata;
       avatarDriverId = driverId;
-
       targetUrl = `/dashboard/shipments/${shipmentId}`;
       descriptionNode = (
-        <Text color="text-color-2" variant="text-s">
-          <EmployeeName id={driverId} variant="text-s-bold" /> je promijenio status naloga{' '}
-          <strong>{orderNumber}</strong> u <ShipmentStatusPill status={newStatus as LoadStatus} />.
-        </Text>
+        <>
+          <DriverName fallback={driverName} id={driverId} /> je promijenio status naloga <Strong>{orderNumber}</Strong>{' '}
+          u <StatusBadge status={newStatus as LoadStatus} />.
+        </>
       );
       break;
     }
     case NotificationType.SHIPMENT_MESSAGE_ACCEPTED: {
-      const { driverId, shipmentId, orderNumber } = metadata;
+      const { driverId, driverName, shipmentId, orderNumber } = metadata;
       avatarDriverId = driverId;
-
       targetUrl = `/dashboard/shipments/${shipmentId}`;
       descriptionNode = (
-        <Text color="text-color-2" variant="text-s">
-          <EmployeeName id={driverId} variant="text-s-bold" /> je primio obavijest o nalogu{' '}
-          <strong>{orderNumber}</strong>.
-        </Text>
+        <>
+          <DriverName fallback={driverName} id={driverId} /> je primio obavijest o nalogu <Strong>{orderNumber}</Strong>
+          .
+        </>
       );
       break;
     }
     case NotificationType.SHIPMENT_DRAFT_UPDATED: {
       const { draftId, fileName } = metadata;
-
       targetUrl = `/dashboard/shipments?tab=drafts${draftId ? `&highlight=${draftId}` : ''}`;
       descriptionNode = (
-        <Text color="text-color-2" variant="text-s">
-          Nalog u pripremi{' '}
-          <Link className="font-medium hover:underline text-teal-600 dark:text-teal-400" href={targetUrl}>
-            <Text variant="text-s-bold">{fileName}</Text>
-          </Link>{' '}
-          je ažuriran.
-        </Text>
+        <>
+          Nalog u pripremi <Strong>{fileName}</Strong> je ažuriran.
+        </>
       );
       break;
     }
     case NotificationType.VEHICLE_STOP_COMPLETED: {
-      const { driverId, address, shipments = [] } = metadata;
+      const { driverId, driverName, address, shipments = [] } = metadata;
       avatarDriverId = driverId;
-
-      targetUrl = '';
       descriptionNode = (
-        <Text color="text-color-2" variant="text-s">
-          <EmployeeName id={driverId} variant="text-s-bold" /> je obavio stanicu na adresi <strong>{address}</strong> za{' '}
-          {shipments.length === 1 ? 'nalog' : 'naloge'}{' '}
-          {shipments.map((s, i) => (
-            <Fragment key={s.shipmentId}>
-              {i > 0 && (i === shipments.length - 1 ? ' i ' : ', ')}
+        <>
+          <DriverName fallback={driverName} id={driverId} /> je obavio utovar / istovar na adresi{' '}
+          <Strong>{address}</Strong> za {shipments.length === 1 ? 'nalog' : 'naloge'}{' '}
+          {shipments.map((shipment, index) => (
+            <Fragment key={shipment.shipmentId}>
+              {index > 0 && (index === shipments.length - 1 ? ' i ' : ', ')}
               <Link
-                className="font-medium hover:underline text-teal-600 dark:text-teal-400"
-                href={`/dashboard/shipments/${s.shipmentId}`}
+                className="font-medium text-primary hover:underline dark:text-teal-300"
+                href={`/dashboard/shipments/${shipment.shipmentId}`}
               >
-                <Text variant="text-s-bold">{s.orderNumber}</Text>
+                {shipment.orderNumber}
               </Link>
             </Fragment>
           ))}
           .
-        </Text>
+        </>
       );
       break;
     }
     case NotificationType.VEHICLE_STOP_DOCUMENT_UPLOADED: {
-      const { driverId, documentName, address, vehicleStopId } = metadata;
+      const { driverId, driverName, documentName, address, vehicleStopId } = metadata;
       avatarDriverId = driverId;
-
-      // Resolves the stop's vehicle and opens its stops page with the stop highlighted.
+      // Resolves the stop's vehicle and opens its route with the stop highlighted.
       targetUrl = `/dashboard/vehicle-stops/stop/${vehicleStopId}`;
       descriptionNode = (
-        <Text color="text-color-2" variant="text-s">
-          <EmployeeName id={driverId} variant="text-s-bold" /> je dodao dokument <strong>{documentName}</strong>
+        <>
+          <DriverName fallback={driverName} id={driverId} /> je dodao dokument <Strong>{documentName}</Strong>
           {address ? (
             <>
               {' '}
-              na stanici na adresi <strong>{address}</strong>
+              na adresi <Strong>{address}</Strong>
             </>
           ) : null}
           .
-        </Text>
+        </>
       );
-      break;
-    }
-    default: {
-      // Handle non-existing case
-      targetUrl = '';
-      descriptionNode = null;
       break;
     }
   }

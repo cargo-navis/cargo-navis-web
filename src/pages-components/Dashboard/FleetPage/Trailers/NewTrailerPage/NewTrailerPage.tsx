@@ -16,7 +16,7 @@ export const NewTrailerPage = () => {
             Nova Poluprikolica
           </Heading>
         </FlexLayout>
-        <FlexLayout className="py-5 flex-col gap-[40px]">
+        <FlexLayout className="py-6 flex-col gap-[40px]">
           <BackButton targetLocation="/dashboard/fleet/trailers" />
           <NewVehicleForm type={VehicleEnum.TRAILER} />
         </FlexLayout>

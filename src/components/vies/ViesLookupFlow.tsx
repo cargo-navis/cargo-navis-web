@@ -90,7 +90,7 @@ export const ViesLookupFlow: React.FC<ViesLookupFlowProps> = ({
   }
 
   return (
-    <FlexLayout className="flex-col gap-6">
+    <FlexLayout className="flex-col gap-8">
       <FlexLayout className="flex-col gap-4 w-[640px]">
         <FlexLayout className="items-center gap-1 text-dark-600 dark:text-light-300">
           <Text variant="text-xs-medium">{searchTitle}</Text>
@@ -110,7 +110,7 @@ export const ViesLookupFlow: React.FC<ViesLookupFlowProps> = ({
         />
         <FlexLayout className="flex-col">
           {isLookupFailed && (
-            <Text color="text-red-600 dark:text-red-500" variant="text-xs">
+            <Text color="text-legacy-red-600 dark:text-legacy-red-500" variant="text-xs">
               Tvrtka nije pronađena u VIES-u. Podatke možeš unijeti ručno.
             </Text>
           )}

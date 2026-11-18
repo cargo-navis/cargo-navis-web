@@ -25,7 +25,7 @@ export const ContactInfo: React.FC<ContactInfoProps> = ({ contact, contactType }
       <Icon icon={ContactIcon} type="solid" />
       <Text variant="text-s">{contact}</Text>
       <Icon
-        className="opacity-0 translate-x-[-4px] group-hover:opacity-100 group-hover:translate-x-0 w-5 transition-transform ease"
+        className="opacity-0 translate-x-[-4px] group-hover:opacity-100 group-hover:translate-x-0 w-6 transition-transform ease"
         icon="IconCopy"
       />
     </FlexLayout>

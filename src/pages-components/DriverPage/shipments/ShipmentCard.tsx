@@ -69,7 +69,7 @@ const ShipmentSummary: React.FC<{
         {Array.from({ length: shipment.totalStopsCount }, (_, index) => (
           <Box
             className={clsx(
-              'size-2 rounded-circle',
+              'size-2 rounded-legacy-circle',
               index < shipment.completedStopsCount ? 'bg-teal-600' : 'border border-dark-300 dark:border-light-600'
             )}
             key={index}
@@ -93,7 +93,7 @@ const ShipmentTimeline: React.FC<{ shipment: DriverShipment }> = ({ shipment }) 
           <FlexLayout className="flex-col items-center">
             <Box
               className={clsx(
-                'mt-1 size-3 shrink-0 rounded-circle border-2',
+                'mt-1 size-3 shrink-0 rounded-legacy-circle border-2',
                 stop.completedAt ? 'border-teal-600 bg-teal-600' : 'border-dark-300 dark:border-light-600'
               )}
             />
@@ -109,7 +109,7 @@ const ShipmentTimeline: React.FC<{ shipment: DriverShipment }> = ({ shipment }) 
               />
             )}
           </FlexLayout>
-          <FlexLayout className={clsx('min-w-0 grow flex-col gap-3', !isLast && 'pb-6')}>
+          <FlexLayout className={clsx('min-w-0 grow flex-col gap-3', !isLast && 'pb-8')}>
             <FlexLayout className="items-center gap-2">
               <Text color="text-color-1" variant="text-xs-medium">
                 {getStopKindLabels(stop).title}
@@ -149,7 +149,7 @@ export const ShipmentCard: React.FC<ShipmentCardProps> = ({ shipment, onOpen }) 
       aria-haspopup="dialog"
       as="button"
       className={clsx(
-        'w-full rounded-l p-4',
+        'w-full rounded-legacy-l p-4',
         isCompleted
           ? COMPLETED_CARD_CLASSES
           : 'border border-dark-100 bg-white shadow-xs dark:border-light-850 dark:bg-light-875'
@@ -179,7 +179,7 @@ export const ShipmentSheet: React.FC<ShipmentSheetProps> = ({ shipmentId, summar
   function renderContent() {
     if (shipment) {
       return (
-        <FlexLayout className="flex-col gap-6">
+        <FlexLayout className="flex-col gap-8">
           <ShipmentTimeline shipment={shipment} />
           <DisponentContact disponent={getStopsDisponent(shipment.stops)} />
         </FlexLayout>
@@ -188,7 +188,7 @@ export const ShipmentSheet: React.FC<ShipmentSheetProps> = ({ shipmentId, summar
 
     if (isError) {
       return (
-        <FlexLayout className="flex-col items-center gap-2 py-8">
+        <FlexLayout className="flex-col items-center gap-2 py-16">
           <Text color="text-color-3" variant="text-s">
             Nalog se nije učitao.
           </Text>

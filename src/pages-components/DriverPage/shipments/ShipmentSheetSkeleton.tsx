@@ -30,7 +30,7 @@ export const ShipmentSheetSkeleton: React.FC<{ summary: DriverShipmentSummary | 
   const hasConfirmButtons = !summary || !isShipmentCompleted(summary);
 
   return (
-    <FlexLayout aria-busy className="flex-col gap-6">
+    <FlexLayout aria-busy className="flex-col gap-8">
       <FlexLayout className="flex-col">
         {STOPS.map((widths, index) => {
           const isLast = index === STOPS.length - 1;
@@ -38,10 +38,10 @@ export const ShipmentSheetSkeleton: React.FC<{ summary: DriverShipmentSummary | 
           return (
             <FlexLayout className="gap-3" key={index}>
               <FlexLayout className="flex-col items-center">
-                <Box className="mt-1 size-3 shrink-0 rounded-circle bg-dark-200 dark:bg-light-850" />
+                <Box className="mt-1 size-3 shrink-0 rounded-legacy-circle bg-dark-200 dark:bg-light-850" />
                 {!isLast && <Box className="w-[1px] grow bg-dark-200 dark:bg-light-800" />}
               </FlexLayout>
-              <FlexLayout className={clsx('min-w-0 grow flex-col gap-3', !isLast && 'pb-6')}>
+              <FlexLayout className={clsx('min-w-0 grow flex-col gap-3', !isLast && 'pb-8')}>
                 {/* Kind and date */}
                 <FlexLayout className="items-center gap-2">
                   <Skeleton borderRadius="xs" height={14} width={widths.title} />

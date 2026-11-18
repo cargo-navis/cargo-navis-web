@@ -67,7 +67,7 @@ export const ContractorsTable = ({ data }: ContractorsTableProps) => {
                 {formatEur(contractor.totalCost)}
               </Text>
               <Text
-                className={`basis-[160px] text-right ${contractor.margin < 0 ? 'text-red-500' : ''}`}
+                className={`basis-[160px] text-right ${contractor.margin < 0 ? 'text-legacy-red-500' : ''}`}
                 color={contractor.margin < 0 ? undefined : 'text-color-1'}
                 variant="text-s-medium"
               >

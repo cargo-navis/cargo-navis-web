@@ -8,6 +8,7 @@ import { ThemeProvider } from 'next-themes';
 
 import { AppToaster } from '@/components/AppToaster';
 import { Head } from '@/components/Head';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import { QueryClientCreator } from '@/lib/components/providers/QueryClientCreator';
 import { fontVariablesCss } from '@/ui/theme/fonts';
 
@@ -18,15 +19,18 @@ export default function App({ Component, pageProps }: AppProps) {
     <ThemeProvider attribute="class" defaultTheme="system" enableColorScheme={false} enableSystem>
       <MantineProvider>
         <QueryClientCreator>
-          <AppToaster>
-            <Head />
-            <NextHead>
-              <style key="font-variables">{fontVariablesCss}</style>
-            </NextHead>
-            <div className="font-display isolate">
-              <Component {...pageProps} />
-            </div>
-          </AppToaster>
+          {/* 300ms tooltip delay app-wide; once one is open, neighbours open instantly (KAN-55 /overlays/popover). */}
+          <TooltipProvider>
+            <AppToaster>
+              <Head />
+              <NextHead>
+                <style key="font-variables">{fontVariablesCss}</style>
+              </NextHead>
+              <div className="font-display isolate">
+                <Component {...pageProps} />
+              </div>
+            </AppToaster>
+          </TooltipProvider>
         </QueryClientCreator>
       </MantineProvider>
     </ThemeProvider>

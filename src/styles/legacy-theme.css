@@ -1,0 +1,133 @@
+/*
+ * KAN-55 theme bridge · the old Cargo Navis scales as collision-free legacy tokens.
+ *
+ * The app now runs on Tailwind's default scales (spacing, font sizes, radii, palette) like the redesign components.
+ * The old `@/ui` code was rewritten to keep its exact pixels:
+ *   spacing   old 1…10 = 4, 8, 12, 16, 24, 32, 48, 64, 80, 120px → default 1, 2, 3, 4, 6, 8, 12, 16, 20, 30
+ *   text      old `text-xs` … → `text-legacy-xs` … (px sizes + line heights below)
+ *   radius    old `rounded-l` … → `rounded-legacy-l` … (px below)
+ *   colours   old `blue / red / yellow / purple` ramps → `legacy-blue-*` …; `dark-*`, `light-*`, `*-alpha-*` keep their
+ *             names. Cargo Navis teal / orange / green override Tailwind's ramps of the same name (globals.css).
+ * Delete a token here once nothing uses it any more (PR 9 removes the rest).
+ */
+@theme {
+  /* Fonts (next/font variables from src/ui/theme/fonts.ts). */
+  --font-display: var(--font-geist);
+  --font-heading: var(--font-sora);
+
+  /* Old font sizes (src/ui/theme/fontSizes.ts). */
+  --text-legacy-xxxxs: 9px;
+  --text-legacy-xxxxs--line-height: 14px;
+  --text-legacy-xxxs: 11px;
+  --text-legacy-xxxs--line-height: 16px;
+  --text-legacy-xxs: 13px;
+  --text-legacy-xxs--line-height: 24px;
+  --text-legacy-xs: 14px;
+  --text-legacy-xs--line-height: 24px;
+  --text-legacy-s: 16px;
+  --text-legacy-s--line-height: 24px;
+  --text-legacy-m: 18px;
+  --text-legacy-m--line-height: 32px;
+  --text-legacy-l: 24px;
+  --text-legacy-l--line-height: 40px;
+  --text-legacy-xl: 32px;
+  --text-legacy-xl--line-height: 40px;
+  --text-legacy-xxl: 40px;
+  --text-legacy-xxl--line-height: 48px;
+  --text-legacy-xxxl: 56px;
+  --text-legacy-xxxl--line-height: 64px;
+  --text-legacy-mobile-override: 16px;
+
+  /* Old radii (src/ui/theme/radii.ts). */
+  --radius-legacy-xs: 4px;
+  --radius-legacy-s: 6px;
+  --radius-legacy-m: 8px;
+  --radius-legacy-l: 12px;
+  --radius-legacy-xl: 16px;
+  --radius-legacy-xxl: 20px;
+  --radius-legacy-xxxl: 24px;
+  --radius-legacy-xxxxl: 40px;
+  --radius-legacy-circle: 50%;
+}
+
+/* Old colours (src/ui/theme/colors.ts). `static`: Skeleton reads some of them as `var(--color-…)` from JS. */
+@theme static {
+  --color-dark-25: #fbfcfc;
+  --color-dark-50: #f5f6f7;
+  --color-dark-75: #edeef0;
+  --color-dark-100: #e6e7ea;
+  --color-dark-200: #d7d9dc;
+  --color-dark-300: #babdc6;
+  --color-dark-400: #acb0ba;
+  --color-dark-500: #979ba8;
+  --color-dark-600: #6d7385;
+  --color-dark-700: #4d556a;
+  --color-dark-800: #2e3750;
+  --color-dark-900: #121627;
+  --color-light-50: #ecedf2;
+  --color-light-100: #d8d9de;
+  --color-light-200: #bfc0c3;
+  --color-light-300: #a4a5a9;
+  --color-light-400: #8d8e94;
+  --color-light-500: #82848b;
+  --color-light-600: #727379;
+  --color-light-700: #5b5c61;
+  --color-light-800: #454649;
+  --color-light-850: #2e2f34;
+  --color-light-875: #212126;
+  --color-light-900: #1a1b21;
+  --color-legacy-blue-50: #e0f2ff;
+  --color-legacy-blue-100: #b3daff;
+  --color-legacy-blue-200: #80c1ff;
+  --color-legacy-blue-300: #4da8ff;
+  --color-legacy-blue-400: #2696ff;
+  --color-legacy-blue-500: #1370cc;
+  --color-legacy-blue-600: #115faa;
+  --color-legacy-blue-700: #0e4d88;
+  --color-legacy-blue-800: #0b3b66;
+  --color-legacy-blue-900: #082945;
+  --color-legacy-yellow-50: #fffce0;
+  --color-legacy-yellow-100: #fff6b3;
+  --color-legacy-yellow-200: #ffef80;
+  --color-legacy-yellow-300: #ffe84d;
+  --color-legacy-yellow-400: #ffe226;
+  --color-legacy-yellow-500: #ccb113;
+  --color-legacy-yellow-600: #aa9311;
+  --color-legacy-yellow-700: #88760e;
+  --color-legacy-yellow-800: #66580b;
+  --color-legacy-yellow-900: #453b08;
+  --color-legacy-purple-50: #f5e0ff;
+  --color-legacy-purple-100: #e3b3ff;
+  --color-legacy-purple-200: #d080ff;
+  --color-legacy-purple-300: #be4dff;
+  --color-legacy-purple-400: #b026ff;
+  --color-legacy-purple-500: #8f13cc;
+  --color-legacy-purple-600: #7711aa;
+  --color-legacy-purple-700: #5f0e88;
+  --color-legacy-purple-800: #470b66;
+  --color-legacy-purple-900: #2f0845;
+  --color-legacy-red-50: #ffe0e0;
+  --color-legacy-red-100: #ffb3b3;
+  --color-legacy-red-200: #ff8080;
+  --color-legacy-red-300: #ff4d4d;
+  --color-legacy-red-400: #ff2626;
+  --color-legacy-red-500: #cc1313;
+  --color-legacy-red-600: #aa1111;
+  --color-legacy-red-700: #880e0e;
+  --color-legacy-red-800: #660b0b;
+  --color-legacy-red-900: #450808;
+  --color-black-alpha-05: rgba(0, 0, 0, 0.05);
+  --color-black-alpha-10: rgba(0, 0, 0, 0.1);
+  --color-black-alpha-25: rgba(0, 0, 0, 0.25);
+  --color-black-alpha-50: rgba(0, 0, 0, 0.5);
+  --color-black-alpha-75: rgba(0, 0, 0, 0.75);
+  --color-white-alpha-05: rgba(255, 255, 255, 0.05);
+  --color-white-alpha-10: rgba(255, 255, 255, 0.1);
+  --color-white-alpha-25: rgba(255, 255, 255, 0.25);
+  --color-white-alpha-50: rgba(255, 255, 255, 0.5);
+  --color-white-alpha-75: rgba(255, 255, 255, 0.75);
+}
+
+@utility bg-sidebar-gradient {
+  background-image: linear-gradient(45deg, #13949f, 35%, transparent);
+}

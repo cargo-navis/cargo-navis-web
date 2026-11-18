@@ -467,7 +467,7 @@ const CargoList = ({ label, color, cargos }: { label: string; color: string; car
     <Text as="span" color={color} variant="text-xxs-medium">
       {label}
     </Text>
-    <FlexLayout as="ul" className="flex-col gap-0.5 list-disc list-inside">
+    <FlexLayout as="ul" className="flex-col list-disc list-inside">
       {cargos.map((cargo) => (
         <Text as="li" color="text-color-2" key={cargo.id} variant="text-xxs">
           {getCargoLabel(cargo)}
@@ -491,9 +491,9 @@ const previewStyleByKind = {
     iconColor: 'text-teal-400',
   },
   both: {
-    indicator: 'border-purple-500 bg-purple-500/30',
-    text: 'text-purple-500',
-    iconColor: 'text-purple-400',
+    indicator: 'border-legacy-purple-500 bg-legacy-purple-500/30',
+    text: 'text-legacy-purple-500',
+    iconColor: 'text-legacy-purple-400',
   },
 } as const;
 
@@ -728,7 +728,7 @@ const VehicleRow = ({
   return (
     <FlexLayout
       as="button"
-      className={`flex-col gap-3 relative rounded-m border p-3 text-left ${
+      className={`flex-col gap-3 relative rounded-legacy-m border p-3 text-left ${
         isSelected ? 'border-teal-500 bg-teal-500/10' : 'border-dark-100 hover:border-teal-500/70 dark:border-light-800'
       }`}
       type="button"

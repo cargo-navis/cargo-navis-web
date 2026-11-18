@@ -59,7 +59,7 @@ export const ShipmentsTableLoader: React.FC = () => {
         <FlexLayout className="flex-col w-full min-w-0">
           {Array.from({ length: 7 }).map((_, index) => (
             <Box className="border-b last:border-b-0 border-b-black-alpha-05 dark:border-b-white-alpha-25" key={index}>
-              <FlexLayout className="items-center py-6 justify-between gap-4 min-w-0">
+              <FlexLayout className="items-center py-8 justify-between gap-4 min-w-0">
                 {/* Nalog */}
                 <FlexLayout className="flex-col gap-1" style={flexBasis(300, 1)}>
                   <Skeleton borderRadius="m" height={22} width={160} />

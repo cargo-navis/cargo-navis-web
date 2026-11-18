@@ -35,7 +35,7 @@ export const ExtractedTextModal: React.FC<ExtractedTextModalProps> = ({ draft, o
           </Text>
         </DialogHeader>
 
-        <Box className="max-h-[60vh] overflow-y-auto rounded-m bg-dark-50 dark:bg-light-800/40 p-4">
+        <Box className="max-h-[60vh] overflow-y-auto rounded-legacy-m bg-dark-50 dark:bg-light-800/40 p-4">
           {extractedText ? (
             <Text as="pre" className="whitespace-pre-wrap break-words font-mono" color="text-color-2" variant="text-s">
               {extractedText}

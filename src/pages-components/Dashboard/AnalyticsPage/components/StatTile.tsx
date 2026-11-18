@@ -19,8 +19,8 @@ const DEFAULT_TILE_STYLE: TileStyle = {
 // the dashboard cards where the icon is already in use.
 const TILE_STYLES: Partial<Record<IconType, TileStyle>> = {
   IconFileDescription: {
-    accent: 'text-blue-600',
-    gradient: 'from-transparent from-45% to-blue-600/15',
+    accent: 'text-legacy-blue-600',
+    gradient: 'from-transparent from-45% to-legacy-blue-600/15',
   },
   IconChartBar: {
     accent: 'text-teal-600',
@@ -31,8 +31,8 @@ const TILE_STYLES: Partial<Record<IconType, TileStyle>> = {
     gradient: 'from-transparent from-45% to-green-600/15',
   },
   IconCashBanknoteOff: {
-    accent: 'text-red-500 dark:text-red-300',
-    gradient: 'from-transparent from-45% to-red-500/15',
+    accent: 'text-legacy-red-500 dark:text-legacy-red-300',
+    gradient: 'from-transparent from-45% to-legacy-red-500/15',
   },
   IconTrendingUp: {
     accent: 'text-teal-600',
@@ -56,7 +56,7 @@ export const StatTile = ({ icon, label, value, hint, note }: StatTileProps) => {
   return (
     <FlexLayout
       className={clsx(
-        'flex-col flex-1 gap-2 p-4 items-baseline justify-between border border-dark-100 dark:border-light-900 shadow-md rounded-m',
+        'flex-col flex-1 gap-2 p-4 items-baseline justify-between border border-dark-100 dark:border-light-900 shadow-md rounded-legacy-m',
         'bg-white dark:bg-white-alpha-10 bg-gradient-to-tr',
         gradient
       )}

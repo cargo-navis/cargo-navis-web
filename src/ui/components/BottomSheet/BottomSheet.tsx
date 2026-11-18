@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import type { ReactNode } from 'react';
 
-import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer-vaul';
 
 import { Box } from '../Box';
 import { Text } from '../Text';
@@ -74,8 +74,8 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
         )}
         {header}
       </DrawerHeader>
-      {children && <Box className={clsx('overflow-y-auto px-4 pt-4', footer ? 'pb-4' : 'pb-6')}>{children}</Box>}
-      {footer && <Box className="px-4 pb-6 pt-2">{footer}</Box>}
+      {children && <Box className={clsx('overflow-y-auto px-4 pt-4', footer ? 'pb-4' : 'pb-8')}>{children}</Box>}
+      {footer && <Box className="px-4 pb-8 pt-2">{footer}</Box>}
     </DrawerContent>
   </Drawer>
 );

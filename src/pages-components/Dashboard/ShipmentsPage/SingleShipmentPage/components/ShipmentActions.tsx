@@ -160,7 +160,7 @@ export const ShipmentActions: React.FC<{ shipment: Shipment }> = ({ shipment }) 
       />
       <Menu
         control={
-          <FlexLayout className="items-center hover:bg-dark-200 dark:hover:bg-light-800 p-1 cursor-pointer rounded-s">
+          <FlexLayout className="items-center hover:bg-dark-200 dark:hover:bg-light-800 p-1 cursor-pointer rounded-legacy-s">
             <Icon icon="IconDotsVertical" isDisabled={isDeleting} size="l" />
           </FlexLayout>
         }

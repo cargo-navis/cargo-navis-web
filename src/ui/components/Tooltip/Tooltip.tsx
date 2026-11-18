@@ -78,7 +78,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
   const motionContent = (
     <MotionBox
       animate={{ opacity: 1 }}
-      className={clsx('p-1 z-[600] rounded-[10px] text-xxs font-semibold', TOOLTIP_BG)}
+      className={clsx('p-1 z-[600] rounded-[10px] text-legacy-xxs font-semibold', TOOLTIP_BG)}
       exit={{ opacity: 0 }}
       initial={{ opacity: 0 }}
       ref={refs.setFloating}

@@ -50,7 +50,7 @@ const MainContent = ({ clients }: { clients: Client[] }) => {
           <Button href="/dashboard/clients/new" iconLeft="IconPlus" text="Dodaj Klijenta" />
         </DisplayIf>
       </FlexLayout>
-      <Box className="py-5">
+      <Box className="py-6">
         {isEmpty ? (
           <EmptyTableState
             buttonHref="/dashboard/clients/new"

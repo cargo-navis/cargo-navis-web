@@ -14,9 +14,24 @@ type SizeMap = Record<
   }
 >;
 export const sizesMap: SizeMap = {
-  s: { sizeStyles: 'h-[32px] rounded-s px-2 py-1', textVariant: 'text-xxs-medium', iconSize: 's', loadingSize: 's' },
-  m: { sizeStyles: 'h-[40px] rounded-m px-3 py-2', textVariant: 'text-xs-medium', iconSize: 'm', loadingSize: 'm' },
-  l: { sizeStyles: 'h-[48px] rounded-m px-5 py-3', textVariant: 'text-s-medium', iconSize: 'm', loadingSize: 'm' },
+  s: {
+    sizeStyles: 'h-[32px] rounded-legacy-s px-2 py-1',
+    textVariant: 'text-xxs-medium',
+    iconSize: 's',
+    loadingSize: 's',
+  },
+  m: {
+    sizeStyles: 'h-[40px] rounded-legacy-m px-3 py-2',
+    textVariant: 'text-xs-medium',
+    iconSize: 'm',
+    loadingSize: 'm',
+  },
+  l: {
+    sizeStyles: 'h-[48px] rounded-legacy-m px-6 py-3',
+    textVariant: 'text-s-medium',
+    iconSize: 'm',
+    loadingSize: 'm',
+  },
 };
 export type Size = keyof typeof sizesMap;
 
@@ -44,10 +59,10 @@ export const variantStyles = {
       'bg-white dark:bg-transparent text-dark-800 dark:text-light-800 border-dark-200 dark:border-light-800 opacity-40 dark:opacity-50',
   },
   danger: {
-    normal: 'bg-red-500 dark:bg-red-600 text-white dark:text-dark-75',
-    hover: 'hover:enabled:bg-red-600 hover:enabled:dark:bg-red-500',
-    focus: 'focus:shadow-[0_0_0_4px] focus:shadow-red-500 focus:dark:shadow-red-700',
-    active: 'active:enabled:bg-red-700 active:enabled:dark:bg-red-500',
+    normal: 'bg-legacy-red-500 dark:bg-legacy-red-600 text-white dark:text-dark-75',
+    hover: 'hover:enabled:bg-legacy-red-600 hover:enabled:dark:bg-legacy-red-500',
+    focus: 'focus:shadow-[0_0_0_4px] focus:shadow-legacy-red-500 focus:dark:shadow-legacy-red-700',
+    active: 'active:enabled:bg-legacy-red-700 active:enabled:dark:bg-legacy-red-500',
     disabled: 'disabled:opacity-25',
     disabledAnchor: 'opacity-25',
   },

@@ -36,10 +36,10 @@ const MainContent: React.FC<{ client: Client }> = ({ client }) => {
   const country = getCountryFromCode(client.address.countryCode);
 
   return (
-    <FlexLayout className="py-5 flex-col gap-5">
+    <FlexLayout className="py-6 flex-col gap-6">
       <BackButton targetLocation="/dashboard/clients" />
       <FlexLayout className="justify-between">
-        <FlexLayout className="items-start gap-6">
+        <FlexLayout className="items-start gap-8">
           <FlexLayout className="flex-col gap-3 mt-[12px]">
             <FlexLayout className="gap-4 items-center">
               <Text variant="text-xxl-medium">{client.name}</Text>

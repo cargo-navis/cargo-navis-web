@@ -23,7 +23,7 @@ const Control = (props: ControlProps<SelectOption, boolean, any>) => {
     <components.Control {...props}>
       <Box
         className={clsx(
-          'flex relative min-h-[40px] py-2 px-3 grow items-center justify-between gap-2 cursor-pointer shadow-dark-1 border-[2px] border-dark-300 dark:border-light-800 rounded-s',
+          'flex relative min-h-[40px] py-2 px-3 grow items-center justify-between gap-2 cursor-pointer shadow-dark-1 border-[2px] border-dark-300 dark:border-light-800 rounded-legacy-s',
           'hover:enabled:border-dark-500 hover:enabled:dark:border-light-700 transition-all',
           'focus-within:!border-teal-600 dark:focus-within:!border-teal-800',
           isDisabled && 'opacity-50'

@@ -30,7 +30,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           return (
             <Link href={`/dashboard/employees/${id}`}>
               <Box className="py-3 pl-3">
-                <FlexLayout className="items-center justify-center w-[50px] h-[50px] rounded-circle bg-teal-900">
+                <FlexLayout className="items-center justify-center w-[50px] h-[50px] rounded-legacy-circle bg-teal-900">
                   <Text className="text-light-50 group-hover/cell:text-teal-600" variant="text-s-medium">
                     {firstName[0] + lastName[0]}
                   </Text>
@@ -61,7 +61,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
                     </Text>
                     {employeeAlerts && (
                       <AlertsTooltip alerts={employeeAlerts}>
-                        <Icon color="text-red-500" icon="IconAlertTriangle" size="l" />
+                        <Icon color="text-legacy-red-500" icon="IconAlertTriangle" size="l" />
                       </AlertsTooltip>
                     )}
                   </FlexLayout>
@@ -91,7 +91,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
             >
               <Text variant="text-s">{governmentId || '–'}</Text>
               <Icon
-                className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
+                className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-6 transition-transform ease"
                 icon="IconCopy"
               />
             </FlexLayout>
@@ -116,7 +116,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
                   {phoneNumber}
                 </Text>
                 <Icon
-                  className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-5 transition-transform ease"
+                  className="opacity-0 translate-x-[-4px] group-hover/cell:opacity-100 group-hover/cell:translate-x-0 w-6 transition-transform ease"
                   icon="IconCopy"
                 />
               </FlexLayout>
@@ -161,7 +161,7 @@ export function EmployeesTable({ employees }: { employees?: Employee[] }) {
           return props.getValue() ? (
             <Icon className="text-green-600" icon="IconCircleCheck" size="l" />
           ) : (
-            <Icon className="text-red-500" icon="IconX" size="l" />
+            <Icon className="text-legacy-red-500" icon="IconX" size="l" />
           );
         },
         header: 'ADR',

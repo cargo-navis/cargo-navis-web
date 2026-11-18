@@ -184,7 +184,7 @@ export const VehicleStopDetailPage = () => {
   if (!vehicle) {
     return (
       <DashboardLayout>
-        <FlexLayout className="py-5 flex-col gap-5">
+        <FlexLayout className="py-6 flex-col gap-6">
           <BackButton forceTarget targetLocation="/dashboard/vehicle-stops" />
           <Text color="text-color-3" variant="text-s">
             Vozilo nije pronađeno.
@@ -197,7 +197,7 @@ export const VehicleStopDetailPage = () => {
   return (
     <DashboardLayout>
       <PageTitle title={vehicle?.registration} type="Prijevoz" />
-      <FlexLayout className="py-5 flex-col gap-5">
+      <FlexLayout className="py-6 flex-col gap-6">
         <BackButton forceTarget targetLocation="/dashboard/vehicle-stops" />
 
         <Box>
@@ -210,14 +210,14 @@ export const VehicleStopDetailPage = () => {
           </FlexLayout>
         </Box>
 
-        <Box className="max-w-[1200px] -ml-6">
-          <Box className="relative ml-6">
+        <Box className="max-w-[1200px] -ml-8">
+          <Box className="relative ml-8">
             <FlexLayout
               as="button"
-              className="items-center gap-4 mb-6 text-teal-500 hover:text-teal-700 border-teal-500 hover:border-teal-700"
+              className="items-center gap-4 mb-8 text-teal-500 hover:text-teal-700 border-teal-500 hover:border-teal-700"
               onClick={openCreateModal}
             >
-              <FlexLayout className="items-center justify-center w-[32px] h-[32px] shrink-0 -ml-2 rounded-circle border-2 border-dashed border-inherit">
+              <FlexLayout className="items-center justify-center w-[32px] h-[32px] shrink-0 -ml-2 rounded-legacy-circle border-2 border-dashed border-inherit">
                 <Icon className="text-inherit" icon="IconPlus" size="m" />
               </FlexLayout>
               <Text color="text-inherit" variant="text-s-medium">
@@ -249,7 +249,7 @@ export const VehicleStopDetailPage = () => {
             </Timeline>
             <DragOverlay dropAnimation={null}>
               {activeDragStop ? (
-                <Box className="bg-white dark:bg-black shadow-lg rounded-md opacity-90">
+                <Box className="bg-white dark:bg-black shadow-lg opacity-90">
                   <Timeline defaultValue={activeDragStep} orientation="vertical">
                     <VerticalStopEntry isDragOverlay step={activeDragStep} stop={activeDragStop} />
                   </Timeline>

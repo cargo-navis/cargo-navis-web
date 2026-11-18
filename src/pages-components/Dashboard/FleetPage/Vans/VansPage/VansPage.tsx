@@ -59,7 +59,7 @@ const MainContent = ({ vans }: { vans: Vehicle[] }) => {
           <Button href="/dashboard/fleet/vans/new" iconLeft="IconPlus" text="Dodaj Kombi" />
         </DisplayIf>
       </FlexLayout>
-      <Box className="py-5">
+      <Box className="py-6">
         {isEmpty ? (
           <EmptyTableState
             buttonHref="/dashboard/fleet/vans/new"

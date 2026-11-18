@@ -45,7 +45,7 @@ export const Table: React.FC<TableProps> = ({
 
   return (
     <Box as="table" className="border-collapse w-full table-fixed">
-      <Box as="thead" className="bg-dark-200 dark:bg-light-900 sticky top-[-0px] z-10">
+      <Box as="thead" className="bg-dark-200 dark:bg-light-900 sticky top-(--app-header-height,0px) z-10">
         {table.getHeaderGroups().map((headerGroup) => (
           <Box as="tr" key={headerGroup.id}>
             {headerGroup.headers.map((header) => {
@@ -94,7 +94,8 @@ export const Table: React.FC<TableProps> = ({
                   ? 'bg-dark-200 dark:bg-white-alpha-10 hover:bg-black-alpha-05 dark:hover:bg-white-alpha-10'
                   : 'hover:bg-black-alpha-05 dark:hover:bg-white-alpha-10',
                 isSubRow && 'relative',
-                hasWarning && 'bg-red-50/80 dark:bg-red-800/50 hover:bg-red-100/50 dark:hover:bg-red-800/80',
+                hasWarning &&
+                  'bg-legacy-red-50/80 dark:bg-legacy-red-800/50 hover:bg-legacy-red-100/50 dark:hover:bg-legacy-red-800/80',
                 isSuccess && 'bg-green-100/80 dark:bg-green-800/50 hover:bg-green-100/50 dark:hover:bg-green-800/80',
                 getRowClassName?.(row)
               )}

@@ -11,7 +11,7 @@ export const Badge: React.FC<BadgeProps> = ({ text, isActive }) => {
   return (
     <Box
       className={clsx(
-        'w-fit h-fit px-2 shrink-0 rounded-xs',
+        'w-fit h-fit px-2 shrink-0 rounded-legacy-xs',
         isActive ? 'bg-white-alpha-50 dark:bg-orange-700' : 'bg-orange-50 dark:bg-orange-700'
       )}
     >

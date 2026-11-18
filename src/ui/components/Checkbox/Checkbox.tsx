@@ -19,7 +19,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({ isDisabled, value, label, on
         checked={value}
         className={clsx(
           'group flex items-center justify-center size-[24px]',
-          'rounded-s border-[2px] border-dark-300 dark:border-light-800',
+          'rounded-legacy-s border-[2px] border-dark-300 dark:border-light-800',
           !isDisabled && 'hover:border-dark-500 hover:dark:border-light-700 cursor-pointer',
           'bg-white-alpha-10 data-[checked]:bg-teal-700 dark:data-[checked]:bg-teal-600 text-white data-[checked]:!border-transparent'
         )}

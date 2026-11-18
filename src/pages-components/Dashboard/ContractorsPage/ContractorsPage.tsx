@@ -50,7 +50,7 @@ const MainContent = ({ contractors }: { contractors: Contractor[] }) => {
           <Button href="/dashboard/contractors/new" iconLeft="IconPlus" text="Dodaj Kontraktora" />
         </DisplayIf>
       </FlexLayout>
-      <Box className="py-5">
+      <Box className="py-6">
         {isEmpty ? (
           <EmptyTableState
             buttonHref="/dashboard/contractors/new"

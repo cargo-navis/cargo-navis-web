@@ -119,7 +119,7 @@ export const CargoLoadField: React.FC<CargoLoadFieldProps> = ({ cargoIndex, carg
                   {getDataPointDateString(initialValues.date)}
                 </Text>
                 {dateError ? (
-                  <Text className="text-red-600 dark:text-red-500" variant="text-xs-medium">
+                  <Text className="text-legacy-red-600 dark:text-legacy-red-500" variant="text-xs-medium">
                     {dateError}
                   </Text>
                 ) : null}

@@ -39,10 +39,10 @@ export const SingleEmployeePage = () => {
 
 const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
   return (
-    <FlexLayout className="py-5 flex-col gap-5">
+    <FlexLayout className="py-6 flex-col gap-6">
       <BackButton targetLocation="/dashboard/employees" />
       <FlexLayout className="justify-between">
-        <FlexLayout className="items-start gap-6">
+        <FlexLayout className="items-start gap-8">
           <Avatar employee={employee} />
           <FlexLayout className="flex-col gap-3 mt-[12px]">
             <FlexLayout className="gap-4 items-center">
@@ -54,7 +54,7 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
                 {employee.deleted && <Pill text="Deaktiviran" />}
               </FlexLayout>
             </FlexLayout>
-            <FlexLayout className="gap-8">
+            <FlexLayout className="gap-16">
               <DisplayIf condition={!!employee.governmentId}>
                 <ContactInfo contact={employee.governmentId} contactType="governmentId" />
               </DisplayIf>
@@ -80,7 +80,7 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
                 </FlexLayout>
               </DisplayIf>
             </FlexLayout>
-            <FlexLayout className="gap-8">
+            <FlexLayout className="gap-16">
               <ContactInfo contact={getDataPointDateString(employee.dateOfBirth) || '—'} contactType="dateOfBirth" />
               <ContactInfo contact={employee.residenceAddress || '—'} contactType="residenceAddress" />
             </FlexLayout>
@@ -94,7 +94,7 @@ const MainContent: React.FC<{ employee: Employee }> = ({ employee }) => {
           />
         )}
       </FlexLayout>
-      <FlexLayout className="ml-4 gap-8">
+      <FlexLayout className="ml-4 gap-16">
         <DisplayIf condition={employee.positions.includes(PositionEnum.Driver)}>
           <DriverInfo employee={employee} />
         </DisplayIf>
@@ -109,7 +109,7 @@ function Avatar({ employee }: { employee: Employee }) {
 
   return (
     <Box className="py-3 pl-3">
-      <FlexLayout className="items-center justify-center w-[80px] h-[80px] rounded-circle bg-teal-900">
+      <FlexLayout className="items-center justify-center w-[80px] h-[80px] rounded-legacy-circle bg-teal-900">
         <Text className="text-light-50" variant="text-l-bold">
           {firstName[0] + lastName[0]}
         </Text>

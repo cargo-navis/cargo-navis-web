@@ -103,7 +103,7 @@ export const SoloTrucksTable = ({ solos }: { solos: Vehicle[] }) => {
           return ramp ? (
             <Icon className="text-green-600" icon="IconCircleCheck" size="l" />
           ) : (
-            <Icon className="text-red-500" icon="IconCircleX" size="l" />
+            <Icon className="text-legacy-red-500" icon="IconCircleX" size="l" />
           );
         },
       }),

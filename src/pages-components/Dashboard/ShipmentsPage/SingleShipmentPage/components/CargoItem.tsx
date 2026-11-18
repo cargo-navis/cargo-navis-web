@@ -39,7 +39,7 @@ export const CargoItem: React.FC<CargoItemProps> = ({ cargo, index, shipmentId, 
   };
 
   return (
-    <FlexLayout className="flex-col gap-4 p-4 rounded-s bg-black-alpha-05 dark:bg-white-alpha-10">
+    <FlexLayout className="flex-col gap-4 p-4 rounded-legacy-s bg-black-alpha-05 dark:bg-white-alpha-10">
       <FlexLayout className="justify-between items-center">
         <FlexLayout className="flex-col">
           <Text color="text-color-1" variant="text-s-medium">

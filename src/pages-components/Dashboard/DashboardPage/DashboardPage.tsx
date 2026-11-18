@@ -16,8 +16,8 @@ export const DashboardPage = () => {
           Početna
         </Heading>
       </FlexLayout>
-      <Box className="py-5">
-        <Box className="grid grid-cols-1 gap-6 xl:grid-cols-2 max-w-[1400px]">
+      <Box className="py-6">
+        <Box className="grid grid-cols-1 gap-8 xl:grid-cols-2 max-w-[1400px]">
           <TodayShipmentsCard />
           <MonthlyShipmentsCard />
           <NotificationsCard />

@@ -15,9 +15,9 @@ export const NotificationsCard = () => {
 
   return (
     <DashboardCard
-      gradient="from-white dark:from-transparent from-65% to-blue-600/20"
+      gradient="from-white dark:from-transparent from-65% to-legacy-blue-600/20"
       icon="IconBell"
-      iconColor="text-blue-600"
+      iconColor="text-legacy-blue-600"
       title={title}
     >
       {isLoading ? (

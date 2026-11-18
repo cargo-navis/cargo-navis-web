@@ -34,9 +34,10 @@ export const variantStyles = {
     disabledAnchor: 'opacity-30',
   },
   danger: {
-    normal: 'text-red-600 dark:text-red-400',
-    hover: 'hover:text-red-400 focus:text-red-400 dark:hover:text-red-500 dark:focus:text-red-500',
-    active: 'active:text-red-400',
+    normal: 'text-legacy-red-600 dark:text-legacy-red-400',
+    hover:
+      'hover:text-legacy-red-400 focus:text-legacy-red-400 dark:hover:text-legacy-red-500 dark:focus:text-legacy-red-500',
+    active: 'active:text-legacy-red-400',
     disabled: 'disabled:opacity-50',
     disabledAnchor: 'opacity-50',
   },

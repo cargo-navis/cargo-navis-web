@@ -92,7 +92,7 @@ const CargoLine = ({ cargo, kind }: CargoEntry) => {
 };
 
 const ShipmentSectionDisplay = ({ section }: { section: ShipmentSection }) => (
-  <FlexLayout className="flex-col items-start gap-0.5">
+  <FlexLayout className="flex-col items-start">
     <ShipmentHeader shipment={section.shipment} />
     {section.cargos.map(({ cargo, kind }) => (
       <CargoLine cargo={cargo} key={`${cargo.id}-${kind}`} kind={kind} />
@@ -231,7 +231,7 @@ export const StopTimelineEntry = ({ stop, nextStop, step, connectsToMore = false
             {date ? (
               dayjs(date).format('DD.MM.YYYY')
             ) : (
-              <Box as="span" className="text-red-700 italic">
+              <Box as="span" className="text-legacy-red-700 italic">
                 Datum nedostaje
               </Box>
             )}
@@ -239,7 +239,9 @@ export const StopTimelineEntry = ({ stop, nextStop, step, connectsToMore = false
               <Tooltip content={<MessageStatusTooltipContent stop={stop} />} interactive isPortal>
                 <Box as="span" className="inline-flex">
                   <Icon
-                    className={messageSent ? 'text-dark-500 dark:text-light-300' : 'text-red-500 dark:text-red-400'}
+                    className={
+                      messageSent ? 'text-dark-500 dark:text-light-300' : 'text-legacy-red-500 dark:text-legacy-red-400'
+                    }
                     icon="IconBrandWhatsapp"
                     size="s"
                   />
@@ -298,7 +300,7 @@ const RemainingStopsTooltipContent = ({ stops }: { stops: VehicleStop[] }) => {
     return b.date.localeCompare(a.date);
   });
   return (
-    <FlexLayout className="p-2 flex-col gap-5 items-start">
+    <FlexLayout className="p-2 flex-col gap-6 items-start">
       {ordered.map((s) => {
         const hasLoading = s.loadingCargos.length > 0;
         const hasUnloading = s.unloadingCargos.length > 0;

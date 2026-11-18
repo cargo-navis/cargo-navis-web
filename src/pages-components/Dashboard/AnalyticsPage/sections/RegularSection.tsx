@@ -75,7 +75,7 @@ export const RegularSection = ({
   const granularityLabel = getGranularityLabel(granularity);
 
   return (
-    <FlexLayout className="flex-col gap-5">
+    <FlexLayout className="flex-col gap-6">
       <AnalyticsFilters
         dateRange={dateRange}
         granularity={granularity}
@@ -91,7 +91,7 @@ export const RegularSection = ({
           <ContentLoader />
         </ClientSideOnly>
       ) : (
-        <FlexLayout className="flex-col gap-5">
+        <FlexLayout className="flex-col gap-6">
           <FlexLayout className="w-full gap-4">
             <StatTile icon="IconFileDescription" label="Broj naloga" value={countData.totalRegular} />
             <StatTile
@@ -138,7 +138,7 @@ export const RegularSection = ({
             title="Vlastiti nalozi — broj i prihod po periodu"
           />
 
-          <FlexLayout className="w-full gap-5">
+          <FlexLayout className="w-full gap-6">
             <DriversTable data={topDrivers} />
             <VehiclesTable data={topVehicles} />
           </FlexLayout>

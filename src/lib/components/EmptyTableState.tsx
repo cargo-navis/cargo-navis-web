@@ -12,7 +12,7 @@ export const EmptyTableState = ({
   buttonHref: string;
 }) => {
   return (
-    <FlexLayout className="flex-col gap-4 items-center justify-center h-full my-10">
+    <FlexLayout className="flex-col gap-4 items-center justify-center h-full my-30">
       <Text color="text-color-2" variant="text-l-medium">
         {title}
       </Text>

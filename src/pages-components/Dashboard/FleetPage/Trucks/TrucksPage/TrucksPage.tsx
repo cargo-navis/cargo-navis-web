@@ -59,7 +59,7 @@ const MainContent = ({ trucks }: { trucks: Vehicle[] }) => {
           <Button href="/dashboard/fleet/trucks/new" iconLeft="IconPlus" text="Dodaj Tegljač" />
         </DisplayIf>
       </FlexLayout>
-      <Box className="py-5">
+      <Box className="py-6">
         {isEmpty ? (
           <EmptyTableState
             buttonHref="/dashboard/fleet/trucks/new"

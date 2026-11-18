@@ -12,9 +12,9 @@ export const AlertsCard = () => {
 
   return (
     <DashboardCard
-      gradient="from-white dark:from-transparent from-65% to-red-500/20"
+      gradient="from-white dark:from-transparent from-65% to-legacy-red-500/20"
       icon="IconAlertTriangle"
-      iconColor="text-red-500 dark:text-red-300"
+      iconColor="text-legacy-red-500 dark:text-legacy-red-300"
       title={title}
     >
       {isLoading ? (

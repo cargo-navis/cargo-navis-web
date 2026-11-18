@@ -27,7 +27,7 @@ export const PageSizeSelector: React.FC<PageSizeSelectorProps> = ({
       <Text className="text-dark-600 dark:text-light-400 whitespace-nowrap" variant="text-xs-medium">
         Prikaži:
       </Text>
-      <div className="w-28">
+      <div>
         <SingleSelect
           isDisabled={isLoading}
           isPortal

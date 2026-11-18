@@ -39,7 +39,7 @@ export const FileCard: React.FC<FileCardProps> = ({
       className={clsx(
         'relative group min-w-[240px] overflow-hidden',
         isLoading && 'opacity-50',
-        'border border-dark-300 dark:border-light-800 shadow-md rounded-s',
+        'border border-dark-300 dark:border-light-800 shadow-md rounded-legacy-s',
         'hover:border-dark-500 dark:hover:border-light-700 hover:shadow-lg transition-all duration-150'
       )}
     >
@@ -82,7 +82,7 @@ export const FileCard: React.FC<FileCardProps> = ({
           <FlexLayout
             as="button"
             className={clsx(
-              'box-border m-[2px] rounded-s grow bg-light-50/90 dark:bg-light-800/95 justify-center items-center gap-2',
+              'box-border m-[2px] rounded-legacy-s grow bg-light-50/90 dark:bg-light-800/95 justify-center items-center gap-2',
               'hover:bg-light-100/90 dark:hover:bg-light-700/95 transition-colors duration-150',
               'border border-light-200 dark:border-light-700',
               'hover:border-light-200 dark:hover:border-light-500'
@@ -106,7 +106,7 @@ export const FileCard: React.FC<FileCardProps> = ({
           <FlexLayout
             as="button"
             className={clsx(
-              'box-border m-[2px] rounded-s grow bg-light-50/90 dark:bg-light-800/95 justify-center items-center gap-2',
+              'box-border m-[2px] rounded-legacy-s grow bg-light-50/90 dark:bg-light-800/95 justify-center items-center gap-2',
               'hover:bg-light-100/90 dark:hover:bg-light-700/95 transition-colors duration-150',
               'border border-light-200 dark:border-light-700',
               'hover:border-light-200 dark:hover:border-light-500'
@@ -130,8 +130,8 @@ export const FileCard: React.FC<FileCardProps> = ({
           <FlexLayout
             as="button"
             className={clsx(
-              'box-border m-[2px] rounded-s grow bg-red-100/90 border border-red-400 dark:bg-red-600/85 dark:border-red-700 justify-center items-center gap-2',
-              'hover:bg-red-200/90 dark:hover:bg-red-500/95 transition-colors duration-150'
+              'box-border m-[2px] rounded-legacy-s grow bg-legacy-red-100/90 border border-legacy-red-400 dark:bg-legacy-red-600/85 dark:border-legacy-red-700 justify-center items-center gap-2',
+              'hover:bg-legacy-red-200/90 dark:hover:bg-legacy-red-500/95 transition-colors duration-150'
             )}
             isDisabled={isLoading}
             onClick={() => onDelete?.(id)}

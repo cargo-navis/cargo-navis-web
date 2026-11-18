@@ -1,7 +1,7 @@
 import { FlexLayout, Skeleton } from '@/ui';
 
 export const ContentLoader = () => (
-  <FlexLayout className="flex-col gap-6">
+  <FlexLayout className="flex-col gap-8">
     {/* New password field */}
     <FlexLayout className="flex-col gap-2">
       <Skeleton borderRadius="xs" height={16} width={100} />

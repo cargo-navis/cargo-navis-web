@@ -1,0 +1,33 @@
+/* Cargo Navis palettes (src/ui/theme/colors.ts), overriding Tailwind's teal / orange / green. */
+@theme {
+  --color-teal-50: #e0f7f8;
+  --color-teal-100: #b3eef0;
+  --color-teal-200: #80e3e8;
+  --color-teal-300: #4dd8df;
+  --color-teal-400: #26cfd8;
+  --color-teal-500: #13949f;
+  --color-teal-600: #117f8a;
+  --color-teal-700: #0e6a75;
+  --color-teal-800: #0b5560;
+  --color-teal-900: #08414b;
+  --color-orange-50: #fff4e0;
+  --color-orange-100: #ffddab;
+  --color-orange-200: #ffc380;
+  --color-orange-300: #ffaa4d;
+  --color-orange-400: #ff9526;
+  --color-orange-500: #cc7513;
+  --color-orange-600: #aa6011;
+  --color-orange-700: #884d0e;
+  --color-orange-800: #663b0b;
+  --color-orange-900: #452908;
+  --color-green-50: #e0f8e0;
+  --color-green-100: #b3efb3;
+  --color-green-200: #80e680;
+  --color-green-300: #4ddf4d;
+  --color-green-400: #26d826;
+  --color-green-500: #13a213;
+  --color-green-600: #118c11;
+  --color-green-700: #0e750e;
+  --color-green-800: #0b5e0b;
+  --color-green-900: #084708;
+}

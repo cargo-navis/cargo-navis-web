@@ -11,9 +11,9 @@ interface InstallGateProps {
 
 /** Full-screen install screen shown in a phone browser instead of the stops, once the driver is signed in. */
 export const InstallGate: React.FC<InstallGateProps> = ({ platform, onInstall, onContinueInBrowser }) => (
-  <FlexLayout className="grow flex-col justify-center gap-6 px-6 py-8">
+  <FlexLayout className="grow flex-col justify-center gap-8 px-8 py-16">
     <FlexLayout className="flex-col items-center gap-3 text-center">
-      <img alt="" className="size-[64px] rounded-l" src="/apple-touch-icon.png" />
+      <img alt="" className="size-[64px] rounded-legacy-l" src="/apple-touch-icon.png" />
       <Text as="h1" color="text-color-1" variant="text-l-medium">
         Instaliraj Cargo Navis
       </Text>
@@ -21,7 +21,7 @@ export const InstallGate: React.FC<InstallGateProps> = ({ platform, onInstall, o
         Nalozi i ruta prijevoza rade kao aplikacija na tvom mobitelu.
       </Text>
     </FlexLayout>
-    <FlexLayout className="flex-col gap-4 rounded-l border border-dark-100 bg-white p-5 shadow-xs dark:border-light-850 dark:bg-light-875">
+    <FlexLayout className="flex-col gap-4 rounded-legacy-l border border-dark-100 bg-white p-6 shadow-xs dark:border-light-850 dark:bg-light-875">
       <InstallInstructions layout="steps" platform={platform} onInstall={onInstall} />
     </FlexLayout>
     <FlexLayout className="flex-col items-center gap-4 text-center">

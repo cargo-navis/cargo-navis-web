@@ -115,7 +115,7 @@ export const StopDocuments: React.FC<StopDocumentsProps> = ({ stop, isReadOnly =
       </Text>
       {stop.documents.map((document) => (
         <FlexLayout
-          className="items-center gap-2 mb-2 rounded-m border border-dark-100 dark:border-light-850"
+          className="items-center gap-2 mb-2 rounded-legacy-m border border-dark-100 dark:border-light-850"
           key={document.id}
         >
           <FlexLayout
@@ -150,7 +150,7 @@ export const StopDocuments: React.FC<StopDocumentsProps> = ({ stop, isReadOnly =
                 setIsDeleteSheetOpen(true);
               }}
             >
-              <Icon color="text-red-500" icon="IconTrash" size="m" />
+              <Icon color="text-legacy-red-500" icon="IconTrash" size="m" />
             </FlexLayout>
           )}
         </FlexLayout>

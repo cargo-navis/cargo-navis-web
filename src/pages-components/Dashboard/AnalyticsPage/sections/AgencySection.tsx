@@ -42,7 +42,7 @@ export const AgencySection = ({
   const agencyMargin = priceData ? priceData.totalRevenueAgency - priceData.totalCostAgency : 0;
 
   return (
-    <FlexLayout className="flex-col gap-5">
+    <FlexLayout className="flex-col gap-6">
       <AnalyticsFilters
         dateRange={dateRange}
         granularity={granularity}
@@ -55,7 +55,7 @@ export const AgencySection = ({
           <ContentLoader />
         </ClientSideOnly>
       ) : (
-        <FlexLayout className="flex-col gap-5">
+        <FlexLayout className="flex-col gap-6">
           <FlexLayout className="w-full gap-4">
             <StatTile icon="IconFileDescription" label="Broj agencijskih naloga" value={countData.totalAgency} />
             <StatTile icon="IconCashBanknote" label="Ukupni prihod" value={formatEur(priceData.totalRevenueAgency)} />

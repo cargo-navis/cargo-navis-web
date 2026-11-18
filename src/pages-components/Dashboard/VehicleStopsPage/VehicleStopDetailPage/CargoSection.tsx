@@ -35,11 +35,11 @@ export const CargoSection = ({ cargos, addressType, icon, label, className }: Ca
           {label} ({cargos.length})
         </Text>
       </FlexLayout>
-      <FlexLayout as="ul" className="flex-col gap-5">
+      <FlexLayout as="ul" className="flex-col gap-6">
         {groups.map((group) => (
           <FlexLayout
             as="li"
-            className={`relative flex-col gap-2 rounded-m ${borderClass} px-2 pt-3 pb-2`}
+            className={`relative flex-col gap-2 rounded-legacy-m ${borderClass} px-2 pt-3 pb-2`}
             key={group.shipment.id}
           >
             <ShipmentHeader
@@ -86,7 +86,7 @@ interface ShipmentHeaderProps {
 
 const ShipmentHeader = ({ shipment, borderClass, textClass, bgClass, className }: ShipmentHeaderProps) => (
   <Link
-    className={`flex items-center gap-1 rounded-xxl border ${borderClass} ${bgClass} px-2 py-0.5 transition-colors ${className ?? ''}`}
+    className={`flex items-center gap-1 rounded-legacy-xxl border ${borderClass} ${bgClass} px-2 transition-colors ${className ?? ''}`}
     href={`/dashboard/shipments/${shipment.id}`}
   >
     <Icon color={textClass} icon="IconFileDescription" size="s" />

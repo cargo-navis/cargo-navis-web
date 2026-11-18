@@ -58,7 +58,7 @@ export const VehicleStopCard = ({ group, vehicle }: VehicleStopCardProps) => {
       className="block transition-colors duration-75 hover:bg-dark-50 dark:hover:bg-light-800/50"
       href={`/dashboard/vehicle-stops/${group.vehicleId}`}
     >
-      <FlexLayout className="items-start gap-6 px-4 py-6">
+      <FlexLayout className="items-start gap-8 px-4 py-8">
         <FlexLayout className="flex-col w-[200px] shrink-0">
           <FlexLayout className="items-center gap-2">
             <Text color="text-color-1" variant="text-l-medium">

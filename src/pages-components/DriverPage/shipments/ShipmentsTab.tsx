@@ -32,7 +32,7 @@ export const ShipmentsTab: React.FC<ShipmentsTabProps> = ({
   function renderList() {
     if (!shipments && isError) {
       return (
-        <FlexLayout className="flex-col items-center gap-2 py-8">
+        <FlexLayout className="flex-col items-center gap-2 py-16">
           <Text color="text-color-3" variant="text-s">
             Nalozi se nisu učitali.
           </Text>
@@ -43,7 +43,7 @@ export const ShipmentsTab: React.FC<ShipmentsTabProps> = ({
 
     if (!shipments) {
       return (
-        <FlexLayout className="justify-center py-8">
+        <FlexLayout className="justify-center py-16">
           <LoadingSpinner />
         </FlexLayout>
       );
@@ -51,7 +51,7 @@ export const ShipmentsTab: React.FC<ShipmentsTabProps> = ({
 
     if (shipments.length === 0) {
       return (
-        <Text className="py-8 text-center" color="text-color-3" variant="text-s">
+        <Text className="py-16 text-center" color="text-color-3" variant="text-s">
           Nemaš naloga.
         </Text>
       );

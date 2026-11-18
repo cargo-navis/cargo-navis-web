@@ -64,7 +64,7 @@ export const StopsTab: React.FC<StopsTabProps> = ({ stops, focusedStopId, pagina
   return (
     <FlexLayout className="flex-col px-4 pb-4">
       {!nextStopId && (
-        <Text className="py-8 text-center" color="text-color-3" variant="text-s">
+        <Text className="py-16 text-center" color="text-color-3" variant="text-s">
           Nemaš aktivnih postaja.
         </Text>
       )}

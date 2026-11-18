@@ -126,7 +126,7 @@ const PageButton: React.FC<PageButtonProps> = ({ page, currentPage, onPageChange
       aria-current={isActive ? 'page' : undefined}
       aria-label={`Go to page ${page}`}
       className={clsx(
-        'w-6 h-6 flex items-center justify-center rounded-s text-xs-medium transition-colors duration-75',
+        'w-8 h-8 flex items-center justify-center rounded-legacy-s text-xs-medium transition-colors duration-75',
         'focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-1',
         isActive
           ? 'bg-teal-700 text-white dark:bg-teal-600 dark:text-dark-75'
