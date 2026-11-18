@@ -480,3 +480,14 @@ html.dark[data-agency='amber'] {
     background-color: var(--highlight);
   }
 }
+
+/*
+ * @/ui Icon wraps the Tabler svg in a box sized by its `size` prop (px). The shadcn components size raw svgs in rem
+ * ([&_svg]:size-4 …), so with the root scaling above (107 % / 114 %) the svg grew past its box and hung off its
+ * bottom-right, sitting lower than the text next to it. The svg always fills Icon's box instead; pick the size with
+ * Icon's `size` (or a size class on Icon). Unlayered, so it wins over those utilities.
+ */
+svg.tabler-icon {
+  width: 100%;
+  height: 100%;
+}

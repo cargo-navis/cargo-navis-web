@@ -79,12 +79,13 @@ const LOOKS = {
   dot: toneLook('dot'),
 };
 
+// Icon sizes go on @/ui Icon's box (a direct div child); its svg fills the box (globals.css).
 const badgeSizes = cva('', {
   variants: {
     size: {
-      sm: 'h-4.5 gap-1 px-1.5 text-[0.625rem] [&_svg]:size-3!',
-      md: 'h-5 gap-1 px-2 text-xs [&_svg]:size-3.5!',
-      lg: 'h-7 gap-1.5 px-3 text-sm [&_svg]:size-4!',
+      sm: 'h-4.5 gap-1 px-1.5 text-[0.625rem] *:[div]:size-3!',
+      md: 'h-5 gap-1 px-2 text-xs *:[div]:size-3.5!',
+      lg: 'h-7 gap-1.5 px-3 text-sm *:[div]:size-4!',
     },
   },
   defaultVariants: { size: 'md' },
