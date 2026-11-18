@@ -122,7 +122,6 @@ function useColumns(): ColumnDef<Shipment>[] {
           </div>
         ),
         cell: ({ row }) => <RouteTrack cargos={row.original.cargo} />,
-        size: 0,
       },
       {
         id: 'cargo',
@@ -219,8 +218,9 @@ export function ShipmentsTable({
                       (header.id === 'price' || header.id === 'status') && 'text-right'
                     )}
                     key={header.id}
-                    // The route column takes what's left (size 0 = no fixed width).
-                    style={{ width: header.getSize() || undefined }}
+                    // The route column has no width, so it takes what's left. (`size: 0` doesn't work: getSize() clamps
+                    // to minSize, which pinned the column to 20px.)
+                    style={{ width: header.id === 'route' ? undefined : header.getSize() }}
                   >
                     {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
