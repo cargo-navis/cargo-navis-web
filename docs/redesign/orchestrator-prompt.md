@@ -15,15 +15,21 @@ subagents.
 - Repo: /Users/kristijankorac/conductor/workspaces/cargo-navis-web/quebec, integration branch `KAN-55/redesign`
   (base `develop`).
 - Permission (granted by the user for this task): the orchestrator AND every subagent may create local branches and
-  worktrees, **commit, and merge PR branches into `KAN-55/redesign` without asking the user first** — this overrides
+  worktrees, **commit, and squash PR branches into `KAN-55/redesign` without asking the user first** — this overrides
   the usual „never commit unprompted” rule for KAN-55 work. Still NOT allowed: push, opening PRs, force-push, rewriting
   `develop` or any pushed history. The user pushes and opens the PRs.
 - Commit messages start with `[KAN-55]`.
 - One branch per PR: `KAN-55/redesign-<n>-<slug>` (e.g. `KAN-55/redesign-3-nalozi`). Parallel work only in separate
   git worktrees (one per subagent), never two agents in one working tree. Worktrees: symlink `node_modules` from the main
   checkout to run tsc / lint (see memory „Conductor worktree tooling”).
-- Merge finished PR branches into `KAN-55/redesign` yourself, in dependency order, resolving conflicts; keep each PR's
-  commits as a coherent unit so the user can review them PR by PR.
+- **Each PR lands on `KAN-55/redesign` as ONE squashed commit** (user's rule), so the branch reads
+  `[KAN-55] docs ── PR 1 ── PR 2 ── … ── PR 9` with a linear history and no merge commits:
+  `git checkout KAN-55/redesign && git merge --squash KAN-55/redesign-<n>-<slug> && git commit`.
+  Commit message: `[KAN-55] PR <n> · <domain>` as the subject, then a body listing what was built, what was left out
+  (backend / parked) and anything that differs from the lab. Squash in dependency order (1, 2, then the page PRs as
+  they pass review, 9 last); resolve conflicts during the squash. Branches that started before an earlier squash must
+  be rebased onto the new `KAN-55/redesign` first. Keep the PR branches (with their full history) until the user says
+  they can go.
 - Never run `next dev` in the user's main checkout (it shares `.next`); `next build` / dev only inside your own worktrees.
 
 ## The 9 PRs (see plan §4–§5)
@@ -54,10 +60,10 @@ Dependencies to respect (you decide the exact schedule):
 ## Your loop
 1. Read the plan and DECISIONS.md; write a short schedule (which PRs in parallel, in which order) and the brief for
    each PR (scope, labs to open, files it owns, files it must not touch, acceptance checks).
-2. Run PR 1 and PR 2 yourself or via one subagent each, sequentially; merge into `KAN-55/redesign`.
+2. Run PR 1 and PR 2 yourself or via one subagent each, sequentially; squash each into `KAN-55/redesign`.
 3. Launch the parallel page PRs (separate worktrees), review each result against its lab before merging (use a fresh
-   reviewer subagent that gets the diff + the lab path, not your conclusions), merge in dependency order, re-run the
-   full checks on `KAN-55/redesign` after every merge.
+   reviewer subagent that gets the diff + the lab path, not your conclusions), squash in dependency order, re-run the
+   full checks on `KAN-55/redesign` after every squash.
 4. PR 9 last, then full checks again.
 5. Report: per PR — branch, commits, what was built, what was left out (backend / parked), anything that differs from
    the lab, and the commands the user should run to review. Do not push.

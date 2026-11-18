@@ -1,7 +1,8 @@
 # KAN-55 · Redesign migration plan
 
 Status: agreed (2026-11-18). Branch: `KAN-55/redesign` (base `develop`). Agents and subagents working on this plan may
-commit and merge locally without asking (see `orchestrator-prompt.md`); pushing and PRs stay with the user.
+commit and squash locally without asking (see `orchestrator-prompt.md`); pushing and PRs stay with the user. Each PR
+lands on `KAN-55/redesign` as one squashed commit: `[KAN-55] docs ── PR 1 ── PR 2 ── … ── PR 9`.
 
 ## 1. What we're migrating to
 
