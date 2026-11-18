@@ -6,7 +6,6 @@
  */
 
 import { useRouter } from 'next/router';
-import * as React from 'react';
 
 import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
@@ -20,7 +19,7 @@ import type { Shipment } from '@/lib/api';
 import { useShipment } from '@/lib/hooks';
 import { Icon } from '@/ui';
 
-import { AssignVehicleModal } from '../NewShipmentPage/AssignVehicleModal';
+import { assignVehicleHref } from '../shared/actions';
 import { ShipmentLookupsProvider, useShipmentLookups } from '../shared/lookups';
 import { CargoCards } from './CargoCards';
 import { documentsOf, DocumentsTab } from './DocumentsTab';
@@ -81,13 +80,13 @@ export const SingleShipmentPage = () => {
 function MainContent({ shipment }: { shipment: Shipment }) {
   const { push } = useRouter();
   const { tab, setTab } = useDetailTab();
-  const [isAssignOpen, setIsAssignOpen] = React.useState(false);
+  const openAssign = () => void push(assignVehicleHref(shipment.id));
   const documentsCount = documentsOf(shipment).length;
   const hasRoute = !shipment.isAgency && (shipment.vehicleStops?.length ?? 0) > 0;
 
   return (
     <div className="flex flex-col gap-6">
-      <OrderHeader shipment={shipment} onAssignClick={() => setIsAssignOpen(true)} />
+      <OrderHeader shipment={shipment} onAssignClick={openAssign} />
       <SummaryStrip shipment={shipment} />
       <Tabs value={tab} onValueChange={(value) => setTab(value as Tab)}>
         <TabsList variant="line">
@@ -106,7 +105,7 @@ function MainContent({ shipment }: { shipment: Shipment }) {
           <div className="grid items-start gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
             <div className="flex flex-col gap-6">
               <InvoicePanel shipment={shipment} />
-              <AssignmentPanel shipment={shipment} onAssignClick={() => setIsAssignOpen(true)} />
+              <AssignmentPanel shipment={shipment} onAssignClick={openAssign} />
               <RecipientsPanel shipment={shipment} />
               {hasRoute && (
                 <Panel title="Ruta">
@@ -127,22 +126,6 @@ function MainContent({ shipment }: { shipment: Shipment }) {
           <NotesTab shipment={shipment} />
         </TabsContent>
       </Tabs>
-
-      {/* „Dodijeli vozilo” keeps today's flow (the modal); PR 4 moves it to its own page. */}
-      {!shipment.isAgency && isAssignOpen && (
-        <AssignVehicleModal
-          cargos={shipment.cargo}
-          clientId={shipment.clientId}
-          isOpen={isAssignOpen}
-          shipmentId={shipment.id}
-          shipmentOrderNumber={shipment.orderNumber}
-          onAssigned={(vehicleId) => {
-            setIsAssignOpen(false);
-            void push(`/dashboard/vehicle-stops/${vehicleId}`);
-          }}
-          onClose={() => setIsAssignOpen(false)}
-        />
-      )}
     </div>
   );
 }

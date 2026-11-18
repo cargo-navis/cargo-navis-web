@@ -1,13 +1,19 @@
 import { useRouter } from 'next/router';
+import type { ReactNode } from 'react';
 
-import { BackButton } from '@/components/BackButton';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
-import { LoadingPage } from '@/lib/components/LoadingPage';
+import type { Shipment, ShipmentDraft } from '@/lib/api';
+import type { Tenant } from '@/lib/api/tenant.d';
 import { useCurrentTenant, useShipment, useShipmentDraft } from '@/lib/hooks';
-import { Box, FlexLayout, Heading, Text } from '@/ui';
 
-import { ShipmentForm } from './ShipmentForm';
+import { NalogForm, type NalogFormMode } from './NalogForm';
+import { NalogFormHeader, NalogFormProblem, NalogFormSkeleton, useInitialValues } from './NalogFormLayout';
+import { fetchPostalCodeData } from './utils';
+import { emptyNalog, fromCopy, fromDraft, type NalogValues, withAgency } from './values';
+
+const DRAFTS_HREF = '/dashboard/shipments?tab=drafts';
+const LIST_HREF = '/dashboard/shipments';
 
 const draftNotReadyMessages: Record<string, string> = {
   PENDING_EXTRACTION: 'Nalog još čeka obradu. Pokušajte ponovno za nekoliko trenutaka.',
@@ -16,81 +22,121 @@ const draftNotReadyMessages: Record<string, string> = {
   FAILED: 'Obrada naloga nije uspjela.',
 };
 
+const queryString = (value: string | string[] | undefined) => (typeof value === 'string' && value ? value : undefined);
+
+/**
+ * Novi nalog: /dashboard/shipments/new, `?copyFromId=` (Kopiraj nalog), `?draftId=` (Nalozi u pripremi), `?clientId=` /
+ * `?contractorId=` (Novi nalog / Novi agencijski nalog from Klijenti / Kontraktori: preselected).
+ */
 export const NewShipmentPage = () => {
-  const { query } = useRouter();
-  const { data: tenant, isLoading: isTenantLoading } = useCurrentTenant();
-  const copyFromId = query.copyFromId as string | undefined;
-  const draftId = query.draftId as string | undefined;
+  const router = useRouter();
+  const copyFromId = queryString(router.query.copyFromId);
+  const draftId = queryString(router.query.draftId);
+  const clientId = queryString(router.query.clientId);
+  const contractorId = queryString(router.query.contractorId);
 
-  const { data: copyFromShipment, isLoading: isCopyFromShipmentLoading } = useShipment(copyFromId || '');
-  const { data: draft, isLoading: isDraftLoading } = useShipmentDraft(draftId);
+  const tenantQuery = useCurrentTenant();
+  const copyQuery = useShipment(copyFromId);
+  const draftQuery = useShipmentDraft(draftId);
+  const tenant = tenantQuery.data;
+  const copyFrom = copyQuery.data;
+  const draft = draftQuery.data;
 
-  const isLoading = isTenantLoading || (copyFromId && isCopyFromShipmentLoading) || (draftId && isDraftLoading);
+  const mode: NalogFormMode = draftId ? 'draft' : copyFromId ? 'copy' : 'new';
+  const draftReady = !!draft && draft.status === 'EXTRACTED';
+  const dataReady = router.isReady && !!tenant && (mode !== 'copy' || !!copyFrom) && (mode !== 'draft' || draftReady);
 
-  if (isLoading || !tenant) return <LoadingPage />;
+  const { values, failed } = useInitialValues(
+    dataReady ? () => initialValues(mode, tenant!, { copyFrom, draft, clientId, contractorId }) : null,
+    router.asPath
+  );
 
-  if (draft && draft.status !== 'EXTRACTED') {
-    const message = draftNotReadyMessages[draft.status] ?? 'Nalog još nije spreman.';
+  const title =
+    mode === 'copy'
+      ? copyFrom
+        ? `Kopija naloga #${copyFrom.orderNumber}`
+        : 'Kopija naloga'
+      : mode === 'draft'
+        ? 'Novi nalog iz pripreme'
+        : 'Novi nalog';
+  const backHref = mode === 'draft' ? DRAFTS_HREF : LIST_HREF;
+  const backLabel = mode === 'draft' ? 'Nalozi u pripremi' : 'Nalozi';
 
-    return (
-      <DashboardLayout>
-        <PageTitle title="Nalog nije spreman" />
-        <Box>
-          <FlexLayout className="flex-col gap-[40px]">
-            <Heading as="h1" variant="text-xl">
-              Nalog nije spreman
-            </Heading>
-          </FlexLayout>
-          <FlexLayout className="py-6 flex-col gap-4">
-            <BackButton targetLocation="/dashboard/shipments?tab=drafts" />
-            <Text color="text-color-2" variant="text-m">
-              {message}
-            </Text>
+  const failedToLoad =
+    failed || tenantQuery.isError || (mode === 'copy' && copyQuery.isError) || (mode === 'draft' && draftQuery.isError);
+
+  let content: ReactNode;
+  if (draft && !draftReady) {
+    content = (
+      <NalogFormProblem
+        backHref={DRAFTS_HREF}
+        backLabel="Nalozi u pripremi"
+        danger={draft.status === 'FAILED'}
+        description={
+          <>
+            {draftNotReadyMessages[draft.status] ?? 'Nalog još nije spreman.'}
             {draft.status === 'FAILED' && draft.errorMessage && (
-              <Text color="text-color-3" variant="text-s">
-                {draft.errorMessage}
-              </Text>
+              <span className="mt-1 block text-xs">{draft.errorMessage}</span>
             )}
-          </FlexLayout>
-        </Box>
-      </DashboardLayout>
+          </>
+        }
+        icon={draft.status === 'FAILED' ? 'IconAlertOctagon' : 'IconHourglass'}
+        title="Nalog nije spreman"
+      />
+    );
+  } else if (failedToLoad) {
+    content = (
+      <NalogFormProblem
+        backHref={backHref}
+        backLabel={backLabel}
+        danger
+        description="Provjeri vezu i pokušaj ponovno."
+        icon="IconAlertOctagon"
+        title={mode === 'copy' ? 'Nalog za kopiranje se nije učitao' : 'Podaci se nisu učitali'}
+        onRetry={() => router.reload()}
+      />
+    );
+  } else if (!values || !tenant) {
+    content = <NalogFormSkeleton />;
+  } else {
+    content = (
+      <div className="flex flex-col gap-6">
+        <NalogFormHeader backHref={backHref} backLabel={backLabel} title={title} />
+        <NalogForm
+          cancelHref={backHref}
+          draft={mode === 'draft' ? draft : undefined}
+          initial={values}
+          key={router.asPath}
+          mode={mode}
+          tenant={tenant}
+        />
+      </div>
     );
   }
 
-  let pageTitle = 'Novi Nalog';
-  if (copyFromShipment) {
-    pageTitle = `Kopija naloga ${copyFromShipment.orderNumber}`;
-  } else if (draft) {
-    pageTitle = 'Novi nalog iz pripreme';
-  }
-
-  const backTarget = draft ? '/dashboard/shipments?tab=drafts' : '/dashboard/shipments';
-
   return (
-    <DashboardLayout>
-      <PageTitle title="Novi nalog" />
-      <Box>
-        <FlexLayout className="flex-col gap-2">
-          <Heading as="h1" variant="text-xl">
-            {pageTitle}
-          </Heading>
-          {draft && (
-            <Text color="text-color-3" variant="text-m">
-              {draft.fileName}
-            </Text>
-          )}
-        </FlexLayout>
-        <FlexLayout className="py-6 flex-col gap-[40px]">
-          <BackButton targetLocation={backTarget} />
-          <ShipmentForm
-            copyFromId={copyFromId}
-            draft={draft}
-            draftId={draftId}
-            shipment={copyFromShipment}
-            tenant={tenant}
-          />
-        </FlexLayout>
-      </Box>
+    <DashboardLayout breadcrumbs={[CRUMBS.shipments, { label: title }]}>
+      <PageTitle title={title} />
+      {content}
     </DashboardLayout>
   );
 };
+
+async function initialValues(
+  mode: NalogFormMode,
+  tenant: Tenant,
+  {
+    copyFrom,
+    draft,
+    clientId,
+    contractorId,
+  }: { copyFrom?: Shipment; draft?: ShipmentDraft; clientId?: string; contractorId?: string }
+): Promise<NalogValues> {
+  if (mode === 'draft' && draft) return fromDraft(draft, tenant, fetchPostalCodeData);
+  if (mode === 'copy' && copyFrom) return fromCopy(copyFrom, tenant, fetchPostalCodeData);
+  let values = emptyNalog(tenant);
+  if (clientId) values = { ...values, clientId };
+  // „Novi agencijski nalog” from a kontraktor: Agencijski with that kontraktor.
+  if (contractorId) values = { ...withAgency(values, true, tenant.id), transportContractorId: contractorId };
+  return values;
+}

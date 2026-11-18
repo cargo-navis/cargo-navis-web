@@ -133,7 +133,7 @@ function ContractorPanel({ shipment }: { shipment: Shipment }) {
   );
 }
 
-/** Own: the vehicle(s) and driver(s) on the nalog's stops; „+ Dodijeli vozilo” opens today's assign flow. */
+/** Own: the vehicle(s) and driver(s) on the nalog's stops; „+ Dodijeli vozilo” opens the Dodijeli vozilo page. */
 export function AssignmentPanel({ shipment, onAssignClick }: { shipment: Shipment; onAssignClick(): void }) {
   const { vehiclesById, employeesById } = useLookups();
   if (shipment.isAgency) return <ContractorPanel shipment={shipment} />;

@@ -25,6 +25,9 @@ import { INVOICE_STATUS_LABEL } from './invoice';
 export const shipmentHref = (id: string) => `/dashboard/shipments/${id}`;
 export const editShipmentHref = (id: string) => `/dashboard/shipments/${id}/edit`;
 export const copyShipmentHref = (id: string) => `/dashboard/shipments/new?copyFromId=${id}`;
+/** Dodijeli vozilo page; `created` = right after „Kreiraj nalog” (Korak 2 od 2). */
+export const assignVehicleHref = (id: string, { created = false } = {}) =>
+  `/dashboard/shipments/${id}/assign${created ? '?created=1' : ''}`;
 export const NEW_SHIPMENT_HREF = '/dashboard/shipments/new';
 
 export const PDF_LANGUAGES = SHIPMENT_PDF_LANGUAGES;

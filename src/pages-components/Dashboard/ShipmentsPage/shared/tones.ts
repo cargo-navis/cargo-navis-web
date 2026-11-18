@@ -65,3 +65,12 @@ export const TEXT_LINK = 'font-medium text-primary hover:underline dark:text-tea
 
 /** Ruta: the line after a done stop. */
 export const DONE_LINE = 'bg-green-600/60 dark:bg-green-500/60';
+
+/** A route stop on the same day as a new one (Dodijeli vozilo „Isti dan”, lab /assign). */
+export const CLASH_ROW = 'bg-amber-50 dark:bg-amber-950/40';
+
+/** The „Danas · 10.11.” line in a vertical route (lab /assign, as Prijevozi's Ruta). */
+export const TODAY_LINE = {
+  text: 'text-primary dark:text-teal-300',
+  rule: 'bg-primary/30 dark:bg-teal-300/30',
+} as const;
