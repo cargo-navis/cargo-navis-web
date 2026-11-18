@@ -1,41 +1,5 @@
 import keyBy from 'lodash/keyBy';
 
-import { PositionEnum } from '@/lib/api/employees';
-import type { RadioOption } from '@/ui';
-
-interface PositionOption {
-  label: string;
-  value: PositionEnum;
-}
-
-export const positionLabelMap = {
-  [PositionEnum.Ceo]: 'CEO',
-  [PositionEnum.Manager]: 'Menadžer',
-  [PositionEnum.Dispatcher]: 'Disponent',
-  [PositionEnum.Driver]: 'Vozač',
-};
-
-export const positionOptions: PositionOption[] = [
-  { label: 'CEO', value: PositionEnum.Ceo },
-  { label: 'Menadžer', value: PositionEnum.Manager },
-  { label: 'Disponent', value: PositionEnum.Dispatcher },
-  { label: 'Vozač', value: PositionEnum.Driver },
-];
-
-export const genderOptions: RadioOption[] = [
-  { label: 'Muško', value: 'M' },
-  { label: 'Žensko', value: 'F' },
-];
-
-export const categoryOptions = [
-  { label: 'B1', value: 'B1' },
-  { label: 'B', value: 'B' },
-  { label: 'C1', value: 'C1' },
-  { label: 'C', value: 'C' },
-  { label: 'C1E', value: 'C1E' },
-  { label: 'CE', value: 'CE' },
-];
-
 export const countries = [
   { name: 'Afganistan', code: 'AF' },
   { name: 'Albanija', code: 'AL' },
@@ -233,13 +197,11 @@ export const countries = [
   { name: 'Zimbabve', code: 'ZW' },
 ];
 
-export const countriesMap = keyBy(countries, 'code');
+const countriesMap = keyBy(countries, 'code');
 
 export function getCountryFromCode(countryCode: string) {
   return countriesMap[countryCode];
 }
-
-export const countryOptions = countries.map((c) => ({ value: c.code, label: c.name }));
 
 const countryCodesEurope = [
   'AD',
@@ -297,28 +259,3 @@ const countryCodesEurope = [
 
 const countriesEurope = countries.filter((c) => countryCodesEurope.includes(c.code));
 export const countryEuropeOptions = countriesEurope.map((c) => ({ value: c.code, label: c.name }));
-
-export const formDefaultValues = {
-  firstName: '',
-  lastName: '',
-  phoneNumber: { countryCode: '+385', phoneNumber: '' },
-  email: '',
-  positions: [] as PositionEnum[],
-  governmentId: undefined as unknown as string,
-  governmentIdExpiryDate: undefined as unknown as string,
-  driverLicenceId: undefined as unknown as string,
-  driverLicenceCategories: undefined as unknown as string[],
-  adrExpiryDate: undefined as unknown as string,
-  driverLicenceExpiryDate: undefined as unknown as string,
-  professionalDriverLicenceExpiryDate: undefined as unknown as string,
-  driverTachographCardId: undefined as unknown as string,
-  driverTachographCardExpiryDate: undefined as unknown as string,
-  nationality: undefined as unknown as string,
-  contractExpiryDate: undefined as unknown as string,
-  medicalExaminationExpiryDate: undefined as unknown as string,
-  visaExpiryDate: undefined as unknown as string,
-  code95ExpiryDate: undefined as unknown as string,
-  dateOfBirth: undefined as unknown as string,
-  residenceAddress: undefined as unknown as string,
-  isMessageChannelEnabled: false,
-};

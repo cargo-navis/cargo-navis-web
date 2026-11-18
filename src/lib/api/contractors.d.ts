@@ -20,7 +20,8 @@ export type CreateContractorParams = {
   addressName: string;
   addressPostalCodeId: string;
   taxId: string;
-  termsOfPayment: string;
+  /** Days; the forms send a number (0 = none). */
+  termsOfPayment: string | number;
   email?: string;
 };
 

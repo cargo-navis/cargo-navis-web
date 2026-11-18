@@ -1,76 +1,41 @@
 import { useRouter } from 'next/router';
 
-import { BackButton } from '@/components/BackButton';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
-import type { Client } from '@/lib/api';
-import { LoadingPage } from '@/lib/components/LoadingPage';
-import { useClient } from '@/lib/hooks';
-import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, Divider, FlexLayout, Text } from '@/ui';
+import { useClients } from '@/lib/hooks';
+import {
+  PartnerDetail,
+  PartnerDetailProblem,
+  PartnerDetailSkeleton,
+} from '@/pages-components/Dashboard/Partners/PartnerDetail';
+import { fromClient } from '@/pages-components/Dashboard/Partners/partners';
 
-import { ClientActions } from './ClientActions';
 import { ClientNotificationEmails } from './ClientNotificationEmails';
+import { ClientMoney, ClientOrders } from './ClientOrders';
 
+/** Klijent detail (lab /partners „Detalj” + KAN-112 notification contacts). */
 export const SingleClientPage = () => {
   const { query } = useRouter();
-  const id = query.id;
-
-  const { data: client, isLoading } = useClient(id as string);
+  const id = query.id as string | undefined;
+  const { data: clients, isLoading, isError, refetch } = useClients({ enabled: !!id });
+  const client = clients?.find((item) => String(item.id) === id);
 
   return (
-    <DashboardLayout>
+    <DashboardLayout breadcrumbs={client ? [CRUMBS.clients, { label: client.name }] : undefined}>
       <PageTitle title={client?.name} type="Klijent" />
-      {!client || isLoading ? (
-        <LoadingPage />
+      {client ? (
+        <PartnerDetail
+          aside={<ClientNotificationEmails client={client} />}
+          kind="client"
+          main={<ClientOrders clientId={String(client.id)} />}
+          money={<ClientMoney clientId={String(client.id)} />}
+          partner={fromClient(client)}
+        />
+      ) : isLoading || !id ? (
+        <PartnerDetailSkeleton />
       ) : (
-        <Box>
-          <MainContent client={client} />
-        </Box>
+        <PartnerDetailProblem isError={isError} kind="client" onRetry={() => void refetch()} />
       )}
     </DashboardLayout>
-  );
-};
-
-const MainContent: React.FC<{ client: Client }> = ({ client }) => {
-  const country = getCountryFromCode(client.address.countryCode);
-
-  return (
-    <FlexLayout className="py-6 flex-col gap-6">
-      <BackButton targetLocation="/dashboard/clients" />
-      <FlexLayout className="justify-between">
-        <FlexLayout className="items-start gap-8">
-          <FlexLayout className="flex-col gap-3 mt-[12px]">
-            <FlexLayout className="gap-4 items-center">
-              <Text variant="text-xxl-medium">{client.name}</Text>
-            </FlexLayout>
-            <FlexLayout className="flex-col gap-3 max-w-[400px]">
-              <FlexLayout className="flex-col">
-                <Text color="text-color-3" variant="text-m">
-                  {client.address.streetName},
-                </Text>
-                <Text color="text-color-3" variant="text-m">
-                  {[client.address.placeName, client.address.postalCode, country.name].filter(Boolean).join(', ')}
-                </Text>
-              </FlexLayout>
-              <Divider />
-              <FlexLayout className="flex-col">
-                <Text color="text-color-2" variant="text-m">
-                  Valuta plaćanja: <strong>{client.termsOfPayment ?? '—'}</strong>
-                </Text>
-              </FlexLayout>
-              <FlexLayout className="flex-col">
-                <Text color="text-color-2" variant="text-m">
-                  Porezni broj: <strong>{client.taxId}</strong>
-                </Text>
-              </FlexLayout>
-            </FlexLayout>
-          </FlexLayout>
-        </FlexLayout>
-        <ClientActions id={client.id} name={client.name} />
-      </FlexLayout>
-      <Divider />
-      <ClientNotificationEmails client={client} />
-    </FlexLayout>
   );
 };

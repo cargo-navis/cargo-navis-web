@@ -1,23 +1,33 @@
-import { useState } from 'react';
+import * as React from 'react';
 
+import { Panel } from '@/components/shared/panel';
+import { Button } from '@/components/ui/button';
+import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { Client, ClientNotificationEmail } from '@/lib/api';
 import { useUpdateClient } from '@/lib/hooks';
 import { isValidEmail, normalizeEmail, NOTIFICATION_EMAIL_LIMIT } from '@/lib/utils/notificationEmails';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, FlexLayout, Icon, Switch, Text, TextInput } from '@/ui';
+import { Icon } from '@/ui';
 
-export const ClientNotificationEmails: React.FC<{ client: Client }> = ({ client }) => {
+/**
+ * KAN-112 notification contacts on the client page (DECISIONS §6b; no lab, built in the /partners look): the emails
+ * that get load / unload notifications. „Automatski” ones go on every new nalog of this client, the rest are offered
+ * as suggestions. Saved straight away with today's client PUT (the whole record goes along).
+ */
+export function ClientNotificationEmails({ client }: { client: Client }) {
   const { mutateAsync: updateClient, isPending } = useUpdateClient(client.id);
-  const [newEmail, setNewEmail] = useState('');
-  const [newAlwaysNotify, setNewAlwaysNotify] = useState(false);
-  const [inputError, setInputError] = useState<string>();
+  const [newEmail, setNewEmail] = React.useState('');
+  const [newAlwaysNotify, setNewAlwaysNotify] = React.useState(false);
+  const [inputError, setInputError] = React.useState<string>();
 
   const emails = client.notificationEmails ?? [];
   const isFull = emails.length >= NOTIFICATION_EMAIL_LIMIT;
 
   async function save(notificationEmails: ClientNotificationEmail[], successTitle: string) {
     try {
-      // The client PUT expects the full record, so the unchanged fields go along.
       await updateClient({
         name: client.name,
         addressName: client.address.streetName,
@@ -34,11 +44,11 @@ export const ClientNotificationEmails: React.FC<{ client: Client }> = ({ client 
     }
   }
 
-  async function handleAdd(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleAdd(event: React.FormEvent) {
+    event.preventDefault();
     const email = normalizeEmail(newEmail);
-    if (!isValidEmail(email)) return setInputError('Upišite ispravnu email adresu.');
-    if (emails.some((c) => c.email === email)) return setInputError(`${email} je već u kontaktima.`);
+    if (!isValidEmail(email)) return setInputError('Upiši ispravnu email adresu.');
+    if (emails.some((contact) => contact.email === email)) return setInputError(`${email} je već u kontaktima.`);
 
     if (await save([...emails, { email, alwaysNotify: newAlwaysNotify }], `Kontakt ${email} dodan`)) {
       setNewEmail('');
@@ -47,93 +57,98 @@ export const ClientNotificationEmails: React.FC<{ client: Client }> = ({ client 
   }
 
   return (
-    <FlexLayout className="flex-col gap-3 max-w-[760px]">
-      <FlexLayout className="flex-col">
-        <Text variant="text-m-medium">Emailovi za obavijesti</Text>
-        <Text color="text-color-3" variant="text-xs">
-          E-mail adrese koje primaju obavijesti o utovaru i istovaru tereta.
-          <br />
-          Automatski kontakti se sami dodaju na svaki novi nalog, ostali se nude kao prijedlog.
-        </Text>
-      </FlexLayout>
-
-      <Box className="border border-dark-200 dark:border-light-800 rounded-legacy-m overflow-hidden">
-        {emails.map(({ email, alwaysNotify }) => (
-          <FlexLayout
-            className="items-center gap-4 px-4 py-2 border-b border-dark-100 dark:border-light-850"
-            key={email}
-          >
-            <Text className="flex-1 truncate" title={email} variant="text-xs-medium">
-              {email}
-            </Text>
-            <Text color="text-color-3" variant="text-xxs">
-              Automatski
-            </Text>
-            <Switch
-              isDisabled={isPending}
-              value={alwaysNotify}
-              onChange={(value) =>
-                save(
-                  emails.map((c) => (c.email === email ? { ...c, alwaysNotify: value } : c)),
-                  `Kontakt ${email} spremljen`
-                )
-              }
-            />
-            <Box
-              aria-label={`Obriši ${email}`}
-              as="button"
-              className="p-1 rounded-legacy-s text-dark-600 dark:text-light-300 hover:bg-dark-75 dark:hover:bg-light-850 hover:text-legacy-red-500 disabled:opacity-40"
-              isDisabled={isPending}
-              type="button"
-              onClick={() =>
-                save(
-                  emails.filter((c) => c.email !== email),
-                  `Kontakt ${email} obrisan`
-                )
-              }
-            >
-              <Icon icon="IconTrash" size="s" />
-            </Box>
-          </FlexLayout>
-        ))}
-
-        <FlexLayout
-          as="form"
-          className="items-center gap-4 px-4 py-3 bg-dark-25 dark:bg-light-875"
-          onSubmit={handleAdd}
-        >
-          <Box className="flex-1">
-            <TextInput
-              isDisabled={isFull}
+    <Panel bodyClassName="p-0" title="Kontakti za obavijesti">
+      <p className="px-4 pt-3 pb-1 text-xs text-muted-foreground">
+        Primaju obavijesti o utovaru i istovaru. Automatski se dodaju na svaki novi nalog, ostali se nude kao prijedlog.
+      </p>
+      {emails.length > 0 && (
+        <ul className="divide-y">
+          {emails.map(({ email, alwaysNotify }) => (
+            <li className="flex min-h-11 items-center gap-3 px-4 py-1.5" key={email}>
+              <a className="min-w-0 flex-1 truncate text-sm hover:underline" href={`mailto:${email}`} title={email}>
+                {email}
+              </a>
+              <label className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
+                Automatski
+                <Switch
+                  aria-label={`Automatski: ${email}`}
+                  checked={alwaysNotify}
+                  disabled={isPending}
+                  onCheckedChange={(value) =>
+                    void save(
+                      emails.map((contact) =>
+                        contact.email === email ? { ...contact, alwaysNotify: value } : contact
+                      ),
+                      `Kontakt ${email} spremljen`
+                    )
+                  }
+                />
+              </label>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      aria-label={`Obriši ${email}`}
+                      className="shrink-0 text-muted-foreground hover:text-destructive"
+                      disabled={isPending}
+                      size="icon-sm"
+                      variant="ghost"
+                      onClick={() =>
+                        void save(
+                          emails.filter((contact) => contact.email !== email),
+                          `Kontakt ${email} obrisan`
+                        )
+                      }
+                    />
+                  }
+                >
+                  <Icon icon="IconTrash" size="s" />
+                </TooltipTrigger>
+                <TooltipContent>Obriši</TooltipContent>
+              </Tooltip>
+            </li>
+          ))}
+        </ul>
+      )}
+      <form
+        className="flex flex-col gap-3 border-t bg-muted/40 px-4 py-3"
+        noValidate
+        onSubmit={(e) => void handleAdd(e)}
+      >
+        <Field data-invalid={inputError ? true : undefined}>
+          <FieldLabel className="sr-only" htmlFor="client-new-contact">
+            Novi kontakt
+          </FieldLabel>
+          <div className="flex gap-2">
+            <Input
+              aria-invalid={inputError ? true : undefined}
+              disabled={isFull}
+              id="client-new-contact"
               placeholder={isFull ? `Dosegnut je limit od ${NOTIFICATION_EMAIL_LIMIT} kontakata` : 'Novi email kontakt'}
               type="email"
               value={newEmail}
-              onChange={(value) => {
-                setNewEmail(value);
+              onChange={(event) => {
+                setNewEmail(event.target.value);
                 setInputError(undefined);
               }}
             />
-          </Box>
-          <Text color="text-color-3" variant="text-xxs">
-            Automatski
-          </Text>
-          <Switch isDisabled={isFull} value={newAlwaysNotify} onChange={setNewAlwaysNotify} />
-          <Button
-            iconLeft="IconPlus"
-            isDisabled={isFull || !newEmail.trim()}
-            isLoading={isPending}
-            size="s"
-            text="Dodaj"
-            type="submit"
-          />
-        </FlexLayout>
-      </Box>
-
-      {inputError && (
-        <Text color="text-legacy-red-600 dark:text-legacy-red-500" variant="text-xxxs">
-          {inputError}
-        </Text>
-      )}
-    </FlexLayout>
+            <Button disabled={isFull} loading={isPending} type="submit" variant="outline">
+              <Icon data-icon="inline-start" icon="IconPlus" size="s" /> Dodaj
+            </Button>
+          </div>
+          {inputError ? (
+            <FieldError>{inputError}</FieldError>
+          ) : (
+            <FieldDescription className="text-xs">
+              {emails.length === 0 ? 'Još nema kontakata.' : `${emails.length} od ${NOTIFICATION_EMAIL_LIMIT}`}
+            </FieldDescription>
+          )}
+        </Field>
+        <label className="flex items-center gap-2 text-sm">
+          <Switch checked={newAlwaysNotify} disabled={isFull} onCheckedChange={setNewAlwaysNotify} />
+          Automatski na svakom novom nalogu
+        </label>
+      </form>
+    </Panel>
   );
-};
+}

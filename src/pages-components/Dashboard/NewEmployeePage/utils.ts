@@ -1,103 +1,42 @@
-import { FormState } from 'react-hook-form';
-
-import { MessageChannelEnum } from '@/lib/api/employees';
-import type { Employee } from '@/lib/api/employees.d';
-import { PhoneNumberValue } from '@/lib/components/PhoneNumberInput';
-import { replaceEmptyStringsWithNull } from '@/lib/utils/data';
-
-import { formDefaultValues } from './const';
-
-/**
- * Initializes form values for both new and edit employee scenarios.
- * Handles phone number conversion from string to PhoneNumberValue when editing.
- */
-export function initializeFormValues(employee?: Employee) {
-  if (!employee) {
-    return formDefaultValues;
-  }
-
-  // Convert string phone number to PhoneNumberValue for editing
-  const phoneNumberValue: PhoneNumberValue = employee.phoneNumber
-    ? splitPhoneNumber(employee.phoneNumber) || { countryCode: '+385', phoneNumber: employee.phoneNumber }
-    : { countryCode: '+385', phoneNumber: '' };
-
-  return {
-    ...employee,
-    phoneNumber: phoneNumberValue,
-    isMessageChannelEnabled: employee.messageChannel === MessageChannelEnum.WHATSAPP,
-  };
+/** Phone number split into the calling code (prefix menu) and the rest (today's PhoneNumberInput value). */
+export interface PhoneValue {
+  countryCode: string;
+  phoneNumber: string;
 }
 
-export function extractDirtyFields(data: any, formState: FormState<any>) {
-  return Object.keys(data).reduce(
-    (acc, key) => {
-      if (formState.dirtyFields[key]) {
-        acc[key] = data[key];
-      }
-      return acc;
-    },
-    {} as Record<string, any>
-  );
-}
-
-export function processFormData(data: any) {
-  const processedData = replaceEmptyStringsWithNull(data);
-
-  if (processedData.hasOwnProperty('isMessageChannelEnabled')) {
-    processedData.messageChannel = processedData.isMessageChannelEnabled ? MessageChannelEnum.WHATSAPP : null;
-    delete processedData.isMessageChannelEnabled;
-  }
-
-  if (processedData.hasOwnProperty('phoneNumber')) {
-    processedData.phoneNumber = joinPhoneNumber(processedData.phoneNumber);
-  }
-
-  return processedData;
-}
+/** Calling codes offered in the prefix menu (today's PhoneNumberInput list). */
+export const PHONE_PREFIXES = [
+  { code: 'HR', prefix: '+385' },
+  { code: 'SI', prefix: '+386' },
+  { code: 'BA', prefix: '+387' },
+  { code: 'RS', prefix: '+381' },
+  { code: 'XK', prefix: '+383' },
+  { code: 'AL', prefix: '+355' },
+  { code: 'MK', prefix: '+389' },
+  { code: 'AT', prefix: '+43' },
+];
 
 /**
  * Joins country code and phone number into a single string.
- * Removes leading "0" from phone number if present (trunk prefix).
+ * Removes spaces and a leading "0" (trunk prefix) from the number.
  */
-export function joinPhoneNumber(value: PhoneNumberValue): string {
-  const { countryCode, phoneNumber } = value;
-  const cleanPhoneNumber = phoneNumber.startsWith('0') ? phoneNumber.substring(1) : phoneNumber;
-
-  return `${countryCode}${cleanPhoneNumber}`;
+export function joinPhoneNumber(value: PhoneValue): string {
+  const digits = value.phoneNumber.trim().replace(/[\s/()-]/g, '');
+  // Typed (or stored) with its own international prefix: keep it as it is.
+  if (digits.startsWith('+') || !value.countryCode) return digits;
+  const clean = digits.startsWith('0') ? digits.substring(1) : digits;
+  return `${value.countryCode}${clean}`;
 }
 
 /**
- * Splits a full phone number string into country code and phone number parts.
- * Supports common European country codes (+385, +386, +387).
- * Returns null if the format is not recognized.
+ * Splits a full phone number string into one of the known prefixes and the rest. Returns null for any other number
+ * (the form then keeps it whole, with its own prefix).
  */
-export function splitPhoneNumber(fullPhoneNumber: string): PhoneNumberValue | null {
-  if (!fullPhoneNumber || !fullPhoneNumber.startsWith('+')) {
-    return null;
-  }
+export function splitPhoneNumber(fullPhoneNumber: string): PhoneValue | null {
+  if (!fullPhoneNumber || !fullPhoneNumber.startsWith('+')) return null;
 
-  // Common European country codes (4 characters: +3xx)
-  const supportedCountryCodes = ['+385', '+386', '+387'];
-
-  for (const countryCode of supportedCountryCodes) {
-    if (fullPhoneNumber.startsWith(countryCode)) {
-      const phoneNumber = fullPhoneNumber.substring(countryCode.length);
-      return {
-        countryCode,
-        phoneNumber,
-      };
-    }
-  }
-
-  // Fallback: try to extract first 4 characters as country code if it starts with +3
-  if (fullPhoneNumber.startsWith('+3') && fullPhoneNumber.length >= 4) {
-    const countryCode = fullPhoneNumber.substring(0, 4);
-    const phoneNumber = fullPhoneNumber.substring(4);
-    return {
-      countryCode,
-      phoneNumber,
-    };
-  }
+  const known = PHONE_PREFIXES.find(({ prefix }) => fullPhoneNumber.startsWith(prefix));
+  if (known) return { countryCode: known.prefix, phoneNumber: fullPhoneNumber.substring(known.prefix.length) };
 
   return null;
 }
