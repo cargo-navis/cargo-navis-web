@@ -14,8 +14,10 @@ subagents.
 ## Repo and git
 - Repo: /Users/kristijankorac/conductor/workspaces/cargo-navis-web/quebec, integration branch `KAN-55/redesign`
   (base `develop`).
-- Permission (granted by the user for this task only): create local branches, worktrees and commits. Do NOT push, do
-  NOT open PRs, do NOT touch `develop`. The user pushes and merges.
+- Permission (granted by the user for this task): the orchestrator AND every subagent may create local branches and
+  worktrees, **commit, and merge PR branches into `KAN-55/redesign` without asking the user first** — this overrides
+  the usual „never commit unprompted” rule for KAN-55 work. Still NOT allowed: push, opening PRs, force-push, rewriting
+  `develop` or any pushed history. The user pushes and opens the PRs.
 - Commit messages start with `[KAN-55]`.
 - One branch per PR: `KAN-55/redesign-<n>-<slug>` (e.g. `KAN-55/redesign-3-nalozi`). Parallel work only in separate
   git worktrees (one per subagent), never two agents in one working tree. Worktrees: symlink `node_modules` from the main

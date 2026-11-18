@@ -1,6 +1,7 @@
 # KAN-55 · Redesign migration plan
 
-Status: draft for review (2026-11-18). Branch: `KAN-55/redesign` (base `develop`). Nothing here is committed.
+Status: agreed (2026-11-18). Branch: `KAN-55/redesign` (base `develop`). Agents and subagents working on this plan may
+commit and merge locally without asking (see `orchestrator-prompt.md`); pushing and PRs stay with the user.
 
 ## 1. What we're migrating to
 
