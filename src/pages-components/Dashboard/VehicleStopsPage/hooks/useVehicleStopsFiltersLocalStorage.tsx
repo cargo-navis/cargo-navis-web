@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 const projectEnv = process.env.PROJECT_ENV;
 const isProductionEnv = projectEnv === 'production';
@@ -6,8 +6,10 @@ const isProductionEnv = projectEnv === 'production';
 const keyName = 'cargo-navis-vehicle-stops-filters';
 const STORAGE_KEY = isProductionEnv ? keyName : `${projectEnv}-${keyName}`;
 
+/** Remembered per browser: the Disponent filter and the list view (Tablica · Tjedan · Kao danas). */
 export interface VehicleStopsFiltersStorage {
   dispatcherId?: string;
+  view?: string;
 }
 
 const getDefaultStorage = (): VehicleStopsFiltersStorage => ({});
@@ -36,7 +38,9 @@ const writeToStorage = (data: VehicleStopsFiltersStorage): void => {
 };
 
 export const useVehicleStopsFiltersLocalStorage = () => {
-  const [storage, setStorage] = useState<VehicleStopsFiltersStorage>(readFromStorage);
+  // Read after mount, so the server render and the first client render agree.
+  const [storage, setStorage] = useState<VehicleStopsFiltersStorage>(getDefaultStorage);
+  useEffect(() => setStorage(readFromStorage()), []);
 
   const updateField = useCallback((field: keyof VehicleStopsFiltersStorage, value: string | undefined) => {
     setStorage((prev) => {
