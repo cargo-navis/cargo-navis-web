@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { Shipment } from '@/lib/api';
 import { cn } from '@/lib/utils';
+import { fileDisplayName } from '@/lib/utils/file';
 import { Icon } from '@/ui';
 
 import {
@@ -39,11 +40,10 @@ export function NalogCell({ shipment, clientName }: { shipment: Shipment; client
               <span className="tabular-nums">{documents}</span>
             </TooltipTrigger>
             <TooltipContent className="max-w-72">
-              <ul className="flex flex-col gap-0.5">
+              {/* Names have no spaces to break on: wrap anywhere inside the tooltip. */}
+              <ul className="flex min-w-0 flex-col gap-0.5 [overflow-wrap:anywhere]">
                 {shipment.documents?.map((document) => (
-                  <li className="truncate" key={document.id}>
-                    {document.name}
-                  </li>
+                  <li key={document.id}>{fileDisplayName(document.name)}</li>
                 ))}
               </ul>
             </TooltipContent>
