@@ -143,6 +143,8 @@ describe('buildWarning', () => {
       kind: 'vehicle',
       severity: 'expired',
       title: 'KC 456-CD · Registracija',
+      name: 'KC 456-CD',
+      subject: 'Registracija',
       detail: 'Istekla prije 8 d',
     });
     expect(
@@ -173,7 +175,13 @@ describe('buildWarning', () => {
       }),
       { clientsById, now: NOW }
     );
-    expect(warning).toMatchObject({ kind: 'invoice', severity: 'expired', title: 'Faktura 2009/2026 · Kraš d.d.' });
+    expect(warning).toMatchObject({
+      kind: 'invoice',
+      severity: 'expired',
+      title: 'Faktura 2009/2026 · Kraš d.d.',
+      name: 'Faktura 2009/2026',
+      subject: 'Kraš d.d.',
+    });
     expect(warning.detail.replace(/\s/g, ' ')).toBe('Dospjela prije 3 d · 1.180 €');
   });
 

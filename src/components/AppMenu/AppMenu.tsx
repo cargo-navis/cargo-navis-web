@@ -17,6 +17,7 @@ import { useAlerts, useIsMobile, useNotifications } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
 import { daysFromToday, formatDate, formatDateShort, formatTime } from '@/lib/utils/date';
 import { plural } from '@/lib/utils/plural';
+import { notificationsHref } from '@/pages-components/Dashboard/NotificationsPage/notifications';
 import { Icon } from '@/ui';
 
 import { getAlertItemData } from './utils/alerts';
@@ -47,7 +48,7 @@ function summary(alerts: number, notifications: number) {
 
 /**
  * Bell in the top bar (DECISIONS §4, lab /dashboard top-bar.tsx `Notifications`): today's alerts and notifications,
- * newest first, 8 at most + „Vidi više” (Početna). Popover on desktop, bottom drawer on phones (DECISIONS §3).
+ * newest first, 8 at most + „Vidi više” (Obavijesti). Popover on desktop, bottom drawer on phones (DECISIONS §3).
  */
 export const AppMenu = () => {
   const [open, setOpen] = React.useState(false);
@@ -71,7 +72,9 @@ export const AppMenu = () => {
   const close = () => setOpen(false);
   const title = 'Obavijesti';
   const description = isLoading ? 'Učitavanje…' : summary(alertCount, notificationCount);
-  const list = <EntryList entries={entries} isLoading={isLoading} onNavigate={close} />;
+  // „Vidi više” opens Obavijesti on the half that has something: Treba pažnju when there are alerts, else Aktivnost.
+  const moreHref = notificationsHref(alertCount > 0 ? 'paznja' : 'aktivnost');
+  const list = <EntryList entries={entries} isLoading={isLoading} moreHref={moreHref} onNavigate={close} />;
 
   const bell = (
     <>
@@ -117,7 +120,17 @@ export const AppMenu = () => {
   );
 };
 
-function EntryList({ entries, isLoading, onNavigate }: { entries: Entry[]; isLoading: boolean; onNavigate(): void }) {
+function EntryList({
+  entries,
+  isLoading,
+  moreHref,
+  onNavigate,
+}: {
+  entries: Entry[];
+  isLoading: boolean;
+  moreHref: string;
+  onNavigate(): void;
+}) {
   if (isLoading) {
     return (
       <div className="flex justify-center py-12">
@@ -149,7 +162,7 @@ function EntryList({ entries, isLoading, onNavigate }: { entries: Entry[]; isLoa
         <li>
           <Link
             className="flex items-center justify-center gap-2 p-3 text-sm font-medium text-brand hover:bg-muted/50"
-            href="/dashboard"
+            href={moreHref}
             onClick={onNavigate}
           >
             Vidi više <Icon icon="IconArrowRight" size="s" />

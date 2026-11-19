@@ -3,17 +3,31 @@ import type { Alert } from '@/lib/api/alerts.d';
 import type { Shipment } from '@/lib/api/shipments.d';
 import { daysFromToday } from '@/lib/utils/date';
 import { getShipmentOverdueInfo } from '@/lib/utils/shipments';
+import type { IconType } from '@/ui';
 
 import { ruleToPropertyMap, ruleToTextMap } from './components/utils';
 
 export type WarningKind = 'invoice' | 'document' | 'vehicle' | 'company';
+
+/** Leading icon per kind (Početna „Treba pažnju”, Obavijesti). */
+export const WARNING_ICON: Record<WarningKind, IconType> = {
+  invoice: 'IconFileInvoice',
+  document: 'IconId',
+  vehicle: 'IconTruck',
+  company: 'IconBuilding',
+};
 
 /** One row of „Treba pažnju”: an alert as „what · whose” + how late / how soon. */
 export interface Warning {
   id: string;
   kind: WarningKind;
   severity: 'expired' | 'soon';
+  /** „name · subject” (Početna shows it in one line). */
   title: string;
+  /** What or whose: „Faktura 422/5/2026”, „Ivan Horvat”, „KC 456-CD”. */
+  name: string;
+  /** The rest: the client, the document, what expires. */
+  subject?: string;
   detail: string;
   /** Days from today to the expiry / due date (negative = past); undefined when the date is unknown. */
   days?: number;
@@ -91,25 +105,20 @@ export function buildWarning(alert: Alert, { clientsById, now = new Date() }: Lo
   // Overdue invoices are past by definition; the rest are expired once the date has passed.
   const severity = kind === 'invoice' || days === undefined || days < 0 ? 'expired' : 'soon';
 
-  let title: string;
+  let parts: (string | undefined)[];
   let detail: string;
   if (kind === 'invoice') {
     const shipment = alert.alertable as Shipment;
     const client = shipment.clientId ? clientsById.get(shipment.clientId)?.name : undefined;
-    title = [`Faktura ${shipment.orderNumber}`, client].filter(Boolean).join(' · ');
+    parts = [`Faktura ${shipment.orderNumber}`, client];
     const due = days === undefined ? 'Dospjela' : days < 0 ? `Dospjela prije ${-days} d` : 'Dospjela danas';
     detail = shipment.price ? `${due} · ${eur(shipment.price)}` : due;
   } else {
-    const subject =
-      kind === 'company'
-        ? undefined
-        : kind === 'vehicle'
-          ? alert.alertable?.registration
-          : [alert.alertable?.firstName, alert.alertable?.lastName].filter(Boolean).join(' ');
-    title =
-      kind === 'company'
-        ? 'Osiguranje tereta'
-        : [subject, TITLE_TEXT[rule] ?? ruleToTextMap[rule]].filter(Boolean).join(' · ');
+    const owner =
+      kind === 'vehicle'
+        ? alert.alertable?.registration
+        : [alert.alertable?.firstName, alert.alertable?.lastName].filter(Boolean).join(' ');
+    parts = kind === 'company' ? ['Osiguranje tereta'] : [owner, TITLE_TEXT[rule] ?? ruleToTextMap[rule]];
     detail =
       days === undefined
         ? EXPIRED[GENDER[rule]]
@@ -120,7 +129,17 @@ export function buildWarning(alert: Alert, { clientsById, now = new Date() }: Lo
             : `Istječe za ${days} d`;
   }
 
-  return { id: alert.id, kind, severity, title, detail, days };
+  const [name = '', rest] = parts.filter((part): part is string => !!part);
+  return {
+    id: alert.id,
+    kind,
+    severity,
+    title: [name, rest].filter(Boolean).join(' · '),
+    name,
+    subject: rest,
+    detail,
+    days,
+  };
 }
 
 /** Expired first (the longest ago first), then what expires soon (the soonest first). */

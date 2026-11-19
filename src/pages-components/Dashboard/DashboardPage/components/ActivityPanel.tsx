@@ -10,8 +10,10 @@ import { cn } from '@/lib/utils';
 import { initials } from '@/lib/utils/initials';
 import { Icon } from '@/ui';
 
+import { notificationsHref } from '../../NotificationsPage/notifications';
 import { formatAgo } from '../format';
 import type { Lookups } from '../useHomeData';
+import { MoreLink } from './MoreLink';
 import { RetryLine } from './RetryLine';
 
 const LIMIT = 5;
@@ -47,12 +49,10 @@ function ActivityRow({ notification, lookups }: { notification: Notification; lo
 /** „Aktivnost”: today's notifications (drivers confirming stops, documents, drafts), newest first (lab /home). */
 export function ActivityPanel({ lookups }: { lookups: Lookups }) {
   const { data, isError, refetch } = useNotifications();
-  const [showAll, setShowAll] = React.useState(false);
   const notifications = React.useMemo(
     () => (data ? [...data].sort((a, b) => b.createdAt.localeCompare(a.createdAt)) : undefined),
     [data]
   );
-  const visible = showAll ? notifications : notifications?.slice(0, LIMIT);
 
   return (
     <Panel bodyClassName="p-0" title="Aktivnost">
@@ -75,18 +75,12 @@ export function ActivityPanel({ lookups }: { lookups: Lookups }) {
       ) : (
         <>
           <div className="divide-y">
-            {visible!.map((notification) => (
+            {notifications.slice(0, LIMIT).map((notification) => (
               <ActivityRow key={notification.id} lookups={lookups} notification={notification} />
             ))}
           </div>
           {notifications.length > LIMIT && (
-            <button
-              className="w-full border-t px-4 py-2 text-left text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:text-foreground"
-              type="button"
-              onClick={() => setShowAll((value) => !value)}
-            >
-              {showAll ? 'Prikaži manje' : `Još ${notifications.length - LIMIT}…`}
-            </button>
+            <MoreLink count={notifications.length - LIMIT} href={notificationsHref('aktivnost')} />
           )}
         </>
       )}

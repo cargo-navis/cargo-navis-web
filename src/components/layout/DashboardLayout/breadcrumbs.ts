@@ -10,7 +10,7 @@ export interface Crumb {
   href?: string;
 }
 
-type CrumbKey = NavSection | 'settings' | 'search';
+type CrumbKey = NavSection | 'settings' | 'search' | 'notifications';
 
 const navCrumb = (key: NavSection): Crumb => {
   const item = NAV.find((nav) => nav.key === key)!;
@@ -29,6 +29,7 @@ export const CRUMBS: Record<CrumbKey, Crumb> = {
   analytics: navCrumb('analytics'),
   settings: { label: 'Postavke', href: SETTINGS_ACCOUNT_HREF },
   search: { label: 'Pretraga', href: '/dashboard/search' },
+  notifications: { label: 'Obavijesti', href: '/dashboard/notifications' },
 };
 
 /** CRUD routes of a list section: list, new, detail, edit (labels are generic until the page passes a name). */
@@ -50,6 +51,7 @@ function crudRoutes(
 const ROUTE_CRUMBS: Record<string, Crumb[]> = {
   '/dashboard': [CRUMBS.home],
   '/dashboard/analytics': [CRUMBS.analytics],
+  '/dashboard/notifications': [CRUMBS.notifications],
   '/dashboard/search': [CRUMBS.search],
   '/dashboard/settings/account': [CRUMBS.settings, { label: 'Moj račun' }],
   '/dashboard/settings/company': [CRUMBS.settings, { label: 'Tvrtka' }],

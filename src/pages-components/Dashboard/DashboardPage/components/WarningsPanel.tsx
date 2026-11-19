@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import * as React from 'react';
 
 import { getAlertItemData } from '@/components/AppMenu/utils/alerts';
 import { Panel } from '@/components/shared/panel';
@@ -9,15 +8,10 @@ import type { Alert } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { Icon } from '@/ui';
 
-import type { Warning, WarningKind } from '../warnings';
+import { notificationsHref } from '../../NotificationsPage/notifications';
+import { type Warning, WARNING_ICON } from '../warnings';
+import { MoreLink } from './MoreLink';
 import { RetryLine } from './RetryLine';
-
-const WARNING_ICON: Record<WarningKind, 'IconFileInvoice' | 'IconId' | 'IconTruck' | 'IconBuilding'> = {
-  invoice: 'IconFileInvoice',
-  document: 'IconId',
-  vehicle: 'IconTruck',
-  company: 'IconBuilding',
-};
 
 const LIMIT = 5;
 
@@ -57,9 +51,7 @@ export function WarningsPanel({
   isError: boolean;
   onRetry(): void;
 }) {
-  const [showAll, setShowAll] = React.useState(false);
   const expired = warnings?.filter((warning) => warning.severity === 'expired').length ?? 0;
-  const visible = showAll ? warnings : warnings?.slice(0, LIMIT);
 
   return (
     <Panel
@@ -94,19 +86,11 @@ export function WarningsPanel({
       ) : (
         <>
           <div className="divide-y">
-            {visible!.map((warning) => (
+            {warnings.slice(0, LIMIT).map((warning) => (
               <WarningRow key={warning.id} warning={warning} />
             ))}
           </div>
-          {warnings.length > LIMIT && (
-            <button
-              className="w-full border-t px-4 py-2 text-left text-sm text-muted-foreground outline-none hover:text-foreground focus-visible:text-foreground"
-              type="button"
-              onClick={() => setShowAll((value) => !value)}
-            >
-              {showAll ? 'Prikaži manje' : `Još ${warnings.length - LIMIT}…`}
-            </button>
-          )}
+          {warnings.length > LIMIT && <MoreLink count={warnings.length - LIMIT} href={notificationsHref('paznja')} />}
         </>
       )}
     </Panel>
