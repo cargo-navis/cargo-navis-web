@@ -24,7 +24,7 @@ export default function App({ Component, pageProps }: AppProps) {
             <NextHead>
               <style key="font-variables">{fontVariablesCss}</style>
             </NextHead>
-            <div className="font-display isolate">
+            <div className="isolate">
               <Component {...pageProps} />
             </div>
           </AppToaster>

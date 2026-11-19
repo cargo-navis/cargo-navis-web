@@ -17,11 +17,9 @@ the decision in their comment.
   `size="s"` (16px) in buttons, menus, inputs, tabs, sidebar; `size="xs"` (12px) in Badge sm / md and `icon-xs`
   buttons; `size="m"` (20px) in xl / 2xl buttons, Alert, Empty / AlertDialog media tiles. In buttons add
   `data-icon="inline-start"` / `"inline-end"` like the labs. Exact other sizes: `className="size-3.5! [&_svg]:size-full!"`.
-- **Old classes**: what is left of the old `@/ui` (Alert, Box, Button, DisplayIf, FlexLayout, Heading, LoadingSpinner,
-  Skeleton, Text, TextInput + the `hocs` label wrapper, `ui/theme`) serves only Prijava, Postavi lozinku, the root
-  redirect, `LoadingPage` and the Skladište / Kapacitet / Dodjela kamiona placeholders. It runs on legacy tokens
-  (`text-legacy-*`, `rounded-legacy-*`, `legacy-red-*` …, `dark-*`, `light-*`, `text-color-*`;
-  src/styles/legacy-theme.css). Don't use them in new code; delete them when those pages move over. `Icon` stays.
+- **`@/ui`** is down to `Icon` (and the `Box` it renders) plus `ui/theme/fonts.ts` (next/font); the old components,
+  `hocs`, `lib/components/form` and the legacy tokens are gone. Everything else comes from `components/ui` /
+  `components/shared`.
 - Dates via `src/lib/utils/date.ts`, counts via `src/lib/utils/plural.ts`, confirmations via AlertDialog, refetch via
   `useDelayedFlag` + `components/shared/loading`.
 
@@ -92,6 +90,7 @@ the decision in their comment.
 | `@/components/shared/expiry-badge` | `<ExpiryBadge date okLabel="U roku\|Valjana" />` Isteklo prije N d / Istječe za N d (30 days ahead) / green dot / „Datum nije upisan”. |
 | `@/components/shared/loading` | `<LoadingBar />` (sweeping bar, absolute), `<TableLoadingRow colSpan show />` (bar under a table header), `dimmed(isDimmed)` classes, `<Dimmed when>` wrapper. |
 | `@/components/shared/discard-changes` | `useDiscardGuard({ dirty, onClose })` → `{ requestClose, discardDialog }`; `<DiscardChangesDialog>` „Odbaciti promjene?”. |
+| `@/components/shared/password` | `<PasswordInput value onChange(value) invalid? autoComplete="new-password" …>` (eye show / hide), `<PasswordChecklist rules value />` live ticks, `PASSWORD_RULES` (Moj račun: 10+, upper, lower, digit), `passwordRuleError(rules, value)`. |
 
 ## Helpers
 
@@ -103,7 +102,7 @@ the decision in their comment.
 | `@/lib/utils/initials` | `initials('Ivan Horvat')` → „IH”. |
 | `@/lib/hooks` | `useDelayedFlag(flag, 300)` (show loading UI only after 300ms), `useIsMobile()` (< 768px). |
 | `@/lib/flags` | `useFlag('nalogRouteEntry')` (render, SSR-safe), `isFlagOn(name)` (handlers), `setFlagOverride(name, true \| false \| null)`; env `NEXT_PUBLIC_FF_*`, per-browser `localStorage['ff:<name>']`. |
-| `@/lib/utils` | `cn()` (tailwind-merge knows the legacy tokens). |
+| `@/lib/utils` | `cn()` (clsx + tailwind-merge). |
 
 ## Shell (src/components/layout/DashboardLayout)
 
@@ -117,7 +116,7 @@ import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 
 | Prop | What |
 |---|---|
-| `breadcrumbs?: Crumb[]` | `{ label, href? }[]`, last = current page. Optional: without it the trail comes from the route (`breadcrumbs.ts`, e.g. `/dashboard/clients/[id]` → Klijenti › Klijent), so pass it only to show names. `CRUMBS.<section>` = linked section crumbs (home, shipments, vehicleStops, fleet, clients, contractors, employees, analytics, settings, search). Hidden below 768px. |
+| `breadcrumbs?: Crumb[]` | `{ label, href? }[]`, last = current page. Optional: without it the trail comes from the route (`breadcrumbs.ts`, e.g. `/dashboard/clients/[id]` → Klijenti › Klijent), so pass it only to show names. `CRUMBS.<section>` = linked section crumbs (home, shipments, vehicleStops, fleet, clients, contractors, employees, analytics, settings, search, notifications). Hidden below 768px. |
 | `contentClassName?` | Classes for the content area (default `p-5 md:p-7`, inside the rounded inset card). |
 
 - Page structure inside: `<h1 className="font-heading text-3xl font-bold tracking-tight">` + content; the window scrolls
@@ -127,8 +126,12 @@ import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
   Collapsed / expanded is kept in the `sidebar_state` cookie; ⌘B toggles it; phones get it as a sheet.
 - Top bar: ⌘K (`@/components/GlobalSearch`: palette + `addRecentSearchItem()` for „Nedavno”), bell
   (`@/components/AppMenu`: alerts + notifications; `getAlertItemData` / `getNotificationItemData` in `AppMenu/utils`
-  are shared with Početna).
+  are shared with Početna and Obavijesti). Obavijesti = `/dashboard/notifications?tab=paznja|aktivnost` (link with
+  `notificationsHref()` from `pages-components/Dashboard/NotificationsPage/notifications.ts`); no sidebar item.
 - Postavke: `/dashboard/settings/account` (Moj račun) and `/dashboard/settings/company` (Tvrtka); `/dashboard/settings`,
   `/dashboard/tenant`, `/dashboard/tenant/edit` redirect there (next.config.mjs). Flota: `/dashboard/fleet` (one page,
   type tabs `?vrsta=`), vehicle `/dashboard/fleet/:id`, form `/dashboard/fleet/new?vrsta=…`; link with the helpers in
   `pages-components/Dashboard/FleetPage/fleet.ts` (`vehicleHref`, `newVehicleHref` …). The old per-type URLs redirect.
+- Frame colour: `FRAME_STYLE` + `FRAME_CLASS` in `src/components/layout/frame.ts` (the shell). Prijava / Postavi
+  lozinku use `@/components/layout/AuthLayout` (`<AuthLayout pageTitle>` split screen: petrol brand panel left, form
+  right; panel hidden below lg — lab /login layout B) and `<AuthHeader title description />`.

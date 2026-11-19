@@ -18,7 +18,7 @@ switchable (see §7). **Later** = not in this redesign.
   `#13949F` (brand teal-500) stays for the logo and the „Vlastiti” chart series only — it fails contrast for white text.
 - **Dark mode = graphite**: background `#141414`, card / popover / sidebar `#1c1c1c`, muted / accent / secondary
   `#262626`, border white 12 %, text white.
-- **Cargo Navis palettes** (teal, orange, green from `src/ui/theme/colors.ts`) override Tailwind's ramps of the same name.
+- **Cargo Navis palettes** (teal, orange, green in `src/styles/palette.css`) override Tailwind's ramps of the same name.
 - **Named domain tokens** (defined once, light + dark; use the token classes, never raw palette classes):
 
 | Token | Meaning | Light / dark |

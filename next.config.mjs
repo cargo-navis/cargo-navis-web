@@ -22,12 +22,6 @@ if (!PROJECT_ENVS.includes(process.env.PROJECT_ENV)) {
   throw new Error(`Invalid PROJECT_ENV "${process.env.PROJECT_ENV}". Use one of: ${PROJECT_ENVS.join(', ')}.`);
 }
 
-const svgrOptions = {
-  svgoConfig: {
-    plugins: [],
-  },
-};
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   env: {
@@ -59,15 +53,6 @@ const nextConfig = {
         { source: `/dashboard/fleet/${path}/:id/edit`, destination: '/dashboard/fleet/:id/edit', permanent: false },
       ]),
     ];
-  },
-  // SVG imports are React components (@svgr/webpack). Next 16 defaults to Turbopack; package.json runs dev and build
-  // with `--webpack` so this rule (and the rest of the webpack pipeline) keeps working the same as on Next 14.
-  webpack(nextConfig) {
-    nextConfig.module.rules.push({
-      test: /\.svg$/,
-      use: [{ loader: '@svgr/webpack', options: svgrOptions }],
-    });
-    return nextConfig;
   },
 };
 

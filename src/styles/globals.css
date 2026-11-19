@@ -2,7 +2,6 @@
 @import 'tw-animate-css';
 @import './shadcn.css';
 @import './palette.css';
-@import './legacy-theme.css';
 
 @source '..';
 
@@ -348,17 +347,9 @@ html.dark[data-agency='amber'] {
   }
 }
 
-/* Tailwind 3 preflight defaults that Tailwind 4 changed; kept so the old pages look the same. */
+/* Tailwind 3 preflight defaults that Tailwind 4 changed, still kept app-wide (cell padding, placeholder grey, pointer
+ * cursor on buttons, centred <dialog>). */
 @layer base {
-  /* v3 only cleared the background of buttons; v4 also clears it (and the radius) on fields. */
-  input:where(:not([type='button'], [type='reset'], [type='submit'])),
-  select,
-  optgroup,
-  textarea {
-    border-radius: revert;
-    background-color: revert;
-  }
-
   td,
   th {
     padding: revert;
@@ -377,22 +368,6 @@ html.dark[data-agency='amber'] {
   dialog {
     margin: auto;
   }
-}
-
-@utility text-color-1 {
-  @apply text-dark-800 dark:text-light-50;
-}
-
-@utility text-color-2 {
-  @apply text-dark-700 dark:text-light-100;
-}
-
-@utility text-color-3 {
-  @apply text-dark-600 dark:text-light-300;
-}
-
-@utility text-color-4 {
-  @apply text-dark-500 dark:text-light-300;
 }
 
 /* Refetch bar under a header (KAN-55, /overlays/loading): a short segment sweeping left to right. */
@@ -490,4 +465,29 @@ html.dark[data-agency='amber'] {
 svg.tabler-icon {
   width: 100%;
   height: 100%;
+}
+
+/*
+ * Browser autofill (Chrome / Safari) paints its own light-blue fill and black text over our fields, square over the
+ * rounded InputGroup. Keep autofill working, drop its paint: its background is clipped to the text (so it only sits
+ * under the glyphs, which we paint in our own colour) — Chrome's background is `!important` in the UA sheet and a
+ * transition delay no longer holds it back. Two rules, not one selector list: a browser that doesn't know one of the
+ * pseudo-classes would drop the whole list.
+ */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: var(--foreground);
+  caret-color: var(--foreground);
+}
+
+input:autofill,
+textarea:autofill,
+select:autofill {
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: var(--foreground);
+  caret-color: var(--foreground);
 }

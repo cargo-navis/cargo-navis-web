@@ -1,1 +1,0 @@
-export { CapacityPage } from './CapacityPage';

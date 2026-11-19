@@ -1,4 +1,4 @@
-/* Cargo Navis palettes (src/ui/theme/colors.ts), overriding Tailwind's teal / orange / green. */
+/* Cargo Navis palettes, overriding Tailwind's teal / orange / green. */
 @theme {
   --color-teal-50: #e0f7f8;
   --color-teal-100: #b3eef0;
@@ -30,4 +30,7 @@
   --color-green-700: #0e750e;
   --color-green-800: #0b5e0b;
   --color-green-900: #084708;
+
+  /* The old blue-200: @/ui Icon's light focus outline (focus:outline-legacy-blue-200). */
+  --color-legacy-blue-200: #80c1ff;
 }
