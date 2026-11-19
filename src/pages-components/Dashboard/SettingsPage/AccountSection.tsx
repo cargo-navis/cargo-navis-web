@@ -4,12 +4,12 @@ import * as React from 'react';
 
 import { POSITION_LABELS } from '@/components/layout/DashboardLayout/nav';
 import { Panel } from '@/components/shared/panel';
+import { PASSWORD_RULES, PasswordChecklist, PasswordInput, passwordRuleError } from '@/components/shared/password';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group';
 import { Switch } from '@/components/ui/switch';
 import { updatePassword } from '@/lib/api/user';
 import type { User } from '@/lib/api/user.d';
@@ -20,7 +20,6 @@ import {
   registerPushSubscription,
   setPushOptedOut,
 } from '@/lib/hooks/usePushNotificationSubscription';
-import { cn } from '@/lib/utils';
 import { initials } from '@/lib/utils/initials';
 import { unsubscribePushOnLogout } from '@/lib/utils/session';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
@@ -102,70 +101,6 @@ function ProfilePanel({ user }: { user: User }) {
 // Lozinka
 // ---------------------------------------------------------------------------------------------------------------------
 
-const RULES = [
-  {
-    label: 'Najmanje 10 znakova',
-    test: (value: string) => value.length >= 10,
-    error: 'Lozinka mora imati najmanje 10 znakova',
-  },
-  {
-    label: 'Veliko slovo',
-    test: (value: string) => /[A-Z]/.test(value),
-    error: 'Lozinka mora sadržavati najmanje jedno veliko slovo',
-  },
-  {
-    label: 'Malo slovo',
-    test: (value: string) => /[a-z]/.test(value),
-    error: 'Lozinka mora sadržavati najmanje jedno malo slovo',
-  },
-  {
-    label: 'Znamenka',
-    test: (value: string) => /[0-9]/.test(value),
-    error: 'Lozinka mora sadržavati najmanje jednu znamenku',
-  },
-];
-
-function PasswordInput({
-  id,
-  value,
-  onChange,
-  onBlur,
-  invalid,
-  ref,
-}: {
-  id: string;
-  value: string;
-  onChange(value: string): void;
-  onBlur?(): void;
-  invalid?: boolean;
-  ref?: React.Ref<HTMLInputElement>;
-}) {
-  const [shown, setShown] = React.useState(false);
-  return (
-    <InputGroup>
-      <InputGroupInput
-        aria-invalid={invalid || undefined}
-        autoComplete="new-password"
-        id={id}
-        ref={ref}
-        type={shown ? 'text' : 'password'}
-        value={value}
-        onBlur={onBlur}
-        onChange={(event) => onChange(event.target.value)}
-      />
-      <InputGroupAddon align="inline-end">
-        <InputGroupButton
-          aria-label={shown ? 'Sakrij lozinku' : 'Prikaži lozinku'}
-          size="icon-xs"
-          onClick={() => setShown(!shown)}
-        >
-          <Icon icon={shown ? 'IconEyeOff' : 'IconEye'} size="xs" />
-        </InputGroupButton>
-      </InputGroupAddon>
-    </InputGroup>
-  );
-}
-
 function PasswordPanel() {
   const [password, setPassword] = React.useState('');
   const [confirm, setConfirm] = React.useState('');
@@ -175,7 +110,7 @@ function PasswordPanel() {
   const confirmRef = React.useRef<HTMLInputElement>(null);
 
   // Updated by the backend without the current password (updatePassword(newPassword)), like today.
-  const passwordError = !password ? 'Nova lozinka je obavezna' : RULES.find((rule) => !rule.test(password))?.error;
+  const passwordError = !password ? 'Nova lozinka je obavezna' : passwordRuleError(PASSWORD_RULES, password);
   const confirmError = !confirm
     ? 'Potvrda lozinke je obavezna'
     : confirm !== password
@@ -224,25 +159,7 @@ function PasswordPanel() {
               onBlur={() => setTouched((current) => ({ ...current, password: true }))}
               onChange={setPassword}
             />
-            {/* All 4 rules visible from the start, ticked while typing. */}
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-1 pt-1 text-xs">
-              {RULES.map((rule) => {
-                const ok = rule.test(password);
-                return (
-                  <li
-                    className={cn('flex items-center gap-1.5', ok ? 'text-success' : 'text-muted-foreground')}
-                    key={rule.label}
-                  >
-                    <Icon
-                      className={cn('size-3.5! [&_svg]:size-full!', !ok && 'opacity-50')}
-                      icon={ok ? 'IconCheck' : 'IconCircle'}
-                      size="xs"
-                    />
-                    {rule.label}
-                  </li>
-                );
-              })}
-            </ul>
+            <PasswordChecklist rules={PASSWORD_RULES} value={password} />
             {showPasswordError && <FieldError>{showPasswordError}</FieldError>}
           </Field>
           <Field data-invalid={showConfirmError ? true : undefined}>

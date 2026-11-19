@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
 import * as React from 'react';
 
+import { FRAME_CLASS, FRAME_STYLE } from '@/components/layout/frame';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { usePushNotificationSubscription } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
@@ -13,12 +14,8 @@ import { useSidebarOpen } from './useSidebarOpen';
 /** Height of the sticky top bar; pinned table headers sit under it (`top-(--app-header-height,0px)`). */
 const APP_HEADER_HEIGHT = '3.5rem';
 
-// Frame behind the sidebar and around the content card: petrol 6 % in light, teal-900 in dark (DECISIONS §4).
-const FRAME_STYLE = {
-  '--frame-light': 'color-mix(in oklch, #0B5560 6%, white)',
-  '--frame-border': 'color-mix(in oklch, #0B5560 14%, white)',
-  '--app-header-height': APP_HEADER_HEIGHT,
-} as React.CSSProperties;
+// Frame behind the sidebar and around the content card (layout/frame.ts) + the header height for pinned headers.
+const SHELL_STYLE = { ...FRAME_STYLE, '--app-header-height': APP_HEADER_HEIGHT } as React.CSSProperties;
 
 export interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -50,13 +47,7 @@ export const DashboardLayout = ({ children, breadcrumbs, contentClassName }: Das
   }, []);
 
   return (
-    <SidebarProvider
-      // `!`: SidebarProvider sets has-data-[variant=inset]:bg-sidebar (transparent here), which outranks a plain bg-*.
-      className="bg-(--frame-light)! dark:bg-teal-900!"
-      open={open}
-      style={FRAME_STYLE}
-      onOpenChange={setOpen}
-    >
+    <SidebarProvider className={FRAME_CLASS} open={open} style={SHELL_STYLE} onOpenChange={setOpen}>
       <AppSidebar />
       <SidebarInset className="min-w-0">
         <TopBar breadcrumbs={breadcrumbs ?? getRouteBreadcrumbs(pathname)} />

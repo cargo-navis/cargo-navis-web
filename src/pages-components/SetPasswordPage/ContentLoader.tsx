@@ -1,18 +1,16 @@
-import { FlexLayout, Skeleton } from '@/ui';
+import { Skeleton } from '@/components/ui/skeleton';
 
+/** Form placeholder while the router reads the link (first render): two fields and the button. */
 export const ContentLoader = () => (
-  <FlexLayout className="flex-col gap-8">
-    {/* New password field */}
-    <FlexLayout className="flex-col gap-2">
-      <Skeleton borderRadius="xs" height={16} width={100} />
-      <Skeleton borderRadius="s" height={48} width="100%" />
-    </FlexLayout>
-    {/* Confirm password field */}
-    <FlexLayout className="flex-col gap-2">
-      <Skeleton borderRadius="xs" height={16} width={120} />
-      <Skeleton borderRadius="s" height={48} width="100%" />
-    </FlexLayout>
-    {/* Submit button */}
-    <Skeleton borderRadius="m" height={48} width="100%" />
-  </FlexLayout>
+  <div aria-busy="true" className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
+      {[0, 1].map((index) => (
+        <div className="flex flex-col gap-2" key={index}>
+          <Skeleton className="h-4 w-28" />
+          <Skeleton className="h-10 w-full rounded-lg" />
+        </div>
+      ))}
+    </div>
+    <Skeleton className="h-10 w-full rounded-lg" />
+  </div>
 );

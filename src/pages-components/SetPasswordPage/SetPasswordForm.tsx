@@ -1,62 +1,104 @@
-import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { object, ref, string } from 'yup';
+import * as React from 'react';
 
+import { PasswordChecklist, PasswordInput } from '@/components/shared/password';
+import { Button } from '@/components/ui/button';
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { acceptInvite } from '@/lib/api';
-import { FormPasswordInput } from '@/lib/components/form';
 import { showSuccessToast } from '@/lib/utils/toast';
-import { Button, FlexLayout } from '@/ui';
 
-import { InvalidLinkAlert } from './InvalidLinkAlert';
+import { SET_PASSWORD_RULES } from './const';
 import type { FormValues } from './types';
-
-const setPasswordSchema = object({
-  newPassword: string().required('Lozinka je obavezna').min(8, 'Lozinka mora imati najmanje 8 znakova'),
-  confirmPassword: string()
-    .required('Potvrda lozinke je obavezna')
-    .oneOf([ref('newPassword')], 'Lozinke se ne podudaraju'),
-});
+import { validateSetPassword } from './validation';
 
 interface SetPasswordFormProps {
   token: string;
+  /** From the link; only for password managers (hidden username field). */
+  email: string;
+  /** Any failure of accept-invite means the link can't be used (the page swaps the form for InvalidLink). */
+  onLinkRejected(): void;
 }
 
-export const SetPasswordForm = ({ token }: SetPasswordFormProps) => {
+/** Validates on blur and on submit (DECISIONS §2); the button is always enabled and jumps to the first problem. */
+export const SetPasswordForm = ({ token, email, onLinkRejected }: SetPasswordFormProps) => {
   const { push } = useRouter();
-  const [isLinkInvalid, setIsLinkInvalid] = useState(false);
 
-  const formMethods = useForm<FormValues>({
-    defaultValues: { newPassword: '', confirmPassword: '' },
-    resolver: yupResolver(setPasswordSchema),
-    mode: 'onChange',
-  });
+  const [values, setValues] = React.useState<FormValues>({ newPassword: '', confirmPassword: '' });
+  const [touched, setTouched] = React.useState({ newPassword: false, confirmPassword: false });
+  const [submitting, setSubmitting] = React.useState(false);
+  const newPasswordRef = React.useRef<HTMLInputElement>(null);
+  const confirmPasswordRef = React.useRef<HTMLInputElement>(null);
 
-  const { formState, handleSubmit } = formMethods;
-  const { isSubmitting, isValid } = formState;
+  const errors = validateSetPassword(values);
+  const newPasswordError = touched.newPassword ? errors.newPassword : undefined;
+  const confirmPasswordError = touched.confirmPassword ? errors.confirmPassword : undefined;
 
-  async function handleFormSubmit({ newPassword }: FormValues) {
-    try {
-      await acceptInvite({ token, newPassword });
-      showSuccessToast({ title: 'Lozinka uspješno postavljena, možete se prijaviti', timeout: 5000 });
-      await push('/login');
-    } catch {
-      setIsLinkInvalid(true);
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    setTouched({ newPassword: true, confirmPassword: true });
+    if (errors.newPassword) {
+      newPasswordRef.current?.focus();
+      return;
     }
-  }
+    if (errors.confirmPassword) {
+      confirmPasswordRef.current?.focus();
+      return;
+    }
 
-  if (isLinkInvalid) {
-    return <InvalidLinkAlert />;
+    setSubmitting(true);
+    try {
+      await acceptInvite({ token, newPassword: values.newPassword });
+    } catch {
+      setSubmitting(false);
+      onLinkRejected();
+      return;
+    }
+    showSuccessToast({ title: 'Lozinka uspješno postavljena, možete se prijaviti', timeout: 5000 });
+    await push('/login');
   }
 
   return (
-    <FormProvider {...formMethods}>
-      <FlexLayout as="form" className="flex-col gap-8" onSubmit={handleSubmit(handleFormSubmit)}>
-        <FormPasswordInput autoFocus label="Nova lozinka" name="newPassword" placeholder="Unesite novu lozinku" />
-        <FormPasswordInput label="Potvrda lozinke" name="confirmPassword" placeholder="Potvrdite unesenu lozinku" />
-        <Button isDisabled={!isValid} isFullWidth isLoading={isSubmitting} size="l" text="Postavi lozinku" />
-      </FlexLayout>
-    </FormProvider>
+    <form className="flex flex-col gap-6" noValidate onSubmit={handleSubmit}>
+      {email && <input autoComplete="username" hidden name="email" readOnly type="email" value={email} />}
+      <FieldGroup className="gap-4">
+        <Field data-invalid={newPasswordError ? true : undefined}>
+          <FieldLabel htmlFor="set-password-new">Nova lozinka</FieldLabel>
+          <PasswordInput
+            autoComplete="new-password"
+            autoFocus
+            disabled={submitting}
+            id="set-password-new"
+            invalid={!!newPasswordError}
+            name="newPassword"
+            placeholder="Unesite novu lozinku"
+            ref={newPasswordRef}
+            value={values.newPassword}
+            onBlur={() => setTouched((current) => ({ ...current, newPassword: true }))}
+            onChange={(newPassword) => setValues((current) => ({ ...current, newPassword }))}
+          />
+          <PasswordChecklist rules={SET_PASSWORD_RULES} value={values.newPassword} />
+          {newPasswordError && <FieldError>{newPasswordError}</FieldError>}
+        </Field>
+        <Field data-invalid={confirmPasswordError ? true : undefined}>
+          <FieldLabel htmlFor="set-password-confirm">Potvrda lozinke</FieldLabel>
+          <PasswordInput
+            autoComplete="new-password"
+            disabled={submitting}
+            id="set-password-confirm"
+            invalid={!!confirmPasswordError}
+            name="confirmPassword"
+            placeholder="Potvrdite unesenu lozinku"
+            ref={confirmPasswordRef}
+            value={values.confirmPassword}
+            onBlur={() => setTouched((current) => ({ ...current, confirmPassword: true }))}
+            onChange={(confirmPassword) => setValues((current) => ({ ...current, confirmPassword }))}
+          />
+          {confirmPasswordError && <FieldError>{confirmPasswordError}</FieldError>}
+        </Field>
+      </FieldGroup>
+      <Button className="w-full" loading={submitting} type="submit">
+        Postavi lozinku
+      </Button>
+    </form>
   );
 };
