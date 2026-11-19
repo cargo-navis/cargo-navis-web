@@ -50,7 +50,7 @@ function BrandPanel() {
         <Logo inverted />
       </div>
       <div className="relative flex max-w-md flex-col gap-6">
-        <h2 className="font-heading text-3xl font-bold tracking-tight">Nalozi, prijevozi i vozači na jednom mjestu.</h2>
+        <Headline />
         <ul className="flex flex-col gap-3 text-sm text-primary-foreground/90">
           {SELLING_POINTS.map(({ icon, text }) => (
             <li className="flex items-start gap-3" key={text}>
@@ -70,11 +70,41 @@ function BrandPanel() {
   );
 }
 
+/** One of these per visit, picked after mount (SSR and the first render agree), then faded in. */
+const HEADLINES: React.ReactNode[] = [
+  'Nalozi, zarada i vozači na jednom mjestu.',
+  'Svaki nalog, vozač i euro na jednom mjestu.',
+  <>
+    Manje poziva,
+    <br /> više naloga.
+  </>,
+];
+
+function Headline() {
+  // The index, not the node: a headline can hold markup (a line break).
+  const [index, setIndex] = React.useState<number | null>(null);
+
+  React.useEffect(() => {
+    const frame = requestAnimationFrame(() => setIndex(Math.floor(Math.random() * HEADLINES.length)));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+
+  return (
+    <h2
+      className={`min-h-[2lh] font-heading text-3xl font-bold tracking-tight transition-opacity duration-300 ${
+        index === null ? 'opacity-0' : 'opacity-100'
+      }`}
+    >
+      {HEADLINES[index ?? 0]}
+    </h2>
+  );
+}
+
 /** One-liners about the product, shown one at a time on the brand panel. */
 /** `{searchShortcut}` = ⌘K on macOS / iOS, Ctrl K elsewhere (same as the top-bar search field). */
 const TIPS = [
   'Pritisni {searchShortcut} i pronađi bilo koji nalog, vozilo ili zaposlenika.',
-  'Povuci PDF naloga na Naloge — podatke popunjavamo umjesto tebe.',
+  'Povuci PDF naloga na Naloge - podatke popunjavamo umjesto tebe.',
   'Klik na red u Nalozima otvara brzi pregled bez napuštanja popisa.',
   'Desni klik na nalog nudi sve radnje i „Otvori u novom tabu”.',
   'Analitikom usporedi prihod po klijentu, vozaču ili vozilu s prethodnim razdobljem.',
@@ -88,17 +118,30 @@ const TIPS = [
 
 const TIP_SHOWN_MS = 6500;
 const TIP_FADE_MS = 500;
+/** After this long on the page (likely not a user yet), the next slot shows the sales nudge, and it stays. */
+const NUDGE_AFTER_MS = 45_000;
+const DEMO_URL = 'https://www.cargo-navis.com/demo';
 
 /**
  * Rotating „Savjet”: a tip fades + slides in from the right, stays ~6.5 s, then fades + slides back out to the right
  * and the next one comes in. Starts at a random tip (after mount, so SSR and the first render agree). Reduced motion:
- * fade only.
+ * fade only. After NUDGE_AFTER_MS the next slot is „Ipak te zanima više? Dogovori sastanak ↗” (demo page, new tab)
+ * and the rotation stops there, so it can be clicked.
  */
 function TipRotator() {
   const os = useOs();
   const searchShortcut = os === 'macos' || os === 'ios' ? '⌘K' : 'Ctrl K';
   const [index, setIndex] = React.useState(0);
   const [visible, setVisible] = React.useState(false);
+  const [nudge, setNudge] = React.useState(false);
+  const nudgeDue = React.useRef(false);
+
+  React.useEffect(() => {
+    const due = window.setTimeout(() => {
+      nudgeDue.current = true;
+    }, NUDGE_AFTER_MS);
+    return () => window.clearTimeout(due);
+  }, []);
 
   React.useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -109,16 +152,17 @@ function TipRotator() {
   }, []);
 
   React.useEffect(() => {
-    if (!visible) return;
+    if (!visible || nudge) return;
     const leave = window.setTimeout(() => setVisible(false), TIP_SHOWN_MS);
     return () => window.clearTimeout(leave);
-  }, [visible, index]);
+  }, [visible, index, nudge]);
 
   React.useEffect(() => {
     if (visible) return;
     let frame = 0;
     const next = window.setTimeout(() => {
-      setIndex((current) => (current + 1) % TIPS.length);
+      if (nudgeDue.current) setNudge(true);
+      else setIndex((current) => (current + 1) % TIPS.length);
       frame = requestAnimationFrame(() => setVisible(true));
     }, TIP_FADE_MS);
     return () => {
@@ -136,11 +180,36 @@ function TipRotator() {
           visible ? 'translate-x-0 opacity-100' : 'translate-x-6 opacity-0'
         }`}
       >
-        <Icon className="text-primary-foreground" icon="IconBulb" size="m" />
-        <span>
-          <span className="font-semibold">Savjet: </span>
-          {TIPS[index].replace('{searchShortcut}', searchShortcut)}
-        </span>
+        {nudge ? (
+          <>
+            <span>
+              <span
+                aria-hidden="true"
+                className="text-base pr-[2px] inline-block origin-[70%_70%] motion-safe:animate-[hand-wave_2.4s_ease-in-out_infinite]"
+              >
+                👋
+              </span>{' '}
+              Hej, zanima te više?{' '}
+              <a
+                className="inline-flex items-center gap-0.5 font-semibold underline-offset-4 hover:underline"
+                href={DEMO_URL}
+                rel="noopener"
+                target="_blank"
+              >
+                Dogovorimo sastanak
+                <Icon className="size-4! [&_svg]:size-full!" icon="IconArrowUpRight" size="s" />
+              </a>
+            </span>
+          </>
+        ) : (
+          <>
+            <Icon className="text-primary-foreground" icon="IconBulb" size="m" />
+            <span>
+              <span className="font-semibold">Savjet: </span>
+              {TIPS[index].replace('{searchShortcut}', searchShortcut)}
+            </span>
+          </>
+        )}
       </div>
     </div>
   );
