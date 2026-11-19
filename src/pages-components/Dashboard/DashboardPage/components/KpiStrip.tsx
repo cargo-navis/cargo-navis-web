@@ -185,7 +185,7 @@ export function KpiStrip({
                 {change >= 0 ? '+' : '−'}
                 {Math.abs(change).toLocaleString('hr-HR', { maximumFractionDigits: 0 })} %
               </span>
-              vs prethodnih 7
+              u odnosu na prethodnih 7 dana
             </span>
           )
         }

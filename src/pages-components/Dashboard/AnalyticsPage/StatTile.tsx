@@ -34,7 +34,7 @@ export function Delta({
         {up ? '+' : '−'}
         {percent(Math.abs(change))}
       </span>
-      <span className="text-muted-foreground">vs {range}</span>
+      <span className="text-muted-foreground">u odnosu na {range}</span>
     </span>
   );
 }

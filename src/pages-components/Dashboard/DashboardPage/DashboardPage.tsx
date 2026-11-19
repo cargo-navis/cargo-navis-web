@@ -56,7 +56,7 @@ export const DashboardPage = () => {
           stopsError={todayStops.isError ? { onRetry: todayStops.refetch } : undefined}
           today={today}
         />
-        <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_380px]">
+        <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_440px]">
           <TodayPanel
             isError={todayStops.isError}
             lookups={lookups}

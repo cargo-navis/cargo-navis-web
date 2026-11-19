@@ -34,7 +34,7 @@ interface Preset extends DateRangePreset {
   key: PresetKey;
   /** Length in months (ytd: from 1 January; sve: no limit). */
   months?: number;
-  /** „vs …” after a tile's change (agreement: prethodna 3 mjeseca, prethodnih 6 mjeseci, prethodne 2 godine). */
+  /** „u odnosu na …” after a tile's change (agreement: prethodna 3 mjeseca, prethodnih 6 mjeseci, prethodne 2 godine). */
   previous?: string;
 }
 
