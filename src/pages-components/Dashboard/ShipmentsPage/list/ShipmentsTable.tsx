@@ -140,7 +140,7 @@ function useColumns(): ColumnDef<Shipment>[] {
         id: 'price',
         header: () => <SortHeader align="right" field={SortFieldEnum.Price} label="Cijena" />,
         cell: ({ row }) => <PriceCell shipment={row.original} />,
-        size: 130,
+        size: 150,
       },
       {
         id: 'status',
@@ -165,6 +165,23 @@ function useColumns(): ColumnDef<Shipment>[] {
 }
 
 const CELL_PADDING = 'py-3';
+
+/**
+ * Share of the table width each column grows to on wide screens; its `size` (px) stays the minimum. Without it the
+ * route column took all the spare width and utovar, istovar and Teret drifted apart on big screens.
+ */
+const GROW: Partial<Record<string, number>> = { shipment: 16, cargo: 10, vehicle: 13, price: 8, status: 11 };
+
+/**
+ * Width in px from the measured table width: browsers treat calc() / max() with % on table columns as `auto`, so the
+ * share can't be left to CSS. The route column has no width, so it takes what's left (`size: 0` can't: getSize()
+ * clamps to minSize, 20px).
+ */
+function columnWidth(id: string, size: number, tableWidth: number) {
+  if (id === 'route') return undefined;
+  const grow = GROW[id];
+  return grow ? Math.max(size, Math.round((grow / 100) * tableWidth)) : size;
+}
 
 export type TableState = 'loading' | 'data' | 'empty';
 
@@ -203,7 +220,7 @@ export function ShipmentsTable({
     getCoreRowModel: getCoreRowModel(),
   });
   const columnCount = table.getVisibleLeafColumns().length;
-  const { containerRef, overflows } = useHorizontalOverflow();
+  const { containerRef, overflows, width } = useHorizontalOverflow();
 
   return (
     // overflow-clip (not hidden / auto) keeps the rounded corners without making a scroll box, so the header can stick.
@@ -216,7 +233,14 @@ export function ShipmentsTable({
           className="min-w-[74rem] table-fixed"
           containerClassName={overflows ? 'overflow-x-auto' : 'overflow-x-clip'}
         >
-          <TableHeader className="sticky top-(--app-header-height,0px) z-10 bg-muted shadow-[inset_0_-1px_0_var(--border)] [&_tr]:border-b-0">
+          <TableHeader
+            className={cn(
+              // Pinned under the top bar; when the table scrolls sideways it is its own scroll box, so pin to its top.
+              'sticky z-10',
+              overflows ? 'top-0' : 'top-(--app-header-height,0px)',
+              'bg-muted shadow-[inset_0_-1px_0_var(--border)] [&_tr]:border-b-0'
+            )}
+          >
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow className="hover:bg-transparent" key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -226,9 +250,7 @@ export function ShipmentsTable({
                       (header.id === 'price' || header.id === 'status') && 'text-right'
                     )}
                     key={header.id}
-                    // The route column has no width, so it takes what's left. (`size: 0` doesn't work: getSize() clamps
-                    // to minSize, which pinned the column to 20px.)
-                    style={{ width: header.id === 'route' ? undefined : header.getSize() }}
+                    style={{ width: columnWidth(header.id, header.getSize(), width) }}
                   >
                     {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
@@ -305,16 +327,22 @@ export function ShipmentsTable({
 function useHorizontalOverflow() {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [overflows, setOverflows] = React.useState(false);
+  const [width, setWidth] = React.useState(0);
   React.useLayoutEffect(() => {
     const container = containerRef.current?.querySelector<HTMLElement>('[data-slot="table-container"]');
     const table = container?.firstElementChild;
     if (!container || !table) return;
-    const measure = () => setOverflows(table.scrollWidth > container.clientWidth + 1);
+    // The table box, not scrollWidth: scrollWidth counts content spilling out of cells (absolutely placed bits), which
+    // made a table that fits look like it scrolls.
+    const measure = () => {
+      setOverflows((table as HTMLElement).offsetWidth > container.clientWidth + 1);
+      setWidth(container.clientWidth);
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(container);
     observer.observe(table);
     return () => observer.disconnect();
   }, []);
-  return { containerRef, overflows };
+  return { containerRef, overflows, width };
 }

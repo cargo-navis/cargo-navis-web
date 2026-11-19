@@ -183,7 +183,7 @@ export function MarginPill({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium',
+        'inline-flex shrink-0 items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium whitespace-nowrap',
         isLoss ? MARGIN_PILL.loss : MARGIN_PILL.gain,
         className
       )}

@@ -361,7 +361,8 @@ export function RouteTrack({ cargos }: { cargos: Cargo[] }) {
   if (!cargos.length) return <span className="text-muted-foreground">—</span>;
 
   return (
-    <div className="flex flex-col gap-3">
+    // Capped: the route column takes the table's spare width, and on wide screens utovar and istovar drifted far apart.
+    <div className="flex max-w-[44rem] flex-col gap-3">
       {groups.map((group) => {
         const rows = groupRows(group);
         const count = rows.length;
