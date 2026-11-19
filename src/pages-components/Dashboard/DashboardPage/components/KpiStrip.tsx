@@ -171,10 +171,11 @@ export function KpiStrip({
         label="Nalozi · zadnjih 7 dana"
         sub={
           change !== undefined && (
-            <span className="flex items-center gap-1">
+            // The change never breaks; the words after it wrap as a whole on narrow tiles.
+            <span className="flex flex-wrap items-center gap-x-1">
               <span
                 className={cn(
-                  'flex items-center gap-0.5 font-medium',
+                  'flex shrink-0 items-center gap-0.5 font-medium whitespace-nowrap',
                   change >= 0 ? 'text-success' : 'text-destructive'
                 )}
               >
