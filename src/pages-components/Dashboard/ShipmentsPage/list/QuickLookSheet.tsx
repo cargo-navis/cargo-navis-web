@@ -3,6 +3,8 @@
  * floating md (512) side sheet, `modal={false}` and no backdrop, so the table stays usable. A click on another row
  * switches to that nalog; a click anywhere else (filters, sidebar, empty space) closes it, as do × and Esc. Read + small
  * actions: quick assign, invoice status, Uredi and „Otvori nalog” (the full page). Not on phones: the row opens the page.
+ * The route is last, under the data rows: utovari / istovari as a vertical timeline by date (RouteStops, lab /quick-look
+ * variant A), agency nalozi too.
  */
 
 import Link from 'next/link';
@@ -16,13 +18,15 @@ import type { Shipment } from '@/lib/api';
 import { Icon, type IconType } from '@/ui';
 
 import { editShipmentHref, shipmentHref } from '../shared/actions';
+import { isOversize } from '../shared/cargo';
 import { formatEuroExact, getMargin } from '../shared/format';
 import { getInvoiceInfo } from '../shared/invoice';
 import { InvoiceCell, InvoiceStatusMenu } from '../shared/InvoiceCell';
 import { useLookups } from '../shared/lookups';
+import { STATUS_TEXT } from '../shared/tones';
 import { useAssignment } from './AssignmentCell';
 import { CargoCell, MarginPill } from './cells';
-import { RouteTrack } from './RouteTrack';
+import { RouteStops } from './RouteStops';
 
 // Presses and focus moves that don't close the sheet: the table (`data-quick-look-rows` on ShipmentsTable; a row click
 // switches the sheet), toasts (e.g. „Obavijesti” after an assignment), a row's ⋯ / right-click menu and its delete
@@ -117,10 +121,16 @@ function QuickLook({ shipment }: { shipment: Shipment }) {
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
-        <RouteTrack cargos={shipment.cargo} />
-        <div className="mt-4 divide-y border-t text-sm">
+        <div className="divide-y text-sm">
           <DetailRow icon="IconPackage" label="Teret">
             <CargoCell shipment={shipment} />
+            {shipment.cargo.some(isOversize) && (
+              // The ⚠ next to LDM; in the table it's explained in the cell's tooltip, here there's room to say it.
+              <span className={`mt-1.5 flex items-start gap-1.5 text-xs ${STATUS_TEXT.oversize}`}>
+                <Icon className="mt-px" icon="IconAlertTriangle" size="xs" />
+                <span>Izvanredne dimenzije (više od 2,55 × 3 × 13,6 m): potrebna dozvola / pratnja.</span>
+              </span>
+            )}
           </DetailRow>
           {assignment.kind === 'contractor' ? (
             <DetailRow icon="IconBriefcase" label="Kontraktor">
@@ -179,6 +189,12 @@ function QuickLook({ shipment }: { shipment: Shipment }) {
             </div>
           </DetailRow>
         </div>
+        <section className="flex flex-col gap-3 border-t pt-4 pb-1 text-sm">
+          <h3 className="flex items-center gap-1.5 text-muted-foreground">
+            <Icon icon="IconRoute" size="s" /> Utovari i istovari
+          </h3>
+          <RouteStops cargos={shipment.cargo} vehicleStops={shipment.vehicleStops} />
+        </section>
       </div>
 
       <SheetFooter className="flex-row justify-end">

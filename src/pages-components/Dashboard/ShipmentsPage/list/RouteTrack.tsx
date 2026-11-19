@@ -9,29 +9,15 @@ import * as React from 'react';
 
 import { CountryFlag } from '@/components/shared/country-flag';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import type { Cargo } from '@/lib/api';
+import type { Cargo, VehicleStop } from '@/lib/api';
 import { LoadStatus } from '@/lib/api/shipments';
 import { cn } from '@/lib/utils';
 import { getCountryName } from '@/lib/utils/countries';
-import { daysFromToday, formatDateShort } from '@/lib/utils/date';
+import { formatDateShort } from '@/lib/utils/date';
 import { Icon, type IconType } from '@/ui';
 
 import { STATUS_BAR, STATUS_BORDER, STATUS_TEXT, TOOLTIP_PILL } from '../shared/tones';
-
-interface Place {
-  countryCode: string | null;
-  postalCode: string | null;
-  placeName: string | null;
-}
-
-interface TrackCargo {
-  id: string;
-  from: Place | null;
-  readyDate: string | null;
-  to: Place | null;
-  dueDate: string | null;
-  status: LoadStatus;
-}
+import { isPast, type Place, placeKey, type RouteState, routeState, toTrackCargo, type TrackCargo } from './routeData';
 
 interface Endpoint {
   place: Place | null;
@@ -49,9 +35,6 @@ interface RouteGroup {
 }
 
 type Side = 'loading' | 'unloading';
-type RowState = 'waiting' | 'late' | 'partial' | 'transit' | 'done';
-
-const placeKey = (place: Place | null) => (place ? `${place.countryCode ?? ''}-${place.postalCode ?? ''}` : '—');
 
 function groupBy<T>(items: T[], key: (item: T) => string) {
   const map = new Map<string, T[]>();
@@ -125,16 +108,7 @@ function groupRows(group: RouteGroup) {
   });
 }
 
-const isPast = (date: string | null) => !!date && daysFromToday(date) < 0;
-
-function rowState(cargos: TrackCargo[]): RowState {
-  if (cargos.every((cargo) => cargo.status === LoadStatus.Unloaded)) return 'done';
-  if (cargos.every((cargo) => cargo.status !== LoadStatus.NotYetLoaded)) return 'transit';
-  if (cargos.some((cargo) => cargo.status !== LoadStatus.NotYetLoaded)) return 'partial';
-  return cargos.some((cargo) => isPast(cargo.readyDate)) ? 'late' : 'waiting';
-}
-
-const STATE: Record<RowState, { label: string; icon: IconType; text: string; bar: string }> = {
+const STATE: Record<RouteState, { label: string; icon: IconType; text: string; bar: string }> = {
   waiting: { label: 'Čeka utovar', icon: 'IconPackage', text: STATUS_TEXT.muted, bar: STATUS_BAR.idle },
   late: { label: 'Kasni utovar', icon: 'IconClockExclamation', text: 'text-destructive', bar: STATUS_BAR.late },
   partial: {
@@ -144,15 +118,21 @@ const STATE: Record<RowState, { label: string; icon: IconType; text: string; bar
     bar: STATUS_BAR.partial,
   },
   transit: { label: 'Utovareno', icon: 'IconTruck', text: STATUS_TEXT.info, bar: STATUS_BAR.transit },
+  lateUnloading: {
+    label: 'Kasni istovar',
+    icon: 'IconTruck',
+    text: 'text-destructive',
+    bar: STATUS_BAR.late,
+  },
   done: { label: 'Istovareno', icon: 'IconPackageExport', text: STATUS_TEXT.success, bar: STATUS_BAR.done },
 };
 
 /** Status of the cargos at this point, worded for its side. */
-function endpointStatus(point: Endpoint, side: Side): { label: string; state: RowState } {
+function endpointStatus(point: Endpoint, side: Side): { label: string; state: RouteState } {
   const total = point.cargos.length;
   const loaded = point.cargos.filter((cargo) => cargo.status !== LoadStatus.NotYetLoaded).length;
   const unloaded = point.cargos.filter((cargo) => cargo.status === LoadStatus.Unloaded).length;
-  const state = rowState(point.cargos);
+  const state = routeState(point.cargos);
   if (side === 'loading') {
     if (loaded === total) return { label: total > 1 ? `Utovareno (${total})` : 'Utovareno', state: 'transit' };
     if (loaded > 0) return { label: `${loaded}/${total} utovareno`, state: 'partial' };
@@ -160,6 +140,7 @@ function endpointStatus(point: Endpoint, side: Side): { label: string; state: Ro
   }
   if (unloaded === total) return { label: total > 1 ? `Istovareno (${total})` : 'Istovareno', state: 'done' };
   if (unloaded > 0) return { label: `${unloaded}/${total} istovareno`, state: 'partial' };
+  if (state === 'lateUnloading') return { label: 'Kasni istovar', state };
   if (loaded > 0) return { label: loaded === total ? 'Na putu' : `${loaded}/${total} na putu`, state: 'transit' };
   return { label: 'Još nije utovareno', state: 'waiting' };
 }
@@ -246,7 +227,14 @@ function Stacked({ point, side, hideCount }: { point: Endpoint; side: Side; hide
   );
 }
 
-const PROGRESS: Record<RowState, number> = { waiting: 0, late: 0, partial: 30, transit: 55, done: 100 };
+const PROGRESS: Record<RouteState, number> = {
+  waiting: 0,
+  late: 0,
+  partial: 30,
+  transit: 55,
+  lateUnloading: 55,
+  done: 100,
+};
 /** Gap around the 16px icon: lines stop short of it, so the row tint shows through. */
 const GAP = '1.25rem';
 
@@ -255,7 +243,7 @@ function Segment({ from, to, className }: { from: string; to: string; className:
 }
 
 /** One progress line, left → right. */
-function TrackLine({ state }: { state: RowState }) {
+function TrackLine({ state }: { state: RouteState }) {
   const progress = PROGRESS[state];
   const { bar, text, label, icon } = STATE[state];
   return (
@@ -296,7 +284,7 @@ const CONNECTOR = {
 
 /** Colour of the shared part (trunk + bar + elbows) of a fan-out / fan-in. */
 function trunkColor(group: RouteGroup, fanOut: boolean) {
-  const state = rowState(group.left.flatMap((point) => point.cargos));
+  const state = routeState(group.left.flatMap((point) => point.cargos));
   if (state === 'done') return CONNECTOR.done;
   if (fanOut)
     return state === 'transit' || state === 'partial'
@@ -336,28 +324,12 @@ function Elbow({
   );
 }
 
-function toTrackCargo(cargo: Cargo): TrackCargo {
-  const place = (address: Cargo['loadingAddress'] | null | undefined): Place | null =>
-    address
-      ? {
-          countryCode: address.countryCode || null,
-          postalCode: address.postalCode || null,
-          placeName: address.placeName,
-        }
-      : null;
-  return {
-    id: cargo.id,
-    from: place(cargo.loadingAddress),
-    readyDate: cargo.loadingReadyDate ?? null,
-    to: place(cargo.unloadingAddress),
-    dueDate: cargo.unloadingDueDate ?? null,
-    status: cargo.loadStatus ?? LoadStatus.NotYetLoaded,
-  };
-}
-
 /** The whole cell. */
-export function RouteTrack({ cargos }: { cargos: Cargo[] }) {
-  const groups = React.useMemo(() => buildGroups(cargos.map(toTrackCargo)), [cargos]);
+export function RouteTrack({ cargos, vehicleStops }: { cargos: Cargo[]; vehicleStops?: VehicleStop[] }) {
+  const groups = React.useMemo(
+    () => buildGroups(cargos.map((cargo) => toTrackCargo(cargo, vehicleStops))),
+    [cargos, vehicleStops]
+  );
   if (!cargos.length) return <span className="text-muted-foreground">—</span>;
 
   return (
@@ -375,7 +347,7 @@ export function RouteTrack({ cargos }: { cargos: Cargo[] }) {
               style={{ gridTemplateColumns: 'minmax(0,1fr) 4.75rem minmax(0,1fr)' }}
             >
               <Stacked point={rows[0].left} side="loading" />
-              <TrackLine state={rowState(rows[0].cargos)} />
+              <TrackLine state={routeState(rows[0].cargos)} />
               <Stacked point={rows[0].right} side="unloading" />
             </div>
           );
@@ -420,7 +392,7 @@ export function RouteTrack({ cargos }: { cargos: Cargo[] }) {
                 >
                   <Elbow color={trunk} count={count} index={index} side={fanOut ? 'left' : 'right'} />
                   <div className={cn('w-full', fanOut ? 'ml-3' : 'mr-3')}>
-                    <TrackLine state={rowState(row.cargos)} />
+                    <TrackLine state={routeState(row.cargos)} />
                   </div>
                 </div>
                 <div
