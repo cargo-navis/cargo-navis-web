@@ -41,10 +41,7 @@ function CommandDialog({
         <DialogTitle>{title}</DialogTitle>
         <DialogDescription>{description}</DialogDescription>
       </DialogHeader>
-      <DialogContent
-        className={cn('top-1/3 translate-y-0 overflow-hidden rounded-xl! p-0', className)}
-        showCloseButton={showCloseButton}
-      >
+      <DialogContent className={cn('overflow-hidden rounded-xl! p-0', className)} showCloseButton={showCloseButton}>
         {children}
       </DialogContent>
     </Dialog>
@@ -54,7 +51,8 @@ function CommandDialog({
 function CommandInput({ className, ...props }: React.ComponentProps<typeof CommandPrimitive.Input>) {
   return (
     <div className="p-1 pb-0" data-slot="command-input-wrapper">
-      <InputGroup className="h-8! rounded-lg! border-input/30 bg-input/30 shadow-none! *:data-[slot=input-group-addon]:pl-2!">
+      {/* Cargo Navis: a plain field (no fill, border or focus ring); the line under it separates it from the list. */}
+      <InputGroup className="h-8! rounded-lg! border-transparent! bg-transparent! shadow-none! ring-0! dark:bg-transparent! *:data-[slot=input-group-addon]:pl-2!">
         <CommandPrimitive.Input
           className={cn('w-full text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50', className)}
           data-slot="command-input"
