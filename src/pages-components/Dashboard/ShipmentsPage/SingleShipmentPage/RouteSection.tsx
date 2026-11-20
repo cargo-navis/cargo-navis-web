@@ -35,7 +35,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { Cargo, Shipment } from '@/lib/api';
-import { useCompleteVehicleStop, useUncompleteVehicleStop, useUploadVehicleStopFile } from '@/lib/hooks';
+import { useUploadVehicleStopFile } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
 import {
   daysFromToday,
@@ -46,7 +46,6 @@ import {
   formatWeekday,
 } from '@/lib/utils/date';
 import { pluralCount } from '@/lib/utils/plural';
-import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Icon } from '@/ui';
 
 import {
@@ -74,6 +73,7 @@ import { isCustomCargo } from '../shared/cargo';
 import { formatNumber } from '../shared/format';
 import { NEXT_STOP_CARD, OVERDUE_STOP_CARD, STATUS_BAR, STATUS_TEXT } from '../shared/tones';
 import { uploadFiles as uploadWithLimit } from '../shared/upload';
+import { useToggleStop, WithReason } from '../shared/vehicleStopConfirm';
 
 const UTOVARI = ['utovar', 'utovara', 'utovara'] as const;
 const ISTOVARI = ['istovar', 'istovara', 'istovara'] as const;
@@ -278,73 +278,9 @@ function RouteRow({
   );
 }
 
-/** Disabled with the reason in a tooltip instead of failing after the click. */
-function WithReason({ reason, children }: { reason?: string; children: React.ReactElement }) {
-  if (!reason) return children;
-  return (
-    <Tooltip>
-      {/* span: disabled buttons get no hover, the tooltip anchors on the wrapper */}
-      <TooltipTrigger render={<span className="inline-flex" />}>{children}</TooltipTrigger>
-      <TooltipContent className="max-w-64">{reason}</TooltipContent>
-    </Tooltip>
-  );
-}
-
 // ---------------------------------------------------------------------------------------------------------------------
 // Own nalog with a vehicle: the vehicle stops
 // ---------------------------------------------------------------------------------------------------------------------
-
-const STOP_WORDS = {
-  loading: { confirm: 'Potvrdi utovar', confirmed: 'Utovar potvrđen', undone: 'Utovar označen nedovršenim' },
-  unloading: { confirm: 'Potvrdi istovar', confirmed: 'Istovar potvrđen', undone: 'Istovar označen nedovršenim' },
-  // A stop with a utovar and an istovar of this nalog is one visit: confirmed together.
-  both: {
-    confirm: 'Potvrdi utovar i istovar',
-    confirmed: 'Utovar i istovar potvrđeni',
-    undone: 'Utovar i istovar označeni nedovršenima',
-  },
-} as const;
-
-const wordsFor = (kinds: RouteStopKind[]) => STOP_WORDS[kinds.length > 1 ? 'both' : kinds[0]];
-
-/** Confirm / undo a vehicle stop (today's ToggleStopCompletionButton rules and messages). */
-function useToggleStop(row: VehicleRouteStop) {
-  const { stop } = row;
-  const { mutateAsync: complete, isPending: isCompleting } = useCompleteVehicleStop(stop.id);
-  const { mutateAsync: uncomplete, isPending: isUncompleting } = useUncompleteVehicleStop(stop.id);
-  const words = wordsFor(row.kinds);
-  const place = stop.address?.placeName ?? undefined;
-
-  async function toggle() {
-    try {
-      if (stop.completedAt) {
-        await uncomplete();
-        showSuccessToast({ title: words.undone, description: place });
-      } else {
-        await complete();
-        showSuccessToast({ title: words.confirmed, description: place });
-      }
-    } catch (error) {
-      console.error(error);
-      const errorCode = (error as { response?: { data?: { errorCode?: string } } })?.response?.data?.errorCode;
-      if (errorCode === 'CARGO_NOT_YET_LOADED') {
-        showErrorToast({
-          title: 'Istovar nije potvrđen: teret još nije utovaren.',
-          description: 'Prvo potvrdi utovar.',
-        });
-      } else if (errorCode === 'CARGO_STATUS_CHANGED_BY_LATER_STOP') {
-        showErrorToast({
-          title: 'Utovar nije poništen: teret je već istovaren.',
-          description: 'Prvo poništi taj istovar.',
-        });
-      } else {
-        showErrorToast({ title: 'Promjena nije spremljena. Pokušaj ponovno.' });
-      }
-    }
-  }
-
-  return { toggle, words, isPending: isCompleting || isUncompleting };
-}
 
 function VehicleStopMenu({
   row,

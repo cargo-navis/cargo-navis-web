@@ -33,6 +33,7 @@ import { Icon, type IconType } from '@/ui';
 import { AGENCY_STATUS_LABEL } from '../shared/cargo';
 import { useSetCargoStatus } from '../shared/cargoStatus';
 import { STATUS_BAR, STATUS_TEXT } from '../shared/tones';
+import { ConfirmStopButton } from '../shared/vehicleStopConfirm';
 import {
   type AgencyRouteStop,
   agencyStopChanges,
@@ -40,6 +41,7 @@ import {
   agencyUndoBlocked,
   buildAgencyRouteStops,
   buildRouteStops,
+  buildVehicleRouteStops,
   type RouteStop,
   type RouteStopState,
   toTrackCargo,
@@ -141,12 +143,37 @@ function StopPlace({ stop }: { stop: Pick<RouteStop, 'place' | 'done'> }) {
 /** A finished stop says what happened, not just what it was. */
 export const DONE_LABEL = { loading: 'Utovareno', unloading: 'Istovareno' } as const;
 
-export function RouteStops({ cargos, vehicleStops }: { cargos: Cargo[]; vehicleStops?: VehicleStop[] }) {
+export function RouteStops({
+  cargos,
+  vehicleStops,
+  canConfirm = false,
+}: {
+  cargos: Cargo[];
+  vehicleStops?: VehicleStop[];
+  /** Own nalog with a vehicle: „✓ Potvrdi utovar / istovar” for the vehicle's next stop (as on the Nalog detail). */
+  canConfirm?: boolean;
+}) {
   const stops = React.useMemo(
     () => buildRouteStops(cargos.map((cargo) => toTrackCargo(cargo, vehicleStops))),
     [cargos, vehicleStops]
   );
   const cargoNumber = React.useMemo(() => new Map(cargos.map((cargo, index) => [cargo.id, index + 1])), [cargos]);
+  // The vehicle's next stop, shown on the first row (same kind) that carries one of its tereti. Rows here are per
+  // utovar / istovar of the tereti, the vehicle's stops can group them differently.
+  const nextVehicleStop = React.useMemo(() => {
+    if (!canConfirm || !vehicleStops?.length) return undefined;
+    const rows = buildVehicleRouteStops(
+      vehicleStops,
+      cargos.map((cargo) => cargo.id)
+    );
+    return rows.find((row) => NEXT.includes(row.state));
+  }, [canConfirm, cargos, vehicleStops]);
+  const confirmKey = nextVehicleStop
+    ? stops.find((stop) => {
+        const ids = stop.kind === 'loading' ? nextVehicleStop.loadingIds : nextVehicleStop.unloadingIds;
+        return !stop.done && stop.cargos.some((cargo) => ids.includes(cargo.id));
+      })?.key
+    : undefined;
   if (!stops.length) return <span className="text-muted-foreground">—</span>;
 
   const loadings = stops.filter((stop) => stop.kind === 'loading').length;
@@ -217,6 +244,11 @@ export function RouteStops({ cargos, vehicleStops }: { cargos: Cargo[]; vehicleS
                     </Badge>
                   ))}
                 </span>
+                {nextVehicleStop && stop.key === confirmKey && (
+                  <span className="pt-1">
+                    <ConfirmStopButton row={nextVehicleStop} size="xs" />
+                  </span>
+                )}
               </div>
             </li>
           );

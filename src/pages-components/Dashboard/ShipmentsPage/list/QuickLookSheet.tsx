@@ -2,7 +2,8 @@
  * Quick look at a nalog from the Nalozi list (DECISIONS §3 Sheet, labs /overlays/sheet + /overlays QuickLookSheet):
  * floating md (512) side sheet, `modal={false}` and no backdrop, so the table stays usable. A click on another row
  * switches to that nalog; a click anywhere else (filters, sidebar, empty space) closes it, as do × and Esc. Read + small
- * actions: quick assign, invoice status, Uredi and „Otvori nalog” (the full page). Not on phones: the row opens the page.
+ * actions: quick assign, invoice status, „✓ Potvrdi utovar / istovar” on the vehicle's next stop (own nalog with a
+ * vehicle, as on the Nalog detail; undo stays there), Uredi and „Otvori nalog” (the full page). Not on phones: the row opens the page.
  * The route is last, under the data rows: utovari / istovari as a vertical timeline by date (RouteStops, lab /quick-look
  * variant A). Agency nalozi (lab „Nalog: Agencijski”): nobody reports, the dispatcher marks each teret by hand — a
  * „Status tereta ▸” per teret in the Teret row, and „Relacija” („Planirano s naloga.”) with a mark button per stop
@@ -237,7 +238,11 @@ function QuickLook({ shipment }: { shipment: Shipment }) {
               <h3 className="flex items-center gap-1.5 text-muted-foreground">
                 <Icon icon="IconRoute" size="s" /> Utovari i istovari
               </h3>
-              <RouteStops cargos={shipment.cargo} vehicleStops={shipment.vehicleStops} />
+              <RouteStops
+                canConfirm={assignment.kind !== 'contractor' && !!assignment.vehicle}
+                cargos={shipment.cargo}
+                vehicleStops={shipment.vehicleStops}
+              />
             </>
           )}
         </section>
