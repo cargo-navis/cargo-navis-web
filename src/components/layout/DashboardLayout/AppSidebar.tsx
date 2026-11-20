@@ -24,10 +24,12 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSkeleton,
+  SidebarMenuSub,
+  SidebarMenuSubButton,
+  SidebarMenuSubItem,
   SidebarRail,
 } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -69,26 +71,47 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               {items.map((item) => (
-                <SidebarMenuItem key={item.key}>
-                  <SidebarMenuButton
-                    isActive={item.match(pathname)}
-                    render={<Link href={item.href} />}
-                    tooltip={item.label}
-                  >
-                    <Icon icon={item.icon} size="s" />
-                    <span>{item.label}</span>
-                  </SidebarMenuButton>
-                  {item.action && (
-                    // Today „Novi Nalog” is a sub item; here a + that shows on hover.
-                    <SidebarMenuAction
-                      aria-label={item.action.label}
-                      render={<Link href={item.action.href} title={item.action.label} />}
-                      showOnHover
+                <React.Fragment key={item.key}>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      // On „Novi nalog” only its sub-item is active, not Nalozi too.
+                      isActive={item.match(pathname) && pathname !== item.action?.href}
+                      render={<Link href={item.href} />}
+                      tooltip={item.label}
                     >
-                      <Icon icon="IconPlus" size="s" />
-                    </SidebarMenuAction>
+                      <Icon icon={item.icon} size="s" />
+                      <span>{item.label}</span>
+                    </SidebarMenuButton>
+                    {item.action && (
+                      // „+ Novi nalog” always visible under its item (decided 2026-11-20, lab /dashboard option C;
+                      // replaces the hover +). Sub menus hide in the collapsed sidebar — the icon item below takes over.
+                      <SidebarMenuSub>
+                        <SidebarMenuSubItem>
+                          <SidebarMenuSubButton
+                            isActive={pathname === item.action.href}
+                            render={<Link href={item.action.href} />}
+                          >
+                            <Icon icon="IconPlus" size="s" />
+                            <span>{item.action.label}</span>
+                          </SidebarMenuSubButton>
+                        </SidebarMenuSubItem>
+                      </SidebarMenuSub>
+                    )}
+                  </SidebarMenuItem>
+                  {item.action && (
+                    // Collapsed sidebar only: a + right under the item's icon, same colours, tooltip with the label.
+                    <SidebarMenuItem className="hidden group-data-[collapsible=icon]:block">
+                      <SidebarMenuButton
+                        isActive={pathname === item.action.href}
+                        render={<Link href={item.action.href} />}
+                        tooltip={item.action.label}
+                      >
+                        <Icon icon="IconPlus" size="s" />
+                        <span>{item.action.label}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   )}
-                </SidebarMenuItem>
+                </React.Fragment>
               ))}
             </SidebarMenu>
           </SidebarGroupContent>

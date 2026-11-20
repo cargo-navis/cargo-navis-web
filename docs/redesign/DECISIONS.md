@@ -121,7 +121,8 @@ switchable (see §7). **Later** = not in this redesign.
 - **Company name** at the top of the sidebar (no switcher — one company per user) → Postavke › Tvrtka.
 - **User menu** (bottom): email, „Moj račun”, **Izgled** (Sustav / Svijetla / Tamna, segmented, menu stays open), Odjava.
   No „Postavke” item in the sidebar footer.
-- Navigation: Početna, Nalozi (+ hover „Novi nalog”), Prijevozi, **Flota (one item)**, Klijenti, Kontraktori, Zaposlenici,
+- Navigation: Početna, Nalozi (+ always-visible sub-item „+ Novi nalog” in the normal nav colours; collapsed sidebar: a
+  „+” icon under Nalozi — decided 2026-11-20, replaces the hover +), Prijevozi, **Flota (one item)**, Klijenti, Kontraktori, Zaposlenici,
   Analitika.
 
 ---
