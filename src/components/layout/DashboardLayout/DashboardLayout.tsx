@@ -51,7 +51,15 @@ export const DashboardLayout = ({ children, breadcrumbs, contentClassName }: Das
       <AppSidebar />
       <SidebarInset className="min-w-0">
         <TopBar breadcrumbs={breadcrumbs ?? getRouteBreadcrumbs(pathname)} />
-        <div className={cn('flex-1 p-5 md:p-7', contentClassName)}>{children}</div>
+        {/* A not-found block (components/shared/not-found) fills the card and sits in its middle. */}
+        <div
+          className={cn(
+            'flex-1 p-5 md:p-7 has-[>[data-not-found]]:flex has-[>[data-not-found]]:flex-col',
+            contentClassName
+          )}
+        >
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

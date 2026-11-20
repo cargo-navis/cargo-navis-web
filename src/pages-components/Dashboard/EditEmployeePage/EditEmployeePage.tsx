@@ -2,6 +2,7 @@ import { useRouter } from 'next/router';
 
 import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
+import { EntityNotFound } from '@/components/shared/not-found';
 import { Button } from '@/components/ui/button';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -49,25 +50,23 @@ export const EditEmployeePage = () => {
             </div>
           ))}
         </div>
-      ) : (
+      ) : isError ? (
         <div className="rounded-xl border">
           <Empty>
             <EmptyHeader>
-              <EmptyMedia variant={isError ? 'danger' : 'icon'}>
-                <Icon icon={isError ? 'IconAlertTriangle' : 'IconUsers'} size="m" />
+              <EmptyMedia variant="danger">
+                <Icon icon="IconAlertTriangle" size="m" />
               </EmptyMedia>
-              <EmptyTitle>{isError ? 'Podaci se nisu učitali' : 'Zaposlenik nije pronađen'}</EmptyTitle>
-              <EmptyDescription>
-                {isError ? 'Provjeri vezu i pokušaj ponovno.' : 'Možda je poveznica pogrešna.'}
-              </EmptyDescription>
+              <EmptyTitle>Podaci se nisu učitali</EmptyTitle>
+              <EmptyDescription>Provjeri vezu i pokušaj ponovno.</EmptyDescription>
             </EmptyHeader>
-            {isError && (
-              <Button variant="outline" onClick={() => void refetch()}>
-                <Icon data-icon="inline-start" icon="IconRefresh" size="s" /> Pokušaj ponovno
-              </Button>
-            )}
+            <Button variant="outline" onClick={() => void refetch()}>
+              <Icon data-icon="inline-start" icon="IconRefresh" size="s" /> Pokušaj ponovno
+            </Button>
           </Empty>
         </div>
+      ) : (
+        <EntityNotFound kind="employee" />
       )}
     </DashboardLayout>
   );

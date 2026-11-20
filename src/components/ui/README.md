@@ -89,6 +89,7 @@ the decision in their comment.
 | `@/components/shared/invoice-status-badge` | `<InvoiceStatusBadge status isOverdue? daysPastDue? unloadedDaysAgo? size? />` Nefakturiran amber (urgent ≥ 7 d) · Fakturiran blue · Kasni red · Plaćen green; `INVOICE_STATUS_LABEL`, `INVOICE_AFTER_DAYS`. |
 | `@/components/shared/expiry-badge` | `<ExpiryBadge date okLabel="U roku\|Valjana" />` Isteklo prije N d / Istječe za N d (30 days ahead) / green dot / „Datum nije upisan”. |
 | `@/components/shared/loading` | `<LoadingBar />` (sweeping bar, absolute), `<TableLoadingRow colSpan show />` (bar under a table header), `dimmed(isDimmed)` classes, `<Dimmed when>` wrapper. |
+| `@/components/shared/not-found` | 404 (lab /lab-404): `<EntityNotFound kind="shipment\|vehicle\|employee\|client\|contractor" />` (D: „Nalog nije pronađen” + list / new) for a real 404 / missing entity only, as a direct child of DashboardLayout (fills the card); `<PageNotFound />` (A, unknown /dashboard path); `isNotFoundError(error)`. Copy in `not-found-copy.ts`; pages/404 picks A (/dashboard/…) or B „Ruta” (elsewhere). |
 | `@/components/shared/discard-changes` | `useDiscardGuard({ dirty, onClose })` → `{ requestClose, discardDialog }`; `<DiscardChangesDialog>` „Odbaciti promjene?”. |
 | `@/components/shared/password` | `<PasswordInput value onChange(value) invalid? autoComplete="new-password" …>` (eye show / hide), `<PasswordChecklist rules value />` live ticks, `PASSWORD_RULES` (Moj račun: 10+, upper, lower, digit), `passwordRuleError(rules, value)`. |
 

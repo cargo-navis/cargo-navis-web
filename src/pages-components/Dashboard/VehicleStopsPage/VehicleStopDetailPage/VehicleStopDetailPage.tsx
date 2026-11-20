@@ -25,6 +25,7 @@ import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
 import { DriverAvatar } from '@/components/shared/driver-avatar';
 import { dimmed, LoadingBar } from '@/components/shared/loading';
+import { EntityNotFound, isNotFoundError } from '@/components/shared/not-found';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -69,6 +70,7 @@ export const VehicleStopDetailPage = () => {
 
   const {
     data,
+    error,
     isPending: isLoadingStops,
     isError,
     isFetching,
@@ -242,28 +244,33 @@ export const VehicleStopDetailPage = () => {
     );
   }
 
+  // The vehicles list has no such vehicle (deleted from the fleet), or the route itself answers 404.
+  if ((vehicles && !vehicle && !isError) || isNotFoundError(error)) {
+    return (
+      <DashboardLayout>
+        <EntityNotFound kind="vehicle" />
+      </DashboardLayout>
+    );
+  }
+
   if (!vehicle || isError) {
     return (
       <DashboardLayout>
         <BackLink />
         <Empty className="min-h-80">
           <EmptyHeader>
-            <EmptyMedia variant={isError ? 'danger' : 'icon'}>
-              <Icon icon={isError ? 'IconAlertTriangle' : 'IconTruckOff'} size="m" />
+            <EmptyMedia variant="danger">
+              <Icon icon="IconAlertTriangle" size="m" />
             </EmptyMedia>
-            <EmptyTitle>{isError ? 'Ruta se nije učitala' : 'Vozilo nije pronađeno'}</EmptyTitle>
-            <EmptyDescription>
-              {isError ? 'Provjerite vezu i pokušajte ponovno.' : 'Možda je obrisano iz flote.'}
-            </EmptyDescription>
+            <EmptyTitle>Ruta se nije učitala</EmptyTitle>
+            <EmptyDescription>Provjerite vezu i pokušajte ponovno.</EmptyDescription>
           </EmptyHeader>
-          {isError && (
-            <EmptyContent>
-              <Button variant="outline" onClick={() => void refetch()}>
-                <Icon data-icon="inline-start" icon="IconRefresh" size="s" />
-                Pokušaj ponovno
-              </Button>
-            </EmptyContent>
-          )}
+          <EmptyContent>
+            <Button variant="outline" onClick={() => void refetch()}>
+              <Icon data-icon="inline-start" icon="IconRefresh" size="s" />
+              Pokušaj ponovno
+            </Button>
+          </EmptyContent>
         </Empty>
       </DashboardLayout>
     );

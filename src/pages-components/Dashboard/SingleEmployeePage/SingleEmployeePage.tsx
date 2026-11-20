@@ -6,6 +6,7 @@ import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
 import { CountryFlag } from '@/components/shared/country-flag';
 import { ExpiryBadge } from '@/components/shared/expiry-badge';
+import { EntityNotFound } from '@/components/shared/not-found';
 import { Panel } from '@/components/shared/panel';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -61,29 +62,23 @@ export const SingleEmployeePage = () => {
         <EmployeeDetail employee={employee} />
       ) : isLoading || !id ? (
         <DetailSkeleton />
-      ) : (
+      ) : isError ? (
         <div className="rounded-xl border">
           <Empty>
             <EmptyHeader>
-              <EmptyMedia variant={isError ? 'danger' : 'icon'}>
-                <Icon icon={isError ? 'IconAlertTriangle' : 'IconUsers'} size="m" />
+              <EmptyMedia variant="danger">
+                <Icon icon="IconAlertTriangle" size="m" />
               </EmptyMedia>
-              <EmptyTitle>{isError ? 'Podaci se nisu učitali' : 'Zaposlenik nije pronađen'}</EmptyTitle>
-              <EmptyDescription>
-                {isError ? 'Provjeri vezu i pokušaj ponovno.' : 'Možda je poveznica pogrešna.'}
-              </EmptyDescription>
+              <EmptyTitle>Podaci se nisu učitali</EmptyTitle>
+              <EmptyDescription>Provjeri vezu i pokušaj ponovno.</EmptyDescription>
             </EmptyHeader>
-            {isError ? (
-              <Button variant="outline" onClick={() => void refetch()}>
-                <Icon data-icon="inline-start" icon="IconRefresh" size="s" /> Pokušaj ponovno
-              </Button>
-            ) : (
-              <Button nativeButton={false} render={<Link href="/dashboard/employees" />} variant="outline">
-                <Icon data-icon="inline-start" icon="IconArrowLeft" size="s" /> Zaposlenici
-              </Button>
-            )}
+            <Button variant="outline" onClick={() => void refetch()}>
+              <Icon data-icon="inline-start" icon="IconRefresh" size="s" /> Pokušaj ponovno
+            </Button>
           </Empty>
         </div>
+      ) : (
+        <EntityNotFound kind="employee" />
       )}
     </DashboardLayout>
   );

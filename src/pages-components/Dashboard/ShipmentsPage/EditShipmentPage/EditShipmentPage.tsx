@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 
 import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
+import { EntityNotFound, isNotFoundError } from '@/components/shared/not-found';
 import { useCurrentTenant, useShipment } from '@/lib/hooks';
 import { NalogForm } from '@/pages-components/Dashboard/ShipmentsPage/NewShipmentPage/NalogForm';
 import {
@@ -31,7 +32,9 @@ export const EditShipmentPage = () => {
   );
 
   let content: ReactNode;
-  if (failed || tenantQuery.isError || shipmentQuery.isError) {
+  if (isNotFoundError(shipmentQuery.error)) {
+    content = <EntityNotFound kind="shipment" />;
+  } else if (failed || tenantQuery.isError || shipmentQuery.isError) {
     content = (
       <NalogFormProblem
         backHref={id ? shipmentHref(id) : '/dashboard/shipments'}

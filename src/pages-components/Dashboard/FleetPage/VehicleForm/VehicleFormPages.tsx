@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 
 import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
+import { EntityNotFound } from '@/components/shared/not-found';
 import { Button } from '@/components/ui/button';
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -56,16 +57,14 @@ export const EditVehiclePage = () => {
             <Skeleton className="h-40 rounded-xl" key={index} />
           ))}
         </div>
-      ) : !vehicle ? (
+      ) : isError && !vehicle ? (
         <Empty>
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <Icon icon="IconTruck" size="m" />
             </EmptyMedia>
-            <EmptyTitle>{isError ? 'Vozilo se nije učitalo' : 'Vozilo nije pronađeno'}</EmptyTitle>
-            <EmptyDescription>
-              {isError ? 'Provjeri vezu i pokušaj ponovno.' : 'Možda je obrisano ili poveznica nije ispravna.'}
-            </EmptyDescription>
+            <EmptyTitle>Vozilo se nije učitalo</EmptyTitle>
+            <EmptyDescription>Provjeri vezu i pokušaj ponovno.</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Button nativeButton={false} render={<Link href={fleetListHref()} />} variant="outline">
@@ -73,6 +72,8 @@ export const EditVehiclePage = () => {
             </Button>
           </EmptyContent>
         </Empty>
+      ) : !vehicle ? (
+        <EntityNotFound kind="vehicle" />
       ) : (
         <div className="flex flex-col gap-6">
           <h1 className="font-heading text-3xl font-bold tracking-tight">

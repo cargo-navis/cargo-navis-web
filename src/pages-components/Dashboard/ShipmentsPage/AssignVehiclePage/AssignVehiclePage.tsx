@@ -17,6 +17,7 @@ import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
 import { CountryFlag } from '@/components/shared/country-flag';
 import { DatePicker } from '@/components/shared/date-picker';
+import { EntityNotFound, isNotFoundError } from '@/components/shared/not-found';
 import { Panel } from '@/components/shared/panel';
 import { StopKindLabel } from '@/components/shared/stop-kind';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -53,7 +54,7 @@ export const AssignVehiclePage = () => {
   const router = useRouter();
   const id = typeof router.query.id === 'string' ? router.query.id : undefined;
   const fromCreate = router.query.created === '1';
-  const { data: shipment, isError, refetch, isFetching } = useShipment(id);
+  const { data: shipment, error, isError, refetch, isFetching } = useShipment(id);
   const lookups = useShipmentLookups();
   const orderNumber = shipment?.orderNumber;
 
@@ -97,6 +98,8 @@ export const AssignVehiclePage = () => {
     } else {
       content = <AssignContent fromCreate={fromCreate} key={shipment.id} lookups={lookups} shipment={shipment} />;
     }
+  } else if (isNotFoundError(error)) {
+    content = <EntityNotFound kind="shipment" />;
   } else if (isError) {
     content = (
       <NalogFormProblem

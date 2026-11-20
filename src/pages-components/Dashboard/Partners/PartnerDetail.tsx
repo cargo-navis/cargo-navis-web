@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import * as React from 'react';
 
 import { CountryFlag } from '@/components/shared/country-flag';
+import { EntityNotFound } from '@/components/shared/not-found';
 import { Panel } from '@/components/shared/panel';
 import { Button } from '@/components/ui/button';
 import {
@@ -243,7 +244,7 @@ export function PartnerDetailSkeleton() {
   );
 }
 
-/** Detail could not be shown: not found (deleted, wrong link) or the load failed. */
+/** Detail could not be shown: not found (deleted, wrong link: D „Kontekstualno”) or the load failed. */
 export function PartnerDetailProblem({
   kind,
   isError,
@@ -253,28 +254,20 @@ export function PartnerDetailProblem({
   isError: boolean;
   onRetry(): void;
 }) {
-  const words = PARTNER_WORDS[kind];
+  if (!isError) return <EntityNotFound kind={kind} />;
   return (
     <div className="rounded-xl border">
       <Empty>
         <EmptyHeader>
-          <EmptyMedia variant={isError ? 'danger' : 'icon'}>
-            <Icon icon={isError ? 'IconAlertTriangle' : words.icon} size="m" />
+          <EmptyMedia variant="danger">
+            <Icon icon="IconAlertTriangle" size="m" />
           </EmptyMedia>
-          <EmptyTitle>{isError ? 'Podaci se nisu učitali' : words.notFound}</EmptyTitle>
-          <EmptyDescription>
-            {isError ? 'Provjeri vezu i pokušaj ponovno.' : 'Možda je izbrisan ili je poveznica pogrešna.'}
-          </EmptyDescription>
+          <EmptyTitle>Podaci se nisu učitali</EmptyTitle>
+          <EmptyDescription>Provjeri vezu i pokušaj ponovno.</EmptyDescription>
         </EmptyHeader>
-        {isError ? (
-          <Button variant="outline" onClick={onRetry}>
-            <Icon data-icon="inline-start" icon="IconRefresh" size="s" /> Pokušaj ponovno
-          </Button>
-        ) : (
-          <Button nativeButton={false} render={<Link href={words.basePath} />} variant="outline">
-            <Icon data-icon="inline-start" icon="IconArrowLeft" size="s" /> {words.many}
-          </Button>
-        )}
+        <Button variant="outline" onClick={onRetry}>
+          <Icon data-icon="inline-start" icon="IconRefresh" size="s" /> Pokušaj ponovno
+        </Button>
       </Empty>
     </div>
   );

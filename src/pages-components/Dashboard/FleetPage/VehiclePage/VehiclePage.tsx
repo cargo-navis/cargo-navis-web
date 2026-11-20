@@ -5,6 +5,7 @@ import * as React from 'react';
 import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
 import { ExpiryBadge } from '@/components/shared/expiry-badge';
+import { EntityNotFound } from '@/components/shared/not-found';
 import { Panel } from '@/components/shared/panel';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -85,15 +86,7 @@ export const VehiclePage = () => {
           title="Vozilo se nije učitalo"
         />
       ) : !vehicle ? (
-        <Missing
-          action={
-            <Button nativeButton={false} render={<Link href={fleetListHref()} />} variant="outline">
-              <Icon data-icon="inline-start" icon="IconArrowLeft" size="s" /> Natrag na flotu
-            </Button>
-          }
-          description="Možda je obrisano ili poveznica nije ispravna."
-          title="Vozilo nije pronađeno"
-        />
+        <EntityNotFound kind="vehicle" />
       ) : (
         <VehicleDetail vehicle={vehicle} />
       )}

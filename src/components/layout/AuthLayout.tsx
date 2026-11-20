@@ -215,8 +215,8 @@ function TipRotator() {
   );
 }
 
-/** Same mark as the sidebar header. */
-function Logo({ inverted = false }: { inverted?: boolean }) {
+/** Same mark as the sidebar header. Also on the 404 outside the app (pages-components/NotFoundPage). */
+export function Logo({ inverted = false }: { inverted?: boolean }) {
   return (
     <div className="flex items-center gap-2.5">
       <div className="flex aspect-square size-8 shrink-0 items-center justify-center rounded-lg bg-white">
@@ -260,6 +260,91 @@ function RoutePattern({ className }: { className?: string }) {
       {[...ROUTE_A, ...ROUTE_B].map(([x, y], i) => (
         <circle cx={x} cy={y} fill="currentColor" key={i} opacity={i % 3 === 0 ? 0.9 : 0.5} r={i % 3 === 0 ? 6 : 4} />
       ))}
+    </svg>
+  );
+}
+
+const BROKEN_ROUTE: [number, number][] = [
+  [40, 420],
+  [130, 350],
+  [220, 380],
+  [300, 290],
+  [390, 320],
+  [460, 250],
+];
+const BROKEN_FAINT: [number, number][] = [
+  [30, 110],
+  [140, 160],
+  [240, 100],
+  [360, 150],
+  [470, 400],
+  [600, 350],
+  [720, 420],
+];
+/** Where the last leg stops short, and the pin it was heading for (tip). */
+const DEAD_END: [number, number] = [520, 190];
+const PIN: [number, number] = [640, 110];
+
+/**
+ * RoutePattern's look, but the last leg dead-ends (capped with a bar) before it reaches the pin: the 404 outside the
+ * app (lab /lab-404 B „Ruta”). Decoration only.
+ */
+export function BrokenRoutePattern({ className }: { className?: string }) {
+  const [ex, ey] = DEAD_END;
+  const [px, py] = PIN;
+  const [lx, ly] = BROKEN_ROUTE[BROKEN_ROUTE.length - 1];
+  return (
+    <svg aria-hidden="true" className={className} preserveAspectRatio="xMidYMid slice" viewBox="0 0 760 480">
+      <path
+        d={toPath(BROKEN_ROUTE)}
+        fill="none"
+        opacity="0.5"
+        stroke="currentColor"
+        strokeDasharray="6 8"
+        strokeWidth="2"
+      />
+      <path
+        d={toPath(BROKEN_FAINT)}
+        fill="none"
+        opacity="0.25"
+        stroke="currentColor"
+        strokeDasharray="6 8"
+        strokeWidth="2"
+      />
+      <path
+        d={`M${lx} ${ly} L${ex} ${ey}`}
+        fill="none"
+        opacity="0.5"
+        stroke="currentColor"
+        strokeDasharray="6 8"
+        strokeWidth="2"
+      />
+      <path
+        d={`M${ex - 11} ${ey - 11} L${ex + 11} ${ey + 11}`}
+        opacity="0.9"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeWidth="3"
+      />
+      <path
+        d={`M${ex + 18} ${ey - 12} L${px - 16} ${py + 22}`}
+        fill="none"
+        opacity="0.3"
+        stroke="currentColor"
+        strokeDasharray="1 9"
+        strokeLinecap="round"
+        strokeWidth="2"
+      />
+      {[...BROKEN_ROUTE, ...BROKEN_FAINT].map(([x, y], i) => (
+        <circle cx={x} cy={y} fill="currentColor" key={i} opacity={i % 3 === 0 ? 0.9 : 0.5} r={i % 3 === 0 ? 6 : 4} />
+      ))}
+      {/* Pin (tip at PIN) with a hole */}
+      <path
+        d={`M${px} ${py} C${px - 4} ${py - 10} ${px - 14} ${py - 16} ${px - 14} ${py - 26} A14 14 0 1 1 ${px + 14} ${py - 26} C${px + 14} ${py - 16} ${px + 4} ${py - 10} ${px} ${py} Z M${px - 5} ${py - 26} a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0 Z`}
+        fill="currentColor"
+        fillRule="evenodd"
+        opacity="0.9"
+      />
     </svg>
   );
 }

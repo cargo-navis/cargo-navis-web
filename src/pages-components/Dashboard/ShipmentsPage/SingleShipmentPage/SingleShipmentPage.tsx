@@ -10,6 +10,7 @@ import { useRouter } from 'next/router';
 
 import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
+import { EntityNotFound, isNotFoundError } from '@/components/shared/not-found';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
@@ -47,7 +48,7 @@ function useDetailTab() {
 export const SingleShipmentPage = () => {
   const { query } = useRouter();
   const id = typeof query.id === 'string' ? query.id : undefined;
-  const { data: shipment, isLoading, isError, refetch, isFetching } = useShipment(id);
+  const { data: shipment, error, isLoading, isError, refetch, isFetching } = useShipment(id);
   const lookups = useShipmentLookups();
 
   return (
@@ -56,6 +57,8 @@ export const SingleShipmentPage = () => {
         <PageTitle title={shipment?.orderNumber} type="Nalog" />
         {shipment ? (
           <MainContent shipment={shipment} />
+        ) : isNotFoundError(error) ? (
+          <EntityNotFound kind="shipment" />
         ) : isError && !isLoading ? (
           <Empty>
             <EmptyHeader>

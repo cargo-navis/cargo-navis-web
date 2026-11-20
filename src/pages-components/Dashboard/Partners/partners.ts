@@ -81,7 +81,6 @@ interface PartnerWords {
   search: string;
   newOrder: string;
   emptyTitle: string;
-  notFound: string;
   basePath: string;
   crumb: Crumb;
 }
@@ -99,7 +98,6 @@ export const PARTNER_WORDS: Record<PartnerKind, PartnerWords> = {
     search: 'Pretraži klijente…',
     newOrder: 'Novi nalog',
     emptyTitle: 'Još nema klijenata',
-    notFound: 'Klijent nije pronađen',
     basePath: '/dashboard/clients',
     crumb: CRUMBS.clients,
   },
@@ -115,7 +113,6 @@ export const PARTNER_WORDS: Record<PartnerKind, PartnerWords> = {
     search: 'Pretraži kontraktore…',
     newOrder: 'Novi agencijski nalog',
     emptyTitle: 'Još nema kontraktora',
-    notFound: 'Kontraktor nije pronađen',
     basePath: '/dashboard/contractors',
     crumb: CRUMBS.contractors,
   },
