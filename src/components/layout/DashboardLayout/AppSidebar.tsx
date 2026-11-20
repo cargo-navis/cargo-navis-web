@@ -38,6 +38,7 @@ import { useCurrentTenant, useCurrentUser } from '@/lib/hooks';
 import { accessTokenStore } from '@/lib/services/accessTokenStore';
 import { initials } from '@/lib/utils/initials';
 import { clearServiceWorkerOnLogout, unsubscribePushOnLogout } from '@/lib/utils/session';
+import { ACCEPTED_DRAFT_FILE_TYPES, useUploadDraftFiles } from '@/pages-components/Dashboard/ShipmentsPage/hooks';
 import { Icon, type IconType } from '@/ui';
 
 import { canAccessNavItem, NAV, POSITION_LABELS, SETTINGS_ACCOUNT_HREF, SETTINGS_COMPANY_HREF } from './nav';
@@ -51,82 +52,111 @@ const SIDEBAR_CLASS =
   '[--sidebar:transparent] [--sidebar-border:var(--frame-border)] [--sidebar-accent:oklch(1_0_0/75%)] [--sidebar-accent-foreground:var(--primary)] [&_[data-active]_svg]:text-primary dark:[--sidebar:transparent] dark:[--sidebar-foreground:oklch(0.97_0_0)] dark:[--sidebar-accent:oklch(1_0_0/12%)] dark:[--sidebar-accent-foreground:oklch(1_0_0)] dark:[--sidebar-border:oklch(1_0_0/10%)] dark:[--sidebar-ring:var(--color-teal-300)] dark:[&_[data-active]_svg]:text-white';
 
 export function AppSidebar() {
-  const { pathname } = useRouter();
+  const router = useRouter();
+  const { pathname } = router;
   const { data: user } = useCurrentUser();
   const items = React.useMemo(() => NAV.filter((item) => canAccessNavItem(item, user?.positions)), [user?.positions]);
+  // „Učitaj nalog”: same upload as the Nalozi page header, then the Nalozi u pripremi tab.
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const uploadFiles = useUploadDraftFiles(() => void router.push('/dashboard/shipments?tab=drafts'));
+  const openFilePicker = () => fileInputRef.current?.click();
 
   return (
-    <Sidebar className={SIDEBAR_CLASS} collapsible="icon" variant="inset">
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <TenantButton isActive={pathname === SETTINGS_COMPANY_HREF} />
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
+    <>
+      {/* Outside the Sidebar: on phones it is a sheet that unmounts its content when it closes. */}
+      <input
+        accept={ACCEPTED_DRAFT_FILE_TYPES.join(',')}
+        className="hidden"
+        multiple
+        ref={fileInputRef}
+        type="file"
+        onChange={(event) => {
+          const files = Array.from(event.target.files ?? []);
+          event.target.value = '';
+          if (files.length > 0) void uploadFiles(files);
+        }}
+      />
+      <Sidebar className={SIDEBAR_CLASS} collapsible="icon" variant="inset">
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <TenantButton isActive={pathname === SETTINGS_COMPANY_HREF} />
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
 
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigacija</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <React.Fragment key={item.key}>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      // On „Novi nalog” only its sub-item is active, not Nalozi too.
-                      isActive={item.match(pathname) && pathname !== item.action?.href}
-                      render={<Link href={item.href} />}
-                      tooltip={item.label}
-                    >
-                      <Icon icon={item.icon} size="s" />
-                      <span>{item.label}</span>
-                    </SidebarMenuButton>
-                    {item.action && (
-                      // „+ Novi nalog” always visible under its item (decided 2026-11-20, lab /dashboard option C;
-                      // replaces the hover +). Sub menus hide in the collapsed sidebar — the icon item below takes over.
-                      <SidebarMenuSub>
-                        <SidebarMenuSubItem>
-                          <SidebarMenuSubButton
-                            isActive={pathname === item.action.href}
-                            render={<Link href={item.action.href} />}
+        <SidebarContent>
+          <SidebarGroup>
+            <SidebarGroupLabel>Navigacija</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {items.map((item) => {
+                  const actions = item.actions ?? [];
+                  const isActionPage = actions.some((action) => 'href' in action && action.href === pathname);
+                  return (
+                    <React.Fragment key={item.key}>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton
+                          // On „Novi nalog” only its sub-item is active, not Nalozi too.
+                          isActive={item.match(pathname) && !isActionPage}
+                          render={<Link href={item.href} />}
+                          tooltip={item.label}
+                        >
+                          <Icon icon={item.icon} size="s" />
+                          <span>{item.label}</span>
+                        </SidebarMenuButton>
+                        {actions.length > 0 && (
+                          // „+ Novi nalog” / „Učitaj nalog” always visible under their item (decided 2026-11-20, lab
+                          // /dashboard option C; replaces the hover +). Sub menus hide in the collapsed sidebar — the icon
+                          // items below take over.
+                          <SidebarMenuSub>
+                            {actions.map((action) => (
+                              <SidebarMenuSubItem key={action.label}>
+                                <SidebarMenuSubButton
+                                  isActive={'href' in action && pathname === action.href}
+                                  render={'href' in action ? <Link href={action.href} /> : <button type="button" />}
+                                  onClick={'upload' in action ? openFilePicker : undefined}
+                                >
+                                  <Icon icon={action.icon} size="s" />
+                                  <span>{action.label}</span>
+                                </SidebarMenuSubButton>
+                              </SidebarMenuSubItem>
+                            ))}
+                          </SidebarMenuSub>
+                        )}
+                      </SidebarMenuItem>
+                      {actions.map((action) => (
+                        // Collapsed sidebar only: the action icons right under the item's icon, tooltip with the label.
+                        <SidebarMenuItem className="hidden group-data-[collapsible=icon]:block" key={action.label}>
+                          <SidebarMenuButton
+                            isActive={'href' in action && pathname === action.href}
+                            render={'href' in action ? <Link href={action.href} /> : undefined}
+                            tooltip={action.label}
+                            onClick={'upload' in action ? openFilePicker : undefined}
                           >
-                            <Icon icon="IconPlus" size="s" />
-                            <span>{item.action.label}</span>
-                          </SidebarMenuSubButton>
-                        </SidebarMenuSubItem>
-                      </SidebarMenuSub>
-                    )}
-                  </SidebarMenuItem>
-                  {item.action && (
-                    // Collapsed sidebar only: a + right under the item's icon, same colours, tooltip with the label.
-                    <SidebarMenuItem className="hidden group-data-[collapsible=icon]:block">
-                      <SidebarMenuButton
-                        isActive={pathname === item.action.href}
-                        render={<Link href={item.action.href} />}
-                        tooltip={item.action.label}
-                      >
-                        <Icon icon="IconPlus" size="s" />
-                        <span>{item.action.label}</span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  )}
-                </React.Fragment>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
+                            <Icon icon={action.icon} size="s" />
+                            <span>{action.label}</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
+                    </React.Fragment>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
 
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <UserMenu />
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
-      <SidebarRail />
-    </Sidebar>
+        <SidebarFooter>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <UserMenu />
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarFooter>
+        <SidebarRail />
+      </Sidebar>
+    </>
   );
 }
 

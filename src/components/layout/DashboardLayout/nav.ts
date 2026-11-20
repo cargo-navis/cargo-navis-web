@@ -1,6 +1,9 @@
 import { PositionEnum } from '@/lib/api/employees';
 import type { IconType } from '@/ui';
 
+/** A link, or `upload`: opens the file picker for nalog PDFs (then Nalozi u pripremi). */
+export type NavAction = { label: string; icon: IconType } & ({ href: string } | { upload: true });
+
 /** One sidebar item (DECISIONS §4, lab /dashboard app-sidebar.tsx). */
 export interface NavItem {
   key: NavSection;
@@ -9,8 +12,8 @@ export interface NavItem {
   icon: IconType;
   /** Route prefixes (Next `router.pathname`) that mark the item active. */
   match: (pathname: string) => boolean;
-  /** Shown as a + on hover („Novi nalog”). */
-  action?: { label: string; href: string };
+  /** Always-visible sub-items („+ Novi nalog”, „Učitaj nalog”); collapsed sidebar: icons under the item. */
+  actions?: NavAction[];
   /** Positions that see the item; everyone when empty. */
   allowedPositions?: PositionEnum[];
 }
@@ -45,7 +48,10 @@ export const NAV: NavItem[] = [
     href: '/dashboard/shipments',
     icon: 'IconFileDescription',
     match: startsWith('/dashboard/shipments'),
-    action: { label: 'Novi nalog', href: '/dashboard/shipments/new' },
+    actions: [
+      { label: 'Novi nalog', icon: 'IconPlus', href: '/dashboard/shipments/new' },
+      { label: 'Učitaj nalog', icon: 'IconUpload', upload: true },
+    ],
   },
   {
     key: 'vehicleStops',
