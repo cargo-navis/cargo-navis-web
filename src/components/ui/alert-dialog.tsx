@@ -1,17 +1,32 @@
 'use client';
 
 import { AlertDialog as AlertDialogPrimitive } from '@base-ui/react/alert-dialog';
+import { Drawer as DrawerPrimitive } from '@base-ui/react/drawer';
 import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
-import { PHONE_SHEET } from '@/components/ui/dialog';
+import { PhoneSheetContent, PhoneSheetContext, useIsPhoneSheet } from '@/components/ui/dialog';
+import { Drawer } from '@/components/ui/drawer';
 import { cn } from '@/lib/utils';
 
+/** Phone (< 640px): a swipeable bottom sheet like Dialog (dialog.tsx); a backdrop tap still does nothing. */
 function AlertDialog({ ...props }: AlertDialogPrimitive.Root.Props) {
-  return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />;
+  const isPhone = useIsPhoneSheet();
+  return (
+    <PhoneSheetContext.Provider value={isPhone}>
+      {isPhone ? (
+        <Drawer disablePointerDismissal {...(props as React.ComponentProps<typeof Drawer>)} />
+      ) : (
+        <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
+      )}
+    </PhoneSheetContext.Provider>
+  );
 }
 
 function AlertDialogTrigger({ ...props }: AlertDialogPrimitive.Trigger.Props) {
+  if (React.useContext(PhoneSheetContext)) {
+    return <DrawerPrimitive.Trigger data-slot="alert-dialog-trigger" {...(props as DrawerPrimitive.Trigger.Props)} />;
+  }
   return <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />;
 }
 
@@ -47,18 +62,35 @@ function AlertDialogContent({
   size?: 'default' | 'sm';
   overlayClassName?: string;
 }) {
+  const isPhone = React.useContext(PhoneSheetContext);
   const popupRef = React.useRef<HTMLDivElement>(null);
   const focusCancel = React.useCallback(
     () => popupRef.current?.querySelector<HTMLElement>('[data-cancel]') ?? true,
     []
   );
+  if (isPhone) {
+    const { children, ...rest } = props;
+    return (
+      <PhoneSheetContent
+        className={className as string | undefined}
+        data-size={size}
+        data-slot="alert-dialog-content"
+        initialFocus={(initialFocus ?? focusCancel) as DrawerPrimitive.Popup.Props['initialFocus']}
+        overlayClassName={overlayClassName}
+        popupClassName="group/alert-dialog-content"
+        ref={popupRef}
+        {...(rest as Omit<DrawerPrimitive.Popup.Props, 'className'>)}
+      >
+        {children as React.ReactNode}
+      </PhoneSheetContent>
+    );
+  }
   return (
     <AlertDialogPortal>
       <AlertDialogOverlay className={overlayClassName} />
       <AlertDialogPrimitive.Popup
         className={cn(
           'group/alert-dialog-content fixed top-[12vh] left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 gap-4 rounded-xl bg-popover p-6 text-popover-foreground shadow-lg ring-1 ring-foreground/10 duration-100 outline-none data-[size=default]:sm:max-w-md data-[size=sm]:sm:max-w-xs data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
-          PHONE_SHEET,
           className
         )}
         data-size={size}
@@ -111,8 +143,9 @@ function AlertDialogMedia({ className, ...props }: React.ComponentProps<'div'>) 
 }
 
 function AlertDialogTitle({ className, ...props }: React.ComponentProps<typeof AlertDialogPrimitive.Title>) {
+  const Title = React.useContext(PhoneSheetContext) ? DrawerPrimitive.Title : AlertDialogPrimitive.Title;
   return (
-    <AlertDialogPrimitive.Title
+    <Title
       className={cn(
         'font-heading text-lg leading-snug font-bold tracking-tight group-has-data-[slot=alert-dialog-media]/alert-dialog-content:col-start-2',
         className
@@ -127,8 +160,11 @@ function AlertDialogDescription({
   className,
   ...props
 }: React.ComponentProps<typeof AlertDialogPrimitive.Description>) {
+  const Description = React.useContext(PhoneSheetContext)
+    ? DrawerPrimitive.Description
+    : AlertDialogPrimitive.Description;
   return (
-    <AlertDialogPrimitive.Description
+    <Description
       className={cn(
         'text-sm text-pretty text-muted-foreground group-has-data-[slot=alert-dialog-media]/alert-dialog-content:col-start-2 *:[a]:underline *:[a]:underline-offset-3 *:[a]:hover:text-foreground',
         className
@@ -149,8 +185,9 @@ function AlertDialogCancel({
   size = 'default',
   ...props
 }: AlertDialogPrimitive.Close.Props & Pick<React.ComponentProps<typeof Button>, 'variant' | 'size'>) {
+  const Close = React.useContext(PhoneSheetContext) ? DrawerPrimitive.Close : AlertDialogPrimitive.Close;
   return (
-    <AlertDialogPrimitive.Close
+    <Close
       className={cn(className)}
       data-cancel=""
       data-slot="alert-dialog-cancel"

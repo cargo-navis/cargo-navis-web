@@ -43,7 +43,7 @@ the decision in their comment.
 | combobox | Base UI combobox: Combobox, ComboboxInput (`showClear`), ComboboxContent / List / Item / Empty / Group … (async: `shared/async-combobox`). |
 | command | cmdk palette: Command, CommandDialog, Input, List, Empty, Group, Item, Separator, Shortcut (⌘K). |
 | context-menu | Right-click menu, same items as dropdown-menu (36px, 44px touch). |
-| dialog | Dialog: `size` sm 384 · md 512 (default) · lg 768 · xl 896, top-anchored 12vh, × always, grey footer strip. Dirty forms: `shared/discard-changes`. Phone (<640): floating bottom sheet (`PHONE_SHEET`, also AlertDialog; no swipe). |
+| dialog | Dialog: `size` sm 384 · md 512 (default) · lg 768 · xl 896, top-anchored 12vh, × always, grey footer strip. Dirty forms: `shared/discard-changes`. Phone (<640): Dialog and AlertDialog render the Drawer (floating bottom sheet, swipe down to close; AlertDialog ignores backdrop taps), same API (`useIsPhoneSheet`, `PhoneSheetContext`). |
 | drawer | Base UI bottom sheet (floating, 2rem radius, handle, no backdrop-filter), `showSwipeHandle`, snap points; Header / Title / Description / Footer. |
 | dropdown-menu | ⋯ menus: items 36px (44 touch), icon on every item, `variant="destructive"`, checkbox / radio items, submenus. |
 | empty | Empty state: Empty / Header / Media (`variant` icon · danger · success) / Title (Sora 16) / Description / Content; min-h 320 in tables. |

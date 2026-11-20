@@ -95,7 +95,7 @@ switchable (see §7). **Later** = not in this redesign.
 
 | Component | Decided |
 |---|---|
-| **Dialog** | sizes sm 384 · **md 512** · lg 768 · xl 896; backdrop black/40 (dark /60), no blur; top-anchored at 12vh, max-h 76dvh; padding 24; title 18 Sora 700; grey footer strip; × always; outside click / Esc / Odustani close when clean, ask „Odbaciti promjene?” when dirty; no dialog on dialog (except that discard confirm); phone (<640) → bottom drawer |
+| **Dialog** | sizes sm 384 · **md 512** · lg 768 · xl 896; backdrop black/40 (dark /60), no blur; top-anchored at 12vh, max-h 76dvh; padding 24; title 18 Sora 700; grey footer strip; × always; outside click / Esc / Odustani close when clean, ask „Odbaciti promjene?” when dirty; no dialog on dialog (except that discard confirm); phone (<640) → floating bottom sheet with swipe-to-close (the Drawer; also confirms) |
 | **Drawer** | floating bottom sheet (8px inset, 2rem radius), handle 48×6, backdrop 40 % / 60 %, **no backdrop-filter** (iOS), header left + line under (no line when header and body scroll together), title 18 Sora 700, no ×, max-h 80dvh, max-w 480 centred; button layout is up to the content |
 | **AlertDialog** | Dialog shell at **448px**, red icon tile on destructive only, text left, ghost Odustani **focused by default**, soft red action, outside click does nothing; type-the-name only for big deletes; phone → drawer |
 | **Sheet** | sizes sm 384 · **md 512** · lg 640; floating (8px off edges, 12px corners); backdrop 40 %; header 24px + line; footer = grey strip; title 18 Sora 700. Quick look from a list: `modal={false}`, no backdrop, clicking another row switches; no prev/next arrows, no URL param (for now) |
