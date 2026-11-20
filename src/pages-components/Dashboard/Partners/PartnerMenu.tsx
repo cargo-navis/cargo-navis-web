@@ -16,7 +16,7 @@ import { copyValue } from './parts';
 
 /**
  * Row actions (lab /partners `PartnerMenuItems`, DECISIONS §5): Otvori, Uredi, Novi nalog, Kopiraj porezni broj,
- * Izbriši. The right-click menu adds „Otvori u novoj kartici” (DECISIONS §2 Lists).
+ * Izbriši. The right-click menu adds „Otvori u novom tabu” (DECISIONS §2 Lists).
  */
 export function PartnerMenuItems({
   kind,
@@ -26,7 +26,7 @@ export function PartnerMenuItems({
 }: {
   kind: PartnerKind;
   partner: Partner;
-  /** Right-click menu (ContextMenu items + „Otvori u novoj kartici”). */
+  /** Right-click menu (ContextMenu items + „Otvori u novom tabu”). */
   context?: boolean;
   onDelete(partner: Partner): void;
 }) {
@@ -41,8 +41,8 @@ export function PartnerMenuItems({
         <Icon icon="IconExternalLink" size="s" /> Otvori
       </Item>
       {context && (
-        <Item onClick={() => window.open(href, '_blank', 'noopener')}>
-          <Icon icon="IconExternalLink" size="s" /> Otvori u novoj kartici
+        <Item render={<a href={href} rel="noopener noreferrer" target="_blank" />}>
+          <Icon icon="IconExternalLink" size="s" /> Otvori u novom tabu
         </Item>
       )}
       <Item onClick={() => void router.push(partnerEditHref(kind, partner.id))}>

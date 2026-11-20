@@ -421,8 +421,8 @@ function RowMenu({
         <Icon icon="IconExternalLink" size="s" /> Otvori
       </Item>
       {context && (
-        <Item onClick={() => window.open(vehicleHref(vehicle.id), '_blank')}>
-          <Icon icon="IconExternalLink" size="s" /> Otvori u novoj kartici
+        <Item render={<a href={vehicleHref(vehicle.id)} rel="noopener noreferrer" target="_blank" />}>
+          <Icon icon="IconExternalLink" size="s" /> Otvori u novom tabu
         </Item>
       )}
       <Item onClick={() => void router.push(vehicleEditHref(vehicle.id))}>

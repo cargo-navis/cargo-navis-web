@@ -1,6 +1,6 @@
 /**
  * ⋯ row menu of the Nalozi table and the same menu on right-click (lab /tables row-menu.tsx, decided on
- * /overlays/menus): Otvori (+ „Otvori u novoj kartici” on right-click), Uredi, Kopiraj nalog, Preuzmi PDF ▸ (per
+ * /overlays/menus): Otvori (+ „Otvori u novom tabu” on right-click), Uredi, Kopiraj nalog, Preuzmi PDF ▸ (per
  * document, HR / EN), Status fakture ▸, Izbriši (AlertDialog). Vehicle / driver are assigned in their own cell.
  * Agency nalozi also get „Status tereta ▸” (lab /quick-look note): the hand-set teret status, per teret (T1, T2 … with
  * its places) or, with one teret, the three states directly — the same save as the Nalog detail (shared/cargoStatus).
@@ -189,8 +189,8 @@ function MenuItems({
           <MenuIcon icon="IconExternalLink" /> Otvori
         </M.Item>
         {inContext && (
-          <M.Item onClick={() => window.open(shipmentHref(shipment.id), '_blank', 'noopener')}>
-            <MenuIcon icon="IconExternalLink" /> Otvori u novoj kartici
+          <M.Item render={<a href={shipmentHref(shipment.id)} rel="noopener noreferrer" target="_blank" />}>
+            <MenuIcon icon="IconExternalLink" /> Otvori u novom tabu
           </M.Item>
         )}
         <M.Item onClick={() => void router.push(editShipmentHref(shipment.id))}>
@@ -294,7 +294,7 @@ export function RowMenu({ shipment }: { shipment: Shipment }) {
   );
 }
 
-/** Right-click anywhere on the row: the same menu, plus „Otvori u novoj kartici”. `children` is the row (`<tr>`). */
+/** Right-click anywhere on the row: the same menu, plus „Otvori u novom tabu”. `children` is the row (`<tr>`). */
 export function RowContextMenu({ shipment, children }: { shipment: Shipment; children: React.ReactElement }) {
   const confirm = useDeleteConfirm(shipment);
   return (

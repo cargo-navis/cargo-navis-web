@@ -84,7 +84,7 @@ switchable (see §7). **Later** = not in this redesign.
   first use → the first action; load error → in place with „Pokušaj ponovno”; no-results echoes the query.
 - **Menus vs popovers vs tooltips**: menu = actions, popover = content / picker, tooltip = label for something visible
   (nothing clickable inside, nothing touch-only).
-- **Lists**: row click opens; ⋯ menu and right-click give the same actions (+ „Otvori u novoj kartici” on right-click).
+- **Lists**: row click opens; ⋯ menu and right-click give the same actions (+ „Otvori u novom tabu” on right-click).
   Hover-only controls always have a visible touch fallback (`pointer-coarse:`).
 - **File rows** (employees, vehicles, nalozi): row click = preview; the date on the right is replaced by ⬇ download +
   🗑 delete on hover / keyboard focus; on touch both show; delete confirms. Attachments icon = 📎 paperclip.

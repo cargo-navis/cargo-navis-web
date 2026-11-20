@@ -127,8 +127,8 @@ function RowMenu({
         <Icon icon="IconExternalLink" size="s" /> Otvori
       </Item>
       {context && (
-        <Item onClick={() => window.open(href, '_blank', 'noopener')}>
-          <Icon icon="IconExternalLink" size="s" /> Otvori u novoj kartici
+        <Item render={<a href={href} rel="noopener noreferrer" target="_blank" />}>
+          <Icon icon="IconExternalLink" size="s" /> Otvori u novom tabu
         </Item>
       )}
       {!employee.deleted && (
