@@ -16,11 +16,14 @@ function Calendar({
   locale,
   formatters,
   components,
+  endMonth,
   ...props
 }: React.ComponentProps<typeof DayPicker> & {
   buttonVariant?: React.ComponentProps<typeof Button>['variant'];
 }) {
   const defaultClassNames = getDefaultClassNames();
+  // The year dropdown stops at this year by default; rokovi, dates and documents live in the future too.
+  const lastMonth = endMonth ?? (captionLayout === 'label' ? undefined : new Date(new Date().getFullYear() + 10, 11));
 
   return (
     <DayPicker
@@ -121,6 +124,7 @@ function Calendar({
         },
         ...components,
       }}
+      endMonth={lastMonth}
       formatters={{
         formatMonthDropdown: (date) => date.toLocaleString(locale?.code, { month: 'short' }),
         ...formatters,
