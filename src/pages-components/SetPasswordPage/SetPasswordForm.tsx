@@ -1,13 +1,12 @@
 import { useRouter } from 'next/router';
 import * as React from 'react';
 
-import { PasswordChecklist, PasswordInput } from '@/components/shared/password';
+import { PASSWORD_RULES, PasswordChecklist, PasswordInput } from '@/components/shared/password';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { acceptInvite } from '@/lib/api';
 import { showSuccessToast } from '@/lib/utils/toast';
 
-import { SET_PASSWORD_RULES } from './const';
 import type { FormValues } from './types';
 import { validateSetPassword } from './validation';
 
@@ -76,7 +75,7 @@ export const SetPasswordForm = ({ token, email, onLinkRejected }: SetPasswordFor
             onBlur={() => setTouched((current) => ({ ...current, newPassword: true }))}
             onChange={(newPassword) => setValues((current) => ({ ...current, newPassword }))}
           />
-          <PasswordChecklist rules={SET_PASSWORD_RULES} value={values.newPassword} />
+          <PasswordChecklist rules={PASSWORD_RULES} value={values.newPassword} />
           {newPasswordError && <FieldError>{newPasswordError}</FieldError>}
         </Field>
         <Field data-invalid={confirmPasswordError ? true : undefined}>

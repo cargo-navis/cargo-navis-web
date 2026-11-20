@@ -12,11 +12,11 @@ describe('validateSetPassword', () => {
     });
   });
 
-  it('keeps the invite rule: at least 8 characters, nothing else', () => {
-    expect(validateSetPassword({ newPassword: 'abcdefg', confirmPassword: 'abcdefg' }).newPassword).toBe(
-      'Lozinka mora imati najmanje 8 znakova'
+  it('uses the Moj račun rules', () => {
+    expect(validateSetPassword({ newPassword: 'abcdefgh', confirmPassword: 'abcdefgh' }).newPassword).toBe(
+      'Lozinka mora imati najmanje 10 znakova'
     );
-    expect(validateSetPassword({ newPassword: 'abcdefgh', confirmPassword: 'abcdefgh' })).toEqual({
+    expect(validateSetPassword({ newPassword: 'Abcdefghi1', confirmPassword: 'Abcdefghi1' })).toEqual({
       newPassword: undefined,
       confirmPassword: undefined,
     });
