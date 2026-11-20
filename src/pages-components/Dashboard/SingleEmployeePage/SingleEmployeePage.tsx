@@ -44,7 +44,7 @@ import {
   LicenceCategories,
 } from '@/pages-components/Dashboard/EmployeesPage/parts';
 import { PhoneBackLink } from '@/pages-components/Dashboard/Partners/PartnerDetail';
-import { Dash, Fact } from '@/pages-components/Dashboard/Partners/parts';
+import { CopyValue, Dash, Fact } from '@/pages-components/Dashboard/Partners/parts';
 import { Icon } from '@/ui';
 
 import { EmployeeFiles } from './EmployeeFiles';
@@ -297,8 +297,9 @@ function EmployeeDetail({ employee }: { employee: Employee }) {
                               </span>
                             )}
                           </TableCell>
-                          <TableCell className="py-2.5 font-mono text-xs text-muted-foreground">
-                            {deadline.number ?? ''}
+                          <TableCell className="py-2.5 font-mono text-xs">
+                            {/* Copied for border and loading paperwork (develop had it in the list). */}
+                            {deadline.number && <CopyValue value={deadline.number} what="Broj" />}
                           </TableCell>
                           <TableCell className="py-2.5 tabular-nums">
                             {deadline.date ? formatDate(deadline.date) : <Dash />}
