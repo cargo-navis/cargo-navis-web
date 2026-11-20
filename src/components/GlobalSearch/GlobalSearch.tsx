@@ -17,10 +17,10 @@ import { Kbd } from '@/components/ui/kbd';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 import { VehicleEnum } from '@/lib/api';
-import { GLOBAL_SEARCH_MIN_LENGTH, useCreateShipmentDraft, useDelayedFlag, useGlobalSearch } from '@/lib/hooks';
+import { GLOBAL_SEARCH_MIN_LENGTH, useDelayedFlag, useGlobalSearch } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
-import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { newVehicleHref } from '@/pages-components/Dashboard/FleetPage/fleet';
+import { ACCEPTED_DRAFT_FILE_TYPES, useUploadDraftFiles } from '@/pages-components/Dashboard/ShipmentsPage/hooks';
 import { Icon, type IconType } from '@/ui';
 
 import { addRecentSearchItem, useRecentSearchItems } from './recent';
@@ -35,7 +35,6 @@ import { mapToSearchResultGroups, type SearchResultGroup, type SearchResultItem 
  */
 
 const DEBOUNCE_MS = 300;
-const DRAFT_TYPES = ['application/pdf'];
 
 interface Action {
   key: string;
@@ -92,7 +91,8 @@ export const GlobalSearch = () => {
   const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const uploadDrafts = useDraftUpload(() => void router.push('/dashboard/shipments?tab=drafts'));
+  // „Učitaj nalog iz PDF-a”: the Nalozi page's upload and messages, then the Nalozi u pripremi tab.
+  const uploadDrafts = useUploadDraftFiles(() => void router.push('/dashboard/shipments?tab=drafts'));
 
   // Empty tagsToIgnore so the shortcut also works while focus is inside a form input
   useHotkeys([['mod+K', () => setIsOpen((open) => !open)]], []);
@@ -101,7 +101,7 @@ export const GlobalSearch = () => {
     <>
       <SearchTrigger onClick={() => setIsOpen(true)} />
       <input
-        accept={DRAFT_TYPES.join(',')}
+        accept={ACCEPTED_DRAFT_FILE_TYPES.join(',')}
         className="hidden"
         multiple
         ref={fileInputRef}
@@ -363,38 +363,4 @@ function SkeletonResults() {
       ))}
     </div>
   );
-}
-
-/** „Učitaj nalog iz PDF-a”: same upload and messages as the Nalozi page (PDF only), then the Nalozi u pripremi tab. */
-function useDraftUpload(onAccepted: () => void) {
-  const { mutateAsync: createDraft } = useCreateShipmentDraft();
-
-  return async (files: File[]) => {
-    const accepted = files.filter((file) => DRAFT_TYPES.includes(file.type));
-    const rejectedCount = files.length - accepted.length;
-
-    if (rejectedCount > 0) {
-      showErrorToast({
-        title: `${rejectedCount} ${rejectedCount === 1 ? 'datoteka nije podržana' : 'datoteke nisu podržane'}. Dozvoljen je samo PDF.`,
-      });
-    }
-    if (accepted.length === 0) return;
-
-    onAccepted();
-
-    const results = await Promise.allSettled(accepted.map((file) => createDraft({ file, fileName: file.name })));
-    const succeeded = results.filter((result) => result.status === 'fulfilled').length;
-    const failed = results.length - succeeded;
-
-    if (succeeded > 0) {
-      showSuccessToast({
-        title: `${succeeded} ${succeeded === 1 ? 'nalog učitan' : 'naloga učitano'}. Obrada je u tijeku.`,
-      });
-    }
-    if (failed > 0) {
-      showErrorToast({
-        title: `${failed} ${failed === 1 ? 'datoteku nije moguće učitati' : 'datoteke nije moguće učitati'}.`,
-      });
-    }
-  };
 }
