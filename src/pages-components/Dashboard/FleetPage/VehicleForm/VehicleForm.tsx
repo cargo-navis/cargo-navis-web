@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import * as React from 'react';
 
-import { DatePicker, YearPicker } from '@/components/shared/date-picker';
+import { DatePicker, expiryStartMonth, YearPicker } from '@/components/shared/date-picker';
 import { useDiscardGuard } from '@/components/shared/discard-changes';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -446,6 +446,7 @@ function ExpiryField({
       <DatePicker
         id={id}
         placeholder={placeholder}
+        startMonth={warn ? expiryStartMonth() : undefined}
         value={value ? dayjs(value).toDate() : null}
         onChange={(next) => onChange(next ? dayjs(next).format('YYYY-MM-DD') : '')}
       />

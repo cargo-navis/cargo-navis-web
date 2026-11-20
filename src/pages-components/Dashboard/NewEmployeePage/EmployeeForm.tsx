@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { CountryCombobox } from '@/components/shared/country-combobox';
 import { CountryFlag } from '@/components/shared/country-flag';
-import { DatePicker } from '@/components/shared/date-picker';
+import { DatePicker, expiryStartMonth } from '@/components/shared/date-picker';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -201,6 +201,7 @@ function ExpiryField({
       <DatePicker
         id={id}
         placeholder={warn ? 'Vrijedi do' : 'Odaberi datum'}
+        startMonth={warn ? expiryStartMonth() : undefined}
         value={parseDate(value)}
         onChange={(date) => onChange(toIso(date))}
       />

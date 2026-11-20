@@ -3,7 +3,7 @@ import * as React from 'react';
 
 import { AsyncCombobox } from '@/components/shared/async-combobox';
 import { CountryCombobox } from '@/components/shared/country-combobox';
-import { DatePicker } from '@/components/shared/date-picker';
+import { DatePicker, expiryStartMonth } from '@/components/shared/date-picker';
 import { ExpiryBadge } from '@/components/shared/expiry-badge';
 import { Panel } from '@/components/shared/panel';
 import { Button } from '@/components/ui/button';
@@ -196,6 +196,7 @@ export function CompanySection({ tenant, postalCode }: { tenant: Tenant; postalC
                   </div>
                   <DatePicker
                     id="company-insurance"
+                    startMonth={expiryStartMonth()}
                     value={parseDate(values.cargoInsuranceExpiryDate)}
                     onChange={(date) => set('cargoInsuranceExpiryDate', date ? dayjs(date).format('YYYY-MM-DD') : '')}
                   />

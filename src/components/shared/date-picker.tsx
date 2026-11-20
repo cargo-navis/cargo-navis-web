@@ -52,12 +52,18 @@ function DateTrigger({
 // Single date
 // ---------------------------------------------------------------------------------------------------------------------
 
+/** Expiry dates (contracts, documents, vehicle checks): the year dropdown starts six years back. */
+export function expiryStartMonth() {
+  return new Date(new Date().getFullYear() - 6, 0);
+}
+
 export function DatePicker({
   id,
   value,
   onChange,
   invalid,
   disabled,
+  startMonth,
   placeholder = 'Odaberi datum',
   ref,
   onBlur,
@@ -68,6 +74,8 @@ export function DatePicker({
   invalid?: boolean;
   disabled?: boolean;
   placeholder?: string;
+  /** First month in the year dropdown (default 100 years back). */
+  startMonth?: Date;
   ref?: React.Ref<HTMLButtonElement>;
   onBlur?(): void;
 }) {
@@ -98,6 +106,7 @@ export function DatePicker({
           locale={hr}
           mode="single"
           selected={value ?? undefined}
+          startMonth={startMonth}
           onSelect={(date) => {
             // Clicking the selected day again deselects it in the calendar: keep the value (× clears).
             if (date) onChange(date);
