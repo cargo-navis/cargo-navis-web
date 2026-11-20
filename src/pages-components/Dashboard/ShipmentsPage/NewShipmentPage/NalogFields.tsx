@@ -256,7 +256,7 @@ function RecipientsField() {
               onClick={() => set({ notificationEmails: [...new Set([...emails, normalizeEmail(contact.email)])] })}
             >
               <Icon data-icon="inline-start" icon="IconPlus" size="xs" /> {contact.email}
-              {contact.alwaysNotify && <span className="text-muted-foreground">· Automatski</span>}
+              {contact.alwaysNotify && <span className="text-muted-foreground">· Na svaki nalog</span>}
             </Button>
           ))}
         </div>

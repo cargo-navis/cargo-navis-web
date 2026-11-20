@@ -257,7 +257,9 @@ switchable (see §7). **Later** = not in this redesign.
 
 Built on develop after the labs were made (13.11.2026) — carry them into the redesign in the new look, following the
 rules above (no lab exists):
-- **KAN-112** client notification contacts (list on the client page: email, „Automatski” switch, delete) and shipment
+- **KAN-112** client notification contacts (client page panel „Email obavijesti klijentu”, lab /client-contacts A,
+  decided 2026-11-20: field first with „Dodaj na svaki novi nalog / naloge koje odaberem”, then the two groups „Na svaki
+  novi nalog” / „Samo na naloge koje odabereš”; emails are always sent automatically, so no „Automatski / Ručno”) and shipment
   recipients (field in the Nalog form prefilled with the client's automatic contacts; emails shown / editable on the
   Nalog page) → PR 3 (Nalog detail), PR 4 (form), PR 6 (client page).
 - **KAN-145** driver picker when assigning a vehicle without a driver → superseded by the Dodijeli vozilo page (PR 4).

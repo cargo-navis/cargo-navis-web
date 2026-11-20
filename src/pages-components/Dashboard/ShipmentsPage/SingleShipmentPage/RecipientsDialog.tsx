@@ -1,7 +1,7 @@
 /**
  * KAN-112 recipients of a saved nalog (today's ShipmentNotificationEmailsModal, new look; no lab): the list with ×,
  * a field to add one (Enter or „Dodaj”; validated on add and on blur, not per keystroke), and the client's contacts
- * not on the list yet as one-click suggestions („Automatski” ones marked). Up to 20. Dirty close asks first.
+ * not on the list yet as one-click suggestions („Na svaki nalog” ones marked). Up to 20. Dirty close asks first.
  */
 
 import * as React from 'react';
@@ -176,7 +176,7 @@ export function RecipientsDialog({ shipment, onClose }: { shipment: Shipment; on
                       onClick={() => setEmails((current) => [...new Set([...current, normalizeEmail(contact.email)])])}
                     >
                       <Icon data-icon="inline-start" icon="IconPlus" size="xs" /> {contact.email}
-                      {contact.alwaysNotify && <span className="text-muted-foreground">· Automatski</span>}
+                      {contact.alwaysNotify && <span className="text-muted-foreground">· Na svaki nalog</span>}
                     </Button>
                   ))}
                 </div>
