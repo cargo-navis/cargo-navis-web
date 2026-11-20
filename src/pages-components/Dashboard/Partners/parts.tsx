@@ -24,7 +24,8 @@ export const formatEuro = (value: number) =>
 
 /** „30 dana” / „1 dan”; short „30 d” for table cells. */
 export function formatTerms(days: number | null, { short = false }: { short?: boolean } = {}) {
-  if (!days) return null;
+  if (days === null) return null;
+  if (days === 0) return 'Odmah';
   return short ? `${days} d` : `${days} ${plural(days, ['dan', 'dana', 'dana'])}`;
 }
 

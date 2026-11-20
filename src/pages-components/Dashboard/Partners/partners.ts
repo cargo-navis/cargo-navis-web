@@ -14,7 +14,8 @@ export interface Partner {
   id: string;
   name: string;
   taxId: string;
-  /** Days; null when not set (today's API stores 0 / '' for „none”). */
+  /** Days; null when not set (today's API stores 0 / '' for „none”). Contractors: 0 = „Odmah” (the field is required
+   * for them, so 0 is a real value). */
   termsOfPayment: number | null;
   street: string;
   postalCode: PostalCode | null;
@@ -23,9 +24,10 @@ export interface Partner {
   emails: string[];
 }
 
-function toTerms(value: string | number | null | undefined) {
+function toTerms(value: string | number | null | undefined, { zeroIsSet = false } = {}) {
+  if (value === null || value === undefined || value === '') return null;
   const days = Number(value);
-  return Number.isFinite(days) && days > 0 ? days : null;
+  return Number.isFinite(days) && (days > 0 || (zeroIsSet && days === 0)) ? days : null;
 }
 
 function toPostalCode(address: Client['address']): PostalCode | null {
@@ -57,7 +59,7 @@ export function fromContractor(contractor: Contractor): Partner {
     id: String(contractor.id),
     name: contractor.name,
     taxId: contractor.taxId ?? '',
-    termsOfPayment: toTerms(contractor.termsOfPayment),
+    termsOfPayment: toTerms(contractor.termsOfPayment, { zeroIsSet: true }),
     street: contractor.address?.streetName ?? '',
     postalCode: contractor.address ? toPostalCode(contractor.address) : null,
     countryCode: contractor.address?.countryCode ?? '',

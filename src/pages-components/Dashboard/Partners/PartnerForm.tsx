@@ -49,7 +49,7 @@ function fromPartner(partner: Partner): Values {
   return {
     name: partner.name,
     taxId: partner.taxId,
-    terms: partner.termsOfPayment ? String(partner.termsOfPayment) : '',
+    terms: partner.termsOfPayment !== null ? String(partner.termsOfPayment) : '',
     email: partner.emails[0] ?? '',
     street: partner.street,
     countryCode: partner.countryCode,
@@ -92,7 +92,7 @@ function validate(values: Values, kind: PartnerKind, withEmail: boolean): Partia
     terms:
       terms && !/^\d+$/.test(terms)
         ? 'Upiši broj dana, npr. 30.'
-        : kind === 'contractor' && !Number(terms)
+        : kind === 'contractor' && !terms
           ? 'Upiši valutu plaćanja.'
           : undefined,
     email:
@@ -173,7 +173,7 @@ export function PartnerForm({
       const saved = await savePartner({
         name: values.name.trim(),
         taxId: values.taxId.trim(),
-        termsOfPayment: Number(values.terms.trim()) || null,
+        termsOfPayment: values.terms.trim() ? Number(values.terms.trim()) : null,
         addressName: values.street.trim(),
         addressPostalCodeId: values.postalCode!.id,
         email: showEmail ? normalizeEmail(values.email) : '',
@@ -234,7 +234,11 @@ export function PartnerForm({
                     <InputGroupText>dana</InputGroupText>
                   </InputGroupAddon>
                 </InputGroup>
-                {show('terms') && <FieldError>{show('terms')}</FieldError>}
+                {show('terms') ? (
+                  <FieldError>{show('terms')}</FieldError>
+                ) : (
+                  kind === 'contractor' && <FieldDescription>0 = plaćanje odmah</FieldDescription>
+                )}
               </Field>
             </div>
             {showEmail && (
