@@ -32,7 +32,7 @@ function unique(values: (string | null)[]) {
   return Array.from(new Set(values.filter((value): value is string => Boolean(value))));
 }
 
-/** Street and place with the Navigacija button (Google Maps). */
+/** Street and place with the map button (Google Maps navigation; icon only, as before the redesign). */
 const AddressRow: React.FC<{ stop: DriverStop }> = ({ stop }) => {
   const { address } = stop;
   if (!address) return null;
@@ -49,13 +49,14 @@ const AddressRow: React.FC<{ stop: DriverStop }> = ({ stop }) => {
       </div>
       {navigationUrl && (
         <Button
+          aria-label="Navigacija"
+          className="shrink-0"
           nativeButton={false}
-          render={<a href={navigationUrl} rel="noopener noreferrer" target="_blank" />}
-          size="xl"
+          render={<a href={navigationUrl} rel="noopener noreferrer" target="_blank" title="Navigacija" />}
+          size="icon-xl"
           variant="outline"
         >
-          <Icon data-icon="inline-start" icon="IconNavigation" size="m" />
-          Navigacija
+          <Icon icon="IconMap2" size="m" />
         </Button>
       )}
     </div>
@@ -81,7 +82,7 @@ const CargoSection: React.FC<{
   return (
     <div className={cn('relative flex flex-col gap-3', !isInTimeline && '-ml-4 pl-4')}>
       {!isInTimeline && (
-        <div className={cn('absolute inset-y-0 left-0 w-1 rounded-r-xs', completedAt ? 'bg-success' : style.bar)} />
+        <div className={cn('absolute inset-y-0 left-0 w-1 rounded-r-[4px]', completedAt ? 'bg-success' : style.bar)} />
       )}
       <SectionTitle
         className={completedAt ? COMPLETED_TEXT : style.text}

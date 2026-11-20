@@ -17,7 +17,7 @@ import { DocumentsIcon } from '../stops/StopCard';
 import { StopDetails } from '../stops/StopDetails';
 import { StopDocuments } from '../stops/StopDocuments';
 import { COMPLETED_CARD, COMPLETED_TEXT, DriverEmpty, keepOpenOnToastPress } from '../ui';
-import { formatCompletedAt, formatStopDate, getStopKindLabels, getStopsDisponent, isShipmentCompleted } from '../utils';
+import { formatCompletedAt, formatStopDate, getStopsDisponent, isShipmentCompleted } from '../utils';
 import { ShipmentSheetSkeleton, ShipmentSummarySkeleton } from './ShipmentSheetSkeleton';
 
 /** Flag + place. */
@@ -105,7 +105,8 @@ const ShipmentTimeline: React.FC<{ shipment: DriverShipment }> = ({ shipment }) 
             {!isLast && (
               <div
                 className={cn(
-                  'w-px grow',
+                  // mt-1: the same gap under the dot as above the next one (its mt-1).
+                  'mt-1 w-px grow',
                   // Segment between two completed stops: the part of the route already driven.
                   stop.completedAt && shipment.stops[index + 1].completedAt ? 'bg-primary' : 'bg-border'
                 )}
@@ -113,13 +114,13 @@ const ShipmentTimeline: React.FC<{ shipment: DriverShipment }> = ({ shipment }) 
             )}
           </div>
           <div className={cn('flex min-w-0 grow flex-col gap-3', !isLast && 'pb-8')}>
+            {/* Place and day only: the coloured UTOVAR / ISTOVAR titles below say what happens there. */}
             <span className="text-sm">
               <span className="inline-flex flex-wrap items-center gap-x-1.5 font-medium">
-                {getStopKindLabels(stop).title} ·
                 {stop.address?.countryCode && <CountryFlag code={stop.address.countryCode} size="xxs" />}
                 {stop.address?.placeName ?? 'Bez adrese'}
               </span>{' '}
-              <span className="text-muted-foreground">{formatStopDate(stop.date, dayjs())}</span>
+              <span className="text-muted-foreground">· {formatStopDate(stop.date, dayjs())}</span>
             </span>
             <StopDetails
               actions={

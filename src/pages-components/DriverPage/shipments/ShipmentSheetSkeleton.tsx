@@ -56,13 +56,13 @@ export const ShipmentSheetSkeleton: React.FC<{ summary: DriverShipmentSummary | 
                     <Skeleton className="h-3" key={width} style={{ width }} />
                   ))}
                 </div>
-                {/* Address with the Navigacija button */}
+                {/* Address with the map button */}
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex flex-col gap-2 pt-1">
                     <Skeleton className="h-3" style={{ width: widths.street }} />
                     <Skeleton className="h-3" style={{ width: widths.place }} />
                   </div>
-                  <Skeleton className="h-12 w-36 rounded-lg" />
+                  <Skeleton className="size-12 shrink-0 rounded-lg" />
                 </div>
                 {hasConfirmButtons && <Skeleton className="h-12 w-full rounded-lg" />}
               </div>
