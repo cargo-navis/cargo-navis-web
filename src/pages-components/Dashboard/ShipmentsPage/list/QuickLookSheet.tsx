@@ -4,7 +4,9 @@
  * switches to that nalog; a click anywhere else (filters, sidebar, empty space) closes it, as do × and Esc. Read + small
  * actions: quick assign, invoice status, Uredi and „Otvori nalog” (the full page). Not on phones: the row opens the page.
  * The route is last, under the data rows: utovari / istovari as a vertical timeline by date (RouteStops, lab /quick-look
- * variant A), agency nalozi too.
+ * variant A). Agency nalozi (lab „Nalog: Agencijski”): nobody reports, the dispatcher marks each teret by hand — a
+ * „Status tereta ▸” per teret in the Teret row, and „Relacija” („Planirano s naloga.”) with a mark button per stop
+ * (AgencyRouteStops).
  */
 
 import Link from 'next/link';
@@ -18,7 +20,8 @@ import type { Shipment } from '@/lib/api';
 import { Icon, type IconType } from '@/ui';
 
 import { editShipmentHref, shipmentHref } from '../shared/actions';
-import { isOversize } from '../shared/cargo';
+import { cargoQuantity, isOversize } from '../shared/cargo';
+import { AgencyStatusBadge, AgencyStatusMenu } from '../shared/cargoStatus';
 import { formatEuroExact, getMargin } from '../shared/format';
 import { getInvoiceInfo } from '../shared/invoice';
 import { InvoiceCell, InvoiceStatusMenu } from '../shared/InvoiceCell';
@@ -26,7 +29,7 @@ import { useLookups } from '../shared/lookups';
 import { STATUS_TEXT } from '../shared/tones';
 import { useAssignment } from './AssignmentCell';
 import { CargoCell, MarginPill } from './cells';
-import { RouteStops } from './RouteStops';
+import { AgencyRouteStops, RouteStops } from './RouteStops';
 
 // Presses and focus moves that don't close the sheet: the table (`data-quick-look-rows` on ShipmentsTable; a row click
 // switches the sheet), toasts (e.g. „Obavijesti” after an assignment), a row's ⋯ / right-click menu and its delete
@@ -81,6 +84,34 @@ function DetailRow({ icon, label, children }: { icon: IconType; label: string; c
 
 const Missing = () => <span className="text-muted-foreground">—</span>;
 
+/** Agency: each teret's hand-set status („Nije utovaren” / „Označeno: Utovaren”) and its „Status tereta ▸” menu. */
+function AgencyCargoStatuses({ shipment }: { shipment: Shipment }) {
+  return (
+    <div className="mt-2 flex flex-col">
+      {shipment.cargo.map((cargo, index) => (
+        <div className="flex flex-col gap-1 border-t py-2 last:pb-0" key={cargo.id}>
+          <span className="flex min-w-0 items-center gap-2">
+            <span className="font-medium">T{index + 1}</span>
+            <span className="truncate text-xs text-muted-foreground">{cargoQuantity(cargo)}</span>
+          </span>
+          <span className="flex flex-wrap items-center justify-between gap-2">
+            <AgencyStatusBadge cargo={cargo} size="sm" />
+            <AgencyStatusMenu
+              align="start"
+              cargo={cargo}
+              shipment={shipment}
+              side="left"
+              trigger={<Button className="-my-0.5 text-muted-foreground" size="xs" variant="ghost" />}
+            >
+              Status tereta <Icon data-icon="inline-end" icon="IconChevronRight" size="xs" />
+            </AgencyStatusMenu>
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function QuickLook({ shipment }: { shipment: Shipment }) {
   const { clientsById, isLoading } = useLookups();
   const assignment = useAssignment(shipment);
@@ -131,6 +162,7 @@ function QuickLook({ shipment }: { shipment: Shipment }) {
                 <span>Izvanredne dimenzije (više od 2,55 × 3 × 13,6 m): potrebna dozvola / pratnja.</span>
               </span>
             )}
+            {shipment.isAgency && <AgencyCargoStatuses shipment={shipment} />}
           </DetailRow>
           {assignment.kind === 'contractor' ? (
             <DetailRow icon="IconBriefcase" label="Kontraktor">
@@ -190,10 +222,24 @@ function QuickLook({ shipment }: { shipment: Shipment }) {
           </DetailRow>
         </div>
         <section className="flex flex-col gap-3 border-t pt-4 pb-1 text-sm">
-          <h3 className="flex items-center gap-1.5 text-muted-foreground">
-            <Icon icon="IconRoute" size="s" /> Utovari i istovari
-          </h3>
-          <RouteStops cargos={shipment.cargo} vehicleStops={shipment.vehicleStops} />
+          {shipment.isAgency ? (
+            <>
+              <div className="flex flex-col gap-0.5">
+                <h3 className="flex items-center gap-1.5 text-muted-foreground">
+                  <Icon icon="IconRoute" size="s" /> Relacija
+                </h3>
+                <p className="text-xs text-muted-foreground">Planirano s naloga.</p>
+              </div>
+              <AgencyRouteStops shipment={shipment} />
+            </>
+          ) : (
+            <>
+              <h3 className="flex items-center gap-1.5 text-muted-foreground">
+                <Icon icon="IconRoute" size="s" /> Utovari i istovari
+              </h3>
+              <RouteStops cargos={shipment.cargo} vehicleStops={shipment.vehicleStops} />
+            </>
+          )}
         </section>
       </div>
 

@@ -1,30 +1,21 @@
 /**
  * Tereti (lab /order parts.tsx CargoCards): one card per cargo — „Teret 1”, what and how much, LDM · kg, status; utovar
  * → istovar side by side (date, place, company, street, reference, note); the description below. Agency nalozi set the
- * cargo status by hand (a menu on the badge, today's LoadStatusProgress); own nalozi get it from the Ruta.
+ * cargo status by hand (a neutral badge with the „Status tereta (ručno)” menu, shared/cargoStatus); own nalozi get it
+ * from the Ruta.
  */
 
 import { CountryFlag } from '@/components/shared/country-flag';
 import { STOP_KIND, type StopKind } from '@/components/shared/stop-kind';
 import { Badge } from '@/components/ui/badge';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import type { Cargo, LoadingAddress, Shipment } from '@/lib/api';
 import { LoadStatus } from '@/lib/api/shipments';
-import { useUpdateCargo } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
 import { formatDateShort } from '@/lib/utils/date';
-import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Icon } from '@/ui';
 
 import { CARGO_STATUS_LABEL, cargoQuantity, cargoState, isOversize } from '../shared/cargo';
+import { AgencyStatusBadge, AgencyStatusMenu } from '../shared/cargoStatus';
 import { formatKg, formatNumber } from '../shared/format';
 
 const STATE_BADGE = {
@@ -39,50 +30,21 @@ export function CargoStatusBadge({ cargo }: { cargo: Cargo }) {
   return <Badge tone={badge.tone}>{badge.label}</Badge>;
 }
 
-const LOAD_STATUSES = [LoadStatus.NotYetLoaded, LoadStatus.Loaded, LoadStatus.Unloaded];
-
-function AgencyStatusMenu({ cargo, shipmentId }: { cargo: Cargo; shipmentId: string }) {
-  const { mutateAsync: updateCargo, isPending } = useUpdateCargo(shipmentId);
-  const status = cargo.loadStatus ?? LoadStatus.NotYetLoaded;
-
-  async function handleChange(next: LoadStatus) {
-    if (next === status) return;
-    try {
-      await updateCargo({ id: cargo.id, loadStatus: next });
-      showSuccessToast({ title: `Status tereta: ${CARGO_STATUS_LABEL[next]}` });
-    } catch (error) {
-      console.error(error);
-      showErrorToast({ title: 'Status tereta nije promijenjen. Pokušaj ponovno.' });
-    }
-  }
-
+function AgencyStatusBadgeMenu({ cargo, shipment }: { cargo: Cargo; shipment: Shipment }) {
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger
-        render={
-          <button
-            className="flex items-center gap-1 rounded-full outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
-            disabled={isPending}
-            type="button"
-          />
-        }
-      >
-        <CargoStatusBadge cargo={cargo} />
-        <Icon className="text-muted-foreground" icon="IconChevronDown" size="s" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-44">
-        <DropdownMenuGroup>
-          <DropdownMenuLabel>Status tereta</DropdownMenuLabel>
-          <DropdownMenuRadioGroup value={status} onValueChange={(value) => void handleChange(value as LoadStatus)}>
-            {LOAD_STATUSES.map((key) => (
-              <DropdownMenuRadioItem key={key} value={key}>
-                {CARGO_STATUS_LABEL[key]}
-              </DropdownMenuRadioItem>
-            ))}
-          </DropdownMenuRadioGroup>
-        </DropdownMenuGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <AgencyStatusMenu
+      cargo={cargo}
+      shipment={shipment}
+      trigger={
+        <button
+          className="flex items-center gap-1 rounded-full outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-50"
+          type="button"
+        />
+      }
+    >
+      <AgencyStatusBadge cargo={cargo} />
+      <Icon className="text-muted-foreground" icon="IconChevronDown" size="s" />
+    </AgencyStatusMenu>
   );
 }
 
@@ -148,7 +110,7 @@ export function CargoCards({ shipment }: { shipment: Shipment }) {
             </span>
             <div className="ml-auto">
               {shipment.isAgency ? (
-                <AgencyStatusMenu cargo={cargo} shipmentId={shipment.id} />
+                <AgencyStatusBadgeMenu cargo={cargo} shipment={shipment} />
               ) : (
                 <CargoStatusBadge cargo={cargo} />
               )}

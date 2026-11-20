@@ -122,7 +122,13 @@ function useColumns(): ColumnDef<Shipment>[] {
             <SortHeader field={SortFieldEnum.UnloadingDueDate} label="Istovar" />
           </div>
         ),
-        cell: ({ row }) => <RouteTrack cargos={row.original.cargo} vehicleStops={row.original.vehicleStops} />,
+        cell: ({ row }) => (
+          <RouteTrack
+            cargos={row.original.cargo}
+            isAgency={row.original.isAgency}
+            vehicleStops={row.original.vehicleStops}
+          />
+        ),
       },
       {
         id: 'cargo',

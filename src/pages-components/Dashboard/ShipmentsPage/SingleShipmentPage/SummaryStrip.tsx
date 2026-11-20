@@ -7,12 +7,12 @@ import type { Shipment } from '@/lib/api';
 import { formatDateShort } from '@/lib/utils/date';
 import { pluralCount } from '@/lib/utils/plural';
 
+import { sortStops } from '../list/routeData';
 import { cargoTotals } from '../shared/cargo';
 import { formatEuro, formatKg, formatNumber, getMargin } from '../shared/format';
 import { getInvoiceInfo } from '../shared/invoice';
 import { InvoiceBadge } from '../shared/InvoiceCell';
 import { getLatestStop, useLookups } from '../shared/lookups';
-import { sortStops } from './RouteTimeline';
 
 interface Point {
   place?: string | null;

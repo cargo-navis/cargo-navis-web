@@ -1,6 +1,7 @@
 /**
- * Side column of the Nalog page (lab /order layout C „mirror”, 380px on the left): Faktura (badge + „Promijeni ▾”),
- * Vozilo i vozač / Kontraktor, and the KAN-112 email recipients (today's ShipmentNotificationEmailsModal, new look).
+ * Side column of the Nalog page (lab /order-route option A, narrow on the right; Napomene is NotesTab): Faktura (badge +
+ * „Promijeni ▾”), Vozilo i vozač / Kontraktor, and the KAN-112 email recipients (today's
+ * ShipmentNotificationEmailsModal, new look).
  */
 
 import Link from 'next/link';
@@ -17,13 +18,13 @@ import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Icon } from '@/ui';
 
 import { MarginPill } from '../list/cells';
+import { sortStops } from '../list/routeData';
 import { formatEuroExact, getMargin } from '../shared/format';
 import { getInvoiceInfo } from '../shared/invoice';
 import { InvoiceCell, InvoiceStatusMenu } from '../shared/InvoiceCell';
 import { useLookups } from '../shared/lookups';
 import { MISSING_BUTTON, TEXT_LINK } from '../shared/tones';
 import { RecipientsDialog } from './RecipientsDialog';
-import { sortStops } from './RouteTimeline';
 
 export function InvoicePanel({ shipment }: { shipment: Shipment }) {
   const { clientsById } = useLookups();
@@ -77,7 +78,9 @@ function ContractorPanel({ shipment }: { shipment: Shipment }) {
             ) : (
               <span className="text-muted-foreground">—</span>
             )}
-            <span className="text-xs text-muted-foreground">Vozilo i vozača određuje kontraktor</span>
+            <span className="text-xs text-muted-foreground">
+              Vozilo i vozača određuje kontraktor. Status tereta postavljaš ti.
+            </span>
           </div>
         </div>
         <div className="flex flex-col border-t pt-2">

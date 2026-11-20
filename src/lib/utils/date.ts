@@ -1,3 +1,5 @@
+import 'dayjs/locale/hr';
+
 import dayjs from 'dayjs';
 import advancedFormat from 'dayjs/plugin/advancedFormat';
 import utc from 'dayjs/plugin/utc';
@@ -37,6 +39,11 @@ export function formatDate(date: DateInput) {
 export function formatDateShort(date: DateInput) {
   const day = dayjs(date);
   return `${day.date()}.${day.month() + 1}.`;
+}
+
+/** „ponedjeljak” (Croatian weekday, lower case). */
+export function formatWeekday(date: DateInput) {
+  return dayjs(date).locale('hr').format('dddd');
 }
 
 /** „08:42” (local time). */

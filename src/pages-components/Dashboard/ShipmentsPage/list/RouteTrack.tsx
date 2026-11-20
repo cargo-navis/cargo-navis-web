@@ -3,6 +3,9 @@
  * and last stop, coloured by load status (grey waiting, red late, blue truck while loaded, green check unloaded).
  * Cargos sharing a loading or unloading point are drawn once with connected branches („auto” grouping = fewer rows).
  * Place layout picked in the lab: flag + postal + date chip on line 1, the name below (truncated).
+ * Agency nalozi (`isAgency`): nobody reports, the dispatcher marks each teret by hand (routeData agencyRouteState) — no
+ * red „Kasni”, no blue truck. All istovareno = green ✓ as own; all utovareno = green ✓ at the utovar, grey line; a date
+ * passed and not marked = amber ring („Rok prošao · označi status”, date chip amber); otherwise grey.
  */
 
 import * as React from 'react';
@@ -17,7 +20,18 @@ import { formatDateShort } from '@/lib/utils/date';
 import { Icon, type IconType } from '@/ui';
 
 import { STATUS_BAR, STATUS_BORDER, STATUS_TEXT, TOOLTIP_PILL } from '../shared/tones';
-import { isPast, type Place, placeKey, type RouteState, routeState, toTrackCargo, type TrackCargo } from './routeData';
+import {
+  agencyEndpointState,
+  type AgencyRouteState,
+  agencyRouteState,
+  isPast,
+  type Place,
+  placeKey,
+  type RouteState,
+  routeState,
+  toTrackCargo,
+  type TrackCargo,
+} from './routeData';
 
 interface Endpoint {
   place: Place | null;
@@ -145,6 +159,44 @@ function endpointStatus(point: Endpoint, side: Side): { label: string; state: Ro
   return { label: 'Još nije utovareno', state: 'waiting' };
 }
 
+const AGENCY_SIDE = {
+  loading: { marked: 'utovareno', none: 'Nije utovareno' },
+  unloading: { marked: 'istovareno', none: 'Nije istovareno' },
+} as const;
+
+const OVERDUE_LABEL = 'Rok prošao · označi status';
+
+interface PointStatus {
+  label: string;
+  pill: string;
+  icon: IconType;
+}
+
+/** Agency: what the dispatcher marked at this point (never tracking words: „Na putu”, „Kasni”). */
+function agencyEndpointStatus(point: Endpoint, side: Side): PointStatus {
+  const total = point.cargos.length;
+  const { state, marked } = agencyEndpointState(point.cargos, side);
+  const word = AGENCY_SIDE[side];
+  if (state === 'marked')
+    return {
+      label: `Označeno ${word.marked}${total > 1 ? ` (${total})` : ''}`,
+      pill: TOOLTIP_PILL.done,
+      icon: 'IconCircleCheck',
+    };
+  if (state === 'overdue') return { label: OVERDUE_LABEL, pill: TOOLTIP_PILL.overdue, icon: 'IconAlertCircle' };
+  return {
+    label: marked > 0 ? `${marked}/${total} označeno ${word.marked}` : word.none,
+    pill: TOOLTIP_PILL.waiting,
+    icon: 'IconPackage',
+  };
+}
+
+/** Own nalozi: as before (tracking from the Ruta). */
+function ownEndpointStatus(point: Endpoint, side: Side): PointStatus {
+  const { label, state } = endpointStatus(point, side);
+  return { label, pill: TOOLTIP_PILL[state as keyof typeof TOOLTIP_PILL], icon: STATE[state].icon };
+}
+
 function StatusIcon({ icon, solid, className }: { icon: IconType; solid?: boolean; className?: string }) {
   return (
     <Icon
@@ -161,10 +213,25 @@ function Count({ point, hideCount }: { point: Endpoint; hideCount?: boolean }) {
   return <span className="shrink-0 text-xs text-muted-foreground">×{point.cargos.length}</span>;
 }
 
-/** Place block: 🇩🇪 80939 [10.11.] / München; the date chip turns red when a loading is late. */
-function PlaceBlock({ point, side, hideCount }: { point: Endpoint; side: Side; hideCount?: boolean }) {
+/**
+ * Place block: 🇩🇪 80939 [10.11.] / München; the date chip turns red when a loading is late (agency: amber when the
+ * date passed and the place isn't marked).
+ */
+function PlaceBlock({
+  point,
+  side,
+  hideCount,
+  isAgency,
+}: {
+  point: Endpoint;
+  side: Side;
+  hideCount?: boolean;
+  isAgency?: boolean;
+}) {
   const { place } = point;
+  const isOverdue = !!isAgency && agencyEndpointState(point.cargos, side).state === 'overdue';
   const isLate =
+    !isAgency &&
     side === 'loading' &&
     point.cargos.some((cargo) => cargo.status === LoadStatus.NotYetLoaded) &&
     isPast(point.firstDate);
@@ -176,7 +243,11 @@ function PlaceBlock({ point, side, hideCount }: { point: Endpoint; side: Side; h
         <span
           className={cn(
             'rounded-md px-1.5 text-xs leading-5 tabular-nums',
-            isLate ? 'bg-destructive/10 font-medium text-destructive' : 'bg-muted text-muted-foreground'
+            isLate
+              ? 'bg-destructive/10 font-medium text-destructive'
+              : isOverdue
+                ? 'bg-warning-soft font-medium text-warning'
+                : 'bg-muted text-muted-foreground'
           )}
         >
           {point.date}
@@ -189,14 +260,24 @@ function PlaceBlock({ point, side, hideCount }: { point: Endpoint; side: Side; h
 }
 
 /** Place block with a tooltip: side, full place, postal code + country, date, status. */
-function Stacked({ point, side, hideCount }: { point: Endpoint; side: Side; hideCount?: boolean }) {
+function Stacked({
+  point,
+  side,
+  hideCount,
+  isAgency,
+}: {
+  point: Endpoint;
+  side: Side;
+  hideCount?: boolean;
+  isAgency?: boolean;
+}) {
   const { place } = point;
-  const status = endpointStatus(point, side);
+  const status = isAgency ? agencyEndpointStatus(point, side) : ownEndpointStatus(point, side);
   const country = place?.countryCode ? (getCountryName(place.countryCode) ?? place.countryCode) : null;
   return (
     <Tooltip>
       <TooltipTrigger render={<div className="min-w-0 cursor-default" />}>
-        <PlaceBlock hideCount={hideCount} point={point} side={side} />
+        <PlaceBlock hideCount={hideCount} isAgency={isAgency} point={point} side={side} />
       </TooltipTrigger>
       <TooltipContent className="max-w-72 p-3" side="top">
         <div className="flex flex-col gap-1 text-xs">
@@ -216,10 +297,10 @@ function Stacked({ point, side, hideCount }: { point: Endpoint; side: Side; hide
           <span
             className={cn(
               'mt-1 inline-flex w-fit items-center gap-1 rounded-full border px-2 py-0.5 font-medium',
-              TOOLTIP_PILL[status.state]
+              status.pill
             )}
           >
-            <StatusIcon className="size-3.5!" icon={STATE[status.state].icon} /> {status.label}
+            <StatusIcon className="size-3.5!" icon={status.icon} /> {status.label}
           </span>
         </div>
       </TooltipContent>
@@ -243,11 +324,11 @@ function Segment({ from, to, className }: { from: string; to: string; className:
 }
 
 /** One progress line, left → right. */
-function TrackLine({ state }: { state: RouteState }) {
+function TrackLine({ state, title }: { state: RouteState; title?: string }) {
   const progress = PROGRESS[state];
   const { bar, text, label, icon } = STATE[state];
   return (
-    <div className="relative flex h-5 w-full items-center" title={label}>
+    <div className="relative flex h-5 w-full items-center" title={title ?? label}>
       {state === 'done' ? (
         <>
           <Segment className={bar} from="0px" to={`calc(100% - ${GAP})`} />
@@ -275,6 +356,55 @@ function TrackLine({ state }: { state: RouteState }) {
   );
 }
 
+/** Hollow ring: a utovar / istovar not marked yet (grey), or its date passed (amber) — as the quick look's Relacija. */
+function Ring({ overdue }: { overdue?: boolean }) {
+  return (
+    <span className="flex size-4 items-center justify-center">
+      <span
+        className={cn('size-3 rounded-full border-2', overdue ? 'border-warning-dot' : 'border-muted-foreground/40')}
+      />
+    </span>
+  );
+}
+
+const AGENCY_TITLE: Record<AgencyRouteState, string> = {
+  done: 'Označeno istovareno',
+  loaded: 'Označeno utovareno',
+  overdueLoading: OVERDUE_LABEL,
+  overdueUnloading: OVERDUE_LABEL,
+  planned: 'Nije označeno',
+};
+
+/**
+ * Agency line: green only when everything is istovareno; a marked utovar gets its ✓ on the left and the line stays
+ * grey (nobody tracks the vehicle); the amber ring sits at the end that needs a mark.
+ */
+function AgencyTrackLine({ state }: { state: AgencyRouteState }) {
+  if (state === 'done') return <TrackLine state="done" title={AGENCY_TITLE.done} />;
+  const loadedMark = state === 'loaded' || state === 'overdueUnloading';
+  return (
+    <div className="relative flex h-5 w-full items-center" title={AGENCY_TITLE[state]}>
+      <span className="absolute left-0">
+        {loadedMark ? (
+          <StatusIcon className={STATUS_TEXT.success} icon="IconCircleCheck" solid />
+        ) : (
+          <Ring overdue={state === 'overdueLoading'} />
+        )}
+      </span>
+      <Segment
+        className={STATUS_BAR.idle}
+        from={GAP}
+        to={state === 'overdueUnloading' ? `calc(100% - ${GAP})` : '100%'}
+      />
+      {state === 'overdueUnloading' && (
+        <span className="absolute right-0">
+          <Ring overdue />
+        </span>
+      )}
+    </div>
+  );
+}
+
 const CONNECTOR = {
   idle: { bg: STATUS_BAR.idle, border: STATUS_BORDER.idle },
   late: { bg: STATUS_BAR.late, border: STATUS_BORDER.late },
@@ -282,9 +412,11 @@ const CONNECTOR = {
   done: { bg: STATUS_BAR.done, border: STATUS_BORDER.done },
 };
 
-/** Colour of the shared part (trunk + bar + elbows) of a fan-out / fan-in. */
-function trunkColor(group: RouteGroup, fanOut: boolean) {
-  const state = routeState(group.left.flatMap((point) => point.cargos));
+/** Colour of the shared part (trunk + bar + elbows) of a fan-out / fan-in; agency: green only once all istovareno. */
+function trunkColor(group: RouteGroup, fanOut: boolean, isAgency?: boolean) {
+  const cargos = group.left.flatMap((point) => point.cargos);
+  if (isAgency) return agencyRouteState(cargos) === 'done' ? CONNECTOR.done : CONNECTOR.idle;
+  const state = routeState(cargos);
   if (state === 'done') return CONNECTOR.done;
   if (fanOut)
     return state === 'transit' || state === 'partial'
@@ -324,8 +456,22 @@ function Elbow({
   );
 }
 
+/** The row's line: own = tracking (routeState), agency = the dispatcher's hand marks (agencyRouteState). */
+function RowLine({ cargos, isAgency }: { cargos: TrackCargo[]; isAgency?: boolean }) {
+  if (isAgency) return <AgencyTrackLine state={agencyRouteState(cargos)} />;
+  return <TrackLine state={routeState(cargos)} />;
+}
+
 /** The whole cell. */
-export function RouteTrack({ cargos, vehicleStops }: { cargos: Cargo[]; vehicleStops?: VehicleStop[] }) {
+export function RouteTrack({
+  cargos,
+  vehicleStops,
+  isAgency,
+}: {
+  cargos: Cargo[];
+  vehicleStops?: VehicleStop[];
+  isAgency?: boolean;
+}) {
   const groups = React.useMemo(
     () => buildGroups(cargos.map((cargo) => toTrackCargo(cargo, vehicleStops))),
     [cargos, vehicleStops]
@@ -346,15 +492,15 @@ export function RouteTrack({ cargos, vehicleStops }: { cargos: Cargo[]; vehicleS
               key={group.key}
               style={{ gridTemplateColumns: 'minmax(0,1fr) 4.75rem minmax(0,1fr)' }}
             >
-              <Stacked point={rows[0].left} side="loading" />
-              <TrackLine state={routeState(rows[0].cargos)} />
-              <Stacked point={rows[0].right} side="unloading" />
+              <Stacked isAgency={isAgency} point={rows[0].left} side="loading" />
+              <RowLine cargos={rows[0].cargos} isAgency={isAgency} />
+              <Stacked isAgency={isAgency} point={rows[0].right} side="unloading" />
             </div>
           );
         }
 
         const fanOut = group.left.length === 1;
-        const trunk = trunkColor(group, fanOut);
+        const trunk = trunkColor(group, fanOut, isAgency);
 
         return (
           <div
@@ -373,6 +519,7 @@ export function RouteTrack({ cargos, vehicleStops }: { cargos: Cargo[]; vehicleS
             >
               <Stacked
                 hideCount
+                isAgency={isAgency}
                 point={fanOut ? group.left[0] : group.right[0]}
                 side={fanOut ? 'loading' : 'unloading'}
               />
@@ -392,14 +539,18 @@ export function RouteTrack({ cargos, vehicleStops }: { cargos: Cargo[]; vehicleS
                 >
                   <Elbow color={trunk} count={count} index={index} side={fanOut ? 'left' : 'right'} />
                   <div className={cn('w-full', fanOut ? 'ml-3' : 'mr-3')}>
-                    <TrackLine state={routeState(row.cargos)} />
+                    <RowLine cargos={row.cargos} isAgency={isAgency} />
                   </div>
                 </div>
                 <div
                   className={cn('min-w-0 py-1', fanOut ? 'pl-2' : 'pr-2')}
                   style={{ gridColumn: fanOut ? 4 : 1, gridRow: index + 1 }}
                 >
-                  <Stacked point={fanOut ? row.right : row.left} side={fanOut ? 'unloading' : 'loading'} />
+                  <Stacked
+                    isAgency={isAgency}
+                    point={fanOut ? row.right : row.left}
+                    side={fanOut ? 'unloading' : 'loading'}
+                  />
                 </div>
               </React.Fragment>
             ))}

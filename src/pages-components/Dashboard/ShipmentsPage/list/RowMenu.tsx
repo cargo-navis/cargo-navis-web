@@ -2,6 +2,8 @@
  * ⋯ row menu of the Nalozi table and the same menu on right-click (lab /tables row-menu.tsx, decided on
  * /overlays/menus): Otvori (+ „Otvori u novoj kartici” on right-click), Uredi, Kopiraj nalog, Preuzmi PDF ▸ (per
  * document, HR / EN), Status fakture ▸, Izbriši (AlertDialog). Vehicle / driver are assigned in their own cell.
+ * Agency nalozi also get „Status tereta ▸” (lab /quick-look note): the hand-set teret status, per teret (T1, T2 … with
+ * its places) or, with one teret, the three states directly — the same save as the Nalog detail (shared/cargoStatus).
  */
 
 import { useRouter } from 'next/router';
@@ -37,8 +39,8 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { Shipment } from '@/lib/api';
-import { InvoiceStatus } from '@/lib/api/shipments';
+import type { Cargo, Shipment } from '@/lib/api';
+import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
 import { Icon } from '@/ui';
 
 import {
@@ -51,6 +53,8 @@ import {
   useChangeInvoiceStatus,
   useDownloadShipmentPdf,
 } from '../shared/actions';
+import { AGENCY_STATUS_LABEL, LOAD_STATUSES } from '../shared/cargo';
+import { type CargoStatusChange, useSetCargoStatus } from '../shared/cargoStatus';
 import { INVOICE_STATUS_LABEL, INVOICE_STATUSES } from '../shared/invoice';
 import { useLookups } from '../shared/lookups';
 
@@ -80,6 +84,76 @@ const CONTEXT = {
 
 function MenuIcon({ icon }: { icon: React.ComponentProps<typeof Icon>['icon'] }) {
   return <Icon icon={icon} size="s" />;
+}
+
+const statusOf = (cargo: Cargo) => cargo.loadStatus ?? LoadStatus.NotYetLoaded;
+
+/** „Zagreb → Graz” */
+const cargoPlaces = (cargo: Cargo) =>
+  `${cargo.loadingAddress?.placeName || '—'} → ${cargo.unloadingAddress?.placeName || '—'}`;
+
+function CargoStatusRadios({
+  parts: M,
+  cargo,
+  onChange,
+}: {
+  parts: typeof DROPDOWN;
+  cargo: Cargo;
+  onChange(change: CargoStatusChange): void;
+}) {
+  return (
+    <M.RadioGroup
+      value={statusOf(cargo)}
+      onValueChange={(value: unknown) => onChange({ cargoId: cargo.id, status: value as LoadStatus })}
+    >
+      {LOAD_STATUSES.map((status) => (
+        <M.RadioItem key={status} value={status}>
+          {AGENCY_STATUS_LABEL[status]}
+        </M.RadioItem>
+      ))}
+    </M.RadioGroup>
+  );
+}
+
+/** Agency: „Status tereta ▸” — one teret: the three states; several: a submenu per teret. */
+function CargoStatusSub({ parts: M, shipment }: { parts: typeof DROPDOWN; shipment: Shipment }) {
+  const { set } = useSetCargoStatus(shipment);
+  const onChange = (change: CargoStatusChange) => void set([change]);
+  const [single] = shipment.cargo;
+  return (
+    <M.Sub>
+      <M.SubTrigger>
+        <MenuIcon icon="IconPackage" /> Status tereta
+        {shipment.cargo.length === 1 && (
+          <span className="ml-auto text-xs text-muted-foreground">{AGENCY_STATUS_LABEL[statusOf(single)]}</span>
+        )}
+      </M.SubTrigger>
+      <M.SubContent className={shipment.cargo.length === 1 ? 'w-48' : 'w-64'}>
+        <M.Group>
+          <M.Label>Status tereta (ručno)</M.Label>
+          {shipment.cargo.length === 1 ? (
+            <CargoStatusRadios cargo={single} parts={M} onChange={onChange} />
+          ) : (
+            shipment.cargo.map((cargo, index) => (
+              <M.Sub key={cargo.id}>
+                <M.SubTrigger>
+                  <span className="flex min-w-0 flex-col">
+                    <span className="truncate">
+                      T{index + 1} · {cargoPlaces(cargo)}
+                    </span>
+                    <span className="text-xs text-muted-foreground">{AGENCY_STATUS_LABEL[statusOf(cargo)]}</span>
+                  </span>
+                </M.SubTrigger>
+                <M.SubContent className="w-48">
+                  <CargoStatusRadios cargo={cargo} parts={M} onChange={onChange} />
+                </M.SubContent>
+              </M.Sub>
+            ))
+          )}
+        </M.Group>
+      </M.SubContent>
+    </M.Sub>
+  );
 }
 
 function MenuItems({
@@ -176,6 +250,8 @@ function MenuItems({
             </M.RadioGroup>
           </M.SubContent>
         </M.Sub>
+
+        {shipment.isAgency && shipment.cargo.length > 0 && <CargoStatusSub parts={M} shipment={shipment} />}
       </M.Group>
 
       <M.Separator />

@@ -34,6 +34,8 @@ export const TOOLTIP_PILL = {
   partial: 'border-blue-700 bg-blue-950 text-blue-300',
   transit: 'border-blue-700 bg-blue-950 text-blue-300',
   done: 'border-green-700 bg-green-950 text-green-300',
+  /** Agency: a date passed and the teret isn't marked by hand („Rok prošao · označi status”). */
+  overdue: 'border-amber-700 bg-amber-950 text-amber-300',
 } as const;
 
 /** Margin pill of agency nalozi (+ green, − red). */
@@ -52,17 +54,14 @@ export const ROW_TINT = {
 export const MISSING_BUTTON =
   'border-dashed border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive dark:border-destructive/50';
 
-/** The next stop on the Ruta: brand tint, and its marker. */
-export const NEXT_STOP = {
-  row: 'bg-primary/5 dark:bg-primary/25',
-  marker: 'border-brand-solid ring-4 ring-primary/15',
-} as const;
+/** The next stop's card on the Nalog detail's Ruta (lab /order-route A): brand tint. */
+export const NEXT_STOP_CARD = 'border-primary/40 bg-primary/5 shadow-xs dark:border-primary/60 dark:bg-primary/20';
+
+/** An agency stop past its date and not marked (Relacija, „Rok prošao · označi status”): amber tint. */
+export const OVERDUE_STOP_CARD = 'border-warning-dot/50 bg-warning-soft';
 
 /** Links in text (petrol; lighter in dark). */
 export const TEXT_LINK = 'font-medium text-brand hover:underline';
-
-/** Ruta: the line after a done stop. */
-export const DONE_LINE = 'bg-success-dot/60';
 
 /** A route stop on the same day as a new one (Dodijeli vozilo „Isti dan”, lab /assign). */
 export const CLASH_ROW = 'bg-warning-soft';

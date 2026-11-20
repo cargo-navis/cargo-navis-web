@@ -66,6 +66,23 @@ export const CARGO_STATUS_LABEL: Record<LoadStatus, string> = {
   [LoadStatus.Unloaded]: 'Istovareno',
 };
 
+export const LOAD_STATUSES = [LoadStatus.NotYetLoaded, LoadStatus.Loaded, LoadStatus.Unloaded] as const;
+
+/**
+ * Agency teret status (lab /order parts.tsx AGENCY_STATUS, decided 2026-11-19): nobody reports progress on an agency
+ * nalog (no vehicle, no driver app, the kontraktor reports nothing), so the only status is the one the dispatcher sets
+ * by hand. Worded as a state of the teret, never as tracking.
+ */
+export const AGENCY_STATUS_LABEL: Record<LoadStatus, string> = {
+  [LoadStatus.NotYetLoaded]: 'Nije utovaren',
+  [LoadStatus.Loaded]: 'Utovaren',
+  [LoadStatus.Unloaded]: 'Istovaren',
+};
+
+/** „Nije utovaren” / „Označeno: Utovaren” / „Označeno: Istovaren” — the agency teret badge. */
+export const agencyStatusBadgeLabel = (status: LoadStatus) =>
+  status === LoadStatus.NotYetLoaded ? AGENCY_STATUS_LABEL[status] : `Označeno: ${AGENCY_STATUS_LABEL[status]}`;
+
 export const isPast = (date: string | null | undefined) => !!date && daysFromToday(date) < 0;
 
 export function cargoState(cargo: Cargo): CargoState {

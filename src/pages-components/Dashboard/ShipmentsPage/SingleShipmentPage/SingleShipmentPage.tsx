@@ -1,15 +1,15 @@
 /**
- * Nalog detail (DECISIONS §5 „Nalog detail”, lab /order, decided layout C with the side column on the left — the same
- * for own and agency nalozi): header, summary strip, tabs Pregled / Dokumenti / Napomene (tab in the URL). Pregled:
- * left 380px Faktura, Vozilo / Kontraktor, email recipients (KAN-112) and the compact Ruta (own nalozi with vehicle
- * stops only — agency nalozi never show a Ruta); right the Tereti cards. Povijest is left out: the API has no log.
+ * Nalog detail (DECISIONS §5 „Nalog detail”): header, summary strip, tabs Pregled / Dokumenti / Napomene (tab in the
+ * URL). Pregled is lab /order-route option A „Ruta kao glavni sadržaj” (decided 2026-11-19): the wide main column is
+ * the Ruta (agency: Relacija) as a status timeline with the Tereti cards below it; the narrow right column Faktura,
+ * Vozilo i vozač / Kontraktor, email recipients (KAN-112) and Napomene. Below xl the right column stacks under the
+ * main one. Povijest is left out: the API has no log.
  */
 
 import { useRouter } from 'next/router';
 
 import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
-import { Panel } from '@/components/shared/panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
@@ -26,7 +26,7 @@ import { documentsOf, DocumentsTab } from './DocumentsTab';
 import { NotesTab } from './NotesTab';
 import { OrderHeader } from './OrderHeader';
 import { AssignmentPanel, InvoicePanel, RecipientsPanel } from './panels';
-import { RouteTimeline } from './RouteTimeline';
+import { RouteSection } from './RouteSection';
 import { SummaryStrip } from './SummaryStrip';
 
 const TABS = ['pregled', 'dokumenti', 'napomene'] as const;
@@ -82,7 +82,6 @@ function MainContent({ shipment }: { shipment: Shipment }) {
   const { tab, setTab } = useDetailTab();
   const openAssign = () => void push(assignVehicleHref(shipment.id));
   const documentsCount = documentsOf(shipment).length;
-  const hasRoute = !shipment.isAgency && (shipment.vehicleStops?.length ?? 0) > 0;
 
   return (
     <div className="flex flex-col gap-6">
@@ -102,20 +101,19 @@ function MainContent({ shipment }: { shipment: Shipment }) {
           <TabsTrigger value="napomene">Napomene</TabsTrigger>
         </TabsList>
         <TabsContent className="pt-5" value="pregled">
-          <div className="grid items-start gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
-            <div className="flex flex-col gap-6">
+          <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+            <div className="flex min-w-0 flex-col gap-8">
+              <RouteSection shipment={shipment} />
+              <section className="flex flex-col gap-3">
+                <h2 className="font-heading text-base font-bold tracking-tight">Tereti</h2>
+                <CargoCards shipment={shipment} />
+              </section>
+            </div>
+            <div className="flex min-w-0 flex-col gap-6">
               <InvoicePanel shipment={shipment} />
               <AssignmentPanel shipment={shipment} onAssignClick={openAssign} />
               <RecipientsPanel shipment={shipment} />
-              {hasRoute && (
-                <Panel title="Ruta">
-                  <RouteTimeline shipment={shipment} />
-                </Panel>
-              )}
-            </div>
-            <div className="flex min-w-0 flex-col gap-3">
-              <h2 className="font-heading text-base font-bold tracking-tight">Tereti</h2>
-              <CargoCards shipment={shipment} />
+              <NotesTab shipment={shipment} />
             </div>
           </div>
         </TabsContent>
@@ -130,7 +128,7 @@ function MainContent({ shipment }: { shipment: Shipment }) {
   );
 }
 
-/** First load: the page's shape (header, strip, tabs, side column + cargo cards). */
+/** First load: the page's shape (header, strip, tabs, Ruta + side column). */
 function PageSkeleton() {
   return (
     <div aria-busy className="flex flex-col gap-6">
@@ -158,14 +156,16 @@ function PageSkeleton() {
         ))}
       </div>
       <Skeleton className="h-10 w-80" />
-      <div className="grid items-start gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
+      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+        <div className="flex flex-col gap-3">
+          <Skeleton className="h-5 w-48" />
+          {Array.from({ length: 3 }, (_, index) => (
+            <Skeleton className="h-32 rounded-xl" key={index} />
+          ))}
+        </div>
         <div className="flex flex-col gap-6">
           <Skeleton className="h-32 rounded-xl" />
           <Skeleton className="h-40 rounded-xl" />
-        </div>
-        <div className="flex flex-col gap-4">
-          <Skeleton className="h-56 rounded-xl" />
-          <Skeleton className="h-56 rounded-xl" />
         </div>
       </div>
     </div>
