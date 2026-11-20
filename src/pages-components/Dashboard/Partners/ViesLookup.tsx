@@ -8,6 +8,9 @@ import { useViesLookup } from '@/lib/hooks';
 import { buildTaxId, MIN_TAX_NUMBER_LENGTH, parseTaxId } from '@/lib/utils/vies';
 import { Icon } from '@/ui';
 
+/** The EU explainer (Croatian) with a link to the official VIES check; develop had it in a tooltip. */
+const VIES_INFO_URL = 'https://europa.eu/youreurope/business/finance-and-tax/vat/check-vat-number-vies/index_hr.htm';
+
 export type ViesResult =
   | { kind: 'hit'; values: CompanyFormInitialValues; name: string }
   | { kind: 'no-details'; values: CompanyFormInitialValues }
@@ -63,7 +66,8 @@ export function ViesLookup({ onResult }: { onResult(result: ViesResult): void })
     setLookup({ countryCode, taxNumber: number });
   }
 
-  let status: React.ReactNode = 'EU baza PDV brojeva. Upiši broj s oznakom države; ime i adresa se popune sami.';
+  let status: React.ReactNode =
+    'Ime i adresa tvrtke popune se sami iz EU baze PDV brojeva. Upiši broj s oznakom države.';
   if (hint) status = <span className="text-destructive">{hint}</span>;
   else if (lookup && !isFetching && data && (data.name || data.address))
     status = (
@@ -76,9 +80,19 @@ export function ViesLookup({ onResult }: { onResult(result: ViesResult): void })
 
   return (
     <div className="flex flex-col gap-2 rounded-xl border bg-muted/40 p-4">
-      <label className="text-sm font-medium" htmlFor="vies-tax-id">
-        Popuni iz VIES-a
-      </label>
+      <div className="flex items-baseline justify-between gap-2">
+        <label className="text-sm font-medium" htmlFor="vies-tax-id">
+          Popuni iz VIES-a
+        </label>
+        <a
+          className="flex items-center gap-1 text-xs text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+          href={VIES_INFO_URL}
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          Što je VIES? <Icon icon="IconExternalLink" size="xs" />
+        </a>
+      </div>
       <div className="flex gap-2">
         <InputGroup className="flex-1">
           <InputGroupAddon>
