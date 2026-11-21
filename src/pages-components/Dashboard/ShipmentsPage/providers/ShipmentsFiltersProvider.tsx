@@ -1,6 +1,8 @@
 import { useRouter } from 'next/router';
 import { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
 
+import { track } from '@/lib/analytics';
+
 import {
   type ShipmentsFiltersStorage,
   ShipmentsFiltersStorageProvider,
@@ -77,6 +79,9 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
     (patch: Partial<ShipmentFilters>) => {
       updateFields(patch);
       resetPage();
+      // Analytics: which filters were set (names only, never the values).
+      const set = Object.entries(patch).flatMap(([key, value]) => (value ? [key] : []));
+      if (set.length) track('filters applied', { filter_names: set });
     },
     [updateFields, resetPage]
   );

@@ -1,3 +1,4 @@
+import { track } from '@/lib/analytics';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { useCompleteVehicleStop, useNotifyVehicleStopDriver, useUncompleteVehicleStop } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
@@ -19,9 +20,11 @@ export function useStopActions(stop: VehicleStop, driverName: string | undefined
     try {
       if (done) {
         await uncomplete();
+        track('stop confirmed', { entry: 'route', undo: true });
         showSuccessToast({ title: 'Završeno poništeno' });
       } else {
         await complete();
+        track('stop confirmed', { entry: 'route', undo: false });
         showSuccessToast({ title: 'Označeno završenim' });
       }
     } catch (error) {

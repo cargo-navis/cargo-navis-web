@@ -18,6 +18,7 @@ import { useDiscardGuard } from '@/components/shared/discard-changes';
 import { Alert, AlertAction, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { track } from '@/lib/analytics';
 import { getShipmentDraftDocumentUrl, type Shipment, type ShipmentDraft } from '@/lib/api';
 import type { Tenant } from '@/lib/api/tenant.d';
 import {
@@ -216,6 +217,7 @@ export function NalogForm({
         } else {
           await updateShipment({ id: shipment.id, ...transformFormDataToPayload(data) });
         }
+        track('shipment updated', { type: data.isAgency ? 'agency' : 'own' });
         showSuccessToast({ title: `Nalog #${shipment.orderNumber} ažuriran` });
         setBaseline(values);
         void router.push(cancelHref);
@@ -226,6 +228,11 @@ export function NalogForm({
       const created = data.isAgency
         ? await createAgencyShipment(transformFormDataToAgencyPayload(data, { draftId }))
         : await createShipment(transformFormDataToPayload(data, { draftId }));
+      track('shipment created', {
+        source: mode === 'draft' ? 'pdf' : mode === 'copy' ? 'copy' : 'manual',
+        type: data.isAgency ? 'agency' : 'own',
+        cargo_count: values.cargo.length,
+      });
       showSuccessToast({ title: `Nalog #${created.orderNumber} dodan` });
       setBaseline(values);
       // Own nalog: Korak 2, Dodijeli vozilo. Agency: the podvozar drives, back to the list (today).

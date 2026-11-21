@@ -33,6 +33,7 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
+import { resetAnalytics } from '@/lib/analytics';
 import { logout } from '@/lib/api';
 import { useCurrentTenant, useCurrentUser } from '@/lib/hooks';
 import { accessTokenStore } from '@/lib/services/accessTokenStore';
@@ -58,7 +59,7 @@ export function AppSidebar() {
   const items = React.useMemo(() => NAV.filter((item) => canAccessNavItem(item, user?.positions)), [user?.positions]);
   // „Učitaj nalog”: same upload as the Nalozi page header, then the Nalozi u pripremi tab.
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const uploadFiles = useUploadDraftFiles(() => void router.push('/dashboard/shipments?tab=drafts'));
+  const uploadFiles = useUploadDraftFiles(() => void router.push('/dashboard/shipments?tab=drafts'), 'sidebar');
   const openFilePicker = () => fileInputRef.current?.click();
 
   return (
@@ -195,6 +196,7 @@ async function handleLogout() {
   await logout().catch(() => undefined);
 
   accessTokenStore.clear();
+  resetAnalytics();
   window.location.pathname = '/login';
 }
 

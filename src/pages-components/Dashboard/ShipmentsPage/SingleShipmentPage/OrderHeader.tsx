@@ -49,7 +49,7 @@ export function NotifyDriversButton({
   clientName?: string;
   compact?: boolean;
 }) {
-  const drivers = useNotifyDrivers(shipment, clientName);
+  const drivers = useNotifyDrivers(shipment, clientName, compact ? 'quick_look' : 'detail');
   if (!drivers.hasStops || (compact && drivers.driverCount === 0)) return null;
   const { driverCount, lastSentAt } = drivers;
 

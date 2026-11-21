@@ -29,6 +29,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
+import { track } from '@/lib/analytics';
 import { type EquipmentEnum, type Vehicle, type VehicleEnum } from '@/lib/api';
 import { useCreateVehicle, useUpdateVehicle } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
@@ -112,6 +113,7 @@ export function VehicleForm({ vehicle, initialType }: { vehicle?: Vehicle; initi
         void router.push(vehicleHref(vehicle.id));
       } else {
         const created = await createVehicle(toPayload(values, type));
+        track('vehicle created', { vehicle_type: type });
         showSuccessToast({ title: 'Vozilo dodano', description: values.registration.trim().toUpperCase() });
         void router.push(created?.id ? vehicleHref(created.id) : fleetListHref(type));
       }

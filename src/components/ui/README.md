@@ -29,7 +29,7 @@ the decision in their comment.
 |---|---|
 | accordion | Accordion / Item / Trigger / Content (chevron icon). |
 | alert | Alert (tone `variant`: default, info, success, warning, destructive; `size` sm / default; `icon` = icon name or `false`; `onClose` shows ×), AlertTitle / Description / Action; Banner (one at a time, top of the content card). |
-| alert-dialog | Confirm: 448px, ghost Odustani focused, `AlertDialogMedia` red icon tile (destructive only), `AlertDialogAction variant="destructive"`; `size="sm"` for small ones. |
+| alert-dialog | Confirm: 448px, ghost Odustani focused, `AlertDialogMedia` red icon tile (destructive only), `AlertDialogAction variant="destructive"`; `size="sm"` (384px) for small ones; the backdrop also shows when opened from a sheet or dialog. |
 | avatar | Avatar / Image / Fallback / Badge / Group (for drivers use `shared/driver-avatar`). |
 | badge | One Badge: `tone` neutral · brand · info · success · warning · danger · category × `look` soft · outline · solid · dot × `size` sm 18 · md 20 · lg 28. |
 | breadcrumb | Breadcrumb / List / Item / Link / Page / Separator / Ellipsis. |

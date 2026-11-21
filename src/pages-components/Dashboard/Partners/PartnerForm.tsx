@@ -15,6 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/input-group';
 import type { CompanyFormInitialValues } from '@/components/vies';
+import { track } from '@/lib/analytics';
 import { type PostalCode, searchPostalCodes } from '@/lib/api';
 import { cn } from '@/lib/utils';
 import { COMPANY_NAME_MAX_LENGTH } from '@/lib/utils/companies';
@@ -136,6 +137,8 @@ export function PartnerForm({
     partner ? fromPartner(partner) : initialValues ? applyInitial(EMPTY, initialValues) : EMPTY
   );
   const [values, setValues] = React.useState<Values>(initial);
+  /** Filled from a VIES hit (analytics only). */
+  const [fromVies, setFromVies] = React.useState(false);
   const dirty = JSON.stringify(values) !== JSON.stringify(initial);
   React.useEffect(() => onDirtyChange?.(dirty), [dirty, onDirtyChange]);
   const [touched, setTouched] = React.useState<Partial<Record<Key, boolean>>>({});
@@ -153,6 +156,7 @@ export function PartnerForm({
   const invalid = (key: Key) => (show(key) ? true : undefined);
 
   function handleVies(result: ViesResult) {
+    if (result.kind !== 'miss') setFromVies(true);
     if (result.kind === 'miss') {
       // Keep what the user typed; only fill an empty tax id.
       setValues((current) => (current.taxId ? current : { ...current, taxId: result.values.taxId ?? '' }));
@@ -178,6 +182,7 @@ export function PartnerForm({
         addressPostalCodeId: values.postalCode!.id,
         email: showEmail ? normalizeEmail(values.email) : '',
       });
+      if (!isEdit) track('partner created', { kind, via_vies: fromVies });
       showSuccessToast({ title: `${words.one} ${saved.name} ${isEdit ? 'ažuriran' : 'dodan'}` });
       onSaved(saved);
     } catch {

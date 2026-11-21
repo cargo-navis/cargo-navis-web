@@ -24,6 +24,15 @@ if (!PROJECT_ENVS.includes(process.env.PROJECT_ENV)) {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // PostHog (KAN-134) goes through our domain so ad blockers don't drop it: /ingest → PostHog EU. Its API paths end
+  // in a slash, which Next would otherwise redirect away.
+  skipTrailingSlashRedirect: true,
+  async rewrites() {
+    return [
+      { source: '/ingest/static/:path*', destination: 'https://eu-assets.i.posthog.com/static/:path*' },
+      { source: '/ingest/:path*', destination: 'https://eu.i.posthog.com/:path*' },
+    ];
+  },
   env: {
     PROJECT_ENV: process.env.PROJECT_ENV,
     // Always defined at build time so production builds drop the driver portal dev mock.
@@ -48,7 +57,11 @@ const nextConfig = {
         ['vans', 'kombiji'],
       ].flatMap(([path, vrsta]) => [
         { source: `/dashboard/fleet/${path}`, destination: `/dashboard/fleet?vrsta=${vrsta}`, permanent: false },
-        { source: `/dashboard/fleet/${path}/new`, destination: `/dashboard/fleet/new?vrsta=${vrsta}`, permanent: false },
+        {
+          source: `/dashboard/fleet/${path}/new`,
+          destination: `/dashboard/fleet/new?vrsta=${vrsta}`,
+          permanent: false,
+        },
         { source: `/dashboard/fleet/${path}/:id`, destination: '/dashboard/fleet/:id', permanent: false },
         { source: `/dashboard/fleet/${path}/:id/edit`, destination: '/dashboard/fleet/:id/edit', permanent: false },
       ]),

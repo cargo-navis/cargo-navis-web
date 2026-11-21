@@ -12,6 +12,7 @@ import {
   AlertDialogMedia,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { track } from '@/lib/analytics';
 import { generateShipmentPdf, type PaginatedResponse, type Shipment, type ShipmentPdfLanguage } from '@/lib/api';
 import { InvoiceStatus } from '@/lib/api/shipments';
 import { useDeleteAgencyShipment, useDeleteShipment, useUpdateAgencyShipment, useUpdateShipment } from '@/lib/hooks';
@@ -56,6 +57,7 @@ export function useChangeInvoiceStatus() {
       try {
         if (shipment.isAgency) await updateAgencyShipment({ id: shipment.id, invoiceStatus });
         else await updateShipment({ id: shipment.id, invoiceStatus });
+        track('invoice status changed', { status: invoiceStatus });
         showSuccessToast({ title: `Status fakture: ${INVOICE_STATUS_LABEL[invoiceStatus]}` });
       } catch (error) {
         console.error(error);
@@ -153,6 +155,7 @@ export function DeleteShipmentDialog({
     try {
       if (shipment.isAgency) await deleteAgency();
       else await deleteRegular();
+      track('shipment deleted');
       showSuccessToast({ title: `Nalog #${shipment.orderNumber} obrisan` });
       onOpenChange(false);
       onDeleted?.();

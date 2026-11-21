@@ -300,7 +300,7 @@ function useClientName(shipment: Shipment) {
 
 export function RowMenu({ shipment }: { shipment: Shipment }) {
   const confirm = useDeleteConfirm(shipment);
-  const notify = useNotifyDrivers(shipment, useClientName(shipment));
+  const notify = useNotifyDrivers(shipment, useClientName(shipment), 'row_menu');
   return (
     // The row opens the nalog on click; nothing in here should.
     <div onClick={(event) => event.stopPropagation()}>
@@ -323,7 +323,7 @@ export function RowMenu({ shipment }: { shipment: Shipment }) {
 /** Right-click anywhere on the row: the same menu, plus „Otvori u novom tabu”. `children` is the row (`<tr>`). */
 export function RowContextMenu({ shipment, children }: { shipment: Shipment; children: React.ReactElement }) {
   const confirm = useDeleteConfirm(shipment);
-  const notify = useNotifyDrivers(shipment, useClientName(shipment));
+  const notify = useNotifyDrivers(shipment, useClientName(shipment), 'row_menu');
   return (
     <>
       <ContextMenu>

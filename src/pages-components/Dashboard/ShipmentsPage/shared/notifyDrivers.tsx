@@ -16,6 +16,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { type AnalyticsEvents, track } from '@/lib/analytics';
 import type { Shipment } from '@/lib/api';
 import { useNotifyShipmentDrivers } from '@/lib/hooks';
 import { formatDateTime } from '@/lib/utils/date';
@@ -26,7 +27,11 @@ import { Icon } from '@/ui';
 import { getDriversNotifiedToast } from '../driverNotifications';
 import { useLookups } from './lookups';
 
-export function useNotifyDrivers(shipment: Shipment, clientName?: string) {
+export function useNotifyDrivers(
+  shipment: Shipment,
+  clientName: string | undefined,
+  entry: AnalyticsEvents['drivers notified']['entry']
+) {
   const { employeesById } = useLookups();
   const { mutateAsync: notifyDrivers, isPending } = useNotifyShipmentDrivers(shipment.id);
   const [confirmOpen, setConfirmOpen] = React.useState(false);
@@ -49,6 +54,7 @@ export function useNotifyDrivers(shipment: Shipment, clientName?: string) {
         showErrorToast({ title: 'Obavijest nije poslana', description: 'Nijedan vozač nije primio poruku.' });
         return;
       }
+      track('drivers notified', { entry, again: !!lastSentAt });
       showSuccessToast(
         getDriversNotifiedToast({
           notifiedStops,
