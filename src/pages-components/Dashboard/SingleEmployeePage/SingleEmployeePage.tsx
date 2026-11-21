@@ -346,7 +346,7 @@ function ResendInvite({ employee }: { employee: Employee }) {
       await mutateAsync();
       showSuccessToast({ title: 'Pozivnica ponovno poslana', description: `Poslano na ${employee.email}.` });
     } catch {
-      showErrorToast({ title: 'Slanje pozivnice nije uspjelo. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Slanje pozivnice nije uspjelo', description: 'Pokušaj ponovno.' });
     }
   }
 

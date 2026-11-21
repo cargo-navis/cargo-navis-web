@@ -118,8 +118,9 @@ function offerNotify(stops: VehicleStop[], { employees, clientName, orderNumber,
   if (!withDriver.length) return;
   const names = getEmployeeNames(getStopDriverIds(withDriver), employees);
   const toastId = showSuccessToast({
-    title: names.length > 1 ? 'Obavijestiti vozače?' : 'Obavijestiti vozača?',
-    description: names.length ? `${names.join(', ')}: utovari i istovari ovog naloga` : undefined,
+    // „Obavijestiti vozača (Marko Hezler)?” — the names in the question itself.
+    title: `${names.length > 1 ? 'Obavijestiti vozače' : 'Obavijestiti vozača'}${names.length ? ` (${names.join(', ')})` : ''}?`,
+    description: 'Utovari i istovari ovog naloga',
     timeout: 10000,
     action: {
       label: 'Obavijesti',
@@ -132,7 +133,7 @@ function offerNotify(stops: VehicleStop[], { employees, clientName, orderNumber,
             .map((result) => result.value);
           onDone();
           if (!notified.length) {
-            showErrorToast({ title: 'Obavijest nije poslana. Pokušaj ponovno s naloga.' });
+            showErrorToast({ title: 'Obavijest nije poslana', description: 'Pokušaj ponovno s naloga.' });
             return;
           }
           showSuccessToast(getDriversNotifiedToast({ notifiedStops: notified, employees, clientName, orderNumber }));
@@ -201,7 +202,7 @@ export function useAssignment(shipment: Shipment): Assignment {
       offerNotify(stops, notifyContext);
     } catch (error) {
       console.error(error);
-      showErrorToast({ title: 'Vozilo nije dodijeljeno. Pokušaj ponovno.' });
+      showErrorToast({ title: 'Vozilo nije dodijeljeno', description: 'Pokušaj ponovno.' });
     }
   }
 

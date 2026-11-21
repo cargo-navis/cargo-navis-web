@@ -319,7 +319,7 @@ export function EmployeeForm({
           )
         );
         const saved = Object.keys(changed).length ? await updateEmployee(changed) : employee;
-        showSuccessToast({ title: 'Zaposlenik spremljen', description: fullName(values) });
+        showSuccessToast({ title: 'Zaposlenik ažuriran', description: fullName(values) });
         onSaved(saved ?? employee);
       } else {
         const saved = await createEmployee(payload);
@@ -331,7 +331,7 @@ export function EmployeeForm({
       if (message === EMAIL_TAKEN) showErrorToast({ title: `Korisnik s email adresom „${values.email}” već postoji` });
       else if (message === ACCOUNT_TAKEN)
         showErrorToast({ title: 'Korisnik s ovom email adresom ili telefonom već postoji' });
-      else showErrorToast({ title: 'Greška s unosom zaposlenika. Pokušajte ponovno.' });
+      else showErrorToast({ title: 'Greška s unosom zaposlenika', description: 'Pokušaj ponovno.' });
     }
   }
 

@@ -216,7 +216,7 @@ export function NalogForm({
         } else {
           await updateShipment({ id: shipment.id, ...transformFormDataToPayload(data) });
         }
-        showSuccessToast({ title: `Nalog #${shipment.orderNumber} spremljen` });
+        showSuccessToast({ title: `Nalog #${shipment.orderNumber} ažuriran` });
         setBaseline(values);
         void router.push(cancelHref);
         return;
@@ -226,13 +226,13 @@ export function NalogForm({
       const created = data.isAgency
         ? await createAgencyShipment(transformFormDataToAgencyPayload(data, { draftId }))
         : await createShipment(transformFormDataToPayload(data, { draftId }));
-      showSuccessToast({ title: `Nalog #${created.orderNumber} kreiran` });
+      showSuccessToast({ title: `Nalog #${created.orderNumber} dodan` });
       setBaseline(values);
       // Own nalog: Korak 2, Dodijeli vozilo. Agency: the podvozar drives, back to the list (today).
       void router.push(data.isAgency ? '/dashboard/shipments' : assignVehicleHref(created.id, { created: true }));
     } catch (error) {
       console.error(error);
-      showErrorToast({ title: 'Dogodila se greška s unosom naloga. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Dogodila se greška s unosom naloga', description: 'Pokušaj ponovno.' });
       setSaving(false);
     }
   }
@@ -401,7 +401,7 @@ function DraftBanners({
       window.open(url, '_blank');
     } catch (error) {
       console.error(error);
-      showErrorToast({ title: 'Dokument se nije otvorio. Pokušaj ponovno.' });
+      showErrorToast({ title: 'Dokument se nije otvorio', description: 'Pokušaj ponovno.' });
     } finally {
       setOpening(false);
     }

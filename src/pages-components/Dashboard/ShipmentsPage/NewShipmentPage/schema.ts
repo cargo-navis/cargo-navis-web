@@ -76,7 +76,7 @@ export function getShipmentSchema(tenantId: string) {
       externalOrderReference: Yup.string().optional(),
       clientId: Yup.string()
         .required('Odaberi klijenta.')
-        .test('not-tenant-when-agency', 'Vaša tvrtka ne može biti klijent na agencijskom nalogu.', function (value) {
+        .test('not-tenant-when-agency', 'Tvoja tvrtka ne može biti klijent na agencijskom nalogu.', function (value) {
           const { isAgency } = this.parent as { isAgency?: boolean };
           return !(isAgency && value === tenantId);
         }),
@@ -91,7 +91,7 @@ export function getShipmentSchema(tenantId: string) {
         }),
       transportContractorId: Yup.string()
         .required('Odaberi podvozara.')
-        .test('not-tenant-when-agency', 'Vaša tvrtka ne može biti podvozar na agencijskom nalogu.', function (value) {
+        .test('not-tenant-when-agency', 'Tvoja tvrtka ne može biti podvozar na agencijskom nalogu.', function (value) {
           const { isAgency } = this.parent as { isAgency?: boolean };
           return !(isAgency && value === tenantId);
         }),
@@ -124,13 +124,13 @@ export function getShipmentSchema(tenantId: string) {
       if (tenantCount === 0) {
         return this.createError({
           path: 'clientId',
-          message: 'Vaša tvrtka mora biti klijent ili podvozar.',
+          message: 'Tvoja tvrtka mora biti klijent ili podvozar.',
         });
       }
       if (tenantCount === 2) {
         return this.createError({
           path: 'clientId',
-          message: 'Vaša tvrtka ne može biti klijent na vlastitom prijevozu.',
+          message: 'Tvoja tvrtka ne može biti klijent na vlastitom prijevozu.',
         });
       }
       return true;

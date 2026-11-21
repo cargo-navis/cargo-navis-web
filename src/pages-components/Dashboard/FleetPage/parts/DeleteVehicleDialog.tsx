@@ -39,7 +39,7 @@ export function DeleteVehicleDialog({
     try {
       await deleteVehicle(vehicle.id);
     } catch {
-      showErrorToast({ title: 'Vozilo nije obrisano. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Vozilo nije obrisano', description: 'Pokušaj ponovno.' });
       return;
     }
     showSuccessToast({ title: 'Vozilo obrisano', description: vehicle.registration });

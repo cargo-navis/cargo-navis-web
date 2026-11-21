@@ -178,10 +178,10 @@ export function PartnerForm({
         addressPostalCodeId: values.postalCode!.id,
         email: showEmail ? normalizeEmail(values.email) : '',
       });
-      showSuccessToast({ title: `${words.one} ${isEdit ? 'spremljen' : 'dodan'}`, description: saved.name });
+      showSuccessToast({ title: `${words.one} ${saved.name} ${isEdit ? 'ažuriran' : 'dodan'}` });
       onSaved(saved);
     } catch {
-      showErrorToast({ title: `Dogodila se greška s unosom ${words.accusative}. Pokušajte ponovno.` });
+      showErrorToast({ title: `Dogodila se greška s unosom ${words.accusative}`, description: 'Pokušaj ponovno.' });
     }
   }
 

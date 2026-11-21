@@ -38,12 +38,12 @@ export const NotificationsCard: React.FC<NotificationsCardProps> = ({ status, on
       const permission = await onEnable();
       if (permission === 'granted') {
         showSuccessToast({
-          title: 'Obavijesti su uključene.',
+          title: 'Obavijesti su uključene',
           description: 'Javit ćemo ti kad stigne novi nalog.',
         });
       }
     } catch {
-      showErrorToast({ title: 'Uključivanje obavijesti nije uspjelo. Pokušaj ponovno.' });
+      showErrorToast({ title: 'Uključivanje obavijesti nije uspjelo', description: 'Pokušaj ponovno.' });
     } finally {
       setIsEnabling(false);
     }

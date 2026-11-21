@@ -68,11 +68,11 @@ function DeleteDraftDialog({
     if (!draft) return;
     try {
       await deleteDraft(draft.id);
-      showSuccessToast({ title: 'Nalog u pripremi izbrisan' });
+      showSuccessToast({ title: 'Nalog u pripremi obrisan' });
       onOpenChange(false);
     } catch (error) {
       console.error(error);
-      showErrorToast({ title: 'Nalog u pripremi nije izbrisan. Pokušaj ponovno.' });
+      showErrorToast({ title: 'Nalog u pripremi nije obrisan', description: 'Pokušaj ponovno.' });
     }
   }
   return (
@@ -122,7 +122,7 @@ export const DraftsTab = ({ onUpload }: { onUpload(): void }) => {
       window.open(url, '_blank');
     } catch (error) {
       console.error(error);
-      showErrorToast({ title: 'Dokument se nije otvorio. Pokušaj ponovno.' });
+      showErrorToast({ title: 'Dokument se nije otvorio', description: 'Pokušaj ponovno.' });
     }
   }
 

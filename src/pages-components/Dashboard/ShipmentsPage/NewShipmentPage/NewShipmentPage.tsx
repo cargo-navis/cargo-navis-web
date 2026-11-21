@@ -16,8 +16,8 @@ const DRAFTS_HREF = '/dashboard/shipments?tab=drafts';
 const LIST_HREF = '/dashboard/shipments';
 
 const draftNotReadyMessages: Record<string, string> = {
-  PENDING_EXTRACTION: 'Nalog još čeka obradu. Pokušajte ponovno za nekoliko trenutaka.',
-  PROCESSING: 'AI obrada naloga je u tijeku. Pokušajte ponovno za nekoliko trenutaka.',
+  PENDING_EXTRACTION: 'Nalog još čeka obradu. Pokušaj ponovno za nekoliko trenutaka.',
+  PROCESSING: 'AI obrada naloga je u tijeku. Pokušaj ponovno za nekoliko trenutaka.',
   CONFIRMED: 'Ovaj nalog je već potvrđen.',
   FAILED: 'Obrada naloga nije uspjela.',
 };

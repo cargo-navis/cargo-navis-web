@@ -139,7 +139,7 @@ function PasswordPanel() {
       setTouched({ password: false, confirm: false });
       showSuccessToast({ title: 'Lozinka promijenjena' });
     } catch {
-      showErrorToast({ title: 'Dogodila se greška s ažuriranjem lozinke. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Dogodila se greška s ažuriranjem lozinke', description: 'Pokušaj ponovno.' });
     } finally {
       setSaving(false);
     }

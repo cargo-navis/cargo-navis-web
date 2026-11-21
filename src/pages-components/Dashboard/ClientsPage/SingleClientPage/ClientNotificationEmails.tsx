@@ -59,7 +59,7 @@ export function ClientNotificationEmails({ client }: { client: Client }) {
       showSuccessToast({ title: successTitle, description });
       return true;
     } catch {
-      showErrorToast({ title: 'Spremanje adresa nije uspjelo. Pokušaj ponovno.' });
+      showErrorToast({ title: 'Spremanje adresa nije uspjelo', description: 'Pokušaj ponovno.' });
       return false;
     }
   }

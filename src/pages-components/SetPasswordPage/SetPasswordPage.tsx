@@ -36,10 +36,10 @@ export const SetPasswordPage = () => {
           description={
             email ? (
               <>
-                Postavite lozinku za račun: <span className="font-medium break-all text-foreground">{email}</span>
+                Postavi lozinku za račun: <span className="font-medium break-all text-foreground">{email}</span>
               </>
             ) : (
-              'Postavite lozinku za svoj račun'
+              'Postavi lozinku za svoj račun'
             )
           }
           title={TITLE}

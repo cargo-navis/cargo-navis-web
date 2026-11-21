@@ -49,10 +49,10 @@ export const CompleteStopButton: React.FC<CompleteStopButtonProps> = ({ stop, on
       showSuccessToast({ title: 'Potvrda poništena', description: getStopToastDescription(stop) });
     } catch (error) {
       if (getErrorCode(error) === 'CARGO_STATUS_CHANGED_BY_LATER_STOP') {
-        showErrorToast({ title: 'Utovar se ne može poništiti.', description: 'Istovar ovog tereta je već potvrđen.' });
+        showErrorToast({ title: 'Utovar se ne može poništiti', description: 'Istovar ovog tereta je već potvrđen.' });
         return;
       }
-      showErrorToast({ title: 'Poništavanje nije uspjelo.' });
+      showErrorToast({ title: 'Poništavanje nije uspjelo' });
     }
   }
 
@@ -64,10 +64,10 @@ export const CompleteStopButton: React.FC<CompleteStopButtonProps> = ({ stop, on
       if (getErrorCode(error) === 'CARGO_NOT_YET_LOADED') {
         // The route on screen was out of date; reloading it disables the button with the reason.
         void refetchStops();
-        showErrorToast({ title: 'Najprije potvrdi utovar.', description: 'Teret ovog istovara još nije utovaren.' });
+        showErrorToast({ title: 'Najprije potvrdi utovar', description: 'Teret ovog istovara još nije utovaren.' });
         return;
       }
-      showErrorToast({ title: 'Potvrda nije uspjela. Pokušaj ponovno.' });
+      showErrorToast({ title: 'Potvrda nije uspjela', description: 'Pokušaj ponovno.' });
       return;
     }
 

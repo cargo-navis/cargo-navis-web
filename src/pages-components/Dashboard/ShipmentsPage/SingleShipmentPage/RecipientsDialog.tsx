@@ -81,11 +81,11 @@ export function RecipientsDialog({ shipment, onClose }: { shipment: Shipment; on
     try {
       if (shipment.isAgency) await updateAgencyShipment({ id: shipment.id, notificationEmails: next });
       else await updateShipment({ id: shipment.id, notificationEmails: next });
-      showSuccessToast({ title: 'Emailovi za obavijesti spremljeni' });
+      showSuccessToast({ title: 'Emailovi za obavijesti ažurirani' });
       onClose();
     } catch (saveError) {
       console.error(saveError);
-      showErrorToast({ title: 'Emailovi nisu spremljeni. Pokušaj ponovno.' });
+      showErrorToast({ title: 'Emailovi nisu spremljeni', description: 'Pokušaj ponovno.' });
     } finally {
       setIsSaving(false);
     }

@@ -61,7 +61,7 @@ export function useChangeInvoiceStatus() {
         console.error(error);
         listSnapshot.forEach(([key, data]) => queryClient.setQueryData(key, data));
         queryClient.setQueryData(['shipment', shipment.id], detailSnapshot);
-        showErrorToast({ title: 'Status fakture nije promijenjen. Pokušaj ponovno.' });
+        showErrorToast({ title: 'Status fakture nije promijenjen', description: 'Pokušaj ponovno.' });
       }
     },
     [queryClient, updateShipment, updateAgencyShipment]
@@ -119,7 +119,7 @@ export function useDownloadShipmentPdf() {
       downloadBlob(blob, buildShipmentPdfFilename({ ...document, language }));
     } catch (error) {
       console.error(error);
-      showErrorToast({ title: 'PDF se nije preuzeo. Pokušaj ponovno.' });
+      showErrorToast({ title: 'PDF se nije preuzeo', description: 'Pokušaj ponovno.' });
     } finally {
       setIsDownloading(false);
     }
@@ -153,12 +153,12 @@ export function DeleteShipmentDialog({
     try {
       if (shipment.isAgency) await deleteAgency();
       else await deleteRegular();
-      showSuccessToast({ title: `Nalog #${shipment.orderNumber} izbrisan` });
+      showSuccessToast({ title: `Nalog #${shipment.orderNumber} obrisan` });
       onOpenChange(false);
       onDeleted?.();
     } catch (error) {
       console.error(error);
-      showErrorToast({ title: 'Nalog nije izbrisan. Pokušaj ponovno.' });
+      showErrorToast({ title: 'Nalog nije obrisan', description: 'Pokušaj ponovno.' });
     }
   }
 

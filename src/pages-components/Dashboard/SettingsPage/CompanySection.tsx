@@ -126,9 +126,9 @@ export function CompanySection({ tenant, postalCode }: { tenant: Tenant; postalC
       });
       setSaved(values);
       setTriedToSave(false);
-      showSuccessToast({ title: 'Podaci tvrtke spremljeni' });
+      showSuccessToast({ title: 'Podaci tvrtke ažurirani' });
     } catch {
-      showErrorToast({ title: 'Dogodila se greška s ažuriranjem podataka tvrtke. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Dogodila se greška s ažuriranjem podataka tvrtke', description: 'Pokušaj ponovno.' });
     }
   }
 
@@ -292,7 +292,7 @@ export function CompanySection({ tenant, postalCode }: { tenant: Tenant; postalC
               <span className={cn('text-sm', triedToSave && errorCount > 0 && 'text-destructive')}>
                 {triedToSave && errorCount > 0
                   ? `${errorCount} ${plural(errorCount, ['polje treba', 'polja trebaju', 'polja treba'])} ispraviti`
-                  : 'Imate nespremljene promjene.'}
+                  : 'Imaš nespremljene promjene.'}
               </span>
               <div className="flex gap-2">
                 <Button disabled={saving} variant="ghost" onClick={discard}>
@@ -366,9 +366,9 @@ function LogoField({
     setPreviewUrl(URL.createObjectURL(file));
     try {
       await uploadTenantLogo({ file, fileName: file.name });
-      showSuccessToast({ title: 'Logo spremljen' });
+      showSuccessToast({ title: 'Logo ažuriran' });
     } catch {
-      showErrorToast({ title: 'Dogodila se greška s dodavanjem logoa. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Dogodila se greška s dodavanjem logoa', description: 'Pokušaj ponovno.' });
     } finally {
       setPreviewUrl(undefined);
     }
@@ -379,7 +379,7 @@ function LogoField({
       await deleteTenantLogo();
       showSuccessToast({ title: 'Logo uklonjen' });
     } catch {
-      showErrorToast({ title: 'Dogodila se greška s brisanjem logoa. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Dogodila se greška s brisanjem logoa', description: 'Pokušaj ponovno.' });
     }
   }
 

@@ -1,5 +1,5 @@
 /**
- * Napomene (lab /order NotesPanel): Interna („Samo za vas”) and Vanjska („Ispisuje se na PDF nalogu”), each with ✎ or
+ * Napomene (lab /order NotesPanel): Interna („Samo za tebe”) and Vanjska („Ispisuje se na PDF nalogu”), each with ✎ or
  * „+ Dodaj napomenu”, edited in a dialog (today's ShipmentNoteModal: max 255 characters, empty = removed).
  */
 
@@ -33,7 +33,7 @@ const NOTE: Record<NoteType, { title: string; hint: string; icon: IconType; fiel
   {
     internal: {
       title: 'Interna',
-      hint: 'Samo za vas. Ne ide na PDF ni drugim primateljima.',
+      hint: 'Samo za tebe. Ne ide na PDF ni drugim primateljima.',
       icon: 'IconLock',
       field: 'internalNote',
     },
@@ -67,11 +67,11 @@ function NoteDialog({ shipment, type, onClose }: { shipment: Shipment; type: Not
       // An agency nalog is patched through its own resource, which carries the note to the contractor's order.
       if (shipment.isAgency) await updateAgencyShipment({ id: shipment.id, [config.field]: note });
       else await updateShipment({ id: shipment.id, [config.field]: note });
-      showSuccessToast({ title: 'Napomena spremljena' });
+      showSuccessToast({ title: 'Napomena ažurirana' });
       onClose();
     } catch (error) {
       console.error(error);
-      showErrorToast({ title: 'Napomena nije spremljena. Pokušaj ponovno.' });
+      showErrorToast({ title: 'Napomena nije spremljena', description: 'Pokušaj ponovno.' });
     } finally {
       setIsSaving(false);
     }

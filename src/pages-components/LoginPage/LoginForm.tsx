@@ -64,7 +64,7 @@ export const LoginForm = () => {
             id="login-email"
             inputMode="email"
             name="email"
-            placeholder="Unesite svoj email"
+            placeholder="Upiši svoj email"
             ref={emailRef}
             type="email"
             value={values.email}
@@ -81,7 +81,7 @@ export const LoginForm = () => {
             id="login-password"
             invalid={!!passwordError}
             name="password"
-            placeholder="Unesite svoju lozinku"
+            placeholder="Upiši svoju lozinku"
             ref={passwordRef}
             value={values.password}
             onBlur={() => setTouched((current) => ({ ...current, password: true }))}

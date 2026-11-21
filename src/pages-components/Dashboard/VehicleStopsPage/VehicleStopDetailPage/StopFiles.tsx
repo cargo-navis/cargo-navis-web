@@ -43,7 +43,8 @@ export function useStopFileUpload(stopId: string) {
             : `Dodano ${uploaded} od ${files.length} ${plural(files.length, ['dokumenta', 'dokumenta', 'dokumenata'])}`,
       });
     }
-    if (uploaded === 0 && skipped === 0) showErrorToast({ title: 'Dokument nije dodan. Pokušajte ponovno.' });
+    if (uploaded === 0 && skipped === 0)
+      showErrorToast({ title: 'Dokument nije dodan', description: 'Pokušaj ponovno.' });
   }
 
   const input = (
@@ -72,7 +73,7 @@ export function StopFiles({ stop, onAdd, isUploading }: { stop: VehicleStop; onA
     try {
       window.open(await getUrl({ stopId: stop.id, documentId: document.id, disposition: 'inline' }), '_blank');
     } catch {
-      showErrorToast({ title: 'Dokument se ne može otvoriti. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Dokument se ne može otvoriti', description: 'Pokušaj ponovno.' });
     }
   }
 
@@ -80,10 +81,10 @@ export function StopFiles({ stop, onAdd, isUploading }: { stop: VehicleStop; onA
     if (!toDelete) return;
     try {
       await deleteFile({ stopId: stop.id, documentId: toDelete.id });
-      showSuccessToast({ title: 'Dokument izbrisan' });
+      showSuccessToast({ title: 'Dokument obrisan' });
       setToDelete(null);
     } catch {
-      showErrorToast({ title: 'Dokument nije izbrisan. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Dokument nije obrisan', description: 'Pokušaj ponovno.' });
     }
   }
 

@@ -84,16 +84,16 @@ export function useToggleStop(row: VehicleRouteStop) {
       const errorCode = (error as { response?: { data?: { errorCode?: string } } })?.response?.data?.errorCode;
       if (errorCode === 'CARGO_NOT_YET_LOADED') {
         showErrorToast({
-          title: 'Istovar nije potvrđen: teret još nije utovaren.',
+          title: 'Istovar nije potvrđen: teret još nije utovaren',
           description: 'Prvo potvrdi utovar.',
         });
       } else if (errorCode === 'CARGO_STATUS_CHANGED_BY_LATER_STOP') {
         showErrorToast({
-          title: 'Utovar nije poništen: teret je već istovaren.',
+          title: 'Utovar nije poništen: teret je već istovaren',
           description: 'Prvo poništi taj istovar.',
         });
       } else {
-        showErrorToast({ title: 'Promjena nije spremljena. Pokušaj ponovno.' });
+        showErrorToast({ title: 'Promjena nije spremljena', description: 'Pokušaj ponovno.' });
       }
     }
   }

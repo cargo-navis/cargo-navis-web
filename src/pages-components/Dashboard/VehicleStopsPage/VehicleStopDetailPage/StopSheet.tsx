@@ -35,7 +35,7 @@ import { pluralCount } from '@/lib/utils/plural';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Icon } from '@/ui';
 
-import { kindWord, placeOnly, toApiDate } from '../stops';
+import { kindWord, placeOnly, stopToastTitle, toApiDate } from '../stops';
 import { CargoPicker } from './CargoPicker';
 import {
   editStopValues,
@@ -200,14 +200,14 @@ function StopSheetBody({
     try {
       if (stop) {
         await updateStop({ id: stop.id, data: toPayload(values) });
-        showSuccessToast({ title: 'Spremljeno' });
+        showSuccessToast({ title: stopToastTitle(stop, 'ažuriran') });
       } else if (target.mode === 'new') {
         await createStops([{ vehicleId, previousStopId: target.previousStopId, ...toPayload(values) }]);
         showSuccessToast({ title: addedTitle(values) });
       }
       onSaved();
     } catch {
-      showErrorToast({ title: 'Spremanje nije uspjelo. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Spremanje nije uspjelo', description: 'Pokušaj ponovno.' });
     }
   }
 

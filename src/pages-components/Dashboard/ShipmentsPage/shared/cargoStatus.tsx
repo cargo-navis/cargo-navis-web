@@ -104,7 +104,7 @@ export function useSetCargoStatus(shipment: Pick<Shipment, 'id' | 'cargo'>) {
         // Some tereti may have been saved before the failing one: show what the server has.
         void queryClient.invalidateQueries(listFilter);
         void queryClient.invalidateQueries({ queryKey: detailKey });
-        showErrorToast({ title: 'Status tereta nije promijenjen. Pokušaj ponovno.' });
+        showErrorToast({ title: 'Status tereta nije promijenjen', description: 'Pokušaj ponovno.' });
       } finally {
         setPending(false);
       }

@@ -16,7 +16,7 @@ import { useDeleteDriverStopFile, useDriverAccount, useUploadDriverStopFile } fr
 import { formatDate } from '@/lib/utils/date';
 import { bytesToMegabytes, getFileInput } from '@/lib/utils/file';
 import { getFileIcon } from '@/lib/utils/fileIcon';
-import { pluralCount } from '@/lib/utils/plural';
+import { plural, pluralCount } from '@/lib/utils/plural';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Icon } from '@/ui';
 
@@ -73,13 +73,13 @@ export const StopDocuments: React.FC<StopDocumentsProps> = ({ stop, isReadOnly =
     if (successCount > 0) {
       showSuccessToast({
         title:
-          successCount === 1 && list.length === 1
-            ? 'Datoteka učitana'
-            : `Učitano ${successCount}/${list.length} datoteka`,
+          list.length === 1
+            ? 'Dokument dodan'
+            : `Dodano ${successCount} od ${list.length} ${plural(list.length, ['dokumenta', 'dokumenta', 'dokumenata'])}`,
       });
     }
     if (successCount === 0 && skippedCount === 0) {
-      showErrorToast({ title: 'Učitavanje datoteka nije uspjelo. Pokušaj ponovno.' });
+      showErrorToast({ title: 'Učitavanje datoteka nije uspjelo', description: 'Pokušaj ponovno.' });
     }
   }
 

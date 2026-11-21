@@ -38,6 +38,13 @@ export function kindWord(stop: VehicleStop, grammaticalCase: 'nominative' | 'gen
   return kinds.map((kind) => KIND_WORD[kind][grammaticalCase]).join(' i ');
 }
 
+/** „Utovar ažuriran”, „Utovar i istovar obrisani” — toast titles about one stop. */
+export function stopToastTitle(stop: VehicleStop, done: 'ažuriran' | 'obrisan') {
+  const word = kindWord(stop);
+  const plural = word.includes(' i ');
+  return `${word.charAt(0).toUpperCase()}${word.slice(1)} ${done}${plural ? 'i' : ''}`;
+}
+
 /** „Koprivnica” (falls back to the postal code). */
 export function placeOnly(stop: VehicleStop) {
   return stop.address?.placeName || stop.address?.postalCode || 'Bez adrese';

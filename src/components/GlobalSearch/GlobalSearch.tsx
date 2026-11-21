@@ -213,7 +213,7 @@ function Palette({ onClose, onUpload }: { onClose(): void; onUpload(): void }) {
         <Message tone="error">
           Pretraživanje nije uspjelo.{' '}
           <button className="font-medium underline underline-offset-2" type="button" onClick={() => void refetch()}>
-            Pokušajte ponovno.
+            Pokušaj ponovno.
           </button>
         </Message>
       );
@@ -284,7 +284,7 @@ function Palette({ onClose, onUpload }: { onClose(): void; onUpload(): void }) {
         </Button>
       </div>
       <CommandList className="max-h-[min(60vh,28rem)] max-sm:max-h-none max-sm:flex-1">
-        {tooShort && <Message>Upišite najmanje {GLOBAL_SEARCH_MIN_LENGTH} znaka.</Message>}
+        {tooShort && <Message>Upiši najmanje {GLOBAL_SEARCH_MIN_LENGTH} znaka.</Message>}
 
         {isStart && recent.length > 0 && (
           <CommandGroup heading="Nedavno">

@@ -75,7 +75,7 @@ export function DocumentsTab({ shipment }: { shipment: Shipment }) {
       window.open(url, '_blank');
     } catch (error) {
       console.error(error);
-      showErrorToast({ title: 'Dokument se nije otvorio. Pokušaj ponovno.' });
+      showErrorToast({ title: 'Dokument se nije otvorio', description: 'Pokušaj ponovno.' });
     }
   }
 
@@ -85,7 +85,7 @@ export function DocumentsTab({ shipment }: { shipment: Shipment }) {
       : downloadShipmentFile(shipment.id, document.id, shipment.isAgency);
     request.catch((error) => {
       console.error(error);
-      showErrorToast({ title: 'Dokument se nije preuzeo. Pokušaj ponovno.' });
+      showErrorToast({ title: 'Dokument se nije preuzeo', description: 'Pokušaj ponovno.' });
     });
   }
 
@@ -94,11 +94,11 @@ export function DocumentsTab({ shipment }: { shipment: Shipment }) {
     try {
       if (toDelete.stopId) await deleteStopFile({ stopId: toDelete.stopId, documentId: toDelete.id });
       else await deleteShipmentFile(toDelete.id);
-      showSuccessToast({ title: 'Dokument izbrisan', description: toDelete.name });
+      showSuccessToast({ title: 'Dokument obrisan', description: toDelete.name });
       setToDelete(null);
     } catch (error) {
       console.error(error);
-      showErrorToast({ title: 'Dokument nije izbrisan. Pokušaj ponovno.' });
+      showErrorToast({ title: 'Dokument nije obrisan', description: 'Pokušaj ponovno.' });
     }
   }
 

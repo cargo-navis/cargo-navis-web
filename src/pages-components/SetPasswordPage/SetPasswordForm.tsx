@@ -52,7 +52,7 @@ export const SetPasswordForm = ({ token, email, onLinkRejected }: SetPasswordFor
       onLinkRejected();
       return;
     }
-    showSuccessToast({ title: 'Lozinka uspješno postavljena, možete se prijaviti', timeout: 5000 });
+    showSuccessToast({ title: 'Lozinka postavljena', description: 'Sad se možeš prijaviti.', timeout: 5000 });
     await push('/login');
   }
 
@@ -69,7 +69,7 @@ export const SetPasswordForm = ({ token, email, onLinkRejected }: SetPasswordFor
             id="set-password-new"
             invalid={!!newPasswordError}
             name="newPassword"
-            placeholder="Unesite novu lozinku"
+            placeholder="Upiši novu lozinku"
             ref={newPasswordRef}
             value={values.newPassword}
             onBlur={() => setTouched((current) => ({ ...current, newPassword: true }))}
@@ -86,7 +86,7 @@ export const SetPasswordForm = ({ token, email, onLinkRejected }: SetPasswordFor
             id="set-password-confirm"
             invalid={!!confirmPasswordError}
             name="confirmPassword"
-            placeholder="Potvrdite unesenu lozinku"
+            placeholder="Ponovi lozinku"
             ref={confirmPasswordRef}
             value={values.confirmPassword}
             onBlur={() => setTouched((current) => ({ ...current, confirmPassword: true }))}

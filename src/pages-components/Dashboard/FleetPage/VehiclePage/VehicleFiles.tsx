@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { formatDate } from '@/lib/utils/date';
 import { bytesToMegabytes, downloadVehicleFile, getFileInput } from '@/lib/utils/file';
 import { getFileIcon } from '@/lib/utils/fileIcon';
+import { plural } from '@/lib/utils/plural';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Icon } from '@/ui';
 
@@ -56,12 +57,15 @@ export function VehicleFiles({ vehicle }: { vehicle: Vehicle }) {
     }
     if (uploaded > 0) {
       showSuccessToast({
-        title: list.length === 1 ? 'Datoteka dodana' : `Dodano ${uploaded} od ${list.length}`,
+        title:
+          list.length === 1
+            ? 'Dokument dodan'
+            : `Dodano ${uploaded} od ${list.length} ${plural(list.length, ['dokumenta', 'dokumenta', 'dokumenata'])}`,
         description: list.length === 1 ? list[0].name : undefined,
       });
     }
     if (uploaded === 0 && skipped === 0) {
-      showErrorToast({ title: 'Datoteke nisu dodane. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Datoteke nisu dodane', description: 'Pokušaj ponovno.' });
     }
   }
 
@@ -72,7 +76,7 @@ export function VehicleFiles({ vehicle }: { vehicle: Vehicle }) {
       const url = await getDocumentUrl({ documentId: document.id, disposition: 'inline' });
       window.open(url, '_blank');
     } catch {
-      showErrorToast({ title: 'Dokument se ne može otvoriti. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Dokument se ne može otvoriti', description: 'Pokušaj ponovno.' });
     }
   }
 
@@ -80,10 +84,10 @@ export function VehicleFiles({ vehicle }: { vehicle: Vehicle }) {
     if (!toDelete) return;
     try {
       await deleteFile(toDelete.id);
-      showSuccessToast({ title: 'Dokument izbrisan', description: toDelete.name });
+      showSuccessToast({ title: 'Dokument obrisan', description: toDelete.name });
       setToDelete(null);
     } catch {
-      showErrorToast({ title: 'Dokument nije izbrisan. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Dokument nije obrisan', description: 'Pokušaj ponovno.' });
     }
   }
 

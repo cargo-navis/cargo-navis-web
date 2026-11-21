@@ -28,16 +28,16 @@ export function useStopActions(stop: VehicleStop, driverName: string | undefined
       const code = errorCode(error);
       if (code === 'CARGO_NOT_YET_LOADED') {
         showErrorToast({
-          title: 'Istovar se ne može završiti: teret još nije utovaren.',
-          description: 'Prvo završite utovar.',
+          title: 'Istovar se ne može završiti: teret još nije utovaren',
+          description: 'Prvo završi utovar.',
         });
       } else if (code === 'CARGO_STATUS_CHANGED_BY_LATER_STOP') {
         showErrorToast({
-          title: 'Ne može se poništiti: teret je već promijenjen na kasnijem utovaru / istovaru.',
-          description: 'Prvo poništite kasniji.',
+          title: 'Ne može se poništiti: teret je već promijenjen na kasnijem utovaru / istovaru',
+          description: 'Prvo poništi kasniji.',
         });
       } else {
-        showErrorToast({ title: 'Promjena nije spremljena. Pokušajte ponovno.' });
+        showErrorToast({ title: 'Promjena nije spremljena', description: 'Pokušaj ponovno.' });
       }
     }
   }
@@ -47,7 +47,7 @@ export function useStopActions(stop: VehicleStop, driverName: string | undefined
       await notify();
       showSuccessToast({ title: driverName ? `${driverName} obaviješten` : 'Vozač obaviješten' });
     } catch {
-      showErrorToast({ title: 'Obavijest nije poslana. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Obavijest nije poslana', description: 'Pokušaj ponovno.' });
     }
   }
 

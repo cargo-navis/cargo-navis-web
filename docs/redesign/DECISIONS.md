@@ -52,6 +52,11 @@ switchable (see §7). **Later** = not in this redesign.
   sequence = **ruta** („Ruta KC 123-AB”); a nalog's from → to = relacija; a single countable noun only if unavoidable =
   mjesto („3 mjesta”).
 - **Menadžer** (not Voditelj), **Disponent** (not Dispečer), **Podvozari** everywhere (not Prijevoznici; renamed from Kontraktori 2026-11-21).
+- **Address the user informally** („ti”: Pokušaj ponovno, Upiši, Imaš …), everywhere (decided 2026-11-21).
+- **Toasts** (decided 2026-11-21): title = short label without a full stop, a second sentence goes to the description
+  (with its full stop): „Dokument nije obrisan” · „Pokušaj ponovno.”. Words: dodan (not kreiran), ažuriran (not
+  spremljen), obrisan (not izbrisan), „Dokument dodan” for any file; „Klijent / Podvozar [naziv] dodan / ažuriran /
+  obrisan”; „Obavijestiti vozača (Ime Prezime)?”.
 - „Aplikacija za vozače” (not Vozački portal), „Pozivnica za aplikaciju”.
 - Croatian agreement checked on every count and status (e.g. Isprave feminine: „1 istekla · 2 istekle · 5 isteklo”;
   Rokovi masculine: „1 istekao · 2 istekla · 5 isteklo”).

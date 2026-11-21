@@ -34,7 +34,7 @@ import { Icon } from '@/ui';
 
 import { routeFacts } from '../routeFacts';
 import { useEmployeeNames } from '../StopLine';
-import { chronological, firstName, isDone, kindWord, placeOnly } from '../stops';
+import { chronological, firstName, isDone, kindWord, placeOnly, stopToastTitle } from '../stops';
 import { DriverChangePopover, DriverHandoverDialog, type DriverScope } from './DriverChange';
 import { buildBlocks, buildEntries, type Entry, foldedCount } from './routeEntries';
 import { type SameDayOrder, StopCard, type StopCardHandlers } from './StopCard';
@@ -178,7 +178,7 @@ export const VehicleStopDetailPage = () => {
                     closeToast(toastId);
                     void Promise.all(notified.map((item) => notifyVehicleStopDriver(item.id)))
                       .then(() => showSuccessToast({ title: 'Vozač obaviješten o novom redoslijedu' }))
-                      .catch(() => showErrorToast({ title: 'Obavijest nije poslana. Pokušajte ponovno.' }))
+                      .catch(() => showErrorToast({ title: 'Obavijest nije poslana', description: 'Pokušaj ponovno.' }))
                       .finally(
                         () => void queryClient.invalidateQueries({ queryKey: ['vehicleStops', 'paginated', vehicleId] })
                       );
@@ -198,7 +198,7 @@ export const VehicleStopDetailPage = () => {
             });
             return;
           }
-          showErrorToast({ title: 'Premještanje nije uspjelo. Pokušajte ponovno.' });
+          showErrorToast({ title: 'Premještanje nije uspjelo', description: 'Pokušaj ponovno.' });
         },
       }
     );
@@ -242,10 +242,10 @@ export const VehicleStopDetailPage = () => {
     if (!toDelete) return;
     try {
       await deleteStop(toDelete.id);
-      showSuccessToast({ title: 'Obrisano' });
+      showSuccessToast({ title: stopToastTitle(toDelete, 'obrisan') });
       setToDelete(null);
     } catch {
-      showErrorToast({ title: 'Brisanje nije uspjelo. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Brisanje nije uspjelo', description: 'Pokušaj ponovno.' });
     }
   }
 
@@ -279,7 +279,7 @@ export const VehicleStopDetailPage = () => {
               <Icon icon="IconAlertTriangle" size="m" />
             </EmptyMedia>
             <EmptyTitle>Ruta se nije učitala</EmptyTitle>
-            <EmptyDescription>Provjerite vezu i pokušajte ponovno.</EmptyDescription>
+            <EmptyDescription>Provjeri vezu i pokušaj ponovno.</EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
             <Button variant="outline" onClick={() => void refetch()}>
@@ -404,7 +404,7 @@ export const VehicleStopDetailPage = () => {
                 <Icon icon="IconRoute" size="m" />
               </EmptyMedia>
               <EmptyTitle>Ruta je prazna</EmptyTitle>
-              <EmptyDescription>Dodijelite vozilu nalog ili dodajte utovar / istovar.</EmptyDescription>
+              <EmptyDescription>Dodijeli vozilu nalog ili dodaj utovar / istovar.</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
               <Button variant="outline" onClick={openNew}>

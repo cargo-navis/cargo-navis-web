@@ -1,5 +1,5 @@
 import { bytesToMegabytes } from '@/lib/utils/file';
-import { pluralCount } from '@/lib/utils/plural';
+import { plural, pluralCount } from '@/lib/utils/plural';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 
 export const FILE_SIZE_LIMIT_MB = 10;
@@ -35,12 +35,16 @@ export async function uploadFiles(files: File[], upload: (file: File) => Promise
   }
   if (uploaded > 0) {
     showSuccessToast({
-      title: files.length === 1 ? 'Dokument dodan' : `Dodano ${uploaded} od ${files.length}`,
+      title:
+        files.length === 1
+          ? 'Dokument dodan'
+          : `Dodano ${uploaded} od ${files.length} ${plural(files.length, ['dokumenta', 'dokumenta', 'dokumenata'])}`,
     });
   }
   if (failed > 0) {
     showErrorToast({
-      title: `${pluralCount(failed, ['datoteka nije dodana', 'datoteke nisu dodane', 'datoteka nije dodano'])}. Pokušaj ponovno.`,
+      title: pluralCount(failed, ['datoteka nije dodana', 'datoteke nisu dodane', 'datoteka nije dodano']),
+      description: 'Pokušaj ponovno.',
     });
   }
   return uploaded;

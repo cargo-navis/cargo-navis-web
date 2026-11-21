@@ -108,7 +108,7 @@ export function VehicleForm({ vehicle, initialType }: { vehicle?: Vehicle; initi
     try {
       if (vehicle) {
         await updateVehicle(toPayload(values, type, initial));
-        showSuccessToast({ title: 'Vozilo spremljeno', description: values.registration.trim().toUpperCase() });
+        showSuccessToast({ title: 'Vozilo ažurirano', description: values.registration.trim().toUpperCase() });
         void router.push(vehicleHref(vehicle.id));
       } else {
         const created = await createVehicle(toPayload(values, type));
@@ -116,7 +116,7 @@ export function VehicleForm({ vehicle, initialType }: { vehicle?: Vehicle; initi
         void router.push(created?.id ? vehicleHref(created.id) : fleetListHref(type));
       }
     } catch {
-      showErrorToast({ title: 'Vozilo nije spremljeno. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Vozilo nije spremljeno', description: 'Pokušaj ponovno.' });
     }
   }
 

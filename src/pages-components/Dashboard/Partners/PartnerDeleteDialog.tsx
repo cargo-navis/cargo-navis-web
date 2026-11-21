@@ -72,11 +72,11 @@ export function PartnerDeleteDialog({
     if (!shown || !canDelete) return;
     try {
       await deletePartner(shown.id);
-      showSuccessToast({ title: `${words.one} izbrisan`, description: shown.name });
+      showSuccessToast({ title: `${words.one} ${shown.name} obrisan` });
       onOpenChange(false);
       onDeleted?.(shown);
     } catch {
-      showErrorToast({ title: `Brisanje ${words.accusative} nije uspjelo. Pokušajte ponovno.` });
+      showErrorToast({ title: `Brisanje ${words.accusative} nije uspjelo`, description: 'Pokušaj ponovno.' });
     }
   }
 

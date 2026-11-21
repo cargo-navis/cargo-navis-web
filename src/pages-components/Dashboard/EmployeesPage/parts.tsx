@@ -154,7 +154,7 @@ export function DeactivateDialog({
       onOpenChange(false);
       onDone?.(shown);
     } catch {
-      showErrorToast({ title: 'Deaktiviranje nije uspjelo. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Deaktiviranje nije uspjelo', description: 'Pokušaj ponovno.' });
     }
   }
 
@@ -219,7 +219,7 @@ export function InviteDialog({
       },
       () => {
         if (cancelled) return;
-        showErrorToast({ title: 'Greška s generiranjem pozivnice.' });
+        showErrorToast({ title: 'Greška s generiranjem pozivnice' });
         onOpenChangeRef.current(false);
       }
     );
@@ -238,7 +238,7 @@ export function InviteDialog({
       });
       onOpenChange(false);
     } catch {
-      showErrorToast({ title: 'Kopiranje nije uspjelo.' });
+      showErrorToast({ title: 'Kopiranje nije uspjelo' });
     } finally {
       setCopying(false);
     }

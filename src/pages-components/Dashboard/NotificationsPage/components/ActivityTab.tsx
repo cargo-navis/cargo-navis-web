@@ -89,7 +89,7 @@ export function ActivityTab({
 
   function markAllRead() {
     readAll.mutate(undefined, {
-      onError: () => showErrorToast({ title: 'Označavanje nije uspjelo. Pokušaj ponovno.' }),
+      onError: () => showErrorToast({ title: 'Označavanje nije uspjelo', description: 'Pokušaj ponovno.' }),
     });
   }
 

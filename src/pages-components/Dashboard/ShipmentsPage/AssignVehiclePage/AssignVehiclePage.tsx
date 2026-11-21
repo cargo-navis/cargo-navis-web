@@ -248,7 +248,7 @@ function AssignContent({
         const notified = await notifyDrivers();
         if (notified.length === 0) {
           showErrorToast({
-            title: 'Obavijest nije poslana.',
+            title: 'Obavijest nije poslana',
             description: 'Vozaču nije dostavljen nijedan utovar ni istovar.',
           });
         } else {
@@ -263,7 +263,7 @@ function AssignContent({
         }
       } catch (error) {
         console.error(error);
-        showErrorToast({ title: 'Greška prilikom slanja obavijesti. Pokušajte ponovno s naloga.' });
+        showErrorToast({ title: 'Greška prilikom slanja obavijesti', description: 'Pokušaj ponovno s naloga.' });
       }
     }
     // Moves on either way: the nalog is assigned, the driver can still be notified from it (today).
@@ -281,7 +281,7 @@ function AssignContent({
       />
       {fromCreate && (
         <Alert size="sm" variant="success">
-          <AlertTitle>Nalog #{shipment.orderNumber} kreiran</AlertTitle>
+          <AlertTitle>Nalog #{shipment.orderNumber} dodan</AlertTitle>
           <AlertDescription>
             Korak 2 od 2: odaberi vozilo, ili preskoči i dodijeli ga kasnije s naloga.
           </AlertDescription>

@@ -27,7 +27,7 @@ export function StopDateButton({ stop }: { stop: VehicleStop }) {
     try {
       await updateStop({ id: stop.id, data: toUpdatePayload(stop, { date }) });
     } catch {
-      showErrorToast({ title: 'Datum nije promijenjen. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Datum nije promijenjen', description: 'Pokušaj ponovno.' });
     }
   }
 

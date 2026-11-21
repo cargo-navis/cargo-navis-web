@@ -82,7 +82,7 @@ export function useChangeDriver() {
         toast.add({
           type: 'error',
           title: `Obavijest nije poslana na ${failed.length} ${plural(failed.length, STOPS_FORMS)}`,
-          description: `${driver.fullName} je vozač, ali nije obaviješten. Obavijestite ga ponovno.`,
+          description: `${driver.fullName} je vozač, ali nije obaviješten. Obavijesti ga ponovno.`,
           actionProps: { children: 'Pokušaj ponovno', onClick: () => void notifyStops(failed, driver) },
         });
       } else if (stops.length > 0) {
@@ -130,7 +130,7 @@ export function useChangeDriver() {
     if (updateFailed.length > 0) {
       showErrorToast({
         title: `Nije promijenjeno na ${updateFailed.length} ${plural(updateFailed.length, STOPS_FORMS)}`,
-        description: 'Pokušajte ponovno.',
+        description: 'Pokušaj ponovno.',
       });
     }
     return updateFailed.length === 0;

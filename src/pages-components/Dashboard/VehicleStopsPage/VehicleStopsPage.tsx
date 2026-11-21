@@ -83,7 +83,7 @@ export const VehicleStopsPage = () => {
           <Icon icon="IconAlertTriangle" size="m" />
         </EmptyMedia>
         <EmptyTitle>Prijevozi se nisu učitali</EmptyTitle>
-        <EmptyDescription>Provjerite vezu i pokušajte ponovno.</EmptyDescription>
+        <EmptyDescription>Provjeri vezu i pokušaj ponovno.</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <Button variant="outline" onClick={() => void refetch()}>
@@ -101,7 +101,7 @@ export const VehicleStopsPage = () => {
         <EmptyTitle>
           {search.trim() ? `Nema rezultata za „${search.trim()}”` : 'Nema prijevoza za ove filtere'}
         </EmptyTitle>
-        <EmptyDescription>Pokušajte s drugom registracijom, vozačem ili disponentom.</EmptyDescription>
+        <EmptyDescription>Pokušaj s drugom registracijom, vozačem ili disponentom.</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <Button variant="outline" onClick={clearFilters}>
@@ -116,7 +116,7 @@ export const VehicleStopsPage = () => {
           <Icon icon="IconTruck" size="m" />
         </EmptyMedia>
         <EmptyTitle>Još nema prijevoza</EmptyTitle>
-        <EmptyDescription>Prijevoz nastaje kad nalogu dodijelite vozilo.</EmptyDescription>
+        <EmptyDescription>Prijevoz nastaje kad nalogu dodijeliš vozilo.</EmptyDescription>
       </EmptyHeader>
       <EmptyContent>
         <Button nativeButton={false} render={<Link href="/dashboard/shipments" />} variant="outline">

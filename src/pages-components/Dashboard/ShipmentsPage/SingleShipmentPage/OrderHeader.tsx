@@ -70,7 +70,7 @@ function NotifyDriversButton({ shipment, clientName }: { shipment: Shipment; cli
     try {
       const notifiedStops = await notifyDrivers();
       if (notifiedStops.length === 0) {
-        showErrorToast({ title: 'Obavijest nije poslana.', description: 'Nijedan vozač nije primio poruku.' });
+        showErrorToast({ title: 'Obavijest nije poslana', description: 'Nijedan vozač nije primio poruku.' });
         return;
       }
       showSuccessToast(
@@ -83,7 +83,7 @@ function NotifyDriversButton({ shipment, clientName }: { shipment: Shipment; cli
       );
     } catch (error) {
       console.error(error);
-      showErrorToast({ title: 'Obavijest nije poslana. Pokušaj ponovno.' });
+      showErrorToast({ title: 'Obavijest nije poslana', description: 'Pokušaj ponovno.' });
     }
   }
 

@@ -50,10 +50,13 @@ export function EmployeeFiles({ employee }: { employee: Employee }) {
       });
     if (uploaded > 0)
       showSuccessToast({
-        title: uploaded === 1 ? 'Datoteka dodana' : `Dodano ${uploaded} od ${files.length} datoteka`,
+        title:
+          files.length === 1
+            ? 'Dokument dodan'
+            : `Dodano ${uploaded} od ${files.length} ${plural(files.length, ['dokumenta', 'dokumenta', 'dokumenata'])}`,
       });
     if (uploaded === 0 && skipped === 0)
-      showErrorToast({ title: 'Dodavanje datoteka nije uspjelo. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Dodavanje datoteka nije uspjelo', description: 'Pokušaj ponovno.' });
   }
 
   async function handlePreview(documentId: string) {
@@ -61,7 +64,7 @@ export function EmployeeFiles({ employee }: { employee: Employee }) {
       const url = await getDocumentUrl({ documentId, disposition: 'inline' });
       window.open(url, '_blank');
     } catch {
-      showErrorToast({ title: 'Pregled dokumenta nije uspio. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Pregled dokumenta nije uspio', description: 'Pokušaj ponovno.' });
     }
   }
 
@@ -69,10 +72,10 @@ export function EmployeeFiles({ employee }: { employee: Employee }) {
     if (!toDelete) return;
     try {
       await deleteFile(toDelete.id);
-      showSuccessToast({ title: 'Dokument izbrisan', description: toDelete.name });
+      showSuccessToast({ title: 'Dokument obrisan', description: toDelete.name });
       setToDelete(null);
     } catch {
-      showErrorToast({ title: 'Brisanje dokumenta nije uspjelo. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Brisanje dokumenta nije uspjelo', description: 'Pokušaj ponovno.' });
     }
   }
 

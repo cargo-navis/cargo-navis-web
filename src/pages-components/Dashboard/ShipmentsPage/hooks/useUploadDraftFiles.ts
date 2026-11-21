@@ -18,7 +18,12 @@ export function useUploadDraftFiles(onFilesAccepted?: () => void) {
 
       if (rejectedCount > 0) {
         showErrorToast({
-          title: `${pluralCount(rejectedCount, ['datoteka nije podržana', 'datoteke nisu podržane', 'datoteka nije podržano'])}. Dozvoljen je samo PDF.`,
+          title: pluralCount(rejectedCount, [
+            'datoteka nije podržana',
+            'datoteke nisu podržane',
+            'datoteka nije podržano',
+          ]),
+          description: 'Dozvoljen je samo PDF.',
         });
       }
 
@@ -33,12 +38,17 @@ export function useUploadDraftFiles(onFilesAccepted?: () => void) {
 
       if (succeeded > 0) {
         showSuccessToast({
-          title: `${pluralCount(succeeded, ['nalog učitan', 'naloga učitana', 'naloga učitano'])}. Obrada je u tijeku.`,
+          title: pluralCount(succeeded, ['nalog učitan', 'naloga učitana', 'naloga učitano']),
+          description: 'Obrada je u tijeku.',
         });
       }
       if (failed > 0) {
         showErrorToast({
-          title: `${pluralCount(failed, ['datoteku nije moguće učitati', 'datoteke nije moguće učitati', 'datoteka nije moguće učitati'])}.`,
+          title: pluralCount(failed, [
+            'datoteku nije moguće učitati',
+            'datoteke nije moguće učitati',
+            'datoteka nije moguće učitati',
+          ]),
         });
       }
     },
