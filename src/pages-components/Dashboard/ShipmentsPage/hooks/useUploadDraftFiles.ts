@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { type AnalyticsEvents, track } from '@/lib/analytics';
 import { useCreateShipmentDraft } from '@/lib/hooks';
 import { pluralCount } from '@/lib/utils/plural';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
@@ -8,7 +9,11 @@ const ACCEPTED_MIME_TYPES = ['application/pdf'];
 
 export const ACCEPTED_DRAFT_FILE_TYPES = ACCEPTED_MIME_TYPES;
 
-export function useUploadDraftFiles(onFilesAccepted?: () => void) {
+/** `entry`: where the upload started (analytics). */
+export function useUploadDraftFiles(
+  onFilesAccepted: (() => void) | undefined,
+  entry: AnalyticsEvents['draft uploaded']['entry']
+) {
   const { mutateAsync: createDraft } = useCreateShipmentDraft();
 
   return useCallback(
@@ -37,6 +42,7 @@ export function useUploadDraftFiles(onFilesAccepted?: () => void) {
       const failed = results.length - succeeded;
 
       if (succeeded > 0) {
+        track('draft uploaded', { entry, file_count: succeeded });
         showSuccessToast({
           title: pluralCount(succeeded, ['nalog učitan', 'naloga učitana', 'naloga učitano']),
           description: 'Obrada je u tijeku.',
@@ -52,6 +58,6 @@ export function useUploadDraftFiles(onFilesAccepted?: () => void) {
         });
       }
     },
-    [createDraft, onFilesAccepted]
+    [createDraft, onFilesAccepted, entry]
   );
 }

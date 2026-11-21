@@ -10,6 +10,7 @@ import * as React from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { track } from '@/lib/analytics';
 import { useCompleteVehicleStop, useUncompleteVehicleStop } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Icon } from '@/ui';
@@ -42,7 +43,7 @@ const STOP_WORDS = {
 const wordsFor = (kinds: RouteStopKind[]) => STOP_WORDS[kinds.length > 1 ? 'both' : kinds[0]];
 
 /** Confirm / undo a vehicle stop (today's ToggleStopCompletionButton rules and messages). */
-export function useToggleStop(row: VehicleRouteStop) {
+export function useToggleStop(row: VehicleRouteStop, entry: 'detail' | 'quick_look' = 'detail') {
   const { stop } = row;
   const { mutateAsync: complete, isPending: isCompleting } = useCompleteVehicleStop(stop.id);
   const { mutateAsync: uncomplete, isPending: isUncompleting } = useUncompleteVehicleStop(stop.id);
@@ -72,10 +73,12 @@ export function useToggleStop(row: VehicleRouteStop) {
     try {
       if (stop.completedAt) {
         await uncomplete();
+        track('stop confirmed', { entry, undo: true });
         await refreshed();
         showSuccessToast({ title: words.undone, description: place });
       } else {
         await complete();
+        track('stop confirmed', { entry, undo: false });
         await refreshed();
         showSuccessToast({ title: words.confirmed, description: place });
       }
@@ -102,8 +105,16 @@ export function useToggleStop(row: VehicleRouteStop) {
 }
 
 /** „✓ Potvrdi utovar / istovar” for the next stop; disabled with the reason when the backend would refuse it. */
-export function ConfirmStopButton({ row, size = 'sm' }: { row: VehicleRouteStop; size?: 'xs' | 'sm' }) {
-  const { toggle, words, isPending } = useToggleStop(row);
+export function ConfirmStopButton({
+  row,
+  size = 'sm',
+  entry = 'detail',
+}: {
+  row: VehicleRouteStop;
+  size?: 'xs' | 'sm';
+  entry?: 'detail' | 'quick_look';
+}) {
+  const { toggle, words, isPending } = useToggleStop(row, entry);
   return (
     <WithReason reason={row.blocked}>
       <Button disabled={!!row.blocked} loading={isPending} size={size} onClick={() => void toggle()}>

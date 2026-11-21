@@ -246,7 +246,7 @@ export function RouteStops({
                 </span>
                 {nextVehicleStop && stop.key === confirmKey && (
                   <span className="pt-1">
-                    <ConfirmStopButton row={nextVehicleStop} size="xs" />
+                    <ConfirmStopButton entry="quick_look" row={nextVehicleStop} size="xs" />
                   </span>
                 )}
               </div>

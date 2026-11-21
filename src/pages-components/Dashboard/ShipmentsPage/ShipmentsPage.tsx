@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { track } from '@/lib/analytics';
 import { useDelayedFlag, useIsMobile, useScrollRestoration, useShipmentDrafts } from '@/lib/hooks';
 import { useHasMounted } from '@/lib/hooks/dom';
 import { Icon } from '@/ui';
@@ -42,7 +43,7 @@ export const ShipmentsPage = () => {
   const { data: drafts = [] } = useShipmentDrafts();
   const lookups = useShipmentLookups();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const uploadFiles = useUploadDraftFiles(() => setTab('drafts'));
+  const uploadFiles = useUploadDraftFiles(() => setTab('drafts'), 'header');
 
   if (!isMounted) return null;
 
@@ -219,7 +220,14 @@ function ShipmentsList({ onUpload }: { onUpload(): void }) {
         state={state}
         tableTopRef={tableTopRef}
         visibility={visibility}
-        onRowOpen={isMobile ? undefined : (shipment) => setQuickLookId(shipment.id)}
+        onRowOpen={
+          isMobile
+            ? undefined
+            : (shipment) => {
+                if (shipment.id !== quickLookId) track('quick look opened');
+                setQuickLookId(shipment.id);
+              }
+        }
       />
       {state === 'data' && resultsLabel && (
         <ShipmentsFooter

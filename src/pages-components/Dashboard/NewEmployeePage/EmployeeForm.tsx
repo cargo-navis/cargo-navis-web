@@ -25,6 +25,7 @@ import { Input } from '@/components/ui/input';
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group';
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select';
 import { Switch } from '@/components/ui/switch';
+import { track } from '@/lib/analytics';
 import { type DriverLicenceEnum, GenderEnum, MessageChannelEnum, PositionEnum } from '@/lib/api/employees';
 import type { CreateEmployeeParams, Employee } from '@/lib/api/employees.d';
 import { useCreateEmployee, useUpdateEmployee } from '@/lib/hooks';
@@ -323,6 +324,7 @@ export function EmployeeForm({
         onSaved(saved ?? employee);
       } else {
         const saved = await createEmployee(payload);
+        track('employee created');
         showSuccessToast({ title: 'Zaposlenik dodan', description: fullName(values) });
         onSaved(saved);
       }

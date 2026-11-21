@@ -16,6 +16,7 @@ import {
 import { Kbd } from '@/components/ui/kbd';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
+import { track } from '@/lib/analytics';
 import { VehicleEnum } from '@/lib/api';
 import { GLOBAL_SEARCH_MIN_LENGTH, useDelayedFlag, useGlobalSearch } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
@@ -99,7 +100,7 @@ export const GlobalSearch = () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   // „Učitaj nalog iz PDF-a”: the Nalozi page's upload and messages, then the Nalozi u pripremi tab.
-  const uploadDrafts = useUploadDraftFiles(() => void router.push('/dashboard/shipments?tab=drafts'));
+  const uploadDrafts = useUploadDraftFiles(() => void router.push('/dashboard/shipments?tab=drafts'), 'search');
 
   // Empty tagsToIgnore so the shortcut also works while focus is inside a form input
   useHotkeys([['mod+K', () => setIsOpen((open) => !open)]], []);
@@ -193,6 +194,10 @@ function Palette({ onClose, onUpload }: { onClose(): void; onUpload(): void }) {
     void router.push(href);
   }
 
+  /** Analytics: what kind of entry was picked, and how long the query was (never the query itself). */
+  const picked = (resultType: string) =>
+    track('search used', { result_type: resultType, query_length: trimmed.length });
+
   function openResult(group: SearchResultGroup, item: SearchResultItem) {
     addRecentSearchItem({
       category: group.key,
@@ -229,7 +234,10 @@ function Palette({ onClose, onUpload }: { onClose(): void; onUpload(): void }) {
                   className="items-start"
                   key={item.id}
                   value={`${group.key}-${item.id}`}
-                  onSelect={() => openResult(group, item)}
+                  onSelect={() => {
+                    picked(group.key);
+                    openResult(group, item);
+                  }}
                 >
                   {/* 20px first line, 16px icon: 2px down. */}
                   <Icon className="mt-0.5" icon={group.icon} size="s" />
@@ -243,7 +251,10 @@ function Palette({ onClose, onUpload }: { onClose(): void; onUpload(): void }) {
                 <CommandItem
                   className="text-brand"
                   value={`${group.key}-show-all`}
-                  onSelect={() => go(group.showAll!.href)}
+                  onSelect={() => {
+                    picked(`${group.key}_all`);
+                    go(group.showAll!.href);
+                  }}
                 >
                   <Icon className="[&_svg]:text-current!" icon="IconArrowRight" size="s" /> {group.showAll.label}
                 </CommandItem>
@@ -289,7 +300,14 @@ function Palette({ onClose, onUpload }: { onClose(): void; onUpload(): void }) {
         {isStart && recent.length > 0 && (
           <CommandGroup heading="Nedavno">
             {recent.map((item) => (
-              <CommandItem key={item.href} value={`recent-${item.href}`} onSelect={() => go(item.href)}>
+              <CommandItem
+                key={item.href}
+                value={`recent-${item.href}`}
+                onSelect={() => {
+                  picked('recent');
+                  go(item.href);
+                }}
+              >
                 <Icon className="text-muted-foreground" icon="IconClock" size="s" />
                 <span className="truncate">{item.title}</span>
                 {item.subtitle && <span className="truncate text-xs text-muted-foreground">{item.subtitle}</span>}
@@ -308,7 +326,11 @@ function Palette({ onClose, onUpload }: { onClose(): void; onUpload(): void }) {
                 <CommandItem
                   key={action.key}
                   value={`action-${action.key}`}
-                  onSelect={() => (action.upload ? onUpload() : go(action.href!))}
+                  onSelect={() => {
+                    picked(`action_${action.key}`);
+                    if (action.upload) onUpload();
+                    else go(action.href!);
+                  }}
                 >
                   <Icon icon={action.icon} size="s" /> {action.label}
                 </CommandItem>
@@ -322,7 +344,14 @@ function Palette({ onClose, onUpload }: { onClose(): void; onUpload(): void }) {
             <CommandSeparator />
             <CommandGroup heading="Idi na">
               {goTo.map((item) => (
-                <CommandItem key={item.key} value={`go-${item.key}`} onSelect={() => go(item.href)}>
+                <CommandItem
+                  key={item.key}
+                  value={`go-${item.key}`}
+                  onSelect={() => {
+                    picked('go_to');
+                    go(item.href);
+                  }}
+                >
                   <Icon icon={item.icon} size="s" /> {item.label}
                 </CommandItem>
               ))}

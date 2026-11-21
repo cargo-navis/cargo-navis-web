@@ -7,5 +7,7 @@ declare namespace NodeJS {
     NEXT_PUBLIC_BACKEND_URL: string;
     /** Web push public key (dashboard and driver portal). */
     NEXT_PUBLIC_VAPID_PUBLIC_KEY: string;
+    /** PostHog project key (KAN-134); optional — without it analytics stay off (local). */
+    NEXT_PUBLIC_POSTHOG_KEY?: string;
   }
 }

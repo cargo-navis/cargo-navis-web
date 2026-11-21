@@ -3,6 +3,7 @@ import * as React from 'react';
 
 import { FRAME_CLASS, FRAME_STYLE } from '@/components/layout/frame';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { useDashboardAnalytics } from '@/lib/analytics/useDashboardAnalytics';
 import { usePushNotificationSubscription } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
 
@@ -34,6 +35,7 @@ export interface DashboardLayoutProps {
  */
 export const DashboardLayout = ({ children, breadcrumbs, contentClassName }: DashboardLayoutProps) => {
   usePushNotificationSubscription();
+  useDashboardAnalytics();
   const { pathname } = useRouter();
   const [open, setOpen] = useSidebarOpen();
 

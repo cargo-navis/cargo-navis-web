@@ -14,7 +14,7 @@ function isFileDrag(event: DragEvent) {
 
 /** Drop a PDF anywhere on the Nalozi page → a new nalog u pripremi. */
 export const ShipmentsDropZone: React.FC<ShipmentsDropZoneProps> = ({ onFilesAccepted }) => {
-  const uploadFiles = useUploadDraftFiles(onFilesAccepted);
+  const uploadFiles = useUploadDraftFiles(onFilesAccepted, 'dropzone');
   const dragCounter = useRef(0);
   const [isDragging, setIsDragging] = useState(false);
 

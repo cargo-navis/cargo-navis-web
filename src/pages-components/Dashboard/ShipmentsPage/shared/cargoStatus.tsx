@@ -21,6 +21,7 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { track } from '@/lib/analytics';
 import type { Cargo, PaginatedResponse, Shipment } from '@/lib/api';
 import { LoadStatus } from '@/lib/api/shipments';
 import { useUpdateCargo } from '@/lib/hooks';
@@ -96,6 +97,7 @@ export function useSetCargoStatus(shipment: Pick<Shipment, 'id' | 'cargo'>) {
             applyOptimistic();
           }
         }
+        track('agency status set', { status: pending[0].status });
         showSuccessToast(toast ?? { title: `Status tereta: ${AGENCY_STATUS_LABEL[pending[0].status]}` });
       } catch (error) {
         console.error(error);

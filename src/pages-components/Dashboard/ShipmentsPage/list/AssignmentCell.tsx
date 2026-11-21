@@ -12,6 +12,7 @@ import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { track } from '@/lib/analytics';
 import {
   type Contractor,
   type Employee,
@@ -136,6 +137,7 @@ function offerNotify(stops: VehicleStop[], { employees, clientName, orderNumber,
             showErrorToast({ title: 'Obavijest nije poslana', description: 'Pokušaj ponovno s naloga.' });
             return;
           }
+          track('drivers notified', { entry: 'assign', again: false });
           showSuccessToast(getDriversNotifiedToast({ notifiedStops: notified, employees, clientName, orderNumber }));
         })();
       },
@@ -197,6 +199,7 @@ export function useAssignment(shipment: Shipment): Assignment {
     const picked = vehiclesById.get(vehicleId);
     try {
       const stops = await assignShipment({ shipmentId: shipment.id, vehicleId, cargoStopDates });
+      track('vehicle assigned', { entry: 'quick' });
       showSuccessToast({ title: picked ? `Vozilo ${picked.registration} dodijeljeno` : 'Vozilo dodijeljeno' });
       // The new stops take the vehicle's driver (if it has one): offer to notify, like today's modal.
       offerNotify(stops, notifyContext);

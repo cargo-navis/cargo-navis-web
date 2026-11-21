@@ -25,6 +25,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Field, FieldError } from '@/components/ui/field';
 import { Skeleton } from '@/components/ui/skeleton';
+import { track } from '@/lib/analytics';
 import type { Employee, Shipment, Vehicle } from '@/lib/api';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import {
@@ -241,6 +242,7 @@ function AssignContent({
       showErrorToast({ title: 'Greška pri dodjeli naloga vozilu' });
       return;
     }
+    track('vehicle assigned', { entry: 'page' });
     showSuccessToast({ title: `Nalog #${shipment.orderNumber} dodijeljen vozilu ${row.vehicle.registration}` });
 
     if (notify && getStopDriverIds(assigned).length > 0) {
@@ -252,6 +254,7 @@ function AssignContent({
             description: 'Vozaču nije dostavljen nijedan utovar ni istovar.',
           });
         } else {
+          track('drivers notified', { entry: 'assign', again: false });
           showSuccessToast(
             getDriversNotifiedToast({
               notifiedStops: notified,
