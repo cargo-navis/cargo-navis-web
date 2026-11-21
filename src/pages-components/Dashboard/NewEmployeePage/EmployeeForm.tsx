@@ -39,6 +39,7 @@ import {
   LICENCES,
   POSITION_LABEL,
   POSITION_ORDER,
+  PROFESSIONAL_LICENCES,
 } from '@/pages-components/Dashboard/EmployeesPage/employees';
 
 import { joinPhoneNumber, PHONE_PREFIXES, type PhoneValue, splitPhoneNumber } from './utils';
@@ -295,6 +296,8 @@ export function EmployeeForm({
   });
   const date = (key: DateField) => ({ value: values[key], onChange: (value: string) => set(key, value) });
   const showDriver = values.positions.includes(PositionEnum.Driver);
+  const hasProfessionalLicence = values.driverLicenceCategories.some((licence) => PROFESSIONAL_LICENCES.has(licence));
+  const hasRegularLicence = values.driverLicenceCategories.some((licence) => !PROFESSIONAL_LICENCES.has(licence));
   const toggle = <T,>(list: T[], item: T) => (list.includes(item) ? list.filter((i) => i !== item) : [...list, item]);
 
   async function handleSubmit(event: React.FormEvent) {
@@ -526,14 +529,24 @@ export function EmployeeForm({
                 </div>
               </Field>
             </div>
-            <div className="grid items-start gap-4 sm:grid-cols-2">
-              <ExpiryField id="e-lic-exp" label="Vozačka vrijedi do" {...date('driverLicenceExpiryDate')} />
-              <ExpiryField
-                id="e-prof-exp"
-                label="Profesionalna vrijedi do"
-                {...date('professionalDriverLicenceExpiryDate')}
-              />
-            </div>
+            {/* The backend keeps the licence dates per category: the regular one only with B / B1, the professional
+                one only with a C category (anything else is dropped on save). Shown only then, as on develop. */}
+            {hasRegularLicence || hasProfessionalLicence ? (
+              <div className="grid items-start gap-4 sm:grid-cols-2">
+                {hasRegularLicence && (
+                  <ExpiryField id="e-lic-exp" label="Vozačka vrijedi do" {...date('driverLicenceExpiryDate')} />
+                )}
+                {hasProfessionalLicence && (
+                  <ExpiryField
+                    id="e-prof-exp"
+                    label="Profesionalna vrijedi do"
+                    {...date('professionalDriverLicenceExpiryDate')}
+                  />
+                )}
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground">Odaberi kategoriju da upišeš do kada vozačka vrijedi.</p>
+            )}
             <div className="grid items-start gap-4 sm:grid-cols-2">
               <Field>
                 <FieldLabel htmlFor="e-tacho">Broj tahografske kartice</FieldLabel>

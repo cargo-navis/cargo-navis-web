@@ -123,6 +123,14 @@ export const LICENCES: DriverLicenceEnum[] = [
   DriverLicenceEnum.CE,
 ];
 
+/** The backend's isProfessional(): C1 / C / C1E / CE. */
+export const PROFESSIONAL_LICENCES = new Set<DriverLicenceEnum>([
+  DriverLicenceEnum.C1,
+  DriverLicenceEnum.C,
+  DriverLicenceEnum.C1E,
+  DriverLicenceEnum.CE,
+]);
+
 export const LICENCE_RANK: Record<DriverLicenceEnum, number> = {
   [DriverLicenceEnum.B1]: 0,
   [DriverLicenceEnum.B]: 1,
