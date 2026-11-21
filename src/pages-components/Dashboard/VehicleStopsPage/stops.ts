@@ -118,3 +118,6 @@ export function toUpdatePayload(stop: VehicleStop, patch: UpdateVehicleStopParam
 export function chronological(stops: VehicleStop[]) {
   return stops.toReversed();
 }
+
+/** „Ivan” from „Ivan Horvat” (names come as one full-name string). */
+export const firstName = (fullName: string) => fullName.trim().split(/\s+/)[0];

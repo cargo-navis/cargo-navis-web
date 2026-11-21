@@ -190,7 +190,9 @@ switchable (see §7). **Later** = not in this redesign.
 - Each card: date (click = inline date edit), UTOVAR / ISTOVAR in colour, „Sljedeće” + „Završeno” on the next stop,
   place · company, street, tereti per nalog (#nalog links), 📎, notification state („Obaviješten 8.11. 16:05” / amber
   „Nije obaviješten · Obavijesti”). ⋯: Uredi (side sheet md), Dodaj prije / poslije, Obavijesti, **Promijeni vozača od
-  ovdje**, Označi završenim / Poništi, Obriši (confirm). Drag handle on hover (only within the same date, as the backend).
+  ovdje**, Označi završenim / Poništi, Obriši (confirm). Reordering (decided 2026-11-21, replaces drag-and-drop): 2+ unfinished stops on one
+  date (or undated) sit in an „Isti dan” box in driving order, numbered „1.”, „2.”, with „Pomakni prije / kasnije”;
+  a lone date has no move controls (the backend only reorders within a date).
 - **Promijeni vozača** popover: new driver, scope radio „Samo oni koje vozi Ivan Horvat (N)” / „Svi nezavršeni na ovom
   vozilu (N)”, a preview list of exactly the affected stops, ☑ Obavijesti novog vozača. **Finished stops never change.**
 

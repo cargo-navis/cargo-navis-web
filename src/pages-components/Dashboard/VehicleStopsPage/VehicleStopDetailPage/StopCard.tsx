@@ -1,5 +1,3 @@
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import Link from 'next/link';
 import * as React from 'react';
 
@@ -17,6 +15,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { ButtonGroup } from '@/components/ui/button-group';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,7 +30,7 @@ import { formatDateTime } from '@/lib/utils/date';
 import { Icon } from '@/ui';
 
 import { StopKinds } from '../StopLine';
-import { companyOf, isDone, kindsOf, kindWord, placeOnly, placeWithPostalCode, shipmentsOf } from '../stops';
+import { companyOf, firstName, isDone, kindsOf, kindWord, placeOnly, placeWithPostalCode, shipmentsOf } from '../stops';
 import { StopDateButton } from './StopDateButton';
 import { StopFiles, useStopFileUpload } from './StopFiles';
 import { useStopActions } from './useStopActions';
@@ -61,10 +60,25 @@ function StopMarker({ stop, isNext }: { stop: VehicleStop; isNext: boolean }) {
   );
 }
 
+/** „Prva”, „Druga” … for the order tooltip; past ten it says „11.”. */
+const ORDINAL = ['Prva', 'Druga', 'Treća', 'Četvrta', 'Peta', 'Šesta', 'Sedma', 'Osma', 'Deveta', 'Deseta'];
+
+/** A stop's place in its „Isti dan” group (see StopCard). */
+export interface SameDayOrder {
+  /** 1-based place in that day's driving order. */
+  n: number;
+  total: number;
+  onEarlier(): void;
+  onLater(): void;
+  isMoving: boolean;
+}
+
 /**
  * One utovar / istovar on the Ruta (DECISIONS §5 Prijevozi, lab /transports `StopCard`): date (click = inline edit),
  * UTOVAR / ISTOVAR in colour, „Sljedeće” + „Završeno” on the next one, place · company, street, tereti per nalog,
- * 📎 documents, notification state, ⋯ menu; drag handle on hover (the backend only allows moves within the same date).
+ * 📎 documents, notification state, ⋯ menu. In an „Isti dan” group (2+ unfinished on one date, lab /transports,
+ * decided 2026-11-21): its place in the driving order („1.”) and „Pomakni prije / kasnije” — the backend only reorders
+ * within a date, so that's the only place a stop can move (no drag-and-drop).
  */
 export function StopCard({
   stop,
@@ -74,6 +88,7 @@ export function StopCard({
   driverName,
   clientName,
   handlers,
+  sameDay,
 }: {
   stop: VehicleStop;
   isNext: boolean;
@@ -82,6 +97,7 @@ export function StopCard({
   driverName(id: string | null): string | undefined;
   clientName(id: string | null): string | undefined;
   handlers: StopCardHandlers;
+  sameDay?: SameDayOrder;
 }) {
   const done = isDone(stop);
   const driver = driverName(stop.driverId);
@@ -90,10 +106,6 @@ export function StopCard({
   // Opened from a link to this stop (e.g. a notification about a new document): show its files.
   const [showFiles, setShowFiles] = React.useState(highlighted);
   const [confirmNotify, setConfirmNotify] = React.useState(false);
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: stop.id,
-    disabled: done,
-  });
   const company = companyOf(stop);
   const shipments = shipmentsOf(stop);
   const documents = stop.documents ?? [];
@@ -101,12 +113,7 @@ export function StopCard({
   const notify = () => (stop.messageSentAt ? setConfirmNotify(true) : void notifyDriver());
 
   return (
-    <li
-      className={cn('group/stop relative flex gap-3', isDragging && 'opacity-40')}
-      data-stop-id={stop.id}
-      ref={setNodeRef}
-      style={{ transform: CSS.Transform.toString(transform), transition }}
-    >
+    <li className="group/stop relative flex gap-3" data-stop-id={stop.id}>
       <span className="flex flex-col items-center">
         <StopMarker isNext={isNext} stop={stop} />
         {!last && <span className="w-px grow bg-border" />}
@@ -119,26 +126,24 @@ export function StopCard({
           done && 'bg-muted/30'
         )}
       >
-        {!done && (
-          <Tooltip>
-            <TooltipTrigger
-              render={
-                <button
-                  aria-label="Premjesti"
-                  className="absolute top-4 -left-7 hidden cursor-grab touch-none text-muted-foreground group-hover/stop:inline-flex active:cursor-grabbing pointer-coarse:inline-flex"
-                  type="button"
-                  {...attributes}
-                  {...listeners}
-                />
-              }
-            >
-              <Icon icon="IconGripVertical" size="s" />
-            </TooltipTrigger>
-            <TooltipContent>Povuci za premještanje (unutar istog datuma)</TooltipContent>
-          </Tooltip>
-        )}
         <div className="flex items-start justify-between gap-2">
           <span className="flex flex-wrap items-center gap-2">
+            {sameDay && (
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-semibold text-primary-foreground tabular-nums" />
+                  }
+                >
+                  {sameDay.n}.
+                </TooltipTrigger>
+                <TooltipContent>
+                  {/* „Prva lokacija koju Ivan posjećuje toga dana.” (no name without a driver). */}
+                  {ORDINAL[sameDay.n - 1] ?? `${sameDay.n}.`} lokacija{' '}
+                  {driver ? `koju ${firstName(driver)} posjećuje toga dana.` : 'toga dana.'}
+                </TooltipContent>
+              </Tooltip>
+            )}
             <StopDateButton stop={stop} />
             <StopKinds muted={done} stop={stop} />
             {isNext && (
@@ -158,6 +163,26 @@ export function StopCard({
             )}
           </span>
           <span className="flex items-center gap-1">
+            {sameDay && (
+              <ButtonGroup>
+                <Button
+                  disabled={sameDay.n === 1 || sameDay.isMoving}
+                  size="xs"
+                  variant="outline"
+                  onClick={sameDay.onEarlier}
+                >
+                  <Icon data-icon="inline-start" icon="IconArrowUp" size="xs" /> Pomakni prije
+                </Button>
+                <Button
+                  disabled={sameDay.n === sameDay.total || sameDay.isMoving}
+                  size="xs"
+                  variant="outline"
+                  onClick={sameDay.onLater}
+                >
+                  <Icon data-icon="inline-start" icon="IconArrowDown" size="xs" /> Pomakni kasnije
+                </Button>
+              </ButtonGroup>
+            )}
             {!done && isNext && (
               <Button loading={isToggling} size="sm" variant="outline" onClick={() => void toggleDone()}>
                 <Icon data-icon="inline-start" icon="IconCheck" size="s" /> Završeno

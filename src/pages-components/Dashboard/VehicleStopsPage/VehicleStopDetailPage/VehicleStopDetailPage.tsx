@@ -1,20 +1,3 @@
-import {
-  closestCenter,
-  DndContext,
-  type DragEndEvent,
-  DragOverlay,
-  type DragStartEvent,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
 import type { AxiosError } from 'axios';
 import Link from 'next/link';
@@ -40,28 +23,30 @@ import {
 import { Button } from '@/components/ui/button';
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Skeleton } from '@/components/ui/skeleton';
-import type { VehicleStop } from '@/lib/api/vehicleStops';
+import { notifyVehicleStopDriver, type VehicleStop } from '@/lib/api/vehicleStops';
 import { useClients, useDelayedFlag, useVehicles } from '@/lib/hooks';
 import { useDeleteVehicleStop, useRearrangeVehicleStop, useVehicleStops } from '@/lib/hooks/api/vehicleStops';
 import { cn } from '@/lib/utils';
 import { formatDateShort } from '@/lib/utils/date';
 import { driverToneClasses } from '@/lib/utils/driverTone';
-import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
+import { closeToast, showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Icon } from '@/ui';
 
 import { routeFacts } from '../routeFacts';
-import { StopDate, StopKinds, useEmployeeNames } from '../StopLine';
-import { chronological, isDone, kindWord, placeOnly } from '../stops';
+import { useEmployeeNames } from '../StopLine';
+import { chronological, firstName, isDone, kindWord, placeOnly } from '../stops';
 import { DriverChangePopover, DriverHandoverDialog, type DriverScope } from './DriverChange';
 import { buildBlocks, buildEntries, type Entry, foldedCount } from './routeEntries';
-import { StopCard, type StopCardHandlers } from './StopCard';
+import { type SameDayOrder, StopCard, type StopCardHandlers } from './StopCard';
 import { StopSheet, type StopSheetTarget } from './StopSheet';
 
 /**
  * Ruta of one vehicle (DECISIONS §5 Prijevozi, lab /transports `RouteView`): today's order — newest first — with runs of
  * the same driver drawn as avatar + side bar in the driver's colour (name + „Promijeni”; red dashed „Bez vozača” +
  * „Dodijeli vozača” when none), a „Danas” line, earlier finished ones folded away, cards with inline date edit and a ⋯
- * menu, the stop form in a side sheet. `?highlight=<stopId>` scrolls to a stop and rings it.
+ * menu, the stop form in a side sheet. `?highlight=<stopId>` scrolls to a stop and rings it. 2+ unfinished stops on
+ * one date (or all undated ones) sit in an „Isti dan” box in driving order, numbered, with „Pomakni prije / kasnije”
+ * (lab /transports, decided 2026-11-21; replaces drag-and-drop — the backend only reorders within a date anyway).
  */
 export const VehicleStopDetailPage = () => {
   const { query } = useRouter();
@@ -83,7 +68,7 @@ export const VehicleStopDetailPage = () => {
   const { data: clients } = useClients();
   const employeeNames = useEmployeeNames();
   const { mutateAsync: deleteStop, isPending: isDeleting } = useDeleteVehicleStop();
-  const { mutate: rearrangeStop } = useRearrangeVehicleStop(vehicleId);
+  const { mutate: rearrangeStop, isPending: isMoving } = useRearrangeVehicleStop(vehicleId);
 
   const vehicle = React.useMemo(() => vehicles?.find((item) => item.id === vehicleId), [vehicles, vehicleId]);
   /** Newest first (the API's route order). */
@@ -93,7 +78,6 @@ export const VehicleStopDetailPage = () => {
   const [sheet, setSheet] = React.useState<StopSheetTarget | null>(null);
   const [toDelete, setToDelete] = React.useState<VehicleStop | null>(null);
   const [handoverFrom, setHandoverFrom] = React.useState<VehicleStop | null>(null);
-  const [activeDragId, setActiveDragId] = React.useState<string | null>(null);
 
   const driverName = React.useCallback(
     (id: string | null) => (id ? employeeNames.get(id) : undefined),
@@ -152,10 +136,6 @@ export const VehicleStopDetailPage = () => {
     return () => observer.disconnect();
   }, [canLoadMore, isFetchingNextPage, fetchNextPage]);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
-  );
   const queryClient = useQueryClient();
   const [isLoadingRoute, setIsLoadingRoute] = React.useState(false);
   /** Loads every older page, so „Svi nezavršeni na ovom vozilu” really is all of them. */
@@ -170,23 +150,42 @@ export const VehicleStopDetailPage = () => {
     }
   }, [hasNextPage, fetchNextPage]);
 
-  const activeDragStop = activeDragId ? stops.find((stop) => stop.id === activeDragId) : undefined;
+  /** The day a stop belongs to for reordering: its date, or „no date” (the backend reorders within these only). */
+  const dayOf = (stop: VehicleStop) => stop.date?.slice(0, 10) ?? 'none';
+  /** Unfinished stops on the same day as `stop`, in driving order. */
+  const sameDayOf = (stop: VehicleStop) =>
+    isDone(stop) ? [] : chronological(stops).filter((item) => !isDone(item) && dayOf(item) === dayOf(stop));
 
-  function handleDragEnd(event: DragEndEvent) {
-    setActiveDragId(null);
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-    const oldIndex = stops.findIndex((stop) => stop.id === active.id);
-    const newIndex = stops.findIndex((stop) => stop.id === over.id);
-    if (oldIndex === -1 || newIndex === -1) return;
-    const reordered = arrayMove(stops, oldIndex, newIndex);
-    // Newest first: the stop after it in the list is the one before it on the route.
-    const previousStopId = reordered[newIndex + 1]?.id ?? null;
+  /** One place earlier / later in that day's order: right before the one ahead of it, or right after the one behind. */
+  function move(stop: VehicleStop, by: -1 | 1) {
+    const day = sameDayOf(stop);
+    const other = day[day.findIndex((item) => item.id === stop.id) + by];
+    if (!other) return;
+    const [first, second] = by === -1 ? [stop, other] : [other, stop];
     rearrangeStop(
-      { stopId: active.id as string, previousStopId },
+      { stopId: stop.id, previousStopId: by === -1 ? other.previousStopId : other.id },
       {
         onSuccess: () => {
-          showSuccessToast({ title: 'Premješteno' });
+          const notified = [stop, other].filter((item) => item.messageSentAt && item.driverId);
+          const toastId = showSuccessToast({
+            title: 'Redoslijed promijenjen',
+            description: `${stop.date ? formatDateShort(stop.date) : 'Bez datuma'}: prvo ${placeOnly(first)}, zatim ${placeOnly(second)}.${notified.length ? ' Vozač je već obaviješten o starom redoslijedu.' : ''}`,
+            timeout: notified.length ? 8000 : undefined,
+            action: notified.length
+              ? {
+                  label: 'Obavijesti vozača',
+                  onClick: () => {
+                    closeToast(toastId);
+                    void Promise.all(notified.map((item) => notifyVehicleStopDriver(item.id)))
+                      .then(() => showSuccessToast({ title: 'Vozač obaviješten o novom redoslijedu' }))
+                      .catch(() => showErrorToast({ title: 'Obavijest nije poslana. Pokušajte ponovno.' }))
+                      .finally(
+                        () => void queryClient.invalidateQueries({ queryKey: ['vehicleStops', 'paginated', vehicleId] })
+                      );
+                  },
+                }
+              : undefined,
+          });
           // The neighbours' previousStopId changed too: reload the route.
           void queryClient.invalidateQueries({ queryKey: ['vehicleStops', 'paginated', vehicleId] });
         },
@@ -204,6 +203,23 @@ export const VehicleStopDetailPage = () => {
       }
     );
   }
+
+  const firstNameOf = (id: string | null) => {
+    const name = driverName(id);
+    return name ? firstName(name) : undefined;
+  };
+
+  const sameDayOrder = (stop: VehicleStop): SameDayOrder | undefined => {
+    const day = sameDayOf(stop);
+    if (day.length < 2) return undefined;
+    return {
+      n: day.findIndex((item) => item.id === stop.id) + 1,
+      total: day.length,
+      onEarlier: () => move(stop, -1),
+      onLater: () => move(stop, 1),
+      isMoving,
+    };
+  };
 
   /** „Dodaj prije”: after the stop before it — taken from the loaded route (fresh), else from the stop itself. */
   function insertBefore(stop: VehicleStop): StopSheetTarget {
@@ -307,9 +323,51 @@ export const VehicleStopDetailPage = () => {
         isNext={stop.id === next?.id}
         key={stop.id}
         last={stop.id === lastStopId}
+        sameDay={sameDayOrder(stop)}
         stop={stop}
       />
     );
+  };
+
+  /** A run's rows with neighbouring unfinished stops of one day wrapped in an „Isti dan” box (driving order inside). */
+  const renderRunEntries = (runEntries: Entry[]) => {
+    const groups: Entry[][] = [];
+    for (const entry of runEntries) {
+      const previous = groups.at(-1)?.[0];
+      const together =
+        previous?.type === 'stop' &&
+        entry.type === 'stop' &&
+        !isDone(previous.stop) &&
+        !isDone(entry.stop) &&
+        dayOf(previous.stop) === dayOf(entry.stop);
+      if (together) groups[groups.length - 1].push(entry);
+      else groups.push([entry]);
+    }
+    const order = new Map(chronological(stops).map((stop, index) => [stop.id, index]));
+    return groups.map((group) => {
+      if (group.length === 1) return renderEntry(group[0]);
+      const day = group.flatMap((entry) => (entry.type === 'stop' ? [entry.stop] : []));
+      day.sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0));
+      const { date } = day[0];
+      return (
+        // -mx: the box's border + padding sit outside the column, so its markers stay on the route's line.
+        <li
+          className="-mx-[13px] mb-3 rounded-2xl border border-brand/30 bg-brand/5 px-3 pt-3"
+          key={`day-${day[0].id}`}
+        >
+          <div className="mb-2 flex flex-wrap items-center gap-x-2 gap-y-1 pl-11 text-sm">
+            <Icon className="text-brand" icon="IconArrowsSort" size="s" />
+            <span className="font-medium">
+              {date ? formatDateShort(date) : 'Bez datuma'} · {day.length} mjesta isti dan
+            </span>
+            <span className="text-muted-foreground">
+              · {firstNameOf(day[0].driverId) ?? 'vozač'} ih obilazi ovim redom
+            </span>
+          </div>
+          <ol className="flex flex-col">{day.map((stop) => renderEntry({ type: 'stop', stop }))}</ol>
+        </li>
+      );
+    });
   };
 
   return (
@@ -357,73 +415,47 @@ export const VehicleStopDetailPage = () => {
         ) : (
           <div className="relative max-w-4xl">
             {showFetching && <LoadingBar className="-top-2" />}
-            <DndContext
-              collisionDetection={closestCenter}
-              sensors={sensors}
-              onDragCancel={() => setActiveDragId(null)}
-              onDragEnd={handleDragEnd}
-              onDragStart={(event: DragStartEvent) => setActiveDragId(event.active.id as string)}
-            >
-              <SortableContext items={visibleStops.map((stop) => stop.id)} strategy={verticalListSortingStrategy}>
-                <ol className={dimmed(showFetching, 'flex flex-col')}>
-                  {blocks.map((block, index) => {
-                    if (block.kind === 'loose') return renderEntry(block.entry);
-                    const tone = driverToneClasses(block.driverId);
-                    const name = driverName(block.driverId);
-                    const runStops = stops.filter((stop) => block.ids.includes(stop.id) && !isDone(stop));
-                    const scopes: DriverScope[] = [
-                      {
-                        key: 'run',
-                        label: block.driverId ? `Samo oni koje vozi ${name ?? 'ovaj vozač'}` : 'Samo oni bez vozača',
-                        stops: runStops,
-                      },
-                      {
-                        key: 'route',
-                        label: 'Svi nezavršeni na ovom vozilu',
-                        stops: stops.filter((stop) => !isDone(stop)),
-                      },
-                    ];
-                    return (
-                      <li className="relative mb-2 pl-10" key={`run-${index}`}>
-                        <span className={cn('absolute top-9 bottom-3 left-[13px] w-1 rounded-full', tone.bar)} />
-                        <DriverAvatar
-                          className="absolute top-0.5 left-0"
-                          driverId={block.driverId}
-                          name={name}
-                          size="md"
-                        />
-                        <div className="flex h-8 items-center gap-2 text-sm">
-                          {block.driverId ? (
-                            <span className="font-medium">{name ?? 'Vozač'}</span>
-                          ) : (
-                            <span className="font-medium text-destructive">Bez vozača</span>
-                          )}
-                          <DriverChangePopover
-                            driverId={block.driverId}
-                            driverName={driverName}
-                            loadingRoute={isLoadingRoute}
-                            scopes={scopes}
-                            onOpen={() => void loadWholeRoute()}
-                          />
-                        </div>
-                        <ol className="flex flex-col">{block.entries.map(renderEntry)}</ol>
-                      </li>
-                    );
-                  })}
-                </ol>
-              </SortableContext>
-              <DragOverlay dropAnimation={null}>
-                {activeDragStop ? (
-                  <div className="flex flex-col gap-1 rounded-xl border bg-card p-4 shadow-lg">
-                    <span className="flex items-center gap-2">
-                      <StopDate className="text-sm" stop={activeDragStop} />
-                      <StopKinds stop={activeDragStop} />
-                    </span>
-                    <span className="font-medium">{placeOnly(activeDragStop)}</span>
-                  </div>
-                ) : null}
-              </DragOverlay>
-            </DndContext>
+            <ol className={dimmed(showFetching, 'flex flex-col')}>
+              {blocks.map((block, index) => {
+                if (block.kind === 'loose') return renderEntry(block.entry);
+                const tone = driverToneClasses(block.driverId);
+                const name = driverName(block.driverId);
+                const runStops = stops.filter((stop) => block.ids.includes(stop.id) && !isDone(stop));
+                const scopes: DriverScope[] = [
+                  {
+                    key: 'run',
+                    label: block.driverId ? `Samo oni koje vozi ${name ?? 'ovaj vozač'}` : 'Samo oni bez vozača',
+                    stops: runStops,
+                  },
+                  {
+                    key: 'route',
+                    label: 'Svi nezavršeni na ovom vozilu',
+                    stops: stops.filter((stop) => !isDone(stop)),
+                  },
+                ];
+                return (
+                  <li className="relative mb-2 pl-10" key={`run-${index}`}>
+                    <span className={cn('absolute top-9 bottom-3 left-[13px] w-1 rounded-full', tone.bar)} />
+                    <DriverAvatar className="absolute top-0.5 left-0" driverId={block.driverId} name={name} size="md" />
+                    <div className="flex h-8 items-center gap-2 text-sm">
+                      {block.driverId ? (
+                        <span className="font-medium">{name ?? 'Vozač'}</span>
+                      ) : (
+                        <span className="font-medium text-destructive">Bez vozača</span>
+                      )}
+                      <DriverChangePopover
+                        driverId={block.driverId}
+                        driverName={driverName}
+                        loadingRoute={isLoadingRoute}
+                        scopes={scopes}
+                        onOpen={() => void loadWholeRoute()}
+                      />
+                    </div>
+                    <ol className="flex flex-col">{renderRunEntries(block.entries)}</ol>
+                  </li>
+                );
+              })}
+            </ol>
             <div className="h-1" ref={sentinelRef} />
             {isFetchingNextPage && <StopCardSkeleton />}
           </div>
