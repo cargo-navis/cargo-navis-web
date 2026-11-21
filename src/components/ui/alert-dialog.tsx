@@ -34,6 +34,10 @@ function AlertDialogPortal({ ...props }: AlertDialogPrimitive.Portal.Props) {
   return <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal" {...props} />;
 }
 
+/**
+ * forceRender: also when opened from inside another dialog / sheet (e.g. the quick look) — Base UI skips nested
+ * backdrops otherwise, and a confirm always dims what's behind it.
+ */
 function AlertDialogOverlay({ className, ...props }: AlertDialogPrimitive.Backdrop.Props) {
   return (
     <AlertDialogPrimitive.Backdrop
@@ -42,6 +46,7 @@ function AlertDialogOverlay({ className, ...props }: AlertDialogPrimitive.Backdr
         className
       )}
       data-slot="alert-dialog-overlay"
+      forceRender
       {...props}
     />
   );
@@ -49,7 +54,7 @@ function AlertDialogOverlay({ className, ...props }: AlertDialogPrimitive.Backdr
 
 /**
  * Decided (KAN-55, /overlays/confirm): Dialog's shell (40% backdrop, top 12vh, 24px padding, 18px title, grey footer
- * strip), 448px wide, text left, ghost Odustani, focus on Odustani so Enter never deletes (pass `initialFocus` to
+ * strip), 448px wide (`sm` 384px), text left, ghost Odustani, focus on Odustani so Enter never deletes (pass `initialFocus` to
  * focus the action on non-destructive confirms). Outside click does nothing (Base UI default for alert dialogs).
  */
 function AlertDialogContent({
@@ -90,7 +95,7 @@ function AlertDialogContent({
       <AlertDialogOverlay className={overlayClassName} />
       <AlertDialogPrimitive.Popup
         className={cn(
-          'group/alert-dialog-content fixed top-[12vh] left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 gap-4 rounded-xl bg-popover p-6 text-popover-foreground shadow-lg ring-1 ring-foreground/10 duration-100 outline-none data-[size=default]:sm:max-w-md data-[size=sm]:sm:max-w-xs data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
+          'group/alert-dialog-content fixed top-[12vh] left-1/2 z-50 grid w-full max-w-[calc(100%-2rem)] -translate-x-1/2 gap-4 rounded-xl bg-popover p-6 text-popover-foreground shadow-lg ring-1 ring-foreground/10 duration-100 outline-none data-[size=default]:sm:max-w-md data-[size=sm]:sm:max-w-sm data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95',
           className
         )}
         data-size={size}
