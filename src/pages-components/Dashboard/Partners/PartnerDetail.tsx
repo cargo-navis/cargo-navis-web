@@ -140,7 +140,7 @@ export function PartnerDetail({
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem variant="destructive" onClick={() => setDeleting(partner)}>
-                  <Icon icon="IconTrash" size="s" /> Izbriši
+                  <Icon icon="IconTrash" size="s" /> Obriši
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

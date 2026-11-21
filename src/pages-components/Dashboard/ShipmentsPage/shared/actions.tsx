@@ -129,7 +129,7 @@ export function useDownloadShipmentPdf() {
 }
 
 /**
- * „Izbrisati nalog #2041?” (AlertDialog, replaces window.confirm). Mount it only while it's needed: it holds the delete
+ * „Obrisati nalog #2041?” (AlertDialog, replaces window.confirm). Mount it only while it's needed: it holds the delete
  * mutations of this one nalog.
  */
 export function DeleteShipmentDialog({
@@ -169,7 +169,7 @@ export function DeleteShipmentDialog({
           <AlertDialogMedia>
             <Icon icon="IconTrash" size="m" />
           </AlertDialogMedia>
-          <AlertDialogTitle>Izbrisati nalog #{shipment.orderNumber}?</AlertDialogTitle>
+          <AlertDialogTitle>Obrisati nalog #{shipment.orderNumber}?</AlertDialogTitle>
           <AlertDialogDescription>
             {[clientName, shipment.isAgency && 'agencijski nalog: briše se i nalog za podvozara']
               .filter(Boolean)
@@ -180,7 +180,7 @@ export function DeleteShipmentDialog({
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isDeleting}>Odustani</AlertDialogCancel>
           <AlertDialogAction loading={isDeleting} variant="destructive" onClick={() => void handleDelete()}>
-            <Icon data-icon="inline-start" icon="IconTrash" size="s" /> Izbriši
+            <Icon data-icon="inline-start" icon="IconTrash" size="s" /> Obriši
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

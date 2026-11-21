@@ -94,7 +94,7 @@ function ContractorPanel({ shipment }: { shipment: Shipment }) {
                 <span className="tabular-nums">−{formatEuroExact(shipment.contractorPrice ?? 0)}</span>
               </Row>
               <div className="flex items-center justify-between gap-3 pt-1">
-                <span className="text-sm text-muted-foreground">{margin.isLoss ? 'Gubitak' : 'Zarada'}</span>
+                <span className="text-sm text-muted-foreground">RUC</span>
                 <MarginPill earnings={margin.earnings} isLoss={margin.isLoss} percent={margin.percent} />
               </div>
             </>

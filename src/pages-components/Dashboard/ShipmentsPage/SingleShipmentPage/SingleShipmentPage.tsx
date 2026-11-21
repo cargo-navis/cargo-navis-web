@@ -66,7 +66,7 @@ export const SingleShipmentPage = () => {
                 <Icon icon="IconAlertOctagon" size="m" />
               </EmptyMedia>
               <EmptyTitle>Nalog se nije učitao</EmptyTitle>
-              <EmptyDescription>Možda je izbrisan, ili je problem kod nas. Pokušaj ponovno.</EmptyDescription>
+              <EmptyDescription>Možda je obrisan, ili je problem kod nas. Pokušaj ponovno.</EmptyDescription>
             </EmptyHeader>
             <Button loading={isFetching} variant="outline" onClick={() => void refetch()}>
               <Icon data-icon="inline-start" icon="IconRefresh" size="s" /> Pokušaj ponovno

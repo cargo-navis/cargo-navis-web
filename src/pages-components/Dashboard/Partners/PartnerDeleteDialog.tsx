@@ -27,7 +27,7 @@ function confirmWord(name: string) {
 }
 
 /**
- * Izbriši (lab /overlays/confirm: confirm-danger, „type the name when it has nalozi”). A client's nalozi are counted
+ * Obriši (lab /overlays/confirm: confirm-danger, „type the name when it has nalozi”). A client's nalozi are counted
  * with today's getShipments({ clientId }); a contractor's can't be yet (no transportContractorId filter), so it gets
  * the plain confirm.
  */
@@ -94,7 +94,7 @@ export function PartnerDeleteDialog({
             <Icon icon="IconTrash" size="m" />
           </AlertDialogMedia>
           <AlertDialogTitle>
-            Izbrisati {words.accusative} {shown?.name}?
+            Obrisati {words.accusative} {shown?.name}?
           </AlertDialogTitle>
           <AlertDialogDescription>
             {needsTyping ? (
@@ -131,7 +131,7 @@ export function PartnerDeleteDialog({
             variant="destructive"
             onClick={() => void handleDelete()}
           >
-            Izbriši {words.accusative}
+            Obriši {words.accusative}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

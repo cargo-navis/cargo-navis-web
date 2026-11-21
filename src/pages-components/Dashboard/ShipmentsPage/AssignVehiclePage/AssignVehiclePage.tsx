@@ -106,7 +106,7 @@ export const AssignVehiclePage = () => {
         backHref="/dashboard/shipments"
         backLabel="Nalozi"
         danger
-        description="Možda je izbrisan, ili je problem kod nas. Pokušaj ponovno."
+        description="Možda je obrisan, ili je problem kod nas. Pokušaj ponovno."
         icon="IconAlertOctagon"
         title="Nalog se nije učitao"
         onRetry={isFetching ? undefined : () => void refetch()}

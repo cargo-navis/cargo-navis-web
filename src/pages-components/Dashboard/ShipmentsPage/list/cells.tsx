@@ -156,7 +156,7 @@ export function PriceCell({ shipment }: { shipment: Shipment }) {
             <span>−{formatEuro(contractor)}</span>
           </div>
           <div className="flex justify-between gap-4 border-t border-current/20 pt-1.5 font-medium">
-            <span>{isLoss ? 'Gubitak' : 'Zarada'}</span>
+            <span>RUC</span>
             <span>
               {isLoss ? '−' : '+'}
               {formatEuro(Math.abs(earnings))} ({formatNumber(percent)} %)

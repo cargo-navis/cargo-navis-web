@@ -16,7 +16,7 @@ import { copyValue } from './parts';
 
 /**
  * Row actions (lab /partners `PartnerMenuItems`, DECISIONS §5): Otvori, Uredi, Novi nalog, Kopiraj porezni broj,
- * Izbriši. The right-click menu adds „Otvori u novom tabu” (DECISIONS §2 Lists).
+ * Obriši. The right-click menu adds „Otvori u novom tabu” (DECISIONS §2 Lists).
  */
 export function PartnerMenuItems({
   kind,
@@ -56,7 +56,7 @@ export function PartnerMenuItems({
       </Item>
       <Separator />
       <Item variant="destructive" onClick={() => onDelete(partner)}>
-        <Icon icon="IconTrash" size="s" /> Izbriši
+        <Icon icon="IconTrash" size="s" /> Obriši
       </Item>
     </>
   );
