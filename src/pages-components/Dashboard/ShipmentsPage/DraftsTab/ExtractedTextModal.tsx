@@ -1,17 +1,16 @@
 import { useEffect, useState } from 'react';
 
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import type { ShipmentDraft } from '@/lib/api';
-import { Box, Dialog, DialogContent, DialogHeader, DialogTitle, FlexLayout, Icon, Text } from '@/ui';
 
 interface ExtractedTextModalProps {
   draft: ShipmentDraft | null;
   onClose(): void;
 }
 
+/** The text the AI read from a draft's PDF (dialog lg). */
 export const ExtractedTextModal: React.FC<ExtractedTextModalProps> = ({ draft, onClose }) => {
-  // Keep the last opened draft around so its content stays visible during the
-  // close transition — `draft` is cleared immediately on close, `open` drives
-  // the animation.
+  // Keep the last opened draft so its content stays visible during the close animation.
   const [displayDraft, setDisplayDraft] = useState<ShipmentDraft | null>(draft);
 
   useEffect(() => {
@@ -22,30 +21,18 @@ export const ExtractedTextModal: React.FC<ExtractedTextModalProps> = ({ draft, o
 
   return (
     <Dialog open={!!draft} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent aria-describedby={undefined} className="max-w-[820px]">
-        <DialogHeader className="flex-col">
-          <FlexLayout className="items-center gap-1 text-dark-800 dark:text-light-50">
-            <Icon icon="IconFileDescription" size="l" />
-            <DialogTitle>
-              <Text variant="text-m-medium">{displayDraft?.fileName}</Text>
-            </DialogTitle>
-          </FlexLayout>
-          <Text as="span" color="text-color-3" variant="text-xs">
-            Tekst izvučen iz dokumenta
-          </Text>
+      <DialogContent size="lg">
+        <DialogHeader>
+          <DialogTitle className="pr-8 break-words">{displayDraft?.fileName}</DialogTitle>
+          <DialogDescription>Tekst izvučen iz dokumenta</DialogDescription>
         </DialogHeader>
-
-        <Box className="max-h-[60vh] overflow-y-auto rounded-m bg-dark-50 dark:bg-light-800/40 p-4">
+        <div className="max-h-[56dvh] overflow-y-auto rounded-lg bg-muted p-4">
           {extractedText ? (
-            <Text as="pre" className="whitespace-pre-wrap break-words font-mono" color="text-color-2" variant="text-s">
-              {extractedText}
-            </Text>
+            <pre className="font-mono text-sm break-words whitespace-pre-wrap">{extractedText}</pre>
           ) : (
-            <Text color="text-color-3" variant="text-s">
-              Nema izvučenog teksta za ovaj dokument.
-            </Text>
+            <p className="text-sm text-muted-foreground">Nema izvučenog teksta za ovaj dokument.</p>
           )}
-        </Box>
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -7,7 +7,8 @@ export interface VehicleStopAddress {
 }
 
 export interface VehicleStopAddressRequest {
-  streetName: string;
+  /** null keeps a stop that came without a street as it was (quick edits resend the address unchanged). */
+  streetName: string | null;
   postalCodeId: string;
 }
 

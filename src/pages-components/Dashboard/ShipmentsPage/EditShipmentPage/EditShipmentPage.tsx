@@ -1,48 +1,83 @@
 import { useRouter } from 'next/router';
+import type { ReactNode } from 'react';
 
-import { BackButton } from '@/components/BackButton';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
-import type { Shipment } from '@/lib/api';
-import type { Tenant } from '@/lib/api/tenant.d';
-import { LoadingPage } from '@/lib/components/LoadingPage';
+import { EntityNotFound, isNotFoundError } from '@/components/shared/not-found';
 import { useCurrentTenant, useShipment } from '@/lib/hooks';
-import { ShipmentForm } from '@/pages-components/Dashboard/ShipmentsPage/NewShipmentPage/ShipmentForm';
-import { Box, FlexLayout, Heading } from '@/ui';
+import { NalogForm } from '@/pages-components/Dashboard/ShipmentsPage/NewShipmentPage/NalogForm';
+import {
+  NalogFormHeader,
+  NalogFormProblem,
+  NalogFormSkeleton,
+  useInitialValues,
+} from '@/pages-components/Dashboard/ShipmentsPage/NewShipmentPage/NalogFormLayout';
+import { fetchPostalCodeData } from '@/pages-components/Dashboard/ShipmentsPage/NewShipmentPage/utils';
+import { fromEdit } from '@/pages-components/Dashboard/ShipmentsPage/NewShipmentPage/values';
 
+import { shipmentHref } from '../shared/actions';
+
+/** Uredi nalog: /dashboard/shipments/[id]/edit (lab /nalog-form „Uredi”). */
 export const EditShipmentPage = () => {
-  const { query } = useRouter();
-  const id = query.id;
+  const router = useRouter();
+  const id = typeof router.query.id === 'string' ? router.query.id : undefined;
+  const tenantQuery = useCurrentTenant();
+  const shipmentQuery = useShipment(id);
+  const tenant = tenantQuery.data;
+  const shipment = shipmentQuery.data;
 
-  const { data: tenant, isLoading: isTenantLoading } = useCurrentTenant();
-  const { data: shipment, isLoading: isShipmentLoading } = useShipment(id as string);
-
-  const isLoading = isTenantLoading || isShipmentLoading;
-
-  return (
-    <DashboardLayout>
-      <PageTitle title={shipment?.orderNumber} type="Uredi nalog" />
-      {isLoading || !shipment || !id || !tenant ? (
-        <LoadingPage />
-      ) : (
-        <MainContent shipment={shipment} shipmentId={id as string} tenant={tenant} />
-      )}
-    </DashboardLayout>
+  const { values, failed } = useInitialValues(
+    tenant && shipment ? () => fromEdit(shipment, tenant, fetchPostalCodeData) : null,
+    id ?? ''
   );
-};
 
-const MainContent = ({ shipment, shipmentId, tenant }: { tenant: Tenant; shipment: Shipment; shipmentId: string }) => {
+  let content: ReactNode;
+  if (isNotFoundError(shipmentQuery.error)) {
+    content = <EntityNotFound kind="shipment" />;
+  } else if (failed || tenantQuery.isError || shipmentQuery.isError) {
+    content = (
+      <NalogFormProblem
+        backHref={id ? shipmentHref(id) : '/dashboard/shipments'}
+        backLabel={id ? 'Natrag na nalog' : 'Nalozi'}
+        danger
+        description="Možda je izbrisan, ili je problem kod nas. Pokušaj ponovno."
+        icon="IconAlertOctagon"
+        title="Nalog se nije učitao"
+        onRetry={() => router.reload()}
+      />
+    );
+  } else if (!values || !tenant || !shipment) {
+    content = <NalogFormSkeleton />;
+  } else {
+    content = (
+      <div className="flex flex-col gap-6">
+        <NalogFormHeader
+          backHref={shipmentHref(shipment.id)}
+          backLabel={`Nalog #${shipment.orderNumber}`}
+          title={`Uredi nalog #${shipment.orderNumber}`}
+        />
+        <NalogForm
+          cancelHref={shipmentHref(shipment.id)}
+          initial={values}
+          key={shipment.id}
+          mode="edit"
+          shipment={shipment}
+          tenant={tenant}
+        />
+      </div>
+    );
+  }
+
   return (
-    <Box>
-      <Box className="py-5 flex flex-col gap-[40px]">
-        <Heading as="h1" variant="text-xl">
-          Ažuriraj Nalog
-        </Heading>
-      </Box>
-      <FlexLayout className="flex-col gap-[40px]">
-        <BackButton targetLocation={`/dashboard/shipments/${shipmentId}`} />
-        <ShipmentForm shipment={shipment} tenant={tenant} />
-      </FlexLayout>
-    </Box>
+    <DashboardLayout
+      breadcrumbs={
+        shipment
+          ? [CRUMBS.shipments, { label: shipment.orderNumber, href: shipmentHref(shipment.id) }, { label: 'Uredi' }]
+          : undefined
+      }
+    >
+      <PageTitle title={shipment?.orderNumber} type="Uredi nalog" />
+      {content}
+    </DashboardLayout>
   );
 };

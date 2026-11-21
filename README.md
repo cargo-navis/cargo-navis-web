@@ -18,7 +18,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to load Geist, Sora and Geist Mono from Google Fonts (`src/ui/theme/fonts.ts`).
 
 ## Environment variables
 
@@ -32,6 +32,7 @@ Set in `.env.local` (git-ignored). Next.js reads them at startup, so restart `np
 | `BACKEND_PROXY_TARGET` | `https://api-dev.cargo-navis.com` | Local dev and Vercel previews only; never on dev/prod deploys. All backend calls (`/auth/*`, `/api/*`) then go to this app and `src/middleware.ts` forwards them here. See [Local backend proxy](#local-backend-proxy). |
 | `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | `BNc…` (base64url) | **Required.** Web push public key; must match the backend's `vapid.public-key`. Used by push notifications in the dashboard and the driver portal. |
 | `NEXT_PUBLIC_DRIVER_API_MOCK` | `true` | Driver portal only: serve driver API calls from an in-browser mock (`npm run dev:driverMock` sets it). Never set in deployed builds. |
+| `NEXT_PUBLIC_FF_NALOG_ROUTE_ENTRY` | `true` | Feature flag (off by default): the parked „Ruta pa tereti” Nalog form entry. Any `NEXT_PUBLIC_FF_*` flag can be overridden per browser with `localStorage.setItem('ff:<name>', 'on' \| 'off')`; see `src/lib/flags.ts`. |
 
 ## Local backend proxy
 

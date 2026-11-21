@@ -1,1 +1,0 @@
-export { SingleTrailerPage } from './SingleTrailerPage';

@@ -17,7 +17,3 @@ export function formatAddressLabel(address: AddressLike) {
   const place = [address.postalCode, address.placeName].filter(Boolean).join(' ');
   return [address.streetName, place].filter(Boolean).join(', ');
 }
-
-export function formatPostalCodeLabel(address: AddressLike) {
-  return [address.postalCode, address.placeName].filter(Boolean).join(', ');
-}

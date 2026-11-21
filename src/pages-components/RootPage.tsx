@@ -1,12 +1,8 @@
 import type { NextPage } from 'next';
 
 import { LoadingPage } from '@/lib/components/LoadingPage';
-import { FlexLayout } from '@/ui';
 
+/** `/` redirects to /dashboard in middleware.ts; this loading screen is only the fallback. */
 export const RootPage: NextPage = () => {
-  return (
-    <FlexLayout className="w-full h-screen">
-      <LoadingPage />
-    </FlexLayout>
-  );
+  return <LoadingPage />;
 };

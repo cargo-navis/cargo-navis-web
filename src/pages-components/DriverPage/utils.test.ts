@@ -175,7 +175,7 @@ describe('formatCargoTotals', () => {
 describe('getStopKindLabels', () => {
   it('labels loading-only stop', () => {
     expect(getStopKindLabels(makeStop('A'))).toEqual({
-      title: 'UTOVAR',
+      title: 'Utovar',
       action: 'Potvrdi utovar',
       confirmed: 'Utovar potvrđen',
     });
@@ -183,7 +183,7 @@ describe('getStopKindLabels', () => {
 
   it('labels unloading-only stop', () => {
     expect(getStopKindLabels(makeStop('A', { loadingCargos: [], unloadingCargos: [makeCargo('s1')] }))).toEqual({
-      title: 'ISTOVAR',
+      title: 'Istovar',
       action: 'Potvrdi istovar',
       confirmed: 'Istovar potvrđen',
     });
@@ -193,9 +193,9 @@ describe('getStopKindLabels', () => {
     expect(
       getStopKindLabels(makeStop('A', { loadingCargos: [makeCargo('s1')], unloadingCargos: [makeCargo('s2')] }))
     ).toEqual({
-      title: 'UTOVAR I ISTOVAR',
+      title: 'Utovar i istovar',
       action: 'Potvrdi utovar i istovar',
-      confirmed: 'Postaja potvrđena',
+      confirmed: 'Utovar i istovar potvrđeni',
     });
   });
 });
@@ -271,19 +271,19 @@ describe('groupCargosByShipment', () => {
 describe('formatCompletedAt', () => {
   // now: Monday 2026-10-19 10:00
   it('shows "Danas" for today', () => {
-    expect(formatCompletedAt('2026-10-19T09:05:00', now)).toBe('Danas · 09:05');
+    expect(formatCompletedAt('2026-10-19T09:05:00', now)).toBe('Danas 09:05');
   });
 
   it('shows "Jučer" for yesterday', () => {
-    expect(formatCompletedAt('2026-10-18T17:45:00', now)).toBe('Jučer · 17:45');
+    expect(formatCompletedAt('2026-10-18T17:45:00', now)).toBe('Jučer 17:45');
   });
 
   it('shows weekday and date for older days this year', () => {
-    expect(formatCompletedAt('2026-10-12T09:00:00', now)).toBe('pon. 12.10. · 09:00');
+    expect(formatCompletedAt('2026-10-12T09:00:00', now)).toBe('pon. 12.10. 09:00');
   });
 
   it('adds the full year for another year', () => {
-    expect(formatCompletedAt('2025-12-30T08:30:00', now)).toBe('uto. 30.12.2025. · 08:30');
+    expect(formatCompletedAt('2025-12-30T08:30:00', now)).toBe('uto. 30.12.2025. 08:30');
   });
 });
 

@@ -1,9 +1,10 @@
-import { FlexLayout, LoadingSpinner } from '@/ui';
+import { Spinner } from '@/components/ui/spinner';
 
+/** Full-page loading screen: a spinner centred on the page background. */
 export const LoadingPage = () => {
   return (
-    <FlexLayout className="items-center justify-center h-full w-full">
-      <LoadingSpinner size="xl" />
-    </FlexLayout>
+    <div className="flex min-h-dvh w-full items-center justify-center bg-background text-muted-foreground">
+      <Spinner className="size-6" />
+    </div>
   );
 };

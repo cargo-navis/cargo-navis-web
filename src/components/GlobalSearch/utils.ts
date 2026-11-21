@@ -1,6 +1,8 @@
 import { type GlobalSearchResults, type SearchShipmentCargo, SearchTypeEnum, VehicleEnum } from '@/lib/api';
 import { getPalletsNoun } from '@/lib/utils/cargo';
-import type { IconType, PillVariant } from '@/ui';
+import type { PluralForms } from '@/lib/utils/plural';
+import { vehicleHref } from '@/pages-components/Dashboard/FleetPage/fleet';
+import type { IconType } from '@/ui';
 
 export type SearchCategoryKey = keyof GlobalSearchResults;
 
@@ -9,16 +11,13 @@ export interface SearchResultItem {
   href: string;
   title: string;
   subtitle?: string;
-  // Labelled line below the subtitle, e.g. "Prijevoznik: …" for agency shipments
+  // Labelled line below the subtitle, e.g. "Podvozar: …" for agency shipments
   detail?: {
     label: string;
     value: string;
   };
-  // Rendered next to the title, e.g. "Agencijski nalog" for agency shipments
-  titlePill?: {
-    text: string;
-    variant: PillVariant;
-  };
+  // Agency shipment: an „Agencijski” badge next to the title
+  isAgency?: boolean;
   // Summary in a right-hand column beside the result (search modal and search page).
   // E.g. a shipment's cargo: primary "Transformer components +1", secondaryLead "14 paleta", secondary "2.771 kg"
   aside?: {
@@ -40,6 +39,8 @@ export interface SearchCategory {
   icon: IconType;
   // Genitive plural used in "Prikaži svih {total} {noun}"
   pluralNoun: string;
+  // Noun forms for counts ("1 nalog", "3 naloga", "5 naloga")
+  forms: PluralForms;
   mapItems(results: GlobalSearchResults): SearchResultItem[];
 }
 
@@ -56,13 +57,6 @@ export interface SearchResultGroup {
 }
 
 export const SEARCH_PAGE_PATH = '/dashboard/search';
-
-const fleetPathMap: Record<VehicleEnum, string> = {
-  [VehicleEnum.TRUCK]: 'trucks',
-  [VehicleEnum.TRAILER]: 'trailers',
-  [VehicleEnum.SOLO_TRUCK]: 'solo-trucks',
-  [VehicleEnum.VAN]: 'vans',
-};
 
 const fleetTypeLabelMap: Record<VehicleEnum, string> = {
   [VehicleEnum.TRUCK]: 'Tegljač',
@@ -137,6 +131,7 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
     heading: 'Nalozi',
     icon: 'IconFileDescription',
     pluralNoun: 'naloga',
+    forms: ['nalog', 'naloga', 'naloga'],
     mapItems: ({ shipments }) =>
       (shipments?.items ?? []).map((s) => {
         // For agency shipments the contractor is the one handling it, so it gets its own line
@@ -147,12 +142,12 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
             id: s.id,
             href: `/dashboard/shipments/${s.id}`,
             title: s.orderNumber,
-            titlePill: s.isAgency ? { text: 'Agencijski nalog', variant: 'warning' } : undefined,
+            isAgency: s.isAgency,
             subtitle: joinDefined(
               agencyContractorName ? s.clientName : (s.clientName ?? s.transportContractorName),
               s.externalOrderReference
             ),
-            detail: agencyContractorName ? { label: 'Prijevoznik', value: agencyContractorName } : undefined,
+            detail: agencyContractorName ? { label: 'Podvozar', value: agencyContractorName } : undefined,
             aside: getCargoSummary(s.cargos ?? []),
           },
           s.matchedValue
@@ -165,12 +160,13 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
     heading: 'Flota',
     icon: 'IconTruck',
     pluralNoun: 'vozila',
+    forms: ['vozilo', 'vozila', 'vozila'],
     mapItems: ({ fleet }) =>
       (fleet?.items ?? []).map((v) =>
         withMatchedValue(
           {
             id: v.id,
-            href: `/dashboard/fleet/${fleetPathMap[v.fleetType]}/${v.id}`,
+            href: vehicleHref(v.id),
             title: v.registration,
             subtitle: joinDefined(fleetTypeLabelMap[v.fleetType], v.brand),
           },
@@ -184,6 +180,7 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
     heading: 'Zaposlenici',
     icon: 'IconUser',
     pluralNoun: 'zaposlenika',
+    forms: ['zaposlenik', 'zaposlenika', 'zaposlenika'],
     mapItems: ({ employees }) =>
       (employees?.items ?? []).map((e) =>
         withMatchedValue(
@@ -203,6 +200,7 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
     heading: 'Klijenti',
     icon: 'IconBriefcase',
     pluralNoun: 'klijenata',
+    forms: ['klijent', 'klijenta', 'klijenata'],
     mapItems: ({ clients }) =>
       (clients?.items ?? []).map((c) =>
         withMatchedValue(
@@ -219,9 +217,10 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
   {
     key: 'contractors',
     type: SearchTypeEnum.CONTRACTORS,
-    heading: 'Kontraktori',
+    heading: 'Podvozari',
     icon: 'IconLicense',
-    pluralNoun: 'kontraktora',
+    pluralNoun: 'podvozara',
+    forms: ['podvozar', 'podvozara', 'podvozara'],
     mapItems: ({ contractors }) =>
       (contractors?.items ?? []).map((c) =>
         withMatchedValue(

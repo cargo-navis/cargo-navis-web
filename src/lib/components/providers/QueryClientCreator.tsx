@@ -15,7 +15,7 @@ const config: QueryClientConfig = {
 };
 
 export const QueryClientCreator: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const queryClient = useRef<QueryClient>();
+  const queryClient = useRef<QueryClient | undefined>(undefined);
   // Devtools' floating button covers bottom-anchored mobile UI (e.g. the driver portal tab bar); md and up only.
   const isDesktop = useMediaQuery('(min-width: 768px)');
   if (!queryClient.current) {

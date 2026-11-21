@@ -1,76 +1,400 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss' source(none);
+@import 'tw-animate-css';
+@import './shadcn.css';
+@import './palette.css';
 
-@import './app.css';
+@source '..';
+
+/* Dark mode follows the `dark` class next-themes puts on <html> (default theme: system). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * KAN-55 design tokens (playground app/globals.css, lab /tokens). Pure neutral greys, primary petrol #0B5560 in both
+ * themes, graphite dark (#141414 / #1c1c1c / #262626). Use the token classes (bg-background, text-muted-foreground,
+ * border-border …) and the domain tokens below, never raw palette classes.
+ */
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: #0b5560; /* petrol = teal-800 (8.5:1 with white) */
+  --primary-foreground: oklch(0.984 0.014 180.72);
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: #0b5560; /* petrol: soft focus halo (ring-ring/50) */
+  --chart-1: oklch(0.855 0.138 181.071);
+  --chart-2: oklch(0.704 0.14 182.503);
+  --chart-3: oklch(0.6 0.118 184.704);
+  --chart-4: oklch(0.511 0.096 186.391);
+  --chart-5: oklch(0.437 0.078 188.216);
+  --radius: 0.75rem; /* 12px; buttons + fields rounded-lg, cards rounded-xl */
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.6 0.118 184.704);
+  --sidebar-primary-foreground: oklch(0.984 0.014 180.72);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: #141414; /* graphite: card = bg + 8, muted = bg + 18 */
+  --foreground: oklch(0.985 0 0);
+  --card: #1c1c1c;
+  --card-foreground: oklch(0.985 0 0);
+  --popover: #1c1c1c;
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: #0b5560; /* petrol in dark too */
+  --primary-foreground: oklch(0.984 0.014 180.72);
+  --secondary: #262626;
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: #262626;
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: #262626;
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: #13949f; /* teal-500 in dark */
+  --chart-1: oklch(0.855 0.138 181.071);
+  --chart-2: oklch(0.704 0.14 182.503);
+  --chart-3: oklch(0.6 0.118 184.704);
+  --chart-4: oklch(0.511 0.096 186.391);
+  --chart-5: oklch(0.437 0.078 188.216);
+  --sidebar: #1c1c1c;
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.704 0.14 182.503);
+  --sidebar-primary-foreground: oklch(0.277 0.046 192.524);
+  --sidebar-accent: #262626;
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+/*
+ * Domain colours as named tokens (DECISIONS §1): defined once, light + dark. Classes: text-utovar, bg-utovar-dot,
+ * text-istovar, bg-driver-1…5 (bar), bg-driver-1-soft / text-driver-1-ink (avatar), bg-series-*, bg-agency-*.
+ */
+:root {
+  --utovar: #aa6011; /* orange-600 */
+  --utovar-dot: #cc7513; /* orange-500 */
+  --istovar: #117f8a; /* teal-600 */
+  --istovar-dot: #117f8a;
+  --driver-1: oklch(0.746 0.16 232.661); /* sky-400 */
+  --driver-1-soft: oklch(0.951 0.026 236.824);
+  --driver-1-ink: oklch(0.443 0.11 240.79);
+  --driver-2: oklch(0.673 0.182 276.935); /* indigo-400 */
+  --driver-2-soft: oklch(0.93 0.034 272.788);
+  --driver-2-ink: oklch(0.398 0.195 277.366);
+  --driver-3: oklch(0.718 0.202 349.761); /* pink-400 */
+  --driver-3-soft: oklch(0.948 0.028 342.258);
+  --driver-3-ink: oklch(0.459 0.187 3.815);
+  --driver-4: oklch(0.768 0.233 130.85); /* lime-500 */
+  --driver-4-soft: oklch(0.967 0.067 122.328);
+  --driver-4-ink: oklch(0.453 0.124 130.933);
+  --driver-5: oklch(0.709 0.01 56.259); /* stone-400 */
+  --driver-5-soft: oklch(0.923 0.003 48.717);
+  --driver-5-ink: oklch(0.268 0.007 34.298);
+  --series-regular: #13949f;
+  --series-margin: #16a34a;
+  --series-loss: #dc2626;
+}
+
+.dark {
+  --utovar: #ff9526; /* orange-400 */
+  --utovar-dot: #ff9526;
+  --istovar: #26cfd8; /* teal-400 */
+  --istovar-dot: #26cfd8;
+  --driver-1: oklch(0.685 0.169 237.323);
+  --driver-1-soft: oklch(0.391 0.09 240.876);
+  --driver-1-ink: oklch(0.951 0.026 236.824);
+  --driver-2: oklch(0.585 0.233 277.117);
+  --driver-2-soft: oklch(0.359 0.144 278.697);
+  --driver-2-ink: oklch(0.93 0.034 272.788);
+  --driver-3: oklch(0.656 0.241 354.308);
+  --driver-3-soft: oklch(0.408 0.153 2.432);
+  --driver-3-ink: oklch(0.948 0.028 342.258);
+  --driver-4: oklch(0.768 0.233 130.85);
+  --driver-4-soft: oklch(0.405 0.101 131.063);
+  --driver-4-ink: oklch(0.967 0.067 122.328);
+  --driver-5: oklch(0.553 0.013 58.071);
+  --driver-5-soft: oklch(0.444 0.011 73.639);
+  --driver-5-ink: oklch(0.97 0.001 106.424);
+  --series-regular: #14a3ad;
+  --series-margin: #22c55e;
+  --series-loss: #f87171;
+}
+
+/*
+ * Status colours outside a Badge (a line of text, an icon, a progress line, a row tint), light + dark: the values the
+ * labs use as palette classes. Status pills stay Badge tones. Classes: text-success / text-warning / text-info,
+ * bg-success-dot / bg-warning-dot / bg-info-dot (lines, dots), bg-success-soft / bg-warning-soft (tinted rows and cards).
+ * Brand text: petrol, lighter in dark where #0B5560 is unreadable (links, „Danas”, active tab icons): text-brand;
+ * bg-brand-solid / border-brand-solid for brand fills, lines and markers (teal-500 in dark); bg-brand-soft for a
+ * selected or inviting card (teal-50 / teal-900 at 40 %).
+ */
+:root {
+  --success: #0e750e; /* green-700 */
+  --success-dot: #13a213; /* green-500 */
+  --success-soft: rgb(224 248 224 / 40%); /* green-50 / 40 */
+  --warning: oklch(0.555 0.163 48.998); /* amber-700 */
+  --warning-dot: oklch(0.769 0.188 70.08); /* amber-500 */
+  --warning-soft: oklch(0.987 0.022 95.277); /* amber-50 */
+  --info: oklch(0.488 0.243 264.376); /* blue-700 */
+  --info-dot: oklch(0.623 0.214 259.815); /* blue-500 */
+  --brand: #0b5560;
+  --brand-solid: #0b5560;
+  --brand-soft: #e0f7f8; /* teal-50 */
+  --highlight: #fff6b3; /* a just-created row / card (row-highlight-fade, card-highlight-fade) */
+}
+
+.dark {
+  --success: #26d826; /* green-400 */
+  --success-dot: #13a213;
+  --success-soft: rgb(8 71 8 / 20%); /* green-900 / 20 */
+  --warning: oklch(0.828 0.189 84.429); /* amber-400 */
+  --warning-dot: oklch(0.769 0.188 70.08);
+  --warning-soft: oklch(0.279 0.077 45.635 / 40%); /* amber-950 / 40 */
+  --info: oklch(0.707 0.165 254.624); /* blue-400 */
+  --info-dot: oklch(0.623 0.214 259.815);
+  --brand: #4dd8df; /* teal-300 */
+  --brand-solid: #13949f; /* teal-500, as the dark focus ring */
+  --brand-soft: rgb(8 65 75 / 40%); /* teal-900 / 40 */
+  --highlight: #312d16;
+}
+
+/*
+ * Agencijski colour = violet (decided). Amber is the parked alternative (DECISIONS §7): set `data-agency="amber"` on
+ * <html> to switch. Badge tone="category", the agency icon tile and the Analitika agency series read these.
+ */
+:root {
+  --agency-50: oklch(96.9% 0.016 293.756);
+  --agency-100: oklch(94.3% 0.029 294.588);
+  --agency-300: oklch(81.1% 0.111 293.571);
+  --agency-400: oklch(70.2% 0.183 293.541);
+  --agency-500: oklch(60.6% 0.25 292.717);
+  --agency-600: oklch(54.1% 0.281 293.009);
+  --agency-700: oklch(49.1% 0.27 292.581);
+  --agency-800: oklch(43.2% 0.232 292.759);
+  --agency-900: oklch(38% 0.189 293.745);
+  --agency-950: oklch(28.3% 0.141 291.089);
+}
+
+html[data-agency='amber'] {
+  --agency-50: oklch(98.7% 0.022 95.277);
+  --agency-100: oklch(96.2% 0.059 95.617);
+  --agency-300: oklch(87.9% 0.169 91.605);
+  --agency-400: oklch(82.8% 0.189 84.429);
+  --agency-500: oklch(76.9% 0.188 70.08);
+  --agency-600: oklch(66.6% 0.179 58.318);
+  --agency-700: oklch(55.5% 0.163 48.998);
+  --agency-800: oklch(47.3% 0.137 46.201);
+  --agency-900: oklch(41.4% 0.112 45.904);
+  --agency-950: oklch(27.9% 0.077 45.635);
+}
+
+/* Chart steps (validated: violet light #7c3aed / dark #9085e9). With amber, Trošak moves to violet. */
+:root {
+  --series-agency: #7c3aed;
+  --series-cost: #eb6834;
+}
+
+.dark {
+  --series-agency: #9085e9;
+  --series-cost: #d95926;
+}
+
+html[data-agency='amber'] {
+  --series-agency: #d97706;
+  --series-cost: #7c3aed;
+}
+
+html.dark[data-agency='amber'] {
+  --series-agency: #f59e0b;
+  --series-cost: #9085e9;
+}
+
+@theme inline {
+  --font-sans: var(--font-geist);
+  --font-heading: var(--font-sora);
+  --font-mono: var(--font-geist-mono);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-success: var(--success);
+  --color-success-dot: var(--success-dot);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-dot: var(--warning-dot);
+  --color-warning-soft: var(--warning-soft);
+  --color-info: var(--info);
+  --color-info-dot: var(--info-dot);
+  --color-brand: var(--brand);
+  --color-brand-solid: var(--brand-solid);
+  --color-brand-soft: var(--brand-soft);
+
+  --color-utovar: var(--utovar);
+  --color-utovar-dot: var(--utovar-dot);
+  --color-istovar: var(--istovar);
+  --color-istovar-dot: var(--istovar-dot);
+  --color-driver-1: var(--driver-1);
+  --color-driver-1-soft: var(--driver-1-soft);
+  --color-driver-1-ink: var(--driver-1-ink);
+  --color-driver-2: var(--driver-2);
+  --color-driver-2-soft: var(--driver-2-soft);
+  --color-driver-2-ink: var(--driver-2-ink);
+  --color-driver-3: var(--driver-3);
+  --color-driver-3-soft: var(--driver-3-soft);
+  --color-driver-3-ink: var(--driver-3-ink);
+  --color-driver-4: var(--driver-4);
+  --color-driver-4-soft: var(--driver-4-soft);
+  --color-driver-4-ink: var(--driver-4-ink);
+  --color-driver-5: var(--driver-5);
+  --color-driver-5-soft: var(--driver-5-soft);
+  --color-driver-5-ink: var(--driver-5-ink);
+  --color-series-regular: var(--series-regular);
+  --color-series-agency: var(--series-agency);
+  --color-series-cost: var(--series-cost);
+  --color-series-margin: var(--series-margin);
+  --color-series-loss: var(--series-loss);
+  --color-agency-50: var(--agency-50);
+  --color-agency-100: var(--agency-100);
+  --color-agency-300: var(--agency-300);
+  --color-agency-400: var(--agency-400);
+  --color-agency-500: var(--agency-500);
+  --color-agency-600: var(--agency-600);
+  --color-agency-700: var(--agency-700);
+  --color-agency-800: var(--agency-800);
+  --color-agency-900: var(--agency-900);
+  --color-agency-950: var(--agency-950);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
 
 @layer base {
-  :root {
-    --foreground-rgb: 0, 0, 0;
-    --background-rgb: rgba(214, 219, 220, 0.5);
-
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
-    --primary: 240 5.9% 10%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 5.9% 10%;
-    --radius: 0.5rem;
+  * {
+    @apply border-border outline-ring/50;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --foreground-rgb: 255, 255, 255;
-      --background-rgb: rgb(0, 0, 0);
+  html {
+    @apply bg-background font-sans antialiased;
+  }
 
-      --background: 240 10% 3.9%;
-      --foreground: 0 0% 98%;
-      --card: 240 10% 3.9%;
-      --card-foreground: 0 0% 98%;
-      --popover: 240 10% 3.9%;
-      --popover-foreground: 0 0% 98%;
-      --primary: 0 0% 98%;
-      --primary-foreground: 240 5.9% 10%;
-      --secondary: 240 3.7% 15.9%;
-      --secondary-foreground: 0 0% 98%;
-      --muted: 240 3.7% 15.9%;
-      --muted-foreground: 240 5% 64.9%;
-      --accent: 240 3.7% 15.9%;
-      --accent-foreground: 0 0% 98%;
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 0 0% 98%;
-      --border: 240 3.7% 15.9%;
-      --input: 240 3.7% 15.9%;
-      --ring: 240 4.9% 83.9%;
+  body {
+    @apply bg-background text-foreground;
+    /* The containing block of the Base UI drawer backdrop, which is `position: absolute` on iOS. */
+    position: relative;
+  }
+
+  /* Scale the whole UI on big screens: everything rem-based grows (text-sm 14 → 15 → 16px, 40px fields → ~46px). */
+  @media (min-width: 1600px) {
+    html {
+      font-size: 107.14%;
+    }
+  }
+
+  @media (min-width: 1920px) {
+    html {
+      font-size: 114.29%;
     }
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background-color: var(--background-rgb);
+/* Tailwind 3 preflight defaults that Tailwind 4 changed, still kept app-wide (cell padding, placeholder grey, pointer
+ * cursor on buttons, centred <dialog>). */
+@layer base {
+  td,
+  th {
+    padding: revert;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #9ca3af;
+  }
+
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
+  dialog {
+    margin: auto;
+  }
+}
+
+/* Refetch bar under a header (KAN-55, /overlays/loading): a short segment sweeping left to right. */
+@keyframes loading-bar {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+/* Timeline: a planned (new) stop = a dot with a soft radial halo that grows and fades (KAN-55, /assign). */
+@keyframes stop-pulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-
   .row-highlight-fade {
-    animation: row-highlight-fade 2s ease-out forwards;
+    animation: row-highlight-fade 2s ease-out;
   }
 
   /* A short ringing swing every few seconds, pivoting at the top of the bell. Still for reduced motion. */
@@ -85,19 +409,8 @@ body {
     }
   }
 
-  html.dark .row-highlight-fade {
-    animation: row-highlight-fade-dark 2s ease-out forwards;
-  }
-
   .card-highlight-fade {
-    animation: card-highlight-fade 5s ease-out forwards;
-  }
-
-  /* Tailwind dark mode here follows prefers-color-scheme, not an html.dark class. */
-  @media (prefers-color-scheme: dark) {
-    .card-highlight-fade {
-      animation-name: card-highlight-fade-dark;
-    }
+    animation: card-highlight-fade 5s ease-out;
   }
 }
 
@@ -126,41 +439,79 @@ body {
   }
 }
 
+/*
+ * Highlight of a just-created / just-opened row or card: starts on --highlight and, with no end keyframe, fades back to
+ * the element's own background (card, tinted tone, transparent row) in both themes.
+ */
 @keyframes row-highlight-fade {
   0% {
-    background-color: #fff6b3;
-  }
-  100% {
-    background-color: transparent;
+    background-color: var(--highlight);
   }
 }
 
-@keyframes row-highlight-fade-dark {
-  0% {
-    background-color: rgba(69, 59, 8, 0.45);
-  }
-  100% {
-    background-color: transparent;
-  }
-}
-
-/* Ends on the card background (white / light-875) instead of transparent, so cards don't turn see-through. */
 @keyframes card-highlight-fade {
   0%,
   20% {
-    background-color: #fff6b3;
-  }
-  100% {
-    background-color: #ffffff;
+    background-color: var(--highlight);
   }
 }
 
-@keyframes card-highlight-fade-dark {
+/*
+ * @/ui Icon wraps the Tabler svg in a box sized by its `size` prop (px). The shadcn components size raw svgs in rem
+ * ([&_svg]:size-4 …), so with the root scaling above (107 % / 114 %) the svg grew past its box and hung off its
+ * bottom-right, sitting lower than the text next to it. The svg always fills Icon's box instead; pick the size with
+ * Icon's `size` (or a size class on Icon). Unlayered, so it wins over those utilities.
+ */
+svg.tabler-icon {
+  width: 100%;
+  height: 100%;
+}
+
+/*
+ * Browser autofill (Chrome / Safari) paints its own light-blue fill and black text over our fields, square over the
+ * rounded InputGroup. Keep autofill working, drop its paint: its background is clipped to the text (so it only sits
+ * under the glyphs, which we paint in our own colour) — Chrome's background is `!important` in the UA sheet and a
+ * transition delay no longer holds it back. Two rules, not one selector list: a browser that doesn't know one of the
+ * pseudo-classes would drop the whole list.
+ */
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: var(--foreground);
+  caret-color: var(--foreground);
+}
+
+input:autofill,
+textarea:autofill,
+select:autofill {
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: var(--foreground);
+  caret-color: var(--foreground);
+}
+
+/* Login sales nudge 👋: a short wave, then a rest (the hand isn't busy all the time). */
+@keyframes hand-wave {
   0%,
-  20% {
-    background-color: #312d16;
-  }
+  60%,
   100% {
-    background-color: #212126;
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(14deg);
+  }
+  20% {
+    transform: rotate(-8deg);
+  }
+  30% {
+    transform: rotate(14deg);
+  }
+  40% {
+    transform: rotate(-4deg);
+  }
+  50% {
+    transform: rotate(10deg);
   }
 }

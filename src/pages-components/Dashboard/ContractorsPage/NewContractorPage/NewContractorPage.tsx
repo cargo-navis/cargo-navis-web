@@ -1,30 +1,3 @@
-import { BackButton } from '@/components/BackButton';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { PageTitle } from '@/components/PageTitle';
-import { ViesLookupFlow } from '@/components/vies';
-import { Box, FlexLayout, Heading } from '@/ui';
+import { NewPartnerPage } from '@/pages-components/Dashboard/Partners/PartnerFormPages';
 
-import { NewContractorForm } from './NewContractorForm';
-
-export const NewContractorPage = () => {
-  return (
-    <DashboardLayout>
-      <PageTitle title="Novi kontraktor" />
-      <Box>
-        <FlexLayout className="flex-col gap-[40px]">
-          <Heading as="h1" variant="text-xl">
-            Novi Kontraktor
-          </Heading>
-        </FlexLayout>
-        <FlexLayout className="py-5 flex-col gap-[40px]">
-          <BackButton targetLocation="/dashboard/contractors" />
-          <ViesLookupFlow
-            manualButtonText="Dodaj kontraktora ručno"
-            renderForm={(initialValues) => <NewContractorForm initialValues={initialValues} />}
-            searchTitle="Pretraži kontraktora u VIES tražilici"
-          />
-        </FlexLayout>
-      </Box>
-    </DashboardLayout>
-  );
-};
+export const NewContractorPage = () => <NewPartnerPage kind="contractor" />;

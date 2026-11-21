@@ -94,3 +94,10 @@ export function downloadBlob(blob: Blob, name: string) {
 export function bytesToMegabytes(bytes: number) {
   return bytes / 1024 ** 2;
 }
+
+const LEADING_UUIDS = /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}[-_]?)+/i;
+
+/** A stored file's name for people: without the storage UUID prefixes („<uuid>-<uuid>-CMR.pdf” → „CMR.pdf”). */
+export function fileDisplayName(name: string) {
+  return name.replace(LEADING_UUIDS, '') || name;
+}

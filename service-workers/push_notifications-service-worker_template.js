@@ -138,7 +138,7 @@ function getVehicleStopDocumentUploadedNotifData(data) {
   const { driverName, documentName, address } = data.metadata;
 
   const title = `CargoNavis - Novi dokument`;
-  const message = `${driverName} je dodao dokument "${documentName}"${address ? ` na stanici (${address})` : ''}`;
+  const message = `${driverName} je dodao dokument "${documentName}"${address ? ` na adresi ${address}` : ''}`;
   // Resolves the stop's vehicle and opens its stops page with the stop highlighted (VehicleStopRedirectPage).
   const targetUrl = `${ENV_VARS.appUrl}/dashboard/vehicle-stops/stop/${data.metadata.vehicleStopId}`;
 
@@ -151,8 +151,8 @@ function getVehicleStopCompletedNotifData(data) {
   const orderList = shipments.map((s) => s.orderNumber).join(', ');
   const orderLabel = shipments.length === 1 ? 'nalog' : 'naloge';
 
-  const title = `CargoNavis - Stanica obavljena`;
-  const message = `${driverName} je obavio stanicu (${address})${orderList ? ` za ${orderLabel} ${orderList}` : ''}`;
+  const title = `CargoNavis - Utovar / istovar obavljen`;
+  const message = `${driverName} je obavio utovar / istovar na adresi ${address}${orderList ? ` za ${orderLabel} ${orderList}` : ''}`;
   const firstShipmentId = shipments[0]?.shipmentId;
   const targetUrl = firstShipmentId ? getShipmentUrl(firstShipmentId) : `${ENV_VARS.appUrl}/dashboard`;
 

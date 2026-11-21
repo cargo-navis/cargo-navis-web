@@ -31,21 +31,28 @@ const nextConfig = {
     // Tells the client to call the backend same-origin when src/middleware.ts proxies it.
     NEXT_PUBLIC_BACKEND_PROXY: process.env.BACKEND_PROXY_TARGET ? 'true' : 'false',
   },
-  webpack(nextConfig) {
-    nextConfig.module.rules.push({
-      test: /\.svg$/,
-      use: [
-        {
-          loader: '@svgr/webpack',
-          options: {
-            svgoConfig: {
-              plugins: [],
-            },
-          },
-        },
-      ],
-    });
-    return nextConfig;
+  // KAN-55 Postavke: one page with Moj račun · Tvrtka; the old settings / tenant URLs land on the right section.
+  // Temporary (307) so browsers don't cache them for good.
+  async redirects() {
+    return [
+      { source: '/dashboard/settings', destination: '/dashboard/settings/account', permanent: false },
+      { source: '/dashboard/tenant', destination: '/dashboard/settings/company', permanent: false },
+      { source: '/dashboard/tenant/edit', destination: '/dashboard/settings/company', permanent: false },
+      // KAN-55 Flota: one page with type tabs (?vrsta=…) and one vehicle page for every type; Pregled flote and the
+      // four type pages (list, new, detail, edit) land on it. „new” before „:id”, so it isn't read as an id.
+      { source: '/dashboard/fleet/overview', destination: '/dashboard/fleet', permanent: false },
+      ...[
+        ['trucks', 'tegljaci'],
+        ['trailers', 'poluprikolice'],
+        ['solo-trucks', 'solo-kamioni'],
+        ['vans', 'kombiji'],
+      ].flatMap(([path, vrsta]) => [
+        { source: `/dashboard/fleet/${path}`, destination: `/dashboard/fleet?vrsta=${vrsta}`, permanent: false },
+        { source: `/dashboard/fleet/${path}/new`, destination: `/dashboard/fleet/new?vrsta=${vrsta}`, permanent: false },
+        { source: `/dashboard/fleet/${path}/:id`, destination: '/dashboard/fleet/:id', permanent: false },
+        { source: `/dashboard/fleet/${path}/:id/edit`, destination: '/dashboard/fleet/:id/edit', permanent: false },
+      ]),
+    ];
   },
 };
 

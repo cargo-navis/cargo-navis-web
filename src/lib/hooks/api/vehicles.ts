@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
   createVehicle,
-  deleteVehicle,
   deleteVehicleFile,
   getVehicleDocumentUrl,
   getVehicles,
@@ -42,24 +41,9 @@ export function useVehicle(id: string) {
   });
 }
 
-export function useTrucks() {
-  const { data: trucks, ...rest } = useVehicles({ type: VehicleEnum.TRUCK });
-  return { trucks, ...rest };
-}
-
 export function useTrailers() {
   const { data: trailers, ...rest } = useVehicles({ type: VehicleEnum.TRAILER });
   return { trailers, ...rest };
-}
-
-export function useSolos() {
-  const { data: solos, ...rest } = useVehicles({ type: VehicleEnum.SOLO_TRUCK });
-  return { solos, ...rest };
-}
-
-export function useVans() {
-  const { data: vans, ...rest } = useVehicles({ type: VehicleEnum.VAN });
-  return { vans, ...rest };
 }
 
 export function useCreateVehicle() {
@@ -76,16 +60,6 @@ export function useUpdateVehicle(id: string) {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: UpdateVehicleParams) => updateVehicle(id, data),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: ['vehicles'], type: 'all' });
-    },
-  });
-}
-
-export function useDeleteVehicle(id: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: () => deleteVehicle(id),
     onSuccess: () => {
       return queryClient.invalidateQueries({ queryKey: ['vehicles'], type: 'all' });
     },

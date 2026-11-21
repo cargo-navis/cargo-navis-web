@@ -17,22 +17,16 @@ export function useNotifications<TData = Notification[]>(args?: UseNotifications
 
 export function useReadNotification() {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: (id: string) => readNotification(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications'] }),
   });
 }
 
-export function useReadAllNotification() {
+export function useReadAllNotifications() {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: () => readAllNotifications(),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notifications'] });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['notifications'] }),
   });
 }

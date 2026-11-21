@@ -1,80 +1,24 @@
-import Fuse from 'fuse.js';
-import { useMemo, useState } from 'react';
-
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
-import type { Client } from '@/lib/api';
-import { EmptyTableState } from '@/lib/components/EmptyTableState';
-import { LoadingPage } from '@/lib/components/LoadingPage';
-import { useClients, useScrollRestoration } from '@/lib/hooks';
-import { ClientsTable } from '@/pages-components/Dashboard/ClientsPage/ClientsTable';
-import { Box, Button, DisplayIf, FlexLayout, Heading, TextInput } from '@/ui';
+import { useClients } from '@/lib/hooks';
+import { PartnerList } from '@/pages-components/Dashboard/Partners/PartnerList';
+import { toClientPartners } from '@/pages-components/Dashboard/Partners/partners';
 
-const FUSE_OPTIONS: ConstructorParameters<typeof Fuse<Client>>[1] = {
-  keys: ['name', 'address.placeName', 'address.streetName'],
-  threshold: 0.35,
-};
-
+/** Klijenti (lab /partners „Popis”). */
 export const ClientsPage = () => {
-  const { data, isLoading } = useClients();
+  const { data, isLoading, isError, isFetching, refetch } = useClients({ select: toClientPartners });
 
   return (
     <DashboardLayout>
       <PageTitle title="Klijenti" />
-      {isLoading ? <LoadingPage /> : <MainContent clients={data || []} />}
+      <PartnerList
+        isError={isError}
+        isFetching={isFetching}
+        isLoading={isLoading}
+        kind="client"
+        partners={data}
+        onRetry={() => void refetch()}
+      />
     </DashboardLayout>
-  );
-};
-
-const MainContent = ({ clients }: { clients: Client[] }) => {
-  const isEmpty = clients.length === 0;
-  useScrollRestoration('clients', { isReady: !isEmpty });
-  const [search, setSearch] = useState('');
-
-  const fuse = useMemo(() => new Fuse(clients, FUSE_OPTIONS), [clients]);
-
-  const filteredClients = useMemo(() => {
-    const query = search.trim();
-    if (!query) return clients;
-
-    return fuse.search(query).map((result) => result.item);
-  }, [clients, search, fuse]);
-
-  return (
-    <Box>
-      <FlexLayout className="items-center justify-between">
-        <Heading as="h1" variant="text-xl">
-          Klijenti
-        </Heading>
-        <DisplayIf condition={!isEmpty}>
-          <Button href="/dashboard/clients/new" iconLeft="IconPlus" text="Dodaj Klijenta" />
-        </DisplayIf>
-      </FlexLayout>
-      <Box className="py-5">
-        {isEmpty ? (
-          <EmptyTableState
-            buttonHref="/dashboard/clients/new"
-            buttonText="Dodaj Klijenta"
-            description="Kada dodate klijente, on će se prikazati ovdje."
-            title="💼 Još nema zapisa o klijentima."
-          />
-        ) : (
-          <>
-            <Box className="max-w-xs mb-4">
-              <TextInput
-                autoFocus
-                iconLeft="IconSearch"
-                iconRight={search ? 'IconX' : undefined}
-                placeholder="Pretraži klijente..."
-                value={search}
-                onChange={setSearch}
-                onClickIconRight={() => setSearch('')}
-              />
-            </Box>
-            <ClientsTable clients={filteredClients} />
-          </>
-        )}
-      </Box>
-    </Box>
   );
 };

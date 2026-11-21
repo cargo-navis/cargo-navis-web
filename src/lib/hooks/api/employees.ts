@@ -2,9 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
   createEmployee,
-  deleteEmployee,
   deleteEmployeeFile,
-  generateDriverPortalToken,
   getEmployeeDocumentUrl,
   getEmployees,
   PositionEnum,
@@ -110,25 +108,9 @@ export function useUpdateEmployee(id: string) {
   });
 }
 
-export function useDeleteEmployee(id: string) {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: () => deleteEmployee(id),
-    onSuccess: () => {
-      return queryClient.invalidateQueries({ queryKey: ['employees'], type: 'all' });
-    },
-  });
-}
-
 export function useResendEmployeeInvite(id: string) {
   return useMutation({
     mutationFn: () => resendEmployeeInvite(id),
-  });
-}
-
-export function useGenerateDriverPortalToken(id: string) {
-  return useMutation({
-    mutationFn: () => generateDriverPortalToken(id),
   });
 }
 

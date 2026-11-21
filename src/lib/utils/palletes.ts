@@ -14,11 +14,6 @@ export const palleteNameMap: Record<PalleteType, string> = {
   [PalleteType.Jumbo]: 'Jumbo Paleta (120x120)',
 };
 
-export const palleteOptions = Object.entries(palleteNameMap).map(([key, name]) => ({
-  value: key as PalleteType,
-  label: name,
-}));
-
 export const palleteValues: Record<PalleteType, number> = {
   [PalleteType.Small]: 0.2,
   [PalleteType.Euro]: 0.4,

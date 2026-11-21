@@ -1,96 +1,96 @@
+import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 
-import { BackButton } from '@/components/BackButton';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
-import type { Contractor } from '@/lib/api';
-import { LoadingPage } from '@/lib/components/LoadingPage';
-import { useContractor } from '@/lib/hooks';
-import { copyToClipboard } from '@/lib/utils/clipboard';
-import { getCountryFromCode } from '@/pages-components/Dashboard/NewEmployeePage/const';
-import { Box, DisplayIf, Divider, FlexLayout, Icon, Text } from '@/ui';
+import { useContractors, useTransportContractorsAnalytics } from '@/lib/hooks';
+import { pluralCount } from '@/lib/utils/plural';
+import {
+  MoneyStrip,
+  PartnerDetail,
+  PartnerDetailProblem,
+  PartnerDetailSkeleton,
+} from '@/pages-components/Dashboard/Partners/PartnerDetail';
+import { fromContractor } from '@/pages-components/Dashboard/Partners/partners';
+import { formatEuro } from '@/pages-components/Dashboard/Partners/parts';
 
-import { ContractorActions } from './ContractorActions';
+/**
+ * Money strip of a contractor (lab /partners `MONEY.contractor`): this year's agency nalozi with them as the carrier,
+ * from getTransportContractorsAnalytics (cost, revenue, margin).
+ */
+function ContractorMoney({ contractorId }: { contractorId: string }) {
+  const year = dayjs().year();
+  const { data, isLoading, isError, refetch } = useTransportContractorsAnalytics({
+    from: `${year}-01-01`,
+    to: dayjs().format('YYYY-MM-DD'),
+  });
+  const totals = data?.find((item) => String(item.contractorId) === contractorId);
+  const cost = totals?.totalCost ?? 0;
+  const revenue = totals?.totalRevenue ?? 0;
+  const margin = totals?.margin ?? 0;
+  const failed = isError && !data;
+  const retry = () => void refetch();
+  const marginShare = revenue ? Math.round((margin / revenue) * 100) : null;
 
+  return (
+    <MoneyStrip
+      isLoading={isLoading}
+      items={[
+        {
+          label: `Plaćeno podvozaru ${year}.`,
+          value: formatEuro(cost),
+          error: failed,
+          onRetry: retry,
+          detail: pluralCount(totals?.shipmentCount ?? 0, [
+            'agencijski nalog',
+            'agencijska naloga',
+            'agencijskih naloga',
+          ]),
+        },
+        {
+          label: 'Naplaćeno klijentima',
+          value: formatEuro(revenue),
+          detail: 'za iste naloge',
+          error: failed,
+          onRetry: retry,
+        },
+        {
+          label: 'Zarada',
+          value: `${margin > 0 ? '+' : ''}${formatEuro(margin)}`,
+          detail: marginShare === null ? undefined : `${marginShare}% marže`,
+          tone: margin > 0 ? 'text-success' : margin < 0 ? 'text-destructive' : undefined,
+          error: failed,
+          onRetry: retry,
+        },
+      ]}
+    />
+  );
+}
+
+/**
+ * Podvozar detail (lab /partners „Detalj”). Their agency nalozi are left out until the backend can filter nalozi
+ * by contractor (transportContractorId).
+ */
 export const SingleContractorPage = () => {
   const { query } = useRouter();
-  const id = query.id;
-
-  const { data: contractor, isLoading } = useContractor(id as string);
+  const id = query.id as string | undefined;
+  const { data: contractors, isLoading, isError, refetch } = useContractors({ enabled: !!id });
+  const contractor = contractors?.find((item) => String(item.id) === id);
 
   return (
-    <DashboardLayout>
-      <PageTitle title={contractor?.name} type="Kontraktor" />
-      {!contractor || isLoading ? (
-        <LoadingPage />
+    <DashboardLayout breadcrumbs={contractor ? [CRUMBS.contractors, { label: contractor.name }] : undefined}>
+      <PageTitle title={contractor?.name} type="Podvozar" />
+      {contractor ? (
+        <PartnerDetail
+          kind="contractor"
+          money={<ContractorMoney contractorId={String(contractor.id)} />}
+          partner={fromContractor(contractor)}
+        />
+      ) : isLoading || !id ? (
+        <PartnerDetailSkeleton />
       ) : (
-        <Box>
-          <MainContent contractor={contractor} />
-        </Box>
+        <PartnerDetailProblem isError={isError} kind="contractor" onRetry={() => void refetch()} />
       )}
     </DashboardLayout>
-  );
-};
-
-const MainContent: React.FC<{ contractor: Contractor }> = ({ contractor }) => {
-  const country = getCountryFromCode(contractor.address.countryCode);
-
-  return (
-    <FlexLayout className="py-5 flex-col gap-5">
-      <BackButton targetLocation="/dashboard/contractors" />
-      <FlexLayout className="justify-between">
-        <FlexLayout className="items-start gap-6">
-          <FlexLayout className="flex-col gap-3 mt-[12px]">
-            <FlexLayout className="gap-4 items-center">
-              <Text variant="text-xxl-medium">{contractor.name}</Text>
-            </FlexLayout>
-            <FlexLayout className="flex-col gap-3 max-w-[400px]">
-              <FlexLayout className="flex-col">
-                <Text color="text-color-3" variant="text-m">
-                  {contractor.address.streetName},
-                </Text>
-                <DisplayIf condition={!!contractor.address.placeName}>
-                  <Text color="text-color-3" variant="text-m">
-                    {contractor.address.placeName}, {contractor.address.postalCode}, {country.name}
-                  </Text>
-                </DisplayIf>
-              </FlexLayout>
-              <Divider />
-              <FlexLayout className="flex-col">
-                <Text color="text-color-2" variant="text-m">
-                  Valuta plaćanja: <strong>{contractor.termsOfPayment || '—'}</strong>
-                </Text>
-              </FlexLayout>
-              <FlexLayout className="flex-col">
-                <Text color="text-color-2" variant="text-m">
-                  Porezni broj: <strong>{contractor.taxId}</strong>
-                </Text>
-              </FlexLayout>
-              {contractor.email ? (
-                <FlexLayout
-                  className="group/email items-center gap-2 cursor-pointer text-color-2 hover:text-color-1 transition-colors ease"
-                  onClick={() => copyToClipboard(contractor.email!)}
-                >
-                  <Text variant="text-m">
-                    Email: <strong>{contractor.email}</strong>
-                  </Text>
-                  <Icon
-                    className="opacity-0 translate-x-[-4px] group-hover/email:opacity-100 group-hover/email:translate-x-0 w-5 transition-transform ease"
-                    icon="IconCopy"
-                  />
-                </FlexLayout>
-              ) : (
-                <FlexLayout className="flex-col">
-                  <Text color="text-color-2" variant="text-m">
-                    Email: <strong>—</strong>
-                  </Text>
-                </FlexLayout>
-              )}
-            </FlexLayout>
-          </FlexLayout>
-        </FlexLayout>
-        <ContractorActions id={contractor.id} name={contractor.name} />
-      </FlexLayout>
-    </FlexLayout>
   );
 };

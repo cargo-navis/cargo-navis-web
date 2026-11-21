@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 
-import { Box, Button, FlexLayout, LoadingSpinner, Text } from '@/ui';
+import { Button } from '@/components/ui/button';
+import { Spinner } from '@/components/ui/spinner';
+import { Icon } from '@/ui';
 
 /** The paging part of an infinite query result; the query result itself can be passed. */
 export interface InfinitePagination {
@@ -38,19 +40,20 @@ export const InfiniteListFooter: React.FC<{ pagination: InfinitePagination }> = 
 
   return (
     <>
-      <Box ref={sentinelRef} />
+      <div ref={sentinelRef} />
       {isFetchingNextPage && (
-        <FlexLayout className="justify-center py-4">
-          <LoadingSpinner size="s" />
-        </FlexLayout>
+        <div className="flex justify-center py-4 text-muted-foreground">
+          <Spinner className="size-5" />
+        </div>
       )}
       {isFetchNextPageError && !isFetchingNextPage && (
-        <FlexLayout className="flex-col items-center gap-2 py-4">
-          <Text color="text-color-3" variant="text-xs">
-            Učitavanje nije uspjelo.
-          </Text>
-          <Button size="m" text="Pokušaj ponovno" variant="secondary" onClick={() => fetchNextPage()} />
-        </FlexLayout>
+        <div className="flex flex-col items-center gap-3 py-4">
+          <span className="text-sm text-muted-foreground">Učitavanje nije uspjelo.</span>
+          <Button size="xl" variant="outline" onClick={() => fetchNextPage()}>
+            <Icon data-icon="inline-start" icon="IconReload" size="m" />
+            Pokušaj ponovno
+          </Button>
+        </div>
       )}
     </>
   );

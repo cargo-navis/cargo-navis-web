@@ -7,27 +7,23 @@ import { PalleteType } from '@/lib/utils/palletes';
 import type { CargoType } from './types.d';
 
 const cargoMetadataSchema = Yup.object().shape({
-  type: Yup.string().oneOf<CargoType>(['standard', 'nonstandard']).required('Tip tereta je obavezan'),
+  type: Yup.string().oneOf<CargoType>(['standard', 'nonstandard']).required('Odaberi vrstu tereta.'),
   width: getSingleDimensionSchema(),
   height: getSingleDimensionSchema(),
   length: getSingleDimensionSchema(),
   palleteType: Yup.mixed<PalleteType>().when('type', {
     is: 'standard',
-    then: () => Yup.mixed<PalleteType>().oneOf(Object.values(PalleteType)).required('Vrsta palete je obavezna'),
+    then: () =>
+      Yup.mixed<PalleteType>()
+        .oneOf(Object.values(PalleteType), 'Odaberi vrstu palete.')
+        .required('Odaberi vrstu palete.'),
     otherwise: () => Yup.mixed().strip(),
   }),
   palleteAmount: Yup.number().when('type', {
     is: 'standard',
     then: () =>
-      Yup.number()
-        .typeError('Količina paleta je obavezna')
-        .min(1, 'Količina paleta mora biti najmanje 1')
-        .required('Količina paleta je obavezna'),
-    otherwise: () =>
-      Yup.number()
-        .typeError('Količina paleta mora biti broj')
-        .min(1, 'Količina paleta mora biti najmanje 1')
-        .optional(),
+      Yup.number().typeError('Upiši broj paleta.').min(1, 'Najmanje 1 paleta.').required('Upiši broj paleta.'),
+    otherwise: () => Yup.number().typeError('Upiši broj koleta.').min(1, 'Najmanje 1 komad.').optional(),
   }),
   hasKolete: Yup.boolean().when('type', {
     is: 'nonstandard',
@@ -36,35 +32,24 @@ const cargoMetadataSchema = Yup.object().shape({
   }),
 });
 
-/** Shared with CargoLoadModal date validation */
-export const cargoLoadUnloadDatesMessage = 'Krajnji rok za istovar mora biti na ili nakon datuma spremnosti za utovar.';
+/** Shared with the utovar / istovar dialog's date check. */
+export const cargoLoadUnloadDatesMessage = 'Rok istovara je prije utovara.';
 
 const cargoSchema = Yup.object().shape({
   id: Yup.string().optional(),
-  weight: Yup.number()
-    .typeError('Težina mora biti broj')
-    .required('Težina je obavezna')
-    .positive('Težina mora biti pozitivan broj'),
+  weight: Yup.number().typeError('Upiši težinu.').required('Upiši težinu.').positive('Težina mora biti veća od 0.'),
   description: Yup.string().optional(),
   ldm: Yup.number()
     .transform((value, original) => (original === '' ? undefined : value))
-    .positive('Mora biti pozitivan broj')
+    .positive('LDM mora biti veći od 0.')
     .optional(),
-  loadingAddress: getAddressSchema({ message: 'Adresa utovara je obavezna' }),
+  loadingAddress: getAddressSchema({ message: 'Dodaj utovar.' }),
   loadingCompanyName: Yup.string().optional(),
-  loadingReadyDate: Yup.string()
-    .optional()
-    .test('not-after-unload', cargoLoadUnloadDatesMessage, function (loadVal) {
-      const unloadRaw = (this.parent as { unloadingDueDate?: string })?.unloadingDueDate?.trim();
-      if (!String(loadVal ?? '').trim() || !unloadRaw) return true;
-      const load = dayjs(loadVal);
-      const unload = dayjs(unloadRaw);
-      if (!load.isValid() || !unload.isValid()) return true;
-      return !load.isAfter(unload, 'day');
-    }),
+  // The order of the two dates is checked once, on the istovar (the same rule both ways).
+  loadingReadyDate: Yup.string().optional(),
   loadingReference: Yup.string().optional(),
   loadingDescription: Yup.string().optional(),
-  unloadingAddress: getAddressSchema({ message: 'Adresa istovara je obavezna' }),
+  unloadingAddress: getAddressSchema({ message: 'Dodaj istovar.' }),
   unloadingCompanyName: Yup.string().optional(),
   unloadingDueDate: Yup.string()
     .optional()
@@ -78,42 +63,38 @@ const cargoSchema = Yup.object().shape({
     }),
   unloadingReference: Yup.string().optional(),
   unloadingDescription: Yup.string().optional(),
-  metadata: cargoMetadataSchema.required('Podaci tereta su obavezni'),
+  metadata: cargoMetadataSchema.required('Odaberi vrstu tereta.'),
 });
 
 export const notificationEmailsSchema = Yup.array()
-  .of(Yup.string().email('Neispravan email').required())
-  .max(NOTIFICATION_EMAIL_LIMIT, `Nalog može imati najviše ${NOTIFICATION_EMAIL_LIMIT} primatelja`);
+  .of(Yup.string().email('Neispravan email.').required())
+  .max(NOTIFICATION_EMAIL_LIMIT, `Nalog može imati najviše ${NOTIFICATION_EMAIL_LIMIT} primatelja.`);
 
 export function getShipmentSchema(tenantId: string) {
   return Yup.object()
     .shape({
       externalOrderReference: Yup.string().optional(),
       clientId: Yup.string()
-        .required('Klijent je obavezan')
-        .test('not-tenant-when-agency', 'Vaša tvrtka ne može biti klijent kod agencijskog naloga', function (value) {
+        .required('Odaberi klijenta.')
+        .test('not-tenant-when-agency', 'Tvoja tvrtka ne može biti klijent na agencijskom nalogu.', function (value) {
           const { isAgency } = this.parent as { isAgency?: boolean };
           return !(isAgency && value === tenantId);
         }),
       price: Yup.number()
-        .typeError('Cijena mora biti broj')
-        .required('Cijena je obavezna')
-        .positive('Cijena mora biti pozitivan broj')
-        .test('max-decimals', 'Cijena može imati maksimalno 2 decimale', (value) => {
+        .typeError('Upiši cijenu.')
+        .required('Upiši cijenu.')
+        .positive('Cijena mora biti veća od 0.')
+        .test('max-decimals', 'Najviše 2 decimale.', (value) => {
           if (value === undefined || value === null) return true;
           const decimalPlaces = (value.toString().split('.')[1] || '').length;
           return decimalPlaces <= 2;
         }),
       transportContractorId: Yup.string()
-        .required('Prijevoznik je obavezan')
-        .test(
-          'not-tenant-when-agency',
-          'Vaša tvrtka ne može biti prijevoznik kod agencijskog naloga',
-          function (value) {
-            const { isAgency } = this.parent as { isAgency?: boolean };
-            return !(isAgency && value === tenantId);
-          }
-        ),
+        .required('Odaberi podvozara.')
+        .test('not-tenant-when-agency', 'Tvoja tvrtka ne može biti podvozar na agencijskom nalogu.', function (value) {
+          const { isAgency } = this.parent as { isAgency?: boolean };
+          return !(isAgency && value === tenantId);
+        }),
       isAgency: Yup.boolean().optional(),
       agencyPrice: Yup.number()
         .transform((value, original) => (original === '' || original === null ? undefined : value))
@@ -121,13 +102,13 @@ export function getShipmentSchema(tenantId: string) {
           is: true,
           then: () =>
             Yup.number()
-              .typeError('Cijena agencijskog prijevoza mora biti broj')
-              .required('Cijena agencijskog prijevoza je obavezna')
-              .positive('Cijena mora biti pozitivan broj'),
+              .typeError('Upiši cijenu podvozara.')
+              .required('Upiši cijenu podvozara.')
+              .positive('Cijena mora biti veća od 0.'),
           otherwise: () => Yup.number().optional().nullable().strip(),
         }),
       notificationEmails: notificationEmailsSchema,
-      cargo: Yup.array().of(cargoSchema).required('Potreban je najmanje jedan teret'),
+      cargo: Yup.array().of(cargoSchema).required('Dodaj barem jedan teret.'),
     })
     .test('tenant-participation', '', function (values) {
       const { isAgency, transportContractorId, clientId } = values as {
@@ -139,16 +120,17 @@ export function getShipmentSchema(tenantId: string) {
 
       const tenantCount = (transportContractorId === tenantId ? 1 : 0) + (clientId === tenantId ? 1 : 0);
 
+      // Own nalog: the form sets the tenant as the contractor, so a problem here is about the client.
       if (tenantCount === 0) {
         return this.createError({
-          path: 'transportContractorId',
-          message: 'Vaša tvrtka mora biti odabrana kao klijent ili prijevoznik',
+          path: 'clientId',
+          message: 'Tvoja tvrtka mora biti klijent ili podvozar.',
         });
       }
       if (tenantCount === 2) {
         return this.createError({
-          path: 'transportContractorId',
-          message: 'Vaša tvrtka ne može biti istovremeno klijent i prijevoznik',
+          path: 'clientId',
+          message: 'Tvoja tvrtka ne može biti klijent na vlastitom prijevozu.',
         });
       }
       return true;
@@ -163,7 +145,7 @@ function getSingleDimensionSchema() {
       then: () =>
         Yup.number()
           .transform((value, original) => (original === '' ? undefined : value))
-          .positive('Mora biti pozitivan broj')
+          .positive('Mora biti veće od 0.')
           .optional(),
       otherwise: () => Yup.number().strip(),
     });
@@ -175,10 +157,10 @@ export function getAddressSchema({ message }: { message: string }) {
       streetName: Yup.string().required(message),
       postalCodeId: Yup.object()
         .shape({
-          label: Yup.string().required(),
-          value: Yup.string().required(),
+          label: Yup.string().required(message),
+          value: Yup.string().required(message),
         })
-        .required('Poštanski broj je obavezan'),
+        .required(message),
       countryCode: Yup.string().optional(),
     })
     .required(message);

@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { useCreateShipmentDraft } from '@/lib/hooks';
+import { pluralCount } from '@/lib/utils/plural';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 
 const ACCEPTED_MIME_TYPES = ['application/pdf'];
@@ -17,7 +18,12 @@ export function useUploadDraftFiles(onFilesAccepted?: () => void) {
 
       if (rejectedCount > 0) {
         showErrorToast({
-          title: `${rejectedCount} ${rejectedCount === 1 ? 'datoteka nije podržana' : 'datoteke nisu podržane'}. Dozvoljen je samo PDF.`,
+          title: pluralCount(rejectedCount, [
+            'datoteka nije podržana',
+            'datoteke nisu podržane',
+            'datoteka nije podržano',
+          ]),
+          description: 'Dozvoljen je samo PDF.',
         });
       }
 
@@ -32,12 +38,17 @@ export function useUploadDraftFiles(onFilesAccepted?: () => void) {
 
       if (succeeded > 0) {
         showSuccessToast({
-          title: `${succeeded} ${succeeded === 1 ? 'nalog učitan' : 'naloga učitano'}. Obrada je u tijeku.`,
+          title: pluralCount(succeeded, ['nalog učitan', 'naloga učitana', 'naloga učitano']),
+          description: 'Obrada je u tijeku.',
         });
       }
       if (failed > 0) {
         showErrorToast({
-          title: `${failed} ${failed === 1 ? 'datoteku nije moguće učitati' : 'datoteke nije moguće učitati'}.`,
+          title: pluralCount(failed, [
+            'datoteku nije moguće učitati',
+            'datoteke nije moguće učitati',
+            'datoteka nije moguće učitati',
+          ]),
         });
       }
     },

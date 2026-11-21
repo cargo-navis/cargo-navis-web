@@ -1,49 +1,103 @@
-import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/router';
-import { FormProvider, useForm } from 'react-hook-form';
-import { object, string } from 'yup';
+import * as React from 'react';
 
-import { FormPasswordInput, FormTextInput } from '@/lib/components/form';
+import { PasswordInput } from '@/components/shared/password';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 import { useLogin } from '@/lib/hooks/api/auth';
-import { showErrorToast } from '@/lib/utils/toast';
-import { Button, FlexLayout } from '@/ui';
 
 import type { FormValues } from './types';
+import { LOGIN_FAILED_MESSAGE, validateLogin } from './validation';
 
-export const loginSchema = object({
-  email: string().email('Email mora biti valjanog formata').required('Email je obavezan'),
-  password: string().required('Lozinka je obavezna'),
-});
-
+/** Validates on blur and on submit (DECISIONS §2); the button is always enabled and jumps to the first problem. */
 export const LoginForm = () => {
   const { push } = useRouter();
   const { loginUser } = useLogin();
 
-  const formMethods = useForm<FormValues>({
-    defaultValues: { email: '', password: '' },
-    resolver: yupResolver(loginSchema),
-    mode: 'onChange',
-  });
+  const [values, setValues] = React.useState<FormValues>({ email: '', password: '' });
+  const [touched, setTouched] = React.useState({ email: false, password: false });
+  const [submitting, setSubmitting] = React.useState(false);
+  const [failed, setFailed] = React.useState(false);
+  const emailRef = React.useRef<HTMLInputElement>(null);
+  const passwordRef = React.useRef<HTMLInputElement>(null);
 
-  const { formState, handleSubmit } = formMethods;
-  const { isSubmitting, isValid } = formState;
+  const errors = validateLogin(values);
+  const emailError = touched.email ? errors.email : undefined;
+  const passwordError = touched.password ? errors.password : undefined;
 
-  async function handleFormSubmit(formValues: FormValues) {
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    setTouched({ email: true, password: true });
+    if (errors.email) {
+      emailRef.current?.focus();
+      return;
+    }
+    if (errors.password) {
+      passwordRef.current?.focus();
+      return;
+    }
+
+    setFailed(false);
+    setSubmitting(true);
     try {
-      await loginUser({ ...formValues });
+      await loginUser({ ...values });
+      // Stays loading until the dashboard is there.
       await push('/dashboard');
     } catch {
-      showErrorToast({ title: 'Nismo pronašli nijednog korisnika s tom kombinacijom emaila i lozinke.' });
+      setFailed(true);
+      setSubmitting(false);
     }
   }
 
   return (
-    <FormProvider {...formMethods}>
-      <FlexLayout as="form" className="flex-col gap-6" onSubmit={handleSubmit(handleFormSubmit)}>
-        <FormTextInput autoFocus label="Email" name="email" placeholder="Unesite svoj email" type="email" />
-        <FormPasswordInput label="Lozinka" name="password" placeholder="Unesite svoju lozinku" />
-        <Button isDisabled={!isValid} isFullWidth isLoading={isSubmitting} size="l" text="Prijava" />
-      </FlexLayout>
-    </FormProvider>
+    <form className="flex flex-col gap-6" noValidate onSubmit={handleSubmit}>
+      <FieldGroup className="gap-4">
+        <Field data-invalid={emailError ? true : undefined}>
+          <FieldLabel htmlFor="login-email">Email</FieldLabel>
+          <Input
+            aria-invalid={emailError ? true : undefined}
+            autoComplete="username"
+            autoFocus
+            disabled={submitting}
+            id="login-email"
+            inputMode="email"
+            name="email"
+            placeholder="Upiši svoj email"
+            ref={emailRef}
+            type="email"
+            value={values.email}
+            onBlur={() => setTouched((current) => ({ ...current, email: true }))}
+            onChange={(event) => setValues((current) => ({ ...current, email: event.target.value }))}
+          />
+          {emailError && <FieldError className="sr-only">{emailError}</FieldError>}
+        </Field>
+        <Field data-invalid={passwordError ? true : undefined}>
+          <FieldLabel htmlFor="login-password">Lozinka</FieldLabel>
+          <PasswordInput
+            autoComplete="current-password"
+            disabled={submitting}
+            id="login-password"
+            invalid={!!passwordError}
+            name="password"
+            placeholder="Upiši svoju lozinku"
+            ref={passwordRef}
+            value={values.password}
+            onBlur={() => setTouched((current) => ({ ...current, password: true }))}
+            onChange={(password) => setValues((current) => ({ ...current, password }))}
+          />
+          {passwordError && <FieldError className="sr-only">{passwordError}</FieldError>}
+        </Field>
+      </FieldGroup>
+      {failed && (
+        <Alert variant="destructive">
+          <AlertDescription>{LOGIN_FAILED_MESSAGE}</AlertDescription>
+        </Alert>
+      )}
+      <Button className="w-full" loading={submitting} type="submit">
+        Prijavi se
+      </Button>
+    </form>
   );
 };

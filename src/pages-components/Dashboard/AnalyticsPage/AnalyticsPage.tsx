@@ -1,49 +1,99 @@
-import { useState } from 'react';
-
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
-import { ClientSideOnly } from '@/lib/components/ClientSideOnly';
-import { FlexLayout, Heading } from '@/ui';
+import { Button } from '@/components/ui/button';
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Icon } from '@/ui';
 
-import { AnalyticsPageTabs } from './AnalyticsPageTabs';
-import { ContentLoader } from './ContentLoader';
-import { DateRange, getInitialDateRange } from './DateRangeFilter';
-import { GranularityOption } from './GranularityFilter';
-import { useAnalyticsPageTab } from './hooks';
-import { AgencySection, OverviewSection, RegularSection } from './sections';
+import { ChartCardSkeleton } from './ChartCard';
+import { FilterRow } from './FilterRow';
+import { type Filters, useAnalyticsFilters, type View, VIEWS } from './filters';
+import { StatTileSkeleton } from './StatTile';
+import { usePeriods } from './usePeriods';
+import { Agency, Overview, Regular } from './views';
 
+/**
+ * Analitika (DECISIONS §5, lab /analytics): tabs Ukupno · Vlastiti prijevoz · Agencijski nalozi; one filter row (period,
+ * Dan / Tjedan / Mjesec / Godina, klijent or vozač / vozilo) kept in the URL; tiles with the change vs the previous
+ * period; two charts per tab (shadcn charts on Recharts, one axis each); tables whose rows open the entity.
+ */
 export const AnalyticsPage = () => {
-  const { isReady, tab, setTab } = useAnalyticsPageTab();
-  const [dateRange, setDateRange] = useState<DateRange>(() => getInitialDateRange('last-6-months'));
-  const [granularity, setGranularity] = useState<GranularityOption>('month');
-
-  // Date range and granularity are shared, so switching tabs keeps the period in view.
-  const sharedFilterProps = {
-    dateRange,
-    granularity,
-    onDateRangeChange: setDateRange,
-    onGranularityChange: setGranularity,
-  };
+  const { isReady, today, view, filters, setView, setFilters } = useAnalyticsFilters();
 
   return (
     <DashboardLayout>
       <PageTitle title="Analitika" />
-      <FlexLayout className="flex-col gap-5">
-        <FlexLayout className="flex-col gap-4">
-          <Heading as="h1" variant="text-xl">
-            Analitika
-          </Heading>
-          {isReady && <AnalyticsPageTabs setTab={setTab} tab={tab} />}
-        </FlexLayout>
-        {!isReady && (
-          <ClientSideOnly>
-            <ContentLoader />
-          </ClientSideOnly>
+      <div className="flex flex-col gap-4">
+        <h1 className="font-heading text-3xl font-bold tracking-tight">Analitika</h1>
+        <Tabs value={view} onValueChange={(value) => setView(value as View)}>
+          <TabsList className="no-scrollbar max-w-full overflow-x-auto" variant="line">
+            {VIEWS.map((item) => (
+              <TabsTrigger key={item.key} value={item.key}>
+                {item.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
+        {/* The page is statically optimised: the filters come from the URL once the router is ready. */}
+        {isReady ? (
+          <>
+            <FilterRow filters={filters} today={today} view={view} onChange={setFilters} />
+            <AnalyticsContent filters={filters} today={today} view={view} />
+          </>
+        ) : (
+          <AnalyticsSkeleton />
         )}
-        {isReady && tab === 'overview' && <OverviewSection {...sharedFilterProps} />}
-        {isReady && tab === 'regular' && <RegularSection {...sharedFilterProps} />}
-        {isReady && tab === 'agency' && <AgencySection {...sharedFilterProps} />}
-      </FlexLayout>
+      </div>
     </DashboardLayout>
   );
 };
+
+function AnalyticsContent({ view, filters, today }: { view: View; filters: Filters; today: Date }) {
+  const data = usePeriods(filters, today);
+
+  if (data.isError) {
+    return (
+      <div className="rounded-xl border">
+        <Empty>
+          <EmptyHeader>
+            <EmptyMedia variant="danger">
+              <Icon icon="IconAlertTriangle" size="m" />
+            </EmptyMedia>
+            <EmptyTitle>Analitika se nije učitala</EmptyTitle>
+            <EmptyDescription>Provjeri vezu pa pokušaj ponovno.</EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button variant="outline" onClick={data.refetch}>
+              <Icon data-icon="inline-start" icon="IconRefresh" size="s" /> Pokušaj ponovno
+            </Button>
+          </EmptyContent>
+        </Empty>
+      </div>
+    );
+  }
+
+  // First load only; a filter change keeps the previous numbers (dimmed).
+  if (!data.periods) return <AnalyticsSkeleton withoutFilters />;
+
+  const props = { filters, today, data: { ...data, periods: data.periods } };
+  if (view === 'regular') return <Regular {...props} />;
+  if (view === 'agency') return <Agency {...props} />;
+  return <Overview {...props} />;
+}
+
+function AnalyticsSkeleton({ withoutFilters }: { withoutFilters?: boolean }) {
+  return (
+    <div aria-busy className="flex flex-col gap-4">
+      {!withoutFilters && <div className="h-10" />}
+      <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+        {Array.from({ length: 4 }, (_, index) => (
+          <StatTileSkeleton key={index} />
+        ))}
+      </div>
+      <div className="grid gap-4 2xl:grid-cols-2">
+        <ChartCardSkeleton />
+        <ChartCardSkeleton />
+      </div>
+    </div>
+  );
+}

@@ -29,7 +29,7 @@ export function getDriversNotifiedToast({
   clientName: string | undefined;
   orderNumber: string;
 }): { title: string; description?: string } {
-  const order = clientName ? `o nalogu za ${clientName}.` : `o nalogu ${orderNumber}.`;
+  const order = clientName ? `o nalogu za ${clientName}` : `o nalogu ${orderNumber}`;
   const driverIds = getStopDriverIds(notifiedStops);
   const names = getEmployeeNames(driverIds, employees);
 

@@ -1,8 +1,10 @@
-import clsx from 'clsx';
 import { useState } from 'react';
 
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { Box, Button, FlexLayout, Icon, Text } from '@/ui';
+import { Icon } from '@/ui';
 
 import { isIos } from '../install/installHint';
 import { isInstalledApp } from '../install/useInstallPrompt';
@@ -16,26 +18,15 @@ function getSettingsHint() {
   return 'U pregledniku otvori postavke stranice (ikonica pokraj URL adrese) i dopusti obavijesti.';
 }
 
-// Teal invites (brand colour, something good to turn on); orange flags that the driver blocked notifications.
-const STATE_STYLES = {
-  invite: {
-    card: 'border-teal-100 bg-teal-50 dark:border-teal-800 dark:bg-teal-900/40',
-    icon: 'text-teal-600 dark:text-teal-300',
-    title: 'text-teal-800 dark:text-teal-100',
-  },
-  denied: {
-    card: 'border-orange-100 bg-orange-50 dark:border-orange-800 dark:bg-orange-900/40',
-    icon: 'text-orange-500 dark:text-orange-300',
-    title: 'text-orange-700 dark:text-orange-200',
-  },
-} as const;
-
 interface NotificationsCardProps {
   status: DriverPushNotificationsStatus;
   onEnable(): Promise<NotificationPermission>;
 }
 
-/** Above the route until the driver allows notifications. Hidden where web push isn't available. */
+/**
+ * Above the route until the driver allows notifications (brand tint, something good to turn on); a warning once they
+ * blocked them. Hidden where web push isn't available.
+ */
 export const NotificationsCard: React.FC<NotificationsCardProps> = ({ status, onEnable }) => {
   const [isEnabling, setIsEnabling] = useState(false);
 
@@ -47,54 +38,41 @@ export const NotificationsCard: React.FC<NotificationsCardProps> = ({ status, on
       const permission = await onEnable();
       if (permission === 'granted') {
         showSuccessToast({
-          title: 'Obavijesti su uključene.',
-          description: 'Javit ćemo ti kad ti se dodijele novi nalozi.',
+          title: 'Obavijesti su uključene',
+          description: 'Javit ćemo ti kad stigne novi nalog.',
         });
       }
     } catch {
-      showErrorToast({ title: 'Uključivanje obavijesti nije uspjelo. Pokušaj ponovno.' });
+      showErrorToast({ title: 'Uključivanje obavijesti nije uspjelo', description: 'Pokušaj ponovno.' });
     } finally {
       setIsEnabling(false);
     }
   }
 
-  const isDenied = status === 'denied';
-  const styles = STATE_STYLES[isDenied ? 'denied' : 'invite'];
+  if (status === 'denied') {
+    return (
+      <div className="px-4 pb-2">
+        <Alert icon="IconBellOff" variant="warning">
+          <AlertTitle>Ne primaš obavijesti</AlertTitle>
+          <AlertDescription>Nećemo ti moći javiti za nove naloge. {getSettingsHint()}</AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   return (
-    <FlexLayout className="px-4 pb-2">
-      <FlexLayout className={clsx('w-full flex-col gap-4 rounded-l border p-4 shadow-sm', styles.card)}>
-        <FlexLayout className="flex-col gap-1">
-          <FlexLayout className="items-center gap-2">
-            <Icon
-              className={isDenied ? undefined : 'bell-ring'}
-              color={styles.icon}
-              icon={isDenied ? 'IconBellOff' : 'IconBellRinging'}
-              size="m"
-            />
-            <Text color={styles.title} variant="text-s-medium">
-              {isDenied ? 'Ne primaš obavijesti' : 'Uključi obavijesti'}
-            </Text>
-          </FlexLayout>
-          <Text color="text-color-2" variant="text-xs">
-            {isDenied
-              ? `Nećemo ti moći javiti za nove naloge. ${getSettingsHint()}`
-              : 'Obavijestit ćemo te o novim nalozima, i kad aplikacija nije otvorena.'}
-          </Text>
-        </FlexLayout>
-        {!isDenied && (
-          <Box>
-            <Button
-              iconLeft="IconBell"
-              isFullWidth
-              isLoading={isEnabling}
-              size="m"
-              text="Uključi obavijesti"
-              onClick={handleEnable}
-            />
-          </Box>
-        )}
-      </FlexLayout>
-    </FlexLayout>
+    <Card className="mx-4 mb-2 gap-3 border border-primary/15 bg-brand-soft p-4 ring-0 dark:border-primary">
+      <div className="flex items-start gap-3">
+        <Icon className="bell-ring mt-0.5 shrink-0 text-brand" icon="IconBell" size="m" />
+        <div className="flex grow flex-col gap-1">
+          <span className="font-medium text-primary dark:text-foreground">Uključi obavijesti</span>
+          <span className="text-sm text-muted-foreground">Javit ćemo ti kad ti se dodijele novi nalozi.</span>
+        </div>
+      </div>
+      <Button className="w-full" loading={isEnabling} size="xl" onClick={() => void handleEnable()}>
+        <Icon data-icon="inline-start" icon="IconBell" size="m" />
+        {isEnabling ? 'Uključujem…' : 'Uključi obavijesti'}
+      </Button>
+    </Card>
   );
 };

@@ -1,46 +1,33 @@
-import { Box, FlexLayout, Skeleton } from '@/ui';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // Fixed, slightly different widths per row (px), so the placeholder doesn't read as a grid of identical bars
 const ROWS = [
-  { lines: [110, 190, 260], aside: [150, 110] },
-  { lines: [90, 150, 220], aside: [130, 100] },
-  { lines: [120, 210, 180], aside: [160, 120] },
-  { lines: [100, 170, 240], aside: [140, 90] },
-  { lines: [115, 140, 200], aside: [120, 110] },
-  { lines: [95, 200, 230], aside: [150, 100] },
+  { lines: [110, 190], aside: [150, 110] },
+  { lines: [90, 150], aside: [130, 100] },
+  { lines: [120, 210], aside: [160, 120] },
+  { lines: [100, 170], aside: [140, 90] },
+  { lines: [115, 140], aside: [120, 110] },
 ];
 
-/** Placeholder for the search page while results load; mirrors the rows of SearchResultsList. */
-export const SearchResultsSkeleton = ({ showAside }: { showAside: boolean }) => (
-  <Box>
-    {/* "Ukupno rezultata: N" */}
-    <Box className="mt-1">
-      <Skeleton borderRadius="xs" height={24} width={140} />
-    </Box>
-    <Box as="ul" className="flex flex-col max-w-[760px] py-5 divide-y divide-dark-100 dark:divide-light-900">
-      {ROWS.map(({ lines, aside }, index) => (
-        // Same height as a typical result row (three lines of text), so nothing jumps when results arrive
-        <li className="h-[88px] py-1" key={index}>
-          <FlexLayout className="h-full items-start gap-3 p-2">
-            <Box className="shrink-0">
-              <Skeleton borderRadius="m" height={40} width={40} />
-            </Box>
-            <FlexLayout className="flex-1 min-w-0 flex-col gap-2 pt-[2px]">
-              {lines.map((width, lineIndex) => (
-                <Skeleton borderRadius="xs" height={lineIndex === 0 ? 14 : 12} key={lineIndex} width={width} />
-              ))}
-            </FlexLayout>
-            {showAside && (
-              // Centred in the row, like the cargo column in SearchResultsList
-              <FlexLayout className="w-[220px] shrink-0 self-center flex-col items-end gap-2">
-                {aside.map((width, lineIndex) => (
-                  <Skeleton borderRadius="xs" height={12} key={lineIndex} width={width} />
-                ))}
-              </FlexLayout>
-            )}
-          </FlexLayout>
-        </li>
-      ))}
-    </Box>
-  </Box>
+/** First-load placeholder for a card of results; mirrors SearchResultsList. */
+export const SearchResultsSkeleton = ({ showAside, rows = ROWS.length }: { showAside: boolean; rows?: number }) => (
+  <div aria-busy className="flex flex-col divide-y rounded-xl border bg-card p-1">
+    {ROWS.slice(0, rows).map(({ lines, aside }, index) => (
+      <div className="flex items-start gap-3 px-3 py-2.5" key={index}>
+        <Skeleton className="mt-0.5 size-5 shrink-0 rounded-md" />
+        <div className="flex min-w-0 flex-1 flex-col gap-2 pt-0.5">
+          {lines.map((width, lineIndex) => (
+            <Skeleton className={lineIndex === 0 ? 'h-3.5' : 'h-3'} key={lineIndex} style={{ width }} />
+          ))}
+        </div>
+        {showAside && (
+          <div className="hidden w-56 shrink-0 flex-col items-end gap-2 self-center sm:flex">
+            {aside.map((width, lineIndex) => (
+              <Skeleton className="h-3" key={lineIndex} style={{ width }} />
+            ))}
+          </div>
+        )}
+      </div>
+    ))}
+  </div>
 );

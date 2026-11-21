@@ -62,14 +62,14 @@ export function getStopKindLabels(stop: DriverStop): { title: string; action: st
   const hasUnloading = stop.unloadingCargos.length > 0;
 
   if (hasLoading && hasUnloading) {
-    return { title: 'UTOVAR I ISTOVAR', action: 'Potvrdi utovar i istovar', confirmed: 'Postaja potvrđena' };
+    return { title: 'Utovar i istovar', action: 'Potvrdi utovar i istovar', confirmed: 'Utovar i istovar potvrđeni' };
   }
 
   if (hasUnloading) {
-    return { title: 'ISTOVAR', action: 'Potvrdi istovar', confirmed: 'Istovar potvrđen' };
+    return { title: 'Istovar', action: 'Potvrdi istovar', confirmed: 'Istovar potvrđen' };
   }
 
-  return { title: 'UTOVAR', action: 'Potvrdi utovar', confirmed: 'Utovar potvrđen' };
+  return { title: 'Utovar', action: 'Potvrdi utovar', confirmed: 'Utovar potvrđen' };
 }
 
 /** The clients of the stop's orders, each once (a stop can serve several orders). */
@@ -213,16 +213,16 @@ export function formatStopDate(date: string | null, now: Dayjs): string {
   return day.format('ddd D.M.');
 }
 
-/** When a stop was confirmed: `Danas · 09:05`, `Jučer · 17:45`, `pon. 12.10. · 09:00`, other years with the full year. */
+/** When a stop was confirmed: `Danas 09:05`, `Jučer 17:45`, `pon. 12.10. 09:00`, other years with the full year. */
 export function formatCompletedAt(completedAt: string, now: Dayjs): string {
   const at = dayjs(completedAt).locale('hr');
   const time = at.format('HH:mm');
 
-  if (at.isSame(now, 'day')) return `Danas · ${time}`;
-  if (at.isSame(now.subtract(1, 'day'), 'day')) return `Jučer · ${time}`;
+  if (at.isSame(now, 'day')) return `Danas ${time}`;
+  if (at.isSame(now.subtract(1, 'day'), 'day')) return `Jučer ${time}`;
 
   const date = at.isSame(now, 'year') ? at.format('ddd D.M.') : at.format('ddd D.M.YYYY.');
-  return `${date} · ${time}`;
+  return `${date} ${time}`;
 }
 
 const formatNumber = (value: number) => value.toLocaleString('hr-HR');

@@ -1,17 +1,30 @@
-import clsx from 'clsx';
 import dayjs from 'dayjs';
 
+import type { StopKind } from '@/components/shared/stop-kind';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 import type { DriverStop, DriverStopCargo } from '@/lib/api/driver';
+import { cn } from '@/lib/utils';
 import { getCargoLabel } from '@/lib/utils/cargo';
-import { Alert, Box, FlexLayout, Icon, type IconType, Text } from '@/ui';
+import { Icon } from '@/ui';
 
-import { formatCargoMeasures, formatCompletedAt, getNavigationUrl, groupCargosByShipment } from '../utils';
+import { COMPLETED_TEXT, KIND_STYLES, SectionTitle } from '../ui';
+import {
+  formatCargoMeasures,
+  formatCargoTotals,
+  formatCompletedAt,
+  getNavigationUrl,
+  groupCargosByShipment,
+} from '../utils';
 
 interface StopDetailsProps {
   stop: DriverStop;
-  hideShipmentHeaders?: boolean;
-  /** Coloured utovar/istovar bar on the card's left edge; only for full-width cards, not inside the shipment timeline. */
-  showSideBars?: boolean;
+  /**
+   * Inside the order drawer's timeline: no colour bar on the left edge (the timeline has its own line), no
+   * confirmation time in the section titles (the timeline says it once for the stop) and no order number per section
+   * (the drawer is about that one order).
+   */
+  isInTimeline?: boolean;
   actions?: React.ReactNode;
 }
 
@@ -19,165 +32,128 @@ function unique(values: (string | null)[]) {
   return Array.from(new Set(values.filter((value): value is string => Boolean(value))));
 }
 
-// Same convention as the dispatcher dashboard: utovar = orange, istovar = teal (500 light / 400 dark).
-const SIDE_STYLES: Record<
-  'loading' | 'unloading',
-  { title: string; icon: IconType; color: string; line: string; bar: string }
-> = {
-  loading: {
-    title: 'UTOVAR',
-    icon: 'IconPackageImport',
-    color: 'text-orange-500 dark:text-orange-400',
-    line: 'bg-orange-300 dark:bg-orange-700',
-    bar: 'bg-orange-500 dark:bg-orange-400',
-  },
-  unloading: {
-    title: 'ISTOVAR',
-    icon: 'IconPackageExport',
-    color: 'text-teal-500 dark:text-teal-400',
-    line: 'bg-teal-300 dark:bg-teal-700',
-    bar: 'bg-teal-500 dark:bg-teal-400',
-  },
-};
-
-// A confirmed stop turns its sections green with a check and shows when it was confirmed, whatever the side.
-const COMPLETED_STYLE = {
-  icon: 'IconCircleCheck',
-  color: 'text-green-600 dark:text-green-400',
-  line: 'bg-green-300 dark:bg-green-700',
-  bar: 'bg-green-600 dark:bg-green-400',
-} satisfies Omit<(typeof SIDE_STYLES)['loading'], 'title'>;
-
-const CargoSide: React.FC<{
-  side: 'loading' | 'unloading';
-  cargos: DriverStopCargo[];
-  completedAt: string | null;
-  hideShipmentHeaders?: boolean;
-  showSideBar?: boolean;
-}> = ({ side, cargos, completedAt, hideShipmentHeaders, showSideBar }) => {
-  const isLoading = side === 'loading';
-  const style = completedAt ? { ...SIDE_STYLES[side], ...COMPLETED_STYLE } : SIDE_STYLES[side];
-
-  // Where the side happens, named in its header line (several orders can load or unload at different companies)
-  const companies = unique(cargos.map((c) => (isLoading ? c.loadingCompanyName : c.unloadingCompanyName)));
-
-  return (
-    <FlexLayout className={clsx('relative flex-col gap-2', showSideBar && '-ml-4 pl-4')}>
-      {showSideBar && <Box className={clsx('absolute inset-y-0 left-0 w-[4px] rounded-r-xs', style.bar)} />}
-      <FlexLayout className={clsx('items-center gap-2', style.color)}>
-        <Icon icon={style.icon} size="s" />
-        <Text className="shrink-0" variant="text-xxxs-bold">
-          {style.title}
-        </Text>
-        {companies.length > 0 && (
-          <>
-            •
-            <Text className="min-w-0 truncate" title={companies.join(', ')} variant="text-xxs-medium">
-              {companies.join(', ')}
-            </Text>
-          </>
-        )}
-        <Box className={clsx('h-[1px] min-w-[12px] grow', style.line)} />
-        {completedAt && (
-          <Text className="shrink-0" variant="text-xxxs-medium">
-            {formatCompletedAt(completedAt, dayjs())}
-          </Text>
-        )}
-      </FlexLayout>
-      <FlexLayout className="flex-col gap-4">
-        {groupCargosByShipment(cargos).map(({ shipment, cargos: shipmentCargos }) => {
-          const references = unique(shipmentCargos.map((c) => (isLoading ? c.loadingReference : c.unloadingReference)));
-          const descriptions = unique(
-            shipmentCargos.map((c) => (isLoading ? c.loadingDescription : c.unloadingDescription))
-          );
-
-          return (
-            <FlexLayout className={clsx('flex-col gap-1', completedAt && 'opacity-50')} key={shipment.id}>
-              {!hideShipmentHeaders && (
-                <Text color="text-color-1" variant="text-xs-medium">
-                  Nalog #{shipment.orderNumber}
-                </Text>
-              )}
-              {references.length > 0 && (
-                <Text color="text-color-2" variant="text-xs">
-                  Ref: {references.join(', ')}
-                </Text>
-              )}
-              {shipmentCargos.map((cargo) => (
-                <Text as="li" className="list-inside" color="text-color-2" key={cargo.id} variant="text-xs">
-                  {[getCargoLabel(cargo), ...formatCargoMeasures(cargo)].join(' · ')}
-                </Text>
-              ))}
-              {descriptions.map((description) => (
-                <Alert
-                  className="mt-1"
-                  icon="IconInfoCircle"
-                  key={description}
-                  size="s"
-                  text={<span className="whitespace-pre-line">{description}</span>}
-                  variant="default"
-                />
-              ))}
-            </FlexLayout>
-          );
-        })}
-      </FlexLayout>
-    </FlexLayout>
-  );
-};
-
-export const StopDetails: React.FC<StopDetailsProps> = ({ stop, hideShipmentHeaders, showSideBars, actions }) => {
+/** Street and place with the map button (Google Maps navigation; icon only, as before the redesign). */
+const AddressRow: React.FC<{ stop: DriverStop }> = ({ stop }) => {
   const { address } = stop;
+  if (!address) return null;
   const navigationUrl = getNavigationUrl(address);
 
   return (
-    <FlexLayout className="flex-col gap-4">
-      {address && (
-        <FlexLayout className="items-start justify-between gap-3">
-          <FlexLayout className="flex-col">
-            {address.streetName && (
-              <Text color="text-color-1" variant="text-xs">
-                {address.streetName}
-              </Text>
+    <div className="flex items-start justify-between gap-3">
+      <div className="flex min-w-0 flex-col text-sm text-muted-foreground">
+        {address.streetName && <span>{address.streetName}</span>}
+        <span>
+          {[address.postalCode, address.placeName].filter(Boolean).join(' ')}
+          {address.countryCode ? `, ${address.countryCode}` : ''}
+        </span>
+      </div>
+      {navigationUrl && (
+        <Button
+          aria-label="Navigacija"
+          className="shrink-0"
+          nativeButton={false}
+          render={<a href={navigationUrl} rel="noopener noreferrer" target="_blank" title="Navigacija" />}
+          size="icon-xl"
+          variant="outline"
+        >
+          <Icon icon="IconMap2" size="m" />
+        </Button>
+      )}
+    </div>
+  );
+};
+
+/**
+ * What happens to the cargo of one kind at the stop: per order the company at the site (else the client), the order
+ * number with its totals, references, every cargo and the dispatcher's notes. Utovar orange / istovar teal, green with
+ * a check once confirmed.
+ */
+const CargoSection: React.FC<{
+  kind: StopKind;
+  stop: DriverStop;
+  cargos: DriverStopCargo[];
+  isInTimeline?: boolean;
+  children?: React.ReactNode;
+}> = ({ kind, stop, cargos, isInTimeline, children }) => {
+  const style = KIND_STYLES[kind];
+  const isLoading = kind === 'loading';
+  const { completedAt } = stop;
+
+  return (
+    <div className={cn('relative flex flex-col gap-3', !isInTimeline && '-ml-4 pl-4')}>
+      {!isInTimeline && (
+        <div className={cn('absolute inset-y-0 left-0 w-1 rounded-r-[4px]', completedAt ? 'bg-success' : style.bar)} />
+      )}
+      <SectionTitle
+        className={completedAt ? COMPLETED_TEXT : style.text}
+        icon={completedAt ? 'IconCircleCheck' : style.icon}
+      >
+        {style.label}
+        {completedAt && !isInTimeline && ` · potvrđeno ${formatCompletedAt(completedAt, dayjs())}`}
+      </SectionTitle>
+      {groupCargosByShipment(cargos).map(({ shipment, cargos: shipmentCargos }) => {
+        const companies = unique(
+          shipmentCargos.map((cargo) => (isLoading ? cargo.loadingCompanyName : cargo.unloadingCompanyName))
+        );
+        const company = companies.join(', ') || shipment.clientName;
+        const references = unique(
+          shipmentCargos.map((cargo) => (isLoading ? cargo.loadingReference : cargo.unloadingReference))
+        );
+        const descriptions = unique(
+          shipmentCargos.map((cargo) => (isLoading ? cargo.loadingDescription : cargo.unloadingDescription))
+        );
+        const totals = formatCargoTotals(shipmentCargos);
+        // The order drawer is about one order: its number is already in the header.
+        const orderLine = [!isInTimeline && `Nalog #${shipment.orderNumber}`, totals].filter(Boolean).join(' · ');
+
+        return (
+          <div className="flex flex-col gap-0.5" key={shipment.id}>
+            {company && <span className="font-medium [overflow-wrap:anywhere]">{company}</span>}
+            {orderLine && <span className="text-sm text-muted-foreground">{orderLine}</span>}
+            {references.length > 0 && (
+              <span className="text-sm text-muted-foreground">Ref: {references.join(', ')}</span>
             )}
-            <Text color="text-color-2" variant="text-xs">
-              {[address.postalCode, address.placeName].filter(Boolean).join(' ')}
-              {address.countryCode ? `, ${address.countryCode}` : ''}
-            </Text>
-          </FlexLayout>
-          {navigationUrl && (
-            <a
-              aria-label="Navigiraj"
-              className="flex size-[44px] shrink-0 items-center justify-center rounded-m border border-dark-200 text-dark-800 dark:border-light-800 dark:text-light-50"
-              href={navigationUrl}
-              rel="noopener noreferrer"
-              target="_blank"
-              title="Navigiraj"
-            >
-              <Icon icon="IconMap2" size="m" />
-            </a>
-          )}
-        </FlexLayout>
-      )}
-      {stop.loadingCargos.length > 0 && (
-        <CargoSide
-          cargos={stop.loadingCargos}
-          completedAt={stop.completedAt}
-          hideShipmentHeaders={hideShipmentHeaders}
-          showSideBar={showSideBars}
-          side="loading"
-        />
-      )}
-      {stop.unloadingCargos.length > 0 && (
-        <CargoSide
-          cargos={stop.unloadingCargos}
-          completedAt={stop.completedAt}
-          hideShipmentHeaders={hideShipmentHeaders}
-          showSideBar={showSideBars}
-          side="unloading"
-        />
-      )}
+            <ul className="text-sm text-foreground/80">
+              {shipmentCargos.map((cargo) => (
+                <li className="list-inside list-disc" key={cargo.id}>
+                  {[getCargoLabel(cargo), ...formatCargoMeasures(cargo)].join(' · ')}
+                </li>
+              ))}
+            </ul>
+            {descriptions.map((description) => (
+              <Alert className="mt-1.5" key={description} size="sm">
+                <AlertDescription className="whitespace-pre-line">{description}</AlertDescription>
+              </Alert>
+            ))}
+          </div>
+        );
+      })}
+      {children}
+    </div>
+  );
+};
+
+/**
+ * The stop's cargo sections (utovar first) with the address and Navigacija in the first one, then the actions
+ * (confirm, documents, dispatcher).
+ */
+export const StopDetails: React.FC<StopDetailsProps> = ({ stop, isInTimeline, actions }) => {
+  const sections = (
+    [
+      ['loading', stop.loadingCargos],
+      ['unloading', stop.unloadingCargos],
+    ] as const
+  ).filter(([, cargos]) => cargos.length > 0);
+
+  return (
+    <div className={cn('flex flex-col', isInTimeline ? 'gap-4' : 'gap-6')}>
+      {sections.length === 0 && <AddressRow stop={stop} />}
+      {sections.map(([kind, cargos], index) => (
+        <CargoSection cargos={cargos} isInTimeline={isInTimeline} key={kind} kind={kind} stop={stop}>
+          {index === 0 && <AddressRow stop={stop} />}
+        </CargoSection>
+      ))}
       {actions}
-    </FlexLayout>
+    </div>
   );
 };
