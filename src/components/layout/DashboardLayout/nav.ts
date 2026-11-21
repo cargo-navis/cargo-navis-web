@@ -31,7 +31,7 @@ export type NavSection =
 const startsWith = (prefix: string) => (pathname: string) => pathname === prefix || pathname.startsWith(`${prefix}/`);
 
 /**
- * Početna, Nalozi (+ „Novi nalog” on hover), Prijevozi, Flota (one item), Klijenti, Kontraktori, Zaposlenici,
+ * Početna, Nalozi (+ „Novi nalog” on hover), Prijevozi, Flota (one item), Klijenti, Podvozari, Zaposlenici,
  * Analitika. No „Postavke” item: Postavke open from the company name (Tvrtka) and the user menu (Moj račun).
  */
 export const NAV: NavItem[] = [
@@ -71,7 +71,7 @@ export const NAV: NavItem[] = [
   },
   {
     key: 'contractors',
-    label: 'Kontraktori',
+    label: 'Podvozari',
     href: '/dashboard/contractors',
     icon: 'IconLicense',
     match: startsWith('/dashboard/contractors'),

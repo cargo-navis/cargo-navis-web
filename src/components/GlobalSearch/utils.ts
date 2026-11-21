@@ -11,7 +11,7 @@ export interface SearchResultItem {
   href: string;
   title: string;
   subtitle?: string;
-  // Labelled line below the subtitle, e.g. "Kontraktor: …" for agency shipments
+  // Labelled line below the subtitle, e.g. "Podvozar: …" for agency shipments
   detail?: {
     label: string;
     value: string;
@@ -147,7 +147,7 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
               agencyContractorName ? s.clientName : (s.clientName ?? s.transportContractorName),
               s.externalOrderReference
             ),
-            detail: agencyContractorName ? { label: 'Kontraktor', value: agencyContractorName } : undefined,
+            detail: agencyContractorName ? { label: 'Podvozar', value: agencyContractorName } : undefined,
             aside: getCargoSummary(s.cargos ?? []),
           },
           s.matchedValue
@@ -217,10 +217,10 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
   {
     key: 'contractors',
     type: SearchTypeEnum.CONTRACTORS,
-    heading: 'Kontraktori',
+    heading: 'Podvozari',
     icon: 'IconLicense',
-    pluralNoun: 'kontraktora',
-    forms: ['kontraktor', 'kontraktora', 'kontraktora'],
+    pluralNoun: 'podvozara',
+    forms: ['podvozar', 'podvozara', 'podvozara'],
     mapItems: ({ contractors }) =>
       (contractors?.items ?? []).map((c) =>
         withMatchedValue(

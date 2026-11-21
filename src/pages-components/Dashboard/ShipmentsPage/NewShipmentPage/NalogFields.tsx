@@ -92,7 +92,7 @@ function AgencyFields({ onNewContractor }: { onNewContractor(): void }) {
           label="Tko vozi?"
           options={[
             { key: 'own', label: 'Vlastiti prijevoz', description: 'Naše vozilo i vozač' },
-            { key: 'agency', label: 'Agencijski', description: 'Vozi kontraktor', icon: 'IconBriefcase' },
+            { key: 'agency', label: 'Agencijski', description: 'Vozi podvozar', icon: 'IconBriefcase' },
           ]}
           value={values.isAgency ? 'agency' : 'own'}
           onChange={(key) => set(withAgency(values, key === 'agency', tenantId))}
@@ -101,12 +101,12 @@ function AgencyFields({ onNewContractor }: { onNewContractor(): void }) {
       {values.isAgency && (
         <div className="flex flex-col gap-4 border-l-2 border-agency-300 pl-4 dark:border-agency-700">
           <Field data-invalid={contractorError ? true : undefined}>
-            <Label htmlFor={fieldDomId('transportContractorId')}>Kontraktor</Label>
+            <Label htmlFor={fieldDomId('transportContractorId')}>Podvozar</Label>
             <PartnerCombobox
               id={fieldDomId('transportContractorId')}
               invalid={!!contractorError}
               items={contractors}
-              placeholder="Odaberi kontraktora"
+              placeholder="Odaberi podvozara"
               value={values.transportContractorId}
               onBlur={() => touch('transportContractorId')}
               onChange={(transportContractorId) => set({ transportContractorId })}
@@ -114,12 +114,12 @@ function AgencyFields({ onNewContractor }: { onNewContractor(): void }) {
             {contractorError ? (
               <ErrorText>{contractorError}</ErrorText>
             ) : (
-              <FieldLink onClick={onNewContractor}>+ Novi kontraktor</FieldLink>
+              <FieldLink onClick={onNewContractor}>+ Novi podvozar</FieldLink>
             )}
           </Field>
           <div className="grid items-start gap-4 sm:grid-cols-2">
             <Field data-invalid={priceError ? true : undefined}>
-              <Label htmlFor={fieldDomId('agencyPrice')}>Cijena kontraktora</Label>
+              <Label htmlFor={fieldDomId('agencyPrice')}>Cijena podvozara</Label>
               <NumberInput
                 field="agencyPrice"
                 invalid={!!priceError}

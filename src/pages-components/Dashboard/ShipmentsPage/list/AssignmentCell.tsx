@@ -274,7 +274,7 @@ export function AssignmentCell({ shipment }: { shipment: Shipment }) {
 
   if (assignment.kind === 'contractor') {
     return (
-      <span title="Agencijski nalog: prijevoz obavlja kontraktor">
+      <span title="Agencijski nalog: prijevoz obavlja podvozar">
         <Line icon="IconBriefcase" muted text={assignment.contractor?.name ?? '—'} />
       </span>
     );

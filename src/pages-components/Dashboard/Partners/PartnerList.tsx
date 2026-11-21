@@ -29,7 +29,7 @@ import { CopyValue, Dash, formatTerms, PlaceLine } from './parts';
 const COLUMNS = 5;
 
 /**
- * Klijenti / Kontraktori list (lab /partners „Popis”, DECISIONS §5): no avatar, place under the name, ⋯ + right-click,
+ * Klijenti / Podvozari list (lab /partners „Popis”, DECISIONS §5): no avatar, place under the name, ⋯ + right-click,
  * search over name / place / tax id / email, all rows at once (today's API has no paging), sorted by name.
  */
 export function PartnerList({

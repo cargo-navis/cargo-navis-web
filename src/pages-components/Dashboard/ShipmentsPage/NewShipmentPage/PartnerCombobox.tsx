@@ -22,7 +22,7 @@ function matches(item: PartnerItem, query: string) {
   return normalize(item.name).includes(q) || normalize(item.taxId ?? '').includes(q);
 }
 
-/** Klijent / Kontraktor picker (lab /nalog-form `PartnerCombobox`): name, under it flag + place · tax id. */
+/** Klijent / Podvozar picker (lab /nalog-form `PartnerCombobox`): name, under it flag + place · tax id. */
 export function PartnerCombobox<T extends PartnerItem>({
   id,
   items,

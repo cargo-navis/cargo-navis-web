@@ -71,7 +71,7 @@ export function useChangeInvoiceStatus() {
 }
 
 export interface PdfDocument {
-  /** „Nalog”, or for agency „Nalog za klijenta” / „Nalog za kontraktora”. */
+  /** „Nalog”, or for agency „Nalog za klijenta” / „Nalog za podvozara”. */
   label: string;
   recipientName?: string;
   shipmentId: string;
@@ -99,7 +99,7 @@ export function getPdfDocuments(
     ...(shipment.childId
       ? [
           {
-            label: 'Nalog za kontraktora',
+            label: 'Nalog za podvozara',
             recipientName: contractorName,
             shipmentId: shipment.childId,
             orderNumber: shipment.contractorOrderNumber ?? '',
@@ -171,7 +171,7 @@ export function DeleteShipmentDialog({
           </AlertDialogMedia>
           <AlertDialogTitle>Izbrisati nalog #{shipment.orderNumber}?</AlertDialogTitle>
           <AlertDialogDescription>
-            {[clientName, shipment.isAgency && 'agencijski nalog: briše se i nalog za kontraktora']
+            {[clientName, shipment.isAgency && 'agencijski nalog: briše se i nalog za podvozara']
               .filter(Boolean)
               .join(' · ')}
             {clientName || shipment.isAgency ? '. ' : ''}Ovo se ne može poništiti.

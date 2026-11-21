@@ -1,6 +1,6 @@
 /**
  * One-line overview (lab /order SummaryStrip): Ruta (first → last place, dates, „još N mjesta”), Teret (LDM · kg,
- * tereti · palete), Vozilo / Kontraktor, Cijena with the invoice pill (agency: + zarada).
+ * tereti · palete), Vozilo / Podvozar, Cijena with the invoice pill (agency: + zarada).
  */
 
 import type { Shipment } from '@/lib/api';
@@ -78,7 +78,7 @@ export function SummaryStrip({ shipment }: { shipment: Shipment }) {
       detail: `${pluralCount(shipment.cargo.length, ['teret', 'tereta', 'tereta'])}${totals.pallets ? ` · ${pluralCount(totals.pallets, ['paleta', 'palete', 'paleta'])}` : ''}`,
     },
     shipment.isAgency
-      ? { label: 'Kontraktor', value: contractor?.name ?? '—', detail: 'agencijski nalog' }
+      ? { label: 'Podvozar', value: contractor?.name ?? '—', detail: 'agencijski nalog' }
       : {
           label: 'Vozilo',
           value: vehicle?.registration ?? 'Nije dodijeljeno',

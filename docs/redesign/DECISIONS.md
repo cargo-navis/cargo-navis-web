@@ -51,7 +51,7 @@ switchable (see §7). **Later** = not in this redesign.
 - **No „stanica”.** Say utovar / istovar directly („Utovari i istovari”, „3 istovara”, „novi istovar”); a vehicle's
   sequence = **ruta** („Ruta KC 123-AB”); a nalog's from → to = relacija; a single countable noun only if unavoidable =
   mjesto („3 mjesta”).
-- **Menadžer** (not Voditelj), **Disponent** (not Dispečer), **Kontraktori** everywhere (not Prijevoznici).
+- **Menadžer** (not Voditelj), **Disponent** (not Dispečer), **Podvozari** everywhere (not Prijevoznici; renamed from Kontraktori 2026-11-21).
 - „Aplikacija za vozače” (not Vozački portal), „Pozivnica za aplikaciju”.
 - Croatian agreement checked on every count and status (e.g. Isprave feminine: „1 istekla · 2 istekle · 5 isteklo”;
   Rokovi masculine: „1 istekao · 2 istekla · 5 isteklo”).
@@ -123,7 +123,7 @@ switchable (see §7). **Later** = not in this redesign.
   No „Postavke” item in the sidebar footer.
 - Navigation: Početna, Nalozi (+ always-visible sub-items „+ Novi nalog” and „Učitaj nalog” (PDF upload, then Nalozi u
   pripremi) in the normal nav colours; collapsed sidebar: their icons under Nalozi — decided 2026-11-20, replaces the
-  hover +), Prijevozi, **Flota (one item)**, Klijenti, Kontraktori, Zaposlenici,
+  hover +), Prijevozi, **Flota (one item)**, Klijenti, Podvozari, Zaposlenici,
   Analitika.
 
 ---
@@ -144,8 +144,8 @@ switchable (see §7). **Later** = not in this redesign.
 
 ### Nalog detail (lab `/order`) — Decided (second look parked)
 - Layout **C with the side column on the left**, the same for agency and own nalozi: summary strip (Ruta, Teret,
-  Vozilo / Kontraktor, Cijena with the invoice pill), tabs Pregled / Dokumenti / Napomene / Povijest; left 380px:
-  Faktura, Vozilo / Kontraktor, compact Ruta (own nalozi with vehicle stops only — **agency nalozi never show a Ruta**);
+  Vozilo / Podvozar, Cijena with the invoice pill), tabs Pregled / Dokumenti / Napomene / Povijest; left 380px:
+  Faktura, Vozilo / Podvozar, compact Ruta (own nalozi with vehicle stops only — **agency nalozi never show a Ruta**);
   right: Tereti cards.
 - Ruta = planned stops **ascending**, next stop highlighted „Sljedeće” with „✓ Potvrdi utovar/istovar”; done stops quieter
   with ✓ + who („Potvrdio vozač” / „Označio …”); undo via ⋯ („Označi nedovršenom”, disabled with reason when blocked);
@@ -154,7 +154,7 @@ switchable (see §7). **Later** = not in this redesign.
 
 ### Nalog form (lab `/nalog-form`)
 - Modes: new, copy, from draft (AI), edit. Left column: Nalog (Klijent combobox + „Novi klijent”, Cijena €, Vanjska
-  referenca, **„Tko vozi?” radio cards** Vlastiti prijevoz / Agencijski → kontraktor, cijena kontraktora, live RUC +
+  referenca, **„Tko vozi?” radio cards** Vlastiti prijevoz / Agencijski → podvozar, cijena podvozara, live RUC +
   marža), Napomene (Interna „Samo za vas”, Vanjska „Ispisuje se na PDF nalogu”).
 - Tereti: cargo type radio cards **„Palete” / „Izvanredni teret”**; LDM computed („izračunato”) until typed; units in
   fields.
@@ -195,7 +195,7 @@ switchable (see §7). **Later** = not in this redesign.
 - **Promijeni vozača** popover: new driver, scope radio „Samo oni koje vozi Ivan Horvat (N)” / „Svi nezavršeni na ovom
   vozilu (N)”, a preview list of exactly the affected stops, ☑ Obavijesti novog vozača. **Finished stops never change.**
 
-### Klijenti + Kontraktori (lab `/partners`)
+### Klijenti + Podvozari (lab `/partners`)
 - List: no avatar, place under the name, ⋯ + right-click (Otvori, Uredi, Novi nalog, Kopiraj porezni broj, Izbriši),
   search over name / place / tax id / email.
 - Detail: header with Uredi / Novi nalog (contractor: Novi agencijski nalog) / ⋯, money strip, left Podaci, right their
@@ -224,7 +224,7 @@ switchable (see §7). **Later** = not in this redesign.
 ### Analitika (lab `/analytics`)
 - Tabs Ukupno · Vlastiti prijevoz · Agencijski nalozi; filter row (period presets, Dan / Tjedan / Mjesec / Godina,
   klijent or vozač / vozilo) in the URL; tiles with change vs the previous period; two charts per tab (Nalozi, Prihod;
-  agency: Prihod i trošak + RUC with zero line); tables with share bar, rows open the entity; „Kontraktori”.
+  agency: Prihod i trošak + RUC with zero line); tables with share bar, rows open the entity; „Podvozari”.
 
 ### Pretraga (lab `/search`)
 - Title „Pretraga za „x”” (query from the top-bar search; no field on the page), tabs Sve + categories with counts

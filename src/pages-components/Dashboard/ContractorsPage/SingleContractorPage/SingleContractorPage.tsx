@@ -37,7 +37,7 @@ function ContractorMoney({ contractorId }: { contractorId: string }) {
       isLoading={isLoading}
       items={[
         {
-          label: `Plaćeno kontraktoru ${year}.`,
+          label: `Plaćeno podvozaru ${year}.`,
           value: formatEuro(cost),
           error: failed,
           onRetry: retry,
@@ -68,7 +68,7 @@ function ContractorMoney({ contractorId }: { contractorId: string }) {
 }
 
 /**
- * Kontraktor detail (lab /partners „Detalj”). Their agency nalozi are left out until the backend can filter nalozi
+ * Podvozar detail (lab /partners „Detalj”). Their agency nalozi are left out until the backend can filter nalozi
  * by contractor (transportContractorId).
  */
 export const SingleContractorPage = () => {
@@ -79,7 +79,7 @@ export const SingleContractorPage = () => {
 
   return (
     <DashboardLayout breadcrumbs={contractor ? [CRUMBS.contractors, { label: contractor.name }] : undefined}>
-      <PageTitle title={contractor?.name} type="Kontraktor" />
+      <PageTitle title={contractor?.name} type="Podvozar" />
       {contractor ? (
         <PartnerDetail
           kind="contractor"

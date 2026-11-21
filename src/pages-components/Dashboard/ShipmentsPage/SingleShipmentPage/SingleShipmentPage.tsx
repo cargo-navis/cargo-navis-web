@@ -2,7 +2,7 @@
  * Nalog detail (DECISIONS §5 „Nalog detail”): header, summary strip, tabs Pregled / Dokumenti / Napomene (tab in the
  * URL). Pregled is lab /order-route option A „Ruta kao glavni sadržaj” (decided 2026-11-19): the wide main column is
  * the Ruta (agency: Relacija) as a status timeline with the Tereti cards below it; the narrow right column Faktura,
- * Vozilo i vozač / Kontraktor, email recipients (KAN-112) and Napomene. Below xl the right column stacks under the
+ * Vozilo i vozač / Podvozar, email recipients (KAN-112) and Napomene. Below xl the right column stacks under the
  * main one. Povijest is left out: the API has no log.
  */
 

@@ -39,7 +39,7 @@ const NOTE: Record<NoteType, { title: string; hint: string; icon: IconType; fiel
     },
     external: {
       title: 'Vanjska',
-      hint: 'Ispisuje se na PDF nalogu i u dokumentima za klijenta / kontraktora.',
+      hint: 'Ispisuje se na PDF nalogu i u dokumentima za klijenta / podvozara.',
       icon: 'IconEye',
       field: 'externalNote',
     },

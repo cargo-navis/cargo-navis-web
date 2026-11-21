@@ -90,8 +90,8 @@ export function getShipmentSchema(tenantId: string) {
           return decimalPlaces <= 2;
         }),
       transportContractorId: Yup.string()
-        .required('Odaberi kontraktora.')
-        .test('not-tenant-when-agency', 'Vaša tvrtka ne može biti kontraktor na agencijskom nalogu.', function (value) {
+        .required('Odaberi podvozara.')
+        .test('not-tenant-when-agency', 'Vaša tvrtka ne može biti podvozar na agencijskom nalogu.', function (value) {
           const { isAgency } = this.parent as { isAgency?: boolean };
           return !(isAgency && value === tenantId);
         }),
@@ -102,8 +102,8 @@ export function getShipmentSchema(tenantId: string) {
           is: true,
           then: () =>
             Yup.number()
-              .typeError('Upiši cijenu kontraktora.')
-              .required('Upiši cijenu kontraktora.')
+              .typeError('Upiši cijenu podvozara.')
+              .required('Upiši cijenu podvozara.')
               .positive('Cijena mora biti veća od 0.'),
           otherwise: () => Yup.number().optional().nullable().strip(),
         }),
@@ -124,7 +124,7 @@ export function getShipmentSchema(tenantId: string) {
       if (tenantCount === 0) {
         return this.createError({
           path: 'clientId',
-          message: 'Vaša tvrtka mora biti klijent ili kontraktor.',
+          message: 'Vaša tvrtka mora biti klijent ili podvozar.',
         });
       }
       if (tenantCount === 2) {

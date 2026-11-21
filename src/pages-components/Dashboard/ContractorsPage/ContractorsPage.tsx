@@ -4,13 +4,13 @@ import { useContractors } from '@/lib/hooks';
 import { PartnerList } from '@/pages-components/Dashboard/Partners/PartnerList';
 import { toContractorPartners } from '@/pages-components/Dashboard/Partners/partners';
 
-/** Kontraktori (lab /partners „Popis”). */
+/** Podvozari (lab /partners „Popis”). */
 export const ContractorsPage = () => {
   const { data, isLoading, isError, isFetching, refetch } = useContractors({ select: toContractorPartners });
 
   return (
     <DashboardLayout>
-      <PageTitle title="Kontraktori" />
+      <PageTitle title="Podvozari" />
       <PartnerList
         isError={isError}
         isFetching={isFetching}

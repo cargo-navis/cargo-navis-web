@@ -254,7 +254,7 @@ export function buildVehicleRouteStops(
 
 // ---------------------------------------------------------------------------------------------------------------------
 // Agency nalozi (labs /quick-look „Nalog: Agencijski”, /order-route, decided 2026-11-19): no vehicle, no driver app, the
-// kontraktor reports nothing — the only status is the dispatcher's hand mark per teret (Nije utovaren → Utovaren →
+// podvozar reports nothing — the only status is the dispatcher's hand mark per teret (Nije utovaren → Utovaren →
 // Istovaren). Never shown as tracking: no late (red „Kasni”), no transit (blue truck). Marked = green ✓; not marked
 // once its date passed = overdue (amber „Rok prošao · označi status”); otherwise planned (grey).
 // ---------------------------------------------------------------------------------------------------------------------

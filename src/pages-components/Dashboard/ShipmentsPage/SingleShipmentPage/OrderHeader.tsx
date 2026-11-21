@@ -1,6 +1,6 @@
 /**
  * Nalog header (lab /order parts.tsx OrderHeader, compact): ← Nalozi, the number (Sora) + violet „Agencijski”, client ·
- * Ref. klijenta · Kontraktor · Kreirao; actions: Obavijesti vozača / Dodijeli vozilo (own nalozi; today's flows),
+ * Ref. klijenta · Podvozar · Kreirao; actions: Obavijesti vozača / Dodijeli vozilo (own nalozi; today's flows),
  * Preuzmi PDF ▾ (per document, HR / EN), Uredi (primary), ⋯ (Kopiraj nalog, Izbriši nalog → AlertDialog).
  */
 
@@ -219,7 +219,7 @@ export function OrderHeader({ shipment, onAssignClick }: { shipment: Shipment; o
             {shipment.externalOrderReference && <span>Ref. klijenta {shipment.externalOrderReference}</span>}
             {contractor && (
               <span className="flex items-center gap-1.5">
-                · Kontraktor
+                · Podvozar
                 <Link
                   className="font-medium text-foreground hover:underline"
                   href={`/dashboard/contractors/${contractor.id}`}

@@ -81,7 +81,14 @@ const ACTIONS: Action[] = [
     keywords: 'vozilo',
   },
   { key: 'new-client', label: 'Dodaj klijenta', icon: 'IconBriefcase', href: '/dashboard/clients/new' },
-  { key: 'new-contractor', label: 'Dodaj kontraktora', icon: 'IconLicense', href: '/dashboard/contractors/new' },
+  {
+    key: 'new-contractor',
+    label: 'Dodaj podvozara',
+    icon: 'IconLicense',
+    href: '/dashboard/contractors/new',
+    // The old name still finds it (renamed from Kontraktori 2026-11-21).
+    keywords: 'kontraktor prijevoznik',
+  },
 ];
 
 // Case- and diacritic-insensitive, like the server search („cetvrt” finds „Četvrt”).
@@ -118,7 +125,7 @@ export const GlobalSearch = () => {
           // Phone: full screen, the keyboard takes half of it.
           'max-sm:inset-0 max-sm:h-dvh max-sm:max-h-none max-sm:w-full max-sm:max-w-none max-sm:translate-x-0 max-sm:rounded-none! max-sm:ring-0'
         )}
-        description="Naloge, flotu, zaposlenike, klijente i kontraktore"
+        description="Naloge, flotu, zaposlenike, klijente i podvozare"
         open={isOpen}
         title="Pretraživanje"
         onOpenChange={setIsOpen}
@@ -261,7 +268,7 @@ function Palette({ onClose, onUpload }: { onClose(): void; onUpload(): void }) {
         <div className="relative min-w-0 flex-1">
           <CommandInput
             autoFocus
-            placeholder="Pretraži naloge, flotu, zaposlenike, klijente i kontraktore…"
+            placeholder="Pretraži naloge, flotu, zaposlenike, klijente i podvozare…"
             value={query}
             onValueChange={setQuery}
           />

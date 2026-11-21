@@ -70,7 +70,7 @@ export const AssignVehiclePage = () => {
         <NalogFormProblem
           backHref={shipmentHref(shipment.id)}
           backLabel="Natrag na nalog"
-          description="Agencijski nalog vozi kontraktor, vozilo mu se ne dodjeljuje."
+          description="Agencijski nalog vozi podvozar, vozilo mu se ne dodjeljuje."
           icon="IconBriefcase"
           title="Agencijski nalog"
         />

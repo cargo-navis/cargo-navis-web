@@ -1,7 +1,7 @@
 /**
  * Nalog form (DECISIONS §5 „Nalog form”, lab /nalog-form): new, copy, from draft (✦ AI marks, file banner, suggested
  * client banner) and edit. Left card: Nalog (Klijent + „Novi klijent”, Cijena, Vanjska referenca, KAN-112 recipients,
- * „Tko vozi?” radio cards → kontraktor, its price, live RUC + marža) and Napomene; right: Tereti, each with its utovar /
+ * „Tko vozi?” radio cards → podvozar, its price, live RUC + marža) and Napomene; right: Tereti, each with its utovar /
  * istovar in a dialog (the parked „per teret” entry; „Ruta pa tereti” is not built). Validation on blur and on save;
  * the primary action is always enabled and jumps to the first problem; actions in a sticky bottom bar.
  *
@@ -228,7 +228,7 @@ export function NalogForm({
         : await createShipment(transformFormDataToPayload(data, { draftId }));
       showSuccessToast({ title: `Nalog #${created.orderNumber} kreiran` });
       setBaseline(values);
-      // Own nalog: Korak 2, Dodijeli vozilo. Agency: the kontraktor drives, back to the list (today).
+      // Own nalog: Korak 2, Dodijeli vozilo. Agency: the podvozar drives, back to the list (today).
       void router.push(data.isAgency ? '/dashboard/shipments' : assignVehicleHref(created.id, { created: true }));
     } catch (error) {
       console.error(error);
@@ -301,11 +301,11 @@ export function NalogForm({
       </div>
       {guard.discardDialog}
 
-      {/* Novi klijent / kontraktor: Partneri's form in a dialog (today's NewClientModal / NewContractorModal). */}
+      {/* Novi klijent / podvozar: Partneri's form in a dialog (today's NewClientModal / NewContractorModal). */}
       <Dialog open={!!partnerDialog} onOpenChange={(open) => !open && partnerGuard.requestClose()}>
         <DialogContent size="lg">
           <DialogHeader>
-            <DialogTitle>{partnerDialog === 'contractor' ? 'Novi kontraktor' : 'Novi klijent'}</DialogTitle>
+            <DialogTitle>{partnerDialog === 'contractor' ? 'Novi podvozar' : 'Novi klijent'}</DialogTitle>
             {partnerDialog === 'client' && suggested.clientFormInitialValues?.taxId && (
               <DialogDescription>
                 Podaci iz VIES-a za {suggested.clientFormInitialValues.taxId}. Provjeri ih prije spremanja.

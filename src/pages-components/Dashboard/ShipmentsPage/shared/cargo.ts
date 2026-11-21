@@ -70,7 +70,7 @@ export const LOAD_STATUSES = [LoadStatus.NotYetLoaded, LoadStatus.Loaded, LoadSt
 
 /**
  * Agency teret status (lab /order parts.tsx AGENCY_STATUS, decided 2026-11-19): nobody reports progress on an agency
- * nalog (no vehicle, no driver app, the kontraktor reports nothing), so the only status is the one the dispatcher sets
+ * nalog (no vehicle, no driver app, the podvozar reports nothing), so the only status is the one the dispatcher sets
  * by hand. Worded as a state of the teret, never as tracking.
  */
 export const AGENCY_STATUS_LABEL: Record<LoadStatus, string> = {

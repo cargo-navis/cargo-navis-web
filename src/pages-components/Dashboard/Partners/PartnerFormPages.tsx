@@ -8,7 +8,7 @@ import { PartnerDetailProblem, PhoneBackLink } from './PartnerDetail';
 import { PartnerForm } from './PartnerForm';
 import { type Partner, PARTNER_WORDS, partnerHref, type PartnerKind } from './partners';
 
-/** Novi klijent / Novi kontraktor (lab /partners „Novi”): VIES lookup above an always-visible form. */
+/** Novi klijent / Novi podvozar (lab /partners „Novi”): VIES lookup above an always-visible form. */
 export function NewPartnerPage({ kind }: { kind: PartnerKind }) {
   const words = PARTNER_WORDS[kind];
   const router = useRouter();
@@ -31,7 +31,7 @@ export function NewPartnerPage({ kind }: { kind: PartnerKind }) {
   );
 }
 
-/** Uredi klijenta / kontraktora (lab /partners „Uredi”). */
+/** Uredi klijenta / podvozara (lab /partners „Uredi”). */
 export function EditPartnerPage({
   kind,
   partner,

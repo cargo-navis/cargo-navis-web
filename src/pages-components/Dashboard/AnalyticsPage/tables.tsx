@@ -199,7 +199,7 @@ export interface ContractorRow {
   margin: number;
 }
 
-/** Kontraktori by RUC; a loss in red with „Gubitak N %”. */
+/** Podvozari by RUC; a loss in red with „Gubitak N %”. */
 export function ContractorsTable({
   rows,
   dim,
@@ -219,12 +219,12 @@ export function ContractorsTable({
       action={<span className="text-xs text-muted-foreground">Po RUC-u</span>}
       bodyClassName="p-0"
       className={cn('min-w-0 transition-opacity', dim && 'opacity-50')}
-      title="Kontraktori"
+      title="Podvozari"
     >
       <Table>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
-            <TableHead className="pl-4">Kontraktor</TableHead>
+            <TableHead className="pl-4">Podvozar</TableHead>
             <TableHead className="text-right">Nalozi</TableHead>
             <TableHead className="text-right">Prihod</TableHead>
             <TableHead className="text-right">Trošak</TableHead>

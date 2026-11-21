@@ -87,7 +87,7 @@ export function MoneyStrip({ items, isLoading }: { items: MoneyItem[]; isLoading
 }
 
 /**
- * Klijent / Kontraktor detail (lab /partners „Detalj”, DECISIONS §5): header with Uredi / Novi nalog (contractor:
+ * Klijent / Podvozar detail (lab /partners „Detalj”, DECISIONS §5): header with Uredi / Novi nalog (contractor:
  * Novi agencijski nalog) / ⋯, money strip, left „Podaci” (+ `aside` panels), right `main` (their nalozi).
  */
 export function PartnerDetail({

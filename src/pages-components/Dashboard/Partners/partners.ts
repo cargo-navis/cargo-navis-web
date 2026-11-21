@@ -4,7 +4,7 @@ import type { PluralForms } from '@/lib/utils/plural';
 import type { IconType } from '@/ui';
 
 /**
- * Klijenti + Kontraktori share one design (lab /partners): today the two are copies of each other, contractors only
+ * Klijenti + Podvozari share one design (lab /partners): today the two are copies of each other, contractors only
  * differ in a required Valuta plaćanja and a plain email (clients have KAN-112 notification contacts instead).
  */
 export type PartnerKind = 'client' | 'contractor';
@@ -104,17 +104,17 @@ export const PARTNER_WORDS: Record<PartnerKind, PartnerWords> = {
     crumb: CRUMBS.clients,
   },
   contractor: {
-    one: 'Kontraktor',
-    many: 'Kontraktori',
-    accusative: 'kontraktora',
-    count: ['kontraktor', 'kontraktora', 'kontraktora'],
-    add: 'Dodaj kontraktora',
-    newTitle: 'Novi kontraktor',
-    editTitle: 'Uredi kontraktora',
+    one: 'Podvozar',
+    many: 'Podvozari',
+    accusative: 'podvozara',
+    count: ['podvozar', 'podvozara', 'podvozara'],
+    add: 'Dodaj podvozara',
+    newTitle: 'Novi podvozar',
+    editTitle: 'Uredi podvozara',
     icon: 'IconLicense',
-    search: 'Pretraži kontraktore…',
+    search: 'Pretraži podvozare…',
     newOrder: 'Novi agencijski nalog',
-    emptyTitle: 'Još nema kontraktora',
+    emptyTitle: 'Još nema podvozara',
     basePath: '/dashboard/contractors',
     crumb: CRUMBS.contractors,
   },

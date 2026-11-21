@@ -166,10 +166,10 @@ function QuickLook({ shipment }: { shipment: Shipment }) {
             {shipment.isAgency && <AgencyCargoStatuses shipment={shipment} />}
           </DetailRow>
           {assignment.kind === 'contractor' ? (
-            <DetailRow icon="IconBriefcase" label="Kontraktor">
+            <DetailRow icon="IconBriefcase" label="Podvozar">
               <div className="flex flex-col">
                 <span className="truncate">{assignment.contractor?.name ?? '—'}</span>
-                <span className="text-xs text-muted-foreground">Vozilo i vozača određuje kontraktor</span>
+                <span className="text-xs text-muted-foreground">Vozilo i vozača određuje podvozar</span>
               </div>
             </DetailRow>
           ) : (
@@ -196,7 +196,7 @@ function QuickLook({ shipment }: { shipment: Shipment }) {
               <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
                 <MarginPill earnings={margin.earnings} isLoss={margin.isLoss} percent={margin.percent} />
                 <span className="text-xs text-muted-foreground tabular-nums">
-                  Cijena kontraktora −{formatEuroExact(shipment.contractorPrice ?? 0)}
+                  Cijena podvozara −{formatEuroExact(shipment.contractorPrice ?? 0)}
                 </span>
               </div>
             </DetailRow>

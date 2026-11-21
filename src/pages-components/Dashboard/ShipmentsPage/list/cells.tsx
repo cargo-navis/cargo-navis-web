@@ -152,7 +152,7 @@ export function PriceCell({ shipment }: { shipment: Shipment }) {
             <span>{formatEuro(price ?? 0)}</span>
           </div>
           <div className="flex justify-between gap-4">
-            <span className="opacity-80">Plaćeno kontraktoru</span>
+            <span className="opacity-80">Plaćeno podvozaru</span>
             <span>−{formatEuro(contractor)}</span>
           </div>
           <div className="flex justify-between gap-4 border-t border-current/20 pt-1.5 font-medium">

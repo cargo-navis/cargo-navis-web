@@ -19,7 +19,7 @@ describe('ENTITY_NOT_FOUND', () => {
     });
     expect(ENTITY_NOT_FOUND.employee.title).toBe('Zaposlenik nije pronađen');
     expect(ENTITY_NOT_FOUND.client.title).toBe('Klijent nije pronađen');
-    expect(ENTITY_NOT_FOUND.contractor.title).toBe('Kontraktor nije pronađen');
+    expect(ENTITY_NOT_FOUND.contractor.title).toBe('Podvozar nije pronađen');
   });
 
   it('offers the list and a new one in the same section', () => {

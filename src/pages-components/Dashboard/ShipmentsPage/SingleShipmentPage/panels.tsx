@@ -1,6 +1,6 @@
 /**
  * Side column of the Nalog page (lab /order-route option A, narrow on the right; Napomene is NotesTab): Faktura (badge +
- * „Promijeni ▾”), Vozilo i vozač / Kontraktor, and the KAN-112 email recipients (today's
+ * „Promijeni ▾”), Vozilo i vozač / Podvozar, and the KAN-112 email recipients (today's
  * ShipmentNotificationEmailsModal, new look).
  */
 
@@ -64,7 +64,7 @@ function ContractorPanel({ shipment }: { shipment: Shipment }) {
       : undefined;
 
   return (
-    <Panel title="Kontraktor">
+    <Panel title="Podvozar">
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-3">
           <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-agency-50 text-agency-700 dark:bg-agency-950 dark:text-agency-300">
@@ -79,18 +79,18 @@ function ContractorPanel({ shipment }: { shipment: Shipment }) {
               <span className="text-muted-foreground">—</span>
             )}
             <span className="text-xs text-muted-foreground">
-              Vozilo i vozača određuje kontraktor. Status tereta postavljaš ti.
+              Vozilo i vozača određuje podvozar. Status tereta postavljaš ti.
             </span>
           </div>
         </div>
         <div className="flex flex-col border-t pt-2">
-          {shipment.contractorOrderNumber && <Row label="Nalog kontraktoru">#{shipment.contractorOrderNumber}</Row>}
+          {shipment.contractorOrderNumber && <Row label="Nalog podvozaru">#{shipment.contractorOrderNumber}</Row>}
           {shipment.contractorExternalOrderReference && (
-            <Row label="Ref. kontraktora">{shipment.contractorExternalOrderReference}</Row>
+            <Row label="Ref. podvozara">{shipment.contractorExternalOrderReference}</Row>
           )}
           {margin && (
             <>
-              <Row label="Cijena kontraktora">
+              <Row label="Cijena podvozara">
                 <span className="tabular-nums">−{formatEuroExact(shipment.contractorPrice ?? 0)}</span>
               </Row>
               <div className="flex items-center justify-between gap-3 pt-1">

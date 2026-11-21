@@ -106,7 +106,7 @@ function validate(values: Values, kind: PartnerKind, withEmail: boolean): Partia
 }
 
 /**
- * Novi / Uredi klijenta or kontraktora (lab /partners `PartnerForm`, decision „sections, buttons at the end”): Tvrtka
+ * Novi / Uredi klijenta or podvozara (lab /partners `PartnerForm`, decision „sections, buttons at the end”): Tvrtka
  * (Naziv, Porezni broj + Valuta plaćanja, Email) and Adresa sjedišta (Ulica, Država + Poštanski broj i mjesto).
  * New: „Popuni iz VIES-a” on top fills the form. Validation on blur and on submit; the primary button is always
  * enabled and jumps to the first problem (DECISIONS §2). Contractor: Valuta plaćanja is required.

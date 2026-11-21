@@ -126,7 +126,7 @@ describe('Nalog form → today’s payload', () => {
     });
   });
 
-  it('agency create sends the kontraktor, its price and the draft id', async () => {
+  it('agency create sends the podvozar, its price and the draft id', async () => {
     const draft = {
       id: 'd1',
       status: 'EXTRACTED',
@@ -200,7 +200,7 @@ describe('Nalog form → today’s payload', () => {
 });
 
 describe('Nalog form values', () => {
-  it('own nalog: the tenant drives; agency: the tenant is neither kontraktor nor client', () => {
+  it('own nalog: the tenant drives; agency: the tenant is neither podvozar nor client', () => {
     const own = emptyNalog(TENANT);
     expect(own.transportContractorId).toBe('t1');
     const agency = withAgency({ ...own, clientId: 't1' }, true, TENANT.id);

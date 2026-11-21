@@ -65,9 +65,9 @@ const ROUTE_CRUMBS: Record<string, Crumb[]> = {
   ...crudRoutes('/dashboard/fleet', CRUMBS.fleet, { new: 'Novo vozilo', one: 'Vozilo', edit: 'Uredi vozilo' }),
   ...crudRoutes('/dashboard/clients', CRUMBS.clients, { new: 'Novi klijent', one: 'Klijent', edit: 'Uredi klijenta' }),
   ...crudRoutes('/dashboard/contractors', CRUMBS.contractors, {
-    new: 'Novi kontraktor',
-    one: 'Kontraktor',
-    edit: 'Uredi kontraktora',
+    new: 'Novi podvozar',
+    one: 'Podvozar',
+    edit: 'Uredi podvozara',
   }),
   ...crudRoutes('/dashboard/employees', CRUMBS.employees, {
     new: 'Novi zaposlenik',

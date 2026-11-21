@@ -26,7 +26,7 @@ const queryString = (value: string | string[] | undefined) => (typeof value === 
 
 /**
  * Novi nalog: /dashboard/shipments/new, `?copyFromId=` (Kopiraj nalog), `?draftId=` (Nalozi u pripremi), `?clientId=` /
- * `?contractorId=` (Novi nalog / Novi agencijski nalog from Klijenti / Kontraktori: preselected).
+ * `?contractorId=` (Novi nalog / Novi agencijski nalog from Klijenti / Podvozari: preselected).
  */
 export const NewShipmentPage = () => {
   const router = useRouter();
@@ -136,7 +136,7 @@ async function initialValues(
   if (mode === 'copy' && copyFrom) return fromCopy(copyFrom, tenant, fetchPostalCodeData);
   let values = emptyNalog(tenant);
   if (clientId) values = { ...values, clientId };
-  // „Novi agencijski nalog” from a kontraktor: Agencijski with that kontraktor.
+  // „Novi agencijski nalog” from a podvozar: Agencijski with that podvozar.
   if (contractorId) values = { ...withAgency(values, true, tenant.id), transportContractorId: contractorId };
   return values;
 }

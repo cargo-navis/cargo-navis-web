@@ -52,10 +52,10 @@ export const ENTITY_NOT_FOUND: Record<EntityKind, EntityNotFoundCopy> = {
   },
   contractor: {
     icon: 'IconLicenseOff',
-    title: 'Kontraktor nije pronađen',
+    title: 'Podvozar nije pronađen',
     description: 'Možda je obrisan.',
-    list: { label: 'Svi kontraktori', href: '/dashboard/contractors' },
-    create: { label: 'Dodaj kontraktora', href: '/dashboard/contractors/new' },
+    list: { label: 'Svi podvozari', href: '/dashboard/contractors' },
+    create: { label: 'Dodaj podvozara', href: '/dashboard/contractors/new' },
   },
 };
 
