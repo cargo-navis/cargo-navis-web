@@ -179,11 +179,10 @@ switchable (see §7). **Later** = not in this redesign.
 - Capacity check and trailer display: Later.
 
 ### Prijevozi (lab `/transports`)
-- List with a **Tablica · Tjedan · Kao danas** switch (default Tablica):
+- List with a **Tablica · Tjedan** switch (default Tablica; „Kao danas” dropped 2026-11-21):
   - Tablica: Vozilo / vozač · Sada · Sljedeće · Plan („još 2 · do 13.11.”) · Treba pažnju (Bez vozača, N bez datuma,
     N nije obaviješteno).
   - Tjedan: vehicles × Pon–Ned + „Bez datuma”, chips with kind dot, today tinted, ‹ › week.
-  - Kao danas: today's horizontal timeline per vehicle, restyled, place + date under each point.
   - Search by driver / registration, Disponent filter (remembered).
 - Vehicle page „Ruta KC 123-AB”: **today's order (newest first)** (chronological variant kept in code);
   **driver runs = avatar + side bar in the driver's colour**, name + „Promijeni” (red dashed „Bez vozača” + „Dodijeli

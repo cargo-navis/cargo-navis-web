@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 
-import { pickTimeline, routeFacts, weekLabel } from '../routeFacts';
+import { routeFacts, weekLabel } from '../routeFacts';
 import { buildBlocks, buildEntries, foldedCount } from './routeEntries';
 
 const cargo = { id: 'c', shipment: { id: 's', orderNumber: '1/2026', clientId: null } } as never;
@@ -108,15 +108,6 @@ describe('routeFacts', () => {
     expect(facts.noDate).toBe(1);
     expect(facts.notNotified).toBe(1);
     expect(facts.driverId).toBe('d1');
-  });
-});
-
-describe('pickTimeline', () => {
-  it('shows the last finished stop, what comes next, and counts the rest', () => {
-    const oldestFirst = ['a', 'b', 'c', 'd', 'e', 'f', 'g'].map((id, index) => stop(id, index < 2 ? done : {}));
-    const { shown, more } = pickTimeline(oldestFirst);
-    expect(shown.map((item) => item.id)).toEqual(['b', 'c', 'd', 'e', 'f']);
-    expect(more).toBe(1);
   });
 });
 

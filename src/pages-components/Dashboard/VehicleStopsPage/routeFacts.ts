@@ -26,19 +26,6 @@ export function routeFacts(stops: VehicleStop[]) {
 
 export type RouteFacts = ReturnType<typeof routeFacts>;
 
-/**
- * „Kao danas”: up to 5 stops — the last finished one and what comes next, filled up with earlier ones — and how many
- * unfinished ones come after them („+N”). `stops` = oldest first.
- */
-export function pickTimeline(stops: VehicleStop[], size = 5) {
-  const lastDone = stops.findLastIndex(isDone);
-  const shown = lastDone >= 0 ? [stops[lastDone]] : [];
-  for (let i = lastDone + 1; i < stops.length && shown.length < size; i++) shown.push(stops[i]);
-  for (let i = lastDone - 1; i >= 0 && shown.length < size; i--) shown.unshift(stops[i]);
-  const shownLast = shown.length > 0 ? stops.indexOf(shown[shown.length - 1]) : -1;
-  return { shown, more: stops.slice(shownLast + 1).filter((stop) => !isDone(stop)).length };
-}
-
 const DAY_NAMES = ['Pon', 'Uto', 'Sri', 'Čet', 'Pet', 'Sub', 'Ned'];
 
 /** Monday of the week `date` is in. */
