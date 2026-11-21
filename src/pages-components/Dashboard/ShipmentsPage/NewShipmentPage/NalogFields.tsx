@@ -265,11 +265,12 @@ function RecipientsField() {
   );
 }
 
-/** Napomene (lab `NoteFields`): Interna „samo za vas”, Vanjska „na PDF nalogu”. */
+/** Napomene (lab `NoteFields`): Interna „samo za tebe”, Vanjska „na PDF nalogu”. */
 export function NoteFields() {
   const { values, set } = useNalogForm();
   return (
-    <div className="grid items-start gap-4 sm:grid-cols-2">
+    // One below the other: notes are long text, a half-width column made them cramped.
+    <div className="flex flex-col gap-4">
       <Field>
         <Label field="internalNote" htmlFor={fieldDomId('internalNote')}>
           Interna napomena
@@ -280,7 +281,7 @@ export function NoteFields() {
           value={values.internalNote}
           onChange={(event) => set({ internalNote: event.target.value }, 'internalNote')}
         />
-        <FieldDescription>Samo za vas, ne ide na PDF.</FieldDescription>
+        <FieldDescription>Samo za tebe, ne ide na PDF.</FieldDescription>
       </Field>
       <Field>
         <Label field="externalNote" htmlFor={fieldDomId('externalNote')}>
