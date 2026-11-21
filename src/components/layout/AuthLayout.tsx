@@ -60,7 +60,9 @@ function BrandPanel() {
           ))}
         </ul>
       </div>
-      <div className="relative flex items-end justify-between gap-8">
+      {/* Fixed height (two tip lines), bottom-aligned: a longer tip grows upward into the empty space instead of
+          pushing the headline and the list up (the panel spreads its three blocks with justify-between). */}
+      <div className="relative flex h-10 items-end justify-between gap-8">
         <span className="shrink-0 text-xs text-primary-foreground/70">
           © {new Date().getFullYear()} Cargo Navis d.o.o.
         </span>
