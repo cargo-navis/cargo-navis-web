@@ -66,7 +66,7 @@ export function FileRow({
               <TooltipTrigger
                 render={
                   <Button
-                    aria-label={`Izbriši ${name}`}
+                    aria-label={`Obriši ${name}`}
                     className="text-muted-foreground hover:text-destructive"
                     size="icon-sm"
                     variant="ghost"
@@ -76,7 +76,7 @@ export function FileRow({
               >
                 <Icon icon="IconTrash" size="s" />
               </TooltipTrigger>
-              <TooltipContent>Izbriši</TooltipContent>
+              <TooltipContent>Obriši</TooltipContent>
             </Tooltip>
           )}
         </div>
@@ -85,7 +85,7 @@ export function FileRow({
   );
 }
 
-/** „Izbrisati dokument?” confirm for a file row (one per list; open it with the file's name). */
+/** „Obrisati dokument?” confirm for a file row (one per list; open it with the file's name). */
 export function FileDeleteDialog({
   fileName,
   loading = false,
@@ -105,13 +105,13 @@ export function FileDeleteDialog({
           <AlertDialogMedia>
             <Icon icon="IconTrash" size="m" />
           </AlertDialogMedia>
-          <AlertDialogTitle>Izbrisati dokument?</AlertDialogTitle>
+          <AlertDialogTitle>Obrisati dokument?</AlertDialogTitle>
           <AlertDialogDescription>{fileName} · Ovo se ne može poništiti.</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Odustani</AlertDialogCancel>
           <AlertDialogAction loading={loading} variant="destructive" onClick={onConfirm}>
-            <Icon data-icon="inline-start" icon="IconTrash" size="s" /> Izbriši
+            <Icon data-icon="inline-start" icon="IconTrash" size="s" /> Obriši
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -1,6 +1,6 @@
 /**
  * „Nalozi u pripremi” (today's DraftsTab, new look): uploaded PDFs the AI reads into a nalog. Datoteka (click = the
- * extracted text), Status, Kreirano, and Otvori dokument / Kreiraj nalog / Izbriši (AlertDialog). `?highlight=<id>`
+ * extracted text), Status, Kreirano, and Otvori dokument / Kreiraj nalog / Obriši (AlertDialog). `?highlight=<id>`
  * scrolls to a draft and flashes it.
  */
 
@@ -82,13 +82,13 @@ function DeleteDraftDialog({
           <AlertDialogMedia>
             <Icon icon="IconTrash" size="m" />
           </AlertDialogMedia>
-          <AlertDialogTitle>Izbrisati nalog u pripremi?</AlertDialogTitle>
+          <AlertDialogTitle>Obrisati nalog u pripremi?</AlertDialogTitle>
           <AlertDialogDescription>{draft?.fileName} · Ovo se ne može poništiti.</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>Odustani</AlertDialogCancel>
           <AlertDialogAction loading={isPending} variant="destructive" onClick={() => void handleDelete()}>
-            <Icon data-icon="inline-start" icon="IconTrash" size="s" /> Izbriši
+            <Icon data-icon="inline-start" icon="IconTrash" size="s" /> Obriši
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -206,7 +206,7 @@ export const DraftsTab = ({ onUpload }: { onUpload(): void }) => {
                     </Button>
                   )}
                   <Button
-                    aria-label={`Izbriši ${draft.fileName}`}
+                    aria-label={`Obriši ${draft.fileName}`}
                     size="icon-sm"
                     variant="ghost"
                     onClick={() => setDeleteDraft(draft)}

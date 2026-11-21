@@ -73,7 +73,7 @@ export const toContractorPartners = (contractors: Contractor[]) => contractors.m
 interface PartnerWords {
   one: string;
   many: string;
-  /** Accusative („Izbrisati klijenta …?”, „Uredi klijenta”). */
+  /** Accusative („Obrisati klijenta …?”, „Uredi klijenta”). */
   accusative: string;
   count: PluralForms;
   add: string;

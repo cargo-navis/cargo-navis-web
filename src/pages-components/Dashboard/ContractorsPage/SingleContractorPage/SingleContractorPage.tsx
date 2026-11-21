@@ -55,7 +55,7 @@ function ContractorMoney({ contractorId }: { contractorId: string }) {
           onRetry: retry,
         },
         {
-          label: 'Zarada',
+          label: 'RUC',
           value: `${margin > 0 ? '+' : ''}${formatEuro(margin)}`,
           detail: marginShare === null ? undefined : `${marginShare}% marže`,
           tone: margin > 0 ? 'text-success' : margin < 0 ? 'text-destructive' : undefined,

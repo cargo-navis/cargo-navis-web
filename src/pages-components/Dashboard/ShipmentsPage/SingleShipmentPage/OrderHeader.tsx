@@ -1,7 +1,7 @@
 /**
  * Nalog header (lab /order parts.tsx OrderHeader, compact): ← Nalozi, the number (Sora) + violet „Agencijski”, client ·
  * Ref. klijenta · Podvozar · Kreirao; actions: Obavijesti vozača / Dodijeli vozilo (own nalozi; today's flows),
- * Preuzmi PDF ▾ (per document, HR / EN), Uredi (primary), ⋯ (Kopiraj nalog, Izbriši nalog → AlertDialog).
+ * Preuzmi PDF ▾ (per document, HR / EN), Uredi (primary), ⋯ (Kopiraj nalog, Obriši nalog → AlertDialog).
  */
 
 import Link from 'next/link';
@@ -9,16 +9,6 @@ import { useRouter } from 'next/router';
 import * as React from 'react';
 
 import { CountryFlag } from '@/components/shared/country-flag';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -32,13 +22,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { Shipment } from '@/lib/api';
-import { useNotifyShipmentDrivers } from '@/lib/hooks';
 import { formatDate, formatDateTime } from '@/lib/utils/date';
-import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Icon } from '@/ui';
 
-import { getDriversNotifiedToast } from '../driverNotifications';
 import {
   copyShipmentHref,
   DeleteShipmentDialog,
@@ -48,87 +34,49 @@ import {
   useDownloadShipmentPdf,
 } from '../shared/actions';
 import { useLookups } from '../shared/lookups';
+import { useNotifyDrivers } from '../shared/notifyDrivers';
 
-/** Today's NotifyDriversButton: notifies the drivers of the unfinished stops; asks first when they were notified. */
-function NotifyDriversButton({ shipment, clientName }: { shipment: Shipment; clientName?: string }) {
-  const { employeesById } = useLookups();
-  const { mutateAsync: notifyDrivers, isPending } = useNotifyShipmentDrivers(shipment.id);
-  const [confirmOpen, setConfirmOpen] = React.useState(false);
-
-  const activeStops = (shipment.vehicleStops ?? []).filter((stop) => !isStopCompleted(stop));
-  const driverIds = new Set(activeStops.map((stop) => stop.driverId).filter(Boolean));
-  const lastSentAt = activeStops
-    .map((stop) => stop.messageSentAt)
-    .filter((sentAt): sentAt is string => !!sentAt)
-    .sort()
-    .at(-1);
-
-  if (activeStops.length === 0) return null;
-
-  async function notify() {
-    setConfirmOpen(false);
-    try {
-      const notifiedStops = await notifyDrivers();
-      if (notifiedStops.length === 0) {
-        showErrorToast({ title: 'Obavijest nije poslana', description: 'Nijedan vozač nije primio poruku.' });
-        return;
-      }
-      showSuccessToast(
-        getDriversNotifiedToast({
-          notifiedStops,
-          employees: [...employeesById.values()],
-          clientName,
-          orderNumber: shipment.orderNumber,
-        })
-      );
-    } catch (error) {
-      console.error(error);
-      showErrorToast({ title: 'Obavijest nije poslana', description: 'Pokušaj ponovno.' });
-    }
-  }
-
-  const noun = driverIds.size > 1 ? 'vozače' : 'vozača';
-  const button = (
-    <Button
-      disabled={driverIds.size === 0}
-      loading={isPending}
-      variant="outline"
-      onClick={() => (lastSentAt ? setConfirmOpen(true) : void notify())}
-    >
-      <Icon data-icon="inline-start" icon="IconBell" size="s" />{' '}
-      {lastSentAt ? 'Obavijesti ponovno' : `Obavijesti ${noun}`}
-    </Button>
-  );
+/**
+ * Today's NotifyDriversButton (logic in shared/notifyDrivers): notifies the drivers of the unfinished stops; asks first
+ * when they were notified. `compact` (the quick look's Vozač row): small „Obavijesti”, hidden without a driver.
+ */
+export function NotifyDriversButton({
+  shipment,
+  clientName,
+  compact = false,
+}: {
+  shipment: Shipment;
+  clientName?: string;
+  compact?: boolean;
+}) {
+  const drivers = useNotifyDrivers(shipment, clientName);
+  if (!drivers.hasStops || (compact && drivers.driverCount === 0)) return null;
+  const { driverCount, lastSentAt } = drivers;
 
   return (
     <>
       <Tooltip>
-        <TooltipTrigger render={<span className="inline-flex" />}>{button}</TooltipTrigger>
+        <TooltipTrigger render={<span className="inline-flex" />}>
+          <Button
+            disabled={driverCount === 0}
+            loading={drivers.isPending}
+            size={compact ? 'sm' : 'default'}
+            variant="outline"
+            onClick={drivers.request}
+          >
+            <Icon data-icon="inline-start" icon="IconBell" size="s" />{' '}
+            {lastSentAt ? 'Obavijesti ponovno' : compact ? 'Obavijesti' : drivers.label}
+          </Button>
+        </TooltipTrigger>
         <TooltipContent>
-          {driverIds.size === 0
+          {driverCount === 0
             ? 'Vozilo nema dodijeljenog vozača.'
             : lastSentAt
               ? `Poslano ${formatDateTime(lastSentAt, { short: true })}`
               : 'Pošalji vozaču utovare i istovare ovog naloga.'}
         </TooltipContent>
       </Tooltip>
-      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <AlertDialogContent size="sm">
-          <AlertDialogHeader>
-            <AlertDialogTitle>Obavijestiti ponovno?</AlertDialogTitle>
-            <AlertDialogDescription>
-              {driverIds.size > 1 ? 'Vozači su već obaviješteni' : 'Vozač je već obaviješten'}
-              {lastSentAt && ` (${formatDateTime(lastSentAt, { short: true })})`}.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Odustani</AlertDialogCancel>
-            <AlertDialogAction onClick={() => void notify()}>
-              <Icon data-icon="inline-start" icon="IconBell" size="s" /> Pošalji ponovno
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {drivers.dialog}
     </>
   );
 }
@@ -256,7 +204,7 @@ export function OrderHeader({ shipment, onAssignClick }: { shipment: Shipment; o
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem variant="destructive" onClick={() => setDeleteOpen(true)}>
-                <Icon icon="IconTrash" size="s" /> Izbriši nalog
+                <Icon icon="IconTrash" size="s" /> Obriši nalog
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

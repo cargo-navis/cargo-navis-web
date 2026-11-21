@@ -1,7 +1,8 @@
 /**
  * ⋯ row menu of the Nalozi table and the same menu on right-click (lab /tables row-menu.tsx, decided on
- * /overlays/menus): Otvori (+ „Otvori u novom tabu” on right-click), Uredi, Kopiraj nalog, Preuzmi PDF ▸ (per
- * document, HR / EN), Status fakture ▸, Izbriši (AlertDialog). Vehicle / driver are assigned in their own cell.
+ * /overlays/menus): Otvori (+ „Otvori u novom tabu” on right-click), Uredi, Kopiraj nalog, Obavijesti vozača (own
+ * nalozi with a driver and unfinished stops; shared/notifyDrivers), Preuzmi PDF ▸ (per document, HR / EN), Status
+ * fakture ▸, Obriši (AlertDialog). Vehicle / driver are assigned in their own cell.
  * Agency nalozi also get „Status tereta ▸” (lab /quick-look note): the hand-set teret status, per teret (T1, T2 … with
  * its places) or, with one teret, the three states directly — the same save as the Nalog detail (shared/cargoStatus).
  */
@@ -57,6 +58,7 @@ import { AGENCY_STATUS_LABEL, LOAD_STATUSES } from '../shared/cargo';
 import { type CargoStatusChange, useSetCargoStatus } from '../shared/cargoStatus';
 import { INVOICE_STATUS_LABEL, INVOICE_STATUSES } from '../shared/invoice';
 import { useLookups } from '../shared/lookups';
+import { useNotifyDrivers } from '../shared/notifyDrivers';
 
 // Dropdown and context menu are different primitives with the same parts; one list of parts keeps them in sync.
 const DROPDOWN = {
@@ -160,11 +162,13 @@ function MenuItems({
   parts: M,
   shipment,
   onAskDelete,
+  notify,
   inContext,
 }: {
   parts: typeof DROPDOWN;
   shipment: Shipment;
   onAskDelete(): void;
+  notify: ReturnType<typeof useNotifyDrivers>;
   inContext?: boolean;
 }) {
   const router = useRouter();
@@ -199,6 +203,20 @@ function MenuItems({
         <M.Item onClick={() => void router.push(copyShipmentHref(shipment.id))}>
           <MenuIcon icon="IconCopy" /> Kopiraj nalog
         </M.Item>
+        {notify.hasStops && notify.driverCount > 0 && (
+          // „Obavijesti vozača [ponovno]” with who gets it underneath.
+          <M.Item className="items-start" disabled={notify.isPending} onClick={notify.request}>
+            <span className="mt-0.5 flex">
+              <MenuIcon icon="IconBell" />
+            </span>
+            <span className="flex min-w-0 flex-col">
+              <span>{notify.lastSentAt ? `${notify.label} ponovno` : notify.label}</span>
+              {notify.driverNames.length > 0 && (
+                <span className="truncate text-xs text-muted-foreground">{notify.driverNames.join(', ')}</span>
+              )}
+            </span>
+          </M.Item>
+        )}
       </M.Group>
 
       <M.Separator />
@@ -257,7 +275,7 @@ function MenuItems({
       <M.Separator />
 
       <M.Item variant="destructive" onClick={onAskDelete}>
-        <MenuIcon icon="IconTrash" /> Izbriši nalog
+        <MenuIcon icon="IconTrash" /> Obriši nalog
       </M.Item>
     </>
   );
@@ -274,8 +292,15 @@ function useDeleteConfirm(shipment: Shipment) {
   return { ask: () => setOpen(true), dialog };
 }
 
+/** The row's client name, for the notify toast („… o nalogu za Kraš”). */
+function useClientName(shipment: Shipment) {
+  const { clientsById } = useLookups();
+  return shipment.clientId ? clientsById.get(shipment.clientId)?.name : undefined;
+}
+
 export function RowMenu({ shipment }: { shipment: Shipment }) {
   const confirm = useDeleteConfirm(shipment);
+  const notify = useNotifyDrivers(shipment, useClientName(shipment));
   return (
     // The row opens the nalog on click; nothing in here should.
     <div onClick={(event) => event.stopPropagation()}>
@@ -286,10 +311,11 @@ export function RowMenu({ shipment }: { shipment: Shipment }) {
           <Icon icon="IconDots" size="s" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-60">
-          <MenuItems parts={DROPDOWN} shipment={shipment} onAskDelete={confirm.ask} />
+          <MenuItems notify={notify} parts={DROPDOWN} shipment={shipment} onAskDelete={confirm.ask} />
         </DropdownMenuContent>
       </DropdownMenu>
       {confirm.dialog}
+      {notify.dialog}
     </div>
   );
 }
@@ -297,15 +323,17 @@ export function RowMenu({ shipment }: { shipment: Shipment }) {
 /** Right-click anywhere on the row: the same menu, plus „Otvori u novom tabu”. `children` is the row (`<tr>`). */
 export function RowContextMenu({ shipment, children }: { shipment: Shipment; children: React.ReactElement }) {
   const confirm = useDeleteConfirm(shipment);
+  const notify = useNotifyDrivers(shipment, useClientName(shipment));
   return (
     <>
       <ContextMenu>
         <ContextMenuTrigger render={children} />
         <ContextMenuContent className="w-60">
-          <MenuItems inContext parts={CONTEXT} shipment={shipment} onAskDelete={confirm.ask} />
+          <MenuItems inContext notify={notify} parts={CONTEXT} shipment={shipment} onAskDelete={confirm.ask} />
         </ContextMenuContent>
       </ContextMenu>
       {confirm.dialog}
+      {notify.dialog}
     </>
   );
 }
