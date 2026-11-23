@@ -1,4 +1,5 @@
 import { type Crumb, CRUMBS } from '@/components/layout/DashboardLayout';
+import { ENTITY_ICON } from '@/components/shared/entity-icons';
 import type { Client, Contractor, PostalCode } from '@/lib/api';
 import type { PluralForms } from '@/lib/utils/plural';
 import type { IconType } from '@/ui';
@@ -96,7 +97,7 @@ export const PARTNER_WORDS: Record<PartnerKind, PartnerWords> = {
     add: 'Dodaj klijenta',
     newTitle: 'Novi klijent',
     editTitle: 'Uredi klijenta',
-    icon: 'IconBriefcase',
+    icon: ENTITY_ICON.client,
     search: 'Pretraži klijente…',
     newOrder: 'Novi nalog',
     emptyTitle: 'Još nema klijenata',
@@ -111,7 +112,7 @@ export const PARTNER_WORDS: Record<PartnerKind, PartnerWords> = {
     add: 'Dodaj podvozara',
     newTitle: 'Novi podvozar',
     editTitle: 'Uredi podvozara',
-    icon: 'IconLicense',
+    icon: ENTITY_ICON.contractor,
     search: 'Pretraži podvozare…',
     newOrder: 'Novi agencijski nalog',
     emptyTitle: 'Još nema podvozara',

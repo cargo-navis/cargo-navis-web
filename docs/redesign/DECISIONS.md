@@ -52,6 +52,9 @@ switchable (see §7). **Later** = not in this redesign.
   sequence = **ruta** („Ruta KC 123-AB”); a nalog's from → to = relacija; a single countable noun only if unavoidable =
   mjesto („3 mjesta”).
 - **Menadžer** (not Voditelj), **Disponent** (not Dispečer), **Podvozari** everywhere (not Prijevoznici; renamed from Kontraktori 2026-11-21).
+- **One icon per concept** (decided 2026-11-23, lab /entity-icons, `components/shared/entity-icons.ts`): klijent
+  IconBriefcase, podvozar IconTruckLoading (also the „Agencijski” badge), our company IconBuilding; documents /
+  licences IconLicense, Flota IconTruck, Prijevozi IconTruckDelivery.
 - **Address the user informally** („ti”: Pokušaj ponovno, Upiši, Imaš …), everywhere (decided 2026-11-21).
 - **Toasts** (decided 2026-11-21): title = short label without a full stop, a second sentence goes to the description
   (with its full stop): „Dokument nije obrisan” · „Pokušaj ponovno.”. Words: dodan (not kreiran), ažuriran (not

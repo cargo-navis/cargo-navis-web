@@ -1,3 +1,4 @@
+import { ENTITY_ICON } from '@/components/shared/entity-icons';
 import { PositionEnum } from '@/lib/api/employees';
 import type { IconType } from '@/ui';
 
@@ -66,14 +67,14 @@ export const NAV: NavItem[] = [
     key: 'clients',
     label: 'Klijenti',
     href: '/dashboard/clients',
-    icon: 'IconBriefcase',
+    icon: ENTITY_ICON.client,
     match: startsWith('/dashboard/clients'),
   },
   {
     key: 'contractors',
     label: 'Podvozari',
     href: '/dashboard/contractors',
-    icon: 'IconLicense',
+    icon: ENTITY_ICON.contractor,
     match: startsWith('/dashboard/contractors'),
   },
   {

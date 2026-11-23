@@ -8,6 +8,7 @@ import Link from 'next/link';
 import * as React from 'react';
 
 import { DriverAvatar } from '@/components/shared/driver-avatar';
+import { ENTITY_ICON } from '@/components/shared/entity-icons';
 import { Panel } from '@/components/shared/panel';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -68,7 +69,7 @@ function ContractorPanel({ shipment }: { shipment: Shipment }) {
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-3">
           <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-agency-50 text-agency-700 dark:bg-agency-950 dark:text-agency-300">
-            <Icon icon="IconBriefcase" size="m" />
+            <Icon icon={ENTITY_ICON.contractor} size="m" />
           </span>
           <div className="flex min-w-0 flex-col">
             {contractor ? (

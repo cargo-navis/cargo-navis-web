@@ -1,3 +1,4 @@
+import { ENTITY_ICON } from '@/components/shared/entity-icons';
 import { type GlobalSearchResults, type SearchShipmentCargo, SearchTypeEnum, VehicleEnum } from '@/lib/api';
 import { getPalletsNoun } from '@/lib/utils/cargo';
 import type { PluralForms } from '@/lib/utils/plural';
@@ -198,7 +199,7 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
     key: 'clients',
     type: SearchTypeEnum.CLIENTS,
     heading: 'Klijenti',
-    icon: 'IconBriefcase',
+    icon: ENTITY_ICON.client,
     pluralNoun: 'klijenata',
     forms: ['klijent', 'klijenta', 'klijenata'],
     mapItems: ({ clients }) =>
@@ -218,7 +219,7 @@ export const SEARCH_CATEGORIES: SearchCategory[] = [
     key: 'contractors',
     type: SearchTypeEnum.CONTRACTORS,
     heading: 'Podvozari',
-    icon: 'IconLicense',
+    icon: ENTITY_ICON.contractor,
     pluralNoun: 'podvozara',
     forms: ['podvozar', 'podvozara', 'podvozara'],
     mapItems: ({ contractors }) =>

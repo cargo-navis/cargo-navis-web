@@ -1,5 +1,6 @@
 import * as React from 'react';
 
+import { ENTITY_ICON } from '@/components/shared/entity-icons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Field, FieldDescription } from '@/components/ui/field';
@@ -92,7 +93,7 @@ function AgencyFields({ onNewContractor }: { onNewContractor(): void }) {
           label="Tko vozi?"
           options={[
             { key: 'own', label: 'Vlastiti prijevoz', description: 'Naše vozilo i vozač' },
-            { key: 'agency', label: 'Agencijski', description: 'Vozi podvozar', icon: 'IconBriefcase' },
+            { key: 'agency', label: 'Agencijski', description: 'Vozi podvozar', icon: ENTITY_ICON.agency },
           ]}
           value={values.isAgency ? 'agency' : 'own'}
           onChange={(key) => set(withAgency(values, key === 'agency', tenantId))}

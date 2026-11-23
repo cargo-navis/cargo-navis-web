@@ -1,6 +1,7 @@
 import Link from 'next/link';
 
 import { CountryFlag } from '@/components/shared/country-flag';
+import { ENTITY_ICON } from '@/components/shared/entity-icons';
 import { Panel } from '@/components/shared/panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -48,7 +49,7 @@ function StopRow({ stop, lookups }: { stop: TodayStop; lookups: Lookups }) {
           #{stop.orderNumber}
           {stop.isAgency && (
             <Badge size="sm" tone="category">
-              <Icon icon="IconBriefcase" size="xs" /> Agencijski
+              <Icon icon={ENTITY_ICON.agency} size="xs" /> Agencijski
             </Badge>
           )}
         </span>

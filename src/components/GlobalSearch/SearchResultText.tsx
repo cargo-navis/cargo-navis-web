@@ -1,3 +1,4 @@
+import { ENTITY_ICON } from '@/components/shared/entity-icons';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { Icon } from '@/ui';
@@ -24,7 +25,7 @@ export const SearchResultText = ({ item, query, size = 'sm' }: SearchResultTextP
         </span>
         {item.isAgency && (
           <Badge className="shrink-0" size="sm" tone="category">
-            <Icon icon="IconBriefcase" size="xs" /> Agencijski
+            <Icon icon={ENTITY_ICON.agency} size="xs" /> Agencijski
           </Badge>
         )}
       </span>

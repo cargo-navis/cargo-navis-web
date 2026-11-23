@@ -9,6 +9,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import * as React from 'react';
 
+import { ENTITY_ICON } from '@/components/shared/entity-icons';
 import { Button } from '@/components/ui/button';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -278,9 +279,11 @@ export function AssignmentCell({ shipment }: { shipment: Shipment }) {
 
   if (assignment.kind === 'contractor') {
     return (
-      <span title="Agencijski nalog: prijevoz obavlja podvozar">
-        <Line icon="IconBriefcase" muted text={assignment.contractor?.name ?? '—'} />
-      </span>
+      // Like a vehicle + its driver: the podvozar's name, what it is underneath (lab /entity-icons).
+      <div className="flex min-w-0 flex-col gap-1" title="Agencijski nalog: prijevoz obavlja podvozar">
+        <Line icon={ENTITY_ICON.contractor} text={assignment.contractor?.name ?? '—'} />
+        <span className="pl-5.5 text-xs text-muted-foreground">Podvozar</span>
+      </div>
     );
   }
 

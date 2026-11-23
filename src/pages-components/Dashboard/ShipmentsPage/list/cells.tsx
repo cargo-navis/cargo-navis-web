@@ -1,3 +1,4 @@
+import { ENTITY_ICON } from '@/components/shared/entity-icons';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { Shipment } from '@/lib/api';
@@ -30,7 +31,7 @@ export function NalogCell({ shipment, clientName }: { shipment: Shipment; client
         <span className="tabular-nums">#{shipment.orderNumber}</span>
         {shipment.isAgency && (
           <Badge size="sm" tone="category">
-            <Icon icon="IconBriefcase" size="xs" /> Agencijski
+            <Icon icon={ENTITY_ICON.agency} size="xs" /> Agencijski
           </Badge>
         )}
         {documents > 0 && (

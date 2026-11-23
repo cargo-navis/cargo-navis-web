@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { SETTINGS_ACCOUNT_HREF, SETTINGS_COMPANY_HREF } from '@/components/layout/DashboardLayout/nav';
 import { PageTitle } from '@/components/PageTitle';
+import { ENTITY_ICON } from '@/components/shared/entity-icons';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getPostalCode } from '@/lib/api';
 import { useCurrentTenant, useCurrentUser } from '@/lib/hooks';
@@ -27,7 +28,7 @@ const SECTIONS: { key: SettingsSection; label: string; hint: string; icon: IconT
     key: 'company',
     label: 'Tvrtka',
     hint: 'Podaci, logo, podaci za naloge',
-    icon: 'IconBuilding',
+    icon: ENTITY_ICON.company,
     href: SETTINGS_COMPANY_HREF,
   },
 ];
