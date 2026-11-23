@@ -64,6 +64,7 @@ export function DatePicker({
   invalid,
   disabled,
   startMonth,
+  marked,
   placeholder = 'Odaberi datum',
   ref,
   onBlur,
@@ -76,6 +77,8 @@ export function DatePicker({
   placeholder?: string;
   /** First month in the year dropdown (default 100 years back). */
   startMonth?: Date;
+  /** A related date shown as a coloured dot in the calendar, with a one-line legend under it („● Utovar 23.11.2026.”). */
+  marked?: { date: Date; label: string; dotClassName: string };
   ref?: React.Ref<HTMLButtonElement>;
   onBlur?(): void;
 }) {
@@ -102,8 +105,9 @@ export function DatePicker({
       <PopoverContent align="start" className="w-auto p-0">
         <Calendar
           captionLayout="dropdown"
-          defaultMonth={value ?? undefined}
+          defaultMonth={value ?? marked?.date}
           locale={hr}
+          marked={marked}
           mode="single"
           selected={value ?? undefined}
           startMonth={startMonth}
@@ -113,6 +117,12 @@ export function DatePicker({
             setOpen(false);
           }}
         />
+        {marked && (
+          <p className="flex items-center gap-1.5 border-t px-3 py-2 text-xs text-muted-foreground">
+            <span aria-hidden="true" className={cn('size-1.5 shrink-0 rounded-full', marked.dotClassName)} />
+            {marked.label} {formatDate(marked.date)}
+          </p>
+        )}
       </PopoverContent>
     </Popover>
   );
