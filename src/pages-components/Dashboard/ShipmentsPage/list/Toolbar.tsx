@@ -1,5 +1,6 @@
 /**
- * Nalozi toolbar (lab /tables): Status fakture, Vozač, date range (Spremno za utovar) and „Više filtera” (the rest of
+ * Nalozi toolbar (lab /tables): Status utovara (swapped with Status fakture 2026-11-23, which moved into „Više
+ * filtera”), Vozač, date range (Spremno za utovar) and „Više filtera” (the rest of
  * today's 11 filter fields); on the right the server-side sort (same as the column headers) and the column picker.
  * Under it the always-present chip row (B) with the result count on the right, so adding a filter never moves the
  * table. Filters apply at once and are remembered (localStorage, as today).
@@ -105,7 +106,7 @@ export function useActiveFilters(): ActiveFilter[] {
   return [
     filters.invoiceStatus && {
       key: 'invoiceStatus',
-      label: `Status: ${INVOICE_STATUS_LABEL[filters.invoiceStatus as keyof typeof INVOICE_STATUS_LABEL] ?? filters.invoiceStatus}`,
+      label: `Status fakture: ${INVOICE_STATUS_LABEL[filters.invoiceStatus as keyof typeof INVOICE_STATUS_LABEL] ?? filters.invoiceStatus}`,
       onRemove: clear({ invoiceStatus: undefined }),
     },
     filters.driverId && {
@@ -154,7 +155,7 @@ export function useActiveFilters(): ActiveFilter[] {
 const MORE_FILTER_KEYS = [
   'clientId',
   'dispatcherId',
-  'loadStatus',
+  'invoiceStatus',
   'isInvoiceOverdue',
   'isAgency',
   'unloadingDueDateFrom',
@@ -262,10 +263,10 @@ function MoreFiltersPopover() {
             onChange={(dispatcherId) => setFilters({ dispatcherId })}
           />
           <FilterSelect
-            label="Status utovara"
-            options={LOAD_STATUSES}
-            value={filters.loadStatus}
-            onChange={(loadStatus) => setFilters({ loadStatus })}
+            label="Status fakture"
+            options={INVOICE_STATUSES.map((status) => ({ value: status, label: INVOICE_STATUS_LABEL[status] }))}
+            value={filters.invoiceStatus}
+            onChange={(invoiceStatus) => setFilters({ invoiceStatus })}
           />
           <FilterSelect
             label="Valuta istekla"
@@ -393,20 +394,18 @@ export function ShipmentsToolbar({ columns }: { columns: ColumnToggle[] }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <DropdownMenu>
-        <DropdownMenuTrigger
-          render={<Button className={filterTriggerClass(!!filters.invoiceStatus)} variant="outline" />}
-        >
-          <Icon data-icon="inline-start" icon="IconFilter" size="s" /> Status fakture
+        <DropdownMenuTrigger render={<Button className={filterTriggerClass(!!filters.loadStatus)} variant="outline" />}>
+          <Icon data-icon="inline-start" icon="IconFilter" size="s" /> Status utovara
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-48">
           <DropdownMenuRadioGroup
-            value={filters.invoiceStatus ?? 'all'}
-            onValueChange={(value: string) => setFilters({ invoiceStatus: value === 'all' ? undefined : value })}
+            value={filters.loadStatus ?? 'all'}
+            onValueChange={(value: string) => setFilters({ loadStatus: value === 'all' ? undefined : value })}
           >
             <DropdownMenuRadioItem value="all">Svi</DropdownMenuRadioItem>
-            {INVOICE_STATUSES.map((status) => (
-              <DropdownMenuRadioItem key={status} value={status}>
-                {INVOICE_STATUS_LABEL[status]}
+            {LOAD_STATUSES.map((status) => (
+              <DropdownMenuRadioItem key={status.value} value={status.value}>
+                {status.label}
               </DropdownMenuRadioItem>
             ))}
           </DropdownMenuRadioGroup>

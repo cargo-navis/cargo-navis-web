@@ -137,7 +137,7 @@ switchable (see §7). **Later** = not in this redesign.
 
 ### Nalozi (labs `/tables`, `/nalog`, `/routes`, `/invoice`)
 - Header: title, „Učitaj nalog” (outline) + „Dodaj nalog” (primary); tabs Nalozi / Nalozi u pripremi (ready drafts count).
-- Toolbar filters (status, driver, date range) + „Više filtera”; **always-present chip row** of applied filters with the
+- Toolbar filters (Status utovara, driver, date range; Status fakture in „Više filtera” since 2026-11-23) + „Više filtera”; **always-present chip row** of applied filters with the
   result count on the right („Prikazano 1–10 od 248”). Sorting server-side only.
 - Columns: **Nalog** (client 15px medium, `#2041/2026`, violet „Agencijski” + 💼, 📎 count, 💬 note), **Utovar / Istovar**
   route track (per-cargo progress, shared stops drawn once, place labels „🇩🇪 80939 [10.11.]”), **Teret** (LDM first:
