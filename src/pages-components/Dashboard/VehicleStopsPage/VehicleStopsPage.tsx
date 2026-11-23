@@ -34,6 +34,12 @@ type View = (typeof VIEWS)[number];
 const isView = (value: string | undefined): value is View => VIEWS.includes(value as View);
 
 /**
+ * Until the redesign is released (user 2026-11-23) only „Kao danas” shows, without the switch. Tablica and Tjedan stay in
+ * the code — set back to true to bring the Tablica · Tjedan · Kao danas switch back (remembered view, default Tablica).
+ */
+const SHOW_VIEW_SWITCH = false;
+
+/**
  * Prijevozi (DECISIONS §5, lab /transports): one row per vehicle, three views of the same data behind a segmented
  * switch — Tablica (default), Tjedan, Kao danas. Search by driver / registration, Disponent filter; the filter and the
  * view are remembered in this browser.
@@ -53,7 +59,7 @@ export const VehicleStopsPage = () => {
   const [search, setSearch] = useState('');
   const { storage, updateField } = useVehicleStopsFiltersLocalStorage();
   const dispatcherId = storage.dispatcherId;
-  const view: View = isView(storage.view) ? storage.view : 'table';
+  const view: View = !SHOW_VIEW_SWITCH ? 'today' : isView(storage.view) ? storage.view : 'table';
 
   const vehicleMap = useMemo(() => new Map<string, Vehicle>((vehicles ?? []).map((v) => [v.id, v])), [vehicles]);
   const routes = useMemo(() => buildRoutes(groups ?? [], vehicleMap), [groups, vehicleMap]);
@@ -165,14 +171,18 @@ export const VehicleStopsPage = () => {
               ))}
             </NativeSelect>
           </div>
-          {/* A view switch (same data, different look) = segmented tabs. Remembered per browser. */}
-          <Tabs value={view} onValueChange={(value) => updateField('view', value as View)}>
-            <TabsList>
-              <TabsTrigger value="table">Tablica</TabsTrigger>
-              <TabsTrigger value="week">Tjedan</TabsTrigger>
-              <TabsTrigger value="today">Kao danas</TabsTrigger>
-            </TabsList>
-          </Tabs>
+          {SHOW_VIEW_SWITCH && (
+            <>
+              {/* A view switch (same data, different look) = segmented tabs. Remembered per browser. */}
+              <Tabs value={view} onValueChange={(value) => updateField('view', value as View)}>
+                <TabsList>
+                  <TabsTrigger value="table">Tablica</TabsTrigger>
+                  <TabsTrigger value="week">Tjedan</TabsTrigger>
+                  <TabsTrigger value="today">Kao danas</TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </>
+          )}
         </div>
 
         {isLoading ? (

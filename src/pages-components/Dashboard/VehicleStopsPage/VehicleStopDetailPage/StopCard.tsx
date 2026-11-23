@@ -63,6 +63,12 @@ function StopMarker({ stop, isNext }: { stop: VehicleStop; isNext: boolean }) {
 /** „Prva”, „Druga” … for the order tooltip; past ten it says „11.”. */
 const ORDINAL = ['Prva', 'Druga', 'Treća', 'Četvrta', 'Peta', 'Šesta', 'Sedma', 'Osma', 'Deveta', 'Deseta'];
 
+/**
+ * Hidden until the redesign is released (user 2026-11-23): ⋯ „Promijeni vozača od ovdje”. Code kept (the handover
+ * dialog too) — set back to true to restore it, together with SHOW_RUN_DRIVER_CHANGE in VehicleStopDetailPage.
+ */
+const SHOW_DRIVER_CHANGE_FROM_HERE = false;
+
 /** A stop's place in its „Isti dan” group (see StopCard). */
 export interface SameDayOrder {
   /** 1-based place in that day's driving order. */
@@ -323,7 +329,7 @@ function StopMenu({
             <Icon icon="IconBellRinging" size="s" /> {stop.messageSentAt ? 'Obavijesti ponovno' : 'Obavijesti vozača'}
           </DropdownMenuItem>
         )}
-        {!done && (
+        {!done && SHOW_DRIVER_CHANGE_FROM_HERE && (
           <DropdownMenuItem onClick={onChangeDriverFrom}>
             <Icon icon="IconUserShare" size="s" /> Promijeni vozača od ovdje
           </DropdownMenuItem>

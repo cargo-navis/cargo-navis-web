@@ -49,6 +49,12 @@ import { StopSheet, type StopSheetTarget } from './StopSheet';
  * one date (or all undated ones) sit in an „Isti dan” box in driving order, numbered, with „Pomakni prije / kasnije”
  * (lab /transports, decided 2026-11-21; replaces drag-and-drop — the backend only reorders within a date anyway).
  */
+/**
+ * Hidden until the redesign is released (user 2026-11-23): the „Promijeni” popover next to each driver run (change the
+ * driver for the run / the whole vehicle). Code kept — set back to true to restore it.
+ */
+const SHOW_RUN_DRIVER_CHANGE = false;
+
 export const VehicleStopDetailPage = () => {
   const { query } = useRouter();
   const vehicleId = query.vehicleId as string;
@@ -344,13 +350,13 @@ export const VehicleStopDetailPage = () => {
         entry.type === 'stop' &&
         !isDone(previous.stop) &&
         !isDone(entry.stop) &&
+        !!dayOf(entry.stop) &&
         dayOf(previous.stop) === dayOf(entry.stop);
       if (together) groups[groups.length - 1].push(entry);
       else groups.push([entry]);
     }
     const order = new Map(chronological(stops).map((stop, index) => [stop.id, index]));
     return groups.map((group) => {
-        !!dayOf(entry.stop) &&
       if (group.length === 1) return renderEntry(group[0]);
       const day = group.flatMap((entry) => (entry.type === 'stop' ? [entry.stop] : []));
       day.sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0));
@@ -449,13 +455,15 @@ export const VehicleStopDetailPage = () => {
                       ) : (
                         <span className="font-medium text-destructive">Bez vozača</span>
                       )}
-                      <DriverChangePopover
-                        driverId={block.driverId}
-                        driverName={driverName}
-                        loadingRoute={isLoadingRoute}
-                        scopes={scopes}
-                        onOpen={() => void loadWholeRoute()}
-                      />
+                      {SHOW_RUN_DRIVER_CHANGE && (
+                        <DriverChangePopover
+                          driverId={block.driverId}
+                          driverName={driverName}
+                          loadingRoute={isLoadingRoute}
+                          scopes={scopes}
+                          onOpen={() => void loadWholeRoute()}
+                        />
+                      )}
                     </div>
                     <ol className="flex flex-col">{renderRunEntries(block.entries)}</ol>
                   </li>
