@@ -104,7 +104,8 @@ function MainContent({ shipment }: { shipment: Shipment }) {
           <TabsTrigger value="napomene">Napomene</TabsTrigger>
         </TabsList>
         <TabsContent className="pt-5" value="pregled">
-          <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+          {/* Side column 30% (at least 360px), so the Ruta doesn't stretch across wide screens (2026-11-23). */}
+          <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(360px,30%)]">
             <div className="flex min-w-0 flex-col gap-8">
               <RouteSection shipment={shipment} />
               <section className="flex flex-col gap-3">
@@ -159,7 +160,7 @@ function PageSkeleton() {
         ))}
       </div>
       <Skeleton className="h-10 w-80" />
-      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]">
+      <div className="grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(360px,30%)]">
         <div className="flex flex-col gap-3">
           <Skeleton className="h-5 w-48" />
           {Array.from({ length: 3 }, (_, index) => (
