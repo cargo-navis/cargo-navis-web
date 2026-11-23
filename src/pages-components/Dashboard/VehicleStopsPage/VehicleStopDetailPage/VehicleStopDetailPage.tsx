@@ -151,11 +151,14 @@ export const VehicleStopDetailPage = () => {
     }
   }, [hasNextPage, fetchNextPage]);
 
-  /** The day a stop belongs to for reordering: its date, or „no date” (the backend reorders within these only). */
-  const dayOf = (stop: VehicleStop) => stop.date?.slice(0, 10) ?? 'none';
-  /** Unfinished stops on the same day as `stop`, in driving order. */
+  /** The day a stop belongs to for reordering: its date; undated stops share no day (2026-11-23: no „Isti dan” box,
+   * no „Pomakni” for them — only exactly the same date). */
+  const dayOf = (stop: VehicleStop) => stop.date?.slice(0, 10);
+  /** Unfinished stops on the same date as `stop`, in driving order (none for an undated stop). */
   const sameDayOf = (stop: VehicleStop) =>
-    isDone(stop) ? [] : chronological(stops).filter((item) => !isDone(item) && dayOf(item) === dayOf(stop));
+    isDone(stop) || !dayOf(stop)
+      ? []
+      : chronological(stops).filter((item) => !isDone(item) && dayOf(item) === dayOf(stop));
 
   /** One place earlier / later in that day's order: right before the one ahead of it, or right after the one behind. */
   function move(stop: VehicleStop, by: -1 | 1) {
@@ -347,6 +350,7 @@ export const VehicleStopDetailPage = () => {
     }
     const order = new Map(chronological(stops).map((stop, index) => [stop.id, index]));
     return groups.map((group) => {
+        !!dayOf(entry.stop) &&
       if (group.length === 1) return renderEntry(group[0]);
       const day = group.flatMap((entry) => (entry.type === 'stop' ? [entry.stop] : []));
       day.sort((a, b) => (order.get(a.id) ?? 0) - (order.get(b.id) ?? 0));
