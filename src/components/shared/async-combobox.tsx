@@ -15,7 +15,10 @@ import { plural } from '@/lib/utils/plural';
  * Combobox that searches the server as you type (lab /forms select-fields.tsx `AsyncClientCombobox`, today's
  * FormAsyncSelect): the selected item fills the input, typing anything else searches after `minChars`; „Tražim…”
  * while waiting, „Nema … „query”” when nothing matches. Presentational: the page passes `search` (an API call).
+ * Searches wait until typing pauses (SEARCH_DEBOUNCE_MS), so „10000” is one request, not five.
  */
+const SEARCH_DEBOUNCE_MS = 300;
+
 export function AsyncCombobox<T>({
   id,
   value,
@@ -61,20 +64,24 @@ export function AsyncCombobox<T>({
 
   React.useEffect(() => {
     if (query.length < minChars) return;
+    // „Tražim…” at once (no „Nema rezultata” flash between keystrokes); the request only once typing pauses.
     const request = ++requestRef.current;
     setIsLoading(true);
-    searchRef.current(query).then(
-      (items) => {
-        if (request !== requestRef.current) return;
-        setResults(items);
-        setIsLoading(false);
-      },
-      () => {
-        if (request !== requestRef.current) return;
-        setResults([]);
-        setIsLoading(false);
-      }
-    );
+    const timer = window.setTimeout(() => {
+      searchRef.current(query).then(
+        (items) => {
+          if (request !== requestRef.current) return;
+          setResults(items);
+          setIsLoading(false);
+        },
+        () => {
+          if (request !== requestRef.current) return;
+          setResults([]);
+          setIsLoading(false);
+        }
+      );
+    }, SEARCH_DEBOUNCE_MS);
+    return () => window.clearTimeout(timer);
   }, [query, minChars]);
 
   const items = query.length < minChars ? (value ? [value] : []) : results;
