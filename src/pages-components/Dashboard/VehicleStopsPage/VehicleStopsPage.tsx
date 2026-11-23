@@ -20,6 +20,7 @@ import { useVehicleStopsFiltersLocalStorage } from './hooks/useVehicleStopsFilte
 import { buildRoutes, matchesSearch } from './routes';
 import { StatusTable } from './StatusTable';
 import { useEmployeeNames } from './StopLine';
+import { TodayTimelines } from './TodayTimelines';
 import { WeekBoard } from './WeekBoard';
 
 /**
@@ -28,14 +29,13 @@ import { WeekBoard } from './WeekBoard';
  */
 const STOPS_PER_VEHICLE = 20;
 
-// „Kao danas” dropped 2026-11-21; a remembered 'today' falls back to Tablica.
-const VIEWS = ['table', 'week'] as const;
+const VIEWS = ['table', 'week', 'today'] as const;
 type View = (typeof VIEWS)[number];
 const isView = (value: string | undefined): value is View => VIEWS.includes(value as View);
 
 /**
- * Prijevozi (DECISIONS §5, lab /transports): one row per vehicle, two views of the same data behind a segmented
- * switch — Tablica (default), Tjedan. Search by driver / registration, Disponent filter; the filter and the
+ * Prijevozi (DECISIONS §5, lab /transports): one row per vehicle, three views of the same data behind a segmented
+ * switch — Tablica (default), Tjedan, Kao danas. Search by driver / registration, Disponent filter; the filter and the
  * view are remembered in this browser.
  */
 export const VehicleStopsPage = () => {
@@ -170,6 +170,7 @@ export const VehicleStopsPage = () => {
             <TabsList>
               <TabsTrigger value="table">Tablica</TabsTrigger>
               <TabsTrigger value="week">Tjedan</TabsTrigger>
+              <TabsTrigger value="today">Kao danas</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -187,7 +188,16 @@ export const VehicleStopsPage = () => {
         ) : (
           <div className="relative">
             {showFetching && <LoadingBar className="z-10 rounded-t-xl" />}
-            <WeekBoard className={dimmed(showFetching)} driverName={driverName} empty={empty} routes={filtered} />
+            {view === 'week' ? (
+              <WeekBoard className={dimmed(showFetching)} driverName={driverName} empty={empty} routes={filtered} />
+            ) : (
+              <TodayTimelines
+                className={dimmed(showFetching)}
+                driverName={driverName}
+                empty={empty}
+                routes={filtered}
+              />
+            )}
           </div>
         )}
       </div>
