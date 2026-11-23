@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import * as React from 'react';
 
 import { NAV } from '@/components/layout/DashboardLayout/nav';
+import { ENTITY_ICON } from '@/components/shared/entity-icons';
 import { Button } from '@/components/ui/button';
 import {
   Command,
@@ -81,11 +82,11 @@ const ACTIONS: Action[] = [
     href: newVehicleHref(VehicleEnum.VAN),
     keywords: 'vozilo',
   },
-  { key: 'new-client', label: 'Dodaj klijenta', icon: 'IconBriefcase', href: '/dashboard/clients/new' },
+  { key: 'new-client', label: 'Dodaj klijenta', icon: ENTITY_ICON.client, href: '/dashboard/clients/new' },
   {
     key: 'new-contractor',
     label: 'Dodaj podvozara',
-    icon: 'IconLicense',
+    icon: ENTITY_ICON.contractor,
     href: '/dashboard/contractors/new',
     // The old name still finds it (renamed from Kontraktori 2026-11-21).
     keywords: 'kontraktor prijevoznik',

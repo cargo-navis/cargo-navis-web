@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 /**
  * Decided (KAN-55, /overlays/badge): one Badge for every pill. tone × look × size; default neutral · soft · md.
  * Colour = meaning: success done, info in progress, warning to do, danger late / failed, neutral types and counts,
- * brand new / ours, category a kind of thing (Agencijski = category + IconBriefcase). Soft = tint + border one step
+ * brand new / ours, category a kind of thing (Agencijski = category + ENTITY_ICON.agency). Soft = tint + border one step
  * darker. Sentence case, pill shape, optional leading Tabler icon, no emoji. Types (vehicle, occupation) = neutral
  * outline; on / off states = look "dot".
  *

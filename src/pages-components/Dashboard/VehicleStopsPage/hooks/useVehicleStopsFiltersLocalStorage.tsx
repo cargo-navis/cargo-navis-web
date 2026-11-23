@@ -6,7 +6,7 @@ const isProductionEnv = projectEnv === 'production';
 const keyName = 'cargo-navis-vehicle-stops-filters';
 const STORAGE_KEY = isProductionEnv ? keyName : `${projectEnv}-${keyName}`;
 
-/** Remembered per browser: the Disponent filter and the list view (Tablica · Tjedan). */
+/** Remembered per browser: the Disponent filter and the list view (Tablica · Tjedan · Kao danas). */
 export interface VehicleStopsFiltersStorage {
   dispatcherId?: string;
   view?: string;

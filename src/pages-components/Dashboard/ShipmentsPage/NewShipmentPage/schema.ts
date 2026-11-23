@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import * as Yup from 'yup';
 
+import { formatDate } from '@/lib/utils/date';
 import { NOTIFICATION_EMAIL_LIMIT } from '@/lib/utils/notificationEmails';
 import { PalleteType } from '@/lib/utils/palletes';
 
@@ -32,8 +33,16 @@ const cargoMetadataSchema = Yup.object().shape({
   }),
 });
 
-/** Shared with the utovar / istovar dialog's date check. */
-export const cargoLoadUnloadDatesMessage = 'Rok istovara je prije utovara.';
+/**
+ * Shared with the utovar / istovar dialog's date check; names the other date, so it's clear what it clashes with:
+ * „Rok istovara ne može biti prije utovara (23.11.2026.).” / „Utovar ne može biti nakon roka istovara (28.11.2026.).”
+ */
+export function cargoLoadUnloadDatesMessage(kind: 'loading' | 'unloading', otherDate: string) {
+  const other = formatDate(otherDate);
+  return kind === 'unloading'
+    ? `Rok istovara ne može biti prije utovara (${other}).`
+    : `Utovar ne može biti nakon roka istovara (${other}).`;
+}
 
 const cargoSchema = Yup.object().shape({
   id: Yup.string().optional(),
@@ -53,13 +62,15 @@ const cargoSchema = Yup.object().shape({
   unloadingCompanyName: Yup.string().optional(),
   unloadingDueDate: Yup.string()
     .optional()
-    .test('not-before-load', cargoLoadUnloadDatesMessage, function (unloadVal) {
+    .test('not-before-load', function (unloadVal) {
       const loadRaw = (this.parent as { loadingReadyDate?: string })?.loadingReadyDate?.trim();
       if (!String(unloadVal ?? '').trim() || !loadRaw) return true;
       const load = dayjs(loadRaw);
       const unload = dayjs(unloadVal);
       if (!load.isValid() || !unload.isValid()) return true;
-      return !unload.isBefore(load, 'day');
+      return unload.isBefore(load, 'day')
+        ? this.createError({ message: cargoLoadUnloadDatesMessage('unloading', loadRaw) })
+        : true;
     }),
   unloadingReference: Yup.string().optional(),
   unloadingDescription: Yup.string().optional(),

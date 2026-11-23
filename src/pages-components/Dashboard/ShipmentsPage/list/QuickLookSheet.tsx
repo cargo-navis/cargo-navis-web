@@ -13,6 +13,7 @@
 import Link from 'next/link';
 import * as React from 'react';
 
+import { ENTITY_ICON } from '@/components/shared/entity-icons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetTitle } from '@/components/ui/sheet';
@@ -143,7 +144,7 @@ function QuickLook({ shipment }: { shipment: Shipment }) {
             #{shipment.orderNumber} · {formatEuroExact(shipment.price ?? 0)}
             {shipment.isAgency && (
               <Badge size="sm" tone="category">
-                <Icon icon="IconBriefcase" size="xs" /> Agencijski
+                <Icon icon={ENTITY_ICON.agency} size="xs" /> Agencijski
               </Badge>
             )}
           </SheetDescription>
@@ -167,7 +168,7 @@ function QuickLook({ shipment }: { shipment: Shipment }) {
             {shipment.isAgency && <AgencyCargoStatuses shipment={shipment} />}
           </DetailRow>
           {assignment.kind === 'contractor' ? (
-            <DetailRow icon="IconBriefcase" label="Podvozar">
+            <DetailRow icon={ENTITY_ICON.contractor} label="Podvozar">
               <div className="flex flex-col">
                 <span className="truncate">{assignment.contractor?.name ?? '—'}</span>
                 <span className="text-xs text-muted-foreground">Vozilo i vozača određuje podvozar</span>

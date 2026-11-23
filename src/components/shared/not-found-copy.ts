@@ -51,7 +51,8 @@ export const ENTITY_NOT_FOUND: Record<EntityKind, EntityNotFoundCopy> = {
     create: { label: 'Dodaj klijenta', href: '/dashboard/clients/new' },
   },
   contractor: {
-    icon: 'IconLicenseOff',
+    // Tabler has no TruckLoadingOff (and TruckOff is the vehicle's): the podvozar icon itself.
+    icon: 'IconTruckLoading',
     title: 'Podvozar nije pronađen',
     description: 'Možda je obrisan.',
     list: { label: 'Svi podvozari', href: '/dashboard/contractors' },

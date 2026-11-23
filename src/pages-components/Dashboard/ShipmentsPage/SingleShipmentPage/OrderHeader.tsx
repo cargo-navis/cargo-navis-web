@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import * as React from 'react';
 
 import { CountryFlag } from '@/components/shared/country-flag';
+import { ENTITY_ICON } from '@/components/shared/entity-icons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -149,7 +150,7 @@ export function OrderHeader({ shipment, onAssignClick }: { shipment: Shipment; o
             <h1 className="font-heading text-3xl font-bold tracking-tight tabular-nums">{shipment.orderNumber}</h1>
             {shipment.isAgency && (
               <Badge tone="category">
-                <Icon icon="IconBriefcase" size="xs" /> Agencijski
+                <Icon icon={ENTITY_ICON.agency} size="xs" /> Agencijski
               </Badge>
             )}
           </div>
@@ -159,7 +160,7 @@ export function OrderHeader({ shipment, onAssignClick }: { shipment: Shipment; o
                 className="flex items-center gap-1.5 font-medium text-foreground hover:underline"
                 href={`/dashboard/clients/${client.id}`}
               >
-                <Icon className="text-muted-foreground" icon="IconBuilding" size="s" /> {client.name}
+                <Icon className="text-muted-foreground" icon={ENTITY_ICON.client} size="s" /> {client.name}
               </Link>
             ) : (
               <span>—</span>

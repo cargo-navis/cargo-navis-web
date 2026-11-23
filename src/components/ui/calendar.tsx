@@ -17,9 +17,13 @@ function Calendar({
   formatters,
   components,
   endMonth,
+  modifiers,
+  marked,
   ...props
 }: React.ComponentProps<typeof DayPicker> & {
   buttonVariant?: React.ComponentProps<typeof Button>['variant'];
+  /** One day with a small coloured dot under its number (e.g. the utovar's date in the istovar's picker). */
+  marked?: { date: Date; dotClassName: string };
 }) {
   const defaultClassNames = getDefaultClassNames();
   // The year dropdown stops at this year by default; rokovi, dates and documents live in the future too.
@@ -114,7 +118,9 @@ function Calendar({
                 : 'IconChevronDown';
           return <Icon className={className} icon={icon} size="s" />;
         },
-        DayButton: ({ ...props }) => <CalendarDayButton locale={locale} {...props} />,
+        DayButton: ({ ...props }) => (
+          <CalendarDayButton dotClassName={marked?.dotClassName} locale={locale} {...props} />
+        ),
         WeekNumber: ({ children, ...props }) => {
           return (
             <td {...props}>
@@ -130,6 +136,7 @@ function Calendar({
         ...formatters,
       }}
       locale={locale}
+      modifiers={marked ? { ...modifiers, marked: marked.date } : modifiers}
       showOutsideDays={showOutsideDays}
       {...props}
     />
@@ -141,8 +148,10 @@ function CalendarDayButton({
   day,
   modifiers,
   locale,
+  dotClassName,
+  children,
   ...props
-}: React.ComponentProps<typeof DayButton> & { locale?: Partial<Locale> }) {
+}: React.ComponentProps<typeof DayButton> & { locale?: Partial<Locale>; dotClassName?: string }) {
   const defaultClassNames = getDefaultClassNames();
 
   const ref = React.useRef<HTMLButtonElement>(null);
@@ -167,7 +176,12 @@ function CalendarDayButton({
       size="icon"
       variant="ghost"
       {...props}
-    />
+    >
+      {children}
+      {modifiers.marked && (
+        <span aria-hidden="true" className={cn('absolute right-1 bottom-1 size-1.5 rounded-full', dotClassName)} />
+      )}
+    </Button>
   );
 }
 

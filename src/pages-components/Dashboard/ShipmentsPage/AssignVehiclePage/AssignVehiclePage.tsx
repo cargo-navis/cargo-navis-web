@@ -17,6 +17,7 @@ import { CRUMBS, DashboardLayout } from '@/components/layout/DashboardLayout';
 import { PageTitle } from '@/components/PageTitle';
 import { CountryFlag } from '@/components/shared/country-flag';
 import { DatePicker } from '@/components/shared/date-picker';
+import { ENTITY_ICON } from '@/components/shared/entity-icons';
 import { EntityNotFound, isNotFoundError } from '@/components/shared/not-found';
 import { Panel } from '@/components/shared/panel';
 import { StopKindLabel } from '@/components/shared/stop-kind';
@@ -72,7 +73,7 @@ export const AssignVehiclePage = () => {
           backHref={shipmentHref(shipment.id)}
           backLabel="Natrag na nalog"
           description="Agencijski nalog vozi podvozar, vozilo mu se ne dodjeljuje."
-          icon="IconBriefcase"
+          icon={ENTITY_ICON.agency}
           title="Agencijski nalog"
         />
       );

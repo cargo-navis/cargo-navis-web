@@ -203,7 +203,7 @@ function dateError(kind: StopKind, date: string, cargo: CargoValues) {
   const otherValue = dayjs(other);
   if (!value.isValid() || !otherValue.isValid()) return undefined;
   const wrong = kind === 'loading' ? value.isAfter(otherValue, 'day') : value.isBefore(otherValue, 'day');
-  return wrong ? cargoLoadUnloadDatesMessage : undefined;
+  return wrong ? cargoLoadUnloadDatesMessage(kind, other) : undefined;
 }
 
 function validateStop(stop: StopValues, kind: StopKind, cargo: CargoValues): StopErrors {
@@ -371,6 +371,7 @@ function StopDialog({
                 <DatePicker
                   id={id('date')}
                   invalid={!!show('date')}
+                  marked={otherDateMark(cargo, kind)}
                   value={toDate(draft.date)}
                   onBlur={leave('date')}
                   onChange={(date) => {
@@ -411,6 +412,19 @@ function StopDialog({
 }
 
 /** Today's helper text under the date: the other date of this teret it has to respect. */
+/** The other side's date as a dot in this picker: the utovar (orange) in the istovar's, the rok istovara (teal) in the utovar's. */
+function otherDateMark(cargo: CargoValues, kind: StopKind) {
+  const other = kind === 'loading' ? cargo.unloading?.date : cargo.loading?.date;
+  const date = toDate(other ?? '');
+  if (!date) return undefined;
+  const otherKind = kind === 'loading' ? 'unloading' : 'loading';
+  return {
+    date,
+    label: otherKind === 'loading' ? 'Utovar' : 'Rok istovara',
+    dotClassName: STOP_KIND[otherKind].dot,
+  };
+}
+
 function OtherDateHint({ cargo, kind }: { cargo: CargoValues; kind: StopKind }) {
   const other = kind === 'loading' ? cargo.unloading?.date : cargo.loading?.date;
   if (!other) return null;

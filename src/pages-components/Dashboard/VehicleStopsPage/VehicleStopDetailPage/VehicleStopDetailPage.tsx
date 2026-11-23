@@ -49,6 +49,12 @@ import { StopSheet, type StopSheetTarget } from './StopSheet';
  * one date (or all undated ones) sit in an „Isti dan” box in driving order, numbered, with „Pomakni prije / kasnije”
  * (lab /transports, decided 2026-11-21; replaces drag-and-drop — the backend only reorders within a date anyway).
  */
+/**
+ * Hidden until the redesign is released (user 2026-11-23): the „Promijeni” popover next to each driver run (change the
+ * driver for the run / the whole vehicle). Code kept — set back to true to restore it.
+ */
+const SHOW_RUN_DRIVER_CHANGE = false;
+
 export const VehicleStopDetailPage = () => {
   const { query } = useRouter();
   const vehicleId = query.vehicleId as string;
@@ -151,11 +157,14 @@ export const VehicleStopDetailPage = () => {
     }
   }, [hasNextPage, fetchNextPage]);
 
-  /** The day a stop belongs to for reordering: its date, or „no date” (the backend reorders within these only). */
-  const dayOf = (stop: VehicleStop) => stop.date?.slice(0, 10) ?? 'none';
-  /** Unfinished stops on the same day as `stop`, in driving order. */
+  /** The day a stop belongs to for reordering: its date; undated stops share no day (2026-11-23: no „Isti dan” box,
+   * no „Pomakni” for them — only exactly the same date). */
+  const dayOf = (stop: VehicleStop) => stop.date?.slice(0, 10);
+  /** Unfinished stops on the same date as `stop`, in driving order (none for an undated stop). */
   const sameDayOf = (stop: VehicleStop) =>
-    isDone(stop) ? [] : chronological(stops).filter((item) => !isDone(item) && dayOf(item) === dayOf(stop));
+    isDone(stop) || !dayOf(stop)
+      ? []
+      : chronological(stops).filter((item) => !isDone(item) && dayOf(item) === dayOf(stop));
 
   /** One place earlier / later in that day's order: right before the one ahead of it, or right after the one behind. */
   function move(stop: VehicleStop, by: -1 | 1) {
@@ -341,6 +350,7 @@ export const VehicleStopDetailPage = () => {
         entry.type === 'stop' &&
         !isDone(previous.stop) &&
         !isDone(entry.stop) &&
+        !!dayOf(entry.stop) &&
         dayOf(previous.stop) === dayOf(entry.stop);
       if (together) groups[groups.length - 1].push(entry);
       else groups.push([entry]);
@@ -445,13 +455,15 @@ export const VehicleStopDetailPage = () => {
                       ) : (
                         <span className="font-medium text-destructive">Bez vozača</span>
                       )}
-                      <DriverChangePopover
-                        driverId={block.driverId}
-                        driverName={driverName}
-                        loadingRoute={isLoadingRoute}
-                        scopes={scopes}
-                        onOpen={() => void loadWholeRoute()}
-                      />
+                      {SHOW_RUN_DRIVER_CHANGE && (
+                        <DriverChangePopover
+                          driverId={block.driverId}
+                          driverName={driverName}
+                          loadingRoute={isLoadingRoute}
+                          scopes={scopes}
+                          onOpen={() => void loadWholeRoute()}
+                        />
+                      )}
                     </div>
                     <ol className="flex flex-col">{renderRunEntries(block.entries)}</ol>
                   </li>

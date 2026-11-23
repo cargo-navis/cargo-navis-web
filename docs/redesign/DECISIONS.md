@@ -52,6 +52,9 @@ switchable (see §7). **Later** = not in this redesign.
   sequence = **ruta** („Ruta KC 123-AB”); a nalog's from → to = relacija; a single countable noun only if unavoidable =
   mjesto („3 mjesta”).
 - **Menadžer** (not Voditelj), **Disponent** (not Dispečer), **Podvozari** everywhere (not Prijevoznici; renamed from Kontraktori 2026-11-21).
+- **One icon per concept** (decided 2026-11-23, lab /entity-icons, `components/shared/entity-icons.ts`): klijent
+  IconBriefcase, podvozar IconTruckLoading (also the „Agencijski” badge), our company IconBuilding; documents /
+  licences IconLicense, Flota IconTruck, Prijevozi IconTruckDelivery.
 - **Address the user informally** („ti”: Pokušaj ponovno, Upiši, Imaš …), everywhere (decided 2026-11-21).
 - **Toasts** (decided 2026-11-21): title = short label without a full stop, a second sentence goes to the description
   (with its full stop): „Dokument nije obrisan” · „Pokušaj ponovno.”. Words: dodan (not kreiran), ažuriran (not
@@ -137,7 +140,7 @@ switchable (see §7). **Later** = not in this redesign.
 
 ### Nalozi (labs `/tables`, `/nalog`, `/routes`, `/invoice`)
 - Header: title, „Učitaj nalog” (outline) + „Dodaj nalog” (primary); tabs Nalozi / Nalozi u pripremi (ready drafts count).
-- Toolbar filters (status, driver, date range) + „Više filtera”; **always-present chip row** of applied filters with the
+- Toolbar filters (Status utovara, driver, date range; Status fakture in „Više filtera” since 2026-11-23) + „Više filtera”; **always-present chip row** of applied filters with the
   result count on the right („Prikazano 1–10 od 248”). Sorting server-side only.
 - Columns: **Nalog** (client 15px medium, `#2041/2026`, violet „Agencijski” + 💼, 📎 count, 💬 note), **Utovar / Istovar**
   route track (per-cargo progress, shared stops drawn once, place labels „🇩🇪 80939 [10.11.]”), **Teret** (LDM first:
@@ -184,10 +187,11 @@ switchable (see §7). **Later** = not in this redesign.
 - Capacity check and trailer display: Later.
 
 ### Prijevozi (lab `/transports`)
-- List with a **Tablica · Tjedan** switch (default Tablica; „Kao danas” dropped 2026-11-21):
+- List with a **Tablica · Tjedan · Kao danas** switch (default Tablica):
   - Tablica: Vozilo / vozač · Sada · Sljedeće · Plan („još 2 · do 13.11.”) · Treba pažnju (Bez vozača, N bez datuma,
     N nije obaviješteno).
   - Tjedan: vehicles × Pon–Ned + „Bez datuma”, chips with kind dot, today tinted, ‹ › week.
+  - Kao danas: today's horizontal timeline per vehicle, restyled, place + date under each point.
   - Search by driver / registration, Disponent filter (remembered).
 - Vehicle page „Ruta KC 123-AB”: **today's order (newest first)** (chronological variant kept in code);
   **driver runs = avatar + side bar in the driver's colour**, name + „Promijeni” (red dashed „Bez vozača” + „Dodijeli

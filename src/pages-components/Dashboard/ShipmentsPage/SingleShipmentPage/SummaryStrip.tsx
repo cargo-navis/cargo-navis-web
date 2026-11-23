@@ -31,12 +31,14 @@ function routeEnds(shipment: Shipment): { first?: Point; last?: Point; count: nu
   }
   const key = (address?: { postalCodeId?: string; streetName?: string } | null) =>
     address ? `${address.postalCodeId}|${address.streetName}` : '';
+  // By date, undated last (an empty date used to sort first and hide the dates the other tereti have).
+  const byDate = (a?: string | null, b?: string | null) => (a && b ? a.localeCompare(b) : a ? -1 : b ? 1 : 0);
   const loadings = shipment.cargo
     .filter((cargo) => cargo.loadingAddress)
-    .sort((a, b) => (a.loadingReadyDate ?? '').localeCompare(b.loadingReadyDate ?? ''));
+    .sort((a, b) => byDate(a.loadingReadyDate, b.loadingReadyDate));
   const unloadings = shipment.cargo
     .filter((cargo) => cargo.unloadingAddress)
-    .sort((a, b) => (a.unloadingDueDate ?? '').localeCompare(b.unloadingDueDate ?? ''));
+    .sort((a, b) => byDate(a.unloadingDueDate, b.unloadingDueDate));
   const count =
     new Set(loadings.map((cargo) => key(cargo.loadingAddress))).size +
     new Set(unloadings.map((cargo) => key(cargo.unloadingAddress))).size;
@@ -64,13 +66,21 @@ export function SummaryStrip({ shipment }: { shipment: Shipment }) {
     shipment.isAgency && shipment.contractorPrice !== null && shipment.contractorPrice !== undefined
       ? getMargin(shipment.price ?? 0, shipment.contractorPrice)
       : undefined;
-  const shortDate = (date?: string | null) => (date ? formatDateShort(date) : '—');
+  // „23.11. → 2.12.”, one side only („Utovar 23.11.” / „Istovar do 2.12.”), or „Bez datuma” — never bare dashes.
+  const dates =
+    first?.date && last?.date
+      ? `${formatDateShort(first.date)} → ${formatDateShort(last.date)}`
+      : first?.date
+        ? `Utovar ${formatDateShort(first.date)}`
+        : last?.date
+          ? `Istovar do ${formatDateShort(last.date)}`
+          : 'Bez datuma';
 
   const items: { label: string; value: string; detail: React.ReactNode }[] = [
     {
       label: 'Ruta',
       value: first || last ? `${first?.place ?? '—'} → ${last?.place ?? '—'}` : '—',
-      detail: `${shortDate(first?.date)} → ${shortDate(last?.date)}${others ? ` · još ${pluralCount(others, ['mjesto', 'mjesta', 'mjesta'])}` : ''}`,
+      detail: `${dates}${others ? ` · još ${pluralCount(others, ['mjesto', 'mjesta', 'mjesta'])}` : ''}`,
     },
     {
       label: 'Teret',

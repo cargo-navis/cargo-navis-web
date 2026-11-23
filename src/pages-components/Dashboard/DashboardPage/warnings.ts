@@ -1,3 +1,4 @@
+import { ENTITY_ICON } from '@/components/shared/entity-icons';
 import { AlertType } from '@/lib/api/alerts';
 import type { Alert } from '@/lib/api/alerts.d';
 import type { Shipment } from '@/lib/api/shipments.d';
@@ -14,7 +15,7 @@ export const WARNING_ICON: Record<WarningKind, IconType> = {
   invoice: 'IconFileInvoice',
   document: 'IconId',
   vehicle: 'IconTruck',
-  company: 'IconBuilding',
+  company: ENTITY_ICON.company,
 };
 
 /** One row of „Treba pažnju”: an alert as „what · whose” + how late / how soon. */
