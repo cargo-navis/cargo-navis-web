@@ -67,7 +67,7 @@ const ORDINAL = ['Prva', 'Druga', 'Treća', 'Četvrta', 'Peta', 'Šesta', 'Sedma
  * Hidden until the redesign is released (user 2026-11-23): ⋯ „Promijeni vozača od ovdje”. Code kept (the handover
  * dialog too) — set back to true to restore it, together with SHOW_RUN_DRIVER_CHANGE in VehicleStopDetailPage.
  */
-const SHOW_DRIVER_CHANGE_FROM_HERE = false;
+const SHOW_DRIVER_CHANGE_FROM_HERE = true;
 
 /** A stop's place in its „Isti dan” group (see StopCard). */
 export interface SameDayOrder {
