@@ -21,6 +21,10 @@ First time on a machine: `npx playwright install chromium`.
 - In a sandboxed shell that blocks Chromium's helper processes (e.g. Claude Code on macOS: `MachPortRendezvousServer … Permission denied`), set `E2E_SINGLE_PROCESS=1`.
 - Failures keep a trace (`e2e/.results`): `npx playwright show-trace <path>/trace.zip`.
 
+## CI
+
+`.github/workflows/test.yml` (GitHub Actions) runs the suite on every pull request, on pushes to `develop` and `main`, and by hand from the Actions tab. One workflow for every branch: the tests use the fake API, so there is nothing per environment. It caches the browsers and the Next build. On failure, download the `playwright-report` artifact (HTML report + traces) from the run's page.
+
 ## How it works
 
 | File                    | Role                                                                                                                 |
