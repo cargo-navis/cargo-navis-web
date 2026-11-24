@@ -23,7 +23,7 @@ First time on a machine: `npx playwright install chromium`.
 
 ## CI
 
-`.github/workflows/test.yml` (GitHub Actions) runs the suite on every pull request, on pushes to `develop` and `main`, and by hand from the Actions tab. One workflow for every branch: the tests use the fake API, so there is nothing per environment. It caches the browsers and the Next build. On failure, download the `playwright-report` artifact (HTML report + traces) from the run's page.
+`.github/workflows/test.yml` (GitHub Actions) runs the suite on pull requests into `develop` and `production` (not drafts; marking one ready starts it), after every push to them, and by hand from the Actions tab. One workflow for every branch: the tests use the fake API, so there is nothing per environment. It caches the browsers and the Next build. On failure, download the `playwright-report` artifact (HTML report + traces) from the run's page.
 
 ## How it works
 

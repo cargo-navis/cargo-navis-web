@@ -1,9 +1,13 @@
 name: Tests
 
 on:
+  # PRs into develop / production: the gate before merging. ready_for_review starts a run when a draft is marked ready.
   pull_request:
+    branches: [develop, production]
+    types: [opened, synchronize, reopened, ready_for_review]
+  # After a merge: catches two PRs that pass alone but break together.
   push:
-    branches: [develop, main]
+    branches: [develop, production]
   workflow_dispatch:
 
 concurrency:
@@ -13,6 +17,8 @@ concurrency:
 jobs:
   e2e:
     name: E2E (Playwright)
+    # Draft PRs skip the run (a skipped job doesn't block a required check, and drafts can't be merged anyway).
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:

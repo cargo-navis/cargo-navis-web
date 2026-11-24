@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 
 import { postalCode } from '../fake-api/areas/ostalo';
 import { KLIJENT } from '../fake-api/areas/partneri';
+import { uuid } from '../fake-api/ids';
 import { expect, test } from '../support/test';
 
 /** Fills the „Detalji utovara” / „Detalji istovara” dialog and confirms it. */
@@ -51,7 +52,8 @@ test('create a nalog by hand', async ({ page, fakeApi }) => {
 
   // Saved: the toast, then step 2 (assign a vehicle) of the new nalog.
   await expect(page.getByText('Nalog #2026/0103 dodan').first()).toBeVisible();
-  await expect(page).toHaveURL(/\/dashboard\/shipments\/[\w-]+\/assign\?created=1$/);
+  // The first id a handler creates in every test (e2e/fake-api/ids.ts), whatever ran before in this worker.
+  await expect(page).toHaveURL(new RegExp(`/dashboard/shipments/${uuid(10_001)}/assign\\?created=1$`));
 
   const [request] = fakeApi.calls('POST', '/api/shipments');
   expect(request.body).toMatchObject({

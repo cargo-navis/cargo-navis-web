@@ -2,6 +2,7 @@ import type { BrowserContext, Request, Route } from '@playwright/test';
 
 import { createDb, type Db } from './db';
 import { compilePath, fail, type FakeRequest, type Handler, type Method, type Reply, type RouteDef } from './http';
+import { resetIds } from './ids';
 import { routes as allRoutes } from './routes';
 
 export type { Db } from './db';
@@ -50,6 +51,7 @@ export class FakeApi {
   private overrides: Override[] = [];
 
   constructor(db: Db = createDb(), routes: RouteDef[] = allRoutes) {
+    resetIds();
     this.db = db;
     this.routes = routes.map((def) => ({ def, matches: compilePath(def.path) }));
   }
