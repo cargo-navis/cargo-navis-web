@@ -45,3 +45,8 @@ next-env.d.ts
 
 # Flag sprites copied by react-flagpack postinstall / prepare-flags script
 /public/flags/
+# Playwright (e2e/README.md)
+/.next-e2e/
+/e2e/.auth/
+/e2e/.results/
+/e2e/.report/
