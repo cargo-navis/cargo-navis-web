@@ -24,13 +24,14 @@ if (!PROJECT_ENVS.includes(process.env.PROJECT_ENV)) {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // PostHog (KAN-134) goes through our domain so ad blockers don't drop it: /ingest → PostHog EU. Its API paths end
-  // in a slash, which Next would otherwise redirect away.
+  // PostHog (KAN-134) goes through our domain so ad blockers don't drop it: /cn-relay → PostHog EU. A name unique to
+  // the app: block lists match common ones (/ingest, /analytics, /posthog …). Its API paths end in a slash, which
+  // Next would otherwise redirect away.
   skipTrailingSlashRedirect: true,
   async rewrites() {
     return [
-      { source: '/ingest/static/:path*', destination: 'https://eu-assets.i.posthog.com/static/:path*' },
-      { source: '/ingest/:path*', destination: 'https://eu.i.posthog.com/:path*' },
+      { source: '/cn-relay/static/:path*', destination: 'https://eu-assets.i.posthog.com/static/:path*' },
+      { source: '/cn-relay/:path*', destination: 'https://eu.i.posthog.com/:path*' },
     ];
   },
   env: {
