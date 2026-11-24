@@ -84,6 +84,8 @@ function AlertDialogContent({
         overlayClassName={overlayClassName}
         popupClassName="group/alert-dialog-content"
         ref={popupRef}
+        // A confirm on phones too: the sheet is a Drawer (role="dialog" by default), screen readers should hear an alert.
+        role="alertdialog"
         {...(rest as Omit<DrawerPrimitive.Popup.Props, 'className'>)}
       >
         {children as React.ReactNode}
