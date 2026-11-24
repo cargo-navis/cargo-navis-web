@@ -16,12 +16,12 @@ const KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY;
 
 let started = false;
 
-/** Once, from the dashboard shell. Requests go through /ingest on our domain (next.config rewrites; ad blockers). */
+/** Once, from the dashboard shell. Requests go through /cn-relay on our domain (next.config rewrites; ad blockers). */
 export function initAnalytics() {
   if (started || !KEY || typeof window === 'undefined') return;
   started = true;
   posthog.init(KEY, {
-    api_host: '/ingest',
+    api_host: '/cn-relay',
     ui_host: 'https://eu.posthog.com',
     defaults: '2025-11-30',
     // Pages router: a pageview per client-side navigation.

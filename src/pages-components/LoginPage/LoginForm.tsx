@@ -11,9 +11,12 @@ import { useLogin } from '@/lib/hooks/api/auth';
 import type { FormValues } from './types';
 import { LOGIN_FAILED_MESSAGE, validateLogin } from './validation';
 
-/** Validates on blur and on submit (DECISIONS §2); the button is always enabled and jumps to the first problem. */
-export const LoginForm = () => {
-  const { push } = useRouter();
+/**
+ * Validates on blur and on submit (DECISIONS §2); the button is always enabled and jumps to the first problem.
+ * Logged in: `onLeave` plays the page's leave animation (the dashboard is prefetched meanwhile), then the dashboard.
+ */
+export const LoginForm = ({ onLeave }: { onLeave?: () => Promise<void> }) => {
+  const { prefetch, push } = useRouter();
   const { loginUser } = useLogin();
 
   const [values, setValues] = React.useState<FormValues>({ email: '', password: '' });
@@ -43,12 +46,14 @@ export const LoginForm = () => {
     setSubmitting(true);
     try {
       await loginUser({ ...values });
-      // Stays loading until the dashboard is there.
-      await push('/dashboard');
     } catch {
       setFailed(true);
       setSubmitting(false);
+      return;
     }
+    // Stays loading until the dashboard is there.
+    await Promise.all([onLeave?.(), prefetch('/dashboard').catch(() => undefined)]);
+    await push('/dashboard');
   }
 
   return (

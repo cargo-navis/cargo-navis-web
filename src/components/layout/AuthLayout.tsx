@@ -4,18 +4,54 @@ import * as React from 'react';
 import { PageTitle } from '@/components/PageTitle';
 import { Icon, type IconType } from '@/ui';
 
+/** How long leaving takes: the fades, then the white side growing over the brand panel (lab /login, 2026-11-24). */
+const LEAVE_FADE_MS = 250;
+const LEAVE_TOTAL_MS = 850;
+
+const leaveFade = (leaving: boolean) =>
+  `transition-opacity duration-250 ease-out ${leaving ? 'opacity-0' : 'opacity-100'}`;
+
+/**
+ * Resolves when the leave animation of `<AuthLayout leaving>` is over: the fades only below lg (no brand panel) and
+ * with reduced motion (the white covers at once).
+ */
+export function waitForAuthLeave() {
+  const grows =
+    window.matchMedia('(min-width: 64rem)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  return new Promise<void>((resolve) => window.setTimeout(resolve, grows ? LEAVE_TOTAL_MS : LEAVE_FADE_MS));
+}
+
 /**
  * Signed-out pages (Prijava, Postavi lozinku). Decided (KAN-55, lab /login, layout B „Brand panel”, 2026-11-19): split
  * screen — left a petrol panel with a faint route pattern, a Sora headline and three lines on what the app does; right
  * the form on the page background, no card. Below lg the panel goes and the logo sits above the form.
+ *
+ * `leaving` (after a successful Prijava, lab /login 2026-11-24): the form and the panel's content fade out, then the
+ * white side grows leftward until it fills the screen; `waitForAuthLeave` says when to open the app.
  */
-export function AuthLayout({ pageTitle, children }: { pageTitle: string; children: React.ReactNode }) {
+export function AuthLayout({
+  pageTitle,
+  leaving = false,
+  children,
+}: {
+  pageTitle: string;
+  leaving?: boolean;
+  children: React.ReactNode;
+}) {
   return (
-    <main className="grid min-h-dvh bg-background lg:grid-cols-2">
+    <main className="relative grid min-h-dvh bg-background lg:grid-cols-2">
       <PageTitle title={pageTitle} />
-      <BrandPanel />
-      <div className="flex flex-col items-center justify-center px-6 py-12">
-        <div className="w-full max-w-sm">
+      <BrandPanel leaving={leaving} />
+      {/* The white side, as one layer over the whole page clipped to the right half; leaving opens the clip leftward
+          (clip-path, no layout work per frame). Above the brand panel, below the form. */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute inset-0 z-10 hidden bg-background transition-[clip-path] delay-150 duration-700 ease-[cubic-bezier(0.65,0,0.35,1)] motion-reduce:transition-none lg:block ${
+          leaving ? '[clip-path:inset(0)]' : '[clip-path:inset(0_0_0_50%)]'
+        }`}
+      />
+      <div className="relative z-20 flex flex-col items-center justify-center px-6 py-12">
+        <div className={`w-full max-w-sm ${leaveFade(leaving)}`}>
           <div className="mb-8 lg:hidden">
             <Logo />
           </div>
@@ -42,14 +78,14 @@ const SELLING_POINTS: { icon: IconType; text: string }[] = [
   { icon: 'IconDeviceMobile', text: 'Vozači potvrđuju u aplikaciji, ti vidiš odmah' },
 ];
 
-function BrandPanel() {
+function BrandPanel({ leaving }: { leaving: boolean }) {
   return (
     <div className="relative hidden flex-col justify-between overflow-hidden bg-primary px-[48px] py-[32px] text-primary-foreground lg:flex">
       <RoutePattern className="pointer-events-none absolute inset-0 size-full text-teal-300" />
-      <div className="relative">
+      <div className={`relative ${leaveFade(leaving)}`}>
         <Logo inverted />
       </div>
-      <div className="relative flex max-w-md flex-col gap-6">
+      <div className={`relative flex max-w-md flex-col gap-6 ${leaveFade(leaving)}`}>
         <Headline />
         <ul className="flex flex-col gap-3 text-sm text-primary-foreground/90">
           {SELLING_POINTS.map(({ icon, text }) => (
@@ -62,7 +98,7 @@ function BrandPanel() {
       </div>
       {/* Fixed height (two tip lines), bottom-aligned: a longer tip grows upward into the empty space instead of
           pushing the headline and the list up (the panel spreads its three blocks with justify-between). */}
-      <div className="relative flex h-10 items-end justify-between gap-8">
+      <div className={`relative flex h-10 items-end justify-between gap-8 ${leaveFade(leaving)}`}>
         <span className="shrink-0 text-xs text-primary-foreground/70">
           © {new Date().getFullYear()} Cargo Navis d.o.o.
         </span>
