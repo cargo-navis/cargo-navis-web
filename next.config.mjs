@@ -24,6 +24,8 @@ if (!PROJECT_ENVS.includes(process.env.PROJECT_ENV)) {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // E2E tests build into their own folder (e2e/README.md), so a running `next dev` keeps its .next untouched.
+  distDir: process.env.NEXT_DIST_DIR || '.next',
   // PostHog (KAN-134) goes through our domain so ad blockers don't drop it: /cn-relay → PostHog EU. A name unique to
   // the app: block lists match common ones (/ingest, /analytics, /posthog …). Its API paths end in a slash, which
   // Next would otherwise redirect away.

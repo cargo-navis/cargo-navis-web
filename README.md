@@ -85,6 +85,7 @@ browser ──/api/*───▶ Next.js (src/middleware.ts) ──▶ BACKEND_P
 npm test          # Vitest (pure logic, services, middleware)
 npm run lint
 npm run typecheck
+npm run test:e2e  # Playwright: production build + key flows on desktop and phone, fake API (e2e/README.md)
 ```
 
 ## Driver portal
