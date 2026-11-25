@@ -1,8 +1,10 @@
 export async function unsubscribePushOnLogout() {
   if ('serviceWorker' in navigator && 'PushManager' in window) {
     try {
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
+      // The current registration, not `ready`: `ready` never settles when no worker is registered (registration failed,
+      // blocked or never happened), and logout would hang on it.
+      const registration = await navigator.serviceWorker.getRegistration();
+      const subscription = await registration?.pushManager.getSubscription();
 
       // unsubscribe() invalidates the endpoint so the push service rejects
       // any further pushes to this device — notifications stop on logout.
