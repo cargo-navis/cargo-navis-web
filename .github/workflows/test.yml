@@ -15,6 +15,31 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  unit:
+    name: Lint, types, unit tests
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Lint
+        run: npx eslint src e2e playwright.config.ts
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      # Fails when coverage of our logic drops below the floor in vitest.config.mts.
+      - name: Unit tests with coverage
+        run: npm run test:coverage
+
   e2e:
     name: E2E (Playwright)
     # Draft PRs skip the run (a skipped job doesn't block a required check, and drafts can't be merged anyway).

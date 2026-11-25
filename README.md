@@ -82,11 +82,17 @@ browser ──/api/*───▶ Next.js (src/middleware.ts) ──▶ BACKEND_P
 ## Tests
 
 ```bash
-npm test          # Vitest (pure logic, services, middleware)
+npm test               # Vitest: our pure logic (rules, formatting, mapping), services, middleware
+npm run test:coverage  # the same, with coverage of our logic (report in coverage/index.html)
 npm run lint
 npm run typecheck
-npm run test:e2e  # Playwright: production build + key flows on desktop and phone, fake API (e2e/README.md)
+npm run test:e2e       # Playwright: production build, every area on desktop and phone, fake API (e2e/README.md)
 ```
+
+- Unit tests sit next to the code as `<module>.test.ts` and test our own functions only, never the shadcn / Base UI components in `src/components/ui`.
+- Coverage counts our plain `.ts` modules in `src/lib`, `src/pages-components` and `src/components` (not React components, types or static data). CI fails when it drops below the floor in `vitest.config.mts`.
+- **Every bug fix adds a test** that fails without the fix: a unit test when the bug is in a function, an E2E test when it's in a page or flow.
+- Icons only through `Icon` from `@/ui`: ESLint rejects direct `@tabler/icons-react` imports.
 
 ## Driver portal
 

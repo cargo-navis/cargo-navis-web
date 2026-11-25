@@ -13,6 +13,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,scss}\"",
     "typecheck": "tsc --noEmit --incremental false --tsBuildInfoFile null",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:e2e": "npm run e2e:build && playwright test",
     "e2e:build": "node e2e/scripts/build.mjs",
     "e2e:run": "playwright test"
@@ -50,6 +51,7 @@
     "@types/react-dom": "19.3.0",
     "@typescript-eslint/eslint-plugin": "^8.24.1",
     "@typescript-eslint/parser": "^8.24.1",
+    "@vitest/coverage-v8": "5.0.4",
     "dotenv": "^17.2.1",
     "eslint": "9.39.5",
     "eslint-config-prettier": "^10.0.1",

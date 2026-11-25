@@ -69,6 +69,17 @@ export default [
           ignoreRestSiblings: true,
         },
       ],
+      // Icons go through Icon from @/ui (sizes, stroke, a11y); only the Icon component itself imports Tabler.
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [{ name: '@tabler/icons-react', message: 'Use Icon from @/ui instead of importing Tabler icons.' }],
+        },
+      ],
     },
+  },
+  {
+    files: ['src/ui/components/Icon/**'],
+    rules: { 'no-restricted-imports': 'off' },
   },
 ];
