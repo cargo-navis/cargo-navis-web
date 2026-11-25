@@ -90,6 +90,8 @@ export function PasswordChecklist({ rules, value }: { rules: PasswordRule[]; val
               size="xs"
             />
             {rule.label}
+            {/* The tick is visual only; screen readers hear the state. */}
+            <span className="sr-only">{ok ? ' – ispunjeno' : ' – nije ispunjeno'}</span>
           </li>
         );
       })}
