@@ -14,7 +14,7 @@ export function getCountryName(code: string) {
 
 /** Country codes paired with their display names, sorted by name. */
 export function getCountryOptions(codes: readonly string[] = COUNTRY_CODES): Country[] {
-  return codes.map((code) => ({ code, name: getCountryName(code) })).sort((a, b) => a.name.localeCompare(b.name));
+  return codes.map((code) => ({ code, name: getCountryName(code) })).sort((a, b) => a.name.localeCompare(b.name, 'hr'));
 }
 
 /** The European subset, for the forms that only ever deal with European countries. */

@@ -18,10 +18,12 @@ export const PHONE_PREFIXES = [
 
 /**
  * Joins country code and phone number into a single string.
- * Removes spaces and a leading "0" (trunk prefix) from the number.
+ * Removes spaces and a leading "0" (trunk prefix) from the number; a leading "00" is read as "+" (international prefix).
  */
 export function joinPhoneNumber(value: PhoneValue): string {
-  const digits = value.phoneNumber.trim().replace(/[\s/()-]/g, '');
+  const typed = value.phoneNumber.trim().replace(/[\s/()-]/g, '');
+  // "00" is the international prefix written out (00386 … = +386 …).
+  const digits = typed.startsWith('00') ? `+${typed.substring(2)}` : typed;
   // Typed (or stored) with its own international prefix: keep it as it is.
   if (digits.startsWith('+') || !value.countryCode) return digits;
   const clean = digits.startsWith('0') ? digits.substring(1) : digits;
