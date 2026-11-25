@@ -143,7 +143,7 @@ function validate(values: Values, initial: Values): Partial<Record<ErrorKey, str
       ? 'Upiši broj telefona.'
       : phoneChanged && (!/^\+?[\d\s/()-]+$/.test(values.phone.phoneNumber.trim()) || digits.length < 6)
         ? 'Broj u obliku 91 234 5678.'
-        : phoneChanged && !values.phone.countryCode && !values.phone.phoneNumber.trim().startsWith('+')
+        : phoneChanged && !values.phone.countryCode && !/^(\+|00)/.test(values.phone.phoneNumber.trim())
           ? 'Odaberi pozivni broj ili upiši broj s +.'
           : undefined,
     email: values.email.trim() && !isValidEmail(values.email.trim()) ? 'Upiši ispravnu email adresu.' : undefined,

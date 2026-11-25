@@ -30,6 +30,8 @@ function ComboboxTrigger({ className, children, ...props }: ComboboxPrimitive.Tr
 function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
   return (
     <ComboboxPrimitive.Clear
+      // Icon-only: give screen readers a name (pass aria-label to override).
+      aria-label="Očisti"
       className={cn(className)}
       data-slot="combobox-clear"
       render={<InputGroupButton size="icon-xs" variant="ghost" />}

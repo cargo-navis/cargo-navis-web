@@ -119,7 +119,7 @@ export function getShipmentSchema(tenantId: string) {
           otherwise: () => Yup.number().optional().nullable().strip(),
         }),
       notificationEmails: notificationEmailsSchema,
-      cargo: Yup.array().of(cargoSchema).required('Dodaj barem jedan teret.'),
+      cargo: Yup.array().of(cargoSchema).required('Dodaj barem jedan teret.').min(1, 'Dodaj barem jedan teret.'),
     })
     .test('tenant-participation', '', function (values) {
       const { isAgency, transportContractorId, clientId } = values as {

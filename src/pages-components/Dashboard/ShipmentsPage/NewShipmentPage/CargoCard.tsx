@@ -73,7 +73,14 @@ function CargoCard({
       <div className="flex items-center justify-between gap-2">
         <h3 className="font-heading text-base font-bold tracking-tight">Teret {index + 1}</h3>
         {total > 1 && (
-          <Button className="text-muted-foreground hover:text-destructive" size="sm" variant="ghost" onClick={onRemove}>
+          <Button
+            // Several cards each have one: the name says which teret.
+            aria-label={`Ukloni teret ${index + 1}`}
+            className="text-muted-foreground hover:text-destructive"
+            size="sm"
+            variant="ghost"
+            onClick={onRemove}
+          >
             <Icon data-icon="inline-start" icon="IconTrash" size="s" /> Ukloni
           </Button>
         )}
@@ -161,6 +168,10 @@ function CargoCard({
             </label>
             {cargo.hasKolete && (
               <Field className="w-32" data-invalid={palletsError ? true : undefined}>
+                {/* The checkbox above says what this is; screen readers need the field's own name. */}
+                <label className="sr-only" htmlFor={fieldDomId(key('palleteAmount'))}>
+                  Broj koleta
+                </label>
                 <NumberInput
                   decimal={false}
                   field={key('palleteAmount')}

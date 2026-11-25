@@ -307,7 +307,8 @@ export function DateRangePicker({
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
       <DateTrigger className={cn('w-auto min-w-64', className)} isEmpty={false}>
-        {activePreset ? `${activePreset.label} · ${label}` : label}
+        {/* No range: just the preset (Ukupno), not „Ukupno · Ukupno”. */}
+        {activePreset && value?.from ? `${activePreset.label} · ${label}` : (activePreset?.label ?? label)}
       </DateTrigger>
       <PopoverContent align="start" className="w-auto p-0">
         <div className="flex flex-col sm:flex-row">

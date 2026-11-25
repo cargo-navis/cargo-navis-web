@@ -12,7 +12,9 @@
     "lint:fix": "eslint src --fix",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx,json,css,scss}\"",
     "typecheck": "tsc --noEmit --incremental false --tsBuildInfoFile null",
-    "test": "vitest run",
+    "test": "vitest run --project unit",
+    "test:coverage": "vitest run --project unit --coverage",
+    "test:components": "vitest run --project components",
     "test:e2e": "npm run e2e:build && playwright test",
     "e2e:build": "node e2e/scripts/build.mjs",
     "e2e:run": "playwright test"
@@ -50,6 +52,9 @@
     "@types/react-dom": "19.3.0",
     "@typescript-eslint/eslint-plugin": "^8.24.1",
     "@typescript-eslint/parser": "^8.24.1",
+    "@vitest/browser": "5.0.4",
+    "@vitest/browser-playwright": "5.0.4",
+    "@vitest/coverage-v8": "5.0.4",
     "dotenv": "^17.2.1",
     "eslint": "9.39.5",
     "eslint-config-prettier": "^10.0.1",
@@ -62,6 +67,7 @@
     "prettier": "^3.5.1",
     "tailwindcss": "4.3.4",
     "typescript": "^5",
-    "vitest": "5.0.4"
+    "vitest": "5.0.4",
+    "vitest-browser-react": "2.3.0"
   }
 }

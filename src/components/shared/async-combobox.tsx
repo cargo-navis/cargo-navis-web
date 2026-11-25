@@ -51,15 +51,21 @@ export function AsyncCombobox<T>({
   ref?: React.Ref<HTMLInputElement>;
   onBlur?(): void;
 }) {
-  const [inputValue, setInputValue] = React.useState('');
+  // The selected item fills the input; typing anything else searches.
+  const label = value ? getLabel(value) : '';
+  const [inputValue, setInputValue] = React.useState(label);
+  // A value set from outside (loaded data, a VIES fill, a reset) shows in the input too, not only one picked here.
+  const [shownLabel, setShownLabel] = React.useState(label);
+  if (label !== shownLabel) {
+    setShownLabel(label);
+    setInputValue(label);
+  }
   const [results, setResults] = React.useState<T[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const requestRef = React.useRef(0);
   const searchRef = React.useRef(search);
   searchRef.current = search;
 
-  // The selected item fills the input; typing anything else searches.
-  const label = value ? getLabel(value) : '';
   const query = inputValue === label ? '' : inputValue.trim();
 
   React.useEffect(() => {
