@@ -223,9 +223,12 @@ function startOfWeek(date: Date) {
   return addDays(date, -((date.getDay() + 6) % 7));
 }
 
+/** The preset (and trigger text) for no date limit, on every page. */
+export const ALL_DATES_LABEL = 'Svi datumi';
+
 export interface DateRangePreset {
   label: string;
-  /** undefined = no limit („Ukupno”). */
+  /** undefined = no limit (ALL_DATES_LABEL). */
   range(today: Date): DateRange | undefined;
 }
 
@@ -237,7 +240,7 @@ export const DATE_RANGE_PRESETS: DateRangePreset[] = [
   { label: 'Zadnjih 12 mjeseci', range: (today) => ({ from: addMonths(today, -12), to: today }) },
   { label: 'Zadnje 2 godine', range: (today) => ({ from: addMonths(today, -24), to: today }) },
   { label: 'Zadnjih 5 godina', range: (today) => ({ from: addMonths(today, -60), to: today }) },
-  { label: 'Ukupno', range: () => undefined },
+  { label: ALL_DATES_LABEL, range: () => undefined },
 ];
 
 /** Around today, mostly ahead (Nalozi: loading dates are planned days). */
@@ -251,7 +254,7 @@ export const UPCOMING_DATE_RANGE_PRESETS: DateRangePreset[] = [
   },
   { label: 'Zadnjih 7 dana', range: (today) => ({ from: addDays(today, -6), to: today }) },
   { label: 'Zadnjih 30 dana', range: (today) => ({ from: addDays(today, -29), to: today }) },
-  { label: 'Ukupno', range: () => undefined },
+  { label: ALL_DATES_LABEL, range: () => undefined },
 ];
 
 function sameDay(a: Date | undefined, b: Date | undefined) {
@@ -301,14 +304,19 @@ export function DateRangePicker({
     return sameDay(presetRange.from, value.from) && sameDay(presetRange.to, value.to);
   });
 
-  const label = !value?.from ? 'Ukupno' : `${formatDate(value.from)} – ${value.to ? formatDate(value.to) : '…'}`;
+  // One day (Danas, Sutra, the same day clicked twice) = that date once; no range = just „Svi datumi”, no preset prefix.
+  const dates = !value?.from
+    ? undefined
+    : sameDay(value.from, value.to)
+      ? formatDate(value.from)
+      : `${formatDate(value.from)} – ${value.to ? formatDate(value.to) : '…'}`;
+  const label = !dates ? ALL_DATES_LABEL : activePreset ? `${activePreset.label} · ${dates}` : dates;
   const anchor = value?.from ? (future ? value.from : addMonths(value.to ?? value.from, -1)) : undefined;
 
   return (
     <Popover open={open} onOpenChange={handleOpenChange}>
       <DateTrigger className={cn('w-auto min-w-64', className)} isEmpty={false}>
-        {/* No range: just the preset (Ukupno), not „Ukupno · Ukupno”. */}
-        {activePreset && value?.from ? `${activePreset.label} · ${label}` : (activePreset?.label ?? label)}
+        {label}
       </DateTrigger>
       <PopoverContent align="start" className="w-auto p-0">
         <div className="flex flex-col sm:flex-row">

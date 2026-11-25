@@ -101,7 +101,9 @@ export function useActiveFilters(): ActiveFilter[] {
   const { filters, setFilters } = useShipmentsFiltersContext();
   const { clientsById, employeesById } = useLookups();
   const clear = (patch: Partial<ShipmentFilters>) => () => setFilters(patch);
-  const range = (from?: string, to?: string) => `${from ? formatDate(from) : '…'} – ${to ? formatDate(to) : '…'}`;
+  // One day (Danas, Sutra) = that date once, like the date picker.
+  const range = (from?: string, to?: string) =>
+    from && from === to ? formatDate(from) : `${from ? formatDate(from) : '…'} – ${to ? formatDate(to) : '…'}`;
 
   return [
     filters.invoiceStatus && {

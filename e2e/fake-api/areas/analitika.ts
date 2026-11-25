@@ -13,7 +13,7 @@ import type { StoredShipment } from './nalozi';
 
 /**
  * Analitika, computed from this test's nalozi (by createdAt), so the numbers move with the data. Periods are days
- * (`YYYY-MM-DD`), months (`YYYY-MM`) or years (`YYYY`); week periods start on Monday. Without `from` / `to` („Ukupno”)
+ * (`YYYY-MM-DD`), months (`YYYY-MM`) or years (`YYYY`); week periods start on Monday. Without `from` / `to` („Svi datumi”)
  * the range is the first to the last nalog. A nalog belongs to a driver or vehicle when one of its stops does.
  */
 type Granularity = ShipmentAnalytics['granularity'];
@@ -42,7 +42,7 @@ function periodsBetween(from: string, to: string, granularity: Granularity): str
   return periods;
 }
 
-/** The query's range, or the data's when it is open („Ukupno”). */
+/** The query's range, or the data's when it is open („Svi datumi”). */
 function rangeOf(db: Db, query: URLSearchParams) {
   const days = db.nalozi.map((item) => item.createdAt.slice(0, 10)).sort();
   return {
