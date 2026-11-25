@@ -18,7 +18,7 @@ First time on a machine: `npx playwright install chromium`.
 - The build goes to `.next-e2e`, not `.next`, so a `next dev` in the same checkout keeps running. Never start a second `next dev` for the tests.
 - The server runs on port **3210** (`E2E_PORT` to change it). Playwright starts and stops it.
 - The build's environment is in `e2e/env.mjs`. Its values beat `.env.local`, so your local settings don't change the tested app. PostHog is off (no key). Feature flags have their `develop` defaults.
-- In a sandboxed shell that blocks Chromium's helper processes (e.g. Claude Code on macOS: `MachPortRendezvousServer … Permission denied`), set `E2E_SINGLE_PROCESS=1`.
+- Chromium needs macOS system services that some sandboxed shells block (Claude Code's sandbox fails with `MachPortRendezvousServer … Permission denied`). There, run `npx playwright test` outside the sandbox (Claude Code: `sandbox.excludedCommands`).
 - Failures keep a trace (`e2e/.results`): `npx playwright show-trace <path>/trace.zip`.
 
 ## CI
@@ -27,15 +27,17 @@ First time on a machine: `npx playwright install chromium`.
 
 ## How it works
 
-| File                    | Role                                                                                                                 |
-| ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| `playwright.config.ts`  | Projects, the server, `reducedMotion: 'reduce'`, `hr-HR` locale, `Europe/Zagreb` time zone, blocked service workers. |
-| `e2e/support/test.ts`   | The `test` every spec imports. Per test: a fresh fake API, the clock at `NOW`, `Math.random` seeded.                 |
-| `e2e/support/time.ts`   | `NOW` (Tue 16 Jun 2026, 09:00 Zagreb) and `day(offset)` / `at(offset, hour)` for dates relative to it.               |
-| `e2e/support/random.ts` | The seeded `Math.random` (the login headline and tip pick from it).                                                  |
-| `e2e/auth.setup.ts`     | Logs in once through the form and saves the session to `e2e/.auth/` for all other tests.                             |
-| `e2e/fake-api/`         | The fake backend (below).                                                                                            |
-| `e2e/flows/`            | Phase 1: the five key flows.                                                                                         |
+| File                    | Role                                                                                                                                    |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `playwright.config.ts`  | Projects, the server, `reducedMotion: 'reduce'`, `hr-HR` locale, `Europe/Zagreb` time zone, blocked service workers.                    |
+| `e2e/support/test.ts`   | The `test` every spec imports. Per test: a fresh fake API, the clock at `NOW`, `Math.random` seeded.                                    |
+| `e2e/support/time.ts`   | `NOW` (Tue 16 Jun 2026, 09:00 Zagreb) and `day(offset)` / `at(offset, hour)` for dates relative to it.                                  |
+| `e2e/support/random.ts` | The seeded `Math.random` (the login headline and tip pick from it).                                                                     |
+| `e2e/auth.setup.ts`     | Logs in once through the form and saves the session to `e2e/.auth/` for all other tests.                                                |
+| `e2e/support/ui.ts`     | Shared UI steps: `expectToast(page, title, description?)`, `pick(page, combobox, text)`, `isPhone(testInfo)`.                           |
+| `e2e/fake-api/`         | The fake backend (below).                                                                                                               |
+| `e2e/flows/`            | Phase 1: the five key flows.                                                                                                            |
+| `e2e/areas/`            | Phase 2: one spec per area (main path plus empty, error, validation and cancel cases). `driver.spec.ts` runs on the phone project only. |
 
 **Session.** The access token lives only in memory (`accessTokenStore`); the session is the httpOnly `refreshToken` cookie. The setup test logs in, the fake `/auth/token` sets the cookie, and `storageState` saves it. Each test then starts like a reloaded tab: the app calls `/auth/refresh` with the cookie and gets a token. A test that needs to be signed out uses `test.use({ storageState: { cookies: [], origins: [] } })`.
 
@@ -59,16 +61,18 @@ The build sets `BACKEND_PROXY_TARGET` to a closed port. The client then calls `/
 
 **Layout.** One file per area in `e2e/fake-api/areas/`, each with its seed data and its endpoints:
 
-| Area             | Data                                               | Endpoints                                    |
-| ---------------- | -------------------------------------------------- | -------------------------------------------- |
-| `korisnik.ts`    | The signed-in dispatcher and the login credentials | `/auth/*`, `/api/account`                    |
-| `tvrtka.ts`      | The company (tenant)                               | `/api/tenant`                                |
-| `partneri.ts`    | Klijenti and podvozari                             | `/api/clients`, `/api/transport-contractors` |
-| `zaposlenici.ts` | The dispatcher and two drivers                     | `/api/employees`                             |
-| `vozila.ts`      | Two trucks and a trailer                           | `/api/fleet`                                 |
-| `nalozi.ts`      | Three nalozi with their tereti                     | `/api/shipments`, `/api/shipment-drafts`     |
-| `prijevozi.ts`   | Vehicle stops (routes)                             | `/api/vehicle-stops`, notify, complete       |
-| `ostalo.ts`      | Poštanski brojevi, alerts, notifications, push     | `/api/postalCodes`, `/api/alerts`, …         |
+| Area             | Data                                                        | Endpoints                                                                     |
+| ---------------- | ----------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `korisnik.ts`    | The signed-in dispatcher, login credentials, an invite link | `/auth/*`, `/api/account`                                                     |
+| `tvrtka.ts`      | The company (tenant); each logo upload gets a new URL       | `/api/tenant`, `/api/tenant/logo`                                             |
+| `partneri.ts`    | Klijenti, podvozari and a fake VIES register                | `/api/clients`, `/api/transport-contractors`, `/api/vies/lookup`              |
+| `zaposlenici.ts` | The dispatcher and two drivers                              | `/api/employees`, invite and driver links                                     |
+| `vozila.ts`      | Two trucks and a trailer                                    | `/api/fleet`                                                                  |
+| `nalozi.ts`      | Three own nalozi and an agency one, with tereti; PDF drafts | `/api/shipments`, `/api/agency-shipments`, files, PDF, `/api/shipment-drafts` |
+| `prijevozi.ts`   | Vehicle stops (routes) and their documents                  | `/api/vehicle-stops`, rearrange, notify, complete                             |
+| `vozac.ts`       | The driver portal: Ivan's link, stops and nalozi            | `/auth/exchange`, `/api/driver/*`                                             |
+| `pretraga.ts`    | ⌘K search over the test's data                              | `/api/search`                                                                 |
+| `ostalo.ts`      | Poštanski brojevi, alerts, notifications, push              | `/api/postalCodes`, `/api/alerts`, …                                          |
 
 `db.ts` puts the seeds together; `routes.ts` lists the endpoints (the first match wins). Ids are fixed UUIDs, exported by name (`NALOG.podravka`, `VOZILO.tegljac1`, `STANICA.podravkaUtovar`), and the data types come from `src/lib/api`, so `npm run typecheck` catches a change in the app's types. Dates are relative to `NOW`.
 
@@ -88,15 +92,22 @@ test('server error', async ({ page, fakeApi }) => {
 });
 ```
 
+For an override that only changes some requests, answer the rest normally: `fakeApi.on('GET', '/api/shipments', (request, db) => (request.query.get('invoiceStatus') === 'not_sent' ? fail(500) : fakeApi.normal(request, db)))`.
+
+**Data helpers for particular shapes:** `manyNalozi(n)` (pagination, sorting), `insertStop(db, stop, afterId)` (same-day or undated stops on a route), `extractDraft(db, id, data)` (the AI finished reading a PDF; nothing tells the page in the tests, so reload it).
+
+**Driver portal session.** The dashboard and the portal share `/auth/refresh` and `/api/account`, like the backend. `/auth/exchange` turns `DRIVER_LINK.token` into a driver session (refresh cookie `driver:<id>`, a token whose `sub` is the driver), and `/api/account` answers with whoever the token belongs to. Driver tests start without the dashboard session, and skip the install gate with the `driver-continue-in-browser` session flag.
+
 **Unknown requests fail the test.** A request with no handler gets a 501, and the test fails when it ends with the list of unknown endpoints. Add a handler in the right area; don't silence it.
 
 ## Add a flow
 
-1. Create `e2e/flows/<name>.spec.ts` (later phases: `e2e/<area>/…`). Import `test` and `expect` from `../support/test`, never from `@playwright/test`.
+1. Add the test to its area's file in `e2e/areas/` (or a new `e2e/areas/<area>.spec.ts`). Import `test` and `expect` from `../support/test`, never from `@playwright/test`.
 2. Use the seeded data by its exported ids, or set up what you need through `fakeApi.db` before `page.goto`.
 3. Find elements by role and label in Croatian: `getByRole('button', { name: 'Spremi' })`, `getByLabel('Cijena')`. Add a `data-testid` only when an element has no accessible name.
 4. Check both what the user sees (toast, URL, text) and what reached the backend (`fakeApi.calls`, `fakeApi.db`).
-5. Run it on both projects, then 10 times in a row: `npm run e2e:run -- e2e/flows/<name>.spec.ts --repeat-each=10`.
+5. Run it on both projects, then 10 times in a row: `npm run e2e:run -- e2e/areas/<area>.spec.ts --repeat-each=10`.
+6. Layouts differ on the phone (bottom sheets instead of dialogs, no right-click, a row opens the nalog instead of the quick look). Branch with `isPhone(testInfo)` or skip with a reason.
 
 ## Update fake data
 
