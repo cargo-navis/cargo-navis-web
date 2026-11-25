@@ -103,6 +103,7 @@ export const LOAD_LABEL: Record<VehicleLoadEnum, string> = {
   [VehicleLoadEnum.FRIGO]: 'Hladnjača',
   [VehicleLoadEnum.CISTERN]: 'Cisterna',
   [VehicleLoadEnum.CONTAINER_TRAILER]: 'Kontejnerska šasija',
+  [VehicleLoadEnum.KIPER]: 'Kiper',
 };
 
 /** Load types a type can have (as today: a solo kamion is never a cisterna or a kontejnerska šasija). */
