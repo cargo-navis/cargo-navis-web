@@ -174,15 +174,17 @@ function FilterSelect({
   onChange(value: string | undefined): void;
 }) {
   const items = [{ value: null, label: 'Svi' }, ...options];
+  // The label names the trigger (screen readers, getByLabel in the E2E tests).
+  const id = React.useId();
   return (
     <Field>
-      <FieldLabel>{label}</FieldLabel>
+      <FieldLabel htmlFor={id}>{label}</FieldLabel>
       <Select
         items={items}
         value={value ?? null}
         onValueChange={(next) => onChange((next as string | null) ?? undefined)}
       >
-        <SelectTrigger className="w-full">
+        <SelectTrigger className="w-full" id={id}>
           <SelectValue placeholder="Svi" />
         </SelectTrigger>
         <SelectContent>
@@ -197,7 +199,15 @@ function FilterSelect({
   );
 }
 
-function ClientFilter({ value, onChange }: { value: string | undefined; onChange(value: string | undefined): void }) {
+function ClientFilter({
+  id,
+  value,
+  onChange,
+}: {
+  id: string;
+  value: string | undefined;
+  onChange(value: string | undefined): void;
+}) {
   const { clientsById } = useLookups();
   const clients = React.useMemo(
     () => [...clientsById.values()].sort((a, b) => a.name.localeCompare(b.name)),
@@ -213,7 +223,7 @@ function ClientFilter({ value, onChange }: { value: string | undefined; onChange
       value={selected}
       onValueChange={(client: Client | null) => onChange(client?.id)}
     >
-      <ComboboxInput className="w-full" placeholder="Svi klijenti" showClear={!!selected} />
+      <ComboboxInput className="w-full" id={id} placeholder="Svi klijenti" showClear={!!selected} />
       <ComboboxContent>
         <ComboboxEmpty>Nema tog klijenta.</ComboboxEmpty>
         <ComboboxList>
@@ -236,6 +246,9 @@ function MoreFiltersPopover() {
     MORE_FILTER_KEYS.filter((key) => !!filters[key]).map((key) => (key.startsWith('unloading') ? 'due' : key))
   ).size;
 
+  // Labels name their controls (screen readers, getByLabel in the E2E tests).
+  const id = React.useId();
+
   return (
     <Popover>
       <PopoverTrigger render={<Button className={filterTriggerClass(activeCount > 0)} variant="outline" />}>
@@ -246,15 +259,23 @@ function MoreFiltersPopover() {
           </Badge>
         )}
       </PopoverTrigger>
-      <PopoverContent align="start" className="w-[min(36rem,calc(100vw-2rem))] gap-4 p-4">
+      {/* Capped to the space on screen and scrollable: on a phone the fields are taller than the viewport. */}
+      <PopoverContent
+        align="start"
+        className="max-h-(--available-height) w-[min(36rem,calc(100vw-2rem))] gap-4 overflow-y-auto p-4"
+      >
         <PopoverHeader>
           <PopoverTitle>Više filtera</PopoverTitle>
           <PopoverDescription>Primjenjuju se odmah.</PopoverDescription>
         </PopoverHeader>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field className="sm:col-span-2">
-            <FieldLabel>Klijent</FieldLabel>
-            <ClientFilter value={filters.clientId} onChange={(clientId) => setFilters({ clientId })} />
+            <FieldLabel htmlFor={`${id}-client`}>Klijent</FieldLabel>
+            <ClientFilter
+              id={`${id}-client`}
+              value={filters.clientId}
+              onChange={(clientId) => setFilters({ clientId })}
+            />
           </Field>
           <FilterSelect
             label="Disponent"
@@ -281,29 +302,33 @@ function MoreFiltersPopover() {
             onChange={(isAgency) => setFilters({ isAgency })}
           />
           <Field>
-            <FieldLabel>Spremno za utovar · od</FieldLabel>
+            <FieldLabel htmlFor={`${id}-loadingReadyDateFrom`}>Spremno za utovar · od</FieldLabel>
             <DatePicker
+              id={`${id}-loadingReadyDateFrom`}
               value={toDate(filters.loadingReadyDateFrom)}
               onChange={(date) => setFilters({ loadingReadyDateFrom: toStored(date) })}
             />
           </Field>
           <Field>
-            <FieldLabel>Spremno za utovar · do</FieldLabel>
+            <FieldLabel htmlFor={`${id}-loadingReadyDateTo`}>Spremno za utovar · do</FieldLabel>
             <DatePicker
+              id={`${id}-loadingReadyDateTo`}
               value={toDate(filters.loadingReadyDateTo)}
               onChange={(date) => setFilters({ loadingReadyDateTo: toStored(date) })}
             />
           </Field>
           <Field>
-            <FieldLabel>Rok istovara · od</FieldLabel>
+            <FieldLabel htmlFor={`${id}-unloadingDueDateFrom`}>Rok istovara · od</FieldLabel>
             <DatePicker
+              id={`${id}-unloadingDueDateFrom`}
               value={toDate(filters.unloadingDueDateFrom)}
               onChange={(date) => setFilters({ unloadingDueDateFrom: toStored(date) })}
             />
           </Field>
           <Field>
-            <FieldLabel>Rok istovara · do</FieldLabel>
+            <FieldLabel htmlFor={`${id}-unloadingDueDateTo`}>Rok istovara · do</FieldLabel>
             <DatePicker
+              id={`${id}-unloadingDueDateTo`}
               value={toDate(filters.unloadingDueDateTo)}
               onChange={(date) => setFilters({ unloadingDueDateTo: toStored(date) })}
             />
