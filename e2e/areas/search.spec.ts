@@ -9,12 +9,17 @@ import { isPhone } from '../support/ui';
 /** Opens ⌘K: the shortcut (Ctrl K, ⌘K on a Mac) on desktop, the top bar field on a phone. */
 async function openSearch(page: Page, testInfo: TestInfo) {
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  const input = page.getByPlaceholder('Pretraži naloge, flotu, zaposlenike, klijente i podvozare…');
   if (isPhone(testInfo)) {
     await page.getByRole('button', { name: /^Pretraži…/ }).click();
   } else {
-    await page.keyboard.press('ControlOrMeta+k');
+    // The shortcut listener is attached in an effect after the page renders, so on a slow machine (CI) the first press
+    // can come before it exists. Press again until the dialog opens.
+    await expect(async () => {
+      await page.keyboard.press('ControlOrMeta+k');
+      await expect(input).toBeVisible({ timeout: 1_000 });
+    }).toPass({ timeout: 10_000 });
   }
-  const input = page.getByPlaceholder('Pretraži naloge, flotu, zaposlenike, klijente i podvozare…');
   await expect(input).toBeVisible();
   return input;
 }

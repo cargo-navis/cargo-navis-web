@@ -73,4 +73,6 @@ jobs:
           path: |
             e2e/.report
             e2e/.results
+          # Both folders start with a dot; upload-artifact skips hidden paths unless told otherwise.
+          include-hidden-files: true
           retention-days: 14
