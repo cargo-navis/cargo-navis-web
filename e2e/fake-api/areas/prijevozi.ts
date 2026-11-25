@@ -2,9 +2,9 @@ import type { VehicleStop, VehicleStopCargo, VehicleStopGroup } from '@/lib/api/
 
 import { at, day, serverNow } from '../../support/time';
 import type { Db } from '../db';
-import { fail, noContent, notFound, ok, paginated, route } from '../http';
+import { fail, formField, noContent, notFound, ok, paginated, route } from '../http';
 import { newId, uuid } from '../ids';
-import { KORISNIK_ID } from './korisnik';
+import { KORISNIK_ID, sessionUserId } from './korisnik';
 import { type StoredShipment, TERET } from './nalozi';
 import { POSTAL_CODES } from './ostalo';
 import { VOZILO } from './vozila';
@@ -46,7 +46,7 @@ function stop(fields: Partial<StoredStop> & Pick<StoredStop, 'id' | 'vehicleId'>
   };
 }
 
-const address = (streetName: string, code: string) => {
+export const stopAddress = (streetName: string, code: string) => {
   const found = POSTAL_CODES.find((entry) => entry.postalCode === code)!;
   return {
     streetName,
@@ -64,7 +64,7 @@ export function seedPrijevozi() {
       vehicleId: VOZILO.tegljac1,
       driverId: VOZAC.ivan,
       trailerId: VOZILO.prikolica1,
-      address: address('Ante Starčevića 32', '48000'),
+      address: stopAddress('Ante Starčevića 32', '48000'),
       date: day(0),
       loadingCargoIds: [TERET.podravka],
     }),
@@ -74,7 +74,7 @@ export function seedPrijevozi() {
       previousStopId: STANICA.podravkaUtovar,
       driverId: VOZAC.ivan,
       trailerId: VOZILO.prikolica1,
-      address: address('Domovinskog rata 2', '21000'),
+      address: stopAddress('Domovinskog rata 2', '21000'),
       date: day(1),
       unloadingCargoIds: [TERET.podravka],
     }),
@@ -82,7 +82,7 @@ export function seedPrijevozi() {
       id: STANICA.krasUtovar,
       vehicleId: VOZILO.tegljac2,
       driverId: VOZAC.petra,
-      address: address('Ravnice 48', '10000'),
+      address: stopAddress('Ravnice 48', '10000'),
       date: day(-7),
       messageSentAt: at(-8, 16),
       completedAt: at(-7, 10),
@@ -94,7 +94,7 @@ export function seedPrijevozi() {
       vehicleId: VOZILO.tegljac2,
       previousStopId: STANICA.krasUtovar,
       driverId: VOZAC.petra,
-      address: address('Industriestraße 1', '80331'),
+      address: stopAddress('Industriestraße 1', '80331'),
       date: day(-6),
       messageSentAt: at(-8, 16),
       completedAt: at(-6, 15),
@@ -295,6 +295,32 @@ export const prijevoziRoutes = [
     db.prijevozi.stops.splice(db.prijevozi.stops.indexOf(found), 1);
     return noContent();
   }),
+  // Stop documents (CMR, photos): the driver portal and the dashboard both upload here. `filename` comes in the query.
+  route('POST', '/api/vehicle-stops/:id/files', (request, db) => {
+    const found = findStop(db, request.params.id);
+    if (!found) return notFound('Vehicle stop');
+    const name = request.query.get('filename') ?? formField(request, 'file') ?? 'dokument.pdf';
+    const document = {
+      id: newId(),
+      createdAt: serverNow(),
+      name,
+      mimeType: name.endsWith('.pdf') ? 'application/pdf' : 'image/jpeg',
+      status: 'UPLOADED',
+      publicUrl: null,
+      uploadedBy: sessionUserId(request.headers) ?? null,
+    };
+    found.documents = [...found.documents, document];
+    return ok(document, 201);
+  }),
+  route('GET', '/api/vehicle-stops/:id/files/:documentId', ({ params }) =>
+    ok(`http://localhost/e2e-files/vehicle-stops/${params.id}/${params.documentId}`)
+  ),
+  route('DELETE', '/api/vehicle-stops/:id/files/:documentId', ({ params }, db) => {
+    const found = findStop(db, params.id);
+    if (!found) return notFound('Vehicle stop');
+    found.documents = found.documents.filter((document) => document.id !== params.documentId);
+    return noContent();
+  }),
   route('POST', '/api/vehicle-stops/:id/notify-driver', ({ params }, db) => {
     const found = findStop(db, params.id);
     if (!found) return notFound('Vehicle stop');
@@ -326,3 +352,21 @@ export const prijevoziRoutes = [
     return ok(stops.map((item) => toStop(db, item)));
   }),
 ];
+
+/**
+ * Inserts a stop into a vehicle's route right after `afterId` (null = first) and relinks the stop that followed it.
+ * For tests that need a particular route shape (same-day stops, undated stops).
+ */
+export function insertStop(
+  db: Db,
+  fields: Partial<StoredStop> & Pick<StoredStop, 'id' | 'vehicleId'>,
+  afterId: string | null
+): StoredStop {
+  const created = stop({ ...fields, previousStopId: afterId });
+  const next = db.prijevozi.stops.find(
+    (item) => item.vehicleId === fields.vehicleId && item.previousStopId === afterId
+  );
+  if (next) next.previousStopId = created.id;
+  db.prijevozi.stops.push(created);
+  return created;
+}

@@ -118,3 +118,38 @@ export const partneriRoutes = [
   ...crud<Client>('/api/clients', (db) => db.partneri.clients, 'Client'),
   ...crud<Contractor>('/api/transport-contractors', (db) => db.partneri.contractors, 'Contractor'),
 ];
+
+/**
+ * The fake VIES register (GET /api/vies/lookup): a Croatian company with full data, and a German one whose member
+ * state confirms the number but withholds the details (like the real VIES). Anything else is not found.
+ */
+export const VIES = {
+  ledo: { countryCode: 'HR', number: '01746086877', name: 'Ledo plus d.o.o.', street: 'Čavićeva 1a', postal: '10000' },
+  german: { countryCode: 'DE', number: '811569869' },
+};
+
+export const viesRoutes = [
+  route('GET', '/api/vies/lookup', ({ query }) => {
+    const countryCode = query.get('countryCode');
+    const number = query.get('number');
+    if (countryCode === VIES.ledo.countryCode && number === VIES.ledo.number) {
+      const code = postalCode(VIES.ledo.postal);
+      return ok({
+        taxId: `${countryCode}${number}`,
+        name: VIES.ledo.name,
+        address: {
+          countryCode: code.countryCode,
+          placeName: code.placeName,
+          postalCode: code.postalCode,
+          postalCodeId: code.id,
+          raw: `${VIES.ledo.street}, ${code.postalCode} ${code.placeName}`,
+          streetName: VIES.ledo.street,
+        },
+      });
+    }
+    if (countryCode === VIES.german.countryCode && number === VIES.german.number) {
+      return ok({ taxId: `${countryCode}${number}`, name: null, address: null });
+    }
+    return notFound('VIES company');
+  }),
+];

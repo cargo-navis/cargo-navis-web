@@ -150,7 +150,8 @@ export function PartnerDetail({
 
       {money}
 
-      <div className="grid items-start gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
+      {/* minmax(0,1fr) below xl too: an implicit column grows to its widest row (the Nalozi panel) and overflows phones. */}
+      <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
         <div className="flex min-w-0 flex-col gap-6">
           <Panel bodyClassName="py-1.5 divide-y" title="Podaci">
             <Fact label="Porezni broj">
@@ -236,7 +237,7 @@ export function PartnerDetailSkeleton() {
         </div>
       </div>
       <Skeleton className="h-20 w-full rounded-xl" />
-      <div className="grid items-start gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
+      <div className="grid grid-cols-[minmax(0,1fr)] items-start gap-6 xl:grid-cols-[380px_minmax(0,1fr)]">
         <Skeleton className="h-72 rounded-xl" />
         <Skeleton className="h-72 rounded-xl" />
       </div>

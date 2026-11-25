@@ -9,10 +9,6 @@ import { AUTH_STATE } from './e2e/support/paths';
  */
 const isCI = !!process.env.CI;
 
-// Sandboxed shells (Claude Code's macOS sandbox) block Chromium's helper processes; one process still works there.
-// Opt-in only: real runs keep Chromium's normal process model.
-const launchOptions = process.env.E2E_SINGLE_PROCESS ? { args: ['--single-process', '--no-zygote'] } : {};
-
 export default defineConfig({
   testDir: './e2e',
   outputDir: './e2e/.results',
@@ -30,7 +26,6 @@ export default defineConfig({
     // The login tip, toasts and dialogs: no motion to wait for. The clock and Math.random are set per test
     // (e2e/support/test.ts).
     reducedMotion: 'reduce',
-    launchOptions,
     // A service worker's requests would skip page.route (and the push worker isn't under test).
     serviceWorkers: 'block',
     trace: 'retain-on-failure',
@@ -42,6 +37,8 @@ export default defineConfig({
     {
       name: 'desktop',
       testMatch: /\.spec\.ts/,
+      // The driver portal is a phone app (e2e/areas/driver.spec.ts runs on the phone project only).
+      testIgnore: /driver\.spec\.ts/,
       dependencies: ['setup'],
       use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 900 }, storageState: AUTH_STATE },
     },

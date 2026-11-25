@@ -111,6 +111,16 @@ export class FakeApi {
     );
   }
 
+  /**
+   * The normal answer to a request, for overrides that change only some requests:
+   * `fakeApi.on('GET', '/api/shipments', (request, db) => (cond ? fail(500) : fakeApi.normal(request, db)))`.
+   */
+  normal(request: FakeRequest, db: Db): Reply | Promise<Reply> {
+    const handler = this.normalHandler(request);
+    if (!handler) throw new Error(`E2E fake API: no handler for ${request.method} ${request.path}`);
+    return handler(request, db);
+  }
+
   private normalHandler(request: FakeRequest): Handler | undefined {
     for (const { def, matches } of this.routes) {
       if (def.method !== request.method) continue;
@@ -161,7 +171,7 @@ export class FakeApi {
       .fulfill({
         status: reply.status,
         headers: { 'content-type': 'application/json', ...reply.headers },
-        body: reply.body === undefined ? '' : JSON.stringify(reply.body),
+        body: reply.raw ?? (reply.body === undefined ? '' : JSON.stringify(reply.body)),
       })
       // The page may have navigated away (or the test ended) while a delayed reply was waiting.
       .catch(() => undefined);
@@ -187,6 +197,7 @@ function toFakeRequest(request: Request): FakeRequest {
     query: url.searchParams,
     body,
     isMultipart,
+    rawBody: request.postDataBuffer(),
     headers,
   };
 }
