@@ -84,12 +84,14 @@ browser ──/api/*───▶ Next.js (src/middleware.ts) ──▶ BACKEND_P
 ```bash
 npm test               # Vitest: our pure logic (rules, formatting, mapping), services, middleware
 npm run test:coverage  # the same, with coverage of our logic (report in coverage/index.html)
+npm run test:components # our own React components in real Chromium (Vitest browser mode), *.browser.test.tsx
 npm run lint
 npm run typecheck
 npm run test:e2e       # Playwright: production build, every area on desktop and phone, fake API (e2e/README.md)
 ```
 
 - Unit tests sit next to the code as `<module>.test.ts` and test our own functions only, never the shadcn / Base UI components in `src/components/ui`.
+- Component tests (`<Component>.browser.test.tsx`) cover our own components whose logic lives in the component (comboboxes, date picker, password checklist, discard guard, the cargo card), found by role and label like a user would. They need Chromium: `npx playwright install chromium` once. In `toHaveTextContent` use exact strings; a RegExp argument doesn't match there.
 - Coverage counts our plain `.ts` modules in `src/lib`, `src/pages-components` and `src/components` (not React components, types or static data). CI fails when it drops below the floor in `vitest.config.mts`.
 - **Every bug fix adds a test** that fails without the fix: a unit test when the bug is in a function, an E2E test when it's in a page or flow.
 - Icons only through `Icon` from `@/ui`: ESLint rejects direct `@tabler/icons-react` imports.

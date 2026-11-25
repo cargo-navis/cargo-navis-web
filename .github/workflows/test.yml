@@ -77,6 +77,10 @@ jobs:
         if: steps.browsers.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
 
+      # Our React components in real Chromium (Vitest browser mode); here because this job has the browser.
+      - name: Component tests
+        run: npm run test:components
+
       - name: Cache Next build
         uses: actions/cache@v4
         with:
