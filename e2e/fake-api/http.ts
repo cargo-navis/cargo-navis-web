@@ -13,12 +13,33 @@ export interface FakeRequest {
   /** Parsed JSON body; `undefined` for no body or multipart (see `isMultipart`). */
   body: any;
   isMultipart: boolean;
+  /** The raw body (uploads); see `formField`. */
+  rawBody: Buffer | null;
   headers: Record<string, string>;
+}
+
+/**
+ * A field of a multipart (FormData) body: a text field's value, or for a file field its file name. Good enough for the
+ * app's uploads (`file` + `fileName`); not a general parser.
+ */
+export function formField(request: FakeRequest, name: string): string | undefined {
+  if (!request.rawBody) return undefined;
+  const text = request.rawBody.toString('latin1');
+  const part = new RegExp(`name="${name}"(?:; filename="([^"]*)")?\\r\\n(?:[^\\r\\n]+\\r\\n)*\\r\\n([^\\r]*)`).exec(
+    text
+  );
+  if (!part) return undefined;
+  const value = part[1] ?? part[2];
+  // Field values are UTF-8 („Teretni list.pdf”); latin1 kept the bytes intact.
+  return Buffer.from(value, 'latin1').toString('utf8');
 }
 
 export interface Reply {
   status: number;
+  /** JSON body (serialised for you). */
   body?: unknown;
+  /** A non-JSON body (a PDF, an image); set `content-type` in `headers`. Wins over `body`. */
+  raw?: Buffer;
   headers?: Record<string, string>;
 }
 
@@ -42,6 +63,13 @@ export const noContent = (): Reply => ({ status: 204 });
 export const fail = (status: number, message = 'E2E fake error', errorCode?: string): Reply => ({
   status,
   body: { status: 'error', errorCode, error: message, message: [message] },
+});
+
+/** A minimal valid PDF, for downloads (generate-pdf, document links). */
+export const pdf = (): Reply => ({
+  status: 200,
+  raw: Buffer.from('%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n'),
+  headers: { 'content-type': 'application/pdf' },
 });
 
 export const notFound = (what: string) => fail(404, `${what} not found`, 'NOT_FOUND');

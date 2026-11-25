@@ -1,4 +1,11 @@
-import type { ShipmentAnalytics, ShipmentPriceAnalytics } from '@/lib/api/analytics.d';
+import type {
+  ClientAnalyticsItem,
+  DriverAnalyticsItem,
+  ShipmentAnalytics,
+  ShipmentPriceAnalytics,
+  TransportContractorAnalyticsItem,
+  VehicleAnalyticsItem,
+} from '@/lib/api/analytics.d';
 
 import type { Db } from '../db';
 import { ok, route } from '../http';
@@ -6,8 +13,8 @@ import type { StoredShipment } from './nalozi';
 
 /**
  * Analitika, computed from this test's nalozi (by createdAt), so the numbers move with the data. Periods are days
- * (`YYYY-MM-DD`), months (`YYYY-MM`) or years (`YYYY`); week periods start on Monday. Phase 1 only needs the day counts
- * of Početna's „Nalozi · zadnjih 7 dana” tile.
+ * (`YYYY-MM-DD`), months (`YYYY-MM`) or years (`YYYY`); week periods start on Monday. Without `from` / `to` („Ukupno”)
+ * the range is the first to the last nalog. A nalog belongs to a driver or vehicle when one of its stops does.
  */
 type Granularity = ShipmentAnalytics['granularity'];
 
@@ -35,23 +42,60 @@ function periodsBetween(from: string, to: string, granularity: Granularity): str
   return periods;
 }
 
+/** The query's range, or the data's when it is open („Ukupno”). */
+function rangeOf(db: Db, query: URLSearchParams) {
+  const days = db.nalozi.map((item) => item.createdAt.slice(0, 10)).sort();
+  return {
+    from: query.get('from') ?? days[0] ?? '2026-01-01',
+    to: query.get('to') ?? days.at(-1) ?? '2026-01-01',
+  };
+}
+
+/** Stops of a nalog (by its cargo), for the driver / vehicle filters and tables. */
+function stopsOf(db: Db, shipment: StoredShipment) {
+  const cargoIds = new Set(shipment.cargo.map((item) => item.id));
+  return db.prijevozi.stops.filter((stop) =>
+    [...stop.loadingCargoIds, ...stop.unloadingCargoIds].some((id) => cargoIds.has(id))
+  );
+}
+
 function selected(db: Db, query: URLSearchParams): StoredShipment[] {
-  const from = query.get('from') ?? '0000-00-00';
-  const to = query.get('to') ?? '9999-99-99';
+  const { from, to } = rangeOf(db, query);
   const clientId = query.get('clientId');
+  const driverId = query.get('driverId');
+  const vehicleId = query.get('vehicleId');
   return db.nalozi.filter((item) => {
     const created = item.createdAt.slice(0, 10);
-    return created >= from && created <= to && (!clientId || item.clientId === clientId);
+    if (created < from || created > to) return false;
+    if (clientId && item.clientId !== clientId) return false;
+    if (driverId && !stopsOf(db, item).some((stop) => stop.driverId === driverId)) return false;
+    if (vehicleId && !stopsOf(db, item).some((stop) => stop.vehicleId === vehicleId)) return false;
+    return true;
   });
 }
 
 const average = (total: number, count: number) => (count ? total / count : 0);
+const sum = (list: StoredShipment[], pick: (item: StoredShipment) => number) =>
+  list.reduce((total, item) => total + pick(item), 0);
+
+/** Groups the selected nalozi by a key (several keys per nalog allowed) for the per-entity tables. */
+function groupBy(list: StoredShipment[], keys: (item: StoredShipment) => (string | null | undefined)[]) {
+  const groups = new Map<string, StoredShipment[]>();
+  for (const item of list) {
+    for (const key of new Set(keys(item))) {
+      if (!key) continue;
+      groups.set(key, [...(groups.get(key) ?? []), item]);
+    }
+  }
+  return [...groups.entries()];
+}
 
 export const analitikaRoutes = [
   route('GET', '/api/analytics/shipments/count', ({ query }, db) => {
     const granularity = (query.get('granularity') ?? 'day') as Granularity;
     const shipments = selected(db, query);
-    const periods = periodsBetween(query.get('from')!, query.get('to')!, granularity).map((period) => {
+    const { from, to } = rangeOf(db, query);
+    const periods = periodsBetween(from, to, granularity).map((period) => {
       const inPeriod = shipments.filter((item) => periodOf(item.createdAt, granularity) === period);
       return {
         period,
@@ -74,9 +118,8 @@ export const analitikaRoutes = [
   route('GET', '/api/analytics/shipments/price', ({ query }, db) => {
     const granularity = (query.get('granularity') ?? 'day') as Granularity;
     const shipments = selected(db, query);
-    const sum = (list: StoredShipment[], pick: (item: StoredShipment) => number) =>
-      list.reduce((total, item) => total + pick(item), 0);
-    const periods = periodsBetween(query.get('from')!, query.get('to')!, granularity).map((period) => {
+    const { from, to } = rangeOf(db, query);
+    const periods = periodsBetween(from, to, granularity).map((period) => {
       const inPeriod = shipments.filter((item) => periodOf(item.createdAt, granularity) === period);
       return {
         period,
@@ -116,5 +159,36 @@ export const analitikaRoutes = [
       periods,
     };
     return ok(body);
+  }),
+  route('GET', '/api/analytics/clients', ({ query }, db) => {
+    const items: ClientAnalyticsItem[] = groupBy(selected(db, query), (item) => [item.clientId]).map(
+      ([clientId, list]) => ({ clientId, shipmentCount: list.length, totalPrice: sum(list, (item) => item.price) })
+    );
+    return ok(items);
+  }),
+  route('GET', '/api/analytics/drivers', ({ query }, db) => {
+    const own = selected(db, query).filter((item) => !item.isAgency);
+    const items: DriverAnalyticsItem[] = groupBy(own, (item) => stopsOf(db, item).map((stop) => stop.driverId)).map(
+      ([driverId, list]) => ({ driverId, shipmentCount: list.length, totalPrice: sum(list, (item) => item.price) })
+    );
+    return ok(items);
+  }),
+  route('GET', '/api/analytics/vehicles', ({ query }, db) => {
+    const own = selected(db, query).filter((item) => !item.isAgency);
+    const items: VehicleAnalyticsItem[] = groupBy(own, (item) => stopsOf(db, item).map((stop) => stop.vehicleId)).map(
+      ([vehicleId, list]) => ({ vehicleId, shipmentCount: list.length, totalPrice: sum(list, (item) => item.price) })
+    );
+    return ok(items);
+  }),
+  route('GET', '/api/analytics/transport-contractors', ({ query }, db) => {
+    const agency = selected(db, query).filter((item) => item.isAgency);
+    const items: TransportContractorAnalyticsItem[] = groupBy(agency, (item) => [item.transportContractorId]).map(
+      ([contractorId, list]) => {
+        const totalRevenue = sum(list, (item) => item.price);
+        const totalCost = sum(list, (item) => item.contractorPrice ?? 0);
+        return { contractorId, shipmentCount: list.length, totalCost, totalRevenue, margin: totalRevenue - totalCost };
+      }
+    );
+    return ok(items);
   }),
 ];

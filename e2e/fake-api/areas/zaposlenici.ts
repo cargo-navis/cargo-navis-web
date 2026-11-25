@@ -76,4 +76,10 @@ export const zaposleniciRoutes = [
     return noContent();
   }),
   route('POST', '/api/employees/:id/resend-invite', () => noContent()),
+  // A new link token every time the invite dialog opens (the app shows <origin>/driver/<token>).
+  route('POST', '/api/employees/:id/driver-portal-token', ({ params }, db) =>
+    db.zaposlenici.some((entry) => entry.id === params.id)
+      ? ok({ token: `e2e-driver-link-${params.id.slice(-3)}` })
+      : notFound('Employee')
+  ),
 ];
