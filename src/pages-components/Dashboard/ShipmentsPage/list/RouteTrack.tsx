@@ -6,6 +6,7 @@
  * Agency nalozi (`isAgency`): nobody reports, the dispatcher marks each teret by hand (routeData agencyRouteState) — no
  * red „Kasni”, no blue truck. All istovareno = green ✓ as own; all utovareno = green ✓ at the utovar, grey line; a date
  * passed and not marked = amber ring („Rok prošao · označi status”, date chip amber); otherwise grey.
+ * With the Nalozi date filter on (`dateFilter`), the date chips in its range turn petrol: why the nalog is listed.
  */
 
 import * as React from 'react';
@@ -19,6 +20,7 @@ import { getCountryName } from '@/lib/utils/countries';
 import { formatDateShort } from '@/lib/utils/date';
 import { Icon, type IconType } from '@/ui';
 
+import { type DateFilter, isInDateFilter } from '../shared/dateFilter';
 import { STATUS_BAR, STATUS_BORDER, STATUS_TEXT, TOOLTIP_PILL } from '../shared/tones';
 import {
   agencyEndpointState,
@@ -49,6 +51,14 @@ interface RouteGroup {
 }
 
 type Side = 'loading' | 'unloading';
+
+/** The list's date filter, for the date chips it matched (set by RouteTrack, read by PlaceBlock). */
+const DateFilterContext = React.createContext<DateFilter | undefined>(undefined);
+
+function matchesDateFilter(point: Endpoint, side: Side, filter: DateFilter | undefined) {
+  if (!filter || (filter.type !== 'any' && filter.type !== side)) return false;
+  return point.cargos.some((cargo) => isInDateFilter(side === 'loading' ? cargo.readyDate : cargo.dueDate, filter));
+}
 
 function groupBy<T>(items: T[], key: (item: T) => string) {
   const map = new Map<string, T[]>();
@@ -229,6 +239,7 @@ function PlaceBlock({
   isAgency?: boolean;
 }) {
   const { place } = point;
+  const isMatch = matchesDateFilter(point, side, React.useContext(DateFilterContext));
   const isOverdue = !!isAgency && agencyEndpointState(point.cargos, side).state === 'overdue';
   const isLate =
     !isAgency &&
@@ -247,7 +258,9 @@ function PlaceBlock({
               ? 'bg-destructive/10 font-medium text-destructive'
               : isOverdue
                 ? 'bg-warning-soft font-medium text-warning'
-                : 'bg-muted text-muted-foreground'
+                : isMatch
+                  ? 'bg-primary font-medium text-primary-foreground'
+                  : 'bg-muted text-muted-foreground'
           )}
         >
           {point.date}
@@ -467,10 +480,12 @@ export function RouteTrack({
   cargos,
   vehicleStops,
   isAgency,
+  dateFilter,
 }: {
   cargos: Cargo[];
   vehicleStops?: VehicleStop[];
   isAgency?: boolean;
+  dateFilter?: DateFilter;
 }) {
   const groups = React.useMemo(
     () => buildGroups(cargos.map((cargo) => toTrackCargo(cargo, vehicleStops))),
@@ -480,83 +495,85 @@ export function RouteTrack({
 
   return (
     // Capped: the route column takes the table's spare width, and on wide screens utovar and istovar drifted far apart.
-    <div className="flex max-w-[44rem] flex-col gap-3">
-      {groups.map((group) => {
-        const rows = groupRows(group);
-        const count = rows.length;
+    <DateFilterContext.Provider value={dateFilter}>
+      <div className="flex max-w-[44rem] flex-col gap-3">
+        {groups.map((group) => {
+          const rows = groupRows(group);
+          const count = rows.length;
 
-        if (count === 1) {
+          if (count === 1) {
+            return (
+              <div
+                className="grid items-center gap-x-2"
+                key={group.key}
+                style={{ gridTemplateColumns: 'minmax(0,1fr) 4.75rem minmax(0,1fr)' }}
+              >
+                <Stacked isAgency={isAgency} point={rows[0].left} side="loading" />
+                <RowLine cargos={rows[0].cargos} isAgency={isAgency} />
+                <Stacked isAgency={isAgency} point={rows[0].right} side="unloading" />
+              </div>
+            );
+          }
+
+          const fanOut = group.left.length === 1;
+          const trunk = trunkColor(group, fanOut, isAgency);
+
           return (
             <div
-              className="grid items-center gap-x-2"
+              className="-my-1 grid items-center gap-x-0"
               key={group.key}
-              style={{ gridTemplateColumns: 'minmax(0,1fr) 4.75rem minmax(0,1fr)' }}
+              style={{
+                gridTemplateColumns: fanOut
+                  ? 'minmax(0,1fr) 0.75rem 4.75rem minmax(0,1fr)'
+                  : 'minmax(0,1fr) 4.75rem 0.75rem minmax(0,1fr)',
+              }}
             >
-              <Stacked isAgency={isAgency} point={rows[0].left} side="loading" />
-              <RowLine cargos={rows[0].cargos} isAgency={isAgency} />
-              <Stacked isAgency={isAgency} point={rows[0].right} side="unloading" />
+              {/* Shared side: place + trunk, spanning all rows (×N only for merged identical pairs). */}
+              <div
+                className={cn('min-w-0 py-1', fanOut ? 'pr-2' : 'pl-2')}
+                style={{ gridColumn: fanOut ? 1 : 4, gridRow: `1 / span ${count}` }}
+              >
+                <Stacked
+                  hideCount
+                  isAgency={isAgency}
+                  point={fanOut ? group.left[0] : group.right[0]}
+                  side={fanOut ? 'loading' : 'unloading'}
+                />
+              </div>
+              <div
+                className="flex h-full items-center self-stretch"
+                style={{ gridColumn: fanOut ? 2 : 3, gridRow: `1 / span ${count}` }}
+              >
+                <div className={cn('h-0.5 w-full', trunk.bg)} />
+              </div>
+
+              {rows.map((row, index) => (
+                <React.Fragment key={index}>
+                  <div
+                    className="relative flex h-full items-center self-stretch"
+                    style={{ gridColumn: fanOut ? 3 : 2, gridRow: index + 1 }}
+                  >
+                    <Elbow color={trunk} count={count} index={index} side={fanOut ? 'left' : 'right'} />
+                    <div className={cn('w-full', fanOut ? 'ml-3' : 'mr-3')}>
+                      <RowLine cargos={row.cargos} isAgency={isAgency} />
+                    </div>
+                  </div>
+                  <div
+                    className={cn('min-w-0 py-1', fanOut ? 'pl-2' : 'pr-2')}
+                    style={{ gridColumn: fanOut ? 4 : 1, gridRow: index + 1 }}
+                  >
+                    <Stacked
+                      isAgency={isAgency}
+                      point={fanOut ? row.right : row.left}
+                      side={fanOut ? 'unloading' : 'loading'}
+                    />
+                  </div>
+                </React.Fragment>
+              ))}
             </div>
           );
-        }
-
-        const fanOut = group.left.length === 1;
-        const trunk = trunkColor(group, fanOut, isAgency);
-
-        return (
-          <div
-            className="-my-1 grid items-center gap-x-0"
-            key={group.key}
-            style={{
-              gridTemplateColumns: fanOut
-                ? 'minmax(0,1fr) 0.75rem 4.75rem minmax(0,1fr)'
-                : 'minmax(0,1fr) 4.75rem 0.75rem minmax(0,1fr)',
-            }}
-          >
-            {/* Shared side: place + trunk, spanning all rows (×N only for merged identical pairs). */}
-            <div
-              className={cn('min-w-0 py-1', fanOut ? 'pr-2' : 'pl-2')}
-              style={{ gridColumn: fanOut ? 1 : 4, gridRow: `1 / span ${count}` }}
-            >
-              <Stacked
-                hideCount
-                isAgency={isAgency}
-                point={fanOut ? group.left[0] : group.right[0]}
-                side={fanOut ? 'loading' : 'unloading'}
-              />
-            </div>
-            <div
-              className="flex h-full items-center self-stretch"
-              style={{ gridColumn: fanOut ? 2 : 3, gridRow: `1 / span ${count}` }}
-            >
-              <div className={cn('h-0.5 w-full', trunk.bg)} />
-            </div>
-
-            {rows.map((row, index) => (
-              <React.Fragment key={index}>
-                <div
-                  className="relative flex h-full items-center self-stretch"
-                  style={{ gridColumn: fanOut ? 3 : 2, gridRow: index + 1 }}
-                >
-                  <Elbow color={trunk} count={count} index={index} side={fanOut ? 'left' : 'right'} />
-                  <div className={cn('w-full', fanOut ? 'ml-3' : 'mr-3')}>
-                    <RowLine cargos={row.cargos} isAgency={isAgency} />
-                  </div>
-                </div>
-                <div
-                  className={cn('min-w-0 py-1', fanOut ? 'pl-2' : 'pr-2')}
-                  style={{ gridColumn: fanOut ? 4 : 1, gridRow: index + 1 }}
-                >
-                  <Stacked
-                    isAgency={isAgency}
-                    point={fanOut ? row.right : row.left}
-                    side={fanOut ? 'unloading' : 'loading'}
-                  />
-                </div>
-              </React.Fragment>
-            ))}
-          </div>
-        );
-      })}
-    </div>
+        })}
+      </div>
+    </DateFilterContext.Provider>
   );
 }

@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 
 import { manyNalozi, NALOG } from '../fake-api/areas/nalozi';
 import { expect, test } from '../support/test';
+import { day } from '../support/time';
 import { expectToast, isPhone } from '../support/ui';
 
 /** The list row of a nalog, by its number. */
@@ -74,6 +75,40 @@ test.describe('Nalozi list', () => {
     await page.getByRole('button', { name: 'Očisti filtere' }).first().click();
     await expect(page.getByText('Nema aktivnih filtera.')).toBeVisible();
     await expect(row(page, '2026/0102')).toBeVisible();
+  });
+
+  test('date control: Utovar ili istovar, then only Istovar; old pairs from links', async ({ page, fakeApi }) => {
+    const lastQuery = () => fakeApi.calls('GET', '/api/shipments').at(-1)?.query;
+    await page.goto('/dashboard/shipments');
+
+    // „Sutra” = 17.6.: 0101 unloads, 0102 loads; by default both, by the date that matched (a tie: by order number).
+    await page.getByRole('button', { name: 'Svi datumi' }).click();
+    await page.getByRole('button', { name: 'Sutra', exact: true }).click();
+    await expect(page.getByText('Utovar ili istovar: 17.6.2026.')).toBeVisible();
+    await expect.poll(() => lastQuery()?.get('activityDateFrom')).toBe(day(1));
+    expect(lastQuery()?.get('activityDateTo')).toBe(day(1));
+    expect(lastQuery()?.get('sort')).toBe('activityDate,asc');
+    await expect(page.getByRole('combobox', { name: 'Poredaj' })).toHaveText('Po datumu');
+    await expect.poll(() => orderNumbers(page)).toEqual(['2026/0101', '2026/0102']);
+
+    // The type keeps the range: only istovari tomorrow.
+    await page.getByRole('button', { name: /Sutra · 17\.6\.2026\./ }).click();
+    await page
+      .getByRole('group', { name: 'Vrsta datuma' })
+      .getByRole('button', { name: 'Istovar', exact: true })
+      .click();
+    await page.keyboard.press('Escape');
+    await expect(page.getByText('Istovar: 17.6.2026.')).toBeVisible();
+    await expect.poll(() => lastQuery()?.get('unloadingDueDateFrom')).toBe(day(1));
+    expect(lastQuery()?.get('activityDateFrom')).toBeNull();
+    expect(lastQuery()?.get('sort')).toBe('unloadingDueDate,asc');
+    await expect.poll(() => orderNumbers(page)).toEqual(['2026/0101']);
+
+    // An old link with a utovar and an istovar range keeps the utovar one.
+    await page.goto(`/dashboard/shipments?loadingReadyDateFrom=${day(1)}&unloadingDueDateFrom=${day(4)}`);
+    await expect(page.getByText('Utovar: 17.6.2026. – …')).toBeVisible();
+    await expect.poll(() => lastQuery()?.get('unloadingDueDateFrom')).toBeNull();
+    expect(lastQuery()?.get('loadingReadyDateFrom')).toBe(day(1));
   });
 
   test('a filter in the URL is applied, then dropped from the URL', async ({ page }) => {

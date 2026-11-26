@@ -43,23 +43,18 @@ export function useLookups() {
 export type Lookups = ReturnType<typeof useLookups>;
 
 /**
- * Today's utovari and istovari. A nalog has no single date (each teret has its own loading / unloading date) and the
- * backend ANDs the two date-range pairs, so „loading OR unloading today” = two queries merged by id.
+ * Today's utovari and istovari: every nalog with a teret loading or unloading today (`activityDate`, the backend's
+ * utovar-OR-istovar filter; one teret may load and another unload, buildTodayStops picks the stops of today).
  */
 export function useTodayStops(today: Date) {
   const day = dayjs(today).format(ISO);
-  const loading = useShipmentsData({ params: { loadingReadyDateFrom: day, loadingReadyDateTo: day, size: 100 } });
-  const unloading = useShipmentsData({ params: { unloadingDueDateFrom: day, unloadingDueDateTo: day, size: 100 } });
-  const stops = React.useMemo(
-    () => (loading.data && unloading.data ? buildTodayStops([...loading.data, ...unloading.data], today) : undefined),
-    [loading.data, unloading.data, today]
-  );
+  const query = useShipmentsData({ params: { activityDateFrom: day, activityDateTo: day, size: 100 } });
+  const stops = React.useMemo(() => (query.data ? buildTodayStops(query.data, today) : undefined), [query.data, today]);
   return {
     stops,
-    isError: (loading.isError && !loading.data) || (unloading.isError && !unloading.data),
+    isError: query.isError && !query.data,
     refetch: () => {
-      void loading.refetch();
-      void unloading.refetch();
+      void query.refetch();
     },
   };
 }

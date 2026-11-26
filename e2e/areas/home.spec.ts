@@ -25,7 +25,7 @@ test.describe('Početna', () => {
   test('„Danas utovara” leads to today’s utovari', async ({ page }) => {
     await page.goto('/dashboard');
     await page.getByRole('link', { name: /Danas utovara/ }).click();
-    await expect(page.getByText('Spremno: 16.6.2026.')).toBeVisible();
+    await expect(page.getByText('Utovar: 16.6.2026.')).toBeVisible();
     await expect(page.getByRole('row').filter({ hasText: '2026/0101' })).toBeVisible();
     await expect(page.getByRole('row').filter({ hasText: '2026/0102' })).toBeHidden();
   });

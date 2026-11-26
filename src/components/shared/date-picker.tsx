@@ -201,7 +201,7 @@ export function YearPicker({
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-// Date range with presets (Analitika; Nalozi „Spremno za utovar” with `future`)
+// Date range with presets (Analitika; Nalozi date filter with `future` and the type in `header`)
 // ---------------------------------------------------------------------------------------------------------------------
 
 export type { DateRange };
@@ -264,19 +264,26 @@ function sameDay(a: Date | undefined, b: Date | undefined) {
 /**
  * Presets on the left, two months on the right. A range is picked with two clicks (start, end; the same day twice =
  * that day) and only then reported, so the page doesn't refetch on the first click; closing after one click keeps the
- * previous range. `future` allows days after today (Nalozi), otherwise they're disabled (Analitika).
+ * previous range. `future` allows days after today (Nalozi), otherwise they're disabled (Analitika). `header` sits
+ * above both (Nalozi: the date type), `labelPrefix` goes before the trigger text while a range is set.
  */
 export function DateRangePicker({
   value,
   onChange,
   presets = DATE_RANGE_PRESETS,
   future = false,
+  header,
+  labelPrefix,
+  onOpenChange,
   className,
 }: {
   value: DateRange | undefined;
   onChange(value: DateRange | undefined): void;
   presets?: DateRangePreset[];
   future?: boolean;
+  header?: React.ReactNode;
+  labelPrefix?: string;
+  onOpenChange?(open: boolean): void;
   className?: string;
 }) {
   const today = React.useMemo(() => new Date(), []);
@@ -287,6 +294,7 @@ export function DateRangePicker({
   function handleOpenChange(next: boolean) {
     setOpen(next);
     if (!next) setStart(null);
+    onOpenChange?.(next);
   }
 
   function handleDayClick(day: Date) {
@@ -310,7 +318,9 @@ export function DateRangePicker({
     : sameDay(value.from, value.to)
       ? formatDate(value.from)
       : `${formatDate(value.from)} – ${value.to ? formatDate(value.to) : '…'}`;
-  const label = !dates ? ALL_DATES_LABEL : activePreset ? `${activePreset.label} · ${dates}` : dates;
+  const label = !dates
+    ? ALL_DATES_LABEL
+    : `${labelPrefix ?? ''}${activePreset ? `${activePreset.label} · ${dates}` : dates}`;
   const anchor = value?.from ? (future ? value.from : addMonths(value.to ?? value.from, -1)) : undefined;
 
   return (
@@ -318,7 +328,8 @@ export function DateRangePicker({
       <DateTrigger className={cn('w-auto min-w-64', className)} isEmpty={false}>
         {label}
       </DateTrigger>
-      <PopoverContent align="start" className="w-auto p-0">
+      <PopoverContent align="start" className="w-auto gap-0 p-0">
+        {header && <div className="border-b p-3">{header}</div>}
         <div className="flex flex-col sm:flex-row">
           {/* 40px rows (like fields and buttons) so the list roughly spans the calendar's height. */}
           <div className="flex flex-col gap-1 border-b p-3 sm:min-w-48 sm:border-r sm:border-b-0">

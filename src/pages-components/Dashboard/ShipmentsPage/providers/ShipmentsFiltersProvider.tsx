@@ -8,8 +8,12 @@ import {
   ShipmentsFiltersStorageProvider,
   useShipmentsFiltersLocalStorage,
 } from '../hooks/useShipmentsFiltersLocalStorage';
+import { withOneDateFilter } from '../shared/dateFilter';
 
-/** The list filters (today's 11 fields), remembered in localStorage. Dates are `YYYY-MM-DD`. */
+/**
+ * The list filters, remembered in localStorage. Dates are `YYYY-MM-DD`; of the three date pairs only one is set at a
+ * time (shared/dateFilter: the toolbar's date control and its type).
+ */
 export type ShipmentFilters = Omit<ShipmentsFiltersStorage, 'sort' | 'pageSize'>;
 
 export const FILTER_KEYS = [
@@ -20,6 +24,8 @@ export const FILTER_KEYS = [
   'invoiceStatus',
   'isInvoiceOverdue',
   'isAgency',
+  'activityDateFrom',
+  'activityDateTo',
   'loadingReadyDateFrom',
   'loadingReadyDateTo',
   'unloadingDueDateFrom',
@@ -71,7 +77,8 @@ const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode
   }, [router.isReady, isReady, urlFilterKey]);
 
   const filters = useMemo<ShipmentFilters>(
-    () => (isReady ? Object.fromEntries(FILTER_KEYS.map((key) => [key, storage[key] || undefined])) : {}),
+    () =>
+      isReady ? withOneDateFilter(Object.fromEntries(FILTER_KEYS.map((key) => [key, storage[key] || undefined]))) : {},
     [storage, isReady]
   );
 

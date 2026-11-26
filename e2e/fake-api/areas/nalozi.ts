@@ -219,6 +219,17 @@ function matches(shipment: Shipment, query: URLSearchParams): boolean {
   if (get('isActive') === 'true' && shipment.cargo.every((item) => item.loadStatus === 'unloaded')) return false;
   if (get('driverId') && !shipment.vehicleStops?.some((stop) => stop.driverId === get('driverId'))) return false;
   if (get('dispatcherId') && shipment.createdById !== get('dispatcherId')) return false;
+  // „Utovar ili istovar”: a teret's ready OR due date in the range.
+  if (
+    (get('activityDateFrom') || get('activityDateTo')) &&
+    !shipment.cargo.some(
+      (item) =>
+        inRange(item.loadingReadyDate, get('activityDateFrom'), get('activityDateTo')) ||
+        inRange(item.unloadingDueDate, get('activityDateFrom'), get('activityDateTo'))
+    )
+  ) {
+    return false;
+  }
   if (
     (get('loadingReadyDateFrom') || get('loadingReadyDateTo')) &&
     !shipment.cargo.some((item) =>
@@ -238,8 +249,19 @@ function matches(shipment: Shipment, query: URLSearchParams): boolean {
   return true;
 }
 
-/** The value a sort field reads: the nalog's own field, or for the cargo dates the earliest one (undated last). */
-function sortValue(shipment: Shipment, field: string): string | number {
+/**
+ * The value a sort field reads: the nalog's own field, or for the cargo dates the earliest one (undated last);
+ * `activityDate` = the earliest ready or due date inside the activityDate range.
+ */
+function sortValue(shipment: Shipment, field: string, query: URLSearchParams): string | number {
+  if (field === 'activityDate') {
+    const [from, to] = [query.get('activityDateFrom'), query.get('activityDateTo')];
+    const dates = shipment.cargo
+      .flatMap((item) => [item.loadingReadyDate, item.unloadingDueDate])
+      .filter((value): value is string => inRange(value, from, to))
+      .map((value) => value.slice(0, 10));
+    return dates.length ? dates.sort()[0] : '';
+  }
   if (field === 'loadingReadyDate' || field === 'unloadingDueDate') {
     const dates = shipment.cargo.map((item) => item[field]).filter((value): value is string => !!value);
     return dates.length ? dates.sort()[0] : '';
@@ -247,15 +269,15 @@ function sortValue(shipment: Shipment, field: string): string | number {
   return (shipment as any)[field] ?? '';
 }
 
-/** `sort=field,asc|desc` (Spring style); default newest first. Ties keep the newest first. */
-function sortShipments(list: Shipment[], sort: string | null): Shipment[] {
-  const [field, direction] = (sort ?? 'createdAt,desc').split(',');
+/** `sort=field,asc|desc` (Spring style); default newest first. Ties by order number, lowest first (as the backend). */
+function sortShipments(list: Shipment[], query: URLSearchParams): Shipment[] {
+  const [field, direction] = (query.get('sort') ?? 'createdAt,desc').split(',');
   const sign = direction === 'asc' ? 1 : -1;
   return [...list].sort((a, b) => {
-    const left = sortValue(a, field);
-    const right = sortValue(b, field);
+    const left = sortValue(a, field, query);
+    const right = sortValue(b, field, query);
     if (left !== right) return left < right ? -sign : sign;
-    return a.createdAt < b.createdAt ? 1 : a.createdAt > b.createdAt ? -1 : 0;
+    return a.orderNumber < b.orderNumber ? -1 : a.orderNumber > b.orderNumber ? 1 : 0;
   });
 }
 
@@ -334,7 +356,7 @@ const documentUrl = (path: string) => ok(`http://localhost/e2e-files${path}`);
 export const naloziRoutes = [
   route('GET', '/api/shipments', ({ query }, db) => {
     const list = db.nalozi.map((stored) => toShipment(db, stored)).filter((item) => matches(item, query));
-    return paginated(sortShipments(list, query.get('sort')), query);
+    return paginated(sortShipments(list, query), query);
   }),
   route('GET', '/api/shipments/:id/generate-pdf', ({ params }, db) =>
     findShipment(db, params.id) ? pdf() : notFound('Shipment')
