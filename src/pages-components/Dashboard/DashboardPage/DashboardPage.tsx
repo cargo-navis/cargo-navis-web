@@ -13,7 +13,7 @@ import { greeting } from './format';
 import { useCounts, useLookups, useTodayStops, useWarnings } from './useHomeData';
 
 /**
- * Početna (DECISIONS §5, lab /home): 5 shortcut tiles (Danas utovara, Danas istovara, Nefakturirano, Dospjelo
+ * Početna (DECISIONS §5, lab /home): 5 shortcut tiles (Današnji utovari, Današnji istovari, Nefakturirano, Dospjelo
  * neplaćeno, Nalozi · zadnjih 7 dana with a sparkline), the main „Danas” list, and on the right „Treba pažnju” +
  * „Aktivnost”. Every block uses a call that exists today.
  */
