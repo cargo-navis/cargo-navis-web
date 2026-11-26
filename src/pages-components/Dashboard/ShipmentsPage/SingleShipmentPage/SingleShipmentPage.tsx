@@ -85,6 +85,8 @@ function MainContent({ shipment }: { shipment: Shipment }) {
   const { tab, setTab } = useDetailTab();
   const openAssign = () => void push(assignVehicleHref(shipment.id));
   const documentsCount = documentsOf(shipment).length;
+  // Interna + Vanjska: how many are written (0–2).
+  const notesCount = [shipment.internalNote, shipment.externalNote].filter((note) => note?.trim()).length;
 
   return (
     <div className="flex flex-col gap-6">
@@ -101,7 +103,14 @@ function MainContent({ shipment }: { shipment: Shipment }) {
               </Badge>
             )}
           </TabsTrigger>
-          <TabsTrigger value="napomene">Napomene</TabsTrigger>
+          <TabsTrigger value="napomene">
+            Napomene
+            {notesCount > 0 && (
+              <Badge className="tabular-nums" size="sm">
+                {notesCount}
+              </Badge>
+            )}
+          </TabsTrigger>
         </TabsList>
         <TabsContent className="pt-5" value="pregled">
           {/* Side column 30% (at least 360px), so the Ruta doesn't stretch across wide screens (2026-11-23). */}
