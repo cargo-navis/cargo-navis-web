@@ -33,7 +33,7 @@ describe('URL vocabulary', () => {
       ['12m', 'Zadnjih 12 mjeseci'],
       ['2y', 'Zadnje 2 godine'],
       ['5y', 'Zadnjih 5 godina'],
-      ['sve', 'Ukupno'],
+      ['sve', 'Svi datumi'],
     ]);
   });
 });
@@ -147,7 +147,7 @@ describe('selectionToDateRange', () => {
     });
   });
 
-  it('gives the preset range ending today, and nothing for „Ukupno”', () => {
+  it('gives the preset range ending today, and nothing for „Svi datumi”', () => {
     expect(selectionToDateRange({ preset: 'ytd' }, TODAY)).toEqual({ from: new Date(2026, 0, 1), to: TODAY });
     expect(selectionToDateRange({ preset: 'sve' }, TODAY)).toBeUndefined();
   });
@@ -178,7 +178,7 @@ describe('dateRangeToSelection', () => {
     });
   });
 
-  it('is „Ukupno” without a start', () => {
+  it('is „Svi datumi” without a start', () => {
     expect(dateRangeToSelection({ from: undefined, to: new Date(2026, 9, 1) }, TODAY)).toEqual({ preset: 'sve' });
   });
 });

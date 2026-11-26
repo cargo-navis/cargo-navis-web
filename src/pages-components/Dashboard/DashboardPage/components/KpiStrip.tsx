@@ -136,14 +136,14 @@ export function KpiStrip({
       <KpiTile
         error={stopsError}
         href={shipmentsHref({ loadingReadyDateFrom: day, loadingReadyDateTo: day })}
-        label="Danas utovara"
+        label="Današnji utovari"
         sub={loads && doneSub(loads)}
         value={loads?.length}
       />
       <KpiTile
         error={stopsError}
         href={shipmentsHref({ unloadingDueDateFrom: day, unloadingDueDateTo: day })}
-        label="Danas istovara"
+        label="Današnji istovari"
         sub={unloads && doneSub(unloads)}
         value={unloads?.length}
       />

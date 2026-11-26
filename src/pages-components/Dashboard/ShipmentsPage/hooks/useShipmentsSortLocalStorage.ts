@@ -4,6 +4,8 @@ import { useCallback, useMemo } from 'react';
 import { useShipmentsFiltersLocalStorage } from './useShipmentsFiltersLocalStorage';
 
 export enum SortFieldEnum {
+  /** Picked as „Najnovije” while a date range is on (no sort = „Po datumu” then). */
+  CreatedAt = 'createdAt',
   LoadingReadyDate = 'loadingReadyDate',
   UnloadingDueDate = 'unloadingDueDate',
   LoadingStopDate = 'loadingStopDate',
@@ -24,7 +26,7 @@ interface SortState {
 
 // Parse sort parameter: format is "field,direction" (e.g., "loadingDate,desc", "price,asc")
 const parseSort = (sort: string | undefined): { field: SortFieldEnum | null; direction: 'asc' | 'desc' | null } => {
-  if (!sort || sort === 'createdAt,desc') {
+  if (!sort) {
     return { field: null, direction: null };
   }
 

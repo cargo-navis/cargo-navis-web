@@ -1,7 +1,7 @@
 /**
  * Product analytics (KAN-134): PostHog, EU Cloud, dashboard only (not the driver portal), identified users grouped by
  * company, no session replay. Off without NEXT_PUBLIC_POSTHOG_KEY (local, or any deploy without the key), so nothing
- * here may be required for the app to work: every call is a no-op until `initAnalytics` ran with a key.
+ * here may be required for the app to work: every call is a no-op until `syncAnalyticsUser` ran with a key.
  *
  * Privacy: never send what users typed or customer data (client names, addresses, phones, notes) — events carry kinds
  * and counts only, and autocapture masks element text and attributes. The privacy policy has to mention PostHog.
@@ -16,9 +16,18 @@ const KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY;
 
 let started = false;
 
-/** Once, from the dashboard shell. Requests go through /cn-relay on our domain (next.config rewrites; ad blockers). */
-export function initAnalytics() {
-  if (started || !KEY || typeof window === 'undefined') return;
+/**
+ * From the dashboard shell once the user and tenant loaded. The first call starts PostHog already as this user (memory
+ * persistence forgets the ID on every load, so bootstrap rather than identify) and sets the company in `loaded`, which
+ * runs before the first pageview, so that pageview carries both. Later calls only refresh person and company
+ * properties. Requests go through /cn-relay on our domain (next.config rewrites; ad blockers).
+ */
+export function syncAnalyticsUser(user: User, tenant: Tenant | undefined) {
+  if (!KEY || typeof window === 'undefined') return;
+  if (started) {
+    tagUser(user, tenant);
+    return;
+  }
   started = true;
   posthog.init(KEY, {
     api_host: '/cn-relay',
@@ -27,22 +36,25 @@ export function initAnalytics() {
     // Pages router: a pageview per client-side navigation.
     capture_pageview: 'history_change',
     person_profiles: 'identified_only',
+    // Nothing stored in the browser (no cookie, no localStorage): the ID lives in memory for the page. Every user is
+    // signed in and bootstrapped as themselves on each load, so events still land on the right person and company — and with
+    // no device storage the EU cookie rule (consent) doesn't apply. Privacy policy 5.6 says so; keep them in sync.
+    persistence: 'memory',
     disable_session_recording: true,
     // Clicks are recorded, but not the text or attributes on them (table rows hold client names and places).
     mask_all_text: true,
     mask_all_element_attributes: true,
+    bootstrap: { distinctID: user.id, isIdentifiedID: true },
+    loaded: () => {
+      posthog.register({ env: process.env.PROJECT_ENV });
+      tagUser(user, tenant);
+    },
   });
-  posthog.register({ env: process.env.PROJECT_ENV });
 }
 
-/** The signed-in user, and the company every event belongs to (group analytics). */
-export function identifyUser(user: User, tenant: Tenant | undefined) {
-  if (!started) return;
-  posthog.identify(user.id, {
-    email: user.email,
-    name: user.fullName,
-    positions: user.positions,
-  });
+/** Person properties of the signed-in user, and the company every event belongs to (group analytics). */
+function tagUser(user: User, tenant: Tenant | undefined) {
+  posthog.setPersonProperties({ email: user.email, name: user.fullName, positions: user.positions });
   if (tenant) posthog.group('company', tenant.id, { name: tenant.name });
 }
 

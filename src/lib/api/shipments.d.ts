@@ -57,6 +57,9 @@ export type GetShipmentParams = {
   loadStatus?: LoadStatus;
   invoiceStatus?: InvoiceStatus;
   isInvoiceOverdue?: string;
+  /** A teret's loadingReadyDate OR unloadingDueDate in the range (the Nalozi „Utovar ili istovar” date filter). */
+  activityDateFrom?: string;
+  activityDateTo?: string;
   loadingReadyDateFrom?: string;
   loadingReadyDateTo?: string;
   unloadingDueDateFrom?: string;

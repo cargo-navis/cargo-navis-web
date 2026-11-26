@@ -2,13 +2,13 @@ import dayjs from 'dayjs';
 import { useRouter } from 'next/router';
 import * as React from 'react';
 
-import type { DateRange, DateRangePreset } from '@/components/shared/date-picker';
+import { ALL_DATES_LABEL, type DateRange, type DateRangePreset } from '@/components/shared/date-picker';
 import type { Granularity } from '@/lib/api';
 
 /**
  * Analitika filters, kept in the URL (lab /analytics): ?tab=regular&razdoblje=3m&po=tjedan&vozac=…
  * - tab: overview (no param) · regular · agency (today's param, so old links keep working);
- * - razdoblje: a preset (default 6m, „sve” = Ukupno) or od + do (YYYY-MM-DD) for a custom range;
+ * - razdoblje: a preset (default 6m, „sve” = Svi datumi) or od + do (YYYY-MM-DD) for a custom range;
  * - po: dan · tjedan · mjesec (default) · godina;
  * - klijent (Ukupno), vozac / vozilo (Vlastiti prijevoz, one or the other). Entity filters reset when the tab changes.
  */
@@ -48,7 +48,7 @@ const lastMonths = (key: PresetKey, label: string, months: number, previous: str
   range: (today) => ({ from: monthsBack(today, months), to: today }),
 });
 
-/** As today (DateRangeFilter), Ukupno included. Passed to the shared DateRangePicker. */
+/** As today (DateRangeFilter), Svi datumi included. Passed to the shared DateRangePicker. */
 export const PRESETS: Preset[] = [
   {
     key: 'ytd',
@@ -60,7 +60,7 @@ export const PRESETS: Preset[] = [
   lastMonths('12m', 'Zadnjih 12 mjeseci', 12, 'prethodnih 12 mjeseci'),
   lastMonths('2y', 'Zadnje 2 godine', 24, 'prethodne 2 godine'),
   lastMonths('5y', 'Zadnjih 5 godina', 60, 'prethodnih 5 godina'),
-  { key: 'sve', label: 'Ukupno', range: () => undefined },
+  { key: 'sve', label: ALL_DATES_LABEL, range: () => undefined },
 ];
 
 const DEFAULT_PRESET: PresetKey = '6m';
@@ -86,7 +86,7 @@ export function selectionRange(selection: Selection, today: Date): ApiRange {
   return range?.from ? { from: toIso(range.from), to: toIso(range.to ?? today) } : {};
 }
 
-/** The same length right before (ytd: the same dates a year back), for the tiles' change. None for „Ukupno”. */
+/** The same length right before (ytd: the same dates a year back), for the tiles' change. None for „Svi datumi”. */
 export function previousRange(selection: Selection, today: Date): (Required<ApiRange> & { label: string }) | undefined {
   if ('from' in selection) {
     const from = dayjs(selection.from);

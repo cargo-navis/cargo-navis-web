@@ -39,6 +39,9 @@ test.describe('⌘K search', () => {
     await input.fill('ZG-5678');
     await page.getByRole('option', { name: /ZG-5678-CD/ }).click();
     await expect(page).toHaveURL(new RegExp(`/dashboard/fleet/${VOZILO.tegljac2}$`));
+    // The URL changes before the vehicle page renders, and every page mounts its own layout (and ⌘K closed). Wait for
+    // the vehicle's heading, or ⌘K opens on the old page's h1 and closes when the vehicle page replaces it.
+    await expect(page.getByRole('heading', { level: 1, name: 'ZG-5678-CD' })).toBeVisible();
 
     input = await openSearch(page, testInfo);
     await input.fill('Petra');

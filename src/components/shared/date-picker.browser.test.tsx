@@ -254,10 +254,10 @@ const preset = (label: string) => calendar().getByRole('button', { name: label, 
 
 describe('DateRangePicker', () => {
   // Regression: with no range the trigger read „Ukupno · Ukupno” (KAN-153).
-  it('no range: the trigger says „Ukupno”', async () => {
+  it('no range: the trigger says „Svi datumi”', async () => {
     const screen = await render(<RangeField />);
-    await expect.element(rangeTrigger(screen)).toHaveTextContent('Ukupno');
-    expect(rangeTrigger(screen).element().textContent).toBe('Ukupno');
+    await expect.element(rangeTrigger(screen)).toHaveTextContent('Svi datumi');
+    expect(rangeTrigger(screen).element().textContent).toBe('Svi datumi');
   });
 
   it('a preset reports its range and the trigger shows „<preset> · <range>”', async () => {
@@ -277,7 +277,7 @@ describe('DateRangePicker', () => {
     await expect.element(rangeTrigger(screen)).toHaveTextContent('Od početka godine · 1.1.2026. – 16.6.2026.');
   });
 
-  it('„Ukupno” removes the limit', async () => {
+  it('„Svi datumi” removes the limit', async () => {
     const onChange = vi.fn();
     const screen = await render(
       <RangeField initial={{ from: new Date(2026, 0, 1), to: new Date(2026, 5, 16) }} onChange={onChange} />
@@ -285,7 +285,7 @@ describe('DateRangePicker', () => {
     await expect.element(rangeTrigger(screen)).toHaveTextContent('Od početka godine · 1.1.2026. – 16.6.2026.');
 
     await rangeTrigger(screen).click();
-    await preset('Ukupno').click();
+    await preset('Svi datumi').click();
     expect(onChange).toHaveBeenCalledExactlyOnceWith(undefined);
     await expect.element(calendar()).not.toBeInTheDocument();
   });
@@ -319,7 +319,8 @@ describe('DateRangePicker', () => {
     await day('srijeda, 10. lipnja 2026.').click();
     await day('srijeda, 10. lipnja 2026.').click();
     expect(onChange).toHaveBeenCalledExactlyOnceWith({ from: new Date(2026, 5, 10), to: new Date(2026, 5, 10) });
-    await expect.element(rangeTrigger(screen)).toHaveTextContent('10.6.2026. – 10.6.2026.');
+    await expect.element(rangeTrigger(screen)).toHaveTextContent('10.6.2026.');
+    expect(rangeTrigger(screen).element().textContent).toBe('10.6.2026.');
   });
 
   it('closing after one click keeps the previous range, and the next opening starts over', async () => {
@@ -372,7 +373,8 @@ describe('DateRangePicker', () => {
 
       await rangeTrigger(screen).click();
       await preset('Sutra').click();
-      await expect.element(rangeTrigger(screen)).toHaveTextContent('Sutra · 17.6.2026. – 17.6.2026.');
+      await expect.element(rangeTrigger(screen)).toHaveTextContent('Sutra · 17.6.2026.');
+      expect(rangeTrigger(screen).element().textContent).toBe('Sutra · 17.6.2026.');
 
       await rangeTrigger(screen).click();
       await preset('Zadnjih 7 dana').click();
@@ -384,7 +386,8 @@ describe('DateRangePicker', () => {
       await rangeTrigger(screen).click();
       await day('utorak, 16. lipnja 2026.').click();
       await day('utorak, 16. lipnja 2026.').click();
-      await expect.element(rangeTrigger(screen)).toHaveTextContent('Danas · 16.6.2026. – 16.6.2026.');
+      await expect.element(rangeTrigger(screen)).toHaveTextContent('Danas · 16.6.2026.');
+      expect(rangeTrigger(screen).element().textContent).toBe('Danas · 16.6.2026.');
     });
 
     it('days after today can be picked; the calendar opens on the range start', async () => {

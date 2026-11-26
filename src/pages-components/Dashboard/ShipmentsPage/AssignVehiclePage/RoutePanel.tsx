@@ -1,3 +1,5 @@
+import * as React from 'react';
+
 import { CountryFlag } from '@/components/shared/country-flag';
 import { DriverAvatar } from '@/components/shared/driver-avatar';
 import { Panel } from '@/components/shared/panel';
@@ -8,12 +10,16 @@ import type { LoadingAddress } from '@/lib/api';
 import type { VehicleStop } from '@/lib/api/vehicleStops';
 import { cn } from '@/lib/utils';
 import { formatDateShort } from '@/lib/utils/date';
+import { pluralCount } from '@/lib/utils/plural';
 import { isStopCompleted } from '@/lib/utils/vehicleStops';
 import { Icon } from '@/ui';
 
 import { CLASH_ROW, TODAY_LINE } from '../shared/tones';
 import type { VehicleRow } from './pickers';
 import { type NewStop, stopKinds, timelineOf } from './route';
+
+/** „+ 1 kasniji / 3 kasnija / 7 kasnijih” (planned stops after the window). */
+const LATER = ['kasniji', 'kasnija', 'kasnijih'] as const;
 
 /** Halo of a new stop's pulsing dot, in its kind's colour (the `stop-pulse` keyframes, globals.css). */
 const HALO: Record<StopKind, string> = { loading: 'var(--utovar-dot)', unloading: 'var(--istovar-dot)' };
@@ -57,7 +63,8 @@ const orderNumbersOf = (stop: VehicleStop) => [
 
 /**
  * „Ruta KC 123-AB” (lab `TimelinePanel`): the selected vehicle's last 3 done stops, the planned ones and the new ones
- * („Novo · #2057”, pulsing dot) by date, a „Danas” line; planned stops on the new days are marked „Isti dan”.
+ * („Novo · #2057”, pulsing dot) by date, latest first, a „Danas” line; planned stops on the new days are marked
+ * „Isti dan”.
  */
 export function RoutePanel({
   row,
@@ -78,6 +85,9 @@ export function RoutePanel({
   loading: boolean;
   stopLabel(key: string): { address: LoadingAddress; companyName?: string } | undefined;
 }) {
+  // „+ N kasnijih” opened for this vehicle (another vehicle starts folded again).
+  const [laterOpenFor, setLaterOpenFor] = React.useState<string>();
+
   if (!row) {
     return (
       <div className="flex min-h-80 flex-col items-center justify-center gap-2 rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
@@ -87,7 +97,9 @@ export function RoutePanel({
     );
   }
 
-  const items = timelineOf(row.stops, newStops, today);
+  // Latest first (2026-11-26): the planned and new stops on top, the done ones at the bottom. Only the window around
+  // the new stops; „+ N kasnijih” opens the rest of the planned ones (per vehicle).
+  const items = timelineOf(row.stops, newStops, today, laterOpenFor === row.vehicle.id).reverse();
 
   return (
     <Panel
@@ -113,6 +125,30 @@ export function RoutePanel({
         <ol className="flex flex-col">
           {items.map((item, index) => {
             const last = index === items.length - 1;
+            if (item.type === 'more') {
+              return (
+                <li className="flex gap-3" key="more">
+                  <span className="flex w-7 shrink-0 flex-col items-center">
+                    <span className="w-px grow border-l border-dashed" />
+                  </span>
+                  <button
+                    className="mb-2 rounded-md px-3 py-1.5 text-xs text-muted-foreground hover:bg-muted hover:text-foreground"
+                    type="button"
+                    onClick={() => setLaterOpenFor(row.vehicle.id)}
+                  >
+                    + {pluralCount(item.count, LATER)}
+                  </button>
+                </li>
+              );
+            }
+            if (item.type === 'history') {
+              // Older stops: no row (it only grows), the line just fades out.
+              return (
+                <li aria-hidden="true" className="flex w-7 justify-center" key="history">
+                  <span className="h-8 w-px bg-linear-to-b from-border to-transparent" />
+                </li>
+              );
+            }
             if (item.type === 'today') {
               return (
                 <li className={cn('flex items-center gap-2 py-2 text-xs font-medium', TODAY_LINE.text)} key="today">

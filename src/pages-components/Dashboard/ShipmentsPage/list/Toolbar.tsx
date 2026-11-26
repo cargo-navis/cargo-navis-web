@@ -1,7 +1,8 @@
 /**
  * Nalozi toolbar (lab /tables): Status utovara (swapped with Status fakture 2026-11-23, which moved into „Više
- * filtera”), Vozač, date range (Spremno za utovar) and „Više filtera” (the rest of
- * today's 11 filter fields); on the right the server-side sort (same as the column headers) and the column picker.
+ * filtera”), Vozač, the date control (lab /date-filter, option C, 2026-11-25: a range + its type, Utovar ili istovar ·
+ * Utovar · Istovar; shared/dateFilter) and „Više filtera” (the rest, no dates); on the right the server-side sort
+ * (same as the column headers; „Po datumu” while a range is on) and the column picker.
  * Under it the always-present chip row (B) with the result count on the right, so adding a filter never moves the
  * table. Filters apply at once and are remembered (localStorage, as today).
  */
@@ -9,12 +10,7 @@
 import dayjs from 'dayjs';
 import * as React from 'react';
 
-import {
-  DatePicker,
-  type DateRange,
-  DateRangePicker,
-  UPCOMING_DATE_RANGE_PRESETS,
-} from '@/components/shared/date-picker';
+import { type DateRange, DateRangePicker, UPCOMING_DATE_RANGE_PRESETS } from '@/components/shared/date-picker';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -45,6 +41,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import type { Client } from '@/lib/api';
 import { LoadStatus } from '@/lib/api/shipments';
 import { useDispatchers } from '@/lib/hooks';
@@ -55,6 +52,7 @@ import { Icon } from '@/ui';
 import { SortFieldEnum, useShipmentsSortLocalStorage } from '../hooks';
 import { type ShipmentFilters, useShipmentsFiltersContext } from '../providers/ShipmentsFiltersProvider';
 import { CARGO_STATUS_LABEL } from '../shared/cargo';
+import { DATE_FILTER_TYPE_LABEL, dateFilterPatch, type DateFilterType, readDateFilter } from '../shared/dateFilter';
 import { INVOICE_STATUS_LABEL, INVOICE_STATUSES } from '../shared/invoice';
 import { useLookups } from '../shared/lookups';
 
@@ -101,7 +99,10 @@ export function useActiveFilters(): ActiveFilter[] {
   const { filters, setFilters } = useShipmentsFiltersContext();
   const { clientsById, employeesById } = useLookups();
   const clear = (patch: Partial<ShipmentFilters>) => () => setFilters(patch);
-  const range = (from?: string, to?: string) => `${from ? formatDate(from) : '…'} – ${to ? formatDate(to) : '…'}`;
+  const dateFilter = readDateFilter(filters);
+  // One day (Danas, Sutra) = that date once, like the date picker.
+  const range = (from?: string, to?: string) =>
+    from && from === to ? formatDate(from) : `${from ? formatDate(from) : '…'} – ${to ? formatDate(to) : '…'}`;
 
   return [
     filters.invoiceStatus && {
@@ -139,28 +140,15 @@ export function useActiveFilters(): ActiveFilter[] {
       label: `Tip: ${labelOf(TYPE_OPTIONS, filters.isAgency)}`,
       onRemove: clear({ isAgency: undefined }),
     },
-    (filters.loadingReadyDateFrom || filters.loadingReadyDateTo) && {
-      key: 'ready',
-      label: `Spremno: ${range(filters.loadingReadyDateFrom, filters.loadingReadyDateTo)}`,
-      onRemove: clear({ loadingReadyDateFrom: undefined, loadingReadyDateTo: undefined }),
-    },
-    (filters.unloadingDueDateFrom || filters.unloadingDueDateTo) && {
-      key: 'due',
-      label: `Rok istovara: ${range(filters.unloadingDueDateFrom, filters.unloadingDueDateTo)}`,
-      onRemove: clear({ unloadingDueDateFrom: undefined, unloadingDueDateTo: undefined }),
+    dateFilter && {
+      key: 'date',
+      label: `${DATE_FILTER_TYPE_LABEL[dateFilter.type]}: ${range(dateFilter.from, dateFilter.to)}`,
+      onRemove: clear(dateFilterPatch('any')),
     },
   ].filter((chip): chip is ActiveFilter => !!chip);
 }
 
-const MORE_FILTER_KEYS = [
-  'clientId',
-  'dispatcherId',
-  'invoiceStatus',
-  'isInvoiceOverdue',
-  'isAgency',
-  'unloadingDueDateFrom',
-  'unloadingDueDateTo',
-] as const;
+const MORE_FILTER_KEYS = ['clientId', 'dispatcherId', 'invoiceStatus', 'isInvoiceOverdue', 'isAgency'] as const;
 
 function FilterSelect({
   label,
@@ -238,13 +226,11 @@ function ClientFilter({
   );
 }
 
-/** „Više filtera”: the rest of today's filter fields, in a popover; they apply at once. */
+/** „Više filtera”: the rest of the filter fields (no dates: the toolbar's date control), in a popover; at once. */
 function MoreFiltersPopover() {
   const { filters, setFilters } = useShipmentsFiltersContext();
   const { data: dispatchers = [] } = useDispatchers();
-  const activeCount = new Set(
-    MORE_FILTER_KEYS.filter((key) => !!filters[key]).map((key) => (key.startsWith('unloading') ? 'due' : key))
-  ).size;
+  const activeCount = MORE_FILTER_KEYS.filter((key) => !!filters[key]).length;
 
   // Labels name their controls (screen readers, getByLabel in the E2E tests).
   const id = React.useId();
@@ -301,38 +287,6 @@ function MoreFiltersPopover() {
             value={filters.isAgency}
             onChange={(isAgency) => setFilters({ isAgency })}
           />
-          <Field>
-            <FieldLabel htmlFor={`${id}-loadingReadyDateFrom`}>Spremno za utovar · od</FieldLabel>
-            <DatePicker
-              id={`${id}-loadingReadyDateFrom`}
-              value={toDate(filters.loadingReadyDateFrom)}
-              onChange={(date) => setFilters({ loadingReadyDateFrom: toStored(date) })}
-            />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor={`${id}-loadingReadyDateTo`}>Spremno za utovar · do</FieldLabel>
-            <DatePicker
-              id={`${id}-loadingReadyDateTo`}
-              value={toDate(filters.loadingReadyDateTo)}
-              onChange={(date) => setFilters({ loadingReadyDateTo: toStored(date) })}
-            />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor={`${id}-unloadingDueDateFrom`}>Rok istovara · od</FieldLabel>
-            <DatePicker
-              id={`${id}-unloadingDueDateFrom`}
-              value={toDate(filters.unloadingDueDateFrom)}
-              onChange={(date) => setFilters({ unloadingDueDateFrom: toStored(date) })}
-            />
-          </Field>
-          <Field>
-            <FieldLabel htmlFor={`${id}-unloadingDueDateTo`}>Rok istovara · do</FieldLabel>
-            <DatePicker
-              id={`${id}-unloadingDueDateTo`}
-              value={toDate(filters.unloadingDueDateTo)}
-              onChange={(date) => setFilters({ unloadingDueDateTo: toStored(date) })}
-            />
-          </Field>
         </div>
         <div className="flex justify-end border-t pt-3">
           <Button
@@ -348,9 +302,14 @@ function MoreFiltersPopover() {
   );
 }
 
-/** Same server-side sort as the Utovar / Istovar / Cijena column headers; „Najnovije” = today's default. */
+/**
+ * Same server-side sort as the Utovar / Istovar / Cijena column headers. No sort picked = „Najnovije”, or „Po datumu”
+ * (earliest first, shared/dateFilter DATE_FILTER_SORT) while a date range is on; then „Najnovije” is its own option.
+ */
+const NEWEST = `${SortFieldEnum.CreatedAt}-desc`;
 const SORT_OPTIONS = [
   { value: 'default', label: 'Najnovije' },
+  { value: NEWEST, label: 'Najnovije' },
   { value: `${SortFieldEnum.LoadingReadyDate}-desc`, label: 'Spremno za utovar ↓' },
   { value: `${SortFieldEnum.LoadingReadyDate}-asc`, label: 'Spremno za utovar ↑' },
   { value: `${SortFieldEnum.UnloadingDueDate}-desc`, label: 'Rok istovara ↓' },
@@ -360,14 +319,19 @@ const SORT_OPTIONS = [
 ];
 
 function SortSelect() {
+  const { filters } = useShipmentsFiltersContext();
   const { getSortField, getSortDirection, setSort, clearSort } = useShipmentsSortLocalStorage();
+  const byDate = !!readDateFilter(filters);
+  const options = byDate
+    ? SORT_OPTIONS.map((option) => (option.value === 'default' ? { ...option, label: 'Po datumu' } : option))
+    : SORT_OPTIONS.filter((option) => option.value !== NEWEST);
   const field = getSortField();
   const direction = field ? getSortDirection(field) : null;
   const value = field && direction ? `${field}-${direction}` : 'default';
   return (
     <Select
-      items={SORT_OPTIONS}
-      value={SORT_OPTIONS.some((option) => option.value === value) ? value : 'default'}
+      items={options}
+      value={options.some((option) => option.value === value) ? value : 'default'}
       onValueChange={(next) => {
         if (!next || next === 'default') return clearSort();
         const [sortField, dir] = (next as string).split('-') as [SortFieldEnum, 'asc' | 'desc'];
@@ -378,7 +342,7 @@ function SortSelect() {
         <SelectValue />
       </SelectTrigger>
       <SelectContent>
-        {SORT_OPTIONS.map((option) => (
+        {options.map((option) => (
           <SelectItem key={option.value} value={option.value}>
             {option.label}
           </SelectItem>
@@ -395,17 +359,64 @@ export interface ColumnToggle {
   onToggle(visible: boolean): void;
 }
 
+const DATE_TYPES = Object.entries(DATE_FILTER_TYPE_LABEL) as [DateFilterType, string][];
+
+/**
+ * The date control: presets + calendar with the type on top. Switching the type keeps the range (Sutra stays Sutra,
+ * the list follows at once); with no range the picked type waits for one. „Svi datumi” clears both.
+ */
+function DateFilterControl() {
+  const { filters, setFilters } = useShipmentsFiltersContext();
+  const current = readDateFilter(filters);
+  const type = current?.type ?? 'any';
+  const [draftType, setDraftType] = React.useState<DateFilterType>(type);
+
+  const range: DateRange | undefined = current
+    ? { from: toDate(current.from) ?? undefined, to: toDate(current.to) ?? undefined }
+    : undefined;
+
+  return (
+    <DateRangePicker
+      className={cn(range && 'border-primary/40 bg-primary/5')}
+      future
+      header={
+        <ToggleGroup
+          aria-label="Vrsta datuma"
+          spacing={0}
+          value={[draftType]}
+          variant="outline"
+          onValueChange={(value) => {
+            const next = value[0] as DateFilterType | undefined;
+            if (!next) return;
+            setDraftType(next);
+            if (current) setFilters(dateFilterPatch(next, current.from, current.to));
+          }}
+        >
+          {DATE_TYPES.map(([value, label]) => (
+            <ToggleGroupItem className="px-3" key={value} value={value}>
+              {label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
+      }
+      labelPrefix={type === 'any' ? undefined : `${DATE_FILTER_TYPE_LABEL[type]} · `}
+      presets={UPCOMING_DATE_RANGE_PRESETS}
+      value={range}
+      onChange={(next) =>
+        setFilters(
+          next?.from ? dateFilterPatch(draftType, toStored(next.from), toStored(next.to)) : dateFilterPatch('any')
+        )
+      }
+      onOpenChange={(open) => {
+        if (open) setDraftType(type);
+      }}
+    />
+  );
+}
+
 export function ShipmentsToolbar({ columns }: { columns: ColumnToggle[] }) {
   const { filters, setFilters } = useShipmentsFiltersContext();
   const { drivers, employeesById } = useLookups();
-
-  const range: DateRange | undefined =
-    filters.loadingReadyDateFrom || filters.loadingReadyDateTo
-      ? {
-          from: toDate(filters.loadingReadyDateFrom) ?? undefined,
-          to: toDate(filters.loadingReadyDateTo) ?? undefined,
-        }
-      : undefined;
 
   const driverItems = [
     { value: null, label: 'Svi vozači' },
@@ -455,15 +466,7 @@ export function ShipmentsToolbar({ columns }: { columns: ColumnToggle[] }) {
         </SelectContent>
       </Select>
 
-      <DateRangePicker
-        className={cn(range && 'border-primary/40 bg-primary/5')}
-        future
-        presets={UPCOMING_DATE_RANGE_PRESETS}
-        value={range}
-        onChange={(next) =>
-          setFilters({ loadingReadyDateFrom: toStored(next?.from), loadingReadyDateTo: toStored(next?.to) })
-        }
-      />
+      <DateFilterControl />
 
       <MoreFiltersPopover />
 

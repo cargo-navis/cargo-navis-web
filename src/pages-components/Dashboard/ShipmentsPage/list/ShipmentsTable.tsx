@@ -27,7 +27,9 @@ import { cn } from '@/lib/utils';
 import { Icon } from '@/ui';
 
 import { SortFieldEnum, useShipmentsSortLocalStorage } from '../hooks';
+import { useShipmentsFiltersContext } from '../providers/ShipmentsFiltersProvider';
 import { shipmentHref } from '../shared/actions';
+import { readDateFilter } from '../shared/dateFilter';
 import { getInvoiceInfo } from '../shared/invoice';
 import { InvoiceCell } from '../shared/InvoiceCell';
 import { getLatestStop, useLookups } from '../shared/lookups';
@@ -100,6 +102,10 @@ function SortHeader({
 
 function useColumns(): ColumnDef<Shipment>[] {
   const { clientsById } = useLookups();
+  const { filters } = useShipmentsFiltersContext();
+  // Stable while the dates stay the same (the columns memo depends on it).
+  const { type, from, to } = readDateFilter(filters) ?? {};
+  const dateFilter = React.useMemo(() => (type ? { type, from, to } : undefined), [type, from, to]);
   return React.useMemo(
     () => [
       {
@@ -125,6 +131,7 @@ function useColumns(): ColumnDef<Shipment>[] {
         cell: ({ row }) => (
           <RouteTrack
             cargos={row.original.cargo}
+            dateFilter={dateFilter}
             isAgency={row.original.isAgency}
             vehicleStops={row.original.vehicleStops}
           />
@@ -166,7 +173,7 @@ function useColumns(): ColumnDef<Shipment>[] {
         size: 48,
       },
     ],
-    [clientsById]
+    [clientsById, dateFilter]
   );
 }
 

@@ -54,14 +54,66 @@ describe('Dodijeli vozilo · route', () => {
     expect(conflicts.map((item) => item.id)).toEqual(['s4']);
   });
 
-  it('shows the last 3 done, the planned and the new stops with a Danas line', () => {
+  /** The timeline as ids: stop ids, new-<key>, today, more-<n>, history. */
+  const ids = (items: ReturnType<typeof timelineOf>) =>
+    items.map((item) =>
+      item.type === 'stop'
+        ? item.stop.id
+        : item.type === 'new'
+          ? `new-${item.stop.key}`
+          : item.type === 'more'
+            ? `more-${item.count}`
+            : item.type
+    );
+
+  it('window: 2 before the new dates, all between them, a Danas line; older ones fade out', () => {
     const items = timelineOf(STOPS, NEW, TODAY);
-    expect(
-      items.map((item) =>
-        item.type === 'stop' ? item.stop.id : item.type === 'new' ? `new-${item.stop.key}` : 'today'
-      )
-    ).toEqual(['s1', 's2', 's3', 'today', 's4', 'new-a', 's5', 'new-b']);
+    expect(ids(items)).toEqual(['history', 's2', 's3', 'today', 's4', 'new-a', 's5', 'new-b']);
     expect(items.find((item) => item.type === 'stop' && item.stop.id === 's4')).toMatchObject({ clash: true });
+  });
+
+  // A busy vehicle: planned work after the new dates.
+  const BUSY = [
+    stop('u', null, 'loading'),
+    stop('p4', '2026-11-20', 'unloading'),
+    stop('p3', '2026-11-18', 'loading'),
+    stop('p2', '2026-11-16', 'unloading'),
+    stop('p1', '2026-11-14', 'loading'),
+    ...STOPS,
+  ];
+
+  it('window: 1 after the new dates, the rest (undated too) folded into „+ N kasnijih”', () => {
+    expect(ids(timelineOf(BUSY, NEW, TODAY))).toEqual([
+      'history',
+      's2',
+      's3',
+      'today',
+      's4',
+      'new-a',
+      's5',
+      'new-b',
+      'p1',
+      'more-4',
+    ]);
+  });
+
+  it('„+ N kasnijih” opened: every later stop, undated last', () => {
+    expect(ids(timelineOf(BUSY, NEW, TODAY, true)).slice(-6)).toEqual(['new-b', 'p1', 'p2', 'p3', 'p4', 'u']);
+  });
+
+  it('Danas only inside the window', () => {
+    const later: NewStop[] = [{ key: 'z', kinds: ['loading'], date: '2026-11-18' }];
+    expect(ids(timelineOf(BUSY, later, TODAY))).toEqual(['history', 'p1', 'p2', 'p3', 'new-z', 'p4', 'more-1']);
+  });
+
+  it('no new dates: around today (last finished + next 3 planned)', () => {
+    const undated: NewStop[] = [{ key: 'a', kinds: ['loading'], date: null }];
+    expect(ids(timelineOf(BUSY, undated, TODAY))).toEqual(['history', 's3', 'today', 's4', 's5', 'p1', 'more-4']);
+  });
+
+  it('a small route: nothing folded', () => {
+    const two = [stop('s5', '2026-11-12', 'loading'), stop('s4', '2026-11-11', 'unloading')];
+    expect(ids(timelineOf(two, NEW, TODAY))).toEqual(['s4', 'new-a', 's5', 'new-b']);
   });
 });
 

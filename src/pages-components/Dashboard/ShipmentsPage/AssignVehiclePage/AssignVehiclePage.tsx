@@ -49,8 +49,11 @@ import { DriverCombobox, VehicleCombobox, type VehicleRow } from './pickers';
 import type { NewStop } from './route';
 import { RoutePanel } from './RoutePanel';
 
-/** Stops per vehicle for the dropdown and the route (today's modal took 5; the route wants the planned ones too). */
-const STOPS_PER_VEHICLE = 10;
+/**
+ * The backend ignores the limit (every unfinished stop + the last 5 finished ones per vehicle); 20 = the same query as
+ * Prijevozi, so the two pages share one cached call.
+ */
+const STOPS_PER_VEHICLE = 20;
 
 export const AssignVehiclePage = () => {
   const router = useRouter();
