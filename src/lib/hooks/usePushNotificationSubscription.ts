@@ -43,12 +43,10 @@ export async function registerPushSubscription(registered?: { endpoint: string }
     // register() resolves before activation, so wait for ready.
     const activeRegistration = await navigator.serviceWorker.ready;
 
-    // Request notification permission
+    // Request notification permission. Declining (or dismissing the prompt) is the user's choice, not an error:
+    // push just stays off, quietly.
     const permission = await Notification.requestPermission();
-    if (permission !== 'granted') {
-      console.error('Permission denied');
-      return false;
-    }
+    if (permission !== 'granted') return false;
 
     // Subscribe to push notifications
     const subscription = await activeRegistration.pushManager.subscribe({
