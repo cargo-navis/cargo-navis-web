@@ -15,9 +15,15 @@ async function fillStop(
   const dialog = page.getByRole('dialog', { name: `Detalji ${kind === 'utovar' ? 'utovara' : 'istovara'}` });
   await dialog.getByLabel('Tvrtka').fill(stop.company);
   await dialog.getByLabel('Ulica i broj').fill(stop.street);
-  await dialog.getByRole('combobox', { name: 'Država' }).fill('Hrvatska');
-  await page.getByRole('option', { name: 'Hrvatska' }).click();
-  await dialog.getByRole('combobox', { name: 'Poštanski broj i mjesto' }).fill(stop.postal);
+  // The postal field waits for a country. On the slow CI runner the option click was once lost (phone, 2026-11-26):
+  // pick it again until the postal field opens, instead of waiting the whole test timeout on a disabled field.
+  const postal = dialog.getByRole('combobox', { name: 'Poštanski broj i mjesto' });
+  await expect(async () => {
+    await dialog.getByRole('combobox', { name: 'Država' }).fill('Hrvatska');
+    await page.getByRole('option', { name: 'Hrvatska' }).click({ timeout: 2_000 });
+    await expect(postal).toBeEnabled({ timeout: 1_000 });
+  }).toPass({ timeout: 10_000 });
+  await postal.fill(stop.postal);
   await page.getByRole('option', { name: `${stop.postal} ${stop.place}` }).click();
   await dialog.getByRole('button', { name: `Potvrdi ${kind}` }).click();
   await expect(dialog).toBeHidden();

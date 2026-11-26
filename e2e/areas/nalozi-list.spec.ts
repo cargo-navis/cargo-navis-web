@@ -19,7 +19,7 @@ test.describe('Nalozi list', () => {
     await page.goto('/dashboard/shipments');
     await expect(page.getByRole('heading', { level: 1, name: 'Nalozi' })).toBeVisible();
     await expect(row(page, '2026/0102')).toBeVisible();
-    expect(await orderNumbers(page)).toEqual(['2026/0102', '2026/0101', '2026/0100', '2026/0099']);
+    await expect.poll(() => orderNumbers(page)).toEqual(['2026/0102', '2026/0101', '2026/0100', '2026/0099']);
     await expect(page.getByText('Prikazano 1–4 od 4 rezultata').first()).toBeVisible();
   });
 
@@ -70,7 +70,7 @@ test.describe('Nalozi list', () => {
 
     await expect(page.getByText('Status fakture: Fakturiran')).toBeVisible();
     await expect.poll(() => fakeApi.calls('GET', '/api/shipments').at(-1)?.query.get('invoiceStatus')).toBe('sent');
-    expect(await orderNumbers(page)).toEqual(['2026/0099']);
+    await expect.poll(() => orderNumbers(page)).toEqual(['2026/0099']);
 
     await page.getByRole('button', { name: 'Očisti filtere' }).first().click();
     await expect(page.getByText('Nema aktivnih filtera.')).toBeVisible();
@@ -116,7 +116,7 @@ test.describe('Nalozi list', () => {
     await page.goto('/dashboard/shipments?invoiceStatus=sent');
     await expect(page.getByText('Status fakture: Fakturiran')).toBeVisible();
     await expect(page).not.toHaveURL(/invoiceStatus/);
-    expect(await orderNumbers(page)).toEqual(['2026/0099']);
+    await expect.poll(() => orderNumbers(page)).toEqual(['2026/0099']);
   });
 
   test('no results for the filters', async ({ page }) => {
