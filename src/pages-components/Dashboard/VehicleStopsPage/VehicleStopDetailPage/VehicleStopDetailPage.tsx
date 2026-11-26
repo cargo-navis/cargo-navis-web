@@ -180,7 +180,7 @@ export const VehicleStopDetailPage = () => {
           const notified = [stop, other].filter((item) => item.messageSentAt && item.driverId);
           const toastId = showSuccessToast({
             title: 'Redoslijed promijenjen',
-            description: `${stop.date ? formatDateShort(stop.date) : 'Bez datuma'}: prvo ${placeOnly(first)}, zatim ${placeOnly(second)}.${notified.length ? ' Vozač je već obaviješten o starom redoslijedu.' : ''}`,
+            description: `${stop.date ? formatDateShort(stop.date) : 'Bez datuma'}: prvo ${placeOnly(first)}, zatim ${placeOnly(second)}.${notified.length ? ' Vozač još nije obaviješten o novom redoslijedu.' : ''}`,
             timeout: notified.length ? 8000 : undefined,
             action: notified.length
               ? {
