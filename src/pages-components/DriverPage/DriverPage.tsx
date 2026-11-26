@@ -126,7 +126,7 @@ export const DriverPage = () => {
   return (
     <>
       <NextHead>
-        <title>Moji nalozi · CargoNavis</title>
+        <title>Moji nalozi · Cargo Navis</title>
         <meta content="no-referrer" name="referrer" />
         {/* Installable as "Cargo Navis"; the manifest and service worker are scoped to /driver. */}
         <link href="/driver.webmanifest" rel="manifest" />

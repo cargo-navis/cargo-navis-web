@@ -8,7 +8,7 @@ export const DriverHeader: React.FC<{ driverName: string | undefined }> = ({ dri
       <div className="mx-auto flex h-full max-w-[480px] items-center justify-between gap-3 px-4">
         <div className="flex items-center gap-2">
           <img alt="" className="size-7" src="/logomark.png" />
-          <span className="font-medium">CargoNavis</span>
+          <span className="font-medium">Cargo Navis</span>
         </div>
         {driverName && <span className="truncate text-sm text-muted-foreground">{driverName}</span>}
       </div>

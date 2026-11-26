@@ -261,7 +261,7 @@ export function Logo({ inverted = false }: { inverted?: boolean }) {
         <img alt="" className="size-6" src="/logomark.png" />
       </div>
       <span className={`font-heading text-base font-bold tracking-tight ${inverted ? 'text-primary-foreground' : ''}`}>
-        CargoNavis
+        Cargo Navis
       </span>
     </div>
   );

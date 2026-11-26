@@ -176,7 +176,7 @@ function TenantButton({ isActive }: { isActive: boolean }) {
         <img alt="" className="size-6" src="/logomark.png" />
       </div>
       <div className="grid flex-1 text-left leading-tight">
-        <span className="truncate font-heading text-base font-bold tracking-tight">CargoNavis</span>
+        <span className="truncate font-heading text-base font-bold tracking-tight">Cargo Navis</span>
         {tenant ? (
           <span className="truncate text-xs opacity-70" title={tenant.name}>
             {tenant.name}

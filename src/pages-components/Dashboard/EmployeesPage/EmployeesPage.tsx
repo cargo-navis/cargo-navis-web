@@ -529,7 +529,7 @@ function FirstUse({ employees, currentUserId }: { employees: Employee[]; current
             <EmptyTitle>Dodaj prve vozače</EmptyTitle>
             <EmptyDescription>
               Vozači dobivaju naloge u aplikaciji za vozače, a rokovi njihovih isprava (vozačka, tahograf, ADR,
-              liječnički…) prate se ovdje. Kolege iz ureda dodaj da se mogu prijaviti u CargoNavis.
+              liječnički…) prate se ovdje. Kolege iz ureda dodaj da se mogu prijaviti u Cargo Navis.
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent className="flex-row justify-center">

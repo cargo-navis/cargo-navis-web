@@ -6,7 +6,7 @@ interface PageTitleProps {
 }
 
 export const PageTitle = ({ title, type }: PageTitleProps) => {
-  const parts = [title || undefined, type, 'CargoNavis'].filter(Boolean);
+  const parts = [title || undefined, type, 'Cargo Navis'].filter(Boolean);
   return (
     <NextHead>
       <title>{parts.join(' | ')}</title>
