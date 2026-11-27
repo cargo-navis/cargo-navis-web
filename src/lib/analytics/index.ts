@@ -110,6 +110,7 @@ export interface AnalyticsEvents {
   'draft document opened': Record<string, never>;
   'draft to nalog': Record<string, never>;
   'draft deleted': Record<string, never>;
+  'draft refreshed': Record<string, never>;
   // Partners, fleet, employees (2026-11-27).
   'partner updated': { kind: 'client' | 'contractor' };
   'partner deleted': { kind: 'client' | 'contractor' };
@@ -160,6 +161,7 @@ const EVENT_NAMES: Record<keyof AnalyticsEvents, string> = {
   'draft document opened': 'Action: Nalozi u pripremi · Dokument otvoren',
   'draft to nalog': 'Action: Nalozi u pripremi · Kreiraj nalog',
   'draft deleted': 'Action: Nalozi u pripremi · Obrisan',
+  'draft refreshed': 'Action: Nalozi u pripremi · Osvježeno',
   'partner updated': 'Action: Klijent / podvozar ažuriran',
   'partner deleted': 'Action: Klijent / podvozar obrisan',
   'vehicle updated': 'Action: Vozilo ažurirano',
