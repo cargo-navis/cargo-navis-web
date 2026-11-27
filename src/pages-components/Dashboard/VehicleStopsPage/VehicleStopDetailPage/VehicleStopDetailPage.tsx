@@ -53,7 +53,7 @@ import { StopSheet, type StopSheetTarget } from './StopSheet';
  * Hidden until the redesign is released (user 2026-11-23): the „Promijeni” popover next to each driver run (change the
  * driver for the run / the whole vehicle). Code kept — set back to true to restore it.
  */
-const SHOW_RUN_DRIVER_CHANGE = false;
+const SHOW_RUN_DRIVER_CHANGE = true;
 
 export const VehicleStopDetailPage = () => {
   const { query } = useRouter();

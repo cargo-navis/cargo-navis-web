@@ -37,7 +37,7 @@ const isView = (value: string | undefined): value is View => VIEWS.includes(valu
  * Until the redesign is released (user 2026-11-23) only „Kao danas” shows, without the switch. Tablica and Tjedan stay in
  * the code — set back to true to bring the Tablica · Tjedan · Kao danas switch back (remembered view, default Tablica).
  */
-const SHOW_VIEW_SWITCH = false;
+const SHOW_VIEW_SWITCH = true;
 
 /**
  * Prijevozi (DECISIONS §5, lab /transports): one row per vehicle, three views of the same data behind a segmented
