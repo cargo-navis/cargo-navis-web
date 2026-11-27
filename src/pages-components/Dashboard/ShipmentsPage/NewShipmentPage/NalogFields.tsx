@@ -244,7 +244,7 @@ function RecipientsField() {
       {error ? (
         <ErrorText>{error}</ErrorText>
       ) : (
-        <FieldDescription>Primaju mail kad se teret utovari i istovari.</FieldDescription>
+        <FieldDescription>Ove email adrese će dobiti poruku kad se teret utovari i istovari.</FieldDescription>
       )}
       {suggestions.length > 0 && (
         <div className="flex flex-wrap gap-1.5">

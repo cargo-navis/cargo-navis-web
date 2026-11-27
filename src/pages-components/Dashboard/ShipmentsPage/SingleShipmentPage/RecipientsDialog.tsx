@@ -99,7 +99,7 @@ export function RecipientsDialog({ shipment, onClose }: { shipment: Shipment; on
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Emailovi za obavijesti</DialogTitle>
-            <DialogDescription>Primaju mail kad se teret utovari i istovari.</DialogDescription>
+            <DialogDescription>Ove email adrese će dobiti poruku kad se teret utovari i istovari.</DialogDescription>
           </DialogHeader>
 
           <div className="flex flex-col gap-4">
