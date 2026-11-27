@@ -1,1 +1,0 @@
-export { EditVanPage } from './EditVanPage';

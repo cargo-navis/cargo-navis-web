@@ -1,13 +1,19 @@
 import { useCallback } from 'react';
 
+import { type AnalyticsEvents, track } from '@/lib/analytics';
 import { useCreateShipmentDraft } from '@/lib/hooks';
+import { pluralCount } from '@/lib/utils/plural';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 
 const ACCEPTED_MIME_TYPES = ['application/pdf'];
 
 export const ACCEPTED_DRAFT_FILE_TYPES = ACCEPTED_MIME_TYPES;
 
-export function useUploadDraftFiles(onFilesAccepted?: () => void) {
+/** `entry`: where the upload started (analytics). */
+export function useUploadDraftFiles(
+  onFilesAccepted: (() => void) | undefined,
+  entry: AnalyticsEvents['draft uploaded']['entry']
+) {
   const { mutateAsync: createDraft } = useCreateShipmentDraft();
 
   return useCallback(
@@ -17,7 +23,12 @@ export function useUploadDraftFiles(onFilesAccepted?: () => void) {
 
       if (rejectedCount > 0) {
         showErrorToast({
-          title: `${rejectedCount} ${rejectedCount === 1 ? 'datoteka nije podržana' : 'datoteke nisu podržane'}. Dozvoljen je samo PDF.`,
+          title: pluralCount(rejectedCount, [
+            'datoteka nije podržana',
+            'datoteke nisu podržane',
+            'datoteka nije podržano',
+          ]),
+          description: 'Dozvoljen je samo PDF.',
         });
       }
 
@@ -31,16 +42,22 @@ export function useUploadDraftFiles(onFilesAccepted?: () => void) {
       const failed = results.length - succeeded;
 
       if (succeeded > 0) {
+        track('draft uploaded', { entry, file_count: succeeded });
         showSuccessToast({
-          title: `${succeeded} ${succeeded === 1 ? 'nalog učitan' : 'naloga učitano'}. Obrada je u tijeku.`,
+          title: pluralCount(succeeded, ['nalog učitan', 'naloga učitana', 'naloga učitano']),
+          description: 'Obrada je u tijeku.',
         });
       }
       if (failed > 0) {
         showErrorToast({
-          title: `${failed} ${failed === 1 ? 'datoteku nije moguće učitati' : 'datoteke nije moguće učitati'}.`,
+          title: pluralCount(failed, [
+            'datoteku nije moguće učitati',
+            'datoteke nije moguće učitati',
+            'datoteka nije moguće učitati',
+          ]),
         });
       }
     },
-    [createDraft, onFilesAccepted]
+    [createDraft, onFilesAccepted, entry]
   );
 }

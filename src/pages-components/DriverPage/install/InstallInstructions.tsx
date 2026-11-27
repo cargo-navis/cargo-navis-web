@@ -1,6 +1,8 @@
 import { createContext, useContext } from 'react';
 
-import { Box, Button, FlexLayout, Icon, Text } from '@/ui';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Icon } from '@/ui';
 
 import type { InstallPlatform } from './installHint';
 
@@ -12,21 +14,19 @@ const LayoutContext = createContext<Layout>('steps');
 const SIZES = {
   steps: {
     listGap: 'gap-3',
-    badge: 'size-[24px]',
-    number: 'text-xs-medium',
-    text: 'text-s',
-    helper: 'text-xs',
+    badge: 'size-6 text-xs',
+    text: 'text-base',
+    helper: 'text-sm',
     icon: 'm',
-    offset: 'mt-[2px]',
+    offset: 'mt-0.5',
   },
   compact: {
     listGap: 'gap-2',
-    badge: 'size-[20px]',
-    number: 'text-xxxs-medium',
-    text: 'text-xs',
-    helper: 'text-xxs',
+    badge: 'size-5 text-[11px]',
+    text: 'text-sm',
+    helper: 'text-xs',
     icon: 's',
-    offset: 'mt-1',
+    offset: 'mt-px',
   },
 } as const;
 
@@ -35,9 +35,7 @@ function useSizes() {
 }
 
 const StepList: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <FlexLayout as="ol" className={`flex-col ${useSizes().listGap}`}>
-    {children}
-  </FlexLayout>
+  <ol className={cn('flex flex-col', useSizes().listGap)}>{children}</ol>
 );
 
 interface StepProps {
@@ -49,51 +47,47 @@ interface StepProps {
 const Step: React.FC<StepProps> = ({ number, helperText, children }) => {
   const sizes = useSizes();
   return (
-    <FlexLayout as="li" className="items-start gap-3">
-      <FlexLayout
-        className={`${sizes.badge} ${sizes.offset} shrink-0 items-center justify-center rounded-circle bg-teal-100 dark:bg-teal-900`}
+    <li className="flex items-start gap-3">
+      <span
+        className={cn(
+          'flex shrink-0 items-center justify-center rounded-full bg-primary/10 font-medium text-brand tabular-nums dark:bg-primary/60',
+          sizes.badge,
+          sizes.offset
+        )}
       >
-        <Text className="tabular-nums" color="text-teal-700 dark:text-teal-300" variant={sizes.number}>
-          {number}
-        </Text>
-      </FlexLayout>
-      <FlexLayout className="min-w-0 flex-col pt-[2px]">
-        <FlexLayout className="flex-wrap items-center gap-x-1">{children}</FlexLayout>
-        {helperText && <FlexLayout className="flex-wrap items-center gap-x-1">{helperText}</FlexLayout>}
-      </FlexLayout>
-    </FlexLayout>
+        {number}
+      </span>
+      <div className="flex min-w-0 flex-col">
+        <div className="flex flex-wrap items-center gap-x-1">{children}</div>
+        {helperText && <div className="flex flex-wrap items-center gap-x-1">{helperText}</div>}
+      </div>
+    </li>
   );
 };
 
 const StepText: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Text color="text-color-2" variant={useSizes().text}>
-    {children}
-  </Text>
+  <span className={cn('text-foreground', useSizes().text)}>{children}</span>
 );
 
 const HelperText: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <Text color="text-color-3" variant={useSizes().helper}>
-    {children}
-  </Text>
+  <span className={cn('text-muted-foreground', useSizes().helper)}>{children}</span>
 );
 
 // The English label of the iOS share sheet item (with its icon), for iPhones set to English.
 const AddToHomeScreenHelper = () => (
   <>
     <HelperText>Eng.</HelperText>
-    <FlexLayout className="items-center gap-[2px]">
+    <span className="flex items-center gap-0.5">
       <HelperText>&quot;</HelperText>
-      <Icon color="text-dark-500 dark:text-light-300" icon="IconSquarePlus" size="m" />
+      <Icon className="text-muted-foreground" icon="IconSquarePlus" size="m" />
       <HelperText>Add to Home Screen&quot;</HelperText>
-    </FlexLayout>
+    </span>
   </>
 );
 
-const ShareIcon = () => <Icon color="text-dark-700 dark:text-light-100" icon="IconShare2" size={useSizes().icon} />;
+const ShareIcon = () => <Icon className="text-foreground" icon="IconShare2" size={useSizes().icon} />;
 
-const SafariIcon = () => (
-  <Icon color="text-dark-700 dark:text-light-100" icon="IconBrandSafari" size={useSizes().icon} />
-);
+const SafariIcon = () => <Icon className="text-foreground" icon="IconBrandSafari" size={useSizes().icon} />;
 
 /** Steps inside Safari, shared by Safari itself and by other iOS browsers once they switch to Safari. */
 const SafariSteps: React.FC<{ startAt: number }> = ({ startAt }) => (
@@ -176,24 +170,15 @@ interface InstallInstructionsProps {
 export const InstallInstructions: React.FC<InstallInstructionsProps> = ({ platform, layout, onInstall }) => {
   if (platform === 'prompt') {
     return (
-      <Box>
-        <Button
-          iconLeft="IconDownload"
-          isFullWidth={layout === 'steps'}
-          size={layout === 'steps' ? 'l' : 'm'}
-          text="Instaliraj"
-          onClick={onInstall}
-        />
-      </Box>
+      <Button className={cn(layout === 'steps' && 'w-full')} size="xl" onClick={onInstall}>
+        <Icon data-icon="inline-start" icon="IconDownload" size="m" />
+        Instaliraj
+      </Button>
     );
   }
 
   if (platform === 'installed') {
-    return (
-      <Text color="text-color-2" variant={SIZES[layout].text}>
-        Aplikacija je instalirana. Otvori Cargo Navis s početnog zaslona.
-      </Text>
-    );
+    return <p className={SIZES[layout].text}>Aplikacija je instalirana. Otvori Cargo Navis s početnog zaslona.</p>;
   }
 
   return (

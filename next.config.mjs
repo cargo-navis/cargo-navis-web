@@ -24,6 +24,18 @@ if (!PROJECT_ENVS.includes(process.env.PROJECT_ENV)) {
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // E2E tests build into their own folder (e2e/README.md), so a running `next dev` keeps its .next untouched.
+  distDir: process.env.NEXT_DIST_DIR || '.next',
+  // PostHog (KAN-134) goes through our domain so ad blockers don't drop it: /cn-relay → PostHog EU. A name unique to
+  // the app: block lists match common ones (/ingest, /analytics, /posthog …). Its API paths end in a slash, which
+  // Next would otherwise redirect away.
+  skipTrailingSlashRedirect: true,
+  async rewrites() {
+    return [
+      { source: '/cn-relay/static/:path*', destination: 'https://eu-assets.i.posthog.com/static/:path*' },
+      { source: '/cn-relay/:path*', destination: 'https://eu.i.posthog.com/:path*' },
+    ];
+  },
   env: {
     PROJECT_ENV: process.env.PROJECT_ENV,
     // Always defined at build time so production builds drop the driver portal dev mock.
@@ -31,21 +43,32 @@ const nextConfig = {
     // Tells the client to call the backend same-origin when src/middleware.ts proxies it.
     NEXT_PUBLIC_BACKEND_PROXY: process.env.BACKEND_PROXY_TARGET ? 'true' : 'false',
   },
-  webpack(nextConfig) {
-    nextConfig.module.rules.push({
-      test: /\.svg$/,
-      use: [
+  // KAN-55 Postavke: one page with Moj račun · Tvrtka; the old settings / tenant URLs land on the right section.
+  // Temporary (307) so browsers don't cache them for good.
+  async redirects() {
+    return [
+      { source: '/dashboard/settings', destination: '/dashboard/settings/account', permanent: false },
+      { source: '/dashboard/tenant', destination: '/dashboard/settings/company', permanent: false },
+      { source: '/dashboard/tenant/edit', destination: '/dashboard/settings/company', permanent: false },
+      // KAN-55 Flota: one page with type tabs (?vrsta=…) and one vehicle page for every type; Pregled flote and the
+      // four type pages (list, new, detail, edit) land on it. „new” before „:id”, so it isn't read as an id.
+      { source: '/dashboard/fleet/overview', destination: '/dashboard/fleet', permanent: false },
+      ...[
+        ['trucks', 'tegljaci'],
+        ['trailers', 'poluprikolice'],
+        ['solo-trucks', 'solo-kamioni'],
+        ['vans', 'kombiji'],
+      ].flatMap(([path, vrsta]) => [
+        { source: `/dashboard/fleet/${path}`, destination: `/dashboard/fleet?vrsta=${vrsta}`, permanent: false },
         {
-          loader: '@svgr/webpack',
-          options: {
-            svgoConfig: {
-              plugins: [],
-            },
-          },
+          source: `/dashboard/fleet/${path}/new`,
+          destination: `/dashboard/fleet/new?vrsta=${vrsta}`,
+          permanent: false,
         },
-      ],
-    });
-    return nextConfig;
+        { source: `/dashboard/fleet/${path}/:id`, destination: '/dashboard/fleet/:id', permanent: false },
+        { source: `/dashboard/fleet/${path}/:id/edit`, destination: '/dashboard/fleet/:id/edit', permanent: false },
+      ]),
+    ];
   },
 };
 

@@ -1,4 +1,7 @@
-import { Box, FlexLayout, Pill, Text } from '@/ui';
+import { ENTITY_ICON } from '@/components/shared/entity-icons';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { Icon } from '@/ui';
 
 import { HighlightedText } from './HighlightedText';
 import type { SearchResultItem } from './utils';
@@ -6,34 +9,41 @@ import type { SearchResultItem } from './utils';
 interface SearchResultTextProps {
   item: SearchResultItem;
   query: string;
+  /** `sm` in the ⌘K list (secondary lines 12px), `md` on the Pretraga page (14px). */
+  size?: 'sm' | 'md';
 }
 
-export const SearchResultText = ({ item, query }: SearchResultTextProps) => (
-  <FlexLayout className="flex-col min-w-0">
-    <FlexLayout className="items-center gap-2 min-w-0">
-      <Text className="truncate" color="text-color-1" variant="text-s-medium">
-        <HighlightedText query={query} text={item.title} />
-      </Text>
-      {item.titlePill && (
-        <Box className="shrink-0">
-          <Pill size="xs" text={item.titlePill.text} variant={item.titlePill.variant} />
-        </Box>
+/** Title (+ „Agencijski” badge) and the secondary lines of a search result (labs /overlays/command, /search). */
+export const SearchResultText = ({ item, query, size = 'sm' }: SearchResultTextProps) => {
+  const secondary = cn('truncate text-muted-foreground', size === 'sm' ? 'text-xs' : 'text-sm');
+
+  return (
+    <span className="flex min-w-0 flex-1 flex-col">
+      <span className="flex min-w-0 items-center gap-2">
+        <span className="truncate font-medium">
+          <HighlightedText query={query} text={item.title} />
+        </span>
+        {item.isAgency && (
+          <Badge className="shrink-0" size="sm" tone="category">
+            <Icon icon={ENTITY_ICON.agency} size="xs" /> Agencijski
+          </Badge>
+        )}
+      </span>
+      {item.subtitle && (
+        <span className={secondary}>
+          <HighlightedText query={query} text={item.subtitle} />
+        </span>
       )}
-    </FlexLayout>
-    {item.subtitle && (
-      <Text className="truncate" color="text-color-3" variant="text-xs">
-        <HighlightedText query={query} text={item.subtitle} />
-      </Text>
-    )}
-    {item.detail && (
-      <Text className="truncate" color="text-color-3" variant="text-xs">
-        {item.detail.label}: <HighlightedText query={query} text={item.detail.value} />
-      </Text>
-    )}
-    {item.matchedValue && (
-      <Text className="truncate" color="text-color-4" variant="text-xs">
-        <HighlightedText query={query} text={item.matchedValue} />
-      </Text>
-    )}
-  </FlexLayout>
-);
+      {item.detail && (
+        <span className={secondary}>
+          {item.detail.label}: <HighlightedText query={query} text={item.detail.value} />
+        </span>
+      )}
+      {item.matchedValue && (
+        <span className={cn(secondary, 'text-muted-foreground/80')}>
+          <HighlightedText query={query} text={item.matchedValue} />
+        </span>
+      )}
+    </span>
+  );
+};

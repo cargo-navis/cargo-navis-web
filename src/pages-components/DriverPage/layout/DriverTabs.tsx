@@ -1,7 +1,7 @@
-import clsx from 'clsx';
 import { Fragment } from 'react';
 
-import { FlexLayout, Icon, type IconType, Text, VerticalDivider } from '@/ui';
+import { cn } from '@/lib/utils';
+import { Icon, type IconType } from '@/ui';
 
 export type DriverTab = 'stops' | 'shipments';
 
@@ -15,41 +15,33 @@ interface DriverTabsProps {
   onChange(tab: DriverTab): void;
 }
 
-// Bottom tab bar, in thumb reach like a native app.
+// Bottom tab bar, in thumb reach like a native app. 60px + 1px border; the pinned next stop and the toasts sit above it.
 export const DriverTabs: React.FC<DriverTabsProps> = ({ activeTab, onChange }) => {
   return (
-    <FlexLayout
-      as="nav"
-      className="fixed inset-x-0 bottom-0 z-20 border-t border-dark-100 bg-white pb-[env(safe-area-inset-bottom)] dark:border-light-850 dark:bg-light-875"
-    >
-      <FlexLayout className="mx-auto w-full max-w-[480px]" role="tablist">
+    <nav className="fixed inset-x-0 bottom-0 z-20 border-t bg-card pb-[env(safe-area-inset-bottom)]">
+      <div className="mx-auto flex w-full max-w-[480px]" role="tablist">
         {TABS.map(({ key, label, icon }, index) => {
           const isActive = key === activeTab;
           return (
             <Fragment key={key}>
-              {index > 0 && (
-                <FlexLayout className="py-3">
-                  <VerticalDivider bgColor="bg-dark-100 dark:bg-light-850" />
-                </FlexLayout>
-              )}
-              <FlexLayout
+              {index > 0 && <div className="my-3 w-px bg-border" />}
+              <button
                 aria-selected={isActive}
-                as="button"
-                className={clsx(
-                  'h-[60px] grow basis-0 flex-col items-center justify-center gap-[2px] transition-colors',
-                  isActive ? 'text-teal-700 dark:text-teal-300' : 'text-dark-500 dark:text-light-300'
+                className={cn(
+                  'flex h-[60px] grow basis-0 flex-col items-center justify-center gap-0.5 transition-colors',
+                  isActive ? 'text-brand' : 'text-muted-foreground'
                 )}
                 role="tab"
                 type="button"
                 onClick={() => onChange(key)}
               >
                 <Icon icon={icon} size="l" />
-                <Text variant={isActive ? 'text-xxxs-bold' : 'text-xxxs-medium'}>{label}</Text>
-              </FlexLayout>
+                <span className={cn('text-[11px]', isActive ? 'font-bold' : 'font-medium')}>{label}</span>
+              </button>
             </Fragment>
           );
         })}
-      </FlexLayout>
-    </FlexLayout>
+      </div>
+    </nav>
   );
 };

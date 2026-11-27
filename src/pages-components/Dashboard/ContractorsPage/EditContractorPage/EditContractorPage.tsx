@@ -1,44 +1,22 @@
 import { useRouter } from 'next/router';
 
-import { BackButton } from '@/components/BackButton';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { PageTitle } from '@/components/PageTitle';
-import type { Contractor } from '@/lib/api';
-import { LoadingPage } from '@/lib/components/LoadingPage';
-import { useContractor } from '@/lib/hooks';
-import { NewContractorForm } from '@/pages-components/Dashboard/ContractorsPage/NewContractorPage/NewContractorForm';
-import { Box, FlexLayout, Heading } from '@/ui';
+import { useContractors } from '@/lib/hooks';
+import { EditPartnerPage } from '@/pages-components/Dashboard/Partners/PartnerFormPages';
+import { fromContractor } from '@/pages-components/Dashboard/Partners/partners';
 
 export const EditContractorPage = () => {
   const { query } = useRouter();
-  const id = query.id;
-
-  const { data: contractor, isLoading } = useContractor(id as string);
+  const id = query.id as string | undefined;
+  const { data: contractors, isLoading, isError, refetch } = useContractors({ enabled: !!id });
+  const contractor = contractors?.find((item) => String(item.id) === id);
 
   return (
-    <DashboardLayout>
-      <PageTitle title={contractor?.name} type="Uredi kontraktora" />
-      {isLoading || !contractor || !id ? (
-        <LoadingPage />
-      ) : (
-        <MainContent contractor={contractor} contractorId={id as string} />
-      )}
-    </DashboardLayout>
-  );
-};
-
-const MainContent = ({ contractor, contractorId }: { contractor: Contractor; contractorId: string }) => {
-  return (
-    <Box>
-      <Box className="py-5 flex flex-col gap-[40px]">
-        <Heading as="h1" variant="text-xl">
-          Ažuriraj Kontraktora
-        </Heading>
-      </Box>
-      <FlexLayout className="flex-col gap-[40px]">
-        <BackButton targetLocation={`/dashboard/contractors/${contractorId}`} />
-        <NewContractorForm contractor={contractor} />
-      </FlexLayout>
-    </Box>
+    <EditPartnerPage
+      isError={isError}
+      isLoading={isLoading || !id}
+      kind="contractor"
+      partner={contractor ? fromContractor(contractor) : undefined}
+      onRetry={() => void refetch()}
+    />
   );
 };

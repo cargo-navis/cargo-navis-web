@@ -33,7 +33,7 @@ export const ruleToTextMap: Record<AlertType, string> = {
   [AlertType.DRIVER_LICENCE_EXPIRED]: 'Vozačka dozvola',
   [AlertType.PROFESSIONAL_DRIVER_LICENCE_EXPIRED]: 'Profesionalna vozačka dozvola',
   [AlertType.DRIVER_VISA_EXPIRED]: 'Viza',
-  [AlertType.DRIVER_MEDICAL_EXAMINATION_EXPIRED]: 'Lječnički pregled',
+  [AlertType.DRIVER_MEDICAL_EXAMINATION_EXPIRED]: 'Liječnički pregled',
   [AlertType.VEHICLE_REGISTRATION_EXPIRED]: 'Registracija vozila',
   [AlertType.VEHICLE_TECHNICAL_INSPECTION_EXPIRED]: 'Tehnički pregled',
   [AlertType.VEHICLE_ADR_EXPIRED]: 'ADR',

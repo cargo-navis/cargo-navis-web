@@ -35,6 +35,8 @@ export interface Shipment extends AgencyShipmentFields {
   price: number;
   internalNote?: string;
   externalNote?: string;
+  /** Recipients of load/unload emails. On create, omitting it makes the backend use the client's automatic contacts. */
+  notificationEmails?: string[];
   cargo: Cargo[];
   createdAt: string;
   documents?: {
@@ -55,6 +57,9 @@ export type GetShipmentParams = {
   loadStatus?: LoadStatus;
   invoiceStatus?: InvoiceStatus;
   isInvoiceOverdue?: string;
+  /** A teret's loadingReadyDate OR unloadingDueDate in the range (the Nalozi „Utovar ili istovar” date filter). */
+  activityDateFrom?: string;
+  activityDateTo?: string;
   loadingReadyDateFrom?: string;
   loadingReadyDateTo?: string;
   unloadingDueDateFrom?: string;

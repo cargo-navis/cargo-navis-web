@@ -20,7 +20,9 @@ export function getCargoLabelParts(cargo: CargoLike): { primary: string; seconda
 
   if (type === 'standard' && palleteAmount) {
     const palleteName = palleteNameMap[palleteType as PalleteType];
-    const primary = palleteName ? `${palleteAmount} x ${palleteName}` : `${palleteAmount} paleta`;
+    const primary = palleteName
+      ? `${palleteAmount} x ${palleteName}`
+      : `${palleteAmount} ${getPalletsNoun(palleteAmount)}`;
     return { primary, secondary };
   }
 

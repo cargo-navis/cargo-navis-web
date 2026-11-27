@@ -18,7 +18,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to load Geist, Sora and Geist Mono from Google Fonts (`src/ui/theme/fonts.ts`).
 
 ## Environment variables
 
@@ -31,7 +31,9 @@ Set in `.env.local` (git-ignored). Next.js reads them at startup, so restart `np
 | `NEXT_PUBLIC_BACKEND_URL` | `https://api-dev.cargo-navis.com` | **Required.** API base URL. Ignored while `BACKEND_PROXY_TARGET` is set (calls then go to this app). |
 | `BACKEND_PROXY_TARGET` | `https://api-dev.cargo-navis.com` | Local dev and Vercel previews only; never on dev/prod deploys. All backend calls (`/auth/*`, `/api/*`) then go to this app and `src/middleware.ts` forwards them here. See [Local backend proxy](#local-backend-proxy). |
 | `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | `BNc…` (base64url) | **Required.** Web push public key; must match the backend's `vapid.public-key`. Used by push notifications in the dashboard and the driver portal. |
+| `NEXT_PUBLIC_POSTHOG_KEY` | `phc_…` | Optional. PostHog project key (EU Cloud) for product analytics in the dashboard (`src/lib/analytics`). Unset = analytics off (local); dev and production each use their own PostHog project. Traffic goes through `/cn-relay` on the app's domain (`next.config.mjs`). |
 | `NEXT_PUBLIC_DRIVER_API_MOCK` | `true` | Driver portal only: serve driver API calls from an in-browser mock (`npm run dev:driverMock` sets it). Never set in deployed builds. |
+| `NEXT_PUBLIC_FF_NALOG_ROUTE_ENTRY` | `true` | Feature flag (off by default): the parked „Ruta pa tereti” Nalog form entry. Any `NEXT_PUBLIC_FF_*` flag can be overridden per browser with `localStorage.setItem('ff:<name>', 'on' \| 'off')`; see `src/lib/flags.ts`. |
 
 ## Local backend proxy
 
@@ -80,10 +82,19 @@ browser ──/api/*───▶ Next.js (src/middleware.ts) ──▶ BACKEND_P
 ## Tests
 
 ```bash
-npm test          # Vitest (pure logic, services, middleware)
+npm test               # Vitest: our pure logic (rules, formatting, mapping), services, middleware
+npm run test:coverage  # the same, with coverage of our logic (report in coverage/index.html)
+npm run test:components # our own React components in real Chromium (Vitest browser mode), *.browser.test.tsx
 npm run lint
 npm run typecheck
+npm run test:e2e       # Playwright: production build, every area on desktop and phone, fake API (e2e/README.md)
 ```
+
+- Unit tests sit next to the code as `<module>.test.ts` and test our own functions only, never the shadcn / Base UI components in `src/components/ui`.
+- Component tests (`<Component>.browser.test.tsx`) cover our own components whose logic lives in the component (comboboxes, date picker, password checklist, discard guard, the cargo card), found by role and label like a user would. They need Chromium: `npx playwright install chromium` once. In `toHaveTextContent` use exact strings; a RegExp argument doesn't match there.
+- Coverage counts our plain `.ts` modules in `src/lib`, `src/pages-components` and `src/components` (not React components, types or static data). CI fails when it drops below the floor in `vitest.config.mts`.
+- **Every bug fix adds a test** that fails without the fix: a unit test when the bug is in a function, an E2E test when it's in a page or flow.
+- Icons only through `Icon` from `@/ui`: ESLint rejects direct `@tabler/icons-react` imports.
 
 ## Driver portal
 

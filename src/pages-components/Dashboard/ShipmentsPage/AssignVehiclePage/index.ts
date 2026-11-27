@@ -1,0 +1,1 @@
+export { AssignVehiclePage } from './AssignVehiclePage';

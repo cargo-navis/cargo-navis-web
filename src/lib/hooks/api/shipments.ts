@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { type keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import {
   createShipment,
@@ -19,6 +19,8 @@ import {
 interface UseShipmentsArgs<T> {
   select?: (data: PaginatedResponse<Shipment>) => T;
   enabled?: boolean;
+  /** e.g. `keepPreviousData`: a filter / sort / page change keeps the current rows until the new page arrives. */
+  placeholderData?: typeof keepPreviousData;
 }
 
 export function useShipments<TData = PaginatedResponse<Shipment>>(
@@ -134,8 +136,9 @@ export function useUpdateShipment() {
     onSuccess: (_, variables) => {
       // Cargo address edits can rewrite vehicle stops on the backend, so
       // refetch the shipment (its vehicleStops field), the shipments list,
-      // and any standalone vehicle-stop views.
-      void queryClient.removeQueries({ queryKey: ['shipments'] });
+      // and any standalone vehicle-stop views. Invalidate (not remove): a mounted list re-renders with the
+      // fresh rows, cached ones refetch when they mount again.
+      void queryClient.invalidateQueries({ queryKey: ['shipments'] });
 
       void queryClient.invalidateQueries({ queryKey: ['vehicleStops'], refetchType: 'all' });
       return queryClient.invalidateQueries({ queryKey: ['shipment', variables.id] });
@@ -163,19 +166,8 @@ export function useDeleteShipment(id: string) {
         if (filtered.length === data.data.length) return data;
         return { ...data, data: filtered, totalElements: Math.max(0, data.totalElements - 1) };
       });
-    },
-  });
-}
-
-export function useSendShipmentToDriver(id: string) {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: (data: { driverId: string; sentToDriver: boolean }) => Promise.resolve(data),
-    // sendShipmentToDriver(id, data.driverId, data.sentToDriver),
-    onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ['shipments'] });
-      await queryClient.invalidateQueries({ queryKey: ['shipment', id] });
+      // Then refetch: the page refills from the next one and the totals / page count are exact again.
+      void queryClient.invalidateQueries({ queryKey: ['shipments'] });
     },
   });
 }

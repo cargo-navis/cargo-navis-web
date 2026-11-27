@@ -1,7 +1,5 @@
 import { createContext, useCallback, useContext, useState } from 'react';
 
-import type { SelectValue } from '@/ui/components/Select/Select';
-
 const projectEnv = process.env.PROJECT_ENV;
 const isProductionEnv = projectEnv === 'production';
 
@@ -16,6 +14,8 @@ export interface ShipmentsFiltersStorage {
   invoiceStatus?: string;
   isInvoiceOverdue?: string;
   isAgency?: string;
+  activityDateFrom?: string;
+  activityDateTo?: string;
   loadingReadyDateFrom?: string;
   loadingReadyDateTo?: string;
   unloadingDueDateFrom?: string;
@@ -27,10 +27,10 @@ export interface ShipmentsFiltersStorage {
 interface StorageContextType {
   storage: ShipmentsFiltersStorage;
   isReady: boolean;
-  updateField: (field: keyof ShipmentsFiltersStorage, value: SelectValue | string | undefined) => void;
+  updateField: (field: keyof ShipmentsFiltersStorage, value: string | undefined) => void;
   updateFields: (updates: Partial<ShipmentsFiltersStorage>) => void;
   clearAll: () => void;
-  getField: (field: keyof ShipmentsFiltersStorage) => SelectValue;
+  getField: (field: keyof ShipmentsFiltersStorage) => string;
 }
 
 const StorageContext = createContext<StorageContextType | undefined>(undefined);
@@ -72,12 +72,12 @@ const clearStorage = (): void => {
   }
 };
 
-export const ShipmentsFiltersStorageProvider = ({ children }: { children: React.ReactNode }): JSX.Element => {
+export const ShipmentsFiltersStorageProvider = ({ children }: { children: React.ReactNode }): React.JSX.Element => {
   const [storage, setStorage] = useState<ShipmentsFiltersStorage>(readFromStorage);
   const [isReady] = useState(() => typeof window !== 'undefined');
 
   // Update a specific field in storage
-  const updateField = useCallback((field: keyof ShipmentsFiltersStorage, value: SelectValue | string | undefined) => {
+  const updateField = useCallback((field: keyof ShipmentsFiltersStorage, value: string | undefined) => {
     setStorage((prev) => {
       const updated = { ...prev };
 
@@ -119,7 +119,7 @@ export const ShipmentsFiltersStorageProvider = ({ children }: { children: React.
 
   // Get a specific field value
   const getField = useCallback(
-    (field: keyof ShipmentsFiltersStorage): SelectValue => {
+    (field: keyof ShipmentsFiltersStorage): string => {
       return storage[field] || '';
     },
     [storage]

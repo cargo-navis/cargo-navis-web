@@ -1,17 +1,30 @@
 import type { AxiosError } from 'axios';
 import { useState } from 'react';
 
+import { Button } from '@/components/ui/button';
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from '@/components/ui/drawer';
 import { type DriverStop, type DriverStopDocument, getDriverStopFileUrl } from '@/lib/api/driver';
 import { useDeleteDriverStopFile, useDriverAccount, useUploadDriverStopFile } from '@/lib/hooks/api/driver';
-import { getDataPointDateString } from '@/lib/utils/date';
+import { formatDate } from '@/lib/utils/date';
 import { bytesToMegabytes, getFileInput } from '@/lib/utils/file';
 import { getFileIcon } from '@/lib/utils/fileIcon';
+import { plural, pluralCount } from '@/lib/utils/plural';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
-import { BottomSheet, Box, Button, FlexLayout, Icon, Text } from '@/ui';
+import { Icon } from '@/ui';
 
+import { keepOpenOnToastPress, SectionTitle } from '../ui';
 import { prepareUploadFile } from './prepareUploadFile';
 
 const FILE_SIZE_LIMIT_IN_MB = 10;
+const SKIPPED = ['datoteka preskočena', 'datoteke preskočene', 'datoteka preskočeno'] as const;
 
 interface StopDocumentsProps {
   stop: DriverStop;
@@ -24,9 +37,9 @@ export const StopDocuments: React.FC<StopDocumentsProps> = ({ stop, isReadOnly =
   const { mutateAsync: uploadFile } = useUploadDriverStopFile();
   const { mutate: deleteFile, isPending: isDeleting } = useDeleteDriverStopFile();
   const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null);
-  // The document stays set while the sheet slides closed, so its name doesn't vanish mid-animation.
+  // The document stays set while the drawer slides closed, so its name doesn't vanish mid-animation.
   const [documentToDelete, setDocumentToDelete] = useState<DriverStopDocument | null>(null);
-  const [isDeleteSheetOpen, setIsDeleteSheetOpen] = useState(false);
+  const [isDeleteDrawerOpen, setIsDeleteDrawerOpen] = useState(false);
 
   async function handleFiles(files: FileList | null) {
     if (!files || files.length === 0) return;
@@ -55,18 +68,18 @@ export const StopDocuments: React.FC<StopDocumentsProps> = ({ stop, isReadOnly =
     setUploadProgress(null);
 
     if (skippedCount > 0) {
-      showErrorToast({ title: `${skippedCount} datoteka preskočeno (maks. ${FILE_SIZE_LIMIT_IN_MB}MB)` });
+      showErrorToast({ title: `${pluralCount(skippedCount, SKIPPED)} (maks. ${FILE_SIZE_LIMIT_IN_MB} MB)` });
     }
     if (successCount > 0) {
       showSuccessToast({
         title:
-          successCount === 1 && list.length === 1
-            ? 'Datoteka uploadana'
-            : `Uploadano ${successCount}/${list.length} datoteka`,
+          list.length === 1
+            ? 'Dokument dodan'
+            : `Dodano ${successCount} od ${list.length} ${plural(list.length, ['dokumenta', 'dokumenta', 'dokumenata'])}`,
       });
     }
     if (successCount === 0 && skippedCount === 0) {
-      showErrorToast({ title: 'Greška prilikom uploadanja datoteka. Pokušajte ponovno.' });
+      showErrorToast({ title: 'Učitavanje datoteka nije uspjelo', description: 'Pokušaj ponovno.' });
     }
   }
 
@@ -94,7 +107,7 @@ export const StopDocuments: React.FC<StopDocumentsProps> = ({ stop, isReadOnly =
     deleteFile(
       { stopId: stop.id, documentId: documentToDelete.id },
       {
-        onSuccess: () => setIsDeleteSheetOpen(false),
+        onSuccess: () => setIsDeleteDrawerOpen(false),
         onError: (error) => {
           const isForbidden = (error as AxiosError).response?.status === 403;
           showErrorToast({
@@ -109,88 +122,75 @@ export const StopDocuments: React.FC<StopDocumentsProps> = ({ stop, isReadOnly =
   if (isReadOnly && stop.documents.length === 0) return null;
 
   return (
-    <FlexLayout className="flex-col gap-2">
-      <Text color="text-color-3" variant="text-xxxs-medium">
+    <div className="flex flex-col gap-3">
+      <SectionTitle className="text-muted-foreground" icon="IconPaperclip">
         DOKUMENTI
-      </Text>
-      {stop.documents.map((document) => (
-        <FlexLayout
-          className="items-center gap-2 mb-2 rounded-m border border-dark-100 dark:border-light-850"
-          key={document.id}
-        >
-          <FlexLayout
-            as="button"
-            className="min-h-[44px] min-w-0 grow items-center gap-2 py-2 pl-3 text-left"
-            type="button"
-            onClick={() => void handlePreview(document)}
-          >
-            <Icon
-              className="shrink-0"
-              color="text-dark-600 dark:text-light-300"
-              icon={getFileIcon(document)}
-              size="m"
-            />
-            <FlexLayout className="min-w-0 flex-col">
-              <Text className="truncate" color="text-color-1" variant="text-xs-medium">
-                {document.name}
-              </Text>
-              <Text color="text-color-3" variant="text-xxxs">
-                {getDataPointDateString(document.createdAt)}
-              </Text>
-            </FlexLayout>
-          </FlexLayout>
-          {!isReadOnly && account && document.uploadedBy === account.id && (
-            <FlexLayout
-              aria-label="Obriši dokument"
-              as="button"
-              className="size-[44px] shrink-0 items-center justify-center"
+      </SectionTitle>
+      {stop.documents.length === 0 && <span className="text-sm text-muted-foreground">Još nema dokumenata.</span>}
+      {stop.documents.map((document) => {
+        const isMine = !!account && document.uploadedBy === account.id;
+        return (
+          <div className="flex items-center gap-1" key={document.id}>
+            {/* Tap = open the document (today's preview: a new tab). */}
+            <button
+              className="flex min-h-12 min-w-0 grow items-center gap-3 text-left"
               type="button"
-              onClick={() => {
-                setDocumentToDelete(document);
-                setIsDeleteSheetOpen(true);
-              }}
+              onClick={() => void handlePreview(document)}
             >
-              <Icon color="text-red-500" icon="IconTrash" size="m" />
-            </FlexLayout>
-          )}
-        </FlexLayout>
-      ))}
+              <Icon className="shrink-0 text-muted-foreground" icon={getFileIcon(document)} size="l" />
+              <span className="flex min-w-0 flex-col">
+                <span className="truncate text-sm font-medium">{document.name}</span>
+                <span className="text-xs text-muted-foreground">
+                  {isMine ? 'Ti' : 'Disponent'} · {formatDate(document.createdAt)}
+                </span>
+              </span>
+            </button>
+            {!isReadOnly && isMine && (
+              <Button
+                aria-label="Obriši dokument"
+                className="text-destructive"
+                size="icon-xl"
+                variant="ghost"
+                onClick={() => {
+                  setDocumentToDelete(document);
+                  setIsDeleteDrawerOpen(true);
+                }}
+              >
+                <Icon icon="IconTrash" size="m" />
+              </Button>
+            )}
+          </div>
+        );
+      })}
       {!isReadOnly && (
         <Button
-          iconLeft="IconCamera"
-          isFullWidth
-          isLoading={!!uploadProgress}
-          size="l"
-          text="Dodaj dokument"
-          variant="secondary"
+          className="w-full"
+          loading={!!uploadProgress}
+          size="xl"
+          variant="outline"
           onClick={() => getFileInput(handleFiles, { accept: 'image/*,application/pdf', multiple: true })}
-        />
+        >
+          <Icon data-icon="inline-start" icon="IconCamera" size="m" />
+          {uploadProgress ? `Učitavanje ${uploadProgress.current}/${uploadProgress.total}…` : 'Dodaj dokument'}
+        </Button>
       )}
-      {uploadProgress && (
-        <Text className="text-center" color="text-color-3" variant="text-xxs">
-          Učitavanje {uploadProgress.current}/{uploadProgress.total}…
-        </Text>
-      )}
-      <BottomSheet
-        description={documentToDelete?.name}
-        footer={
-          <Box className="grid grid-cols-2 gap-3">
-            <Button
-              isDisabled={isDeleting}
-              isFullWidth
-              size="l"
-              text="Odustani"
-              variant="secondary"
-              onClick={() => setIsDeleteSheetOpen(false)}
-            />
-            <Button isFullWidth isLoading={isDeleting} size="l" text="Obriši" variant="danger" onClick={handleDelete} />
-          </Box>
-        }
-        isNested
-        isOpen={isDeleteSheetOpen}
-        title="Obrisati dokument?"
-        onOpenChange={setIsDeleteSheetOpen}
-      />
-    </FlexLayout>
+      {/* Rendered inside the stop drawer, so Base UI stacks it on top as a nested drawer. */}
+      <Drawer open={isDeleteDrawerOpen} onOpenChange={keepOpenOnToastPress(setIsDeleteDrawerOpen)}>
+        <DrawerContent>
+          <DrawerHeader className="not-last:border-b-0">
+            <DrawerTitle>Obrisati dokument?</DrawerTitle>
+            <DrawerDescription>{documentToDelete?.name}</DrawerDescription>
+          </DrawerHeader>
+          <DrawerFooter className="grid grid-cols-2 gap-3 pt-6 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+            <DrawerClose disabled={isDeleting} render={<Button className="w-full" size="xl" variant="ghost" />}>
+              Odustani
+            </DrawerClose>
+            <Button className="w-full" loading={isDeleting} size="xl" variant="destructive" onClick={handleDelete}>
+              Obriši
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    </div>
   );
 };

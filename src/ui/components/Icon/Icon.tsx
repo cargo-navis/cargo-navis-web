@@ -45,7 +45,7 @@ export const Icon = forwardRef<HTMLDivElement, Icon2Props>(
           className,
           iconSizesMap[size],
           color,
-          'flex-none focus:outline-blue-200 dark:focus:outline-orange-200 leading-[0px]'
+          'flex-none focus:outline-legacy-blue-200 dark:focus:outline-orange-200 leading-[0px]'
         )}
         ref={ref}
         onClick={onClick}

@@ -100,7 +100,7 @@ function broadcastNotification(notification) {
 function getShipmentAcceptedNotifData(data) {
   const { orderNumber, driverName, shipmentId } = data.metadata;
 
-  const title = `CargoNavis - Nalog prihvaćen`;
+  const title = `Cargo Navis - Nalog prihvaćen`;
   const message = `${driverName} je prihvatio nalog ${orderNumber}`;
   const targetUrl = getShipmentUrl(shipmentId);
 
@@ -115,7 +115,7 @@ function getShipmentStatusChangedNotifData(data) {
 
   const statusText = isShipmentLoaded ? 'utovario' : 'istovario';
 
-  const title = `CargoNavis - Nalog ${newShipmentStatus}`;
+  const title = `Cargo Navis - Nalog ${newShipmentStatus}`;
   const message = `${driverName} je ${statusText} nalog ${orderNumber}`;
   const targetUrl = getShipmentUrl(shipmentId);
 
@@ -125,7 +125,7 @@ function getShipmentStatusChangedNotifData(data) {
 function getShipmentDraftUpdatedNotifData(data) {
   const { draftId, fileName } = data.metadata;
 
-  const title = `CargoNavis - Nalog obrađen`;
+  const title = `Cargo Navis - Nalog obrađen`;
   const message = fileName
     ? `Obrađeni nalog "${fileName}" je spreman za pregled`
     : 'Obrađeni nalog je spreman za pregled';
@@ -137,8 +137,8 @@ function getShipmentDraftUpdatedNotifData(data) {
 function getVehicleStopDocumentUploadedNotifData(data) {
   const { driverName, documentName, address } = data.metadata;
 
-  const title = `CargoNavis - Novi dokument`;
-  const message = `${driverName} je dodao dokument "${documentName}"${address ? ` na stanici (${address})` : ''}`;
+  const title = `Cargo Navis - Novi dokument`;
+  const message = `${driverName} je dodao dokument "${documentName}"${address ? ` na adresi ${address}` : ''}`;
   // Resolves the stop's vehicle and opens its stops page with the stop highlighted (VehicleStopRedirectPage).
   const targetUrl = `${ENV_VARS.appUrl}/dashboard/vehicle-stops/stop/${data.metadata.vehicleStopId}`;
 
@@ -151,8 +151,8 @@ function getVehicleStopCompletedNotifData(data) {
   const orderList = shipments.map((s) => s.orderNumber).join(', ');
   const orderLabel = shipments.length === 1 ? 'nalog' : 'naloge';
 
-  const title = `CargoNavis - Stanica obavljena`;
-  const message = `${driverName} je obavio stanicu (${address})${orderList ? ` za ${orderLabel} ${orderList}` : ''}`;
+  const title = `Cargo Navis - Utovar / istovar obavljen`;
+  const message = `${driverName} je obavio utovar / istovar na adresi ${address}${orderList ? ` za ${orderLabel} ${orderList}` : ''}`;
   const firstShipmentId = shipments[0]?.shipmentId;
   const targetUrl = firstShipmentId ? getShipmentUrl(firstShipmentId) : `${ENV_VARS.appUrl}/dashboard`;
 

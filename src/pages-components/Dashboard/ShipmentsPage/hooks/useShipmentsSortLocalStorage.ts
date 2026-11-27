@@ -1,9 +1,13 @@
 import { useRouter } from 'next/router';
 import { useCallback, useMemo } from 'react';
 
+import { track } from '@/lib/analytics';
+
 import { useShipmentsFiltersLocalStorage } from './useShipmentsFiltersLocalStorage';
 
 export enum SortFieldEnum {
+  /** Picked as „Najnovije” while a date range is on (no sort = „Po datumu” then). */
+  CreatedAt = 'createdAt',
   LoadingReadyDate = 'loadingReadyDate',
   UnloadingDueDate = 'unloadingDueDate',
   LoadingStopDate = 'loadingStopDate',
@@ -24,7 +28,7 @@ interface SortState {
 
 // Parse sort parameter: format is "field,direction" (e.g., "loadingDate,desc", "price,asc")
 const parseSort = (sort: string | undefined): { field: SortFieldEnum | null; direction: 'asc' | 'desc' | null } => {
-  if (!sort || sort === 'createdAt,desc') {
+  if (!sort) {
     return { field: null, direction: null };
   }
 
@@ -94,12 +98,15 @@ export const useShipmentsSortLocalStorage = (): SortState => {
       if (!isCurrentlyActive) {
         // First click: set to desc
         updateField('sort', `${fieldToSort},desc`);
+        track('sort changed', { field: fieldToSort, direction: 'desc' });
       } else if (currentDirection === 'desc') {
         // Second click: change to asc
         updateField('sort', `${fieldToSort},asc`);
+        track('sort changed', { field: fieldToSort, direction: 'asc' });
       } else {
         // Third click: remove sort (will default to createdAt,desc)
         updateField('sort', undefined);
+        track('sort changed', { field: fieldToSort, direction: 'default' });
       }
 
       // Reset pagination to first page on sort change
@@ -111,6 +118,7 @@ export const useShipmentsSortLocalStorage = (): SortState => {
   const setSort = useCallback(
     (field: SortFieldEnum, direction: 'asc' | 'desc') => {
       updateField('sort', `${field},${direction}`);
+      track('sort changed', { field, direction });
       void paginationReset();
     },
     [updateField, paginationReset]
@@ -118,6 +126,7 @@ export const useShipmentsSortLocalStorage = (): SortState => {
 
   const clearSort = useCallback(() => {
     updateField('sort', undefined);
+    track('sort changed', { field: 'default', direction: 'default' });
     void paginationReset();
   }, [updateField, paginationReset]);
 

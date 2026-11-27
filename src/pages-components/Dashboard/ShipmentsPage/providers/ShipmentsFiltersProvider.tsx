@@ -1,136 +1,109 @@
 import { useRouter } from 'next/router';
-import { createContext, useCallback, useContext } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo } from 'react';
 
-import { SelectValue } from '@/ui';
+import { track } from '@/lib/analytics';
 
 import {
+  type ShipmentsFiltersStorage,
   ShipmentsFiltersStorageProvider,
   useShipmentsFiltersLocalStorage,
 } from '../hooks/useShipmentsFiltersLocalStorage';
-import { useFiltersLocalStorageState } from '../ShipmentFilters/useFiltersLocalStorageState';
+import { withOneDateFilter } from '../shared/dateFilter';
+
+/**
+ * The list filters, remembered in localStorage. Dates are `YYYY-MM-DD`; of the three date pairs only one is set at a
+ * time (shared/dateFilter: the toolbar's date control and its type).
+ */
+export type ShipmentFilters = Omit<ShipmentsFiltersStorage, 'sort' | 'pageSize'>;
+
+export const FILTER_KEYS = [
+  'clientId',
+  'driverId',
+  'dispatcherId',
+  'loadStatus',
+  'invoiceStatus',
+  'isInvoiceOverdue',
+  'isAgency',
+  'activityDateFrom',
+  'activityDateTo',
+  'loadingReadyDateFrom',
+  'loadingReadyDateTo',
+  'unloadingDueDateFrom',
+  'unloadingDueDateTo',
+] as const satisfies readonly (keyof ShipmentFilters)[];
 
 export type ShipmentsFiltersContextType = {
+  filters: ShipmentFilters;
   activeFiltersCount: number;
-  selectedClientId: SelectValue;
-  selectedDriverId: SelectValue;
-  selectedDispatcherId: SelectValue;
-  selectedLoadStatus: SelectValue;
-  selectedInvoiceStatus: SelectValue;
-  selectedIsInvoiceOverdue: SelectValue;
-  selectedIsAgency: SelectValue;
-  loadingReadyDateFrom: string;
-  loadingReadyDateTo: string;
-  unloadingDueDateFrom: string;
-  unloadingDueDateTo: string;
-  onClientChange(clientId: SelectValue): void;
-  onDriverChange(driverId: SelectValue): void;
-  onDispatcherChange(dispatcherId: SelectValue): void;
-  onLoadStatusChange(loadStatus: SelectValue): void;
-  onInvoiceStatusChange(invoiceStatus: SelectValue): void;
-  onIsInvoiceOverdueChange(isInvoiceOverdue: SelectValue): void;
-  onIsAgencyChange(isAgency: SelectValue): void;
-  onLoadingReadyDateFromChange(date: string): void;
-  onLoadingReadyDateToChange(date: string): void;
-  onUnloadingDueDateFromChange(date: string): void;
-  onUnloadingDueDateToChange(date: string): void;
-  onClearAll(): void;
+  /** Set (or clear with `undefined`) some fields; back to page 1. */
+  setFilters(patch: Partial<ShipmentFilters>): void;
+  clearAll(): void;
+  /** URL filters are about to replace the remembered ones: hold the list request. */
+  isApplyingUrlFilters: boolean;
 };
 
 const ShipmentsFiltersContext = createContext<ShipmentsFiltersContextType | undefined>(undefined);
 
 const ShipmentsFiltersProviderInner = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-  const { clearAll: clearAllFilters } = useShipmentsFiltersLocalStorage();
+  const { storage, isReady, updateFields } = useShipmentsFiltersLocalStorage();
 
-  const { value: selectedClientId, onChange: onClientChange } = useFiltersLocalStorageState({
-    paramName: 'clientId',
-  });
-  const { value: selectedDriverId, onChange: onDriverChange } = useFiltersLocalStorageState({
-    paramName: 'driverId',
-  });
-  const { value: selectedDispatcherId, onChange: onDispatcherChange } = useFiltersLocalStorageState({
-    paramName: 'dispatcherId',
-  });
-  const { value: selectedLoadStatus, onChange: onLoadStatusChange } = useFiltersLocalStorageState({
-    paramName: 'loadStatus',
-  });
-  const { value: selectedInvoiceStatus, onChange: onInvoiceStatusChange } = useFiltersLocalStorageState({
-    paramName: 'invoiceStatus',
-  });
-  const { value: selectedIsInvoiceOverdue, onChange: onIsInvoiceOverdueChange } = useFiltersLocalStorageState({
-    paramName: 'isInvoiceOverdue',
-  });
-  const { value: selectedIsAgency, onChange: onIsAgencyChange } = useFiltersLocalStorageState({
-    paramName: 'isAgency',
-  });
-  const { value: loadingReadyDateFrom, onChange: onLoadingReadyDateFromChange } = useFiltersLocalStorageState({
-    paramName: 'loadingReadyDateFrom',
-  });
-  const { value: loadingReadyDateTo, onChange: onLoadingReadyDateToChange } = useFiltersLocalStorageState({
-    paramName: 'loadingReadyDateTo',
-  });
-  const { value: unloadingDueDateFrom, onChange: onUnloadingDueDateFromChange } = useFiltersLocalStorageState({
-    paramName: 'unloadingDueDateFrom',
-  });
-  const { value: unloadingDueDateTo, onChange: onUnloadingDueDateToChange } = useFiltersLocalStorageState({
-    paramName: 'unloadingDueDateTo',
-  });
+  const resetPage = useCallback(() => {
+    void router.push({ pathname: router.pathname, query: { ...router.query, page: '1' } }, undefined, {
+      shallow: true,
+    });
+  }, [router]);
 
-  const onClearAll = useCallback(async () => {
-    clearAllFilters();
-    // Reset pagination to first page
-    await router.push(
-      {
-        pathname: router.pathname,
-        query: { ...router.query, page: '1' },
-      },
-      undefined,
-      { shallow: true }
-    );
-  }, [clearAllFilters, router]);
+  // Links from elsewhere (Početna tiles) carry filters in the URL, named after the API params
+  // (?invoiceStatus=not_sent, ?loadingReadyDateFrom=2026-11-18 …). They win over the remembered ones: applied as the
+  // whole filter set (so they show as chips), then dropped from the URL so the chips stay the one source.
+  const urlFilterKey = FILTER_KEYS.filter((key) => typeof router.query[key] === 'string')
+    .map((key) => `${key}=${router.query[key]}`)
+    .join('&');
+  useEffect(() => {
+    if (!router.isReady || !isReady || !urlFilterKey) return;
+    const fromUrl = Object.fromEntries(
+      FILTER_KEYS.map((key) => [
+        key,
+        typeof router.query[key] === 'string' ? router.query[key] || undefined : undefined,
+      ])
+    ) as Partial<ShipmentFilters>;
+    updateFields(fromUrl);
+    const query = { ...router.query, page: '1' };
+    FILTER_KEYS.forEach((key) => delete query[key]);
+    void router.replace({ pathname: router.pathname, query }, undefined, { shallow: true });
+    // Runs once per set of URL filters.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady, isReady, urlFilterKey]);
 
-  const activeFiltersCount = [
-    selectedClientId,
-    selectedDriverId,
-    selectedDispatcherId,
-    selectedLoadStatus,
-    selectedInvoiceStatus,
-    selectedIsInvoiceOverdue,
-    selectedIsAgency,
-    loadingReadyDateFrom,
-    loadingReadyDateTo,
-    unloadingDueDateFrom,
-    unloadingDueDateTo,
-  ].filter(Boolean).length;
+  const filters = useMemo<ShipmentFilters>(
+    () =>
+      isReady ? withOneDateFilter(Object.fromEntries(FILTER_KEYS.map((key) => [key, storage[key] || undefined]))) : {},
+    [storage, isReady]
+  );
+
+  const setFilters = useCallback(
+    (patch: Partial<ShipmentFilters>) => {
+      updateFields(patch);
+      resetPage();
+      // Analytics: which filters were set (names only, never the values).
+      const set = Object.entries(patch).flatMap(([key, value]) => (value ? [key] : []));
+      if (set.length) track('filters applied', { filter_names: set });
+    },
+    [updateFields, resetPage]
+  );
+
+  // Clears the filters, keeps the sort and page size.
+  const clearAll = useCallback(() => {
+    updateFields(Object.fromEntries(FILTER_KEYS.map((key) => [key, undefined])));
+    resetPage();
+  }, [updateFields, resetPage]);
+
+  const activeFiltersCount = FILTER_KEYS.filter((key) => !!filters[key]).length;
 
   return (
     <ShipmentsFiltersContext.Provider
-      value={{
-        activeFiltersCount,
-        selectedClientId,
-        selectedDriverId,
-        selectedDispatcherId,
-        selectedLoadStatus,
-        selectedInvoiceStatus,
-        selectedIsInvoiceOverdue,
-        selectedIsAgency,
-        loadingReadyDateFrom: String(loadingReadyDateFrom || ''),
-        loadingReadyDateTo: String(loadingReadyDateTo || ''),
-        unloadingDueDateFrom: String(unloadingDueDateFrom || ''),
-        unloadingDueDateTo: String(unloadingDueDateTo || ''),
-        onClientChange,
-        onDriverChange,
-        onDispatcherChange,
-        onLoadStatusChange,
-        onInvoiceStatusChange,
-        onIsInvoiceOverdueChange,
-        onIsAgencyChange,
-        onLoadingReadyDateFromChange,
-        onLoadingReadyDateToChange,
-        onUnloadingDueDateFromChange,
-        onUnloadingDueDateToChange,
-        onClearAll,
-      }}
+      value={{ filters, activeFiltersCount, setFilters, clearAll, isApplyingUrlFilters: !!urlFilterKey }}
     >
       {children}
     </ShipmentsFiltersContext.Provider>

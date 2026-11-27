@@ -1,46 +1,42 @@
+import { keepPreviousData } from '@tanstack/react-query';
+
 import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
 import { useShipments } from '@/lib/hooks';
 
-import { usePaginationQueryParamState, useShipmentsSortLocalStorage } from '../hooks';
 import { useShipmentsFiltersContext } from '../providers/ShipmentsFiltersProvider';
+import { DATE_FILTER_SORT, readDateFilter } from '../shared/dateFilter';
+import { usePaginationQueryParamState } from './usePaginationQueryParamState';
+import { useShipmentsSortLocalStorage } from './useShipmentsSortLocalStorage';
 
+/** The current page of the list (filters, sort, page, size). A change keeps the previous rows until it answers. */
 export function useShipmentsPageData() {
-  const {
-    selectedClientId,
-    selectedDriverId,
-    selectedDispatcherId,
-    selectedLoadStatus,
-    selectedInvoiceStatus,
-    selectedIsInvoiceOverdue,
-    selectedIsAgency,
-    loadingReadyDateFrom,
-    loadingReadyDateTo,
-    unloadingDueDateFrom,
-    unloadingDueDateTo,
-  } = useShipmentsFiltersContext();
+  const { filters, isApplyingUrlFilters } = useShipmentsFiltersContext();
   const { page, pageSize, isRouterReady: isPaginationReady } = usePaginationQueryParamState();
   const { sort, isRouterReady: isSortReady } = useShipmentsSortLocalStorage();
-
-  const isRouterReady = isPaginationReady && isSortReady;
+  const dateFilter = readDateFilter(filters);
 
   return useShipments({
     params: {
-      clientId: selectedClientId ? String(selectedClientId) : undefined,
-      driverId: selectedDriverId ? String(selectedDriverId) : undefined,
-      dispatcherId: selectedDispatcherId ? String(selectedDispatcherId) : undefined,
-      loadStatus: selectedLoadStatus ? (selectedLoadStatus as LoadStatus) : undefined,
-      invoiceStatus: selectedInvoiceStatus ? (selectedInvoiceStatus as InvoiceStatus) : undefined,
-      isInvoiceOverdue: selectedIsInvoiceOverdue ? String(selectedIsInvoiceOverdue) : undefined,
+      clientId: filters.clientId,
+      driverId: filters.driverId,
+      dispatcherId: filters.dispatcherId,
+      loadStatus: filters.loadStatus as LoadStatus | undefined,
+      invoiceStatus: filters.invoiceStatus as InvoiceStatus | undefined,
+      isInvoiceOverdue: filters.isInvoiceOverdue,
       // Left out entirely when unset, which is what returns both types.
-      isAgency: selectedIsAgency ? selectedIsAgency === 'true' : undefined,
-      loadingReadyDateFrom: loadingReadyDateFrom ? String(loadingReadyDateFrom) : undefined,
-      loadingReadyDateTo: loadingReadyDateTo ? String(loadingReadyDateTo) : undefined,
-      unloadingDueDateFrom: unloadingDueDateFrom ? String(unloadingDueDateFrom) : undefined,
-      unloadingDueDateTo: unloadingDueDateTo ? String(unloadingDueDateTo) : undefined,
-      page: page,
+      isAgency: filters.isAgency ? filters.isAgency === 'true' : undefined,
+      activityDateFrom: filters.activityDateFrom,
+      activityDateTo: filters.activityDateTo,
+      loadingReadyDateFrom: filters.loadingReadyDateFrom,
+      loadingReadyDateTo: filters.loadingReadyDateTo,
+      unloadingDueDateFrom: filters.unloadingDueDateFrom,
+      unloadingDueDateTo: filters.unloadingDueDateTo,
+      page,
       size: pageSize,
-      sort: sort || undefined,
+      // No sort picked + a date range: by date, earliest first („Po datumu” in the sort select).
+      sort: sort || (dateFilter ? DATE_FILTER_SORT[dateFilter.type] : undefined),
     },
-    enabled: isRouterReady,
+    enabled: isPaginationReady && isSortReady && !isApplyingUrlFilters,
+    placeholderData: keepPreviousData,
   });
 }

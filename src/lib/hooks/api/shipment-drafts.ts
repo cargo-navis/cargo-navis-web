@@ -8,10 +8,17 @@ import {
   ShipmentDraft,
 } from '@/lib/api';
 
+/** While a PDF is being read: the list reloads itself this often, in case the push doesn't reach this tab. */
+const DRAFTS_POLL_MS = 5000;
+
 export function useShipmentDrafts() {
   return useQuery({
     queryKey: ['shipment-drafts'],
     queryFn: getShipmentDrafts,
+    refetchInterval: (query) =>
+      query.state.data?.some((draft) => draft.status === 'PENDING_EXTRACTION' || draft.status === 'PROCESSING')
+        ? DRAFTS_POLL_MS
+        : false,
   });
 }
 

@@ -1,10 +1,16 @@
+export interface ClientNotificationEmail {
+  email: string;
+  /** Added to every new shipment of this client automatically. */
+  alwaysNotify: boolean;
+}
+
 export interface Client {
   id: string;
   name: string;
   address: ClientAddress;
   taxId: string;
   termsOfPayment: string;
-  email?: string;
+  notificationEmails: ClientNotificationEmail[];
 }
 
 interface ClientAddress {
@@ -20,8 +26,10 @@ export type CreateClientParams = {
   addressName: string;
   addressPostalCodeId: string;
   taxId: string;
-  termsOfPayment: string;
-  email?: string;
+  /** Days; the forms send a number (0 = none). */
+  termsOfPayment: string | number;
+  notificationEmails?: ClientNotificationEmail[];
 };
 
+/** Omitting `notificationEmails` keeps the current list; sending one replaces it. */
 export type UpdateClientParams = Partial<CreateClientParams>;

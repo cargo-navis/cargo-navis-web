@@ -7,6 +7,7 @@ export interface ShipmentFields {
   externalNote?: string;
   isAgency?: boolean;
   agencyPrice?: number;
+  notificationEmails: string[];
   cargo: Cargo[];
 }
 
