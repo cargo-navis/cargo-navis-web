@@ -3,7 +3,7 @@ import * as React from 'react';
 import { ENTITY_ICON } from '@/components/shared/entity-icons';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Field, FieldDescription } from '@/components/ui/field';
+import { Field, FieldDescription, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,7 +13,7 @@ import { Icon } from '@/ui';
 
 import { formatEuro, formatNumber, getMargin } from '../shared/format';
 import { STATUS_TEXT } from '../shared/tones';
-import { ChoiceCards, ErrorText, FieldLink, Label, NumberInput, useNalogForm } from './form-context';
+import { AiMark, ChoiceCards, ErrorText, FieldLink, Label, NumberInput, Section, useNalogForm } from './form-context';
 import { PartnerCombobox } from './PartnerCombobox';
 import { fieldDomId, parseNumber, withAgency } from './values';
 
@@ -266,25 +266,53 @@ function RecipientsField() {
   );
 }
 
-/** Napomene (lab `NoteFields`): „Napomena” je interna, a „Napomena za podvozara” ide na njegov PDF (samo agency). */
+/**
+ * Napomene (lab `NoteFields`): „Napomena” is internal; „Napomena za podvozara” goes on the podvozar's PDF (agency only).
+ * An own nalog has the one note, so the section is „Napomena”, the field drops its own label (screen readers keep it;
+ * the ✦ AI mark moves to the title) and the hint (nothing to tell it apart from) — „Napomene” over „Napomena” read
+ * twice.
+ */
 export function NoteFields() {
   const { values, set } = useNalogForm();
+  const textarea = (
+    <Textarea
+      id={fieldDomId('internalNote')}
+      rows={3}
+      value={values.internalNote}
+      onChange={(event) => set({ internalNote: event.target.value }, 'internalNote')}
+    />
+  );
+
+  if (!values.isAgency) {
+    return (
+      <Section
+        title={
+          <span className="flex items-center gap-1.5">
+            Napomena <AiMark field="internalNote" />
+          </span>
+        }
+      >
+        <Field>
+          <FieldLabel className="sr-only" htmlFor={fieldDomId('internalNote')}>
+            Napomena
+          </FieldLabel>
+          {textarea}
+        </Field>
+      </Section>
+    );
+  }
+
   return (
-    // One below the other: notes are long text, a half-width column made them cramped.
-    <div className="flex flex-col gap-4">
-      <Field>
-        <Label field="internalNote" htmlFor={fieldDomId('internalNote')}>
-          Napomena
-        </Label>
-        <Textarea
-          id={fieldDomId('internalNote')}
-          rows={3}
-          value={values.internalNote}
-          onChange={(event) => set({ internalNote: event.target.value }, 'internalNote')}
-        />
-        <FieldDescription>Samo za tebe, ne ide ni na jedan PDF.</FieldDescription>
-      </Field>
-      {values.isAgency && (
+    <Section title="Napomene">
+      {/* One below the other: notes are long text, a half-width column made them cramped. */}
+      <div className="flex flex-col gap-4">
+        <Field>
+          <Label field="internalNote" htmlFor={fieldDomId('internalNote')}>
+            Napomena
+          </Label>
+          {textarea}
+          <FieldDescription>Vidi je samo tvoja tvrtka, ne ide ni na jedan PDF.</FieldDescription>
+        </Field>
         <Field>
           <Label field="externalNote" htmlFor={fieldDomId('externalNote')}>
             Napomena za podvozara
@@ -295,9 +323,9 @@ export function NoteFields() {
             value={values.externalNote}
             onChange={(event) => set({ externalNote: event.target.value }, 'externalNote')}
           />
-          <FieldDescription>Ispisuje se na PDF-u „Nalog za podvozara” koji preuzimaš.</FieldDescription>
+          <FieldDescription>Ispisuje se na PDF-u „Nalog za podvozara”.</FieldDescription>
         </Field>
-      )}
-    </div>
+      </div>
+    </Section>
   );
 }

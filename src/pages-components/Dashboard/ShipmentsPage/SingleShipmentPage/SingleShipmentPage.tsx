@@ -88,7 +88,9 @@ function MainContent({ shipment }: { shipment: Shipment }) {
   const openAssign = () => void push(assignVehicleHref(shipment.id));
   const documentsCount = documentsOf(shipment).length;
   // Interna + Vanjska: how many are written (0–2).
-  const notesCount = [shipment.internalNote, shipment.externalNote].filter((note) => note?.trim()).length;
+  const notesCount = [shipment.internalNote, shipment.isAgency ? shipment.externalNote : undefined].filter((note) =>
+    note?.trim()
+  ).length;
 
   return (
     <div className="flex flex-col gap-6">
@@ -106,7 +108,8 @@ function MainContent({ shipment }: { shipment: Shipment }) {
             )}
           </TabsTrigger>
           <TabsTrigger value="napomene">
-            Napomene
+            {/* An own nalog has the one note (NotesTab). */}
+            {shipment.isAgency ? 'Napomene' : 'Napomena'}
             {notesCount > 0 && (
               <Badge className="tabular-nums" size="sm">
                 {notesCount}

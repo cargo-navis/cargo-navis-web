@@ -290,9 +290,7 @@ export function NalogForm({
                 onNewContractor={() => setPartnerDialog('contractor')}
               />
             </Section>
-            <Section title="Napomene">
-              <NoteFields />
-            </Section>
+            <NoteFields />
           </div>
           <CargoList />
         </div>
