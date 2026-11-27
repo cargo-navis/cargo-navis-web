@@ -3,6 +3,7 @@ import * as React from 'react';
 import { AsyncCombobox } from '@/components/shared/async-combobox';
 import { CountryCombobox } from '@/components/shared/country-combobox';
 import { Button } from '@/components/ui/button';
+import { DialogFooter } from '@/components/ui/dialog';
 import {
   Field,
   FieldDescription,
@@ -119,6 +120,7 @@ export function PartnerForm({
   onSaved,
   onCancel,
   onDirtyChange,
+  inDialog = false,
 }: {
   kind: PartnerKind;
   /** Edit this partner; without it the form creates one. */
@@ -130,6 +132,8 @@ export function PartnerForm({
   onCancel(): void;
   /** Reports whether anything differs from the starting values (a dialog asks „Odbaciti promjene?” then). */
   onDirtyChange?(dirty: boolean): void;
+  /** Inside a Dialog (Novi nalog › Novi klijent / podvozar): the dialog's grey footer strip, kept in view. */
+  inDialog?: boolean;
 }) {
   const words = PARTNER_WORDS[kind];
   const isEdit = !!partner;
@@ -193,8 +197,27 @@ export function PartnerForm({
 
   const optional = <span className="font-normal text-muted-foreground">(neobavezno)</span>;
 
+  const footerContent = (
+    <>
+      <span className={cn('text-sm', triedToSave && errorCount > 0 ? 'text-destructive' : 'sr-only')}>
+        {triedToSave && errorCount > 0
+          ? `${errorCount} ${plural(errorCount, ['polje treba', 'polja trebaju', 'polja treba'])} ispraviti`
+          : ''}
+      </span>
+      <div className="ml-auto flex gap-2">
+        <Button disabled={saving} type="button" variant="ghost" onClick={onCancel}>
+          Odustani
+        </Button>
+        <Button loading={saving} type="submit">
+          {isEdit ? 'Spremi promjene' : words.add}
+        </Button>
+      </div>
+    </>
+  );
+
   return (
-    <div className="flex w-full max-w-2xl flex-col gap-6">
+    // Page: capped at 2xl. Dialog: the dialog sets the width, so the footer strip reaches both edges.
+    <div className={cn('flex w-full flex-col gap-6', !inDialog && 'max-w-2xl')}>
       {!isEdit && <ViesLookup onResult={handleVies} />}
       <form className="flex flex-col gap-6" noValidate onSubmit={(event) => void handleSubmit(event)}>
         <FieldSet>
@@ -339,22 +362,18 @@ export function PartnerForm({
             </div>
           </FieldGroup>
         </FieldSet>
-        {/* Sticky bottom bar (DECISIONS §2 page-level forms): summary left, Odustani + primary right. */}
-        <div className="sticky bottom-0 z-10 flex flex-wrap items-center justify-between gap-3 border-t bg-background py-3">
-          <span className={cn('text-sm', triedToSave && errorCount > 0 ? 'text-destructive' : 'sr-only')}>
-            {triedToSave && errorCount > 0
-              ? `${errorCount} ${plural(errorCount, ['polje treba', 'polja trebaju', 'polja treba'])} ispraviti`
-              : ''}
-          </span>
-          <div className="ml-auto flex gap-2">
-            <Button disabled={saving} type="button" variant="ghost" onClick={onCancel}>
-              Odustani
-            </Button>
-            <Button loading={saving} type="submit">
-              {isEdit ? 'Spremi promjene' : words.add}
-            </Button>
+        {inDialog ? (
+          // The dialog's footer strip, edge to edge, stuck to the bottom of the scrolling dialog (-bottom-6 = over its
+          // 24px padding; opaque so the fields don't show through).
+          <DialogFooter className="sticky -bottom-6 z-10 items-center bg-[color-mix(in_oklab,var(--muted)_50%,var(--popover))] sm:justify-between">
+            {footerContent}
+          </DialogFooter>
+        ) : (
+          // Sticky bottom bar (DECISIONS §2 page-level forms): summary left, Odustani + primary right.
+          <div className="sticky bottom-0 z-10 flex flex-wrap items-center justify-between gap-3 border-t bg-background py-3">
+            {footerContent}
           </div>
-        </div>
+        )}
       </form>
     </div>
   );

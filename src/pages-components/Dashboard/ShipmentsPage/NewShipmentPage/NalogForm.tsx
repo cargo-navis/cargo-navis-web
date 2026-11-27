@@ -321,6 +321,7 @@ export function NalogForm({
           </DialogHeader>
           {partnerDialog && (
             <PartnerForm
+              inDialog
               initialValues={partnerDialog === 'client' ? suggested.clientFormInitialValues : undefined}
               kind={partnerDialog}
               onCancel={partnerGuard.requestClose}
