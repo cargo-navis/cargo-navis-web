@@ -208,7 +208,10 @@ function ShipmentsList({ onUpload }: { onUpload(): void }) {
           id,
           label,
           visible: visibility[id] !== false,
-          onToggle: (visible) => update(id, visible),
+          onToggle: (visible) => {
+            update(id, visible);
+            track('column toggled', { column: id, visible });
+          },
         }))}
       />
       <FilterChipRow filters={activeFilters} resultsLabel={resultsLabel} />

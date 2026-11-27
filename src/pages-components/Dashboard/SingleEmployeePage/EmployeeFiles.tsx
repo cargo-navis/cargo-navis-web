@@ -3,6 +3,7 @@ import * as React from 'react';
 import { FileDeleteDialog, FileRow } from '@/components/shared/file-row';
 import { Panel } from '@/components/shared/panel';
 import { Button } from '@/components/ui/button';
+import { track } from '@/lib/analytics';
 import type { Employee } from '@/lib/api/employees.d';
 import { useDeleteEmployeeFile, useGetEmployeeDocumentUrl, useUploadEmployeeFile } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
@@ -48,6 +49,7 @@ export function EmployeeFiles({ employee }: { employee: Employee }) {
       showErrorToast({
         title: `${skipped} ${plural(skipped, ['datoteka preskočena', 'datoteke preskočene', 'datoteka preskočeno'])} (najviše ${FILE_SIZE_LIMIT_IN_MB} MB)`,
       });
+    if (uploaded > 0) track('entity document added', { entity: 'employee', file_count: uploaded });
     if (uploaded > 0)
       showSuccessToast({
         title:

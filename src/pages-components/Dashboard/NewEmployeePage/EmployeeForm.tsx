@@ -320,6 +320,7 @@ export function EmployeeForm({
           )
         );
         const saved = Object.keys(changed).length ? await updateEmployee(changed) : employee;
+        track('employee updated');
         showSuccessToast({ title: 'Zaposlenik ažuriran', description: fullName(values) });
         onSaved(saved ?? employee);
       } else {

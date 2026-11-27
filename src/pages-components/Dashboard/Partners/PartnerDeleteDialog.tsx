@@ -12,6 +12,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
+import { track } from '@/lib/analytics';
 import { useShipments } from '@/lib/hooks';
 import { pluralCount } from '@/lib/utils/plural';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
@@ -72,6 +73,7 @@ export function PartnerDeleteDialog({
     if (!shown || !canDelete) return;
     try {
       await deletePartner(shown.id);
+      track('partner deleted', { kind });
       showSuccessToast({ title: `${words.one} ${shown.name} obrisan` });
       onOpenChange(false);
       onDeleted?.(shown);

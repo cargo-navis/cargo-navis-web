@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Switch } from '@/components/ui/switch';
+import { track } from '@/lib/analytics';
 import { updatePassword } from '@/lib/api/user';
 import type { User } from '@/lib/api/user.d';
 import { usePushSubscriptions } from '@/lib/hooks/api/push-subscriptions';
@@ -227,12 +228,14 @@ function DevicePanel() {
       if (on) {
         setPushOptedOut(false);
         const ok = await registerPushSubscription(registered);
+        track('push toggled', { on: true, ok });
         const state = await readPushState();
         setPush(ok ? 'on' : state);
         if (ok) showSuccessToast({ title: 'Obavijesti uključene' });
       } else {
         setPushOptedOut(true);
         await unsubscribePushOnLogout();
+        track('push toggled', { on: false, ok: true });
         setPush('off');
         showSuccessToast({ title: 'Obavijesti isključene' });
       }
@@ -254,7 +257,10 @@ function DevicePanel() {
               key={value}
               size="sm"
               variant={theme === value ? 'secondary' : 'outline'}
-              onClick={() => setTheme(value)}
+              onClick={() => {
+                setTheme(value);
+                track('theme changed', { theme: value, entry: 'settings' });
+              }}
             >
               <Icon data-icon="inline-start" icon={icon} size="s" /> {label}
             </Button>

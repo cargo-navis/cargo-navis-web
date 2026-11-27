@@ -4,6 +4,7 @@ import { FileDeleteDialog, FileRow } from '@/components/shared/file-row';
 import { Panel } from '@/components/shared/panel';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
+import { track } from '@/lib/analytics';
 import type { Vehicle } from '@/lib/api';
 import { useDeleteVehicleFile, useGetVehicleDocumentUrl, useUploadVehicleFile } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
@@ -56,6 +57,7 @@ export function VehicleFiles({ vehicle }: { vehicle: Vehicle }) {
       });
     }
     if (uploaded > 0) {
+      track('entity document added', { entity: 'vehicle', file_count: uploaded });
       showSuccessToast({
         title:
           list.length === 1

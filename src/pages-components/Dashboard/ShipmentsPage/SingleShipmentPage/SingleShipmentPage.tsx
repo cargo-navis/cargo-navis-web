@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { track } from '@/lib/analytics';
 import type { Shipment } from '@/lib/api';
 import { useShipment } from '@/lib/hooks';
 import { Icon } from '@/ui';
@@ -37,6 +38,7 @@ function useDetailTab() {
   const router = useRouter();
   const tab: Tab = TABS.includes(router.query.tab as Tab) ? (router.query.tab as Tab) : 'pregled';
   const setTab = (next: Tab) => {
+    track('nalog tab opened', { tab: next });
     const query = { ...router.query };
     if (next === 'pregled') delete query.tab;
     else query.tab = next;

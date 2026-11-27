@@ -182,7 +182,8 @@ export function PartnerForm({
         addressPostalCodeId: values.postalCode!.id,
         email: showEmail ? normalizeEmail(values.email) : '',
       });
-      if (!isEdit) track('partner created', { kind, via_vies: fromVies });
+      if (isEdit) track('partner updated', { kind });
+      else track('partner created', { kind, via_vies: fromVies });
       showSuccessToast({ title: `${words.one} ${saved.name} ${isEdit ? 'ažuriran' : 'dodan'}` });
       onSaved(saved);
     } catch {

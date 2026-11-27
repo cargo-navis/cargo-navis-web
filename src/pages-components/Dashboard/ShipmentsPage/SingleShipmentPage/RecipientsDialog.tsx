@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/dialog';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from '@/components/ui/input-group';
+import { track } from '@/lib/analytics';
 import type { Shipment } from '@/lib/api';
 import { useUpdateAgencyShipment, useUpdateShipment } from '@/lib/hooks';
 import { isValidEmail, normalizeEmail, NOTIFICATION_EMAIL_LIMIT } from '@/lib/utils/notificationEmails';
@@ -81,6 +82,7 @@ export function RecipientsDialog({ shipment, onClose }: { shipment: Shipment; on
     try {
       if (shipment.isAgency) await updateAgencyShipment({ id: shipment.id, notificationEmails: next });
       else await updateShipment({ id: shipment.id, notificationEmails: next });
+      track('notification emails saved', { count: next.length });
       showSuccessToast({ title: 'Emailovi za obavijesti ažurirani' });
       onClose();
     } catch (saveError) {

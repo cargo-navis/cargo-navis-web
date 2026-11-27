@@ -3,6 +3,7 @@ import { PageTitle } from '@/components/PageTitle';
 import { Button } from '@/components/ui/button';
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { track } from '@/lib/analytics';
 import { Icon } from '@/ui';
 
 import { ChartCardSkeleton } from './ChartCard';
@@ -20,12 +21,34 @@ import { Agency, Overview, Regular } from './views';
 export const AnalyticsPage = () => {
   const { isReady, today, view, filters, setView, setFilters } = useAnalyticsFilters();
 
+  // Analytics: which filter changed; the value only for period presets and Dan / Tjedan / Mjesec / Godina (never ids).
+  function changeFilters(patch: Partial<Filters>) {
+    setFilters(patch);
+    if (patch.selection) {
+      track('analytics filter changed', {
+        filter: 'period',
+        value: 'preset' in patch.selection ? patch.selection.preset : 'custom',
+      });
+    } else if (patch.granularity) {
+      track('analytics filter changed', { filter: 'granularity', value: patch.granularity });
+    } else {
+      const filter = (['client', 'driver', 'vehicle'] as const).find((key) => key in patch && patch[key]);
+      if (filter) track('analytics filter changed', { filter });
+    }
+  }
+
   return (
     <DashboardLayout>
       <PageTitle title="Analitika" />
       <div className="flex flex-col gap-4">
         <h1 className="font-heading text-3xl font-bold tracking-tight">Analitika</h1>
-        <Tabs value={view} onValueChange={(value) => setView(value as View)}>
+        <Tabs
+          value={view}
+          onValueChange={(value) => {
+            setView(value as View);
+            track('analytics view changed', { view: value as string });
+          }}
+        >
           <TabsList className="no-scrollbar max-w-full overflow-x-auto" variant="line">
             {VIEWS.map((item) => (
               <TabsTrigger key={item.key} value={item.key}>
@@ -37,7 +60,7 @@ export const AnalyticsPage = () => {
         {/* The page is statically optimised: the filters come from the URL once the router is ready. */}
         {isReady ? (
           <>
-            <FilterRow filters={filters} today={today} view={view} onChange={setFilters} />
+            <FilterRow filters={filters} today={today} view={view} onChange={(patch) => changeFilters(patch)} />
             <AnalyticsContent filters={filters} today={today} view={view} />
           </>
         ) : (

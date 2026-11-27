@@ -20,6 +20,7 @@ import {
 import { Field, FieldDescription, FieldError } from '@/components/ui/field';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { track } from '@/lib/analytics';
 import type { Shipment } from '@/lib/api';
 import { useUpdateAgencyShipment, useUpdateShipment } from '@/lib/hooks';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
@@ -71,6 +72,7 @@ function NoteDialog({ shipment, type, onClose }: { shipment: Shipment; type: Not
       // Agency nalog ide kroz svoj resurs; backend ruta externalNote na child (PDF podvozaru).
       if (shipment.isAgency) await updateAgencyShipment({ id: shipment.id, [config.field]: note });
       else await updateShipment({ id: shipment.id, [config.field]: note });
+      track('note saved', { kind: config.field === 'internalNote' ? 'internal' : 'external', cleared: !note });
       showSuccessToast({ title: 'Napomena ažurirana' });
       onClose();
     } catch (error) {

@@ -12,6 +12,8 @@ import posthog from 'posthog-js';
 import type { Tenant } from '@/lib/api/tenant.d';
 import type { User } from '@/lib/api/user.d';
 
+import { pageNameOf } from './pageNames';
+
 const KEY = process.env.NEXT_PUBLIC_POSTHOG_KEY;
 
 let started = false;
@@ -45,6 +47,16 @@ export function syncAnalyticsUser(user: User, tenant: Tenant | undefined) {
     mask_all_text: true,
     mask_all_element_attributes: true,
     bootstrap: { distinctID: user.id, isIdentifiedID: true },
+    // A readable page name on every event („Nalozi”, „Nalog”): where a page view, an action or a click happened, for
+    // breakdowns in insights (pageNames.ts).
+    before_send: (event) => {
+      if (event) {
+        const url = event.properties.$current_url;
+        const name = pageNameOf(typeof url === 'string' ? url : window.location.href);
+        if (name) event.properties.page_name = name;
+      }
+      return event;
+    },
     loaded: () => {
       posthog.register({ env: process.env.PROJECT_ENV });
       tagUser(user, tenant);
@@ -63,7 +75,7 @@ export function resetAnalytics() {
   if (started) posthog.reset();
 }
 
-/** Every product event and its properties (kinds and counts only). */
+/** Every product event (code name → its properties; kinds and counts only). PostHog names: EVENT_NAMES. */
 export interface AnalyticsEvents {
   'shipment created': { source: 'manual' | 'pdf' | 'copy'; type: 'own' | 'agency'; cargo_count: number };
   'shipment updated': { type: 'own' | 'agency' };
@@ -77,15 +89,91 @@ export interface AnalyticsEvents {
   'quick look opened': Record<string, never>;
   'search used': { result_type: string; query_length: number };
   'filters applied': { filter_names: string[] };
-  'route reordered': Record<string, never>;
+  'route reordered': { direction: 'earlier' | 'later' };
   'partner created': { kind: 'client' | 'contractor'; via_vies: boolean };
   'employee created': Record<string, never>;
   'vehicle created': { vehicle_type: string };
+  // UI usage (2026-11-27): which parts of the redesign get used.
+  'sort changed': { field: string; direction: 'asc' | 'desc' | 'default' };
+  'column toggled': { column: string; visible: boolean };
+  'nalog tab opened': { tab: 'pregled' | 'dokumenti' | 'napomene' };
+  'nalog opened': { entry: 'quick_look' | 'row_menu' | 'new_tab' };
+  'document added': { entry: 'nalog' | 'stop'; file_count: number };
+  'note saved': { kind: 'internal' | 'external'; cleared: boolean };
+  'notifications opened': Record<string, never>;
+  'push toggled': { on: boolean; ok: boolean };
+  'theme changed': { theme: string; entry: 'user_menu' | 'settings' };
+  // Documents and drafts (2026-11-27).
+  'pdf downloaded': { entry: 'detail' | 'row_menu'; document: 'own' | 'client' | 'contractor'; language: string };
+  'notification emails saved': { count: number };
+  'draft text opened': Record<string, never>;
+  'draft document opened': Record<string, never>;
+  'draft to nalog': Record<string, never>;
+  'draft deleted': Record<string, never>;
+  // Partners, fleet, employees (2026-11-27).
+  'partner updated': { kind: 'client' | 'contractor' };
+  'partner deleted': { kind: 'client' | 'contractor' };
+  'vehicle updated': { vehicle_type: string };
+  'vehicle deleted': Record<string, never>;
+  'employee updated': Record<string, never>;
+  'employee deactivated': Record<string, never>;
+  'entity document added': { entity: 'vehicle' | 'employee'; file_count: number };
+  // Analitika (2026-11-27).
+  'analytics view changed': { view: string };
+  'analytics filter changed': { filter: 'period' | 'granularity' | 'client' | 'driver' | 'vehicle'; value?: string };
 }
+
+/**
+ * The name each event has in PostHog (2026-11-27: „Action: …” in Croatian, readable next to the page names); events
+ * that exist on one table only name it („Nalozi · …”), and every event also carries `page_name`. The keys stay the
+ * short code names used in track(). Renaming one splits its history in PostHog: past data keeps the old name.
+ */
+const EVENT_NAMES: Record<keyof AnalyticsEvents, string> = {
+  'shipment created': 'Action: Nalog dodan',
+  'shipment updated': 'Action: Nalog ažuriran',
+  'shipment deleted': 'Action: Nalog obrisan',
+  'draft uploaded': 'Action: Nalozi u pripremi · PDF učitan',
+  'vehicle assigned': 'Action: Vozilo dodijeljeno',
+  'drivers notified': 'Action: Vozač obaviješten',
+  'stop confirmed': 'Action: Utovar / istovar potvrđen',
+  'agency status set': 'Action: Status tereta promijenjen',
+  'invoice status changed': 'Action: Status fakture promijenjen',
+  'quick look opened': 'Action: Nalozi · Brzi pregled otvoren',
+  'search used': 'Action: Pretraga korištena',
+  'filters applied': 'Action: Nalozi · Filter primijenjen',
+  'route reordered': 'Action: Redoslijed rute promijenjen',
+  'partner created': 'Action: Klijent / podvozar dodan',
+  'employee created': 'Action: Zaposlenik dodan',
+  'vehicle created': 'Action: Vozilo dodano',
+  'sort changed': 'Action: Nalozi · Sortiranje promijenjeno',
+  'column toggled': 'Action: Nalozi · Stupac prikazan / skriven',
+  'nalog tab opened': 'Action: Kartica naloga otvorena',
+  'nalog opened': 'Action: Nalog otvoren',
+  'document added': 'Action: Dokument dodan',
+  'note saved': 'Action: Napomena spremljena',
+  'notifications opened': 'Action: Obavijesti otvorene',
+  'push toggled': 'Action: Push obavijesti uključene / isključene',
+  'theme changed': 'Action: Izgled promijenjen',
+  'pdf downloaded': 'Action: PDF naloga preuzet',
+  'notification emails saved': 'Action: Emailovi za obavijesti ažurirani',
+  'draft text opened': 'Action: Nalozi u pripremi · Tekst otvoren',
+  'draft document opened': 'Action: Nalozi u pripremi · Dokument otvoren',
+  'draft to nalog': 'Action: Nalozi u pripremi · Kreiraj nalog',
+  'draft deleted': 'Action: Nalozi u pripremi · Obrisan',
+  'partner updated': 'Action: Klijent / podvozar ažuriran',
+  'partner deleted': 'Action: Klijent / podvozar obrisan',
+  'vehicle updated': 'Action: Vozilo ažurirano',
+  'vehicle deleted': 'Action: Vozilo obrisano',
+  'employee updated': 'Action: Zaposlenik ažuriran',
+  'employee deactivated': 'Action: Zaposlenik deaktiviran',
+  'entity document added': 'Action: Dokument dodan (vozilo / zaposlenik)',
+  'analytics view changed': 'Action: Analitika · Kartica promijenjena',
+  'analytics filter changed': 'Action: Analitika · Filter promijenjen',
+};
 
 export function track<E extends keyof AnalyticsEvents>(
   event: E,
   ...[properties]: AnalyticsEvents[E] extends Record<string, never> ? [] : [AnalyticsEvents[E]]
 ) {
-  if (started) posthog.capture(event, properties);
+  if (started) posthog.capture(EVENT_NAMES[event], properties);
 }

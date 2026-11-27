@@ -111,21 +111,31 @@ export function getPdfDocuments(
   ];
 }
 
-export function useDownloadShipmentPdf() {
+const PDF_DOCUMENT_KIND: Record<string, 'own' | 'client' | 'contractor'> = {
+  Nalog: 'own',
+  'Nalog za klijenta': 'client',
+  'Nalog za podvozara': 'contractor',
+};
+
+export function useDownloadShipmentPdf(entry: 'detail' | 'row_menu') {
   const [isDownloading, setIsDownloading] = React.useState(false);
 
-  const download = React.useCallback(async (document: PdfDocument, language: ShipmentPdfLanguage) => {
-    setIsDownloading(true);
-    try {
-      const blob = await generateShipmentPdf(document.shipmentId, language);
-      downloadBlob(blob, buildShipmentPdfFilename({ ...document, language }));
-    } catch (error) {
-      console.error(error);
-      showErrorToast({ title: 'PDF se nije preuzeo', description: 'Pokušaj ponovno.' });
-    } finally {
-      setIsDownloading(false);
-    }
-  }, []);
+  const download = React.useCallback(
+    async (document: PdfDocument, language: ShipmentPdfLanguage) => {
+      setIsDownloading(true);
+      try {
+        const blob = await generateShipmentPdf(document.shipmentId, language);
+        downloadBlob(blob, buildShipmentPdfFilename({ ...document, language }));
+        track('pdf downloaded', { entry, document: PDF_DOCUMENT_KIND[document.label] ?? 'own', language });
+      } catch (error) {
+        console.error(error);
+        showErrorToast({ title: 'PDF se nije preuzeo', description: 'Pokušaj ponovno.' });
+      } finally {
+        setIsDownloading(false);
+      }
+    },
+    [entry]
+  );
 
   return { download, isDownloading };
 }

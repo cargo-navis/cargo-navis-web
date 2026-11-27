@@ -24,6 +24,7 @@ import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { track } from '@/lib/analytics';
 import { getShipmentDraftDocumentUrl, type ShipmentDraft, type ShipmentDraftStatus } from '@/lib/api';
 import { useDeleteShipmentDraft, useShipmentDrafts } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
@@ -68,6 +69,7 @@ function DeleteDraftDialog({
     if (!draft) return;
     try {
       await deleteDraft(draft.id);
+      track('draft deleted');
       showSuccessToast({ title: 'Nalog u pripremi obrisan' });
       onOpenChange(false);
     } catch (error) {
@@ -181,7 +183,10 @@ export const DraftsTab = ({ onUpload }: { onUpload(): void }) => {
                 <button
                   className="group flex items-start gap-2 text-left"
                   type="button"
-                  onClick={() => setTextDraft(draft)}
+                  onClick={() => {
+                    track('draft text opened');
+                    setTextDraft(draft);
+                  }}
                 >
                   <Icon className="mt-0.5 text-muted-foreground" icon="IconFileDescription" size="s" />
                   <span className="font-medium group-hover:underline">{draft.fileName}</span>
@@ -196,12 +201,25 @@ export const DraftsTab = ({ onUpload }: { onUpload(): void }) => {
               <TableCell className="px-3 py-3">
                 <div className="flex items-center justify-end gap-2">
                   {draft.document && (
-                    <Button size="sm" variant="outline" onClick={() => void handleOpenDocument(draft)}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        track('draft document opened');
+                        void handleOpenDocument(draft);
+                      }}
+                    >
                       <Icon data-icon="inline-start" icon="IconExternalLink" size="s" /> Otvori dokument
                     </Button>
                   )}
                   {draft.status === 'EXTRACTED' && (
-                    <Button size="sm" onClick={() => void router.push(`/dashboard/shipments/new?draftId=${draft.id}`)}>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        track('draft to nalog');
+                        void router.push(`/dashboard/shipments/new?draftId=${draft.id}`);
+                      }}
+                    >
                       <Icon data-icon="inline-start" icon="IconArrowRight" size="s" /> Kreiraj nalog
                     </Button>
                   )}

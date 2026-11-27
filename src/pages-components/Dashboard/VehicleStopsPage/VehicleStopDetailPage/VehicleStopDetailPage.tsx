@@ -176,7 +176,7 @@ export const VehicleStopDetailPage = () => {
       { stopId: stop.id, previousStopId: by === -1 ? other.previousStopId : other.id },
       {
         onSuccess: () => {
-          track('route reordered');
+          track('route reordered', { direction: by === -1 ? 'earlier' : 'later' });
           const notified = [stop, other].filter((item) => item.messageSentAt && item.driverId);
           const toastId = showSuccessToast({
             title: 'Redoslijed promijenjen',

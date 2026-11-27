@@ -10,6 +10,7 @@ import { FileDeleteDialog, FileRow } from '@/components/shared/file-row';
 import { Panel } from '@/components/shared/panel';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { track } from '@/lib/analytics';
 import type { Shipment } from '@/lib/api';
 import {
   useDeleteShipmentFile,
@@ -64,7 +65,8 @@ export function DocumentsTab({ shipment }: { shipment: Shipment }) {
   const documents = documentsOf(shipment);
 
   async function uploadFiles(files: File[]) {
-    await uploadWithLimit(files, (file) => upload({ file, fileName: file.name }));
+    const uploaded = await uploadWithLimit(files, (file) => upload({ file, fileName: file.name }));
+    if (uploaded > 0) track('document added', { entry: 'nalog', file_count: uploaded });
   }
 
   async function open(document: DocumentItem) {
