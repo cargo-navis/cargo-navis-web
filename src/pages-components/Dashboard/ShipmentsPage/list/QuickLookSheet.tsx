@@ -122,7 +122,8 @@ function QuickLook({ shipment }: { shipment: Shipment }) {
   const client = shipment.clientId ? clientsById.get(shipment.clientId) : undefined;
   const notes = [
     { label: 'Napomena', text: shipment.internalNote },
-    { label: 'Napomena za podvozara', text: shipment.externalNote },
+    // Agency only, as in the form and Napomene (an own nalog may hold an old, hidden one).
+    { label: 'Napomena za podvozara', text: shipment.isAgency ? shipment.externalNote : undefined },
   ].filter((note) => !!note.text);
   const margin =
     shipment.isAgency && shipment.contractorPrice !== null && shipment.contractorPrice !== undefined

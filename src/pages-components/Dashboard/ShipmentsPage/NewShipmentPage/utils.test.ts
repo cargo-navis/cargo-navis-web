@@ -53,7 +53,7 @@ describe('transformFormDataToPayload · nalog', () => {
 
   it('empties present text fields and recipients', () => {
     const payload = transformFormDataToPayload({
-      ...fields({ cargo: undefined as never }),
+      ...fields({ cargo: undefined as never, isAgency: true }),
       externalOrderReference: undefined,
       internalNote: undefined,
       externalNote: undefined,
@@ -61,6 +61,15 @@ describe('transformFormDataToPayload · nalog', () => {
     });
     expect(payload).toMatchObject({ externalOrderReference: '', internalNote: '', externalNote: '' });
     expect(payload.notificationEmails).toEqual([]);
+  });
+
+  it('an own nalog never sends „Napomena za podvozara”', () => {
+    expect(transformFormDataToPayload(fields({ externalNote: 'Carina Ingolstadt' }))).not.toHaveProperty(
+      'externalNote'
+    );
+    expect(transformFormDataToPayload(fields({ externalNote: 'Carina Ingolstadt', isAgency: true }))).toMatchObject({
+      externalNote: 'Carina Ingolstadt',
+    });
   });
 
   it('keeps a price of 0, drops an undefined one', () => {

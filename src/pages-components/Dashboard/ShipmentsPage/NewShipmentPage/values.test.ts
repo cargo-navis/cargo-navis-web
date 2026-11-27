@@ -100,7 +100,7 @@ describe('Nalog form → today’s payload', () => {
       transportContractorId: 't1',
       price: 1850,
       internalNote: 'Interna',
-      externalNote: '',
+      // Own nalog: no „Napomena za podvozara”.
       notificationEmails: ['ana@podravka.hr'],
       cargo: [{ id: 'cg1', ...savedCargo }],
     });
@@ -120,7 +120,7 @@ describe('Nalog form → today’s payload', () => {
       transportContractorId: 't1',
       price: 1850,
       internalNote: 'Interna',
-      externalNote: '',
+      // A copy is an own nalog: no „Napomena za podvozara”.
       notificationEmails: [],
       cargo: [{ ...savedCargo, loadingReadyDate: '', unloadingDueDate: '' }],
     });
