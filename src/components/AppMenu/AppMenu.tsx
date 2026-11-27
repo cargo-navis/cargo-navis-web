@@ -12,6 +12,7 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { Spinner } from '@/components/ui/spinner';
+import { track } from '@/lib/analytics';
 import type { Alert, Notification } from '@/lib/api';
 import { useAlerts, useIsMobile, useNotifications } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
@@ -51,7 +52,11 @@ function summary(alerts: number, notifications: number) {
  * newest first, 8 at most + „Vidi više” (Obavijesti). Popover on desktop, bottom drawer on phones (DECISIONS §3).
  */
 export const AppMenu = () => {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpenState] = React.useState(false);
+  const setOpen = (next: boolean) => {
+    if (next && !open) track('notifications opened');
+    setOpenState(next);
+  };
   const isMobile = useIsMobile();
   const { data: alerts, isLoading: isLoadingAlerts } = useAlerts();
   const { data: notifications, isLoading: isLoadingNotifications } = useNotifications();

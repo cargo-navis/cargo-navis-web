@@ -11,6 +11,7 @@ import {
   AlertDialogMedia,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { track } from '@/lib/analytics';
 import { deleteVehicle as deleteVehicleRequest, type Vehicle } from '@/lib/api';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Icon } from '@/ui';
@@ -42,6 +43,7 @@ export function DeleteVehicleDialog({
       showErrorToast({ title: 'Vozilo nije obrisano', description: 'Pokušaj ponovno.' });
       return;
     }
+    track('vehicle deleted');
     showSuccessToast({ title: 'Vozilo obrisano', description: vehicle.registration });
     onOpenChange(false);
     try {

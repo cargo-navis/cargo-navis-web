@@ -109,6 +109,7 @@ export function VehicleForm({ vehicle, initialType }: { vehicle?: Vehicle; initi
     try {
       if (vehicle) {
         await updateVehicle(toPayload(values, type, initial));
+        track('vehicle updated', { vehicle_type: type });
         showSuccessToast({ title: 'Vozilo ažurirano', description: values.registration.trim().toUpperCase() });
         void router.push(vehicleHref(vehicle.id));
       } else {

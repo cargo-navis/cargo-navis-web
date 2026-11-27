@@ -33,7 +33,7 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { resetAnalytics } from '@/lib/analytics';
+import { resetAnalytics, track } from '@/lib/analytics';
 import { logout } from '@/lib/api';
 import { useCurrentTenant, useCurrentUser } from '@/lib/hooks';
 import { accessTokenStore } from '@/lib/services/accessTokenStore';
@@ -266,7 +266,10 @@ function ThemePicker() {
       <DropdownMenuRadioGroup
         className="flex gap-0.5 rounded-lg bg-muted p-0.5"
         value={theme ?? 'system'}
-        onValueChange={(value) => setTheme(value as string)}
+        onValueChange={(value) => {
+          setTheme(value as string);
+          track('theme changed', { theme: value as string, entry: 'user_menu' });
+        }}
       >
         {THEMES.map(({ value, label, icon }) => (
           <DropdownMenuRadioItem

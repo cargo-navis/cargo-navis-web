@@ -18,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetTitle } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
+import { track } from '@/lib/analytics';
 import type { Shipment } from '@/lib/api';
 import { Icon, type IconType } from '@/ui';
 
@@ -121,7 +122,8 @@ function QuickLook({ shipment }: { shipment: Shipment }) {
   const client = shipment.clientId ? clientsById.get(shipment.clientId) : undefined;
   const notes = [
     { label: 'Napomena', text: shipment.internalNote },
-    { label: 'Napomena za podvozara', text: shipment.externalNote },
+    // Agency only, as in the form and Napomene (an own nalog may hold an old, hidden one).
+    { label: 'Napomena za podvozara', text: shipment.isAgency ? shipment.externalNote : undefined },
   ].filter((note) => !!note.text);
   const margin =
     shipment.isAgency && shipment.contractorPrice !== null && shipment.contractorPrice !== undefined
@@ -259,7 +261,12 @@ function QuickLook({ shipment }: { shipment: Shipment }) {
         <Button nativeButton={false} render={<Link href={editShipmentHref(shipment.id)} />} variant="outline">
           <Icon data-icon="inline-start" icon="IconPencil" size="s" /> Uredi
         </Button>
-        <Button nativeButton={false} render={<Link href={shipmentHref(shipment.id)} />}>
+        <Button
+          nativeButton={false}
+          render={
+            <Link href={shipmentHref(shipment.id)} onClick={() => track('nalog opened', { entry: 'quick_look' })} />
+          }
+        >
           <Icon data-icon="inline-start" icon="IconExternalLink" size="s" /> Otvori nalog
         </Button>
       </SheetFooter>

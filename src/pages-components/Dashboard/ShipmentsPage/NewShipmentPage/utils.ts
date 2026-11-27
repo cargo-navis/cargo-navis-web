@@ -38,7 +38,9 @@ export const transformFormDataToPayload = (
   if ('transportContractorId' in formData) payload.transportContractorId = transportContractorId;
   if ('price' in formData && price !== undefined) payload.price = price;
   if ('internalNote' in formData) payload.internalNote = internalNote ?? '';
-  if ('externalNote' in formData) payload.externalNote = externalNote ?? '';
+  // „Napomena za podvozara” exists on agency nalozi only (hidden on own ones; the backend keeps it on the outgoing
+  // order): an own nalog never sends it, so a value left from „Agencijski” or the AI doesn't go out unseen.
+  if ('externalNote' in formData && formData.isAgency) payload.externalNote = externalNote ?? '';
   if ('notificationEmails' in formData) payload.notificationEmails = formData.notificationEmails ?? [];
 
   // Handle cargo with addresses

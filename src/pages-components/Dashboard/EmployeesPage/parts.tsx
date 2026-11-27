@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/dialog';
 import { InputGroup, InputGroupInput } from '@/components/ui/input-group';
 import { Skeleton } from '@/components/ui/skeleton';
+import { track } from '@/lib/analytics';
 import { deleteEmployee, type DriverLicenceEnum, generateDriverPortalToken } from '@/lib/api';
 import type { Employee } from '@/lib/api/employees.d';
 import { cn } from '@/lib/utils';
@@ -150,6 +151,7 @@ export function DeactivateDialog({
     if (!shown) return;
     try {
       await mutateAsync(shown.id);
+      track('employee deactivated');
       showSuccessToast({ title: 'Zaposlenik deaktiviran', description: fullName(shown) });
       onOpenChange(false);
       onDone?.(shown);

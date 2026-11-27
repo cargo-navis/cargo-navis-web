@@ -34,6 +34,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { track } from '@/lib/analytics';
 import type { Cargo, Shipment } from '@/lib/api';
 import { useUploadVehicleStopFile } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
@@ -308,7 +309,10 @@ function VehicleStopMenu({
     event.target.value = '';
     const uploaded = await uploadWithLimit(files, (file) => upload({ file, fileName: file.name }));
     // The nalog lists its stops' files (Dokumenti, 📎 counts).
-    if (uploaded > 0) void queryClient.invalidateQueries({ queryKey: ['shipment', shipmentId] });
+    if (uploaded > 0) {
+      track('document added', { entry: 'stop', file_count: uploaded });
+      void queryClient.invalidateQueries({ queryKey: ['shipment', shipmentId] });
+    }
   }
 
   return (

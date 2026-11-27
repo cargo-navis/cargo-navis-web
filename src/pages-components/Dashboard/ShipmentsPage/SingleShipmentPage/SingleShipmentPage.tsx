@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { track } from '@/lib/analytics';
 import type { Shipment } from '@/lib/api';
 import { useShipment } from '@/lib/hooks';
 import { Icon } from '@/ui';
@@ -37,6 +38,7 @@ function useDetailTab() {
   const router = useRouter();
   const tab: Tab = TABS.includes(router.query.tab as Tab) ? (router.query.tab as Tab) : 'pregled';
   const setTab = (next: Tab) => {
+    track('nalog tab opened', { tab: next });
     const query = { ...router.query };
     if (next === 'pregled') delete query.tab;
     else query.tab = next;
@@ -86,7 +88,9 @@ function MainContent({ shipment }: { shipment: Shipment }) {
   const openAssign = () => void push(assignVehicleHref(shipment.id));
   const documentsCount = documentsOf(shipment).length;
   // Interna + Vanjska: how many are written (0–2).
-  const notesCount = [shipment.internalNote, shipment.externalNote].filter((note) => note?.trim()).length;
+  const notesCount = [shipment.internalNote, shipment.isAgency ? shipment.externalNote : undefined].filter((note) =>
+    note?.trim()
+  ).length;
 
   return (
     <div className="flex flex-col gap-6">
@@ -104,7 +108,8 @@ function MainContent({ shipment }: { shipment: Shipment }) {
             )}
           </TabsTrigger>
           <TabsTrigger value="napomene">
-            Napomene
+            {/* An own nalog has the one note (NotesTab). */}
+            {shipment.isAgency ? 'Napomene' : 'Napomena'}
             {notesCount > 0 && (
               <Badge className="tabular-nums" size="sm">
                 {notesCount}

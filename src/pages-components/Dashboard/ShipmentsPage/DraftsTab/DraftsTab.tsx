@@ -1,7 +1,8 @@
 /**
  * „Nalozi u pripremi” (today's DraftsTab, new look): uploaded PDFs the AI reads into a nalog. Datoteka (click = the
  * extracted text), Status, Kreirano, and Otvori dokument / Kreiraj nalog / Obriši (AlertDialog). `?highlight=<id>`
- * scrolls to a draft and flashes it.
+ * scrolls to a draft and flashes it. While a PDF is being read: „Osvježi” on its row (2026-11-27), and the list reloads
+ * itself (useShipmentDrafts polls; the push notification reloads it too).
  */
 
 import { useRouter } from 'next/router';
@@ -18,43 +19,20 @@ import {
   AlertDialogMedia,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { getShipmentDraftDocumentUrl, type ShipmentDraft, type ShipmentDraftStatus } from '@/lib/api';
+import { track } from '@/lib/analytics';
+import { getShipmentDraftDocumentUrl, type ShipmentDraft } from '@/lib/api';
 import { useDeleteShipmentDraft, useShipmentDrafts } from '@/lib/hooks';
 import { cn } from '@/lib/utils';
 import { formatDateTime } from '@/lib/utils/date';
 import { showErrorToast, showSuccessToast } from '@/lib/utils/toast';
 import { Icon } from '@/ui';
 
+import { DraftStatus, isDraftProcessing } from './draftStatus';
 import { ExtractedTextModal } from './ExtractedTextModal';
-
-const STATUS: Record<
-  ShipmentDraftStatus,
-  { tone: 'info' | 'success' | 'neutral' | 'danger'; label: string; icon?: 'IconLoader2' }
-> = {
-  PENDING_EXTRACTION: { tone: 'info', label: 'Obrada u tijeku' },
-  PROCESSING: { tone: 'info', label: 'Obrada u tijeku' },
-  EXTRACTED: { tone: 'success', label: 'Spremno' },
-  CONFIRMED: { tone: 'neutral', label: 'Potvrđeno' },
-  FAILED: { tone: 'danger', label: 'Greška' },
-};
-
-function DraftStatus({ draft }: { draft: ShipmentDraft }) {
-  const config = STATUS[draft.status];
-  const badge = <Badge tone={config.tone}>{config.label}</Badge>;
-  if (draft.status !== 'FAILED' || !draft.errorMessage) return badge;
-  return (
-    <Tooltip>
-      <TooltipTrigger render={<span className="inline-flex cursor-default" />}>{badge}</TooltipTrigger>
-      <TooltipContent className="max-w-72">{draft.errorMessage}</TooltipContent>
-    </Tooltip>
-  );
-}
 
 function DeleteDraftDialog({
   draft,
@@ -68,6 +46,7 @@ function DeleteDraftDialog({
     if (!draft) return;
     try {
       await deleteDraft(draft.id);
+      track('draft deleted');
       showSuccessToast({ title: 'Nalog u pripremi obrisan' });
       onOpenChange(false);
     } catch (error) {
@@ -98,10 +77,12 @@ function DeleteDraftDialog({
 
 export const DraftsTab = ({ onUpload }: { onUpload(): void }) => {
   const router = useRouter();
-  const { data: drafts = [], isLoading } = useShipmentDrafts();
+  const { data: drafts = [], isLoading, isFetching, refetch } = useShipmentDrafts();
   const highlightedDraftId = typeof router.query.highlight === 'string' ? router.query.highlight : undefined;
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const [textDraft, setTextDraft] = React.useState<ShipmentDraft | null>(null);
+  // By id, so the open text dialog follows the draft when its reading finishes.
+  const [textDraftId, setTextDraftId] = React.useState<string | null>(null);
+  const textDraft = drafts.find((draft) => draft.id === textDraftId) ?? null;
   const [deleteDraft, setDeleteDraft] = React.useState<ShipmentDraft | null>(null);
 
   const sortedDrafts = React.useMemo(
@@ -181,7 +162,10 @@ export const DraftsTab = ({ onUpload }: { onUpload(): void }) => {
                 <button
                   className="group flex items-start gap-2 text-left"
                   type="button"
-                  onClick={() => setTextDraft(draft)}
+                  onClick={() => {
+                    track('draft text opened');
+                    setTextDraftId(draft.id);
+                  }}
                 >
                   <Icon className="mt-0.5 text-muted-foreground" icon="IconFileDescription" size="s" />
                   <span className="font-medium group-hover:underline">{draft.fileName}</span>
@@ -196,12 +180,45 @@ export const DraftsTab = ({ onUpload }: { onUpload(): void }) => {
               <TableCell className="px-3 py-3">
                 <div className="flex items-center justify-end gap-2">
                   {draft.document && (
-                    <Button size="sm" variant="outline" onClick={() => void handleOpenDocument(draft)}>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        track('draft document opened');
+                        void handleOpenDocument(draft);
+                      }}
+                    >
                       <Icon data-icon="inline-start" icon="IconExternalLink" size="s" /> Otvori dokument
                     </Button>
                   )}
+                  {isDraftProcessing(draft) && (
+                    <Button
+                      disabled={isFetching}
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        track('draft refreshed');
+                        void refetch();
+                      }}
+                    >
+                      <Icon
+                        // IconRefresh's arrows point counter-clockwise: spin that way.
+                        className={cn(isFetching && 'animate-spin [animation-direction:reverse]')}
+                        data-icon="inline-start"
+                        icon="IconRefresh"
+                        size="s"
+                      />{' '}
+                      Osvježi
+                    </Button>
+                  )}
                   {draft.status === 'EXTRACTED' && (
-                    <Button size="sm" onClick={() => void router.push(`/dashboard/shipments/new?draftId=${draft.id}`)}>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        track('draft to nalog');
+                        void router.push(`/dashboard/shipments/new?draftId=${draft.id}`);
+                      }}
+                    >
                       <Icon data-icon="inline-start" icon="IconArrowRight" size="s" /> Kreiraj nalog
                     </Button>
                   )}
@@ -219,7 +236,7 @@ export const DraftsTab = ({ onUpload }: { onUpload(): void }) => {
           ))}
         </TableBody>
       </Table>
-      <ExtractedTextModal draft={textDraft} onClose={() => setTextDraft(null)} />
+      <ExtractedTextModal draft={textDraft} onClose={() => setTextDraftId(null)} />
       <DeleteDraftDialog draft={deleteDraft} onOpenChange={(open) => !open && setDeleteDraft(null)} />
     </div>
   );

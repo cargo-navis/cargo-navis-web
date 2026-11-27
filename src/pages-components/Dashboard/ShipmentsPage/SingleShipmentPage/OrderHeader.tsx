@@ -91,7 +91,7 @@ function PdfMenu({
   clientName?: string;
   contractorName?: string;
 }) {
-  const { download, isDownloading } = useDownloadShipmentPdf();
+  const { download, isDownloading } = useDownloadShipmentPdf('detail');
   const documents = getPdfDocuments(shipment, { clientName, contractorName });
   return (
     <DropdownMenu>

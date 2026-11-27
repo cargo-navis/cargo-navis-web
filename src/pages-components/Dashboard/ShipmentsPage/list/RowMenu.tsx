@@ -40,6 +40,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { track } from '@/lib/analytics';
 import type { Cargo, Shipment } from '@/lib/api';
 import { InvoiceStatus, LoadStatus } from '@/lib/api/shipments';
 import { Icon } from '@/ui';
@@ -174,7 +175,7 @@ function MenuItems({
   const router = useRouter();
   const { clientsById, contractorsById } = useLookups();
   const { change } = useChangeInvoiceStatus();
-  const { download } = useDownloadShipmentPdf();
+  const { download } = useDownloadShipmentPdf('row_menu');
 
   const clientName = shipment.clientId ? clientsById.get(shipment.clientId)?.name : undefined;
   const contractorName = shipment.transportContractorId
@@ -189,11 +190,19 @@ function MenuItems({
           #{shipment.orderNumber}
           {clientName && ` · ${clientName}`}
         </M.Label>
-        <M.Item onClick={() => void router.push(shipmentHref(shipment.id))}>
+        <M.Item
+          onClick={() => {
+            track('nalog opened', { entry: 'row_menu' });
+            void router.push(shipmentHref(shipment.id));
+          }}
+        >
           <MenuIcon icon="IconExternalLink" /> Otvori
         </M.Item>
         {inContext && (
-          <M.Item render={<a href={shipmentHref(shipment.id)} rel="noopener noreferrer" target="_blank" />}>
+          <M.Item
+            render={<a href={shipmentHref(shipment.id)} rel="noopener noreferrer" target="_blank" />}
+            onClick={() => track('nalog opened', { entry: 'new_tab' })}
+          >
             <MenuIcon icon="IconExternalLink" /> Otvori u novom tabu
           </M.Item>
         )}

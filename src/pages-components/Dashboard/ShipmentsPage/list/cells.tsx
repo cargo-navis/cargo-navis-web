@@ -23,7 +23,9 @@ import { MARGIN_PILL, STATUS_TEXT } from '../shared/tones';
  */
 export function NalogCell({ shipment, clientName }: { shipment: Shipment; clientName?: string }) {
   const documents = shipment.documents?.length ?? 0;
-  const hasNotes = !!(shipment.internalNote || shipment.externalNote);
+  // „Napomena za podvozara” only counts on agency nalozi (own ones may hold an old, hidden one).
+  const podvozarNote = shipment.isAgency ? shipment.externalNote : undefined;
+  const hasNotes = !!(shipment.internalNote || podvozarNote);
   return (
     <div className="flex min-w-0 flex-col">
       <span className="truncate text-[0.9375rem] font-medium">{clientName ?? '—'}</span>
@@ -58,7 +60,7 @@ export function NalogCell({ shipment, clientName }: { shipment: Shipment; client
             <TooltipContent className="max-w-72">
               <div className="flex flex-col gap-2">
                 {shipment.internalNote && <NoteLine label="Napomena" note={shipment.internalNote} />}
-                {shipment.externalNote && <NoteLine label="Napomena za podvozara" note={shipment.externalNote} />}
+                {podvozarNote && <NoteLine label="Napomena za podvozara" note={podvozarNote} />}
               </div>
             </TooltipContent>
           </Tooltip>

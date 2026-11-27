@@ -290,9 +290,7 @@ export function NalogForm({
                 onNewContractor={() => setPartnerDialog('contractor')}
               />
             </Section>
-            <Section title="Napomene">
-              <NoteFields />
-            </Section>
+            <NoteFields />
           </div>
           <CargoList />
         </div>
@@ -321,6 +319,7 @@ export function NalogForm({
           </DialogHeader>
           {partnerDialog && (
             <PartnerForm
+              inDialog
               initialValues={partnerDialog === 'client' ? suggested.clientFormInitialValues : undefined}
               kind={partnerDialog}
               onCancel={partnerGuard.requestClose}

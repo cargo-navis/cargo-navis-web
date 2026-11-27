@@ -199,7 +199,9 @@ export function RecipientsPanel({ shipment }: { shipment: Shipment }) {
             <TooltipTrigger render={<span aria-label="Što je ovo?" className="cursor-default text-muted-foreground" />}>
               <Icon icon="IconInfoCircle" size="s" />
             </TooltipTrigger>
-            <TooltipContent className="max-w-64">Primaju mail kad se teret utovari i istovari.</TooltipContent>
+            <TooltipContent className="max-w-64">
+              Ove email adrese će dobiti poruku kad se teret utovari i istovari.
+            </TooltipContent>
           </Tooltip>
         </span>
       }
