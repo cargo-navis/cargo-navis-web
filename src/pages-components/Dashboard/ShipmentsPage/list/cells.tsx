@@ -57,8 +57,8 @@ export function NalogCell({ shipment, clientName }: { shipment: Shipment; client
             </TooltipTrigger>
             <TooltipContent className="max-w-72">
               <div className="flex flex-col gap-2">
-                {shipment.internalNote && <NoteLine label="Interna" note={shipment.internalNote} />}
-                {shipment.externalNote && <NoteLine label="Vanjska" note={shipment.externalNote} />}
+                {shipment.internalNote && <NoteLine label="Napomena" note={shipment.internalNote} />}
+                {shipment.externalNote && <NoteLine label="Napomena za podvozara" note={shipment.externalNote} />}
               </div>
             </TooltipContent>
           </Tooltip>

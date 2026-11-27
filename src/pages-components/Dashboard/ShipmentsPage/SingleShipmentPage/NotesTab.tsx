@@ -1,6 +1,6 @@
 /**
- * Napomene (lab /order NotesPanel): Interna („Samo za tebe”) and Vanjska („Ispisuje se na PDF nalogu”), each with ✎ or
- * „+ Dodaj napomenu”, edited in a dialog (today's ShipmentNoteModal: max 255 characters, empty = removed).
+ * Napomene (lab /order NotesPanel): „Napomena” (interna, samo za tebe) and „Napomena za podvozara” (samo agency, ide
+ * na PDF podvozaru), each with ✎ or „+ Dodaj napomenu”, edited in a dialog (max 255 characters, empty = removed).
  */
 
 import * as React from 'react';
@@ -29,21 +29,25 @@ const NOTE_MAX_LENGTH = 255;
 
 type NoteType = 'internal' | 'external';
 
-const NOTE: Record<NoteType, { title: string; hint: string; icon: IconType; field: 'internalNote' | 'externalNote' }> =
-  {
-    internal: {
-      title: 'Interna',
-      hint: 'Samo za tebe. Ne ide na PDF ni drugim primateljima.',
-      icon: 'IconLock',
-      field: 'internalNote',
-    },
-    external: {
-      title: 'Vanjska',
-      hint: 'Ispisuje se na PDF nalogu i u dokumentima za klijenta / podvozara.',
-      icon: 'IconEye',
-      field: 'externalNote',
-    },
-  };
+const NOTE: Record<
+  NoteType,
+  { title: string; dialogTitle: string; hint: string; icon: IconType; field: 'internalNote' | 'externalNote' }
+> = {
+  internal: {
+    title: 'Napomena',
+    dialogTitle: 'Napomena',
+    hint: 'Samo za tebe. Ne ide ni na jedan PDF ni drugim primateljima.',
+    icon: 'IconLock',
+    field: 'internalNote',
+  },
+  external: {
+    title: 'Napomena za podvozara',
+    dialogTitle: 'Napomena za podvozara',
+    hint: 'Ispisuje se na PDF-u „Nalog za podvozara” koji preuzimaš.',
+    icon: 'IconEye',
+    field: 'externalNote',
+  },
+};
 
 function NoteDialog({ shipment, type, onClose }: { shipment: Shipment; type: NoteType; onClose(): void }) {
   const { mutateAsync: updateShipment } = useUpdateShipment();
@@ -64,7 +68,7 @@ function NoteDialog({ shipment, type, onClose }: { shipment: Shipment; type: Not
     setIsSaving(true);
     try {
       const note = value.trim() || null;
-      // An agency nalog is patched through its own resource, which carries the note to the contractor's order.
+      // Agency nalog ide kroz svoj resurs; backend ruta externalNote na child (PDF podvozaru).
       if (shipment.isAgency) await updateAgencyShipment({ id: shipment.id, [config.field]: note });
       else await updateShipment({ id: shipment.id, [config.field]: note });
       showSuccessToast({ title: 'Napomena ažurirana' });
@@ -82,7 +86,7 @@ function NoteDialog({ shipment, type, onClose }: { shipment: Shipment; type: Not
       <Dialog open onOpenChange={(open) => !open && !isSaving && guard.requestClose()}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{type === 'internal' ? 'Interna napomena' : 'Vanjska napomena'}</DialogTitle>
+            <DialogTitle>{config.dialogTitle}</DialogTitle>
             <DialogDescription>{config.hint}</DialogDescription>
           </DialogHeader>
           <Field data-invalid={(showError && tooLong) || undefined}>
@@ -157,8 +161,12 @@ export function NotesTab({ shipment }: { shipment: Shipment }) {
   return (
     <Panel bodyClassName="flex flex-col gap-4" title="Napomene">
       <NoteBlock note={shipment.internalNote} type="internal" onEdit={() => setEditing('internal')} />
-      <div className="h-px bg-border" />
-      <NoteBlock note={shipment.externalNote} type="external" onEdit={() => setEditing('external')} />
+      {shipment.isAgency && (
+        <>
+          <div className="h-px bg-border" />
+          <NoteBlock note={shipment.externalNote} type="external" onEdit={() => setEditing('external')} />
+        </>
+      )}
       {editing && <NoteDialog shipment={shipment} type={editing} onClose={() => setEditing(null)} />}
     </Panel>
   );

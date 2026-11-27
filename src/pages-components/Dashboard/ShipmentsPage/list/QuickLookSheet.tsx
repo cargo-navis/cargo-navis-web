@@ -120,8 +120,8 @@ function QuickLook({ shipment }: { shipment: Shipment }) {
   const assignment = useAssignment(shipment);
   const client = shipment.clientId ? clientsById.get(shipment.clientId) : undefined;
   const notes = [
-    { label: 'Interna', text: shipment.internalNote },
-    { label: 'Vanjska', text: shipment.externalNote },
+    { label: 'Napomena', text: shipment.internalNote },
+    { label: 'Napomena za podvozara', text: shipment.externalNote },
   ].filter((note) => !!note.text);
   const margin =
     shipment.isAgency && shipment.contractorPrice !== null && shipment.contractorPrice !== undefined

@@ -266,7 +266,7 @@ function RecipientsField() {
   );
 }
 
-/** Napomene (lab `NoteFields`): Interna „samo za tebe”, Vanjska „na PDF nalogu”. */
+/** Napomene (lab `NoteFields`): „Napomena” je interna, a „Napomena za podvozara” ide na njegov PDF (samo agency). */
 export function NoteFields() {
   const { values, set } = useNalogForm();
   return (
@@ -274,7 +274,7 @@ export function NoteFields() {
     <div className="flex flex-col gap-4">
       <Field>
         <Label field="internalNote" htmlFor={fieldDomId('internalNote')}>
-          Interna napomena
+          Napomena
         </Label>
         <Textarea
           id={fieldDomId('internalNote')}
@@ -282,20 +282,22 @@ export function NoteFields() {
           value={values.internalNote}
           onChange={(event) => set({ internalNote: event.target.value }, 'internalNote')}
         />
-        <FieldDescription>Samo za tebe, ne ide na PDF.</FieldDescription>
+        <FieldDescription>Samo za tebe, ne ide ni na jedan PDF.</FieldDescription>
       </Field>
-      <Field>
-        <Label field="externalNote" htmlFor={fieldDomId('externalNote')}>
-          Vanjska napomena
-        </Label>
-        <Textarea
-          id={fieldDomId('externalNote')}
-          rows={3}
-          value={values.externalNote}
-          onChange={(event) => set({ externalNote: event.target.value }, 'externalNote')}
-        />
-        <FieldDescription>Ispisuje se na PDF nalogu.</FieldDescription>
-      </Field>
+      {values.isAgency && (
+        <Field>
+          <Label field="externalNote" htmlFor={fieldDomId('externalNote')}>
+            Napomena za podvozara
+          </Label>
+          <Textarea
+            id={fieldDomId('externalNote')}
+            rows={3}
+            value={values.externalNote}
+            onChange={(event) => set({ externalNote: event.target.value }, 'externalNote')}
+          />
+          <FieldDescription>Ispisuje se na PDF-u „Nalog za podvozara” koji preuzimaš.</FieldDescription>
+        </Field>
+      )}
     </div>
   );
 }
